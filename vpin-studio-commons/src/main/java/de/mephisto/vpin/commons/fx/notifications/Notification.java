@@ -12,6 +12,15 @@ public class Notification {
   private String title3;
   private long durationSec;
   private boolean desktopMode;
+  private boolean showOnEmulatorExit = true;
+
+  public boolean isShowOnEmulatorExit() {
+    return showOnEmulatorExit;
+  }
+
+  public void setShowOnEmulatorExit(boolean showOnEmulatorExit) {
+    this.showOnEmulatorExit = showOnEmulatorExit;
+  }
 
   public boolean isDesktopMode() {
     return desktopMode;

@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.commons.fx.notifications.Notification;
+import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingData;
-import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
@@ -20,10 +20,15 @@ import java.util.List;
 public class InGameRecorderJob extends RecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(InGameRecorderJob.class);
   private final NotificationService notificationService;
+  private final NotificationSettings notificationSettings;
 
-  public InGameRecorderJob(NotificationService notificationService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+  public InGameRecorderJob(NotificationService notificationService, GameService gameService, FrontendConnector frontend,
+                           FrontendStatusService frontendStatusService, RecorderSettings settings,
+                           NotificationSettings notificationSettings, RecordingDataSummary recordingDataSummary,
+                           List<RecordingScreen> recordingScreens) {
     super(gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
     this.notificationService = notificationService;
+    this.notificationSettings = notificationSettings;
   }
 
   @Override
@@ -40,8 +45,8 @@ public class InGameRecorderJob extends RecorderJob implements Job {
 
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
-        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-          break;
+        if (showStartNotification(jobDescriptor, data)) {
+          return;
         }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
@@ -56,7 +61,7 @@ public class InGameRecorderJob extends RecorderJob implements Job {
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 
           //create the game recorder which includes all screens
-          gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+          gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
           gameRecorder.startRecording();
         }
         finally {
@@ -72,11 +77,42 @@ public class InGameRecorderJob extends RecorderJob implements Job {
       catch (Exception e) {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
       }
+      finally {
+        LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
+        jobDescriptor.setProgress(1);
+        jobDescriptor.setGameId(-1);
+      }
     }
-    LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
-    jobDescriptor.setProgress(1);
-    jobDescriptor.setGameId(-1);
 
     LOG.info("***************************** /In-Game Recording Log *****************************************************");
+  }
+
+  private boolean showStartNotification(JobDescriptor jobDescriptor, RecordingData data) throws InterruptedException {
+    if (notificationSettings.isRecordingStartNotification()) {
+      int seconds = notificationSettings.getDurationSec();
+
+      int wait = Integer.MAX_VALUE;
+      for (VPinScreen screen : data.getScreens()) {
+        RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
+        if (option.getInitialDelay() < wait) {
+          wait = option.getInitialDelay();
+        }
+      }
+
+      seconds = seconds + wait;
+      Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder Start", "The recorder will start in " + seconds + " seconds.");
+      notificationService.showNotificationNow(notification);
+
+      while (seconds > 0) {
+        Thread.sleep(1000);
+        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+          return true;
+        }
+        LOG.info("Recording starting in " + seconds + " seconds.");
+        seconds--;
+      }
+      Thread.sleep(300);
+    }
+    return false;
   }
 }

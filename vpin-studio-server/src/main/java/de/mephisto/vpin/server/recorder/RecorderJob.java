@@ -20,7 +20,7 @@ public class RecorderJob implements Job {
   final GameService gameService;
   final FrontendConnector frontend;
   final FrontendStatusService frontendStatusService;
-  final RecorderSettings settings;
+  final RecorderSettings recorderSettings;
   final RecordingDataSummary recordingDataSummary;
   final List<RecordingScreen> recordingScreens;
 
@@ -30,7 +30,7 @@ public class RecorderJob implements Job {
     this.gameService = gameService;
     this.frontend = frontend;
     this.frontendStatusService = frontendStatusService;
-    this.settings = settings;
+    this.recorderSettings = settings;
     this.recordingDataSummary = recordingDataSummary;
     this.recordingScreens = recordingScreens;
   }
@@ -88,7 +88,7 @@ public class RecorderJob implements Job {
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 
           //create the game recorder which includes all screens
-          gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+          gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
           gameRecorder.startRecording();
         }
         finally {
@@ -148,7 +148,7 @@ public class RecorderJob implements Job {
     if (recordingData != null) {
       List<VPinScreen> screens = recordingData.getScreens();
       for (VPinScreen screen : screens) {
-        RecordingScreenOptions recordingScreenOption = settings.getRecordingScreenOption(screen);
+        RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(screen);
         if (!recordingScreenOption.isEnabled()) {
           continue;
         }

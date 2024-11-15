@@ -43,6 +43,12 @@ public class NotificationsPreferencesController implements Initializable {
   private CheckBox desktopCheckbox;
 
   @FXML
+  private CheckBox recordingStartCheckbox;
+
+  @FXML
+  private CheckBox recordingEndCheckbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
@@ -99,6 +105,18 @@ public class NotificationsPreferencesController implements Initializable {
     competitionsCheckbox.setSelected(notificationSettings.isCompetitionNotification());
     competitionsCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setCompetitionNotification(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+    });
+
+    recordingStartCheckbox.setSelected(notificationSettings.isCompetitionNotification());
+    recordingStartCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      notificationSettings.setRecordingStartNotification(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+    });
+
+    recordingEndCheckbox.setSelected(notificationSettings.isCompetitionNotification());
+    recordingEndCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      notificationSettings.setRecordingEndNotification(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });
 

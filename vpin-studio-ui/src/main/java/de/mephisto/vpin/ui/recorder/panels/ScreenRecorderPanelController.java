@@ -115,7 +115,7 @@ public class ScreenRecorderPanelController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
     });
 
-    inGameRecordingCheckbox.setSelected(option.isFps60());
+    inGameRecordingCheckbox.setSelected(option.isInGameRecording());
     inGameRecordingCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
       RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
