@@ -50,7 +50,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -62,7 +62,12 @@ public class CabinetSettingsPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     if (Features.MANIA_ENABLED) {
-      cabinet = maniaClient.getCabinetClient().getCabinet();
+      try {
+        cabinet = maniaClient.getCabinetClient().getCabinet();
+      }
+      catch (Exception e) {
+        LOG.error("Failed to read cabinet info: {}", e.getMessage());
+      }
       if (cabinet != null) {
         vpinNameText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("cabinetName", () -> {
           if (StringUtils.isEmpty(t1)) {
@@ -74,7 +79,8 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
           try {
             maniaClient.getCabinetClient().update(cabinet);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOG.error("Failed to update cabinet name for VPin Mania: " + e.getMessage(), e);
             WidgetFactory.showAlert(stage, "Error", "Failed to update cabinet name for VPin Mania: " + e.getMessage());
           }
@@ -95,14 +101,14 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
     avatarBorderPane.setCenter(null);
     avatar = TileBuilder.create()
-      .skinType(Tile.SkinType.IMAGE)
-      .prefSize(300, 300)
-      .backgroundColor(Color.TRANSPARENT)
-      .image(image)
-      .imageMask(Tile.ImageMask.ROUND)
-      .textSize(Tile.TextSize.BIGGER)
-      .textAlignment(TextAlignment.CENTER)
-      .build();
+        .skinType(Tile.SkinType.IMAGE)
+        .prefSize(300, 300)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
     avatarBorderPane.setCenter(avatar);
     avatar.setImage(image);
   }

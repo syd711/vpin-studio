@@ -79,7 +79,7 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
   @FXML
   private void onIdCopy() {
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-    if(cabinet != null) {
+    if (cabinet != null) {
       Clipboard clipboard = Clipboard.getSystemClipboard();
       ClipboardContent content = new ClipboardContent();
       content.putString(cabinet.getUuid());
@@ -100,7 +100,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
           try {
             client.getPlayerService().savePlayer(player);
             LOG.info("Resetted VPin Mania account for " + player);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOG.error("Failed to de-register player account: " + e.getMessage(), e);
           }
 
@@ -114,7 +115,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       settings.setEnabled(false);
       try {
         settings = client.getTournamentsService().saveSettings(settings);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save tournament settings: " + e.getMessage());
       }
@@ -127,7 +129,13 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
     preferencesPanel.managedProperty().bindBidirectional(preferencesPanel.visibleProperty());
     registrationPanel.managedProperty().bindBidirectional(registrationPanel.visibleProperty());
 
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    Cabinet cabinet = null;
+    try {
+      cabinet = maniaClient.getCabinetClient().getCabinet();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load cabinet setting: {}", e.getMessage());
+    }
     registrationPanel.setVisible(cabinet == null);
 
     if (cabinet != null) {
@@ -168,7 +176,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
 
           settings.setEnabled(true);
           settings = client.getTournamentsService().saveSettings(settings);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           registrationCheckbox.setSelected(false);
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for details).");
@@ -185,7 +194,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       try {
         settings.setDefaultDashboardUrl(t1);
         settings = client.getTournamentsService().saveSettings(settings);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
       }
     }, 300));
@@ -197,7 +207,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
         try {
           settings.setSubmitAllScores(newValue);
           settings = client.getTournamentsService().saveSettings(settings);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
         }
       }
@@ -210,7 +221,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
         try {
           settings.setTournamentsEnabled(newValue);
           settings = client.getTournamentsService().saveSettings(settings);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
         }
       }
@@ -220,7 +232,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       try {
         settings.setDefaultDiscordLink(t1);
         settings = client.getTournamentsService().saveSettings(settings);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
       }
     }, 300));
@@ -229,7 +242,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       try {
         settings.setDefaultWebsite(t1);
         settings = client.getTournamentsService().saveSettings(settings);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
       }
     }, 300));
@@ -242,7 +256,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       try {
         settings.setDefaultDescription(value);
         settings = client.getTournamentsService().saveSettings(settings);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
       }
     }, 300));
