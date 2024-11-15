@@ -4,12 +4,14 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -84,12 +86,12 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
 
     Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
     BackgroundImage myBI = new BackgroundImage(backgroundImage,
-      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-      BackgroundSize.DEFAULT);
+        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+        BackgroundSize.DEFAULT);
     rootStack.setBackground(new Background(myBI));
   }
 
-  public void setData(GameRepresentation game, int position, TableScore tableScore) {
+  public void setData(@Nullable GameRepresentation game, VpsTable vpsTable, int position, TableScore tableScore) {
     if (game == null) {
       Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
       wheelImageView.setImage(wheel);
@@ -108,7 +110,15 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       }
     }
 
-    tableLabel.setText(game.getGameDisplayName());
+    if (game != null) {
+      tableLabel.setText(game.getGameDisplayName());
+    }
+    else if (vpsTable != null) {
+      tableLabel.setText(vpsTable.getName());
+    }
+    else {
+      tableLabel.setText("- Table not resolved - ");
+    }
 
     positionLabel.setText("#" + position);
 
@@ -121,10 +131,12 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     String date = DateFormat.getDateTimeInstance().format(tableScore.getCreationDate());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
-    BackgroundImage myBI = new BackgroundImage(backgroundImage,
-      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-      BackgroundSize.DEFAULT);
-    rootStack.setBackground(new Background(myBI));
+    if (game != null) {
+      Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
+      BackgroundImage myBI = new BackgroundImage(backgroundImage,
+          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+      rootStack.setBackground(new Background(myBI));
+    }
   }
 }

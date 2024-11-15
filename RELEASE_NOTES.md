@@ -2,7 +2,7 @@
 
 ## Changes
 
-- **Tables / Remote Recording**: The Studio supports remote recording of frontend screens now. You find the recorder as an additional tab in the tables section. The recorder supports single and bulk recording and gives a preview of the screens that are recorded. 
+- **Tables / Remote + In-Game Recording**: The Studio supports remote recording of frontend screens now. You find the recorder as an additional tab in the tables section. The recorder supports single and bulk recording and gives a preview of the screens that are recorded. In addition to that, you can start an in-game recording by binding a key for this. More details about this can be found here: https://github.com/syd711/vpin-studio/wiki/Media-Recorder 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder.png" width="800" />
 
@@ -26,7 +26,7 @@
 
 - **Tables / Table Asset Manager**: for pinballX and pinballY users, added video conversion services as it was proposed for PinUP Popper users.
 
-- **Tables / Validators**: Introduced new validator for VR support. The validator checks if there is a VR room flag inside the script and returns an error if not enabled. If you do not use VR, please disable this validator as there is no option to disable it by default. Note that you need to re-scan all tables to find disabled VR rooms. 
+- **Tables / Validators**: Introduced new validator for VR support. The validator checks if there is a VR room flag inside the script and returns an error if not enabled. **If you do not use VR, please disable this validator as there is no option to disable it by default.** Note that you need to re-scan all tables to find disabled VR rooms. 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vr-validator.png" width="500" />
 
@@ -40,9 +40,11 @@
 
 - **Tables / Uploads**: Improved **cloning** behaviour so that the original name is kept and the existing VPS mapping too, if the auto-match flag has been disabled.
 - **PinUP Popper Integration**: More gracefully stopping of PinUP Popper by calling the regular exit command first (instead of simply killing all processes).
+- **Tournaments / Tournament Browser**: Fixed remaining time label.
+- **Tournaments / Highscores**: Fixed issue that scores where only shown for installed games.
 
 
 ## VPin Mania
 
-- **Tournaments**: Tournaments have been hidden by default and must be enabled in the preferences. This improves the boot-up time of the server a bit.
-- **Table Views**: Added more convenience for VR users by adding the launch game menu button to the different table views.
+- **Tournaments**: **Tournaments have been disabled/hidden by default and must be enabled in the preferences.** You won't loose any data by this. It improves the boot-up time of the server a bit since the automatic synchronization of tournament highscores is also disabled this way.
+- **Table Views**: Added more convenience for VR users by adding the launch game menu button to the different table views of VPin Mania.

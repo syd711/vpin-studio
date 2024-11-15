@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -222,6 +223,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
       Tournament tournament = value.getTournament();
       List<TableScore> highscores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
+      LOG.info("Loaded " + highscores.size() + " highscores for tournament " + tournament.getId());
       highscores = highscores.stream().filter(h -> h.getVpsTableId().equals(value.getVpsTable().getId())).collect(Collectors.toList());
 
       if (highscores.isEmpty()) {
@@ -231,6 +233,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       }
       else {
         Collections.sort(highscores, (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
+        VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTable().getId());
         int position = 1;
         for (TableScore highscore : highscores) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(highscore.getVpsTableId(), highscore.getVpsVersionId());
@@ -240,7 +243,7 @@ public class TournamentsController implements Initializable, StudioFXController 
               Pane row = loader.load();
               row.setPrefWidth(600);
               WidgetPlayerScoreController controller = loader.getController();
-              controller.setData(game, position, highscore);
+              controller.setData(game, vpsTable, position, highscore);
               scoreList.getChildren().add(row);
               position++;
             }

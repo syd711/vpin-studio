@@ -312,7 +312,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         nameLabel.setText(item.getDisplayName());
         startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
         endLabel.setText(DateFormat.getDateTimeInstance().format(item.getEndDate()));
-        remainingLabel.setText(DateUtil.formatDuration(item.getStartDate(), item.getEndDate()));
+        remainingLabel.setText(DateUtil.formatDuration(new Date(), item.getEndDate()));
         if (!StringUtils.isEmpty(item.getDiscordLink())) {
           discordLink.setText(item.getDiscordLink());
         }

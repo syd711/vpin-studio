@@ -297,7 +297,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
             maniaClient.getTournamentClient().addMember(this.tournament, account);
           }
         }
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Error joining tournament: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, ex.getMessage());
       }
@@ -405,7 +406,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     tournamentBadgeCombo.setDisable(isOwner && tournament.getUuid() != null);
     this.nameField.setText(selectedTournament.getDisplayName());
     this.nameField.setDisable(!isOwner);
-    this.descriptionText.setText(selectedTournament.getDescription());
+    this.descriptionText.setText(selectedTournament.getDescription() != null && !selectedTournament.getDescription().equals("null") ? selectedTournament.getDescription() : "");
     this.descriptionText.setDisable(!isOwner);
     this.discordLinkText.setText(selectedTournament.getDiscordLink());
     this.discordLinkText.setDisable(!isOwner);
@@ -515,7 +516,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
               this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
               this.tableView.refresh();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
             }
@@ -670,7 +672,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tournament Data...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }
