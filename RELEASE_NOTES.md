@@ -24,7 +24,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-deletions.png" width="500" />
 
-- **Tables / Table Asset Manager**: for pinballX and pinballY users, added video conversion services as it was proposed for PinUP Popper users.
+- **Tables / Table Asset Manager**: PinballX and PinballY users have video conversion options now too. (They were only shown for PinUP Popper users before).
 
 - **Tables / Validators**: Introduced new validator for VR support. The validator checks if there is a VR room flag inside the script and returns an error if not enabled. **If you do not use VR, please disable this validator as there is no option to disable it by default.** Note that you need to re-scan all tables to find disabled VR rooms. 
 
@@ -40,12 +40,11 @@
 
 - **Tables / Uploads**: Improved **cloning** behaviour so that the original name is kept and the existing VPS mapping too, if the auto-match flag has been disabled.
 - **PinUP Popper Integration**: More gracefully stopping of PinUP Popper by calling the regular exit command first (instead of simply killing all processes).
-- **Tournaments / Tournament Browser**: Fixed remaining time label.
-- **Tournaments / Highscores**: Fixed issue that scores where only shown for installed games.
 - **Competitions / iScored**: Added **Event Log** button to inspect events of the selected table.
-
 
 ## VPin Mania
 
+- **Tournaments / Tournament Browser**: Fixed remaining time label.
+- **Tournaments / Highscores**: Fixed issue that scores where only shown for installed games.
 - **Tournaments**: **Tournaments have been disabled/hidden by default and must be enabled in the preferences.** You won't loose any data by this. It improves the boot-up time of the server a bit since the automatic synchronization of tournament highscores is also disabled this way.
 - **Table Views**: Added more convenience for VR users by adding the launch game menu button to the different table views of VPin Mania.

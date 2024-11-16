@@ -105,7 +105,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
               TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
               if (tournamentTable != null) {
                 if (tournament.isActive() && tournamentTable.isActive()) {
-                  List<TableScore> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
+                  List<TableScoreDetails> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
                   if (tournamentScores.contains(createdTableScore)) {
                     LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
                   }
