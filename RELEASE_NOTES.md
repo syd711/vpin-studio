@@ -42,6 +42,7 @@
 - **PinUP Popper Integration**: More gracefully stopping of PinUP Popper by calling the regular exit command first (instead of simply killing all processes).
 - **Tournaments / Tournament Browser**: Fixed remaining time label.
 - **Tournaments / Highscores**: Fixed issue that scores where only shown for installed games.
+- **Competitions / iScored**: Added **Event Log** button to inspect events of the selected table.
 
 
 ## VPin Mania
