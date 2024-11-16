@@ -8,6 +8,7 @@ import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -43,7 +44,7 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
 
     try {
       Platform.setImplicitExit(false);
-      Screen screen = Screen.getPrimary();
+      Screen screen = SystemUtil.getPlayfieldScreen();
 
       BorderPane root = new BorderPane();
       final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);

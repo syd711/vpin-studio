@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -23,7 +24,7 @@ public class MaintenanceController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    Screen screen = Screen.getPrimary();
+    Screen screen = SystemUtil.getPlayfieldScreen();
     Rectangle2D bounds = screen.getVisualBounds();
     imageView.setPreserveRatio(false);
     imageView.setFitWidth(bounds.getHeight());
