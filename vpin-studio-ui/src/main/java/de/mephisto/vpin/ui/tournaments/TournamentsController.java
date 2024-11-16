@@ -1,10 +1,7 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.TableScore;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.mania.model.TournamentMember;
-import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -222,7 +219,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     if (tournamentTreeModel.isPresent() && !tournamentTreeModel.get().getValue().isTournamentNode()) {
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
       Tournament tournament = value.getTournament();
-      List<TableScore> highscores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
+      List<TableScoreDetails> highscores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
       LOG.info("Loaded " + highscores.size() + " highscores for tournament " + tournament.getId());
       highscores = highscores.stream().filter(h -> h.getVpsTableId().equals(value.getVpsTable().getId())).collect(Collectors.toList());
 
@@ -235,21 +232,19 @@ public class TournamentsController implements Initializable, StudioFXController 
         Collections.sort(highscores, (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
         VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTable().getId());
         int position = 1;
-        for (TableScore highscore : highscores) {
+        for (TableScoreDetails highscore : highscores) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(highscore.getVpsTableId(), highscore.getVpsVersionId());
-          if (game != null) {
-            try {
-              FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
-              Pane row = loader.load();
-              row.setPrefWidth(600);
-              WidgetPlayerScoreController controller = loader.getController();
-              controller.setData(game, vpsTable, position, highscore);
-              scoreList.getChildren().add(row);
-              position++;
-            }
-            catch (IOException e) {
-              LOG.error("failed to load score component: " + e.getMessage(), e);
-            }
+          try {
+            FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
+            Pane row = loader.load();
+            row.setPrefWidth(600);
+            WidgetPlayerScoreController controller = loader.getController();
+            controller.setData(game, vpsTable, position, highscore);
+            scoreList.getChildren().add(row);
+            position++;
+          }
+          catch (IOException e) {
+            LOG.error("failed to load score component: " + e.getMessage(), e);
           }
         }
 
@@ -311,7 +306,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
       websiteLink.setText(!StringUtils.isEmpty(tournament.getWebsite()) ? tournament.getWebsite() : "-");
       dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl() : "-");
-      descriptionLabel.setText(!StringUtils.isEmpty(tournament.getDescription()) ? tournament.getDescription() : "");
+      descriptionLabel.setText(!StringUtils.isEmpty(tournament.getDescription()) && !tournament.getDescription().equals("null") ? tournament.getDescription() : "");
     }
   }
 

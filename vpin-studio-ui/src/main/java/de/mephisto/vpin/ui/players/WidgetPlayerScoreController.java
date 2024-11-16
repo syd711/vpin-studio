@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
+import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -91,7 +92,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     rootStack.setBackground(new Background(myBI));
   }
 
-  public void setData(@Nullable GameRepresentation game, VpsTable vpsTable, int position, TableScore tableScore) {
+  public void setData(@Nullable GameRepresentation game, VpsTable vpsTable, int position, TableScoreDetails tableScore) {
     if (game == null) {
       Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
       wheelImageView.setImage(wheel);
@@ -121,9 +122,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     }
 
     positionLabel.setText("#" + position);
-
-    Account account = maniaClient.getAccountClient().getAccount(tableScore.getAccountId());
-    nameLabel.setText(account.getDisplayName() + " [" + account.getInitials() + "]");
+    nameLabel.setText(tableScore.getDisplayName() + " [" + tableScore.getInitials() + "]");
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(tableScore.getScoreText());
