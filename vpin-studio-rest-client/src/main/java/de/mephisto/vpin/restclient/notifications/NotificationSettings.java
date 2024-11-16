@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.notifications;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class NotificationSettings extends JsonSettings {
   private boolean desktopMode = false;
@@ -13,6 +14,15 @@ public class NotificationSettings extends JsonSettings {
   private boolean competitionNotification = true;
   private boolean recordingStartNotification = true;
   private boolean recordingEndNotification = true;
+  private int notificationsScreenId = -1;
+
+  public int getNotificationsScreenId() {
+    return notificationsScreenId;
+  }
+
+  public void setNotificationsScreenId(int notificationsScreenId) {
+    this.notificationsScreenId = notificationsScreenId;
+  }
 
   private int durationSec = 5;
 
@@ -94,5 +104,10 @@ public class NotificationSettings extends JsonSettings {
 
   public void setHighscoreUpdatedNotification(boolean highscoreUpdatedNotification) {
     this.highscoreUpdatedNotification = highscoreUpdatedNotification;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.NOTIFICATION_SETTINGS;
   }
 }

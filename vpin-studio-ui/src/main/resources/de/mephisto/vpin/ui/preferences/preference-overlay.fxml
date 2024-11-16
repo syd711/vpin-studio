@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -74,45 +75,46 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Overlay Design:" textFill="WHITE">
+                        <Label prefHeight="20.0" styleClass="preference-label" text="Overlay Design:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions / Online Competitions" textFill="WHITE" GridPane.columnIndex="1">
+                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions / Online Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / External Page" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / External Page" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="External Page URL:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="External Page URL:" textFill="WHITE" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="externalPageUrl" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <TextField fx:id="externalPageUrl" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Label text="You can use this field to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="TOP" />
-                        <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                        <Label text="You can use this field to add URLs to external competition dashboards, like iscored.info." GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+                        <Button fx:id="externalPageButton" mnemonicParsing="false" onAction="#onOpenExternalPage" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="5">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
                            </graphic>
@@ -126,12 +128,18 @@
                               <Insets left="3.0" />
                            </GridPane.margin>
                         </Button>
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Overlay Screen:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" GridPane.columnIndex="1" />
                      </children>
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
                      <VBox.margin>
-                        <Insets />
+                        <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
                </children>

@@ -62,7 +62,7 @@ public class SystemSettingsPreferencesController implements Initializable {
     stickyKeysCheckbox.setSelected(!serverSettings.isStickyKeysEnabled());
     stickyKeysCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setStickyKeysEnabled(!t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
   }
 }

@@ -94,7 +94,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     if (!confirmationResult.isApplyClicked() && confirmationResult.isChecked()) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       uiSettings.setHideComponentWarning(true);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     }
   }
 

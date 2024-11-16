@@ -63,7 +63,7 @@ public class PinVolPreferencesController implements Initializable {
     volumeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("volume", () -> {
         serverSettings.setVolume(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        client.getPreferenceService().setJsonPreference(serverSettings);
       }, 300);
     });
   }

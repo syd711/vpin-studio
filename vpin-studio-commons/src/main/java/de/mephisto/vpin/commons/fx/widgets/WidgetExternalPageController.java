@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.StackPane;
@@ -31,7 +32,8 @@ public class WidgetExternalPageController extends WidgetController implements In
     webView.setZoom(0.5);
     webView.getEngine().setUserStyleSheetLocation(ServerFX.class.getResource("web-style.css").toString());
 
-    String pageUrl = ServerFX.client.getPreference(PreferenceNames.OVERLAY_PAGE_URL).getValue();
+    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+    String pageUrl = overlaySettings.getPageUrl();
     if (!StringUtils.isEmpty(pageUrl)) {
       webView.getEngine().load(pageUrl);
     }

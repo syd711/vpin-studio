@@ -179,7 +179,7 @@ public class PlayersController implements Initializable, StudioFXController {
     loadScoreList.setSelected(uiSettings.isShowPlayerScores());
     loadScoreList.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setShowPlayerScores(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
 
       updateSelection(this.selection);
     });

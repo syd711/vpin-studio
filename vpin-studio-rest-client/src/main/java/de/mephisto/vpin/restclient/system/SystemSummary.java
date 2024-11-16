@@ -34,13 +34,13 @@ public class SystemSummary {
     this.screenInfos = screenInfos;
   }
 
-  public ScreenInfo getMainScreenInfo() {
+  public ScreenInfo getPrimaryScreen() {
     for (ScreenInfo screenInfo : screenInfos) {
       if (screenInfo.isPrimary()) {
         return screenInfo;
       }
     }
-    return screenInfos.get(0);
+    return null;
   }
 
   public ScreenInfo getScreenInfo(int id) {

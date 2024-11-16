@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.frontend.popper;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -362,5 +363,10 @@ public class PopperSettings extends JsonSettings {
         }
       }
     }
+  }
+
+  @Override
+  public String getSettingsName() {
+    return "PopperSettings";
   }
 }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.validation;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,5 +25,10 @@ public class IgnoredValidationSettings extends JsonSettings {
 
   public boolean isIgnored(String validationCode) {
     return ignoredValidators.containsKey(validationCode) && ignoredValidators.get(validationCode);
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.IGNORED_VALIDATION_SETTINGS;
   }
 }

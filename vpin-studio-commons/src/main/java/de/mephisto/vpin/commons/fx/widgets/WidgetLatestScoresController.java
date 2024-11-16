@@ -2,10 +2,12 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -71,9 +73,12 @@ public class WidgetLatestScoresController extends WidgetController implements In
       viewStack.getChildren().add(loadingOverlay);
     }
 
+    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+    Screen overlayScreen = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId());
+
     new Thread(() -> {
       int limit = 12;
-      Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
+      Rectangle2D screenBounds = overlayScreen.getBounds();
       if (screenBounds.getWidth() > 2000 && screenBounds.getWidth() < 3000) {
         limit = 10;
       }

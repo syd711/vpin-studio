@@ -67,7 +67,7 @@ public class VPFPreferencesController implements Initializable {
 
   private void saveSettings() {
     try {
-      client.getPreferenceService().setJsonPreference(PreferenceNames.VPF_SETTINGS, settings);
+      client.getPreferenceService().setJsonPreference(settings);
     }
     catch (Exception e) {
       LOG.error("Failed to update VPF settings: " + e.getMessage(), e);

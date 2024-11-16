@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class PauseMenuSettings extends JsonSettings {
@@ -18,6 +19,16 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  private int pauseMenuScreenId = -1;
+
+  public int getPauseMenuScreenId() {
+    return pauseMenuScreenId;
+  }
+
+  public void setPauseMenuScreenId(int pauseMenuScreenId) {
+    this.pauseMenuScreenId = pauseMenuScreenId;
+  }
 
   public String getRecordingButton() {
     return recordingButton;
@@ -124,5 +135,10 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setUseOverlayKey(boolean useOverlayKey) {
     this.useOverlayKey = useOverlayKey;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.PAUSE_MENU_SETTINGS;
   }
 }

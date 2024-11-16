@@ -324,7 +324,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     try {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       uiSettings.setHideUpdateInfo(false);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     } catch (Exception e) {
       LOG.error("Failed to reset update info: " + e.getMessage(), e);
     }

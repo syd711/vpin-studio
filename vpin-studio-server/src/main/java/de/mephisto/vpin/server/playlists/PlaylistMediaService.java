@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.PlaylistFrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -75,12 +76,15 @@ public class PlaylistMediaService {
     File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
     File media = new File(mediaFolder, filename);
 
-    boolean result = media.exists() && media.delete();
-    if (result && screen.equals(VPinScreen.Wheel)) {
-      WheelAugmenter augmenter = new WheelAugmenter(media);
-      augmenter.deAugment();
+    if (media.exists() && media.delete()) {
+      LOG.info("Deleted {} of screen {}", media.getAbsolutePath(), screen.name());
+      if (screen.equals(VPinScreen.Wheel)) {
+        new WheelAugmenter(media).deAugment();
+        new WheelIconDelete(media).delete();
+      }
+      return true;
     }
-    return result;
+    return false;
   }
 
   public File buildMediaAsset(Playlist playlist, VPinScreen screen, String suffix, boolean append) {

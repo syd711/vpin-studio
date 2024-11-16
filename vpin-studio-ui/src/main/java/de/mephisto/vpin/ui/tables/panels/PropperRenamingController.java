@@ -100,22 +100,22 @@ public class PropperRenamingController implements Initializable {
 
     authorBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperAuthorField(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
       refreshNames();
     });
     versionBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperVersionField(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
       refreshNames();
     });
     modBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperModField(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
       refreshNames();
     });
     vrBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       uiSettings.setPropperVRField(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
       refreshNames();
     });
 

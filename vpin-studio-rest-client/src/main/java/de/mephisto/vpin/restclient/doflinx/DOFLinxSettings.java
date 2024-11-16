@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.doflinx;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 /**
  *
@@ -23,5 +24,10 @@ public class DOFLinxSettings extends JsonSettings {
 
   public void setInstallationFolder(String installationFolder) {
     this.installationFolder = installationFolder;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.DOFLINX_SETTINGS;
   }
 }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient;
 
 public interface PreferenceNames {
-  String IGNORED_VALIDATIONS = "ignoredValidations";
+  String IGNORED_VALIDATION_SETTINGS = "ignoredValidations";
   String VALIDATION_SETTINGS = "validationSettings";
 
   String SYSTEM_NAME = "systemName";
@@ -18,9 +18,7 @@ public interface PreferenceNames {
   String DOF_SETTINGS = "dofSettings";
   String DOFLINX_SETTINGS = "dofLinxSettings";
 
-  String OVERLAY_DESIGN = "overlayDesign";
-  String OVERLAY_PAGE_URL = "overlayPageUrl";
-  String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
+  String OVERLAY_SETTINGS = "overlaySettings";
 
   String UI_SETTINGS = "uiSettings";
   String SERVER_SETTINGS = "serverSettings";

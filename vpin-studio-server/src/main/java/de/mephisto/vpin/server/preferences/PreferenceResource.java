@@ -9,10 +9,7 @@ import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.restclient.preferences.BackupSettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.preferences.*;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
@@ -78,7 +75,7 @@ public class PreferenceResource {
         case PreferenceNames.VALIDATION_SETTINGS: {
           return preferencesService.getJsonPreference(key, ValidationSettings.class);
         }
-        case PreferenceNames.IGNORED_VALIDATIONS: {
+        case PreferenceNames.IGNORED_VALIDATION_SETTINGS: {
           return preferencesService.getJsonPreference(key, IgnoredValidationSettings.class);
         }
         case PreferenceNames.NOTIFICATION_SETTINGS: {
@@ -92,6 +89,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.VPU_SETTINGS: {
           return preferencesService.getJsonPreference(key, VPUSettings.class);
+        }
+        case PreferenceNames.OVERLAY_SETTINGS: {
+          return preferencesService.getJsonPreference(key, OverlaySettings.class);
         }
         case PreferenceNames.VPF_SETTINGS: {
           return preferencesService.getJsonPreference(key, VPFSettings.class);

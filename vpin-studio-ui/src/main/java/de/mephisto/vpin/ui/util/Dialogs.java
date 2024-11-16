@@ -59,7 +59,7 @@ public class Dialogs {
       stage.showAndWait();
 
       uiSettings.setHideUpdateInfo(true);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
 
       if (!force) {
         ClientUpdatePostProcessing.executePostProcessing();

@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -480,8 +481,8 @@ public class GameMediaService {
         File gameMediaFile = frontendMediaItem.getFile();
         if (gameMediaFile.exists()) {
           if (screen.equals(VPinScreen.Wheel)) {
-            WheelAugmenter augmenter = new WheelAugmenter(gameMediaFile);
-            augmenter.deAugment();
+            new WheelAugmenter(gameMediaFile).deAugment();
+            new WheelIconDelete(gameMediaFile).delete();
           }
 
           if (de.mephisto.vpin.restclient.util.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
@@ -679,8 +680,8 @@ public class GameMediaService {
                   File mediaFile = mediaItem.getFile();
 
                   if (originalScreenValue.equals(VPinScreen.Wheel)) {
-                    WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
-                    augmenter.deAugment();
+                    new WheelAugmenter(mediaFile).deAugment();
+                    new WheelIconDelete(mediaFile).delete();
                   }
 
                   if (mediaFile.exists() && !mediaFile.delete()) {

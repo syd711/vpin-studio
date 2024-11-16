@@ -8,13 +8,14 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -27,7 +28,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -78,7 +78,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       DiscordServer server = discordService.getServer(serverId);
       String s = mapper.writeValueAsString(server);
       return mapper.readValue(s, DiscordServer.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -104,7 +105,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
         imageCache.put(imageUrl, bytes);
         LOG.info("Cached image URL " + imageUrl);
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to read image from URL: " + e.getMessage(), e);
     }
 
@@ -118,7 +120,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       List<Competition> finishedCompetitions = competitionService.getFinishedCompetitions(limit);
       String s = mapper.writeValueAsString(finishedCompetitions);
       return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return Collections.emptyList();
@@ -130,7 +133,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       Competition competition = competitionService.getActiveCompetition(type);
       String s = mapper.writeValueAsString(competition);
       return mapper.readValue(s, CompetitionRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -142,7 +146,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       Game game = gameService.getGame(id);
       String s = mapper.writeValueAsString(game);
       return mapper.readValue(s, GameRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -159,7 +164,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       FrontendMedia frontendMedia = frontendService.getGameMedia(id);
       String s = mapper.writeValueAsString(frontendMedia);
       return mapper.readValue(s, FrontendMediaRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -171,7 +177,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       ScoreList competitionScores = competitionService.getCompetitionScores(id);
       String s = mapper.writeValueAsString(competitionScores);
       return mapper.readValue(s, ScoreListRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -183,7 +190,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       ScoreSummary competitionScore = competitionService.getCompetitionScore(id);
       String s = mapper.writeValueAsString(competitionScore);
       return mapper.readValue(s, ScoreSummaryRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -192,7 +200,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
     Asset asset = assetService.getCompetitionBackground(gameId);
-    if(asset != null) {
+    if (asset != null) {
       return new ByteArrayInputStream(asset.getData());
     }
     return null;
@@ -215,7 +223,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
         fileInputStream.close();
         return new ByteArrayInputStream(bytes);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error reading media item: " + e.getMessage(), e);
     }
     return null;
@@ -227,7 +236,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       ScoreSummary summary = gameService.getRecentHighscores(count);
       String s = mapper.writeValueAsString(summary);
       return mapper.readValue(s, ScoreSummaryRepresentation.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
@@ -243,12 +253,18 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
+  public <T> T getJsonPreference(String key, Class<T> clazz) {
+    return preferencesService.getJsonPreference(key, clazz);
+  }
+
+  @Override
   public List<RankedPlayerRepresentation> getRankedPlayers() {
     try {
       List<RankedPlayer> rankedPlayers = highscoreService.getPlayersByRanks();
       String s = mapper.writeValueAsString(rankedPlayers);
       return List.of(mapper.readValue(s, RankedPlayerRepresentation[].class));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return Collections.emptyList();

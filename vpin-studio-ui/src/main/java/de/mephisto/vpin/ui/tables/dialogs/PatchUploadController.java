@@ -134,10 +134,11 @@ public class PatchUploadController extends BaseUploadController {
           if (!uploadReplaceBox.getStyleClass().contains("selection-panel-selected")) {
             uploadReplaceBox.getStyleClass().add("selection-panel-selected");
           }
+          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
           uploadDescriptor.setUploadType(UploadType.uploadAndReplace);
         }
         else {
-          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
+          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
         }
       }
     });
@@ -149,10 +150,11 @@ public class PatchUploadController extends BaseUploadController {
           if (!uploadCloneBox.getStyleClass().contains("selection-panel-selected")) {
             uploadCloneBox.getStyleClass().add("selection-panel-selected");
           }
+          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
           uploadDescriptor.setUploadType(UploadType.uploadAndClone);
         }
         else {
-          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
         }
       }
     });

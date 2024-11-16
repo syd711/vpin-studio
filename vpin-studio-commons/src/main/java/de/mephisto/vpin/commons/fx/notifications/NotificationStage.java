@@ -1,6 +1,9 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.animation.Transition;
 import javafx.application.Platform;
@@ -27,6 +30,7 @@ public class NotificationStage {
   public static final int OFFSET = 30;
   private static double scaling = 0.5;
   private final Notification notification;
+  private Rectangle2D screenBounds;
   private NotificationController notificationController;
 
   private BorderPane root;
@@ -46,7 +50,10 @@ public class NotificationStage {
     try {
       stage.getIcons().add(new Image(NotificationController.class.getResourceAsStream("logo-64.png")));
 
-      Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
+      NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+      Screen screen = SystemUtil.getScreenById(notificationSettings.getNotificationsScreenId());
+      screenBounds = screen.getBounds();
+
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
       root = loader.load();
       notificationController = loader.getController();
@@ -72,7 +79,7 @@ public class NotificationStage {
         outTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (screenBounds.getHeight() / 2));
 
         stage.setY(screenBounds.getHeight() / 2);
-        stage.setX(0);
+        stage.setX(screenBounds.getMinX());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
       else {
@@ -99,7 +106,7 @@ public class NotificationStage {
         outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getWidth() / 2));
 
         stage.setY(0);
-        stage.setX(0);
+        stage.setX(screenBounds.getMinX());
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
 
@@ -113,7 +120,6 @@ public class NotificationStage {
 
 
   public void move() {
-    Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
     Transition transition = null;
     if (screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode()) {
       transition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (WIDTH * scaling / 3) + OFFSET);

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -229,8 +230,8 @@ public class TournamentSynchronizer {
     if (game != null) {
       File wheelFile = game.getWheelImage();
       if (wheelFile != null && wheelFile.exists()) {
-        WheelAugmenter augmenter = new WheelAugmenter(wheelFile);
-        augmenter.deAugment();
+        new WheelAugmenter(wheelFile).deAugment();
+        new WheelIconDelete(wheelFile).delete();
       }
     }
     tournamentTablesRepository.deleteById(tournamentTableInfo.getId());

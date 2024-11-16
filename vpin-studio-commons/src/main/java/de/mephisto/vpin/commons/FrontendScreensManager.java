@@ -36,7 +36,7 @@ public class FrontendScreensManager {
     try {
       BorderPane root = new BorderPane();
       root.setStyle("-fx-background-color: transparent;");
-      Screen screen = SystemUtil.getPlayfieldScreen();
+      Screen screen = SystemUtil.getScreenById(-1);
       final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
       scene.setFill(Color.TRANSPARENT);
       scene.setCursor(Cursor.NONE);
@@ -57,7 +57,7 @@ public class FrontendScreensManager {
         screenController.setMediaAsset(asset);
         root.setCenter(widgetRoot);
       } catch (IOException e) {
-        LOG.error("Failed to Popper screen: " + e.getMessage(), e);
+        LOG.error("Failed to frontend screen: " + e.getMessage(), e);
       }
 
       showStage(screenStage, asset.getDuration());

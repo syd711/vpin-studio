@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;

@@ -3,8 +3,10 @@ package de.mephisto.vpin.commons.fx.widgets;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -144,7 +146,8 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       return new SimpleObjectProperty(hBox);
     });
 
-    Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
+    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+    Rectangle2D screenBounds = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId()).getBounds();
     if (screenBounds.getWidth() < 2600) {
       columnName.setPrefWidth(280);
     }

@@ -789,7 +789,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       autoFillCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
       autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
         uiSettings.setAutoApplyVpsData(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        client.getPreferenceService().setJsonPreference(uiSettings);
       });
 
       gameName.setText(tableDetails.getGameName());

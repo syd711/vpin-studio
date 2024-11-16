@@ -1,19 +1,16 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
+import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
-import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +40,9 @@ public class OverlayPreferencesController implements Initializable {
   private RadioButton radioD;
 
   @FXML
+  private ComboBox<ScreenInfo> screenInfoComboBox;
+
+  @FXML
   private TextField externalPageUrl;
 
   @FXML
@@ -58,15 +58,35 @@ public class OverlayPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    PreferenceBindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
+    OverlaySettings overlaySettings = client.getPreferenceService().getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+
+    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
+    if (overlaySettings.getOverlayScreenId() == -1) {
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryScreen());
+    }
+    else {
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getScreenInfo(overlaySettings.getOverlayScreenId()));
+    }
+    screenInfoComboBox.valueProperty().addListener(new ChangeListener<ScreenInfo>() {
+      @Override
+      public void changed(ObservableValue<? extends ScreenInfo> observable, ScreenInfo oldValue, ScreenInfo newValue) {
+        overlaySettings.setOverlayScreenId(newValue.getId());
+        client.getPreferenceService().setJsonPreference(overlaySettings);
+      }
+    });
+
+    showOverlayOnStartupCheckbox.setSelected(overlaySettings.isShowOnStartup());
+    showOverlayOnStartupCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      overlaySettings.setShowOnStartup(newValue);
+      client.getPreferenceService().setJsonPreference(overlaySettings);
+    });
 
     radioA.setUserData("");
     radioB.setUserData("-hs-plrs-offline");
     radioC.setUserData("-hs");
     radioD.setUserData("-hs-plrs-iframe");
 
-    PreferenceEntryRepresentation preference = Studio.client.getPreference(PreferenceNames.OVERLAY_DESIGN);
-    String value = preference.getValue();
+    String value = overlaySettings.getDesignType();
     radioA.setSelected(true);
 
     ToggleGroup toggleGroup = new ToggleGroup();
@@ -103,15 +123,14 @@ public class OverlayPreferencesController implements Initializable {
     toggleGroup.selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
       String type = (String) t1.getUserData();
       externalPageUrl.setDisable(!type.contains("iframe"));
-      Studio.client.getPreferenceService().setPreference(PreferenceNames.OVERLAY_DESIGN, type);
+      overlaySettings.setDesignType(type);
+      client.getPreferenceService().setJsonPreference(overlaySettings);
     });
 
-    String externalPageUrlValue = client.getPreferenceService().getPreference(PreferenceNames.OVERLAY_PAGE_URL).getValue();
-    externalPageUrl.setText(externalPageUrlValue);
-
-    externalPageUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.OVERLAY_PAGE_URL, () -> {
-      client.getPreferenceService().setPreference(PreferenceNames.OVERLAY_PAGE_URL, t1);
+    externalPageUrl.setText(overlaySettings.getPageUrl());
+    externalPageUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("overlayPageUrl", () -> {
+      overlaySettings.setPageUrl(t1);
+      client.getPreferenceService().setJsonPreference(overlaySettings);
     }, 300));
-
   }
 }

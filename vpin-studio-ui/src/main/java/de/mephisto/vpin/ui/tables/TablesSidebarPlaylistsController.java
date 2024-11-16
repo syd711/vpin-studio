@@ -132,7 +132,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         try {
           String hexValue = t1 != null ? PreferenceBindingUtil.toHexString(t1) : WidgetFactory.LOCAL_FAVS_COLOR;
           uiSettings.setLocalFavsColor(hexValue);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+          client.getPreferenceService().setJsonPreference(uiSettings);
           tablesSidebarController.getTablesController().refreshPlaylists();
           EventManager.getInstance().notifyTablesChanged();
         }
@@ -161,7 +161,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         try {
           String hexValue = t1 != null ? PreferenceBindingUtil.toHexString(t1) : WidgetFactory.GLOBAL_FAVS_COLOR;
           uiSettings.setGlobalFavsColor(hexValue);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+          client.getPreferenceService().setJsonPreference(uiSettings);
           tablesSidebarController.getTablesController().refreshPlaylists();
           EventManager.getInstance().notifyTablesChanged();
         }

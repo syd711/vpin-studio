@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class ServerSettings extends JsonSettings {
   private boolean vpxKeepFileNames;
@@ -119,5 +120,10 @@ public class ServerSettings extends JsonSettings {
 
   public void setVpxKeepDisplayNames(boolean vpxKeepDisplayNames) {
     this.vpxKeepDisplayNames = vpxKeepDisplayNames;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.SERVER_SETTINGS;
   }
 }

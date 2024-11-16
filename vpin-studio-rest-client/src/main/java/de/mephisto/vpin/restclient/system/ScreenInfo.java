@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.system;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javafx.stage.Screen;
+
 public class ScreenInfo {
   private boolean portraitMode;
   private boolean primary;
@@ -10,6 +13,16 @@ public class ScreenInfo {
   private int id;
   private double x;
   private double y;
+  private Screen screen;
+
+  @JsonIgnore
+  public Screen getScreen() {
+    return screen;
+  }
+
+  public void setScreen(Screen screen) {
+    this.screen = screen;
+  }
 
   public int getOriginalWidth() {
     return originalWidth;
@@ -85,7 +98,10 @@ public class ScreenInfo {
 
   @Override
   public String toString() {
-    return String.valueOf(id);
+    if (primary) {
+      return "Monitor " + id + " (primary) [" + getOriginalWidth() + "x" + getOriginalHeight() + "]";
+    }
+    return "Monitor " + id + " [" + getOriginalWidth() + "x" + getOriginalHeight() + "]";
   }
 
   @Override

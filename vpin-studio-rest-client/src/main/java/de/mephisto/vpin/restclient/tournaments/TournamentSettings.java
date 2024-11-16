@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.tournaments;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class TournamentSettings extends JsonSettings {
   private boolean enabled;
@@ -65,5 +66,10 @@ public class TournamentSettings extends JsonSettings {
 
   public void setDefaultDescription(String defaultDescription) {
     this.defaultDescription = defaultDescription;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.TOURNAMENTS_SETTINGS;
   }
 }

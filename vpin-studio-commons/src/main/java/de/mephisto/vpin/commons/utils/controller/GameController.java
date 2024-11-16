@@ -23,7 +23,7 @@ public class GameController {
       try {
         controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
       }
-      catch (Exception e) {
+      catch (UnsatisfiedLinkError e) {
         LOG.info("Loaded game controllers: " + e.getMessage());
       }
       List<Controller> filteredControllers = Arrays.stream(controllers).filter(c ->

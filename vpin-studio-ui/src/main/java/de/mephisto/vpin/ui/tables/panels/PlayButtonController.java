@@ -110,7 +110,7 @@ public class PlayButtonController implements Initializable {
       if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {
           uiSettings.setHideVPXStartInfo(true);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+          client.getPreferenceService().setJsonPreference(uiSettings);
         }
         client.getGameService().playGame(game.getId(), altExe);
       }

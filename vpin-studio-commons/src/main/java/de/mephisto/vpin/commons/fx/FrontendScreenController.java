@@ -48,7 +48,7 @@ public class FrontendScreenController implements Initializable {
 
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
     try {
-      Screen screen = SystemUtil.getPlayfieldScreen();
+      Screen screen = SystemUtil.getScreenById(-1);
       Rectangle2D bounds = screen.getVisualBounds();
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
       root.setRotate(0);//reset of the other options

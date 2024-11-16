@@ -124,91 +124,91 @@ public class AutoFillSelectionController implements Initializable, DialogControl
     gameVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setGameVersion(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     gameYear.setSelected(uiSettings.getAutoFillSettings().isGameYear());
     gameYear.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setGameYear(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     gameType.setSelected(uiSettings.getAutoFillSettings().isGameType());
     gameType.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setGameType(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     gameTheme.setSelected(uiSettings.getAutoFillSettings().isGameTheme());
     gameTheme.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setGameTheme(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     manufacturer.setSelected(uiSettings.getAutoFillSettings().isManufacturer());
     manufacturer.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setManufacturer(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     numberOfPlayers.setSelected(uiSettings.getAutoFillSettings().isNumberOfPlayers());
     numberOfPlayers.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setNumberOfPlayers(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     author.setSelected(uiSettings.getAutoFillSettings().isAuthor());
     author.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setAuthor(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     category.setSelected(uiSettings.getAutoFillSettings().isCategory());
     category.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setCategory(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     ipdbNumber.setSelected(uiSettings.getAutoFillSettings().isIpdbNumber());
     ipdbNumber.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setIpdbNumber(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     url.setSelected(uiSettings.getAutoFillSettings().isUrl());
     url.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setUrl(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     designBy.setSelected(uiSettings.getAutoFillSettings().isDesignBy());
     designBy.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setDesignBy(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     notes.setSelected(uiSettings.getAutoFillSettings().isNotes());
     notes.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setNotes(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     tags.setSelected(uiSettings.getAutoFillSettings().isTags());
     tags.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setTags(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     details.setSelected(uiSettings.getAutoFillSettings().isDetails());
     details.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setDetails(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     overwrite.setSelected(uiSettings.getAutoFillSettings().isOverwrite());
     overwrite.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setOverwrite(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
   }
 

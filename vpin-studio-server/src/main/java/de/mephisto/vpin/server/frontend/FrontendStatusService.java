@@ -233,8 +233,8 @@ public class FrontendStatusService implements InitializingBean {
     FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
     if (frontendMediaItem != null) {
       File wheelIcon = frontendMediaItem.getFile();
-      WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
-      augmenter.deAugment();
+      new WheelAugmenter(wheelIcon).deAugment();
+      new WheelIconDelete(wheelIcon).delete();
     }
   }
 

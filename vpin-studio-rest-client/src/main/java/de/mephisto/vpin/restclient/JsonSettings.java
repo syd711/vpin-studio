@@ -31,4 +31,6 @@ public abstract class JsonSettings {
   public String toJson() throws JsonProcessingException {
     return objectMapper.writeValueAsString(this);
   }
+
+  public abstract String getSettingsName();
 }

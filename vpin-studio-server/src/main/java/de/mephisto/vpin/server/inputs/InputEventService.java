@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -262,9 +263,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
     try {
       switch (propertyName) {
-        case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
-          String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
-          this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
+        case PreferenceNames.OVERLAY_SETTINGS: {
+          OverlaySettings overlaySettings = preferencesService.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+          this.launchOverlayOnStartup = overlaySettings.isShowOnStartup();
           LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
           break;
         }
@@ -305,7 +306,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
       //
     }
 
-    preferenceChanged(PreferenceNames.SHOW_OVERLAY_ON_STARTUP, null, null);
+    preferenceChanged(PreferenceNames.OVERLAY_SETTINGS, null, null);
     preferenceChanged(PreferenceNames.PAUSE_MENU_SETTINGS, null, null);
 
     preferencesService.addChangeListener(this);

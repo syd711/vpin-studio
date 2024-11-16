@@ -37,7 +37,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     String code = id.split("_")[1];
 
     ignoredValidationSettings.getIgnoredValidators().put(code, !checked);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, ignoredValidationSettings);
+    client.getPreferenceService().setJsonPreference(ignoredValidationSettings);
 
     PreferencesController.markDirty(PreferenceType.serverSettings);
   }
@@ -47,7 +47,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     pupPackValidator.managedProperty().bindBidirectional(pupPackValidator.visibleProperty());
 
-    ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
+    ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     pupPackValidator.setVisible(frontendType.supportPupPacks());

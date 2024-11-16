@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
-public class SystemUtilTests {
+public class VersionUtilTests {
 
   @Test
   public void testChecksum() {

@@ -68,11 +68,11 @@ public class VPBMPreferencesController implements Initializable {
 
     externalHostText1.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("value", () -> {
       backupSettings.setVpbmExternalHostId1(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
+      client.getPreferenceService().setJsonPreference(backupSettings);
     }, 500));
     externalHostText2.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("value", () -> {
       backupSettings.setVpbmExternalHostId2(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
+      client.getPreferenceService().setJsonPreference(backupSettings);
     }, 500));
 
     new Thread(() -> {

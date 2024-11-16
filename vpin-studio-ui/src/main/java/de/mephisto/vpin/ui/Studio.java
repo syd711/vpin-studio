@@ -415,7 +415,7 @@ public class Studio extends Application {
 
       if (confirmationResult.isChecked()) {
         uiSettings.setHideFrontendLaunchQuestion(true);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        client.getPreferenceService().setJsonPreference(uiSettings);
       }
     }
 

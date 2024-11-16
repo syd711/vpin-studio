@@ -1,4 +1,17 @@
-## Release Notes 3.10
+## Release Notes 3.10.1
+
+## Breaking Change
+
+- **Overlay Settings**: Due to a breaking change in the configuration format, you have to reconfigure the overlay settings in the preferences.
+
+## Changes
+
+- **Overlay / Pause Menu / Notifications**: All VPin Studio overlay elements have the additional "Screen" setting now. This allows to show overlays on other screens that are not the primary screen (which may be the case for PinballX users). The default remains the primary screen. So PinUP Popper users should not be affected by this change.
+- **Tables / Table Asset Manager**: Fixed deletion of wheel icons for games and playlist so that the thumbnails of these icons are deleted too. Otherwise, you still may see old icons that have not been cleared from PinUP Popper thumbs folder.
+
+---
+
+## Release Notes 3.10.0
 
 ## Changes
 

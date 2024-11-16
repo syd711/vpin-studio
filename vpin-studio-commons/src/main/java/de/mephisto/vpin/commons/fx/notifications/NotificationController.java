@@ -1,5 +1,8 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,7 +65,8 @@ public class NotificationController implements Initializable {
         }
       }
 
-      Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
+      NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+      Rectangle2D screenBounds = SystemUtil.getScreenById(notificationSettings.getNotificationsScreenId()).getBounds();
       if (screenBounds.getHeight() > 2000) {
         labelContainer.setPadding(new Insets(0, 0, 0, 650));
       }

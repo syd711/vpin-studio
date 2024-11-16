@@ -169,7 +169,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     uiSettings.setSidebarVisible(sidebarVisible);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings, true);
+    client.getPreferenceService().setJsonPreference(uiSettings, true);
 
     setSidebarVisible(sidebarVisible);
   }
