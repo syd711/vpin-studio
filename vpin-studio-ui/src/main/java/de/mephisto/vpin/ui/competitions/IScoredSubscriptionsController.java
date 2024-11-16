@@ -9,12 +9,17 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -72,6 +77,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private Button addBtn;
 
   @FXML
+  private Button eventLogBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -126,6 +134,19 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
   }
 
+
+  @FXML
+  private void onEventLog() {
+    List<CompetitionRepresentation> selections = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
+    if (selections.isEmpty()) {
+      return;
+    }
+    CompetitionRepresentation competitionRepresentation = selections.get(0);
+    GameRepresentation game = client.getGameService().getGame(competitionRepresentation.getGameId());
+    if (game != null && game.isEventLogAvailable()) {
+      TableDialogs.openEventLogDialog(game);
+    }
+  }
 
   @FXML
   private void onDelete() {
@@ -374,12 +395,16 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     CompetitionRepresentation newSelection = null;
     if (competition.isPresent()) {
       newSelection = competition.get();
+
+      GameRepresentation game = client.getGameService().getGame(newSelection.getGameId());
+      eventLogBtn.setDisable(game == null || !game.isEventLogAvailable());
     }
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     deleteBtn.setDisable(defaultPlayer == null);
     reloadBtn.setDisable(defaultPlayer == null);
     addBtn.setDisable(defaultPlayer == null);
+
 
     if (defaultPlayer == null) {
       tableView.setPlaceholder(new Label("                                 No default player set!\n" +
