@@ -9,6 +9,7 @@
 - **Overlay / Pause Menu / Notifications**: All VPin Studio overlay elements have the additional "Screen" setting now. This allows to show overlays on other screens that are not the primary screen (which may be the case for PinballX users). The default remains the primary screen. So PinUP Popper users should not be affected by this change.
 - **Tables / Table Asset Manager**: Fixed deletion of wheel icons for games and playlist so that the thumbnails of these icons are deleted too. Otherwise, you still may see old icons that have not been cleared from PinUP Popper thumbs folder.
 - **Tables / Media Recorder**: Fixed issue that the preview screen section remains empty when launched the first time.
+- **Tables / NVOffset Validator**: The validator is more restrictive now and complains only if two tables that use the same ROM and have the same **nvoffset**, either have no or a different VPS table mapping. Note that only the table type is checked, not the table version.
 
 ---
 
