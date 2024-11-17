@@ -98,7 +98,7 @@ public class CabMonitorController implements Initializable, DialogController {
   private void saveScaling() {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     settings.setScaling(scaling);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+    client.getPreferenceService().setJsonPreference(settings);
   }
 
   @Override
@@ -106,7 +106,7 @@ public class CabMonitorController implements Initializable, DialogController {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     settings.setOpen(true);
     scaling = settings.getScaling();
-    client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+    client.getPreferenceService().setJsonPreference(settings);
 
     monitoringModeCombo.setItems(FXCollections.observableList(Arrays.asList(MonitoringMode.values())));
     MonitoringMode monitoringMode = settings.getMonitoringMode();
@@ -121,7 +121,7 @@ public class CabMonitorController implements Initializable, DialogController {
         Platform.runLater(() -> {
           screenMenuButton.setDisable(newValue.equals(MonitoringMode.monitors));
           settings.setMonitoringMode(newValue);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+          client.getPreferenceService().setJsonPreference(settings);
           updateMonitoringMode(newValue);
         });
       }
@@ -139,7 +139,7 @@ public class CabMonitorController implements Initializable, DialogController {
         refreshPreview();
         settings.setRefreshInterval(newValue.intValue());
         MonitoringManager.getInstance().setMonitoringRefreshIntervalSec(refreshInterval.getValue());
-        client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+        client.getPreferenceService().setJsonPreference(settings);
       }, 300);
     });
 
@@ -165,7 +165,7 @@ public class CabMonitorController implements Initializable, DialogController {
         else {
           s.getDisabledScreens().remove(screen);
         }
-        client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, s);
+        client.getPreferenceService().setJsonPreference(s);
         refreshPreviewPanelVisibilities();
       });
       screenMenuButton.getItems().add(item);
@@ -194,7 +194,7 @@ public class CabMonitorController implements Initializable, DialogController {
 
         MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
         settings.setOpen(false);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+        client.getPreferenceService().setJsonPreference(settings);
 
         ToolbarController.INSTANCE.onMonitorClose();
       }

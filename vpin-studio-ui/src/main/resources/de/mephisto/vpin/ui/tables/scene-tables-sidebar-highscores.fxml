@@ -309,7 +309,7 @@
                 </Button>
                 <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" textFill="#ff3333">
                     <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-reload-alert" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />

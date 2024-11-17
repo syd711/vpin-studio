@@ -1,4 +1,21 @@
-## Release Notes 3.10
+## Release Notes 3.10.1
+
+## Breaking Change
+
+- **Overlay Settings**: Due to a breaking change in the configuration format, you have to reconfigure the overlay settings in the preferences.
+
+## Changes
+
+- **Overlay / Pause Menu / Notifications**: All VPin Studio overlay elements have the additional "Screen" setting now. This allows to show overlays on other screens that are not the primary screen (which may be the case for PinballX users). The default remains the primary screen. So PinUP Popper users should not be affected by this change (beside the fact everyone needs to re-configure the overlay settings).
+- **Tables / Table Asset Manager**: Fixed deletion of wheel icons for games and playlist so that the thumbnails of these icons are deleted too. Otherwise, you still may see old icons that have not been cleared from PinUP Popper thumbs folder.
+- **Tables / Media Recorder**: Fixed issue that the preview screen section remains empty when launched the first time.
+- **Tables / Highscores**: Exchanged icon for the highscore reset button, to indicate that this is more than a simple deletion.
+- **Tables / NVOffset Validator**: The validator is more restrictive now and complains only if two tables that use the same ROM and have the same **nvoffset**, either have no or a different VPS table mapping. Note that only the table type is checked, not the table version.
+- **Toolbar**: Fixed missing hiding of the frontend UI button that should be hidden when connecting from remote.
+
+---
+
+## Release Notes 3.10.0
 
 ## Changes
 

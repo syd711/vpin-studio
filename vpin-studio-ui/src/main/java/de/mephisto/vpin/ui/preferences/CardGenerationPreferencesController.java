@@ -97,7 +97,7 @@ public class CardGenerationPreferencesController implements Initializable {
     cardTargetScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       Platform.runLater(() -> {
         cardSettings.setPopperScreen(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+        client.getPreferenceService().setJsonPreference(cardSettings);
         onScreenChange();
       });
     });
@@ -113,7 +113,7 @@ public class CardGenerationPreferencesController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         cardSettings.setNotificationRotation(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+        client.getPreferenceService().setJsonPreference(cardSettings);
       }
     });
 
@@ -122,7 +122,7 @@ public class CardGenerationPreferencesController implements Initializable {
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("cardDuration", () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       cardSettings.setNotificationTime(value1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+      client.getPreferenceService().setJsonPreference(cardSettings);
     }, 500));
 
     boolean notificationOnScreen = cardSettings.isNotificationOnPopperScreen();
@@ -133,14 +133,14 @@ public class CardGenerationPreferencesController implements Initializable {
       rotationCombo.setDisable(!newValue);
       cardPosPopperRadio.setSelected(!newValue);
       cardSettings.setNotificationOnPopperScreen(false);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+      client.getPreferenceService().setJsonPreference(cardSettings);
     });
 
     cardPosPopperRadio.selectedProperty().addListener((observable, oldValue, newValue) -> {
       rotationCombo.setDisable(newValue);
       cardPosPlayfieldRadio.setSelected(!newValue);
       cardSettings.setNotificationOnPopperScreen(true);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+      client.getPreferenceService().setJsonPreference(cardSettings);
     });
 
     onScreenChange();
@@ -198,7 +198,7 @@ public class CardGenerationPreferencesController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Change Highscore Card Size?", "Change the default highscore card size to " + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         cardSettings.setCardResolution(HighscoreCardResolution.valueOfString(newValue));
-        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+        client.getPreferenceService().setJsonPreference(cardSettings);
         Platform.runLater(() -> {
           ProgressDialog.createProgressDialog(new RegenerateMediaCacheProgressModel(client.getGameService().getVpxGamesCached()));
         });

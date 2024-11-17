@@ -592,21 +592,21 @@ public class TableUploadController implements Initializable, DialogController {
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uploadAndReplaceRadio.setSelected(true);
       serverSettings.setVpxKeepFileNames(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     keepDisplayNamesCheckbox.setSelected(serverSettings.isVpxKeepDisplayNames());
     keepDisplayNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uploadAndReplaceRadio.setSelected(true);
       serverSettings.setVpxKeepDisplayNames(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     backupTableOnOverwriteCheckbox.setSelected(serverSettings.isBackupTableOnOverwrite());
     backupTableOnOverwriteCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uploadAndReplaceRadio.setSelected(true);
       serverSettings.setBackupTableOnOverwrite(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     subfolderCheckbox.setSelected(serverSettings.isUseSubfolders());
@@ -614,7 +614,7 @@ public class TableUploadController implements Initializable, DialogController {
     subfolderCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setUseSubfolders(t1);
       subfolderText.setDisable(!t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     uploadAndCloneRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {

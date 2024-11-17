@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class FilterSettings extends JsonSettings {
   private int emulatorId = -1;
@@ -222,5 +223,10 @@ public class FilterSettings extends JsonSettings {
       && this.noteType == null
       && this.gameStatus == -1;
 
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.FILTER_SETTINGS;
   }
 }

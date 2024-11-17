@@ -85,7 +85,10 @@ public class ScreenInfo {
 
   @Override
   public String toString() {
-    return String.valueOf(id);
+    if (primary) {
+      return "Monitor " + id + " (primary) [" + getOriginalWidth() + "x" + getOriginalHeight() + "]";
+    }
+    return "Monitor " + id + " [" + getOriginalWidth() + "x" + getOriginalHeight() + "]";
   }
 
   @Override

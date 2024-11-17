@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
-import de.mephisto.vpin.server.util.SystemUtil;
+import de.mephisto.vpin.server.util.VersionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -305,7 +305,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
 
   public String getVersion() {
-    return SystemUtil.getVersion();
+    return VersionUtil.getVersion();
   }
 
   public List<String> getCompetitionBadges() {
@@ -417,21 +417,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public List<ScreenInfo> getScreenInfos() {
     List<ScreenInfo> result = new ArrayList<>();
-
-    Screen primary = Screen.getPrimary();
-    ScreenInfo info = createScreenInfo(primary);
-
-    info.setId(1);
-    result.add(info);
-
-    int index = 2;
+    int index = 1;
     ObservableList<Screen> screens = Screen.getScreens();
     for (Screen screen : screens) {
-      if (screen.equals(Screen.getPrimary())) {
-        continue;
-      }
-
-      info = createScreenInfo(screen);
+      ScreenInfo info = createScreenInfo(screen);
       info.setId(index);
       result.add(info);
       index++;
@@ -446,7 +435,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     info.setX(screenBounds.getMinX());
     info.setY(screenBounds.getMinY());
     info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-    info.setPrimary(true);
+    info.setPrimary(screen.equals(Screen.getPrimary()));
     info.setHeight((int) screenBounds.getHeight());
     info.setWidth((int) screenBounds.getWidth());
 

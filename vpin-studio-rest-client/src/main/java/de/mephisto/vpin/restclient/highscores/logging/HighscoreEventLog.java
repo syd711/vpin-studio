@@ -35,4 +35,9 @@ public class HighscoreEventLog extends JsonSettings {
     }
     return builder.toString();
   }
+
+  @Override
+  public String getSettingsName() {
+    return "EventLog";
+  }
 }

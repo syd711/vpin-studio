@@ -234,9 +234,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
             Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
             if (otherGame != null) {
-              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
-              if (findFirst) {
-                return result;
+              //only complain if it is another table or has no VPS mapping
+              if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {
+                result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+                if (findFirst) {
+                  return result;
+                }
               }
             }
           }
@@ -712,13 +715,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     frontend = frontendService.getFrontend();
     this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     this.preferenceChanged(PreferenceNames.VALIDATION_SETTINGS, null, null);
-    this.preferenceChanged(PreferenceNames.IGNORED_VALIDATIONS, null, null);
+    this.preferenceChanged(PreferenceNames.IGNORED_VALIDATION_SETTINGS, null, null);
   }
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.IGNORED_VALIDATIONS)) {
-      ignoredValidationSettings = preferencesService.getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
+    if (propertyName.equals(PreferenceNames.IGNORED_VALIDATION_SETTINGS)) {
+      ignoredValidationSettings = preferencesService.getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
     }
     if (propertyName.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = preferencesService.getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);

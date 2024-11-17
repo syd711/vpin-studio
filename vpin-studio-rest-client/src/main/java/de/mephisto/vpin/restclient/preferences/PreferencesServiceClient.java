@@ -49,18 +49,18 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     return (T) jsonSettingsCache.get(key);
   }
 
-  public synchronized boolean setJsonPreference(String key, JsonSettings settings) {
-    return setJsonPreference(key, settings, false);
+  public synchronized boolean setJsonPreference(JsonSettings settings) {
+    return setJsonPreference(settings, false);
   }
 
-  public boolean setJsonPreference(String key, JsonSettings settings, boolean silent) {
+  public boolean setJsonPreference(JsonSettings settings, boolean silent) {
     try {
       Map<String, Object> data = new HashMap<>();
       data.put("data", settings.toJson());
-      boolean result = getRestClient().put(API + "preferences/json/" + key, data);
-      jsonSettingsCache.remove(key);
+      boolean result = getRestClient().put(API + "preferences/json/" + settings.getSettingsName(), data);
+      jsonSettingsCache.remove(settings.getSettingsName());
       if (!silent) {
-        notifyPreferenceChange(key, settings);
+        notifyPreferenceChange(settings.getSettingsName(), settings);
       }
       return result;
     }

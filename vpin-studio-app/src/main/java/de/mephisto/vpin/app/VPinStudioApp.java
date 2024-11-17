@@ -7,7 +7,9 @@ import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -43,7 +45,8 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
 
     try {
       Platform.setImplicitExit(false);
-      Screen screen = Screen.getPrimary();
+      OverlaySettings overlaySettings = client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+      Screen screen = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId());
 
       BorderPane root = new BorderPane();
       final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
@@ -60,18 +63,17 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
       overlayStage.setTitle("VPin Studio Overlay");
       overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
-      PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
-      if (preference == null) {
+      if (overlaySettings.getDesignType() == null) {
         WidgetFactory.showAlert(overlayStage, "Error", "No overlay design selected.", "Select an overlay design from the preferences.");
         System.exit(0);
       }
 
-      String value = preference.getValue();
-      if (StringUtils.isEmpty(value) || value.equalsIgnoreCase("null")) {
-        value = "";
+      String designType = overlaySettings.getDesignType();
+      if (StringUtils.isEmpty(designType) || designType.equalsIgnoreCase("null")) {
+        designType = "";
       }
 
-      String resource = ServerFX.resolveDashboard(value);
+      String resource = ServerFX.resolveDashboard(designType);
       FXMLLoader overlayLoader = new FXMLLoader(OverlayController.class.getResource(resource));
       Parent widgetRoot = overlayLoader.load();
       OverlayController controller = overlayLoader.getController();

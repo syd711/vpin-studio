@@ -438,6 +438,11 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public <T> T getJsonPreference(String key, Class<T> clazz) {
+    return this.preferencesServiceClient.getJsonPreference(key, clazz);
+  }
+
+  @Override
   public List<RankedPlayerRepresentation> getRankedPlayers() {
     return getPlayerService().getRankedPlayers();
   }

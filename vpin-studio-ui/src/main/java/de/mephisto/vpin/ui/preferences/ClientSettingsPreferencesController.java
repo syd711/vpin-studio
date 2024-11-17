@@ -175,7 +175,7 @@ public class ClientSettingsPreferencesController implements Initializable {
       uiSettings.setHideVPXStartInfo(false);
       uiSettings.setHideFrontendLaunchQuestion(false);
 
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
       EventManager.getInstance().notifyPreferenceChanged(PreferenceType.uiSettings);
     }
   }
@@ -235,7 +235,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVersions(!t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     boolean disabled = uiSettings.isHideVPSUpdates();
@@ -263,59 +263,59 @@ public class ClientSettingsPreferencesController implements Initializable {
     vpsAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsAltSound(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsAltColor(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsBackglass(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsPOV.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsPOV(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsPUPPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsPUPPack(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsRom.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsRom(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsSound(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsToppper.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsToppper(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsTutorial.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsTutorial(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
     vpsWheel.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setVpsWheel(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     uiShowVPSUpdates.setSelected(!uiSettings.isHideVPSUpdates());
     uiShowVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVPSUpdates(!t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
 
       boolean disabledSelection = !t1;
       vpsAltSound.setDisable(disabledSelection);
@@ -334,7 +334,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     autoEditCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setAutoEditTableData(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     winNetworkShare.setText(uiSettings.getWinNetworkShare());
@@ -349,7 +349,7 @@ public class ClientSettingsPreferencesController implements Initializable {
           boolean visible = supportsNetworkShare && !StringUtils.isEmpty(newValue);
           winNetworkShareStatusLabel.setVisible(visible);
           refreshNetworkStatusLabel(newValue);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+          client.getPreferenceService().setJsonPreference(uiSettings);
         }, 300);
       }
     });
@@ -382,7 +382,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
           //update the REST client immediately
           client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
-          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+          client.getPreferenceService().setJsonPreference(uiSettings);
         }
       });
 
@@ -394,98 +394,98 @@ public class ClientSettingsPreferencesController implements Initializable {
     sectionAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionAltColor(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionAltSound.setSelected(uiSettings.isSectionAltSound());
     sectionAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionAltSound(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionBackglass.setSelected(uiSettings.isSectionBackglass());
     sectionBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionBackglass(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionDMD.setSelected(uiSettings.isSectionDMD());
     sectionDMD.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionDMD(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionHighscore.setSelected(uiSettings.isSectionHighscore());
     sectionHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionHighscore(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionAssets.setSelected(uiSettings.isSectionAssets());
     sectionAssets.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionAssets(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionPov.setSelected(uiSettings.isSectionPov());
     sectionPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionPov(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionIni.setSelected(uiSettings.isSectionIni());
     sectionIni.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionIni(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionPupPack.setSelected(uiSettings.isSectionPupPack());
     sectionPupPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionPupPack(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionPlaylists.setSelected(uiSettings.isSectionPlaylists());
     sectionPlaylists.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionPlaylists(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionScriptDetails.setSelected(uiSettings.isSectionScriptDetails());
     sectionScriptDetails.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionScriptDetails(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionTableData.setSelected(uiSettings.isSectionTableData());
     sectionTableData.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionTableData(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionVps.setSelected(uiSettings.isSectionVps());
     sectionVps.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionVps(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     sectionVPinMAME.setSelected(uiSettings.isSectionVPinMAME());
     sectionVPinMAME.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionVPinMAME(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
 
@@ -494,112 +494,112 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnAltColor(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnAltSound.setSelected(uiSettings.isColumnAltSound());
     columnAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnAltSound(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnBackglass.setSelected(uiSettings.isColumnBackglass());
     columnBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnBackglass(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnDateAdded.setSelected(uiSettings.isColumnDateAdded());
     columnDateAdded.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnDateAdded(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnLauncher.setSelected(uiSettings.isColumnLauncher());
     columnLauncher.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnLauncher(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnDateModified.setSelected(uiSettings.isColumnDateModified());
     columnDateModified.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnDateModified(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnHighscore.setSelected(uiSettings.isColumnHighscore());
     columnHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnHighscore(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnEmulator.setSelected(uiSettings.isColumnEmulator());
     columnEmulator.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnEmulator(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnIni.setSelected(uiSettings.isColumnIni());
     columnIni.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnIni(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnPlaylists.setSelected(uiSettings.isColumnPlaylists());
     columnPlaylists.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPlaylists(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnPov.setSelected(uiSettings.isColumnPov());
     columnPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPov(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnRes.setSelected(uiSettings.isColumnRes());
     columnRes.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnRes(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnPupPack.setSelected(uiSettings.isColumnPupPack());
     columnPupPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPupPack(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnRom.setSelected(uiSettings.isColumnRom());
     columnRom.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnRom(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnVersion.setSelected(uiSettings.isColumnVersion());
     columnVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnVersion(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     columnVpsStatus.setSelected(uiSettings.isColumnVpsStatus());
     columnVpsStatus.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnVpsStatus(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
   }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.frontend.pinballx;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 /**
  *
@@ -32,5 +33,10 @@ public class PinballXSettings extends JsonSettings {
 
   public void setGameExEnabled(boolean gameExEnabled) {
     this.gameExEnabled = gameExEnabled;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.PINBALLX_SETTINGS;
   }
 }

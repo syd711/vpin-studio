@@ -1667,7 +1667,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
     preferencesChanged(PreferenceNames.VALIDATION_SETTINGS, null);
-    preferencesChanged(PreferenceNames.IGNORED_VALIDATIONS, null);
+    preferencesChanged(PreferenceNames.IGNORED_VALIDATION_SETTINGS, null);
 
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
@@ -1784,8 +1784,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     else if (key.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     }
-    else if (key.equals(PreferenceNames.IGNORED_VALIDATIONS)) {
-      ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
+    else if (key.equals(PreferenceNames.IGNORED_VALIDATION_SETTINGS)) {
+      ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
       refreshViewAssetColumns(assetManagerMode);
     }
   }

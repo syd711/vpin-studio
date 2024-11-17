@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.validation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,10 @@ public class ValidationSettings extends JsonSettings {
     }
 
     return validationProfiles.stream().filter(p -> p.getName().equals(ValidationProfile.DEFAULT)).findFirst().get();
+  }
 
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.VALIDATION_SETTINGS;
   }
 }

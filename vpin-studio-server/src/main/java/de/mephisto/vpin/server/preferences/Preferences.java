@@ -24,11 +24,7 @@ public class Preferences {
 
   private String systemName;
 
-  private String overlayDesign;
-
-  private String overlayPageUrl;
-
-  private String showOverlayOnStartup;
+  private String overlaySettings;
 
   private String discordWebHookUrl;
 
@@ -235,12 +231,12 @@ public class Preferences {
     this.pinballXSettings = pinballXSettings;
   }
 
-  public String getOverlayPageUrl() {
-    return overlayPageUrl;
+  public String getOverlaySettings() {
+    return overlaySettings;
   }
 
-  public void setOverlayPageUrl(String overlayPageUrl) {
-    this.overlayPageUrl = overlayPageUrl;
+  public void setOverlaySettings(String overlaySettings) {
+    this.overlaySettings = overlaySettings;
   }
 
   public String getDoNotShowAgains() {
@@ -257,14 +253,6 @@ public class Preferences {
 
   public void setUiSettings(String uiSettings) {
     this.uiSettings = uiSettings;
-  }
-
-  public String getOverlayDesign() {
-    return overlayDesign;
-  }
-
-  public void setOverlayDesign(String overlayDesign) {
-    this.overlayDesign = overlayDesign;
   }
 
   public boolean getHighscoreFilterEnabled() {
@@ -393,14 +381,6 @@ public class Preferences {
 
   public void setDiscordWebHookUrl(String discordWebHookUrl) {
     this.discordWebHookUrl = discordWebHookUrl;
-  }
-
-  public String getShowOverlayOnStartup() {
-    return showOverlayOnStartup;
-  }
-
-  public void setShowOverlayOnStartup(String showOverlayOnStartup) {
-    this.showOverlayOnStartup = showOverlayOnStartup;
   }
 
   public Asset getAvatar() {

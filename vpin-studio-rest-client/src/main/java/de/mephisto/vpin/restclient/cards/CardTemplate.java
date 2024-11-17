@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 import java.util.Objects;
 
@@ -445,5 +446,10 @@ public class CardTemplate extends JsonSettings {
   @Override
   public String toString() {
     return this.name;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return null;
   }
 }

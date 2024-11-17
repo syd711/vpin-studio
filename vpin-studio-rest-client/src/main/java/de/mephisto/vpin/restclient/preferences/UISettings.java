@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 
 import java.util.ArrayList;
@@ -573,5 +574,10 @@ public class UISettings extends JsonSettings {
 
   public void setHideUpdateInfo(boolean hideUpdateInfo) {
     this.hideUpdateInfo = hideUpdateInfo;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.UI_SETTINGS;
   }
 }

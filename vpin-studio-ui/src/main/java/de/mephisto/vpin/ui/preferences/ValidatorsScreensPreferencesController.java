@@ -13,7 +13,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.*;
@@ -46,7 +45,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     mediaCombo.setDisable(!checked);
 
     ignoredValidationSettings.getIgnoredValidators().put(String.valueOf(code), !checked);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, ignoredValidationSettings);
+    client.getPreferenceService().setJsonPreference(ignoredValidationSettings);
 
     PreferencesController.markDirty(PreferenceType.validationSettings);
   }
@@ -64,14 +63,14 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     config.setMedia(mediaCombo.getValue());
     config.setOption(optionCombo.getValue());
 
-    client.getPreferenceService().setJsonPreference(PreferenceNames.VALIDATION_SETTINGS, validationSettings);
+    client.getPreferenceService().setJsonPreference(validationSettings);
     PreferencesController.markDirty(PreferenceType.validationSettings);
   }
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
+    ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
@@ -84,7 +83,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     findAllMediaCombos(parent, mediaCombos);
     findAllOptionsCombos(parent, optionsCombos);
 
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
+    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
     validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
 

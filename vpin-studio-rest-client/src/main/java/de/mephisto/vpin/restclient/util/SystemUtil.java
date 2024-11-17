@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.util;
 
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,15 @@ public class SystemUtil {
       LOG.warn("Failed to resolve cpu id: " + e.getMessage());
     }
     return null;
+  }
+
+  public static Screen getScreenById(int id) {
+    if (id == -1) {
+      return Screen.getPrimary();
+    }
+
+    List<Screen> screens = Screen.getScreens();
+    return screens.get(id - 1);
   }
 
   private static boolean isNotValid(String serial) {

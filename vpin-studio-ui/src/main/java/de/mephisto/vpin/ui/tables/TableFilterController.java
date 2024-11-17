@@ -110,7 +110,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   public void applyFilters() {
     // as we do not call filterGames() anymore, manually call saveFilterSettings to persist the reset
-    client.getPreferenceService().setJsonPreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
+    client.getPreferenceService().setJsonPreference(filterSettings);
     super.applyFilters();
   }
 

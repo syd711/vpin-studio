@@ -3,9 +3,14 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
+import de.mephisto.vpin.restclient.system.ScreenInfo;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.VBox;
@@ -52,72 +57,90 @@ public class NotificationsPreferencesController implements Initializable {
   private Spinner<Integer> durationSpinner;
 
   @FXML
+  private ComboBox<ScreenInfo> screenInfoComboBox;
+
+  @FXML
   private VBox iScoredSettings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NotificationSettings notificationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
 
+    screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
+    if (notificationSettings.getNotificationsScreenId() == -1) {
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryScreen());
+    }
+    else {
+      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getScreenInfo(notificationSettings.getNotificationsScreenId()));
+    }
+    screenInfoComboBox.valueProperty().addListener(new ChangeListener<ScreenInfo>() {
+      @Override
+      public void changed(ObservableValue<? extends ScreenInfo> observable, ScreenInfo oldValue, ScreenInfo newValue) {
+        notificationSettings.setNotificationsScreenId(newValue.getId());
+        client.getPreferenceService().setJsonPreference(notificationSettings);
+      }
+    });
+
     int durationSec = notificationSettings.getDurationSec();
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, durationSec);
     durationSpinner.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       notificationSettings.setDurationSec(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     }, 300));
 
     desktopCheckbox.setSelected(notificationSettings.isDesktopMode());
     desktopCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setDesktopMode(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     highscoresCheckbox.setSelected(notificationSettings.isHighscoreUpdatedNotification());
     highscoresCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setHighscoreUpdatedNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     highscoresCheckedCheckbox.setSelected(notificationSettings.isHighscoreCheckedNotification());
     highscoresCheckedCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setHighscoreCheckedNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     startUpCheckbox.setSelected(notificationSettings.isStartupNotification());
     startUpCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setStartupNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     iScoredCheckbox.setSelected(notificationSettings.isiScoredNotification());
     iScoredCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setiScoredNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     discordCheckbox.setSelected(notificationSettings.isDiscordNotification());
     discordCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setDiscordNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     competitionsCheckbox.setSelected(notificationSettings.isCompetitionNotification());
     competitionsCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setCompetitionNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     recordingStartCheckbox.setSelected(notificationSettings.isCompetitionNotification());
     recordingStartCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setRecordingStartNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     recordingEndCheckbox.setSelected(notificationSettings.isCompetitionNotification());
     recordingEndCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setRecordingEndNotification(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+      client.getPreferenceService().setJsonPreference(notificationSettings);
     });
 
     iScoredSettings.managedProperty().bindBidirectional(iScoredSettings.visibleProperty());

@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -219,8 +220,8 @@ public class GameMediaResource {
     File media = new File(mediaFolder, filename);
     if (media.exists()) {
       if (screen.equals(VPinScreen.Wheel)) {
-        WheelAugmenter augmenter = new WheelAugmenter(media);
-        augmenter.deAugment();
+        new WheelAugmenter(media).deAugment();
+        new WheelIconDelete(media).delete();
       }
       return media.delete();
     }
@@ -238,8 +239,8 @@ public class GameMediaResource {
       for (FrontendMediaItem mediaItem : mediaItems) {
         File file = mediaItem.getFile();
         if (screen.equals(VPinScreen.Wheel)) {
-          WheelAugmenter augmenter = new WheelAugmenter(file);
-          augmenter.deAugment();
+          new WheelAugmenter(file).deAugment();
+          new WheelIconDelete(file).delete();
         }
         if (file.delete()) {
           LOG.info("Deleted game media: {}", file.getAbsolutePath());

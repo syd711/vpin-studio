@@ -1,9 +1,9 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
-import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -11,13 +11,14 @@ import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -59,7 +60,8 @@ public class PauseMenu extends Application {
   static {
     try {
       robot = new Robot();
-    } catch (AWTException e) {
+    }
+    catch (AWTException e) {
       LOG.error("Failed to create robot: " + e.getMessage());
     }
   }
@@ -89,7 +91,10 @@ public class PauseMenu extends Application {
 
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
-      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+      Screen playfieldScreen = SystemUtil.getScreenById(pauseMenuSettings.getPauseMenuScreenId());
+      LOG.info("Pause Menu is using screen {}", playfieldScreen);
+      Rectangle2D screenBounds = playfieldScreen.getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane root = loader.load();
 
@@ -101,7 +106,7 @@ public class PauseMenu extends Application {
           root.setTranslateX(0);
           root.setRotate(-90);
           stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
-          stage.setX(screenBounds.getWidth() / 2 / 2);
+          stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() / 2 / 2));
           double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
           if (max > 2560) {
             stage.setX(stage.getX() + 600);
@@ -116,7 +121,7 @@ public class PauseMenu extends Application {
           LOG.info("Window Mode: Portrait");
           root.setTranslateY(0);
           root.setTranslateX(0);
-          stage.setX((screenBounds.getWidth() - root.getPrefWidth()) / 2);
+          stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
           stage.setY(screenBounds.getHeight() / 2 / 2);
           double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
           if (max > 2560) {
@@ -127,7 +132,7 @@ public class PauseMenu extends Application {
       }
       else {
         scene = new Scene(root, screenBounds.getWidth(), height);
-        stage.setX((screenBounds.getWidth() / 2) - (screenBounds.getWidth() / 2));
+        stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() / 2) - (screenBounds.getWidth() / 2)));
         stage.setY((screenBounds.getHeight() / 2) - (height / 2));
       }
 
@@ -140,7 +145,8 @@ public class PauseMenu extends Application {
       if (!PRODUCTION_USE) {
         togglePauseMenu();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
@@ -224,13 +230,14 @@ public class PauseMenu extends Application {
                 if (!videoTutorials.isEmpty()) {
                   VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
                   String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-                  if(visible) {
+                  if (visible) {
                     ChromeLauncher.showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
                   }
                 }
               }
               LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error("Failed to prepare pause menu screens: " + e.getMessage(), e);
             }
           });
@@ -241,7 +248,8 @@ public class PauseMenu extends Application {
           ServerFX.toFront(stage, visible);
         }).start();
         ServerFX.forceShow(stage);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to init pause menu: " + e.getMessage(), e);
       }
     }
@@ -261,10 +269,11 @@ public class PauseMenu extends Application {
       LOG.info("Exited pause menu");
       stage.hide();
 
-      Platform.runLater(()-> {
+      Platform.runLater(() -> {
         try {
           Thread.sleep(SELECTION_SCALE_DURATION);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           //
         }
         screenAssets.stream().forEach(asset -> {
@@ -276,7 +285,8 @@ public class PauseMenu extends Application {
 
       try {
         NirCmd.focusWindow("Visual Pinball Player");
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to execute focus command: " + e.getMessage(), e);
       }
     }
@@ -300,7 +310,8 @@ public class PauseMenu extends Application {
       Thread.sleep(100);
       robot.keyRelease(KeyEvent.VK_P);
       LOG.info("Sending Pause key 'P'");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed sending pause key toggle: " + e.getMessage(), e);
     }
   }

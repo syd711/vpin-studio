@@ -435,7 +435,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
 
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     List<RecordingScreenOptions> options = new ArrayList<>();
     List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
     for (RecordingScreen recordingScreen : recordingScreens) {
@@ -444,14 +444,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         Parent panelRoot = loader.load();
         ScreenRecorderPanelController screenPanelController = loader.getController();
         screenRecorderPanelControllers.add(screenPanelController);
-        screenPanelController.setVisible(settings.isEnabled(recordingScreen.getScreen()));
+        screenPanelController.setVisible(recorderSettings.isEnabled(recordingScreen.getScreen()));
         screenPanelController.setData(this, recordingScreen);
         recordingOptions.getChildren().add(panelRoot);
       }
       catch (IOException e) {
         LOG.error("failed to load recorder options tab: " + e.getMessage(), e);
       }
-      RecordingScreenOptions recordingScreenOption = settings.getRecordingScreenOption(recordingScreen);
+      RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(recordingScreen);
       if(recordingScreenOption != null) {
         options.add(recordingScreenOption);
       }
@@ -462,8 +462,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       }
     }
     // get only the options that have a valid RecordingScreen and ignore all other ones
-    settings.setRecordingScreenOptions(options);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
+    recorderSettings.setRecordingScreenOptions(options);
+    client.getPreferenceService().setJsonPreference(recorderSettings);
 
 
     /**
@@ -502,23 +502,23 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       return columnCheckbox;
     }, true);
 
-    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createScreenCell(value, model, VPinScreen.PlayField), settings.isEnabled(VPinScreen.PlayField));
-    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createScreenCell(value, model, VPinScreen.BackGlass), settings.isEnabled(VPinScreen.BackGlass));
-    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createScreenCell(value, model, VPinScreen.DMD), settings.isEnabled(VPinScreen.DMD));
-    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createScreenCell(value, model, VPinScreen.Topper), settings.isEnabled(VPinScreen.Topper));
-    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createScreenCell(value, model, VPinScreen.Menu), settings.isEnabled(VPinScreen.Menu));
+    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createScreenCell(value, model, VPinScreen.PlayField), recorderSettings.isEnabled(VPinScreen.PlayField));
+    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createScreenCell(value, model, VPinScreen.BackGlass), recorderSettings.isEnabled(VPinScreen.BackGlass));
+    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createScreenCell(value, model, VPinScreen.DMD), recorderSettings.isEnabled(VPinScreen.DMD));
+    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createScreenCell(value, model, VPinScreen.Topper), recorderSettings.isEnabled(VPinScreen.Topper));
+    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createScreenCell(value, model, VPinScreen.Menu), recorderSettings.isEnabled(VPinScreen.Menu));
 
 
     screenSizeChangeListener = new ScreenSizeChangeListener();
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, settings.getRefreshInterval());
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, recorderSettings.getRefreshInterval());
     refreshInterval.setValueFactory(factory);
     refreshInterval.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("refresh", () -> {
         refreshScreens();
-        settings.setRefreshInterval(newValue.intValue());
+        recorderSettings.setRefreshInterval(newValue.intValue());
         MonitoringManager.getInstance().setRecordingRefreshIntervalSec(refreshInterval.getValue());
-        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
+        client.getPreferenceService().setJsonPreference(recorderSettings);
       }, 300);
     });
 
@@ -560,13 +560,13 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       checkBox.getStyleClass().add("default-text");
       checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
       checkBox.setPrefHeight(30);
-      checkBox.setSelected(settings.isEnabled(screen));
+      checkBox.setSelected(recorderSettings.isEnabled(screen));
       item.setContent(checkBox);
       item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
       item.setOnAction(actionEvent -> {
-        RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        recorderSettings.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
-        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, recorderSettings);
+        RecorderSettings r = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        r.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
+        client.getPreferenceService().setJsonPreference(r);
 
         switch (screen) {
           case PlayField: {
@@ -691,7 +691,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   public void refreshSelection() {
     RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
-      screenRecorderPanelController.setVisible(recorderSettings.isEnabled(screenRecorderPanelController.getScreen()));
+      screenRecorderPanelController.setVisible(recorderSettings.
+          isEnabled(screenRecorderPanelController.getScreen()));
     }
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();

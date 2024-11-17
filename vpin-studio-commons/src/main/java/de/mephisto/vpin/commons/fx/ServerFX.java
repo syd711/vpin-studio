@@ -6,9 +6,10 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.preferences.OverlaySettings;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -98,8 +99,8 @@ public class ServerFX extends Application {
     overlayVisible = visible;
     if (visible) {
       try {
-        PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
-        String value = preference.getValue();
+        OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+        String value = overlaySettings.getDesignType();
         if (StringUtils.isEmpty(value) || value.equalsIgnoreCase("null")) {
           value = "";
         }
@@ -168,7 +169,9 @@ public class ServerFX extends Application {
 
   private static String resolveDashboardResolution() {
     String resource = "uhd";
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+    Rectangle2D screenBounds = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId()).getBounds();
     double width = screenBounds.getWidth();
     if (screenBounds.getWidth() < screenBounds.getHeight()) {
       width = screenBounds.getHeight();
@@ -196,7 +199,8 @@ public class ServerFX extends Application {
     }
 
     BorderPane root = new BorderPane();
-    Screen screen = Screen.getPrimary();
+    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+    Screen screen = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId());
     final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
     scene.setCursor(Cursor.NONE);
 
@@ -301,11 +305,13 @@ public class ServerFX extends Application {
   public void start(Stage primaryStage) throws Exception {
     INSTANCE = this;
 
+    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
+
     this.overlayStage = primaryStage;
     Platform.setImplicitExit(false);
 
     root = new BorderPane();
-    Screen screen = Screen.getPrimary();
+    Screen screen = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId());
     final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
     scene.setCursor(Cursor.NONE);
 

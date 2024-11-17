@@ -137,6 +137,10 @@ public class ServerUpdatePreProcessing {
     try {
       File nvRamIndex = new File(RESOURCES, "index.txt");
       Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
+      if (!nvRamIndex.exists()) {
+        LOG.warn("Skipped nvram sync, download failed.");
+        return null;
+      }
 
       FileInputStream in = new FileInputStream(nvRamIndex);
       List<String> nvRams = IOUtils.readLines(in, Charset.defaultCharset());

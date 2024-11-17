@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.monitor;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.ArrayList;
@@ -52,5 +53,10 @@ public class MonitoringSettings extends JsonSettings {
 
   public void setDisabledScreens(List<VPinScreen> disabledScreens) {
     this.disabledScreens = disabledScreens;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.MONITORING_SETTINGS;
   }
 }

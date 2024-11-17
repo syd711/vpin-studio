@@ -116,7 +116,7 @@ public class DOFLinxPreferencesController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
         settings.setAutostart(t1);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.DOFLINX_SETTINGS, settings);
+        client.getPreferenceService().setJsonPreference(settings);
       }
     });
 
@@ -125,7 +125,7 @@ public class DOFLinxPreferencesController implements Initializable {
       debouncer.debounce("installationFolderText", () -> {
         try {
           settings.setInstallationFolder(t1);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.DOFLINX_SETTINGS, settings);
+          client.getPreferenceService().setJsonPreference(settings);
           refresh();
         }
         catch (Exception e) {

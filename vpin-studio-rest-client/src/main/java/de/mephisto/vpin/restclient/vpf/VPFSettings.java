@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.vpf;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 /**
  *
@@ -23,5 +24,10 @@ public class VPFSettings extends JsonSettings {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.VPF_SETTINGS;
   }
 }

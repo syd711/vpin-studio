@@ -49,5 +49,7 @@ public interface OverlayClient {
 
   PreferenceEntryRepresentation getPreference(String key);
 
+  <T> T getJsonPreference(String key, Class<T> clazz);
+
   List<RankedPlayerRepresentation> getRankedPlayers();
 }

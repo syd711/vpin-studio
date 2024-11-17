@@ -123,7 +123,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingHsFileNameCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingHsFileName(newValue);
       PreferencesController.markDirty(PreferenceType.serverSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     List<String> tableIdFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
@@ -132,7 +132,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingVpsTableIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingVpsTableId(newValue);
       PreferencesController.markDirty(PreferenceType.serverSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     List<String> vpsTableVersionFields = Arrays.asList("WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
@@ -141,37 +141,37 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingVpsVersionIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingVpsTableVersionId(newValue);
       PreferencesController.markDirty(PreferenceType.serverSettings);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     launchFrontendCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
     launchFrontendCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setLaunchPopperOnExit(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     useOriginalVbsFilesCheckbox.setSelected(serverSettings.isKeepVbsFiles());
     useOriginalVbsFilesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepVbsFiles(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     keepModificationDateCheckbox.setSelected(serverSettings.isKeepModificationDate());
     keepModificationDateCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepModificationDate(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     vpxMonitoringCheckbox.setSelected(serverSettings.isUseVPXTableMonitor());
     vpxMonitoringCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setUseVPXTableMonitor(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     uploadTableBackups.setSelected(serverSettings.isBackupTableOnOverwrite());
     uploadTableBackups.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setBackupTableOnOverwrite(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
   }
 }

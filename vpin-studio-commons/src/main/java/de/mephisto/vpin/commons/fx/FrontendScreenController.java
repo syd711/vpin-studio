@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -47,7 +48,7 @@ public class FrontendScreenController implements Initializable {
 
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
     try {
-      Screen screen = Screen.getPrimary();
+      Screen screen = SystemUtil.getScreenById(-1);
       Rectangle2D bounds = screen.getVisualBounds();
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
       root.setRotate(0);//reset of the other options

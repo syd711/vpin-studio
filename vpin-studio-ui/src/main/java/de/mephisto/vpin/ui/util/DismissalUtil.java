@@ -29,7 +29,7 @@ public class DismissalUtil {
 
       if (!confirmationResult.isApplyClicked() && confirmationResult.isChecked()) {
         uiSettings.setHideDismissConfirmations(true);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        client.getPreferenceService().setJsonPreference(uiSettings);
       }
     }
   }

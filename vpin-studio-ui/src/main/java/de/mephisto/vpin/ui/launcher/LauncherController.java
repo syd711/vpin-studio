@@ -233,7 +233,8 @@ public class LauncherController implements Initializable {
       if (!serverVersion.equals(clientVersion)) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update your client.", "Install Update");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          Dialogs.openUpdateDialog();
+          // laucnh update of the remote client
+          Dialogs.openUpdateDialog(client);
         }
         return;
       }

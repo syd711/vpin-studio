@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class BackupSettings extends JsonSettings {
 
@@ -30,5 +31,10 @@ public class BackupSettings extends JsonSettings {
 
   public void setVpbmExternalHostId2(String vpbmExternalHostId2) {
     this.vpbmExternalHostId2 = vpbmExternalHostId2;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.BACKUP_SETTINGS;
   }
 }

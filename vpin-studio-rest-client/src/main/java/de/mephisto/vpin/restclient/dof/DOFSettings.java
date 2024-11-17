@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.dof;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class DOFSettings extends JsonSettings {
   private String apiKey;
@@ -53,5 +54,10 @@ public class DOFSettings extends JsonSettings {
 
   public void setApiKey(String apiKey) {
     this.apiKey = apiKey;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.DOF_SETTINGS;
   }
 }

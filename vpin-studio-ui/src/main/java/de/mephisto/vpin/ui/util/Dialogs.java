@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.ui.ClientUpdatePostProcessing;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.TextEditorController;
+import de.mephisto.vpin.ui.UpdateDialogController;
 import de.mephisto.vpin.ui.UpdateInfoDialogController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
@@ -59,7 +61,7 @@ public class Dialogs {
       stage.showAndWait();
 
       uiSettings.setHideUpdateInfo(true);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
 
       if (!force) {
         ClientUpdatePostProcessing.executePostProcessing();
@@ -76,7 +78,12 @@ public class Dialogs {
   }
 
   public static boolean openUpdateDialog() {
+    return openUpdateDialog(Studio.client);
+  }
+  public static boolean openUpdateDialog(VPinStudioClient client) {
     Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
+    UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
+    controller.setClient(client);
     stage.showAndWait();
     return true;
   }

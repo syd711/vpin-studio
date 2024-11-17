@@ -204,7 +204,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   @FXML
   private void onSave(ActionEvent e) {
     doDestroy();
-    client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -218,7 +218,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     pauseMenuSettings.setOverlayButton(null);
     pauseMenuSettings.setResetButton(null);
     pauseMenuSettings.setRecordingButton(null);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     refreshView();
   }
 

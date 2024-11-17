@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 
 /**
@@ -51,5 +52,10 @@ public class CardSettings extends JsonSettings {
 
   public void setNotificationOnPopperScreen(boolean notificationOnPopperScreen) {
     this.notificationOnPopperScreen = notificationOnPopperScreen;
+  }
+
+  @Override
+  public String getSettingsName() {
+    return PreferenceNames.HIGHSCORE_CARD_SETTINGS;
   }
 }
