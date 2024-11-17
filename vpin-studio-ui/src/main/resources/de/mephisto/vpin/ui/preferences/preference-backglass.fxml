@@ -2,10 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -24,7 +22,7 @@
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE"></Label>
+            <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE" />
             <VBox>
                <children>
                   <Label fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" styleClass="error-title" text="No backglass server found." textFill="WHITE" wrapText="true">
@@ -40,7 +38,7 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="This should always be in enabled in order for PinUP Popper and DOF to work." textFill="WHITE" wrapText="true">
+                  <Label styleClass="checkbox-description" text="This should always be in enabled in order for PinUP Player and DOF to work." textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>
