@@ -57,7 +57,7 @@ public class RecorderSettings extends JsonSettings {
 
   public boolean isEnabled(VPinScreen screen) {
     RecordingScreenOptions option = getRecordingScreenOption(screen);
-    return option != null ? option.isEnabled() : false;
+    return option != null ? option.isEnabled() : true;
   }
 
   public boolean isEnabled() {

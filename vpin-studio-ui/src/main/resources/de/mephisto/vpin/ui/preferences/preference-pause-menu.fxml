@@ -156,7 +156,22 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" GridPane.columnIndex="1" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <ComboBox fx:id="screenInfoComboBox" prefWidth="250.0" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-restart-alert" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="The server needs to be restarted to apply this change. You can restart the server in the &quot;Server Settings&quot; section." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <opaqueInsets>
                         <Insets />

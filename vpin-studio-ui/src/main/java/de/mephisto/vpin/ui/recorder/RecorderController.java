@@ -691,7 +691,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   public void refreshSelection() {
     RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
-      screenRecorderPanelController.setVisible(recorderSettings.isEnabled(screenRecorderPanelController.getScreen()));
+      screenRecorderPanelController.setVisible(recorderSettings.
+          isEnabled(screenRecorderPanelController.getScreen()));
     }
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
