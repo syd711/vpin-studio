@@ -235,24 +235,27 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     try {
       updateBtn.setVisible(false);
       new Thread(() -> {
+
+        String latestVersion = Updater.checkForUpdate();
+
         String serverVersion = client.getSystemService().getVersion();
         String clientVersion = Studio.getVersion();
 
-        String updateServerVersion = Updater.checkForUpdate(serverVersion);
-        String updateClientVersion = Updater.checkForUpdate(clientVersion);
+        boolean updateServer = Updater.isLargerVersionThan(latestVersion, serverVersion); 
+        boolean updateClient = Updater.isLargerVersionThan(latestVersion, clientVersion);
 
-        if (updateClientVersion != null) {
+        if (updateClient) {
           Platform.runLater(() -> {
-            newVersion = updateClientVersion;
-            updateBtn.setText("Version " + updateClientVersion + " available");
-            updateBtn.setVisible(!StringUtils.isEmpty(updateClientVersion));
+            newVersion = latestVersion;
+            updateBtn.setText("Version " + newVersion + " available");
+            updateBtn.setVisible(true);
           });
         }
-        else if (updateServerVersion != null) {
+        else if (updateServer) {
           Platform.runLater(() -> {
-            newVersion = updateServerVersion;
-            updateBtn.setText("Version " + updateServerVersion + " available");
-            updateBtn.setVisible(!StringUtils.isEmpty(updateServerVersion));
+            newVersion = latestVersion;
+            updateBtn.setText("Version " + newVersion + " available");
+            updateBtn.setVisible(updateServer);
           });
         }
       }).start();

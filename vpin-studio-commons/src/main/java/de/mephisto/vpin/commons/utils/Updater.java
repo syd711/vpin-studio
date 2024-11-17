@@ -167,7 +167,7 @@ public class Updater {
     executor.executeCommandAsync();
   }
 
-  public static String checkForUpdate(String referenceVersion) {
+  public static String checkForUpdate() {
     try {
       URL obj = new URL(LATEST_RELEASE_URL);
       HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
@@ -181,12 +181,10 @@ public class Updater {
       int responseCode = conn.getResponseCode(); //DO NOT DELETE!!!!
 
       String s = conn.getURL().toString();
-      String latestVersion = s.substring(s.lastIndexOf("/") + 1);
-      if (isLargerVersionThan(latestVersion, referenceVersion)) {
-        LATEST_VERSION = latestVersion;
-        return latestVersion;
-      }
-    } catch (Exception e) {
+      LATEST_VERSION = s.substring(s.lastIndexOf("/") + 1);
+      return LATEST_VERSION;
+    }
+    catch (Exception e) {
       LOG.error("Update check failed: " + e.getMessage(), e);
     }
     return null;
