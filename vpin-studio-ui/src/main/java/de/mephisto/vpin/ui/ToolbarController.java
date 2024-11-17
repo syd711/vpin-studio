@@ -241,7 +241,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         String serverVersion = client.getSystemService().getVersion();
         String clientVersion = Studio.getVersion();
 
-        boolean updateServer = Updater.isLargerVersionThan(latestVersion, serverVersion); 
+        boolean updateServer = Updater.isLargerVersionThan(latestVersion, serverVersion);
         boolean updateClient = Updater.isLargerVersionThan(latestVersion, clientVersion);
 
         if (updateClient) {
@@ -277,7 +277,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
-    frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
+    frontendMenuBtn.setVisible(frontend.getAdminExe() != null && client.getSystemService().isLocal());
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
     frontendMenuItem.setText("Restart " + frontend.getName());
     this.jobProgress.setDisable(true);

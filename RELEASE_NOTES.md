@@ -11,6 +11,7 @@
 - **Tables / Media Recorder**: Fixed issue that the preview screen section remains empty when launched the first time.
 - **Tables / Highscores**: Exchanged icon for the highscore reset button, to indicate that this is more than a simple deletion.
 - **Tables / NVOffset Validator**: The validator is more restrictive now and complains only if two tables that use the same ROM and have the same **nvoffset**, either have no or a different VPS table mapping. Note that only the table type is checked, not the table version.
+- **Toolbar**: Fixed missing hiding of the frontend UI button that should be hidden when connecting from remote.
 
 ---
 
