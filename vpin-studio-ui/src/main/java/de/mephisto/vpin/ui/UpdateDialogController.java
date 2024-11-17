@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
+//import static de.mephisto.vpin.ui.Studio.client;
 
 public class UpdateDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(UpdateDialogController.class);
@@ -54,26 +55,33 @@ public class UpdateDialogController implements Initializable, DialogController {
   @FXML
   private Button closeBtn;
 
-  private Service serverService;
-  private Service clientService;
-  private Service remoteClientService;
+  private Service<?> serverService;
+  private Service<?> clientService;
+  private Service<?> remoteClientService;
 
   private boolean updateServer = false;
   private boolean updateClient = false;
+  
+  /** The client that needs to be updated */
+  private VPinStudioClient client;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     remoteClientUpdate.managedProperty().bindBidirectional(remoteClientUpdate.visibleProperty());
+  }
+
+  public void setClient(VPinStudioClient _client) {
+    this.client = _client;
+
     remoteClientUpdate.setVisible(!client.getSystemService().isLocal());
+
+    String latestVersion = Updater.checkForUpdate();
 
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
 
-    String newClientVersion = Updater.checkForUpdate(clientVersion);
-    updateClient = newClientVersion != null;
-
-    String newServerVersion = Updater.checkForUpdate(serverVersion);
-    updateServer = newServerVersion != null;
+    updateClient = Updater.isLargerVersionThan(latestVersion, clientVersion);
+    updateServer = Updater.isLargerVersionThan(latestVersion, serverVersion);
 
     //initialize UI
     if (!updateClient) {
@@ -85,10 +93,10 @@ public class UpdateDialogController implements Initializable, DialogController {
       String os = System.getProperty("os.name");
       boolean winUpdate = os.contains("Windows");
       if(winUpdate) {
-        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_ZIP);
+        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP);
       }
       else {
-        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newClientVersion) + Updater.UI_JAR_ZIP);
+        clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_JAR_ZIP);
       }
     }
 
@@ -101,16 +109,16 @@ public class UpdateDialogController implements Initializable, DialogController {
       serverLabel.setText("The server is already running on version " + serverVersion);
     }
     else {
-      serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, newServerVersion) + Updater.SERVER_ZIP);
-      remoteClientLabel.setText("Downloading " + String.format(Updater.BASE_URL, newServerVersion) + Updater.UI_ZIP);
+      serverLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.SERVER_ZIP);
+      remoteClientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP);
     }
 
     //execute updates
     if (updateServer) {
-      startServerUpdate(newServerVersion, newClientVersion);
+      startServerUpdate(latestVersion, latestVersion);
     }
     else if (updateClient) {
-      startClientUpdate(newClientVersion);
+      startClientUpdate(latestVersion);
     }
   }
 
@@ -139,10 +147,10 @@ public class UpdateDialogController implements Initializable, DialogController {
   }
 
   private void startServerUpdate(String newServerVersion, String newClientVersion) {
-    serverService = new Service() {
+    serverService = new Service<>() {
       @Override
-      protected Task createTask() {
-        return new Task() {
+      protected Task<Object> createTask() {
+        return new Task<>() {
           @Override
           protected Object call() throws Exception {
             client.getSystemService().startServerUpdate(newServerVersion);
@@ -176,21 +184,22 @@ public class UpdateDialogController implements Initializable, DialogController {
             }
 
             Platform.runLater(() -> {
-              serverLabel.setText("Update successful, server is running on version " + client.getSystemService().getVersion());
+              String updatedVersion = client.getSystemService().getVersion();
+              serverLabel.setText("Update successful, server is running on version " + updatedVersion);
               serverProgress.setProgress(1f);
 
-              LOG.info("Server updated finished to " + client.getSystemService().getVersion());
+              LOG.info("Server updated finished to " + updatedVersion);
             });
 
-            //finished
-            if (updateClient) {
+            // if we are here and remote, assume the remote client has to be updated as well  
+            if (!client.getSystemService().isLocal()) {
               Platform.runLater(() -> {
-                if (!client.getSystemService().isLocal()) {
-                  startRemoteClientUpdate(newServerVersion, newClientVersion);
-                }
-                else {
-                  startClientUpdate(newClientVersion);
-                }
+                startRemoteClientUpdate(newServerVersion, newClientVersion);
+              });
+            }
+            else if (updateClient) {
+              Platform.runLater(() -> {
+                startClientUpdate(newClientVersion);
               });
             }
 
@@ -203,10 +212,10 @@ public class UpdateDialogController implements Initializable, DialogController {
   }
 
   private void startRemoteClientUpdate(String newServerVersion, String newClientVersion) {
-    remoteClientService = new Service() {
+    remoteClientService = new Service<>() {
       @Override
-      protected Task createTask() {
-        return new Task() {
+      protected Task<Object> createTask() {
+        return new Task<>() {
           @Override
           protected Object call() throws Exception {
             client.getSystemService().startRemoteClientUpdate(newServerVersion);
@@ -271,10 +280,10 @@ public class UpdateDialogController implements Initializable, DialogController {
     String os = System.getProperty("os.name");
     LOG.info("Updater resolved OS name '" + os + "'");
     boolean winUpdate = os.contains("Windows");
-    clientService = new Service() {
+    clientService = new Service<>() {
       @Override
-      protected Task createTask() {
-        return new Task() {
+      protected Task<Object> createTask() {
+        return new Task<>() {
           @Override
           protected Object call() throws Exception {
             new Thread(() -> {
