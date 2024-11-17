@@ -1,14 +1,10 @@
 package de.mephisto.vpin.restclient.util;
 
-import de.mephisto.vpin.restclient.system.ScreenInfo;
-import javafx.collections.ObservableList;
-import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
