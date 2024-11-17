@@ -438,7 +438,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     info.setPrimary(screen.equals(Screen.getPrimary()));
     info.setHeight((int) screenBounds.getHeight());
     info.setWidth((int) screenBounds.getWidth());
-    info.setScreen(screen);
 
     if (screen.getOutputScaleX() > 1) {
       info.setOriginalWidth((int) (info.getWidth() * screen.getOutputScaleX()));
