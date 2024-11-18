@@ -804,20 +804,31 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         WidgetFactory.disposeMediaPane(mediaPane);
         infoBtn.setDisable(mediaItem == null);
-        conversionMenu.setDisable(mediaItem == null || !mediaItem.getName().endsWith(".mp4"));
         renameBtn.setDisable(mediaItem == null);
         downloadAssetBtn.setDisable(mediaItem == null);
 
         if (mediaItem == null) {
+          conversionMenu.setDisable(true);  
+
           Label label = new Label("No media selected");
           label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
           label.setUserData(mediaItem);
           mediaPane.setCenter(label);
           return;
         }
-
+        // else 
         String mimeType = mediaItem.getMimeType();
         String baseType = mimeType.split("/")[0];
+
+        boolean atleastone = false;
+        for (MenuItem item : conversionMenu.getItems()) {
+          VideoConversionCommand cmd = (VideoConversionCommand) item.getUserData();
+          boolean visible = cmd.isActiveForType(baseType);
+          atleastone |= visible;
+          item.setVisible(visible);
+        }
+        conversionMenu.setDisable(!atleastone);            
+
         String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
         LOG.info("Loading " + url);
 
@@ -857,6 +868,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     conversionMenu.setVisible(!commandList.isEmpty());
     for (VideoConversionCommand command : commandList) {
       MenuItem item = new MenuItem(command.getName());
+      item.setUserData(command);
       conversionMenu.getItems().add(item);
       item.setOnAction(new EventHandler<ActionEvent>() {
         @Override
