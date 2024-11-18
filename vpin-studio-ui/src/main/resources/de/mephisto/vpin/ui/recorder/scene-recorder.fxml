@@ -152,31 +152,6 @@
                                             </graphic>
                                         </TableColumn>
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                        <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Playfield">
-                                 <graphic>
-                                    <CheckBox fx:id="checkBoxPlayfield" mnemonicParsing="false" />
-                                 </graphic>
-                                        </TableColumn>
-                                        <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Backglass">
-                                 <graphic>
-                                    <CheckBox fx:id="checkBoxBackglass" mnemonicParsing="false" />
-                                 </graphic>
-                                        </TableColumn>
-                                        <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="DMD">
-                                 <graphic>
-                                    <CheckBox fx:id="checkBoxDMD" mnemonicParsing="false" />
-                                 </graphic>
-                                        </TableColumn>
-                                        <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Topper">
-                                 <graphic>
-                                    <CheckBox fx:id="checkBoxTopper" mnemonicParsing="false" />
-                                 </graphic>
-                                        </TableColumn>
-                                        <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Full DMD">
-                                 <graphic>
-                                    <CheckBox fx:id="checkBoxFullDMD" mnemonicParsing="false" />
-                                 </graphic>
-                                        </TableColumn>
                                     </columns>
                                 </TableView>
                             </children>

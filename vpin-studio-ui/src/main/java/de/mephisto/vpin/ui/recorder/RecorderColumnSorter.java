@@ -30,20 +30,11 @@ public class RecorderColumnSorter implements BaseColumnSorter<GameRepresentation
       if (column.equals(recorderController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getGame().getGameDisplayName());
       }      
-      else if (column.equals(recorderController.columnPlayfield)) {
-        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.PlayField, validationSettings));
-      }
-      else if (column.equals(recorderController.columnBackglass)) {
-        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.BackGlass, validationSettings));
-      }
-      else if (column.equals(recorderController.columnDMD)) {
-        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.DMD, validationSettings));
-      }
-      else if (column.equals(recorderController.columnTopper)) {
-        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Topper, validationSettings));
-      }
-      else if (column.equals(recorderController.columnFullDMD)) {
-        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Menu, validationSettings));
+      else {
+        VPinScreen screen = recorderController.screenFromColumn(column);
+        if (screen != null) {
+          comp = Comparator.comparing(o -> o.getStatusColor(screen, validationSettings));
+        }
       }
 
       // optionally reverse order 
