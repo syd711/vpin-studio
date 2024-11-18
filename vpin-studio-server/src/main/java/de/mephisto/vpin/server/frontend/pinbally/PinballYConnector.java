@@ -340,6 +340,9 @@ PlayfieldWindow.Minimized = 0
       String position = display.getProperty(sectionName + ".Position");
       String[] positions = StringUtils.split(position, ",");
       String rotation = StringUtils.defaultString(display.getProperty(sectionName + ".Rotation"), "0");
+      if (VPinScreen.PlayField.equals(screen)) {
+        player.setInverted(true);
+      }
 
       boolean fullScreen = "1".equals(display.getProperty(sectionName + ".FullScreen"));
 

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -106,6 +107,10 @@ public class ScreenRecorder {
       commandList.add("25");
       commandList.add("-pix_fmt");
       commandList.add("yuv420p");
+      if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.getDisplay().isInverted()) {
+        commandList.add("-vf");
+        commandList.add("\"transpose=2,transpose=2\"");
+      }
       commandList.add(target.getAbsolutePath());
 
       executor = new SystemCommandExecutor(commandList);
