@@ -4,10 +4,11 @@
 
 - **Tables / Media Recorder**:
   - Fixed broken recordings of some tables caused by invalid characters in the generated temporary recording file.
-  - The columns of the recorder tab are completely dynamic and only the ones that are supported ar visible.
+  - The columns of the recorder tab are completely dynamic and only the ones that are supported are visible.
   - For PinballX the playfield video rotation is applied directly after the recording.
   - Fixed macOS layouting problem where the recorder panels where resizing slowly (hopefully).
-- **Uploads / ROM Files**: Improved ROM file upload detection.
+- **Tables / ROM File Uplods**: Improved ROM file upload detection.
+- **Tables / Uploads**: Fixed critical error in media selector.
 - **Drop-In Folder**: Improved feature description in the settings.
 - **Table Launches**: The call of the **SendPuPEvent.exe** when Popper is restarted or stopped is optional now.
 - **VPS Version Selector**: Limited visible item count to 5. That should avoid the to interpret the upper-most entry as being not completely visible.

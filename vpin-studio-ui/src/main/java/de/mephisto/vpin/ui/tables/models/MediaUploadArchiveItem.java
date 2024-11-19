@@ -57,10 +57,10 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
 
   public void setSelected(boolean selected) {
     //you can't de-select on selection mode
-    if(filterMode.equals(AssetType.TABLE) && isTableAsset()) {
+    if(filterMode != null && filterMode.equals(AssetType.TABLE) && isTableAsset()) {
       return;
     }
-    else if(filterMode.equals(AssetType.DIF) && isPatch()) {
+    else if(filterMode != null && filterMode.equals(AssetType.DIF) && isPatch()) {
       return;
     }
     this.selected = selected;

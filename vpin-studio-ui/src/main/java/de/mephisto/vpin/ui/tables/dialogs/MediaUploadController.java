@@ -225,27 +225,31 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
           }
         })
         .thenLater(() -> {
-          tableView.setItems(FXCollections.observableList(filteredData));
+          try {
+            tableView.setItems(FXCollections.observableList(filteredData));
 
-          this.fileNameField.setText(this.selection.getAbsolutePath());
-          this.fileNameField.setDisable(false);
-          this.fileBtn.setDisable(false);
-          this.cancelBtn.setDisable(false);
-          this.uploadBtn.setDisable(false);
-          this.cancelBtn.setDisable(false);
+            this.fileNameField.setText(this.selection.getAbsolutePath());
+            this.fileNameField.setDisable(false);
+            this.fileBtn.setDisable(false);
+            this.cancelBtn.setDisable(false);
+            this.uploadBtn.setDisable(false);
+            this.cancelBtn.setDisable(false);
 
-          this.labelCount.setText(allData.size() + " entries");
+            this.labelCount.setText(allData.size() + " entries");
 
-          uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
-          ObservableList<MediaUploadArchiveItem> items = tableView.getItems();
-          for (MediaUploadArchiveItem item : items) {
-            item.setSelected(!(excludedFiles.contains(item.getName()) || excludedFolders.contains(item.getName())));
+            uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
+            ObservableList<MediaUploadArchiveItem> items = tableView.getItems();
+            for (MediaUploadArchiveItem item : items) {
+              item.setSelected(!(excludedFiles.contains(item.getName()) || excludedFolders.contains(item.getName())));
+            }
+
+            tableView.refresh();
+            refreshAfterSelection();
+            endReload();
           }
-          tableView.refresh();
-
-          refreshAfterSelection();
-
-          endReload();
+          catch (Exception e) {
+            LOG.error("Media refresh failed: {}", e.getMessage(), e);
+          }
         });
   }
 
