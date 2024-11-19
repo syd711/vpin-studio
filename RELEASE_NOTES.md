@@ -1,3 +1,11 @@
+## Release Notes 3.10.3
+
+## Changes
+
+- **Tables / Date Columns**: Fixed missing modification date column data.
+
+---
+
 ## Release Notes 3.10.2
 
 ## Changes
