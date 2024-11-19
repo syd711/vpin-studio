@@ -190,8 +190,15 @@ public class GameRecorder {
               }
             }
           }
-          FileUtils.copyFile(recordingTempFile, target);
-          LOG.info("Overwritten existing media file {} of screen {} with {}, used overwrite mode.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+          if (!target.canWrite()) {
+            target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+            FileUtils.copyFile(recordingTempFile, target);
+            LOG.info("Appending instead of overwriting existing media file {} of screen {} with {} (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+          }
+          else {
+            FileUtils.copyFile(recordingTempFile, target);
+            LOG.info("Overwritten existing media file {} of screen {} with {}, used overwrite mode.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+          }
           break;
         }
         case ifMissing: {
@@ -212,7 +219,7 @@ public class GameRecorder {
       }
     }
     catch (Exception e) {
-      LOG.error("Error finalizing recording: {}", e.getMessage(), e);
+      LOG.error("Error finalizing recording with mode {}: {}", recordMode.name(), e.getMessage(), e);
     }
 
     if (recordingTempFile.delete()) {

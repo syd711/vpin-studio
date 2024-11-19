@@ -6,7 +6,8 @@
   - Fixed broken recordings of some tables caused by invalid characters in the generated temporary recording file.
   - The columns of the recorder tab are completely dynamic and only the ones that are supported are visible.
   - For PinballX the playfield video rotation is applied directly after the recording.
-  - Fixed macOS layouting problem where the recorder panels where resizing slowly (hopefully).
+  - Fixed macOS layout problem where the recorder panels where resizing slowly (hopefully).
+  - Fixed issue that in case **overwrite** mode was selected for a screen and the file is still locked by the frontend, **append** will be used as fallback.
 - **Tables / ROM File Uplods**: Improved ROM file upload detection.
 - **Tables / Uploads**: Fixed critical error in media selector.
 - **Drop-In Folder**: Improved feature description in the settings.

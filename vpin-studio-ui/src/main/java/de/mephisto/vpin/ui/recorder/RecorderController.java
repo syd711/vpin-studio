@@ -477,6 +477,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     screenColumns = new HashMap<>();
     for (RecordingScreen screen : recordingScreens) {
       TableColumn<GameRepresentationModel, GameRepresentationModel> column = new TableColumn<>(screen.getName());
+      column.setPrefWidth(130);
+      if(screen.getScreen().equals(VPinScreen.DMD) || screen.getScreen().equals(VPinScreen.Topper)) {
+        column.setPrefWidth(90);
+      }
       column.setStyle("-fx-alignment: CENTER;");
       BaseLoadingColumn.configureColumn(column, (value, model) -> createScreenCell(value, model, screen.getScreen()), recorderSettings.isEnabled(screen.getScreen()));
 
