@@ -753,7 +753,11 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   class ScreenSizeChangeListener implements ChangeListener<Number> {
     @Override
     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-      refreshScreens();
+      debouncer.debounce("recorderScreenSize", () -> {
+        Platform.runLater(() -> {
+          refreshScreens();
+        });
+      }, 200);
     }
   }
 

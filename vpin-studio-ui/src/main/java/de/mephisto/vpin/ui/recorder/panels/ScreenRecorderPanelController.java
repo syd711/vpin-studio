@@ -72,7 +72,20 @@ public class ScreenRecorderPanelController implements Initializable {
   private RecordingScreen recordingScreen;
 
   public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
-    root.prefWidthProperty().bind(Studio.stage.widthProperty().subtract(1040));
+    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if(!root.isVisible()) {
+          return;
+        }
+
+        debouncer.debounce("recorderScreenSize" + recordingScreen.getScreen().name(), () -> {
+          Platform.runLater(() -> {
+            root.prefWidthProperty().set(newValue.intValue() - 1040);
+          });
+        }, 500);
+      }
+    });
 
     this.recordingScreen = recordingScreen;
     screenName.setText(recordingScreen.getScreen().name());
@@ -149,7 +162,7 @@ public class ScreenRecorderPanelController implements Initializable {
   }
 
   public void refresh() {
-    if(!root.isVisible()) {
+    if (!root.isVisible()) {
       return;
     }
 

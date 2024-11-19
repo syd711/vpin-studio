@@ -54,7 +54,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label styleClass="checkbox-description" text="If checked, archives downloaded into the selected drop-in folder will be imported once the download is finished." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="If checked, new files of the selected drop-in folder will be shown in the menu once the download is finished." textFill="WHITE" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
                            <children>
                               <TextField fx:id="dropInTextField" editable="false" prefWidth="400.0" promptText="Select Drop-In Folder...">

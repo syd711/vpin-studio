@@ -24,7 +24,7 @@ import static de.mephisto.vpin.restclient.util.FileUtils.isFileBelowFolder;
 
 public class UploaderAnalysis<T> {
   private final static Logger LOG = LoggerFactory.getLogger(UploaderAnalysis.class);
-  private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat");
+  private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "czr", "pal", "pac", "pal");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
   private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg");
@@ -789,6 +789,16 @@ public class UploaderAnalysis<T> {
         String suffix = FilenameUtils.getExtension(fileName);
         if (romSuffixes.contains(suffix.toLowerCase())) {
           return true;
+        }
+        if (suffix.length() == 2) {
+          try {
+            String s = suffix.substring(suffix.length() - 1);
+            Integer.parseInt(s);
+            return true;
+          }
+          catch (Exception e) {
+            //ignore
+          }
         }
       }
 

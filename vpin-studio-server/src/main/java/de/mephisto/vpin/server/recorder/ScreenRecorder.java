@@ -15,6 +15,9 @@ import java.util.List;
 /**
  * ffmpeg -video_size 800x600 -offset_x 1000 -offset_y 20 -y -rtbufsize 100M -f gdigrab -framerate 30 -t 5 -draw_mouse 1 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p video_comapre2.mp4
  * ffmpeg -video_size 254x927 -offset_x 716  -offset_y 83 -y -rtbufsize 100M -f gdigrab -framerate 30 -t 3 -draw_mouse 0 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p
+ *
+ * Popper nvidia=0
+ * ffmpeg -y -rtbufsize 100M -report %wAudio% -f gdigrab -t 60 -framerate %curFPS% -probesize 10M -offset_x %1 -offset_y %2 -video_size %3x%4 -i desktop -c:v h264_nvenc -preset:v fast -pix_fmt nv12 -r %curFPS% -b:v %cbitrate%M output.mkv
  */
 public class ScreenRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorder.class);
@@ -99,7 +102,8 @@ public class ScreenRecorder {
       commandList.add("-r");
       commandList.add("30");
       commandList.add("-preset");
-      commandList.add("ultrafast");
+//      commandList.add("ultrafast");
+      commandList.add("fast");
       commandList.add("-tune");
       commandList.add("zerolatency");
       commandList.add("-crf");

@@ -159,7 +159,9 @@ public class GameRecorder {
    */
   @NonNull
   private File createTemporaryRecordingFile(Game game, VPinScreen screen, RecordMode recordMode) throws IOException {
-    File tempFile = File.createTempFile(game.getGameDisplayName() + "-" + screen.name(), ".mp4");
+    String name = game.getGameDisplayName() + "-" + screen.name();
+    name = de.mephisto.vpin.restclient.util.FileUtils.replaceWindowsChars(name);
+    File tempFile = File.createTempFile(name, ".mp4");
     tempFile.deleteOnExit();
     return tempFile;
   }

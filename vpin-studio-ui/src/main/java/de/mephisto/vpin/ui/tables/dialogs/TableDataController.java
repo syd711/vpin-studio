@@ -654,6 +654,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
       tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
+      tableVersionsCombo.setVisibleRowCount(5);
     }
     catch (Exception e) {
       LOG.error("Failed to initialize table data manager: " + e.getMessage(), e);

@@ -25,6 +25,12 @@ public class PupEventEmitter {
   public boolean sendPupEvent(int id, int secondsWait) {
     try {
       File launchFolder = new File(installationFolder, "Launch");
+      File eventExe = new File(launchFolder, "SendPuPEvent.exe");
+      if (!eventExe.exists()) {
+        LOG.warn("{} has not been found.", eventExe.getAbsolutePath());
+        return false;
+      }
+
       List<String> params = Arrays.asList("cmd", "/c", "start", "SendPuPEvent.exe", String.valueOf(id));
       SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
       executor.setDir(launchFolder);
