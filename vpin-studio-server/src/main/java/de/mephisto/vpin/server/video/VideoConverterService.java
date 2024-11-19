@@ -5,10 +5,12 @@ import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.restclient.video.VideoOperation;
+import de.mephisto.vpin.restclient.video.VideoConversionCommand;
+import de.mephisto.vpin.restclient.video.VideoConversionCommand.ImageOp;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ public class VideoConverterService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VideoConverterService.class);
 
   private final List<VideoConversionCommand> commands = new ArrayList<>();
+
 
   @Autowired
   private FrontendService frontendService;
@@ -77,6 +81,9 @@ public class VideoConverterService implements InitializingBean {
     else if (command.getType() == VideoConversionCommand.TYPE_FFMEPG) {
       String[] args = StringUtils.split(command.getCommand());
       return convertWithFfmpeg(args, mediaFile);
+    }
+    else if (command.getType() == VideoConversionCommand.TYPE_IMAGE) {
+      return convertWithImageUtils(command.getCommand(), mediaFile);
     }
     else {
       LOG.warn("Not supported implementation of command {} for {}", command.getClass().getName(), command.getName());
@@ -144,6 +151,29 @@ public class VideoConverterService implements InitializingBean {
     return null;
   }
 
+  private String convertWithImageUtils(String command, File mediaFile) {
+    try {
+      BufferedImage img = ImageUtil.loadImage(mediaFile);
+      switch (ImageOp.valueOf(command)) {
+      case ROTATE_90:
+        img = ImageUtil.rotateRight(img);
+        break;
+      case ROTATE_90_CCW :
+        img = ImageUtil.rotateLeft(img);
+        break;
+      case ROTATE_180:
+        img = ImageUtil.rotate180(img);
+        break;
+      }
+      
+      ImageUtil.write(img, mediaFile);
+      return null;
+    }
+    catch (Exception e) {
+      return e.getMessage();
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     commands.clear();
@@ -183,6 +213,11 @@ public class VideoConverterService implements InitializingBean {
       commands.add(new VideoConversionCommand("Rotate 180°").setFFmpegArgs("-vf \"transpose=2,transpose=2\""));
       commands.add(new VideoConversionCommand("Mute Volume").setFFmpegArgs("-c:v copy -an"));    
     }
+
+    // add image commandes
+    commands.add(new VideoConversionCommand("Rotate Clockwise 90°").setImageArgs(ImageOp.ROTATE_90));
+    commands.add(new VideoConversionCommand("Rotate Counter Clockwise 90°").setImageArgs(ImageOp.ROTATE_90_CCW));
+    commands.add(new VideoConversionCommand("Rotate 180°").setImageArgs(ImageOp.ROTATE_180));
   }
 
   public List<VideoConversionCommand> getCommandList() {

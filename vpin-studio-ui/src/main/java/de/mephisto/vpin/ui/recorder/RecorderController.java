@@ -78,36 +78,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
 
   @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
-
-  @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackglass;
-
-  @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDMD;
-
-  @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTopper;
-
-  @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
-
-  @FXML
-  CheckBox checkBoxPlayfield;
-
-  @FXML
-  CheckBox checkBoxBackglass;
-
-  @FXML
-  CheckBox checkBoxDMD;
-
-  @FXML
-  CheckBox checkBoxTopper;
-
-  @FXML
-  CheckBox checkBoxFullDMD;
-
-  @FXML
   private CheckBox selectAllCheckbox;
 
   @FXML
@@ -148,6 +118,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private ToolBar toolbar;
+
+  private Map<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> screenColumns;
 
   private List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
 
@@ -502,12 +474,19 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       return columnCheckbox;
     }, true);
 
-    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createScreenCell(value, model, VPinScreen.PlayField), recorderSettings.isEnabled(VPinScreen.PlayField));
-    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createScreenCell(value, model, VPinScreen.BackGlass), recorderSettings.isEnabled(VPinScreen.BackGlass));
-    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createScreenCell(value, model, VPinScreen.DMD), recorderSettings.isEnabled(VPinScreen.DMD));
-    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createScreenCell(value, model, VPinScreen.Topper), recorderSettings.isEnabled(VPinScreen.Topper));
-    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createScreenCell(value, model, VPinScreen.Menu), recorderSettings.isEnabled(VPinScreen.Menu));
+    screenColumns = new HashMap<>();
+    for (RecordingScreen screen : recordingScreens) {
+      TableColumn<GameRepresentationModel, GameRepresentationModel> column = new TableColumn<>(screen.getName());
+      column.setStyle("-fx-alignment: CENTER;");
+      BaseLoadingColumn.configureColumn(column, (value, model) -> createScreenCell(value, model, screen.getScreen()), recorderSettings.isEnabled(screen.getScreen()));
 
+      CheckBox cb = new CheckBox();
+      column.setGraphic(cb);
+      cb.selectedProperty().addListener(new ColumnCheckboxListener(screen.getScreen()));
+
+      tableView.getColumns().add(column);
+      screenColumns.put(screen.getScreen(), column);
+    }
 
     screenSizeChangeListener = new ScreenSizeChangeListener();
 
@@ -568,38 +547,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         r.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
         client.getPreferenceService().setJsonPreference(r);
 
-        switch (screen) {
-          case PlayField: {
-            columnPlayfield.setVisible(checkBox.isSelected());
-            break;
-          }
-          case BackGlass: {
-            columnBackglass.setVisible(checkBox.isSelected());
-            break;
-          }
-          case DMD: {
-            columnDMD.setVisible(checkBox.isSelected());
-            break;
-          }
-          case Menu: {
-            columnFullDMD.setVisible(checkBox.isSelected());
-            break;
-          }
-          case Topper: {
-            columnTopper.setVisible(checkBox.isSelected());
-            break;
-          }
+        TableColumn<?, ?> column = screenColumns.get(screen);
+        if (column != null) {
+          column.setVisible(checkBox.isSelected());
         }
         refreshSelection();
       });
       screenMenuButton.getItems().add(item);
     }
-
-    checkBoxPlayfield.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.PlayField));
-    checkBoxBackglass.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.BackGlass));
-    checkBoxFullDMD.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.Menu));
-    checkBoxTopper.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.Topper));
-    checkBoxDMD.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.DMD));
 
     this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
@@ -665,22 +620,21 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   private List<VPinScreen> getEnabledScreens() {
     List<VPinScreen> result = new ArrayList<>();
-    if (columnPlayfield.isVisible()) {
-      result.add(VPinScreen.PlayField);
-    }
-    if (columnBackglass.isVisible()) {
-      result.add(VPinScreen.BackGlass);
-    }
-    if (columnDMD.isVisible()) {
-      result.add(VPinScreen.DMD);
-    }
-    if (columnFullDMD.isVisible()) {
-      result.add(VPinScreen.Menu);
-    }
-    if (columnTopper.isVisible()) {
-      result.add(VPinScreen.Topper);
+    for (Map.Entry<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> entry : screenColumns.entrySet())  {
+      if (entry.getValue().isVisible()) {
+        result.add(entry.getKey());
+      }
     }
     return result;
+  }
+
+  VPinScreen screenFromColumn(TableColumn<?, ?> column) {
+    for (Map.Entry<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> sc : screenColumns.entrySet()) {
+      if (column.equals(sc.getValue())) {
+        return sc.getKey();
+      }
+    }
+    return null;
   }
 
   @Override

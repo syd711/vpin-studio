@@ -518,7 +518,7 @@ public class TablesSidebarMediaController implements Initializable {
     FileDragEventHandler.install(mediaRootPane, screenLoading, false, "mp4")
         .setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Loading, "mp4"));
 
-    FileDragEventHandler.install(mediaRootPane, screenPlayField, false, "mp4")
+    FileDragEventHandler.install(mediaRootPane, screenPlayField, false, "mp4", "png", "jpg")
         .setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.PlayField, "mp4"));
 
     FileDragEventHandler.install(mediaRootPane, screenBackGlass, false, "mp4", "png", "jpg")

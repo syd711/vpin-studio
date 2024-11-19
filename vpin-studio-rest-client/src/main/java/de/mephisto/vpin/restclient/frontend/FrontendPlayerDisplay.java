@@ -11,6 +11,11 @@ public class FrontendPlayerDisplay {
   private int width;
   private int height;
   private int rotation;
+  /**
+   * For pinballX, playfield videos are inverted
+   * TODO check how much this is redundant with rotation=270
+   */
+  private boolean inverted;
 
   public int getMonitor() {
     return monitor;
@@ -76,6 +81,15 @@ public class FrontendPlayerDisplay {
     this.rotation = rotation;
   }
 
+	public boolean isInverted() {
+		return inverted;
+	}
+
+	public void setInverted(boolean inverted) {
+		this.inverted = inverted;
+	}
+
+  
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -93,4 +107,5 @@ public class FrontendPlayerDisplay {
   public String toString() {
     return name + " [" + x + "/" + y + " - " + width + "x" + height + "]";
   }
+
 }

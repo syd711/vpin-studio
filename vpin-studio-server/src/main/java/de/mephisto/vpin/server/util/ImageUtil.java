@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -53,7 +52,6 @@ public class ImageUtil {
     return Font.PLAIN;
   }
 
-  @SuppressWarnings("unused")
   public static BufferedImage loadImage(File file) throws IOException {
     if (!file.exists()) {
       throw new FileNotFoundException("File not found " + file.getAbsolutePath());
@@ -67,7 +65,6 @@ public class ImageUtil {
     }
   }
 
-  @SuppressWarnings("unused")
   public static BufferedImage rotateLeft(BufferedImage image) {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -75,12 +72,18 @@ public class ImageUtil {
     return create(image, -Math.PI / 2, gc);
   }
 
-  @SuppressWarnings("unused")
   public static BufferedImage rotateRight(BufferedImage image) {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice gd = ge.getDefaultScreenDevice();
     GraphicsConfiguration gc = gd.getDefaultConfiguration();
     return create(image, Math.PI / 2, gc);
+  }
+
+  public static BufferedImage rotate180(BufferedImage image) {
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice gd = ge.getDefaultScreenDevice();
+    GraphicsConfiguration gc = gd.getDefaultConfiguration();
+    return create(image, Math.PI, gc);
   }
 
   private static BufferedImage create(BufferedImage image, double angle, GraphicsConfiguration gc) {
@@ -97,14 +100,12 @@ public class ImageUtil {
     return result;
   }
 
-  @SuppressWarnings("unused")
   public static void setDefaultColor(GraphicsContext g, String fontColor) {
     Paint paint = Paint.valueOf(fontColor);
     g.setStroke(paint);
 //    setRendingHints(g);
   }
 
-  @SuppressWarnings("unused")
   public static void applyAlphaComposites(BufferedImage image, float alphaWhite, float alphaBlack) {
     Graphics g = image.getGraphics();
     int imageWidth = image.getWidth();
@@ -131,7 +132,6 @@ public class ImageUtil {
     }
   }
 
-  @SuppressWarnings("unused")
   public static void drawBorder(GraphicsContext g, int strokeWidth, int width, int height) {
     if (strokeWidth > 0) {
       g.setStroke(g.getFill());
@@ -173,7 +173,6 @@ public class ImageUtil {
     return image.getSubimage(x, y, targetWidth, targetHeight);
   }
 
-  @SuppressWarnings("unused")
   public static BufferedImage blurImage(BufferedImage originalImage, int radius) {
     GaussianFilter filter = new GaussianFilter(radius);
     return filter.filter(originalImage, null);

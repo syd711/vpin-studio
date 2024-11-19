@@ -6,6 +6,11 @@ public class VideoConversionCommand {
 
   public static final int TYPE_FILE = 1;
   public static final int TYPE_FFMEPG = 2;
+  public static final int TYPE_IMAGE = 3;
+
+  public static enum ImageOp {
+    ROTATE_90, ROTATE_90_CCW, ROTATE_180
+  }
 
   private String name;
   private String command;
@@ -50,6 +55,21 @@ public class VideoConversionCommand {
     this.type = TYPE_FFMEPG;
     this.command = args;
     return this;
+  }
+  public VideoConversionCommand setImageArgs(ImageOp op) {
+    this.type = TYPE_IMAGE;
+    this.command = op.name();
+    return this;
+  }
+
+  public boolean isActiveForType(String mediaType) {
+    if ("video".equalsIgnoreCase(mediaType)) {
+      return type == TYPE_FILE || type == TYPE_FFMEPG;
+    }
+    else if ("image".equalsIgnoreCase(mediaType)) {
+      return type == TYPE_IMAGE;
+    }
+    return false;
   }
 
   @Override

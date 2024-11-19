@@ -371,6 +371,7 @@ public class PinballXConnector extends BaseConnector {
       player.setScreen(VPinScreen.PlayField);
       player.setMonitor(monitor);
       player.setRotation(Integer.parseInt(display.getString("Rotate", "0")));
+      player.setInverted(true);
 
       boolean windowed = display.getBoolean("Windowed", false);
       if (windowed) {
