@@ -8,12 +8,14 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.dialogs.ResGeneratorDialogController">
    <top>
@@ -29,7 +31,7 @@
                         <Insets right="12.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGenerateClick" styleClass="submit-button" text="Generate .res File">
+                  <Button fx:id="generateBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGenerateClick" styleClass="submit-button" text="Generate .res File">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -48,48 +50,46 @@
                <bottom>
                   <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.399951171875" minWidth="10.0" prefWidth="114.399951171875" />
-                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="395.199951171875" minWidth="10.0" prefWidth="374.400048828125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="114.399951171875" minWidth="10.0" prefWidth="114.399951171875" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="395.199951171875" minWidth="10.0" prefWidth="374.400048828125" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
-                           </font></Button>
-                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="Select or drop a frame image here" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
                            </font>
-                        </TextField>
+                        </Button>
+                        <StackPane alignment="CENTER_RIGHT" GridPane.columnIndex="1">
+                           <children>
+                              <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="Select or drop a frame image here" >
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" visible="false" styleClass="ghost-icon-button" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </StackPane>                
                         <Label styleClass="default-text" text="Frame Picture:" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <RadioButton mnemonicParsing="false" prefWidth="170.0" text="Stretch backglass" textFill="WHITE">
+                              <RadioButton fx:id="radioStretchBackglass" mnemonicParsing="false" prefWidth="170.0" text="Stretch backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </RadioButton>
-                              <RadioButton mnemonicParsing="false" prefWidth="170.0" text="Center backglass" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </RadioButton>
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <RadioButton mnemonicParsing="false" prefWidth="170.0" text="Stretch DMD" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </RadioButton>
-                              <RadioButton layoutX="10.0" layoutY="15.0" mnemonicParsing="false" prefWidth="170.0" text="Center DMD" textFill="WHITE">
+                              <RadioButton fx:id="radioCenterBackglass" mnemonicParsing="false" prefWidth="170.0" text="Center backglass" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -103,21 +103,25 @@
                      </BorderPane.margin>
                   </GridPane>
                </bottom>
-               <center>
-                  <VBox alignment="CENTER" prefHeight="350.0" styleClass="media-container" BorderPane.alignment="CENTER">
+               <left>
+                  <HBox prefHeight="350.0" prefWidth="650" BorderPane.alignment="CENTER">
                      <children>
-                        <ImageView fx:id="previewImage" fitHeight="350.0" fitWidth="622.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../empty-preview.png" />
-                           </image></ImageView>
+                        <VBox styleClass="media-container" ><children>
+                           <ImageView fx:id="previewImage" fitHeight="350.0" fitWidth="622.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="false">
+                              <image>
+                                 <Image url="@../../empty-preview.png" />
+                              </image>
+                           </ImageView>
+                        </children></VBox>
                      </children>
                      <BorderPane.margin>
                         <Insets />
                      </BorderPane.margin>
                      <padding>
                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                     </padding></VBox>
-               </center>
+                     </padding>
+                  </HBox>
+               </left>
                <top>
                   <Label styleClass="default-text" text="Preview" BorderPane.alignment="TOP_LEFT">
                      <BorderPane.margin>
@@ -128,29 +132,40 @@
             </BorderPane>
          </center>
          <top>
-            <GridPane BorderPane.alignment="CENTER">
+            <GridPane BorderPane.alignment="CENTER" hgap="10" >
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.2000732421875" minWidth="10.0" prefWidth="141.60009765625" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="552.4000129699707" minWidth="10.0" prefWidth="455.19990234374995" />
+                <ColumnConstraints hgrow="SOMETIMES"  />
+                <ColumnConstraints hgrow="ALWAYS"  />
+                <ColumnConstraints hgrow="SOMETIMES"  />
+                <ColumnConstraints hgrow="ALWAYS"  />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <BorderPane.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="default-text" text="Screenres.txt:" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Playfield Dimension:" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Backglass Dimension:" GridPane.rowIndex="2" />
-                  <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="DMD Dimension:" GridPane.rowIndex="3" />
-                  <Label fx:id="screenResLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
-                  <Label fx:id="playfieldDimensionLabel" layoutX="152.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="backglassDimensionLabel" layoutX="152.0" layoutY="45.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label fx:id="dmdDimensionLabel" layoutX="152.0" layoutY="76.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label styleClass="default-text" text="Screenres.txt:"/>
+                  <Label fx:id="screenResLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" />
+
+                  <Label styleClass="default-text" text="Playfield Dimension:" GridPane.rowIndex="1" />
+                  <Label fx:id="playfieldDimensionLabel" styleClass="default-text" text="-" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                  <Label styleClass="default-text" text="Playfield Screen:" GridPane.rowIndex="1" GridPane.columnIndex="2" />
+                  <Label fx:id="playfieldScreenLabel" styleClass="default-text" text="-" GridPane.rowIndex="1" GridPane.columnIndex="3" />
+
+                  <Label styleClass="default-text" text="Backglass Dimension:" GridPane.rowIndex="2" />
+                  <Label fx:id="backglassDimensionLabel" styleClass="default-text" text="-" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                  <Label styleClass="default-text" text="Backglass Screen:" GridPane.rowIndex="2" GridPane.columnIndex="2" />
+                  <Label fx:id="backglassScreenLabel" styleClass="default-text" text="-" GridPane.rowIndex="2" GridPane.columnIndex="3" />
+
+                  <Label styleClass="default-text" text="DMD Dimension:" GridPane.rowIndex="3" />
+                  <Label fx:id="dmdDimensionLabel" styleClass="default-text" text="-" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                  <Label styleClass="default-text" text="DMD Screen:" GridPane.rowIndex="3" GridPane.columnIndex="2" />
+                  <Label fx:id="dmdScreenLabel" styleClass="default-text" text="-" GridPane.rowIndex="3" GridPane.columnIndex="3" />
                </children>
             </GridPane>
          </top>
