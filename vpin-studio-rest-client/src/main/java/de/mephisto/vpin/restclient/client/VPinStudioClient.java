@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.components.ComponentServiceClient;
 import de.mephisto.vpin.restclient.directb2s.BackglassServiceClient;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
+import de.mephisto.vpin.restclient.dmd.DMDPositionServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
@@ -78,6 +79,7 @@ public class VPinStudioClient implements OverlayClient {
   private final BackglassServiceClient backglassServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final DMDServiceClient dmdServiceClient;
+  private final DMDPositionServiceClient dmdPositionServiceClient;
   private final DOFServiceClient dofServiceClient;
   private final DOFLinxServiceClient dofLinxServiceClient;
   private final GamesServiceClient gamesServiceClient;
@@ -124,6 +126,7 @@ public class VPinStudioClient implements OverlayClient {
     this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
+    this.dmdPositionServiceClient = new DMDPositionServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
     this.dofLinxServiceClient = new DOFLinxServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
@@ -157,6 +160,10 @@ public class VPinStudioClient implements OverlayClient {
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public DMDPositionServiceClient getDmdPositionService() {
+    return dmdPositionServiceClient;
   }
 
   public PatcherServiceClient getPatcherService() {
