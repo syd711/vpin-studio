@@ -58,6 +58,7 @@ public class PinballXTableParser extends DefaultHandler {
             String gameFileName =  gameName + "." + emu.getGamesExt();
 
             TableDetails detail = new TableDetails();
+            detail.setGameName(gameName);
             detail.setGameFileName(gameFileName);
             detail.setEmulatorId(emu.getId());
             // will be overriden but enabled by default
@@ -86,8 +87,7 @@ public class PinballXTableParser extends DefaultHandler {
             
             // if no title provided, displayName should be description and gameName defaulted from filename 
             if (StringUtils.isEmpty(detail.getGameDisplayName())) {
-              detail.setGameDisplayName(StringUtils.defaultIfBlank(detail.getGameName(), gameName)); 
-              detail.setGameName(gameName);
+              detail.setGameDisplayName(detail.getGameName()); 
             }
 
             games.add(gameFileName);

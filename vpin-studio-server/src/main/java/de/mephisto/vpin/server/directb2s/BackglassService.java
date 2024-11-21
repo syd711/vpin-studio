@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -25,14 +26,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -442,6 +453,193 @@ public class BackglassService {
     catch (IOException e) {
       LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
       throw e;
+    }
+  }
+
+  //------------------------------------
+
+  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s) {
+    GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
+    File b2sFile = new File(emulator.getTablesDirectory(), directb2s.getFileName());
+
+    List<String> lines = readScreenRes(b2sFile, false);
+    if (lines == null) {
+      return null;
+    }
+    DirectB2sScreenRes res = new DirectB2sScreenRes();
+    res.setEmulatorId(directb2s.getEmulatorId());
+    res.setFileName(directb2s.getFileName());
+    res.setScreenresFilePath(lines.remove(0));
+    res.setGlobal(StringUtils.containsIgnoreCase(res.getScreenresFilePath(), FilenameUtils.getBaseName(directb2s.getFileName())));
+
+    // cf https://github.com/vpinball/b2s-backglass/blob/7842b3638b62741e21ebb511e2a886fa2091a40f/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L105
+    res.setPlayfieldWidth(Integer.parseInt(lines.get(0)));
+    res.setPlayfieldHeight(Integer.parseInt(lines.get(1)));
+
+    res.setBackglassWidth(Integer.parseInt(lines.get(2)));
+    res.setBackglassHeight(Integer.parseInt(lines.get(3)));
+
+    res.setBackglassDisplay(lines.get(4));
+
+    res.setBackglassX(Integer.parseInt(lines.get(5)));
+    res.setBackglassY(Integer.parseInt(lines.get(6)));
+
+    res.setDmdWidth(Integer.parseInt(lines.get(7)));
+    res.setDmdHeight(Integer.parseInt(lines.get(8)));
+
+    res.setDmdX(Integer.parseInt(lines.get(9)));
+    res.setDmdY(Integer.parseInt(lines.get(10)));
+
+    res.setDmYFlip("1".equals(lines.get(11)));
+
+    if (lines.size() > 16) {
+      res.setBackgroundX(Integer.parseInt(lines.get(12)));
+      res.setBackgroundY(Integer.parseInt(lines.get(13)));
+
+      res.setBackgroundWidth(Integer.parseInt(lines.get(14)));
+      res.setBackgroundHeight(Integer.parseInt(lines.get(15)));
+  
+      res.setBackgroundFilePath(lines.get(16)); 
+
+      if (lines.size() > 17) {
+        res.setB2SWindowPunch(lines.get(17));
+      }  
+    }
+
+    return res;
+  }
+
+  public File getScreenResFile(int emuId, String filename) {
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    File b2sFile = new File(emulator.getTablesDirectory(), filename);
+    List<String> lines = readScreenRes(b2sFile, false);
+    if (lines == null || lines.size() < 16) {
+      return null;
+    }
+    lines.remove(0);
+    File framePath = new File(lines.get(16));
+    return framePath.exists() ? framePath : null;
+  }
+
+  private List<String> readScreenRes(File b2sFile, boolean withComment) {
+    //TODO The default filename ScreenRes.txt can be altered by setting the registry key Software\B2S\B2SScreenResFileNameOverride to a different filename.
+    String screenresTxt = "ScreenRes.txt";
+
+    //When the B2S Server starts, it tries to find the ScreenRes files in this order  (from backglassServer documentation)
+    // see https://github.com/vpinball/b2s-backglass/wiki/Screenres.txt
+    
+    //  tablename.res next to the tablename.vpx
+    File target = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()) + ".res");
+    if (!target.exists()) {
+      //  Screenres.txt (or whatever you set in the registry) in the same folder as tablename.vpx
+      target = new File(b2sFile.getParentFile(), screenresTxt);
+      if (!target.exists()) {
+        //  Screenres.txt (or whatever you set in the registry) as tablename/Screenres.txt
+        File tableFolder = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()));
+        target = new File(tableFolder, screenresTxt);
+        if (!target.exists()) {
+          //  Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
+          target = new File(getBackglassServerFolder(), screenresTxt);
+        }
+      }
+    }
+
+    if (!target.exists()) {
+      return null;
+    }
+
+    List<String> lines = new ArrayList<>();
+    lines.add(target.getAbsolutePath());
+    try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (withComment || !line.startsWith("#")) {
+          lines.add(line.trim());
+        }
+      }
+      return lines;
+    }
+    catch (Exception e) {
+      LOG.error("Cannor open screen res file " + target.getAbsolutePath(), e);
+      return null;
+    }
+  }
+
+  public DirectB2sScreenRes saveScreenRes(DirectB2sScreenRes screenres) {
+    GameEmulator emulator = frontendService.getGameEmulator(screenres.getEmulatorId());
+    File b2sFile = new File(emulator.getTablesDirectory(), screenres.getFileName());
+
+    List<String> lines = readScreenRes(b2sFile, true);
+    if (lines == null) {
+      return null;
+    }
+    String templateName = lines.remove(0);
+    // if already a table file exists, replace it 
+    File screenresFile = StringUtils.containsIgnoreCase(templateName, FilenameUtils.getBaseName(screenres.getFileName())) ?
+      new File(templateName) : new File(emulator.getTablesDirectory(), FilenameUtils.getBaseName(screenres.getFileName()) + ".res");
+
+    if (!screenresFile.exists() || screenresFile.delete()) {
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(screenresFile))) {
+        int currentLine = 0;
+        for (String line: lines) {
+          if (line.startsWith("#")) {
+            writer.write(line);
+          }
+          else {
+            switch (currentLine++) {
+              case 2: writer.write(Integer.toString(screenres.getBackglassWidth())); break;
+              case 3: writer.write(Integer.toString(screenres.getBackglassHeight())); break;
+              case 5: writer.write(Integer.toString(screenres.getBackglassX())); break;
+              case 6: writer.write(Integer.toString(screenres.getBackglassY())); break;
+              case 12: writer.write(Integer.toString(screenres.getBackgroundX())); break;
+              case 13: writer.write(Integer.toString(screenres.getBackgroundY())); break;
+              case 14: writer.write(Integer.toString(screenres.getBackgroundWidth())); break;
+              case 15: writer.write(Integer.toString(screenres.getBackgroundHeight())); break;
+              case 16: writer.write(StringUtils.defaultString(screenres.getBackgroundFilePath())); break;
+              default : writer.write(line);
+            }
+          }
+          writer.write(System.lineSeparator());
+        }
+        // generate the last line if not done
+        if (currentLine == 16 && StringUtils.isNotEmpty(screenres.getBackgroundFilePath())) {
+          writer.write(screenres.getBackgroundFilePath());
+          writer.write(System.lineSeparator());
+        }
+        return screenres;
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot generate table screen res file " + screenresFile.getAbsolutePath(), ioe);
+      }
+    }
+    else {
+      LOG.error("Cannot delete existing table screen res file " + screenresFile.getAbsolutePath());
+    }
+    return null;
+  }
+
+  public String setScreenResFrame(int emulatorId, String filename, String screenName, InputStream is) throws IOException {
+    GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
+    File frameFolder = new File(emulator.getTablesDirectory(), "_Frames");
+    if (frameFolder.exists() || is != null && frameFolder.mkdir()) {
+      File frameFile = new File(frameFolder, screenName);
+      if (!frameFile.exists() || frameFile.delete()) {
+        if (is != null) {
+          try (FileOutputStream out = new FileOutputStream(frameFile)) {
+            StreamUtils.copy(is, out);
+          }
+        }
+        // return the filename created or deleted in case of success
+        return frameFile.getAbsolutePath();
+      }
+      else {
+        LOG.error("Cannot delete existing frame res file " + frameFile.getAbsolutePath());
+        return null;
+      }
+    }
+    else {
+      LOG.error("Cannot create _frames Folder " + emulator.getTablesDirectory());
+      return null;
     }
   }
 }

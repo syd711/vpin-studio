@@ -580,7 +580,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     serverSettings = client.getBackglassServiceClient().getServerSettings();
 
-    this.resBtn.setVisible(false);
+    //this.resBtn.setVisible(false);
+
     this.clearBtn.setVisible(false);
     this.dataManagerBtn.setDisable(true);
     this.tableNavigateBtn.setDisable(true);
@@ -734,7 +735,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
     // first time activation 
-    if (this.models == null) {
+    if (models == null || models.isEmpty()) {
       doReload();
 
       if (this.tableView.getItems().isEmpty()) {
