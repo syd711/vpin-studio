@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
@@ -40,14 +41,10 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <VBox fx:id="dismissalList" prefHeight="768.0" prefWidth="1024.0" styleClass="media-container" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-               <children>
-                  <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
-               </children>
-            </VBox>
+            <Pane fx:id="stackpane">
+               <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" >
+               </ImageView>
+            </Pane>
          </center>
          <right>
             <VBox BorderPane.alignment="TOP_LEFT">
