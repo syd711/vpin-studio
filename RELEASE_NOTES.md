@@ -2,6 +2,14 @@
 
 ## Changes
 
+- **Tables / Media Recorderr**: Added more recording options to tackle the OpenGL problem. You can record games via the VPX launcher now, skipping the frontend start and exit calls. This way, another VPX.exe can be used which allows to work around the playfield recording problem.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder-dialog.png" width="700" />
+
+- **Tables / Backglass Manager**: Added .res designer dialog.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="600" />
+
 - **Tables / Date Columns**: Fixed missing modification date column data.
 
 ---

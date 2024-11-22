@@ -1,13 +1,8 @@
 package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.recorder.RecordMode;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
-import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

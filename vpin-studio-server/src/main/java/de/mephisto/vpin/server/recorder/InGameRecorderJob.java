@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class InGameRecorderJob extends RecorderJob implements Job {
+public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(InGameRecorderJob.class);
   private final NotificationService notificationService;
   private final NotificationSettings notificationSettings;

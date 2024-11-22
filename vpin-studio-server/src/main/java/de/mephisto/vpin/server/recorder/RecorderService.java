@@ -5,10 +5,12 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.GameService;
@@ -16,6 +18,7 @@ import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,12 @@ public class RecorderService {
   private SystemService systemService;
 
   @Autowired
+  private VPXService vpxService;
+
+  @Autowired
+  private FPService fpService;
+
+  @Autowired
   private NotificationService notificationService;
 
   private JobDescriptor jobDescriptor;
@@ -59,11 +68,17 @@ public class RecorderService {
   public JobDescriptor startRecording(RecordingDataSummary recordingData) {
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
 
-    RecorderJob job = new RecorderJob(gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+    Job job = null;
+    if (settings.getRecordingMode() == null || settings.getRecordingMode().equals(RecordingMode.emulator)) {
+      job = new EmulatorRecorderJob(gameService, vpxService, fpService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+    }
+    else {
+      job = new FrontendRecorderJob(gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+    }
+
     jobDescriptor = new JobDescriptor(JobType.RECORDER);
     jobDescriptor.setTitle("Screen Recorder (" + recordingData.size() + " games)");
     jobDescriptor.setJob(job);
-
     jobService.offer(jobDescriptor);
     LOG.info("Offered screen recorder job.");
     return jobDescriptor;
@@ -104,7 +119,7 @@ public class RecorderService {
 
     if (!recordingDataEntry.getScreens().isEmpty()) {
       NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      RecorderJob job = new InGameRecorderJob(notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
+      FrontendRecorderJob job = new InGameRecorderJob(notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
       jobDescriptor = new JobDescriptor(JobType.RECORDER);
       jobDescriptor.setTitle("In-Game Screen Recorder");
       jobDescriptor.setJob(job);
