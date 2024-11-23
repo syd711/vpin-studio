@@ -6,7 +6,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Spinner;
@@ -21,24 +21,25 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class DMDPositionController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
 
   @FXML
-  private CheckBox aspectRationCheckbox;
+  private CheckBox aspectRatioCheckbox;
 
   @FXML
-  private Spinner<Integer> xSpinner;
+  private Spinner<Double> xSpinner;
   @FXML
-  private Spinner<Integer> ySpinner;
+  private Spinner<Double> ySpinner;
   @FXML
-  private Spinner<Integer> widthSpinner;
+  private Spinner<Double> widthSpinner;
   @FXML
-  private Spinner<Integer> heightSpinner;
+  private Spinner<Double> heightSpinner;
 
   @FXML
-  private Pane stackpane;
+  private Pane imagepane;
 
   @FXML
   private ImageView fullDMDImage;
@@ -81,44 +82,60 @@ public class DMDPositionController implements Initializable, DialogController {
     fullDMDImage.setImage(image);
     fullDMDImage.setPreserveRatio(true);
 
-    // The bounds for the DMD handler 
-    Rectangle2D area = new Rectangle2D(0, 0, fullDMDImage.getFitWidth(), fullDMDImage.getFitHeight());
+    // The bounds for the DMD resizer 
+    Bounds area = fullDMDImage.getLayoutBounds();
+    // The lime box that is used to position the DMD
+    dragBox = new DMDPositionResizer(imagepane, area, aspectRatioCheckbox.selectedProperty(), Color.LIME);
 
-    dragBox = new DMDPositionResizer(stackpane, area, Color.LIME);
+    configureSpinner(dragBox.xProperty(), xSpinner, 20, 0, image.getWidth(), null);
+    configureSpinner(dragBox.yProperty(), ySpinner, 20, 0, image.getHeight(), null);
+    configureSpinner(dragBox.widthProperty(), widthSpinner, 400, 0, image.getWidth(), (w) -> {
+      if (aspectRatioCheckbox.isSelected()) {
+        heightSpinner.getValueFactory().valueProperty().setValue(w / 4);
+      }
+    });
+    configureSpinner(dragBox.heightProperty(), heightSpinner, 100, 0, image.getHeight(), (h) -> {
+      if (aspectRatioCheckbox.isSelected()) {
+        widthSpinner.getValueFactory().setValue(h * 4);
+      }
+    });
 
-    configureSpinner(dragBox.layoutXProperty(), xSpinner, 20, 0, image.getWidth());
-    configureSpinner(dragBox.layoutYProperty(), ySpinner, 20, 0, image.getHeight());
-    configureSpinner(dragBox.widthProperty(), widthSpinner, 400, 0, image.getWidth());
-    configureSpinner(dragBox.heightProperty(), heightSpinner, 100, 0, image.getHeight());
-
-
-   // add a selector in the pane to draw a 
-   new DMDPositionSelection(stackpane, area, Color.LIME, 
-     () -> {
+   // add a selector in the pane to draw a rectangle.
+   new DMDPositionSelection(imagepane, area, aspectRatioCheckbox.selectedProperty(), Color.LIME, 
+    // called on drag start, hide the lime dragbox 
+    () -> {
       dragBox.setVisible(false);
      }, 
+     // called once dragged, show th edragbox back and reposition/resize it
      rect -> {
       dragBox.setVisible(true);
+      dragBox.select();
 
-      xSpinner.getValueFactory().setValue((int) rect.getMinX());
-      ySpinner.getValueFactory().setValue((int) rect.getMinY());
-      widthSpinner.getValueFactory().setValue((int) rect.getWidth());
-      heightSpinner.getValueFactory().setValue((int) rect.getHeight());
+      xSpinner.getValueFactory().setValue(rect.getMinX());
+      ySpinner.getValueFactory().setValue(rect.getMinY());
+      widthSpinner.getValueFactory().setValue(rect.getWidth());
+      heightSpinner.getValueFactory().setValue(rect.getHeight());
      });  
   }
-  private void configureSpinner(DoubleProperty property, Spinner<Integer> spinner, int value, int min, double max) {
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, (int) max, 0);
+  private void configureSpinner(DoubleProperty property, Spinner<Double> spinner, double value, double min, double max, Consumer<Double> spinnerHook) {
+    SpinnerValueFactory.DoubleSpinnerValueFactory factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, 0);
     spinner.setValueFactory(factory);
     spinner.setEditable(true);
 
-    spinner.valueProperty().addListener((x, o, n) -> {
-      property.setValue(n);
+    // Set the bidirectionnal binding between the spinner and a property of the resizer
+    spinner.getValueFactory().valueProperty().addListener((x, o, n) -> {
+      // hook must run before setting the value so that when we set it up, 
+      // it has already the good value and does not trigger a new change
+      if (spinnerHook != null) {
+        spinnerHook.accept(n);
+      }
+      property.set(n);
     });
     property.addListener((x, o, n) -> {
-      spinner.getValueFactory().setValue(n.intValue());
+      spinner.getValueFactory().setValue((Double) n);
     });
 
-    // now set the value, that also change the associated property
+    // now that propeties are bound, sets the value, that also changes the associated property
     spinner.getValueFactory().setValue(value);
   }
 }

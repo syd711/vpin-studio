@@ -18,7 +18,7 @@ public class DMDPositionResizerDemo extends Application {
     BorderPane layout = new BorderPane();
     stage.setScene(new Scene(layout, 500, 300));
 
-    Rectangle2D area = new Rectangle2D(15, 15, 500-15*2, 300-15*2);
+    Bounds area = new BoundingBox(15, 15, 500-15*2, 300-15*2);
     Pane pane = new Pane();
 
     createElementHandler(pane, area, 150, 30, 105, 105, Color.AQUA);
@@ -30,10 +30,10 @@ public class DMDPositionResizerDemo extends Application {
     stage.show();
   }
     
-  private void createElementHandler(Pane pane, Rectangle2D area, int x, int y, int width, int height, Color color) {
-    DMDPositionResizer eh = new DMDPositionResizer(pane, area, color);
-    eh.setLayoutX(x);
-    eh.setLayoutY(y);
+  private void createElementHandler(Pane pane, Bounds area, int x, int y, int width, int height, Color color) {
+    DMDPositionResizer eh = new DMDPositionResizer(pane, area, null, color);
+    eh.setX(x);
+    eh.setY(y);
     eh.setWidth(width);
     eh.setHeight(height);
   }

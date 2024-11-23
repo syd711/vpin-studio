@@ -6,24 +6,28 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 
 public class DMDPositionSelection {
 
   private static double minSize = 8;
 
-  Rectangle2D area;
+  /** The constrained area for mouse drag */
+  private Bounds area;
 
-  Rectangle selection;
-  double initX, initY;
+  /** The selection representing the drawn region */
+  private Rectangle selection;
+  /** The initial point */
+  private double initX, initY;
 
-  Runnable onDragStart;
-  Consumer<Rectangle2D> onRelease;
+  /** Whether aspect ratio has to be enforced */
+  private BooleanProperty aspectRatio;
 
-  public DMDPositionSelection(Pane pane, Rectangle2D area, Color color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
+  public DMDPositionSelection(Pane pane, Bounds area, BooleanProperty aspectRatio, Color color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
     this.area = area;
-    this.onDragStart = onDragStart;
-    this.onRelease = onDragEnd;
+    this.aspectRatio = aspectRatio;
 
     pane.setOnMousePressed(me -> {
       this.initX = checkAreaX(me.getX());
@@ -56,10 +60,12 @@ public class DMDPositionSelection {
         double meY = checkAreaY(me.getY());
         if (meY >= initY) {
           selection.setHeight(meY - initY);
+          checkAspectRatio(false);
         }
         else {
           selection.setY(meY);
           selection.setHeight(initY - meY);
+          checkAspectRatio(true);
         }
         me.consume();
       }
@@ -74,12 +80,26 @@ public class DMDPositionSelection {
         double x = meX > initX ? initX: meX;
         double y = meY > initY ? initY: meY;
         double width = meX > initX ? meX - initX : initX - meX;
-        double height = meY > initY ? meY - initY : initY - meY;
+        double height = (aspectRatio != null && aspectRatio.getValue()) ?
+          width / 4 : meY > initY ? meY - initY : initY - meY;
+
         onDragEnd.accept(new Rectangle2D(x, y, width, height));
         me.consume();
       }
     });
   }
+
+  private void checkAspectRatio(boolean moveUp) {
+    if (aspectRatio != null && aspectRatio.getValue()) {
+      double width = selection.getWidth();
+      double height = width / 4;
+      if (moveUp) {
+        selection.setY(selection.getY() + selection.getHeight() - height);
+      }
+      selection.setHeight(height);
+    }
+  }
+
 
   private double checkAreaX(double meX) {
     if (meX < area.getMinX()) {
