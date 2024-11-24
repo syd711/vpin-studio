@@ -13,6 +13,8 @@
 
 - **Tables / Date Columns**: Added missing modification date column data.
 - **Tables / Playlist Column**: Added missing tooltips for custom playlists.
+- **Tables / Asset Manager**: Fixed styling of list selection which was not highlighted properly.
+- **Tables / Asset Manager**: Provided "undock" button in the header. Using this options removes the "modal" option of the dialog so it can be kept open. The selection is automatically updated for the current table.
 
 ---
 

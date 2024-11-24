@@ -131,6 +131,7 @@ public class FrontendRecorderJob implements Job {
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
+    frontend.killFrontend();
     LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.recordingDataSummary.size() + " processed.");
     if (gameRecorder != null) {
       gameRecorder.cancel(jobDescriptor);

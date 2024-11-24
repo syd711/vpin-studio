@@ -234,7 +234,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private boolean embedded = false;
 
   public static void close() {
-    if (INSTANCE != null && INSTANCE.isShowing()) {
+    if (INSTANCE != null) {
       INSTANCE.close();
       INSTANCE = null;
     }

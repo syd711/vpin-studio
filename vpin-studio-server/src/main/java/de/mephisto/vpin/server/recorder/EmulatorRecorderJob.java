@@ -121,4 +121,10 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
     frontendStatusService.setEventsEnabled(true);
     LOG.info("***************************** /Game Recording Log *****************************************************");
   }
+
+  @Override
+  public void cancel(JobDescriptor jobDescriptor) {
+    frontend.killFrontend();
+    super.cancel(jobDescriptor);
+  }
 }
