@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.jobs.JobUpdatesListener;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -105,6 +106,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   @FXML
   private void onRecord(ActionEvent e) {
+    TableAssetManagerDialogController.close();
+
     finished = false;
     recordBtn.setVisible(false);
     cancelBtn.setVisible(false);
@@ -245,9 +248,14 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     emulatorRecordingRadio.setToggleGroup(toggleGroup);
     frontendRecordingRadio.setToggleGroup(toggleGroup);
 
-    emulatorRecordingRadio.setSelected(true);
-    frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
-
+    if (settings.getRecordingMode() == null || settings.getRecordingMode().equals(RecordingMode.emulator)) {
+      frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+      emulatorRecordingRadio.setSelected(true);
+    }
+    else {
+      emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+      frontendRecordingRadio.setSelected(true);
+    }
 
     emulatorRecordingRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override

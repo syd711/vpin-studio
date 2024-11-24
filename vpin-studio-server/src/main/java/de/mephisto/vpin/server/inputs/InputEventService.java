@@ -215,6 +215,11 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   public void frontendLaunched() {
     frontendIsRunning = true;
 
+    //disable this for recording mode
+    if (!frontendStatusService.isEventsEnabled()) {
+      return;
+    }
+
     Platform.runLater(() -> {
       if (this.launchOverlayOnStartup) {
         try {

@@ -233,6 +233,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Node lastSelected;
   private boolean embedded = false;
 
+  public static void close() {
+    if (INSTANCE != null && INSTANCE.isShowing()) {
+      INSTANCE.close();
+      INSTANCE = null;
+    }
+  }
+
 
   @FXML
   private void onNext(ActionEvent e) {

@@ -6,11 +6,13 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder-dialog.png" width="700" />
 
+- **Tables / Media Recorder**: Disabled VPin Studio overlay when Popper is started for recordings. 
 - **Tables / Backglass Manager**: Added .res designer dialog.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="600" />
 
-- **Tables / Date Columns**: Fixed missing modification date column data.
+- **Tables / Date Columns**: Added missing modification date column data.
+- **Tables / Playlist Column**: Added missing tooltips for custom playlists.
 
 ---
 
