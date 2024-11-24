@@ -6,14 +6,17 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 
 import de.mephisto.vpin.server.system.DefaultPictureService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +27,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.xml.bind.DatatypeConverter;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -83,8 +91,12 @@ public class DirectB2SResource {
   }
 
   protected ResponseEntity<Resource> download(String base64, String filename, String extension) {
+    byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
     String name = StringUtils.indexOf(filename, '/') >= 0 ? StringUtils.substringAfterLast(filename, "/") : filename;
     name = StringUtils.substringBeforeLast(name, ".") + extension;
+    return download(image, name);
+  }
+  protected ResponseEntity<Resource> download(byte[] image, String name) {
 
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
@@ -92,13 +104,11 @@ public class DirectB2SResource {
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");
 
-    if (base64 == null) {
+    if (image == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    byte[] image = DatatypeConverter.parseBase64Binary(base64);
     ByteArrayResource resource = new ByteArrayResource(image);
-
     return ResponseEntity.ok()
         .headers(headers)
         .contentLength(resource.contentLength())
@@ -214,5 +224,70 @@ public class DirectB2SResource {
   @PostMapping("/removeDmdImage")
   public Boolean removeDmdImage(@RequestBody DirectB2S directB2S) {
     return backglassService.setDmdImage(directB2S.getEmulatorId(), directB2S.getFileName(), null, null);
+  }
+
+
+  @PostMapping("/screenRes")
+  public DirectB2sScreenRes getScreenRes(@RequestBody DirectB2S directb2s) {
+    return backglassService.getScreenRes(directb2s);
+  }
+
+  @GetMapping("/frame/{emuId}/{filename}")
+  public ResponseEntity<StreamingResponseBody> getFrame(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+
+    File screenRes = backglassService.getScreenResFile(emuId, filename);
+    if (screenRes == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + screenRes.getName());
+    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.add("Pragma", "no-cache");
+    headers.add("Expires", "0");
+
+    return ResponseEntity.ok()
+      .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(screenRes)))
+      .header("X-Frame-Options", "SAMEORIGIN")
+      .body(out -> {
+        try (FileInputStream fis = new FileInputStream(screenRes)) {
+          StreamUtils.copy(fis, out);
+        }
+      });
+  }
+
+  @PostMapping("/screenRes/save")
+  public DirectB2sScreenRes saveScreenRes(@RequestBody DirectB2sScreenRes screenres) {
+    return backglassService.saveScreenRes(screenres);
+  }
+
+  @PostMapping("/screenRes/uploadFrame")
+  public String uploadScreenResFrame(@RequestParam(value = "file", required = false) MultipartFile file,
+                                @RequestParam("emuid") int emuId, @RequestParam("filename") String filename) {
+    if (file == null) {
+      LOG.error("Upload request did not contain a file object.");
+      return null;
+    }
+    try {
+      return backglassService.setScreenResFrame(emuId, filename, file.getOriginalFilename(), file.getInputStream());
+    }
+    catch (IOException ioe) {
+      LOG.error("Error while converting image into base64 representation", ioe);
+      return null;
+    }
+  }
+
+  @DeleteMapping("/screenRes/removeFrame")
+  public boolean removeScreenResFrame(@RequestParam("emuid") int emuId, @RequestParam("filename") String filename) throws Exception {
+    try {
+      String filedeleted = backglassService.setScreenResFrame(emuId, filename, null, null);
+      return filedeleted != null;
+    }
+    catch (IOException ioe) {
+      LOG.error("Error while converting image into base64 representation", ioe);
+      return false;
+    }
   }
 }
