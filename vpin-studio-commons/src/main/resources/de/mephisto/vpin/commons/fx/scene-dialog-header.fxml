@@ -24,7 +24,7 @@
    <right>
       <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
          <graphic>
-            <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+            <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16" />
          </graphic>
          <BorderPane.margin>
             <Insets bottom="3.0" left="3.0" right="6.0" top="6.0" />

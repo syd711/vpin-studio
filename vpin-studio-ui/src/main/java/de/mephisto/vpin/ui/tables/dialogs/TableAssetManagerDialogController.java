@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
@@ -51,6 +52,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -71,7 +73,8 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetManagerDialogController.class);
-//  public static final int MEDIA_SIZE = 280;
+  public static final String MODAL_STATE_ID = "tableAssetManagerDialog";
+  public static Stage INSTANCE = null;
 
   @FXML
   private BorderPane root;
@@ -228,6 +231,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private VPinScreen screen = VPinScreen.Wheel;
   private FrontendMediaRepresentation frontendMedia;
   private Node lastSelected;
+  private boolean embedded = false;
 
 
   @FXML
@@ -667,10 +671,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (game != null) {
-            setGame(localStage, overviewController, game, screen);
+            setGame(localStage, overviewController, game, screen, embedded);
           }
           else {
-            setGame(localStage, overviewController, tablesCombo.getValue(), screen);
+            setGame(localStage, overviewController, tablesCombo.getValue(), screen, embedded);
           }
 
           screenDeleteBtn.setDisable(isPlaylistMode());
@@ -808,7 +812,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         downloadAssetBtn.setDisable(mediaItem == null);
 
         if (mediaItem == null) {
-          conversionMenu.setDisable(true);  
+          conversionMenu.setDisable(true);
 
           Label label = new Label("No media selected");
           label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
@@ -827,7 +831,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           atleastone |= visible;
           item.setVisible(visible);
         }
-        conversionMenu.setDisable(!atleastone);            
+        conversionMenu.setDisable(!atleastone);
 
         String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
         LOG.info("Loading " + url);
@@ -959,7 +963,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
         tablesCombo.getItems().addAll(gameRepresentations);
         tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-          this.setGame(localStage, this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
+          this.setGame(localStage, this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel, false);
         });
       }).start();
     }
@@ -992,11 +996,26 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     initDragAndDrop();
   }
 
-  public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen) {
-    localStage = stage;
+  public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen, boolean embedded) {
+    this.localStage = stage;
+    this.embedded = embedded;
+    if (!embedded) {
+      TableAssetManagerDialogController.INSTANCE = localStage;
+      localStage.setOnHiding(new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+          TableAssetManagerDialogController.INSTANCE = null;
+        }
+      });
+    }
     this.overviewController = overviewController;
 
-    // detection of change in game  
+    setGame(game, screen);
+    initDragAndDrop();
+  }
+
+  private void setGame(@Nullable GameRepresentation game, @Nullable VPinScreen screen) {
+    // detection of change in game
     if (this.game != null && (game == null || this.game.getId() != game.getId())) {
       searchField.setText("");
     }
@@ -1074,7 +1093,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     refreshTableMediaView();
     onSearch();
-    initDragAndDrop();
   }
 
   private void initDragAndDrop() {
@@ -1224,5 +1242,37 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   public void setPlaylistMode() {
     this.playlistsRadio.setSelected(true);
+  }
+
+  @Override
+  public void setModality(boolean modal) {
+    LocalUISettings.setModal(MODAL_STATE_ID, modal);
+    Platform.runLater(() -> {
+      localStage.close();
+    });
+    Platform.runLater(() -> {
+      if (playlistsRadio.isSelected()) {
+        TableDialogs.openTableAssetsDialog(overviewController, game, playlist, screen);
+      }
+      else {
+        TableDialogs.openTableAssetsDialog(overviewController, game, screen);
+      }
+    });
+  }
+
+  @Override
+  public void tablesSelected(List<GameRepresentation> games) {
+    if (!games.isEmpty()) {
+      boolean modal = LocalUISettings.isModal(MODAL_STATE_ID);
+      if (!modal) {
+        Platform.runLater(() -> {
+          GameRepresentation gameRepresentation = games.get(0);
+          if (this.game == null || this.game.getId() != gameRepresentation.getId()) {
+            tablesRadio.setSelected(true);
+            setGame(gameRepresentation, screen);
+          }
+        });
+      }
+    }
   }
 }

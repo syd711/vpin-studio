@@ -1,11 +1,16 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,17 +27,47 @@ public class DialogHeaderController implements Initializable {
   @FXML
   private Label titleLabel;
 
+  @FXML
+  private Button modalBtn;
+
   private Stage stage;
   private DialogController dialogController;
   private String id;
 
+  private boolean modal = true;
+
   @FXML
   private void onCloseClick() {
     Object userData = stage.getUserData();
-    if(userData instanceof DialogController) {
-      ((DialogController)userData).onDialogCancel();
+    if (userData instanceof DialogController) {
+      ((DialogController) userData).onDialogCancel();
     }
     stage.close();
+  }
+
+  @FXML
+  private void onModalToggle() {
+    modal = !modal;
+    Object userData = stage.getUserData();
+    if (userData instanceof DialogController) {
+      ((DialogController) userData).setModality(modal);
+    }
+  }
+
+  public void setModal(boolean b) {
+    modal = b;
+    if (modalBtn != null) {
+      if (b) {
+        FontIcon icon = WidgetFactory.createIcon("mdi2p-pin");
+        icon.setIconSize(16);
+        modalBtn.setGraphic(icon);
+      }
+      else {
+        FontIcon icon = WidgetFactory.createIcon("mdi2p-pin-off-outline");
+        icon.setIconSize(16);
+        modalBtn.setGraphic(icon);
+      }
+    }
   }
 
   @Override

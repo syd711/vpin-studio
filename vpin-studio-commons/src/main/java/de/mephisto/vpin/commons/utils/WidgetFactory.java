@@ -452,6 +452,10 @@ public class WidgetFactory {
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
+    return createDialogStage(fxmlLoader,owner, title, stateId, null);
+  }
+
+  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId, String modalStateId) {
     Parent root = null;
 
     try {
@@ -470,6 +474,7 @@ public class WidgetFactory {
       DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
       dialogHeaderController.setStage(stage);
       dialogHeaderController.setTitle(title);
+      dialogHeaderController.setModal(modalStateId == null || LocalUISettings.isModal(modalStateId));
       stage.setOnShowing(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
@@ -485,8 +490,14 @@ public class WidgetFactory {
       dialogHeaderController.setTitle(title);
     }
 
-    stage.initOwner(owner);
-    stage.initModality(Modality.WINDOW_MODAL);
+    if (modalStateId != null && !LocalUISettings.isModal(modalStateId)) {
+      stage.initModality(Modality.NONE);
+    }
+    else {
+      stage.initOwner(owner);
+      stage.initModality(Modality.APPLICATION_MODAL);
+    }
+
     stage.initStyle(StageStyle.UNDECORATED);
     stage.setTitle(title);
     stage.setUserData(controller);
