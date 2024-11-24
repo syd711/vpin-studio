@@ -5,6 +5,7 @@ import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -41,6 +42,12 @@ public class DMDPositionResizerDemo2 extends Application {
     layout.setCenter(pane);
 
     stage.show();
+
+    stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+      if (resizer != null) {
+        resizer.keyPressed(event);
+      }
+    });
 
     // add a selector in the pane
     Bounds area = new BoundingBox(15, 15, 500-15*2, 300-15*2);

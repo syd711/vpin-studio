@@ -4,6 +4,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -64,6 +66,77 @@ public class DMDPositionResizer extends Rectangle {
     });
 
     boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+  }
+
+  public boolean keyPressed(KeyEvent event) {
+    if (overlay.isVisible()) {
+      //if (Keys.isSpecial(event)) {
+      KeyCode code = event.getCode();
+      switch (code) {
+        case LEFT:
+          if (event.isControlDown()) {
+            if (event.isShiftDown()) {
+              moveXPos(getX() + getWidth() - 1, false);
+              checkAspectRatio(true, false, false);
+            }
+            else {
+              moveXPos(getX() - 1, true);
+              checkAspectRatio(true, false, false);
+            }
+          }
+          else {
+            relocateInArea(getX() - 1, getY());
+          }
+          return true;
+        case RIGHT:
+          if (event.isControlDown()) {
+            if (event.isShiftDown()) {
+              moveXPos(getX() +1, true);
+              checkAspectRatio(true, false, false);  
+            }
+            else {
+              moveXPos(getX() + getWidth() + 1, false);
+              checkAspectRatio(true, false, false);
+            }
+          }
+          else {
+            relocateInArea(getX() + 1, getY());
+          }
+          return true;
+        case UP:
+          if (event.isControlDown()) {
+            if (event.isShiftDown()) {
+              moveYPos(getY() + getHeight() - 1, false);
+              checkAspectRatio(false, false, false);
+            }
+            else {
+              moveYPos(getY() - 1, true);
+              checkAspectRatio(false, false, true);
+            }
+          }
+          else {
+            relocateInArea(getX(), getY() - 1);
+          }
+          return true;
+        case DOWN:
+          if (event.isControlDown()) {
+            if (event.isShiftDown()) {
+              moveYPos(getY() + 1, true);
+              checkAspectRatio(false, false, true);
+            }
+            else {
+              moveYPos(getY() + getHeight() + 1, false);
+              checkAspectRatio(false, false, false);
+            }
+          }
+          else {
+            relocateInArea(getX(), getY() + 1);
+          }
+          return true;
+        default:
+      }
+    }
+    return false;
   }
 
   public void select() {
