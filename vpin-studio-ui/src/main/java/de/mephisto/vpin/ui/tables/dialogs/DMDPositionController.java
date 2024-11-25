@@ -2,17 +2,23 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.JFXFuture;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -25,13 +31,17 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 public class DMDPositionController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
 
   @FXML
   private CheckBox aspectRatioCheckbox;
+
+  @FXML
+  private RadioButton radioOnBackglass;
+  @FXML
+  private RadioButton radioOnB2sDMD;
 
   @FXML
   private Spinner<Double> xSpinner;
@@ -52,6 +62,11 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private DMDPositionResizer dragBox;
 
+  // The image bounds
+  private ObjectProperty<Bounds> area = new SimpleObjectProperty<>();
+
+  private ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
+
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -62,7 +77,6 @@ public class DMDPositionController implements Initializable, DialogController {
   @FXML
   private void onSaveClick(ActionEvent e) {
 
-
   }
 
   @FXML
@@ -72,45 +86,19 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-  }
 
-  @Override
-  public void onDialogCancel() {
+    // The lime box that is used to position the DMD
+    dragBox = new DMDPositionResizer(area, aspectRatioCheckbox.selectedProperty(), color);
+    dragBox.addToPane(imagepane);
 
-  }
-
-  public void setGame(GameRepresentation gameRepresentation) {
-    this.game = gameRepresentation;
-
-    JFXFuture.supplyAsync(() -> {
-      return client.getDmdPositionService().getDMDInfo(game.getId());
-    })
-    .thenAcceptLater(dmdinfo -> {
-
-      Image image = new Image(client.getRestClient().getBaseUrl() + VPinStudioClientService.API + dmdinfo.getBackgroundUrl());
-      fullDMDImage.setImage(image);
-      fullDMDImage.setPreserveRatio(true);
-
-      // The bounds for the DMD resizer 
-      Bounds area = fullDMDImage.getLayoutBounds();
-      // The lime box that is used to position the DMD
-      dragBox = new DMDPositionResizer(imagepane, area, aspectRatioCheckbox.selectedProperty(), Color.LIME);
-
-      configureSpinner(dragBox.xProperty(), xSpinner, dmdinfo.getX(), 0, image.getWidth(), null);
-      configureSpinner(dragBox.yProperty(), ySpinner, dmdinfo.getY(), 0, image.getHeight(), null);
-      configureSpinner(dragBox.widthProperty(), widthSpinner, dmdinfo.getWidth(), 0, image.getWidth(), (w) -> {
-        if (aspectRatioCheckbox.isSelected()) {
-          heightSpinner.getValueFactory().valueProperty().setValue(w / 4);
-        }
-      });
-      configureSpinner(dragBox.heightProperty(), heightSpinner, dmdinfo.getHeight(), 0, image.getHeight(), (h) -> {
-        if (aspectRatioCheckbox.isSelected()) {
-          widthSpinner.getValueFactory().setValue(h * 4);
-        }
-      });
+    // setup linkages between spinner and our dragbox
+    configureSpinner(xSpinner, dragBox.xProperty(),dragBox.xMinProperty(), dragBox.xMaxProperty());
+    configureSpinner(ySpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
+    configureSpinner(widthSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
+    configureSpinner(heightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
 
     // add a selector in the pane to draw a rectangle.
-    new DMDPositionSelection(imagepane, area, aspectRatioCheckbox.selectedProperty(), Color.LIME, 
+    new DMDPositionSelection(imagepane, area, aspectRatioCheckbox.selectedProperty(), color, 
       // called on drag start, hide the lime dragbox 
       () -> {
         dragBox.setVisible(false);
@@ -120,40 +108,79 @@ public class DMDPositionController implements Initializable, DialogController {
         dragBox.setVisible(true);
         dragBox.select();
 
-        xSpinner.getValueFactory().setValue(rect.getMinX());
-        ySpinner.getValueFactory().setValue(rect.getMinY());
-        widthSpinner.getValueFactory().setValue(rect.getWidth());
-        heightSpinner.getValueFactory().setValue(rect.getHeight());
+        dragBox.setX(rect.getMinX());
+        dragBox.setY(rect.getMinY());
+        dragBox.setWidth(rect.getWidth());
+        dragBox.setHeight(rect.getHeight());
       });
-      
-      // if existing dmd size ratio is close to 4:1, activate the checkbox
-      if (dmdinfo != null) {
-        double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
-        if (Math.abs(ratio - 4) < 0.01) {
-          aspectRatioCheckbox.setSelected(true);
-        }
-      }
+
+
+    // now set the existing bounds
+    Bounds bounds = fullDMDImage.getLayoutBounds();
+    area.set(bounds);
+
+    // create a toggle group 
+    ToggleGroup tg = new ToggleGroup(); 
+    radioOnBackglass.setToggleGroup(tg);
+    radioOnB2sDMD.setToggleGroup(tg);
+    tg.selectedToggleProperty().addListener((obs, o, n) -> {
+      //TODO     
     });
   }
-  private void configureSpinner(DoubleProperty property, Spinner<Double> spinner, double value, double min, double max, Consumer<Double> spinnerHook) {
-    SpinnerValueFactory.DoubleSpinnerValueFactory factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, 0);
+
+  private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property, 
+        ReadOnlyObjectProperty<Double> minProperty, ReadOnlyObjectProperty<Double> maxProperty) {
+    SpinnerValueFactory.DoubleSpinnerValueFactory factory = 
+      new SpinnerValueFactory.DoubleSpinnerValueFactory(minProperty.get(), maxProperty.get());
     spinner.setValueFactory(factory);
     spinner.setEditable(true);
 
-    // Set the bidirectionnal binding between the spinner and a property of the resizer
-    spinner.getValueFactory().valueProperty().addListener((x, o, n) -> {
-      // hook must run before setting the value so that when we set it up, 
-      // it has already the good value and does not trigger a new change
-      if (spinnerHook != null) {
-        spinnerHook.accept(n);
-      }
-      property.set(n);
-    });
-    property.addListener((x, o, n) -> {
-      spinner.getValueFactory().setValue((Double) n);
-    });
-
-    // now that propeties are bound, sets the value, that also changes the associated property
-    spinner.getValueFactory().setValue(value);
+    factory.valueProperty().bindBidirectional(property);
+    factory.minProperty().bind(minProperty);
+    factory.maxProperty().bind(maxProperty);
   }
+
+  @Override
+  public void onDialogCancel() {
+
+  }
+
+  public void setGame(GameRepresentation gameRepresentation) {
+    this.game = gameRepresentation;
+    JFXFuture
+      .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
+      .thenAcceptLater(dmdinfo -> setDmdInfo(dmdinfo));
+  }
+
+  private void setDmdInfo(DMDInfo dmdinfo) {
+    Image image = new Image(client.getRestClient().getBaseUrl() + VPinStudioClientService.API + dmdinfo.getBackgroundUrl());
+    fullDMDImage.setImage(image);
+    fullDMDImage.setPreserveRatio(true);
+
+    if (VPinScreen.BackGlass.equals(dmdinfo.getOnScreen())) {
+      radioOnBackglass.setSelected(true);
+    }
+    else if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
+      radioOnB2sDMD.setSelected(true);
+    }
+
+    // The bounds for the DMD resizer 
+    Bounds bounds = fullDMDImage.getLayoutBounds();
+    area.set(bounds);
+
+    // Position our box
+    dragBox.setX(dmdinfo.getX());
+    dragBox.setY(dmdinfo.getY());
+    dragBox.setWidth(dmdinfo.getWidth());
+    dragBox.setHeight(dmdinfo.getHeight());
+
+    // if existing dmd size ratio is close to 4:1, activate the checkbox
+    if (dmdinfo != null) {
+      double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
+      if (Math.abs(ratio - 4) < 0.01) {
+        aspectRatioCheckbox.setSelected(true);
+      }
+    }
+  }
+
 }

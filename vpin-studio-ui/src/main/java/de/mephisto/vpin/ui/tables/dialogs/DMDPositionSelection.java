@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 
@@ -15,7 +16,7 @@ public class DMDPositionSelection {
   private static double minSize = 8;
 
   /** The constrained area for mouse drag */
-  private Bounds area;
+  private ObjectProperty<Bounds> areaProperty;
 
   /** The selection representing the drawn region */
   private Rectangle selection;
@@ -25,8 +26,8 @@ public class DMDPositionSelection {
   /** Whether aspect ratio has to be enforced */
   private BooleanProperty aspectRatio;
 
-  public DMDPositionSelection(Pane pane, Bounds area, BooleanProperty aspectRatio, Color color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
-    this.area = area;
+  public DMDPositionSelection(Pane pane, ObjectProperty<Bounds> areaProperty, BooleanProperty aspectRatio, ObjectProperty<Color> color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
+    this.areaProperty = areaProperty;
     this.aspectRatio = aspectRatio;
 
     pane.setOnMousePressed(me -> {
@@ -39,7 +40,7 @@ public class DMDPositionSelection {
       if (selection == null && (Math.abs(me.getX() - initX) > minSize || Math.abs(me.getY() - initY) > minSize)) {
         onDragStart.run();
         selection = new Rectangle(initX, initY, 0, 0);
-        selection.setStroke(color);
+        selection.strokeProperty().bind(color);
         selection.setStrokeType(StrokeType.INSIDE);
         selection.setStrokeWidth(1);
         selection.getStrokeDashArray().addAll(2d, 4d);
@@ -102,6 +103,7 @@ public class DMDPositionSelection {
 
 
   private double checkAreaX(double meX) {
+    Bounds area = areaProperty.get();
     if (meX < area.getMinX()) {
       return area.getMinX();
     }
@@ -111,6 +113,7 @@ public class DMDPositionSelection {
     return meX;
   }   
   private double checkAreaY(double meY) {
+    Bounds area = areaProperty.get();
     if (meY < area.getMinY()) {
       return area.getMinY();
     }

@@ -2,7 +2,10 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -20,8 +23,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Service
 public class DMDPositionService {
@@ -31,6 +32,8 @@ public class DMDPositionService {
   private GameService gameService;
   @Autowired
   private BackglassService backglassService;
+  @Autowired
+  private FrontendService frontendService;
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
@@ -109,14 +112,27 @@ public class DMDPositionService {
   }
 
   private DMDInfo addImageUrl(DMDInfo info) {
+
     DirectB2SData data = backglassService.getDirectB2SData(info.getGameId());
     if (data != null) {
-      // determine if DMD is positionned on backglass background or on fulldmd
-      boolean useFullDmd = false;
-  
-      String url = "directb2s/" + (useFullDmd? "dmdimage/" : "background/") + data.getEmulatorId() + "/" 
-        + URLEncoder.encode(URLEncoder.encode(data.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+      FrontendPlayerDisplay bg = frontendService.getFrontendPlayerDisplays(VPinScreen.BackGlass);
+      FrontendPlayerDisplay dmd = frontendService.getFrontendPlayerDisplays(VPinScreen.DMD);
+      FrontendPlayerDisplay display = bg;
+      // determine if DMD is positionned on DMD screen ?
+      if (dmd != null && dmd.contains(info.getX(), info.getY())) {
+        display = dmd;
+      }
+
+      // relativize to display
+      info.setX(info.getX() - display.getX());
+      info.setY(info.getY() - display.getY());
+
+      info.setOnScreen(display.getScreen());
+      String url = "directb2s/" + (display == dmd? "croppedDmd/" : "croppedBackground/") + info.getGameId();
       info.setBackgroundUrl(url);
+
+      //DirectB2STableSettings tableSettings = backglassService.getTableSettings(info.getGameId());
+
     }
     return info;
   }
@@ -125,4 +141,5 @@ public class DMDPositionService {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'saveDMDInfo'");
   }
+
 }

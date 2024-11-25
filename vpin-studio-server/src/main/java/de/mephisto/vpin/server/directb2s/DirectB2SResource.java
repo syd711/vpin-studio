@@ -97,16 +97,16 @@ public class DirectB2SResource {
     return download(image, name);
   }
   protected ResponseEntity<Resource> download(byte[] image, String name) {
+    if (image == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
 
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
     headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");
-
-    if (image == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    headers.add("X-Frame-Options", "SAMEORIGIN");
 
     ByteArrayResource resource = new ByteArrayResource(image);
     return ResponseEntity.ok()
@@ -115,6 +115,30 @@ public class DirectB2SResource {
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .body(resource);
   }
+
+  private ResponseEntity<StreamingResponseBody> download(File file) {
+    if (file == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.add("Pragma", "no-cache");
+    headers.add("Expires", "0");
+    headers.add("X-Frame-Options", "SAMEORIGIN");
+
+    return ResponseEntity.ok()
+      .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(file)))
+      .headers(headers)
+      .body(out -> {
+        try (FileInputStream fis = new FileInputStream(file)) {
+          StreamUtils.copy(fis, out);
+        }
+      });
+  }
+
+  //------------------------
 
   @PostMapping("/get")
   public DirectB2SData getData(@RequestBody DirectB2S directB2S) {
@@ -238,24 +262,25 @@ public class DirectB2SResource {
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
 
     File screenRes = backglassService.getScreenResFile(emuId, filename);
-    if (screenRes == null) {
+    return download(screenRes);
+  }
+
+  @GetMapping("/croppedBackground/{gameId}")
+  public ResponseEntity<StreamingResponseBody> getCroppedBackground(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+    return download(defaultPictureService.getCroppedDefaultPicture(game));
+  }
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + screenRes.getName());
-    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-    headers.add("Pragma", "no-cache");
-    headers.add("Expires", "0");
-
-    return ResponseEntity.ok()
-      .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(screenRes)))
-      .header("X-Frame-Options", "SAMEORIGIN")
-      .body(out -> {
-        try (FileInputStream fis = new FileInputStream(screenRes)) {
-          StreamUtils.copy(fis, out);
-        }
-      });
+  @GetMapping("/croppedDmd/{gameId}")
+  public ResponseEntity<StreamingResponseBody> getCroppedDmd(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    return download(defaultPictureService.getDMDPicture(game));
   }
 
   @PostMapping("/screenRes/save")

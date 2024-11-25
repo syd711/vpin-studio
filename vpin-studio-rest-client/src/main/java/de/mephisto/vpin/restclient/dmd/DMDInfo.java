@@ -2,12 +2,16 @@ package de.mephisto.vpin.restclient.dmd;
 
 import java.util.Objects;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+
 public class DMDInfo {
   private int gameId;
   private int x;
   private int y;
   private int width;
   private int height;
+  
+  private VPinScreen onScreen;
   private String backgroundUrl;
 
   public String getBackgroundUrl() {
@@ -58,6 +62,14 @@ public class DMDInfo {
     this.height = height;
   }
 
+  public VPinScreen getOnScreen() {
+    return onScreen;
+  }
+
+  public void setOnScreen(VPinScreen onScreen) {
+    this.onScreen = onScreen;
+  }
+  
   @Override
   public boolean equals(Object object) {
     if (this == object) return true;

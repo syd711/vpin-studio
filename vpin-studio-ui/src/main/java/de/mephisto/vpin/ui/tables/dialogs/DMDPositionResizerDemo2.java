@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import javafx.application.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.CheckBox;
@@ -50,23 +52,25 @@ public class DMDPositionResizerDemo2 extends Application {
     });
 
     // add a selector in the pane
-    Bounds area = new BoundingBox(15, 15, 500-15*2, 300-15*2);
+    ObjectProperty<Bounds> area = new SimpleObjectProperty<>(new BoundingBox(15, 15, 500-15*2, 300-15*2));
+    ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
 
-    addAreaBorder(pane, area);
+    addAreaBorder(pane, area.get());
     
-    new DMDPositionSelection(pane, area, aspectRatio.selectedProperty(),  Color.LIME, 
+    new DMDPositionSelection(pane, area, aspectRatio.selectedProperty(),  color, 
       () -> {
         if (resizer != null) {
-          pane.getChildren().remove(resizer);
+          resizer.removeFromPane(pane);
           resizer = null;
         }  
       }, 
       rect -> {
-        resizer = new DMDPositionResizer(pane, area, aspectRatio.selectedProperty(), Color.LIME);
+        resizer = new DMDPositionResizer(area, aspectRatio.selectedProperty(), color);
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());
         resizer.setHeight((int) rect.getHeight());
+        resizer.addToPane(pane);
       });  
   }
 
