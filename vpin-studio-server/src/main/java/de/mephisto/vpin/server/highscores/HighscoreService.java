@@ -439,8 +439,8 @@ public class HighscoreService implements InitializingBean {
     }
 
     if (oldRaw.equals(newRaw)) {
-      LOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '{}' detected.", game, game.getRom());
-      SLOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '" + game.getRom() + "' detected.");
+      LOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because there was no score change for rom '{}' detected.", game, game.getRom());
+      SLOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because there was no score change for rom '" + game.getRom() + "' detected.");
       return Optional.of(oldHighscore);
     }
 
