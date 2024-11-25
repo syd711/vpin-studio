@@ -7,4 +7,8 @@ public interface DialogController {
   default void onResized(int x, int y, int width, int height) {
 
   }
+
+  default void setModality(boolean modal) {
+
+  }
 }

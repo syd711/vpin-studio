@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-public class RecorderJob implements Job {
-  private final static Logger LOG = LoggerFactory.getLogger(RecorderJob.class);
+public class FrontendRecorderJob implements Job {
+  private final static Logger LOG = LoggerFactory.getLogger(FrontendRecorderJob.class);
 
   final GameService gameService;
   final FrontendConnector frontend;
@@ -26,7 +26,7 @@ public class RecorderJob implements Job {
 
   GameRecorder gameRecorder;
 
-  public RecorderJob(GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+  public FrontendRecorderJob(GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
     this.gameService = gameService;
     this.frontend = frontend;
     this.frontendStatusService = frontendStatusService;
@@ -131,6 +131,7 @@ public class RecorderJob implements Job {
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
+    frontend.killFrontend();
     LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.recordingDataSummary.size() + " processed.");
     if (gameRecorder != null) {
       gameRecorder.cancel(jobDescriptor);
@@ -153,15 +154,15 @@ public class RecorderJob implements Job {
           continue;
         }
 
-        if (recordingScreenOption.getRecordMode().equals(RecordMode.overwrite)) {
+        if (recordingScreenOption.getRecordMode().equals(RecordingWriteMode.overwrite)) {
           return true;
         }
 
-        if (recordingScreenOption.getRecordMode().equals(RecordMode.append)) {
+        if (recordingScreenOption.getRecordMode().equals(RecordingWriteMode.append)) {
           return true;
         }
 
-        if (recordingScreenOption.getRecordMode().equals(RecordMode.ifMissing)) {
+        if (recordingScreenOption.getRecordMode().equals(RecordingWriteMode.ifMissing)) {
           List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
           if (screenMediaFiles.isEmpty()) {
             return true;

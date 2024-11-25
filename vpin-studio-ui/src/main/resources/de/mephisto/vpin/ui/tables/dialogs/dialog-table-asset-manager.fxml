@@ -27,7 +27,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <top>
-      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-pinable-header.fxml" />
    </top>
    <center>
       <VBox>
@@ -249,7 +249,7 @@
                                           <Insets />
                                        </BorderPane.margin>
                                        <left>
-                                          <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                          <ListView fx:id="serverAssetsList" prefHeight="372.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
                                        </left>
                                        <center>
                                           <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
@@ -352,7 +352,7 @@
                                           <Insets />
                                        </BorderPane.margin>
                                        <left>
-                                          <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                          <ListView fx:id="assetList" prefHeight="250.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
                                        </left>
                                        <center>
                                           <BorderPane BorderPane.alignment="CENTER">

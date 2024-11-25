@@ -343,48 +343,39 @@ public class WidgetFactory {
     fontIcon.setIconSize(24);
     fontIcon.setIconColor(Paint.valueOf(hexColor(playlist.getMenuColor())));
     fontIcon.setIconLiteral("mdi2v-view-list");
+    label.setTooltip(new Tooltip(playlist.getName()));
 
     if (playlist.getId() == -1) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getLocalFavsColor()));
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getId() == -2) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("Visual Pinball X")) {
       fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("VPX")) {
       fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("Future")) {
       fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("FX3")) {
       fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("Just Added")) {
       fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("Most Played")) {
       fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("Home")) {
       fontIcon.setIconLiteral("mdi2a-alpha-h-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("VPW")) {
       fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
-      label.setTooltip(new Tooltip(playlist.getName()));
     }
 
     label.setGraphic(fontIcon);
@@ -452,6 +443,10 @@ public class WidgetFactory {
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
+    return createDialogStage(fxmlLoader,owner, title, stateId, null);
+  }
+
+  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId, String modalStateId) {
     Parent root = null;
 
     try {
@@ -470,6 +465,7 @@ public class WidgetFactory {
       DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
       dialogHeaderController.setStage(stage);
       dialogHeaderController.setTitle(title);
+      dialogHeaderController.setModal(modalStateId == null || LocalUISettings.isModal(modalStateId));
       stage.setOnShowing(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
@@ -485,8 +481,14 @@ public class WidgetFactory {
       dialogHeaderController.setTitle(title);
     }
 
-    stage.initOwner(owner);
-    stage.initModality(Modality.WINDOW_MODAL);
+    if (modalStateId != null && !LocalUISettings.isModal(modalStateId)) {
+      stage.initModality(Modality.NONE);
+    }
+    else {
+      stage.initOwner(owner);
+      stage.initModality(Modality.APPLICATION_MODAL);
+    }
+
     stage.initStyle(StageStyle.UNDECORATED);
     stage.setTitle(title);
     stage.setUserData(controller);

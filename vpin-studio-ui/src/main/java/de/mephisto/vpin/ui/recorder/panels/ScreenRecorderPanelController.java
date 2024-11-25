@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.recorder.panels;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.recorder.RecordMode;
+import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
@@ -33,7 +33,7 @@ import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 public class ScreenRecorderPanelController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorderPanelController.class);
 
-  private final static List<RecordMode> RECORD_MODE_LIST = Arrays.asList(RecordMode.ifMissing, RecordMode.overwrite, RecordMode.append);
+  private final static List<RecordingWriteMode> RECORD_MODE_LIST = Arrays.asList(RecordingWriteMode.ifMissing, RecordingWriteMode.overwrite, RecordingWriteMode.append);
   public static final int PREVIEW_WIDTH_THRESHOLD = 1600;
 
   @FXML
@@ -41,6 +41,9 @@ public class ScreenRecorderPanelController implements Initializable {
 
   @FXML
   private Pane preview;
+
+  @FXML
+  private Pane audioPanel;
 
   @FXML
   private ImageView imageView;
@@ -61,17 +64,23 @@ public class ScreenRecorderPanelController implements Initializable {
   private CheckBox inGameRecordingCheckbox;
 
   @FXML
+  private CheckBox audioCheckbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
   private Spinner<Integer> delaySpinner;
 
   @FXML
-  private ComboBox<RecordMode> recordModeComboBox;
+  private ComboBox<RecordingWriteMode> recordModeComboBox;
 
   private RecordingScreen recordingScreen;
 
   public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
+//    audioPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
+    audioPanel.setVisible(false);
+
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -101,14 +110,14 @@ public class ScreenRecorderPanelController implements Initializable {
       option = new RecordingScreenOptions();
       option.setRecordingDuration(10);
       option.setDisplayName(recordingScreen.getScreen().name());
-      option.setRecordMode(RecordMode.ifMissing);
+      option.setRecordMode(RecordingWriteMode.ifMissing);
       settings.getRecordingScreenOptions().add(option);
     }
 
     recordModeComboBox.setValue(option.getRecordMode());
-    recordModeComboBox.valueProperty().addListener(new ChangeListener<RecordMode>() {
+    recordModeComboBox.valueProperty().addListener(new ChangeListener<RecordingWriteMode>() {
       @Override
-      public void changed(ObservableValue<? extends RecordMode> observable, RecordMode oldValue, RecordMode newValue) {
+      public void changed(ObservableValue<? extends RecordingWriteMode> observable, RecordingWriteMode oldValue, RecordingWriteMode newValue) {
         Platform.runLater(() -> {
           RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
           RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
@@ -131,6 +140,14 @@ public class ScreenRecorderPanelController implements Initializable {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
       RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
       option2.setInGameRecording(t1);
+      client.getPreferenceService().setJsonPreference(s);
+    });
+
+    audioCheckbox.setSelected(option.isRecordAudio());
+    audioCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+      option2.setRecordAudio(t1);
       client.getPreferenceService().setJsonPreference(s);
     });
 
@@ -210,6 +227,7 @@ public class ScreenRecorderPanelController implements Initializable {
     preview.managedProperty().bindBidirectional(preview.visibleProperty());
     previewLabel.managedProperty().bindBidirectional(previewLabel.visibleProperty());
     imageView.managedProperty().bindBidirectional(imageView.visibleProperty());
+    audioPanel.managedProperty().bindBidirectional(audioPanel.visibleProperty());
   }
 
   public VPinScreen getScreen() {

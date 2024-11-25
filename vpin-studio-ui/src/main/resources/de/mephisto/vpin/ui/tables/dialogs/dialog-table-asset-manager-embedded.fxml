@@ -5,8 +5,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -17,8 +19,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitMenuButton?>
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
@@ -26,7 +26,7 @@
             <Insets />
          </BorderPane.margin>
          <content>
-            <VBox>
+            <VBox styleClass="media-list">
                <children>
                   <VBox maxHeight="1.7976931348623157E308">
                      <children>
@@ -91,7 +91,7 @@
                                     </BorderPane>
                                  </right>
                                  <center>
-                                    <ListView fx:id="serverAssetsList" prefHeight="220.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                    <ListView fx:id="serverAssetsList" prefHeight="220.0" BorderPane.alignment="CENTER" />
                                  </center>
                               </BorderPane>
                            </top>
@@ -428,7 +428,7 @@
                         </Button>
                      </items>
                   </ToolBar>
-                  <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="70.0" styleClass="pretty-list-view" />
+                  <ListView fx:id="assetList" maxHeight="1.7976931348623157E308" minHeight="70.0" />
                </children>
             </VBox>
          </content>

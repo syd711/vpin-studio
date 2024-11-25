@@ -1,3 +1,23 @@
+## Release Notes 3.10.3
+
+## Changes
+
+- **Tables / Media Recorder**: Added more recording options to tackle the OpenGL problem. You can record games via the VPX launcher now, skipping the frontend start and exit calls. This way, another VPX.exe can be used which allows to work around the playfield recording problem.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder-dialog.png" width="700" />
+
+- **Tables / Media Recorder**: Disabled VPin Studio overlay when Popper is started for recordings. 
+- **Tables / Backglass Manager**: Added .res designer dialog.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="600" />
+
+- **Tables / Date Columns**: Added missing modification date column data.
+- **Tables / Playlist Column**: Added missing tooltips for custom playlists.
+- **Tables / Asset Manager**: Fixed styling of list selection which was not highlighted properly.
+- **Tables / Asset Manager**: Provided "undock" button in the header. Using this options removes the "modal" option of the dialog so it can be kept open. The selection is automatically updated for the current table.
+
+---
+
 ## Release Notes 3.10.2
 
 ## Changes

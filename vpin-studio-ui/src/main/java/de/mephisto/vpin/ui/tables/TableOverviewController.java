@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
@@ -269,7 +270,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private final DateFormat dateFormat =  DateFormat.getDateInstance();
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
@@ -1178,6 +1179,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       Label label = null;
       if (value.getDateAdded() != null) {
         label = new Label(dateFormat.format(value.getDateAdded()));
+      }
+      else {
+        label = new Label("-");
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
+      Label label = null;
+      if (value.getDateAdded() != null) {
+        label = new Label(dateFormat.format(value.getDateUpdated()));
       }
       else {
         label = new Label("-");

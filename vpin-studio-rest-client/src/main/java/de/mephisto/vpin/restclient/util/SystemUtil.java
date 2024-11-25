@@ -5,6 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,5 +90,22 @@ public class SystemUtil {
       }
     }
     return true;
+  }
+
+  public static List<String> getAudioDevices() {
+    List<String> names = new ArrayList<>();
+    Mixer.Info[] infos = AudioSystem.getMixerInfo();
+    for (int i = 0; i < infos.length; i++) {
+      Mixer.Info info = infos[i];
+
+      System.out.println(String.format("Name [%s], description - [%s]\n", info.getName(), info.getDescription()));
+      System.out.println(info.getDescription());
+      names.add(info.getName());
+    }
+    return names;
+  }
+
+  public static void main(String[] args) {
+    System.out.println(getAudioDevices());
   }
 }

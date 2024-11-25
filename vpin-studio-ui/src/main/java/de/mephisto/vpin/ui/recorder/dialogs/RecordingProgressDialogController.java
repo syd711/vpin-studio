@@ -2,24 +2,31 @@ package de.mephisto.vpin.ui.recorder.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
+import de.mephisto.vpin.restclient.recorder.RecordingMode;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.jobs.JobUpdatesListener;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +64,24 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   @FXML
   private ProgressBar progressBar;
 
+  @FXML
+  private Pane recordingProgressPanel;
+
+  @FXML
+  private Pane emulatorRecordingPanel;
+  @FXML
+  private RadioButton emulatorRecordingRadio;
+  @FXML
+  private Pane frontendRecordingPanel;
+  @FXML
+  private RadioButton frontendRecordingRadio;
+
+  @FXML
+  private CheckBox customLauncherCheckbox;
+
+  @FXML
+  private ComboBox<String> launcherCombo;
+
 
   private Stage stage;
   private RecorderController recorderController;
@@ -66,6 +91,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private JobDescriptor jobDescriptor;
   private Thread jobRefreshThread;
   private boolean finished = false;
+  private RecorderSettings settings;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -80,11 +106,22 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   @FXML
   private void onRecord(ActionEvent e) {
+    TableAssetManagerDialogController.close();
+
     finished = false;
     recordBtn.setVisible(false);
     cancelBtn.setVisible(false);
     stopBtn.setVisible(true);
     progressBar.setDisable(false);
+
+    frontendRecordingRadio.setDisable(true);
+    emulatorRecordingRadio.setDisable(true);
+    launcherCombo.setDisable(true);
+    customLauncherCheckbox.setDisable(true);
+
+    recordingProgressPanel.getStyleClass().add("selection-panel-selected");
+    emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+    frontendRecordingRadio.getStyleClass().remove("selection-panel-selected");
 
     progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
 
@@ -200,10 +237,86 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+
     stopBtn.managedProperty().bindBidirectional(stopBtn.visibleProperty());
     recordBtn.managedProperty().bindBidirectional(recordBtn.visibleProperty());
     cancelBtn.managedProperty().bindBidirectional(cancelBtn.visibleProperty());
     stopBtn.setVisible(false);
+
+    ToggleGroup toggleGroup = new ToggleGroup();
+    emulatorRecordingRadio.setToggleGroup(toggleGroup);
+    frontendRecordingRadio.setToggleGroup(toggleGroup);
+
+    if (settings.getRecordingMode() == null || settings.getRecordingMode().equals(RecordingMode.emulator)) {
+      frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+      emulatorRecordingRadio.setSelected(true);
+    }
+    else {
+      emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+      frontendRecordingRadio.setSelected(true);
+    }
+
+    emulatorRecordingRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          if (!emulatorRecordingPanel.getStyleClass().contains("selection-panel-selected")) {
+            emulatorRecordingPanel.getStyleClass().add("selection-panel-selected");
+          }
+          frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+          settings.setRecordingMode(RecordingMode.emulator);
+        }
+        else {
+          frontendRecordingPanel.getStyleClass().remove("selection-panel-selected");
+        }
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
+
+    frontendRecordingRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          if (!frontendRecordingPanel.getStyleClass().contains("selection-panel-selected")) {
+            frontendRecordingPanel.getStyleClass().add("selection-panel-selected");
+          }
+          emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+          settings.setRecordingMode(RecordingMode.frontend);
+        }
+        else {
+          emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
+        }
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
+
+    GameEmulatorRepresentation gameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    List<String> altExeNames = gameEmulator.getAltExeNames();
+    launcherCombo.setItems(FXCollections.observableList(altExeNames));
+
+    if (!StringUtils.isEmpty(settings.getCustomLauncher())) {
+      launcherCombo.setValue(settings.getCustomLauncher());
+    }
+
+    customLauncherCheckbox.setSelected(settings.isCustomLauncherEnabled());
+    customLauncherCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        settings.setCustomLauncherEnabled(newValue);
+        launcherCombo.setDisable(!newValue);
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
+    launcherCombo.setDisable(!settings.isCustomLauncherEnabled());
+
+    launcherCombo.valueProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        settings.setCustomLauncher(newValue);
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
   }
 
   @Override

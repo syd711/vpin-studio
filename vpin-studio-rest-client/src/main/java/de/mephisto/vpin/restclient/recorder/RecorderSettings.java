@@ -12,6 +12,33 @@ public class RecorderSettings extends JsonSettings {
   private int startDelay = 2;
   private int refreshInterval = 2;
   private List<RecordingScreenOptions> recordingScreenOptions = new ArrayList<>();
+  private RecordingMode recordingMode = RecordingMode.emulator;
+  private boolean customLauncherEnabled;
+  private String customLauncher;
+
+  public String getCustomLauncher() {
+    return customLauncher;
+  }
+
+  public void setCustomLauncher(String customLauncher) {
+    this.customLauncher = customLauncher;
+  }
+
+  public boolean isCustomLauncherEnabled() {
+    return customLauncherEnabled;
+  }
+
+  public void setCustomLauncherEnabled(boolean customLauncherEnabled) {
+    this.customLauncherEnabled = customLauncherEnabled;
+  }
+
+  public RecordingMode getRecordingMode() {
+    return recordingMode;
+  }
+
+  public void setRecordingMode(RecordingMode recordingMode) {
+    this.recordingMode = recordingMode;
+  }
 
   public List<RecordingScreenOptions> getRecordingScreenOptions() {
     return recordingScreenOptions;

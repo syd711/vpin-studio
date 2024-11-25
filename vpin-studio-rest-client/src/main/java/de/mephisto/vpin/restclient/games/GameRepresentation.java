@@ -27,6 +27,7 @@ public class GameRepresentation {
   private String gameDisplayName;
   private String gameFileName;
   private Date dateAdded;
+  private Date dateUpdated;
   private String gameName;
   private String version;
   private long gameFileSize;
@@ -77,6 +78,14 @@ public class GameRepresentation {
   private String resPath;
   private String pupPackPath;
   private boolean altSoundAvailable;
+
+  public Date getDateUpdated() {
+    return dateUpdated;
+  }
+
+  public void setDateUpdated(Date dateUpdated) {
+    this.dateUpdated = dateUpdated;
+  }
 
   public String getLauncher() {
     return launcher;

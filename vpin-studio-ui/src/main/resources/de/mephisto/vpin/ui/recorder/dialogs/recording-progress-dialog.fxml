@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.dialogs.RecordingProgressDialogController">
+<BorderPane prefWidth="800.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.dialogs.RecordingProgressDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -36,20 +43,114 @@
          <children>
             <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="Tables selected for recording:" textFill="WHITE" />
             <Label fx:id="tablesLabel" layoutX="22.0" layoutY="121.0" styleClass="default-text" text="-" />
-            <VBox spacing="6.0" styleClass="selection-panel-selected">
+            <HBox spacing="12.0">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
                <children>
-                  <Label fx:id="durationLabel2" styleClass="default-headline" text="Recording Progress" />
-                  <ProgressBar fx:id="progressBar" disable="true" prefWidth="600.0" progress="0.0" />
+                  <VBox fx:id="emulatorRecordingPanel" prefWidth="400.0">
+                     <children>
+                        <VBox>
+                           <children>
+                              <RadioButton fx:id="emulatorRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="Emulator Recording" />
+                              <Label styleClass="checkbox-description" text="The tables will be launched by their emulator," textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label styleClass="checkbox-description" text="but you can override this setting for the recording." textFill="WHITE" />
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="86.199951171875" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="425.60002441406255" minWidth="10.0" prefWidth="240.600048828125" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label layoutX="10.0" layoutY="44.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="Launcher:" />
+                                    <CheckBox fx:id="customLauncherCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Custom Launcher" GridPane.columnIndex="1" />
+                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="VPX .exe:" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="launcherCombo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" top="12.0" />
+                                 </VBox.margin>
+                              </GridPane>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </VBox.margin>
+                        </VBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <styleClass>
+                        <String fx:value="selection-panel-selected" />
+                        <String fx:value="selection-panel" />
+                     </styleClass>
+                  </VBox>
+                  <VBox fx:id="frontendRecordingPanel" layoutX="10.0" layoutY="10.0" prefWidth="390.0">
+                     <children>
+                        <VBox>
+                           <children>
+                              <HBox spacing="6.0">
+                                 <children>
+                                    <RadioButton fx:id="frontendRecordingRadio" mnemonicParsing="false" styleClass="default-headline" text="Frontend Recording" />
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="For the OpenGL version of Visual Pinball X, playfield recording is known not to work." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <Label styleClass="checkbox-description" text="The tables will be launched through the" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="122.39997558593751" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="425.60002441406255" minWidth="10.0" prefWidth="425.60002441406255" />
+                                 </columnConstraints>
+                              </GridPane>
+                              <Label styleClass="checkbox-description" text="frontend, using the configured emulator." textFill="WHITE" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </VBox.margin>
+                        </VBox>
+                     </children>
+                     <styleClass>
+                        <String fx:value="selection-panel-selected" />
+                        <String fx:value="selection-panel" />
+                     </styleClass>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox fx:id="recordingProgressPanel" layoutX="22.0" layoutY="88.0" spacing="6.0">
+               <children>
+                  <Label fx:id="durationLabel21" styleClass="default-headline" text="Recording Progress" />
+                  <ProgressBar fx:id="progressBar" disable="true" prefWidth="800.0" progress="0.0" />
                   <GridPane hgap="3.0" vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="184.599951171875" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="418.00000000000006" minWidth="10.0" prefWidth="363.00004882812493" />
-                    </columnConstraints>
-                    <rowConstraints>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="144.8" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="604.0" minWidth="10.0" prefWidth="604.0" />
+                     </columnConstraints>
+                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="Total Recordings:" GridPane.rowIndex="2" />
                         <Label styleClass="default-text" text="Active Table:" GridPane.rowIndex="1" />
@@ -60,9 +161,6 @@
                      </children>
                   </GridPane>
                </children>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
                <padding>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </padding>

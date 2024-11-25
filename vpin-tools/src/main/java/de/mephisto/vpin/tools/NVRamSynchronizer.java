@@ -35,14 +35,14 @@ public class NVRamSynchronizer {
       "| Table | ROM | Available | Submitted By |\n" +
       "| ----- | --- | --------- |--------------|\n";
 
-  private static String AUTHOR = "DoXer";
+  private static String AUTHOR = "gorgatron";
 
   public static void main(String[] args) throws Exception {
     synchonizeNVRamRepo();
   }
 
   private static void synchonizeNVRamRepo() throws Exception {
-    File init = new File("./resources/pinemhi/pinemhi.ini");
+    File init = new File("./resources/pinemhi/pinemhi.ini.template");
     File readme = new File(NVRAM_REPO, "README.md");
     File allZip = new File(NVRAM_REPO, "all.zip");
 

@@ -424,7 +424,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         LOG.error("failed to load recorder options tab: " + e.getMessage(), e);
       }
       RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(recordingScreen);
-      if(recordingScreenOption != null) {
+      if (recordingScreenOption != null) {
         options.add(recordingScreenOption);
       }
       else {
@@ -478,7 +478,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     for (RecordingScreen screen : recordingScreens) {
       TableColumn<GameRepresentationModel, GameRepresentationModel> column = new TableColumn<>(screen.getName());
       column.setPrefWidth(130);
-      if(screen.getScreen().equals(VPinScreen.DMD) || screen.getScreen().equals(VPinScreen.Topper)) {
+      if (screen.getScreen().equals(VPinScreen.DMD) || screen.getScreen().equals(VPinScreen.Topper)) {
         column.setPrefWidth(90);
       }
       column.setStyle("-fx-alignment: CENTER;");
@@ -525,11 +525,15 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       public void changed(ObservableValue<? extends GameRepresentationModel> observable, GameRepresentationModel oldValue, GameRepresentationModel newValue) {
         dataManagerBtn.setDisable(newValue == null);
         tableNavigateBtn.setDisable(newValue == null);
-        if(newValue != null) {
+        if (newValue != null) {
           playButtonController.setData(newValue.getGame());
         }
         else {
           playButtonController.setData(null);
+        }
+
+        if (newValue != null) {
+          EventManager.getInstance().notifyTableSelectionChanged(Arrays.asList(newValue.getGame()));
         }
       }
     });
@@ -624,7 +628,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   private List<VPinScreen> getEnabledScreens() {
     List<VPinScreen> result = new ArrayList<>();
-    for (Map.Entry<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> entry : screenColumns.entrySet())  {
+    for (Map.Entry<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> entry : screenColumns.entrySet()) {
       if (entry.getValue().isVisible()) {
         result.add(entry.getKey());
       }

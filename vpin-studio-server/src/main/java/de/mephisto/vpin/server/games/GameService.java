@@ -5,7 +5,10 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.GameList;
+import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
+import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
@@ -402,7 +405,7 @@ public class GameService implements InitializingBean {
     }
 
     GameEmulator emulator = game.getEmulator();
-    if (emulator.isVpxEmulator() && emulator.getExe().exists()) {
+    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe().exists()) {
       game.setLauncher(emulator.getExe().getName());
     }
 
@@ -428,11 +431,13 @@ public class GameService implements InitializingBean {
     }
 
     //check alias
-    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
-    if (!StringUtils.isEmpty(originalRom)) {
-      String aliasName = game.getRom();
-      game.setRom(originalRom);
-      game.setRomAlias(aliasName);
+    if (game.getEmulator() != null) {
+      String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), game.getRom());
+      if (!StringUtils.isEmpty(originalRom)) {
+        String aliasName = game.getRom();
+        game.setRom(originalRom);
+        game.setRomAlias(aliasName);
+      }
     }
 
     // fill scanned values
@@ -481,7 +486,7 @@ public class GameService implements InitializingBean {
     game.setAltColorType(altColorService.getAltColorType(game));
 
     File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-    game.setDefaultBackgroundAvailable(rawDefaultPicture != null && rawDefaultPicture.exists());
+    game.setDefaultBackgroundAvailable(rawDefaultPicture.exists());
 
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
@@ -590,7 +595,7 @@ public class GameService implements InitializingBean {
       LOG.info("Saved event log for " + log.getGameId());
     }
     catch (Exception e) {
-      LOG.error("Failed to save event log: " + e.getMessage(), e);
+      LOG.error("Failed to save event log: {}", e.getMessage(), e);
     }
   }
 
@@ -653,7 +658,7 @@ public class GameService implements InitializingBean {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to reset update flag for rom '" + rom + "': " + e.getMessage(), e);
+      LOG.error("Failed to reset update flag for rom '{}': {}", rom, e.getMessage(), e);
     }
   }
 

@@ -828,6 +828,9 @@
 }
 
 .media-list .list-view {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #000000;
+    -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-text-background-color: #FFFFFF;
@@ -836,17 +839,17 @@
     -fx-border-width: 1;*/
 }
 
-.media-list .list-view .list-cell:selected {
+.media-list .list-view .list-cell:filled:selected {
     -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+    -fx-background-color: #5252b8;
 }
 
 .media-list .list-view .list-cell:hover {
     -fx-font-size: 14px;
     -fx-text-fill: #7381fa;
 }
-
 
 .media-list .list-view .list-cell:odd {
     -fx-font-size: 14px;
@@ -1217,55 +1220,6 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-border-radius: 4 4 4 4;
 }
-
-.pretty-list-view {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: black;
-    -fx-border-width: 1;
-}
-.pretty-list-view: focused {
-    -fx-border-style: solid solid solid solid;
-    -fx-border-color: black;
-    -fx-border-width: 1;
-}
-.pretty-list-view .list-cell: hover {
-    -fx-border-width: 1;
-    -fx-background-color: #3e3e71;
-    -fx-text-background-color: #6666FF;
-}
-.pretty-list-view .list-cell: odd{
-    -fx-background-color: #303733;
-    -fx-text-fill: #FFFFFF;
-}
-.pretty-list-view .list-cell: odd:hover{
-    -fx-background-color: #3e3e71;
-    -fx-text-fill: #FFFFFF;
-}
-.pretty-list-view .list-cell: even{
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #283335;
-}
-.pretty-list-view .list-cell: even:hover{
-    -fx-background-color: #3e3e71;
-    -fx-text-fill: #FFFFFF;
-}
-
-.pretty-list-view .list-cell:selected {
-    -fx-text-background-color: #FFFFFF;
-    -fx-font-weight: bold;
-    -fx-background-color: #5252b8;
-}
-.pretty-list-view:row-selection .list-cell:filled:hover {
-    -fx-background-color: #5252b8;
-    -fx-text-fill: #FFFFFF;
-}
-.pretty-list-view:focused .list-cell:filled:focused:selected:hover {
-    -fx-text-background-color: #FFFFFF;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-weight: bold;
-    -fx-background-color: #6666FFAA;
- }
-
 
 .edit-mode-border {
     -fx-border-color: #6666FF;

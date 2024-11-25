@@ -36,6 +36,7 @@ public class CabMonitorController implements Initializable, DialogController {
   public static final double MIN_ZOOM = 0.2;
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
+  public static String MODAL_STATE_ID = "cabinetMonitorController";
 
   private double scaling = 1;
 

@@ -17,8 +17,8 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -247,6 +247,10 @@ public class TableDialogs {
   }
 
   public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, VPinScreen screen) {
+    if (TableAssetManagerDialogController.INSTANCE != null) {
+      return true;
+    }
+
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
     GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
@@ -256,16 +260,20 @@ public class TableDialogs {
     if (hd) {
       fxml = "dialog-table-asset-manager-hd.fxml";
     }
-    Stage stage = Dialogs.createStudioDialogStage(TableAssetManagerDialogController.class, fxml, "Asset Manager", null);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
-    controller.setGame(stage, overviewController, game, screen);
+    controller.setGame(stage, overviewController, game, screen, false);
 
     stage.showAndWait();
     return true;
   }
 
   public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, PlaylistRepresentation playlist, VPinScreen screen) {
+    if (TableAssetManagerDialogController.INSTANCE != null) {
+      return true;
+    }
+
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
     GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
@@ -275,7 +283,7 @@ public class TableDialogs {
     if (hd) {
       fxml = "dialog-table-asset-manager-hd.fxml";
     }
-    Stage stage = Dialogs.createStudioDialogStage(TableAssetManagerDialogController.class, fxml, "Asset Manager", null);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
     controller.setPlaylistMode();

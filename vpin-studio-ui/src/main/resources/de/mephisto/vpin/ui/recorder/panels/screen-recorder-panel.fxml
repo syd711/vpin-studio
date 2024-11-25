@@ -24,7 +24,7 @@
             <Insets left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <left>
-            <VBox spacing="12.0" BorderPane.alignment="CENTER">
+            <VBox BorderPane.alignment="CENTER">
                <children>
                   <BorderPane prefWidth="300.0">
                      <left>
@@ -99,6 +99,29 @@
                            </children>
                         </HBox>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <GridPane fx:id="audioPanel" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.599951171875" minWidth="10.0" prefWidth="132.599951171875" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="182.20007324218747" minWidth="10.0" prefWidth="167.80004882812497" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <CheckBox fx:id="audioCheckbox" mnemonicParsing="false" text="Record Audio" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="default-text" text="Audio:" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
                   </GridPane>
                   <HBox spacing="12.0">
                      <children>

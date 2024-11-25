@@ -4,10 +4,19 @@ public class RecordingScreenOptions {
   private String displayName;
   private int recordingDuration = 10;
   private int initialDelay = 2;
-  private RecordMode recordMode = RecordMode.ifMissing;
+  private RecordingWriteMode recordingWriteMode = RecordingWriteMode.ifMissing;
   private boolean enabled = true;
   private boolean fps60 = false;
   private boolean inGameRecording = false;
+  private boolean recordAudio = false;
+
+  public boolean isRecordAudio() {
+    return recordAudio;
+  }
+
+  public void setRecordAudio(boolean recordAudio) {
+    this.recordAudio = recordAudio;
+  }
 
   public boolean isInGameRecording() {
     return inGameRecording;
@@ -57,11 +66,11 @@ public class RecordingScreenOptions {
     this.recordingDuration = recordingDuration;
   }
 
-  public RecordMode getRecordMode() {
-    return recordMode;
+  public RecordingWriteMode getRecordMode() {
+    return recordingWriteMode;
   }
 
-  public void setRecordMode(RecordMode recordMode) {
-    this.recordMode = recordMode;
+  public void setRecordMode(RecordingWriteMode recordingWriteMode) {
+    this.recordingWriteMode = recordingWriteMode;
   }
 }

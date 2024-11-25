@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.WindowsUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -788,7 +789,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
               display.setRotation(sectionNode.getInt("ScreenRotation"));
             }
             else {
-              LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
+              LOG.warn("Unsupported PinUP display for screen '{}', display has been skipped.", name);
             }
             result.add(display);
           }
@@ -2165,11 +2166,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return false;
   }
 
-  private boolean isEmulatorRunning(GameEmulator emulator) {
-    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
-  }
-
   //-------------------------------
   // Recording
 
@@ -2244,7 +2240,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    * User32.INSTANCE.PostMessage(hwnd, msg, new WinDef.WPARAM(6), new WinDef.LPARAM(game.getId()));
    *
    * @param game
-   * @param wait
    * @return
    */
   @Override
@@ -2264,7 +2259,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
-          while (!isEmulatorRunning(game.getEmulator())) {
+          //TODO mpf
+          while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player")) {
             Thread.sleep(1000);
           }
           return true;

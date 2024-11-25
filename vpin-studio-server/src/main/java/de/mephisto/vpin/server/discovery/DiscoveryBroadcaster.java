@@ -14,120 +14,124 @@ import java.util.Enumeration;
 
 @Service
 public class DiscoveryBroadcaster implements InitializingBean {
-    private final static Logger LOG = LoggerFactory.getLogger(DiscoveryBroadcaster.class);
-    private final PreferencesService preferencesService;
+  private final static Logger LOG = LoggerFactory.getLogger(DiscoveryBroadcaster.class);
+  private final PreferencesService preferencesService;
 
-    private Thread thread;
-    private boolean shouldRun = false;
+  private Thread thread;
+  private boolean shouldRun = false;
 
-    public DiscoveryBroadcaster(PreferencesService preferencesService) {
-        this.preferencesService = preferencesService;
+  public DiscoveryBroadcaster(PreferencesService preferencesService) {
+    this.preferencesService = preferencesService;
+  }
+
+  public void stop() {
+    LOG.info("Trying to stop the {}", DiscoveryBroadcaster.class.getName());
+
+    synchronized (this) {
+      LOG.info("{} wasn't running", DiscoveryBroadcaster.class.getName());
+
+      if (thread == null)
+        return;
+
+      shouldRun = false;
+      this.notify();
     }
 
-    public void stop() {
-        LOG.info("Trying to stop the {}",DiscoveryBroadcaster.class.getName());
+    try {
+      thread.join();
+    }
+    catch (InterruptedException e) {
+      LOG.error("Failed to stop {}: {}", DiscoveryBroadcaster.class.getName(), e.getMessage(), e);
+    }
 
-        synchronized (this) {
-            LOG.info("{} wasn't running", DiscoveryBroadcaster.class.getName());
+    LOG.info("{} stopped", DiscoveryBroadcaster.class.getName());
 
-            if (thread == null)
-                return;
+    thread = null;
+  }
 
-            shouldRun = false;
-            this.notify();
+  public synchronized void start() {
+    if (thread != null) {
+      LOG.info("{} already started", DiscoveryBroadcaster.class.getName());
+      return;
+    }
+
+    shouldRun = true;
+
+    LOG.info("Starting {} thread", DiscoveryBroadcaster.class.getName());
+
+    thread = new Thread(new Runnable() {
+      private DatagramSocket socket;
+
+      @Override
+      public void run() {
+        // The system name can be null. If it was not previously set we'll use the server address.
+        String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
+        if (systemName == null) {
+          systemName = "";
+
+          try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            systemName = localHost.getHostName();
+          }
+          catch (Exception e) {
+            //
+          }
         }
 
         try {
-            thread.join();
-        } catch (InterruptedException e) {
-            LOG.error("Failed to stop {}: {}", DiscoveryBroadcaster.class.getName(), e.getMessage(), e);
-        }
+          socket = new DatagramSocket();
 
-        LOG.info("{} stopped", DiscoveryBroadcaster.class.getName());
+          byte[] bytes = systemName.getBytes(StandardCharsets.US_ASCII);
 
-        thread = null;
-    }
+          DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
+          packet.setPort(50505);
 
-    public synchronized void start() {
-        if (thread != null) {
-            LOG.info("{} already started", DiscoveryBroadcaster.class.getName());
-            return;
-        }
+          while (shouldRun) {
+            Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+            for (NetworkInterface netint : Collections.list(nets)) {
+              if (!netint.isUp())
+                continue;
 
-        shouldRun = true;
+              if (!netint.isLoopback()) {
+                for (InterfaceAddress ifaceAddress : netint.getInterfaceAddresses()) {
+                  InetAddress bcast = ifaceAddress.getBroadcast();
 
-        LOG.info("Starting {} thread", DiscoveryBroadcaster.class.getName());
-
-        thread = new Thread(new Runnable() {
-            private DatagramSocket socket;
-
-            @Override
-            public void run() {
-                // The system name can be null. If it was not previously set we'll use the server address.
-                String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
-                if (systemName == null) {
-                    systemName = "";
-
-                    try {
-                        InetAddress localHost = InetAddress.getLocalHost();
-                        systemName = localHost.getHostName();
-                    } catch(Exception e) {
-                        //
-                    }
+                  if (bcast != null) {
+                    sendPacket(socket, packet, bcast);
+                  }
                 }
-
-                try {
-                    socket = new DatagramSocket();
-
-                    byte[] bytes = systemName.getBytes(StandardCharsets.US_ASCII);
-
-                    DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
-                    packet.setPort(50505);
-
-                    while (shouldRun) {
-                        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
-                        for (NetworkInterface netint : Collections.list(nets)) {
-                            if (!netint.isUp())
-                                continue;
-
-                            if (!netint.isLoopback()) {
-                                for (InterfaceAddress ifaceAddress : netint.getInterfaceAddresses()) {
-                                    InetAddress bcast = ifaceAddress.getBroadcast();
-
-                                    if (bcast != null) {
-                                        sendPacket(socket, packet, bcast);
-                                    }
-                                }
-                            }
-                        }
-
-                        synchronized (this) {
-                            this.wait(5000);
-                        }
-                    }
-
-                    socket.close();
-                } catch (Exception e) {
-                    LOG.error("Error while trying to send a {} packet: {}", DiscoveryBroadcaster.class.getName(), e.getMessage(), e);
-                }
+              }
             }
-        });
 
-        thread.start();
-    }
+            synchronized (this) {
+              this.wait(5000);
+            }
+          }
 
-    protected void sendPacket(DatagramSocket socket, DatagramPacket packet, InetAddress address) {
-        packet.setAddress(address);
-
-        try {
-            socket.send(packet);
-        } catch (Exception e) {
-            LOG.error("Unable to broadcast for {} on {}.", DiscoveryBroadcaster.class.getName(), address, e);
+          socket.close();
         }
-    }
+        catch (Exception e) {
+          LOG.error("Error while trying to send a {} packet: {}", DiscoveryBroadcaster.class.getName(), e.getMessage(), e);
+        }
+      }
+    });
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        start();
+    thread.start();
+  }
+
+  protected void sendPacket(DatagramSocket socket, DatagramPacket packet, InetAddress address) {
+    packet.setAddress(address);
+
+    try {
+      socket.send(packet);
     }
+    catch (Exception e) {
+      LOG.error("Unable to broadcast for {} on {}.", DiscoveryBroadcaster.class.getName(), address);
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    start();
+  }
 }

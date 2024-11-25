@@ -126,4 +126,11 @@ public class LocalUISettings {
     return null;
   }
 
+  public static void setModal(String stateId, boolean modal) {
+    store.set(stateId + "_modality", String.valueOf(modal));
+  }
+
+  public static boolean isModal(String stateId) {
+    return store.getBoolean(stateId + "_modality");
+  }
 }

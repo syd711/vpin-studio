@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -198,9 +199,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   @FXML
   private void toggleMonitor() {
     if (!monitorOpen) {
+      LocalUISettings.setModal(CabMonitorController.MODAL_STATE_ID, false);
       monitorOpen = true;
       monitorBtn.getStyleClass().add("toggle-button-selected");
-      monitorStage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor");
+      monitorStage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor", CabMonitorController.MODAL_STATE_ID);
       CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
       controller.setData(monitorStage);
       FXResizeHelper fxResizeHelper = new FXResizeHelper(monitorStage, 30, 6);

@@ -170,6 +170,11 @@ public class Dialogs {
     return createStudioDialogStage(stage, clazz, fxml, title, null);
   }
 
+  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String stateId, String modalStateId) {
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    return WidgetFactory.createDialogStage(fxmlLoader, stage, title, stateId, modalStateId);
+  }
+
   public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String stateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
     return WidgetFactory.createDialogStage(fxmlLoader, stage, title, stateId);

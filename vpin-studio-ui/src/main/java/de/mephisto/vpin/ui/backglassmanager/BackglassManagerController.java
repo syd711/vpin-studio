@@ -228,6 +228,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Label gameFilenameLabel;
 
   @FXML
+  private Label emulatorNameLabel;
+
+  @FXML
   private Button dataManagerBtn;
 
   @FXML
@@ -871,6 +874,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     fullDmdLabel.setText("");
     gameLabel.setText("-");
     gameFilenameLabel.setText("-");
+    emulatorNameLabel.setText("-");
 
     hideGrill.setDisable(true);
     hideB2SBackglass.setDisable(true);
@@ -946,6 +950,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
             gameFilenameLabel.setText("(Available, but not installed)");
           }
         }
+        JFXFuture.supplyAsync(() -> {
+            int emuId = game != null ? game.getEmulatorId() : newValue.getEmulatorId();
+            return client.getFrontendService().getGameEmulator(emuId);
+          })
+          .thenAcceptLater(emu -> emulatorNameLabel.setText(emu != null ? emu.getName(): "?"));
 
         nameLabel.setText(tableData.getName());
         typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));

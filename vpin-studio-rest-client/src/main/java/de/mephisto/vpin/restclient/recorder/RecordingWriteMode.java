@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.recorder;
 
-public enum RecordMode {
+public enum RecordingWriteMode {
   ifMissing, overwrite, append;
 
 
