@@ -671,7 +671,7 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getAltSoundFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
+    if (!StringUtils.isEmpty(this.getRom()) && emulator != null) {
       return new File(emulator.getAltSoundFolder(), this.getRom());
     }
     return null;

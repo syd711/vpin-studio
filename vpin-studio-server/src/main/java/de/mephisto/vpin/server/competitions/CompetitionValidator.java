@@ -43,7 +43,7 @@ public class CompetitionValidator {
     }
 
     Game game = gameService.getGame(competition.getGameId());
-    if(game == null) {
+    if(game == null || game.getEmulator() == null) {
       validationState.setCode(CompetitionValidationCode.GAME_NOT_FOUND);
     }
 
