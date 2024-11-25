@@ -49,7 +49,7 @@ public class FrontendScreenController implements Initializable {
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
     try {
       Screen screen = SystemUtil.getScreenById(-1);
-      Rectangle2D bounds = screen.getVisualBounds();
+      Rectangle2D bounds = screen.getBounds();
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
       root.setRotate(0);//reset of the other options
 
@@ -77,24 +77,23 @@ public class FrontendScreenController implements Initializable {
     imageView.setFitHeight(image.getHeight());
 
     Stage screenStage = asset.getScreenStage();
-    screenStage.setX(bounds.getWidth() / 2 - image.getWidth() / 2);
-    screenStage.setY(bounds.getHeight() / 2 - image.getHeight() / 2);
-    screenStage.setHeight(image.getHeight() + 12);
-    screenStage.setWidth(image.getWidth());
+    double x = bounds.getWidth() / 2 - image.getWidth() / 2;
+    double y = bounds.getHeight() / 2 - image.getHeight() / 2;
+    screenStage.setX(0);
+    screenStage.setY(0);
+    screenStage.setHeight(bounds.getHeight());
+    screenStage.setWidth(bounds.getWidth());
+//    screenStage.initStyle(StageStyle.UTILITY);
 
     int targetRotation = asset.getRotation() + (-90);
     root.setRotate(targetRotation);
-    root.setPadding(new Insets(3, 0, 0, 0));
+    root.setPadding(new Insets(0, 0, 0, 0));
 
     if (targetRotation == -90 || targetRotation == 90) {
-      screenStage.setX(bounds.getWidth() / 2 - image.getHeight() / 2);
-      screenStage.setY(bounds.getHeight() / 2 - image.getWidth() / 2);
-      screenStage.setWidth(image.getHeight() + 12);
-      screenStage.setHeight(image.getWidth());
-
-      root.setPadding(new Insets(0, 0, image.getHeight() / 2 + image.getHeight() / 2 / 2 + 6, 0));
+      //move the image a bit up for more distance to the wheel selector
+      root.setPadding(new Insets(0, 0, image.getHeight() / 2 + image.getHeight() / 2 / 2, 0));
       if (targetRotation == 90) {
-        root.setPadding(new Insets(image.getHeight() / 2 + image.getHeight() / 2 / 2 + 6, 0, 0, 0));
+        root.setPadding(new Insets(image.getHeight() / 2 + image.getHeight() / 2 / 2, 0, 0, 0));
       }
     }
   }
@@ -138,16 +137,14 @@ public class FrontendScreenController implements Initializable {
     }
 
     Stage screenStage = asset.getScreenStage();
-    screenStage.setX(display.getX() + 6);
-    screenStage.setY(display.getY() + 6);
-    screenStage.setHeight(display.getHeight() + 12);
-    screenStage.setWidth(display.getWidth() + 12);
+    screenStage.setX(display.getX());
+    screenStage.setY(display.getY());
+    screenStage.setHeight(display.getHeight());
+    screenStage.setWidth(display.getWidth());
 
     root.setRotate(display.getRotation());
 
     if (display.getRotation() == 90 || display.getRotation() == 270) {
-      screenStage.setWidth(display.getHeight() + 12);
-      screenStage.setHeight(display.getWidth() + 12);
       root.setPadding(new Insets(display.getHeight() / 2 + display.getHeight() / 2 / 2, 0, 0, 0));
       if (display.getRotation() == 270) {
         root.setPadding(new Insets(0, 0, display.getHeight() / 2 + display.getHeight() / 2 / 2, 0));
