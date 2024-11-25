@@ -55,14 +55,21 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "directb2s/clearcache", Boolean.class);
   }
 
+  public String getDirectB2sBackgroundUrl(int emulatorId, String filename) {
+    return getRestClient().getBaseUrl() + API + "directb2s/background/" + emulatorId + "/" 
+      + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+  }
   public InputStream getDirectB2sBackground(DirectB2SData directB2S) throws IOException {
-    String url = getRestClient().getBaseUrl() + API + "directb2s/background/" + directB2S.getEmulatorId() + "/" 
-      + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    String url = getDirectB2sBackgroundUrl(directB2S.getEmulatorId(), directB2S.getFilename());
     return new URL(url).openStream();
   }
+
+  public String getDirectB2sDmdUrl(int emulatorId, String filename) {
+    return getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + emulatorId + "/" 
+    + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+  }
   public InputStream getDirectB2sDmd(DirectB2SData directB2S) throws IOException {
-    String url = getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + directB2S.getEmulatorId() + "/" 
-    + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    String url = getDirectB2sDmdUrl(directB2S.getEmulatorId(), directB2S.getFilename());
     return new URL(url).openStream();
   }
 
@@ -154,26 +161,65 @@ public class BackglassServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean uploadDMDImage(DirectB2S directb2s, File file) {
-    try {
-      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("emuid", directb2s.getEmulatorId());
-      map.add("filename", directb2s.getFileName());
-      String url = getRestClient().getBaseUrl() + API + "directb2s/uploadDmdImage";
-      HttpEntity<?> upload = createUpload(map, file, -1, null, AssetType.DIRECTB2S, null);
+  //--------------------------------
+  // DMD Image management
 
-      //new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
-      createUploadTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
-      finalizeUpload(upload);
-      return true;
-    } 
-    catch (Exception e) {
-      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
-      throw e;
-    }
+  public boolean uploadDMDImage(DirectB2S directb2s, File file) {
+    return uploadFile(directb2s.getEmulatorId(), directb2s.getFileName(), "directb2s/uploadDmdImage", file, Boolean.class);
   }
 
   public boolean removeDMDImage(DirectB2S directb2s) throws Exception {
     return getRestClient().post(API + "directb2s/removeDmdImage", directb2s, Boolean.class);
+  }
+
+  //--------------------------------
+  // screen res management
+
+  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s) {
+    return getRestClient().post(API + "directb2s/screenRes", directb2s, DirectB2sScreenRes.class);
+  }
+
+  public InputStream getScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
+    String url = getRestClient().getBaseUrl() + API + "directb2s/frame/" + screenres.getEmulatorId() + "/" 
+        + URLEncoder.encode(URLEncoder.encode(screenres.getFileName(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    return new URL(url).openStream();
+  }
+
+  public DirectB2sScreenRes saveScreenRes(DirectB2sScreenRes screenres) {
+   
+    return getRestClient().post(API + "directb2s/screenRes/save", screenres, DirectB2sScreenRes.class);
+  }
+
+  public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {
+    return uploadFile(screenres.getEmulatorId(), screenres.getFileName(), "directb2s/screenRes/uploadFrame", file, String.class);
+  }
+
+  public boolean removeScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
+    Map<String, Object> map = new HashMap<>();
+    map.put("emuid", screenres.getEmulatorId());
+    map.put("filename", screenres.getFileName());
+    return getRestClient().delete(API + "directb2s/screenRes/removeFrame", map);
+  }
+
+  //--------------------------------
+  // common methods
+
+  private <T> T uploadFile(int emuId, String filename, String suburl, File file, Class<T> responseType) {
+    try {
+      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+      map.add("emuid", emuId);
+      map.add("filename", filename);
+      String url = getRestClient().getBaseUrl() + API + suburl;
+      HttpEntity<?> upload = createUpload(map, file, -1, null, AssetType.DIRECTB2S, null);
+
+      //new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      ResponseEntity<T> ret = createUploadTemplate().exchange(url, HttpMethod.POST, upload, responseType);
+      finalizeUpload(upload);
+      return ret.getBody();
+    } 
+    catch (Exception e) {
+      LOG.error("Upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 }

@@ -89,7 +89,29 @@ public class FrontendPlayerDisplay {
 		this.inverted = inverted;
 	}
 
-  
+  /**
+   * Return true if the _x, _y point is within the bounds of that display
+   */
+  public boolean contains(int _x, int _y) {
+    return _x >= getMinX() && _x <= getMaxX() && _y >= getMinY() && _y <= getMaxY();
+  }
+    
+  private int getMinX() {
+    return getX();
+  }
+
+  private int getMaxX() {
+    return getX() + getWidth();
+  }
+
+  private int getMinY() {
+    return getY();
+  }
+
+  private int getMaxY() {
+    return getY() + getHeight();
+  }
+          
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

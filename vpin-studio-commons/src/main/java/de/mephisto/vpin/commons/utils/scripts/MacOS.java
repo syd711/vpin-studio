@@ -19,8 +19,12 @@ public class MacOS {
     private static final String UPDATE_CLIENT_SCRIPT = String.join("\n",
             "#!/bin/sh",
             "sleep 4",
-            "unzip -o vpin-studio-ui-jar.zip",
-            "rm vpin-studio-ui-jar.zip",
+            "echo \"Unzipping jar...\" > vpin-studio-ui.log 2>&1",
+            "unzip -o vpin-studio-ui-jar.zip -d ./_updatefolder > vpin-studio-ui.log 2>&1",
+            "rm vpin-studio-ui-jar.zip > vpin-studio-ui.log 2>&1",
+            "mv -f ./_updatefolder/vpin-studio-ui.jar ./ > vpin-studio-ui.log 2>&1",
+            "rm -rf ./_updatefolder > vpin-studio-ui.log 2>&1",         
+            "echo \"Restarting client...\" > vpin-studio-ui.log 2>&1",
             "./VPin-Studio-macosx_aarch64.sh &");
 
     public static final String EXEC_CLIENT_SCRIPT_NAME = "VPin-Studio-macosx_aarch64.sh";

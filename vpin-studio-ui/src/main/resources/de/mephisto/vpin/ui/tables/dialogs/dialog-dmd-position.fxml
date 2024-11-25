@@ -3,12 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
@@ -40,19 +43,18 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <VBox fx:id="dismissalList" prefHeight="768.0" prefWidth="1024.0" styleClass="media-container" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets />
-               </BorderPane.margin>
-               <children>
-                  <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true" />
-               </children>
-            </VBox>
+            <Pane fx:id="imagepane">
+               <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
+                  <image>
+                     <Image url="@../../empty-preview.png" />
+                  </image>
+               </ImageView>
+            </Pane>
          </center>
          <right>
             <VBox BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="default-headline" text="Size" />
+                  <Label styleClass="default-headline" text="Position" />
                   <GridPane vgap="3.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.199951171875" minWidth="10.0" prefWidth="53.600048828125" />
@@ -62,13 +64,26 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="X:" />
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Y:" GridPane.rowIndex="1" />
-                        <Spinner GridPane.columnIndex="1" fx:id="xSpinner" />
-                        <Spinner fx:id="ySpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Button mnemonicParsing="false" onAction="#onAutoPosition" text="Auto Position" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="On Backglass" textFill="WHITE" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="On B2S DMD" textFill="WHITE" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <Label styleClass="default-text" text="X:" GridPane.rowIndex="2" />
+                        <Spinner fx:id="xSpinner" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                        <Label styleClass="default-text" text="Y:" GridPane.rowIndex="3" />
+                        <Spinner fx:id="ySpinner" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                        <Button mnemonicParsing="false" onAction="#onAutoPosition" text="Auto Position" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -81,7 +96,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="Position">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="Size">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin></Label>
@@ -104,7 +119,7 @@
                         <Insets top="12.0" />
                      </padding>
                   </GridPane>
-                  <CheckBox fx:id="aspectRationCheckbox" mnemonicParsing="false" styleClass="default-text" text="Keep Aspect Ratio">
+                  <CheckBox fx:id="aspectRatioCheckbox" mnemonicParsing="false" styleClass="default-text" text="Keep 4:1 Aspect Ratio">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
