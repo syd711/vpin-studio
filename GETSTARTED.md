@@ -40,9 +40,9 @@ Assuming you use IDEA:
 ## How to update pinemhi
 
 - Check the method PINEmHiService#checkForUpdates method
-- Download and extract the new pinemhi version in the file **scoringdb.json**.
+- Download and extract the new pinemhi into the resources folder.
+- Update the version in the file **scoringdb.json**.
 - Upload everything on main.
-
 
 ## How to release
 
@@ -56,5 +56,5 @@ Assuming you use IDEA:
 ## How to update nvrams
 
 - Copy new resetted nvram files to **resources/nvrams**.
-- Open the NVRamSynchronizer from the tools module and adapter author and target folder for the nvrams project. You need to clone this separately.
+- Open the NVRamSynchronizer from the tools module and adapter author and target folder for the nvrams project. You need to clone this separately. The nvram project is supposed to be cloned next to the vpin-studio folder.
 - Run the synchronizer.
