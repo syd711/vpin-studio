@@ -42,4 +42,19 @@ Assuming you use IDEA:
 - Check the method PINEmHiService#checkForUpdates method
 - Download and extract the new pinemhi version in the file **scoringdb.json**.
 - Upload everything on main.
-- 
+
+
+## How to release
+
+- Use the _setVersion_ script to apply the new version, e.g. "setVersion.bat 1.3.5".
+- Push everything
+- Go to github actions and trigger the workflow job, this will build a release draft to review.
+- Manually publish the drafted release.
+- Clear the RELEASE_NOTES.md afterwards to start with the next version.
+
+
+## How to update nvrams
+
+- Copy new resetted nvram files to **resources/nvrams**.
+- Open the NVRamSynchronizer from the tools module and adapter author and target folder for the nvrams project. You need to clone this separately.
+- Run the synchronizer.
