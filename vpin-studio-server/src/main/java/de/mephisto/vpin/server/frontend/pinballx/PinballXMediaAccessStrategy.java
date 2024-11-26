@@ -96,14 +96,14 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
   @Override
   public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
-    String gameFileName = FilenameUtils.getBaseName(game.getGameFileName());
+    String gameName = FilenameUtils.getBaseName(game.getGameName());
 
     ArrayList<File> lists = new ArrayList<>();
     String[] _folders = folders.get(screen);
     if (_folders != null) {
       for (String folder : _folders) {
         File parent = new File(mediaDirectory, folder);
-        File[] files = parent.listFiles((dir, name) -> StringUtils.startsWithIgnoreCase(name, gameFileName));
+        File[] files = parent.listFiles((dir, name) -> StringUtils.startsWithIgnoreCase(name, gameName));
         if (files != null && files.length > 0) {
           for (File f : files) {
             lists.add(f);
