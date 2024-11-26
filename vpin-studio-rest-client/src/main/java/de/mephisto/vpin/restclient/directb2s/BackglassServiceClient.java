@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.util.ReturnMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -178,9 +180,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return new URL(url).openStream();
   }
 
-  public DirectB2sScreenRes saveScreenRes(DirectB2sScreenRes screenres) {
-   
-    return getRestClient().post(API + "directb2s/screenRes/save", screenres, DirectB2sScreenRes.class);
+  public ReturnMessage saveScreenRes(DirectB2sScreenRes screenres) {
+    return getRestClient().post(API + "directb2s/screenRes/save", screenres, ReturnMessage.class);
   }
 
   public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {

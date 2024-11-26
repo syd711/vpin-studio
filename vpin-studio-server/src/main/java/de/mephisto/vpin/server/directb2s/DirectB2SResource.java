@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
+import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -259,8 +260,15 @@ public class DirectB2SResource {
   }
 
   @PostMapping("/screenRes/save")
-  public DirectB2sScreenRes saveScreenRes(@RequestBody DirectB2sScreenRes screenres) {
-    return backglassService.saveScreenRes(screenres);
+  public ReturnMessage saveScreenRes(@RequestBody DirectB2sScreenRes screenres) throws Exception {
+    try {
+      backglassService.saveScreenRes(screenres);
+      return null;
+    }
+    catch (IOException ioe) {
+      LOG.error("Error in save", ioe);
+      return ReturnMessage.error(ioe);
+    }
   }
 
   @PostMapping("/screenRes/uploadFrame")

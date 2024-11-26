@@ -400,7 +400,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="251.0" text="Start Background:" textFill="WHITE" GridPane.rowIndex="12">
+                                    <Label layoutX="10.0" layoutY="251.0" text="Background:" textFill="WHITE" GridPane.rowIndex="12">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -439,7 +439,7 @@
                                        </font>
                                     </Label>
                                     <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                    <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                    <ComboBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                                     <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <ComboBox fx:id="usedLEDType" layoutX="176.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                     <Label GridPane.columnIndex="2" GridPane.rowIndex="5">

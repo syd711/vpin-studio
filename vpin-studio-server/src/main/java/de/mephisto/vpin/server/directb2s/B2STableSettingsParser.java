@@ -130,7 +130,9 @@ public class B2STableSettingsParser extends DefaultHandler {
         break;
       }
       case "StartBackground": {
-        settings.setStartBackground(Integer.parseInt(node.getTextContent().trim()) == 1);
+        // background is a boolean encoded as int so i is on, which is inverse from visiblity settings
+        // absence of settings means standard which is the predfined value for this field
+        settings.setStartBackground("1".equals(node.getTextContent().trim()) ? 0 : 1);
         break;
       }
       case "FormToFront": {

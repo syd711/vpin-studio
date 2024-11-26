@@ -201,7 +201,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private ComboBox<B2SLedType> usedLEDType;
 
   @FXML
-  private CheckBox startBackground;
+  private ComboBox<B2SVisibility> startBackground;
 
   @FXML
   private CheckBox bringBGFromTop;
@@ -578,18 +578,16 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
 
-    this.resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
     EventManager.getInstance().addListener(this);
 
     serverSettings = client.getBackglassServiceClient().getServerSettings();
-
-    //this.resBtn.setVisible(false);
 
     this.clearBtn.setVisible(false);
     this.dataManagerBtn.setDisable(true);
     this.tableNavigateBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
+    this.resBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.reloadBackglassBtn.setDisable(true);
@@ -700,9 +698,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
     });
 
-    startBackground.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    startBackground.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
+    startBackground.valueProperty().addListener((observableValue, aBoolean, t1) -> {
       if (!refreshing && tableSettings != null) {
-        save(() -> tableSettings.setStartBackground(newValue));
+        save(() -> tableSettings.setStartBackground(t1.getId()));
       }
     });
 
@@ -897,7 +896,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     skipLEDFrames.getValueFactory().valueProperty().set(0);
     lightBulbOn.selectedProperty().setValue(false);
     bringBGFromTop.selectedProperty().setValue(false);
-    startBackground.selectedProperty().setValue(false);
 
     this.refreshing = false;
 
@@ -1002,7 +1000,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
 
           startBackground.setDisable(false);
-          startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+          startBackground.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
           bringBGFromTop.setDisable(false);
           bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
         }
