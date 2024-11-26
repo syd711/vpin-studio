@@ -148,7 +148,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     TableDetails manifest = frontend.getTableDetails(id);
     if (manifest != null) {
       GameEmulator emu = emulators.get(manifest.getEmulatorId());
-      manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
+      if(emu != null) {
+        manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
+      }
     }
     return manifest;
 
