@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -35,15 +36,12 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -266,7 +264,6 @@ public class BackglassService {
   }
 
   public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws VPinStudioException {
-    Game game = gameService.getGame(gameId);
     try {
       File settingsXml = getB2STableSettingsXml();
       B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
@@ -276,7 +273,7 @@ public class BackglassService {
       return settings;
     }
     catch (VPinStudioException e) {
-      LOG.error("Failed to save table settings for \"" + game.getGameDisplayName() + "\": " + e.getMessage(), e);
+      LOG.error("Failed to save table settings for \"" + gameId + "\": " + e.getMessage(), e);
       throw e;
     }
   }
@@ -284,10 +281,11 @@ public class BackglassService {
   @Nullable
   public DirectB2STableSettings getTableSettings(int gameId) {
     Game game = gameService.getGame(gameId);
-    if (game == null) {
-      return null;
-    }
+    return game != null ? getTableSettings(game) : null;
+  }
 
+  @Nullable
+  public DirectB2STableSettings getTableSettings(Game game) {
     String rom = game.getRom();
 
     File settingsXml = getB2STableSettingsXml();
@@ -506,6 +504,16 @@ public class BackglassService {
       }  
     }
 
+    // Now add the associated game if any
+    Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(), 
+        FilenameUtils.getBaseName(directb2s.getFileName()));
+    if (game != null) {
+      //this will ensure that a scanned table is fetched and get the rom
+      game = gameService.getGame(game.getId());
+    }
+    if (game != null) {
+      res.setGameId(game.getId());
+    }
     return res;
   }
 
@@ -522,23 +530,25 @@ public class BackglassService {
   }
 
   private List<String> readScreenRes(File b2sFile, boolean withComment) {
-    //TODO The default filename ScreenRes.txt can be altered by setting the registry key Software\B2S\B2SScreenResFileNameOverride to a different filename.
-    String screenresTxt = "ScreenRes.txt";
+    // The default filename ScreenRes.txt can be altered by setting the registry key
+    // Software\B2S\B2SScreenResFileNameOverride to a different filename.
+    String screenresTxt = StringUtils.defaultIfEmpty(
+      systemService.readRegistryValue("HKEY_CURRENT_USER\\Software\\B2S", "B2SScreenResFileNameOverride"),
+      "ScreenRes.txt");
 
-    //When the B2S Server starts, it tries to find the ScreenRes files in this order  (from backglassServer documentation)
     // see https://github.com/vpinball/b2s-backglass/wiki/Screenres.txt
-    
-    //  tablename.res next to the tablename.vpx
+    // When the B2S Server starts, it tries to find the ScreenRes files in this order  (from backglassServer documentation):
+    //  1) tablename.res next to the tablename.vpx
     File target = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()) + ".res");
     if (!target.exists()) {
-      //  Screenres.txt (or whatever you set in the registry) in the same folder as tablename.vpx
+      //  2) Screenres.txt (or whatever set in the registry) in the same folder as tablename.vpx
       target = new File(b2sFile.getParentFile(), screenresTxt);
       if (!target.exists()) {
-        //  Screenres.txt (or whatever you set in the registry) as tablename/Screenres.txt
+        //  3) Screenres.txt (or whatever set in the registry) as tablename/Screenres.txt
         File tableFolder = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()));
         target = new File(tableFolder, screenresTxt);
         if (!target.exists()) {
-          //  Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
+          //  4) Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
           target = new File(getBackglassServerFolder(), screenresTxt);
         }
       }
@@ -565,13 +575,13 @@ public class BackglassService {
     }
   }
 
-  public DirectB2sScreenRes saveScreenRes(DirectB2sScreenRes screenres) {
+  public void saveScreenRes(DirectB2sScreenRes screenres) throws Exception {
     GameEmulator emulator = frontendService.getGameEmulator(screenres.getEmulatorId());
     File b2sFile = new File(emulator.getTablesDirectory(), screenres.getFileName());
 
     List<String> lines = readScreenRes(b2sFile, true);
     if (lines == null) {
-      return null;
+      throw new IOException("Cannot find an existing table nor table .res");
     }
     String templateName = lines.remove(0);
     // if already a table file exists, replace it 
@@ -580,6 +590,15 @@ public class BackglassService {
 
     if (!screenresFile.exists() || screenresFile.delete()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(screenresFile))) {
+
+        // generate version number in case it is not in th eoriginal file
+        if (!lines.get(0).replace(" ", "").toLowerCase().startsWith("#v2")) {
+          // fetch the b2s version from the file itself
+          File b2sServerExe = new File(getBackglassServerFolder(), "B2SBackglassServerEXE.exe");
+          String b2sVersion = FileVersion.fetch(b2sServerExe);
+          writer.write("# V" + b2sVersion);
+          writer.write(System.lineSeparator());
+        }
         int currentLine = 0;
         for (String line: lines) {
           if (line.startsWith("#")) {
@@ -606,16 +625,43 @@ public class BackglassService {
           writer.write(screenres.getBackgroundFilePath());
           writer.write(System.lineSeparator());
         }
-        return screenres;
-      }
-      catch (IOException ioe) {
-        LOG.error("Cannot generate table screen res file " + screenresFile.getAbsolutePath(), ioe);
       }
     }
     else {
-      LOG.error("Cannot delete existing table screen res file " + screenresFile.getAbsolutePath());
+      throw new IOException("Cannot overwrite existing table screen res file " + screenresFile.getAbsolutePath());
     }
-    return null;
+
+    // now everything is saved, automatically turns settings in B2STableSettings
+    // case when Gaùe 
+
+    // get the Game with gameService, this  will ensure that a scanned table is fetched and get the rom
+    Game game = screenres.getGameId() != -1 ? gameService.getGame(screenres.getGameId()) : null;
+    if (game != null) {
+      DirectB2STableSettings settings = getTableSettings(game);
+      if (settings == null && StringUtils.isNotEmpty(game.getRom())) {
+        settings = new DirectB2STableSettings();
+        settings.setRom(game.getRom());
+      }
+      // If no settings found and no rom on game to associate the settings with, skip that phase
+      if (settings != null) {
+        boolean hasToBeSaved = false;
+
+        boolean startAsExe = settings.getStartAsEXE() != null && settings.getStartAsEXE();
+        if (!startAsExe && screenres.isTurnOnRunAsExe()) {
+          hasToBeSaved = true;
+          settings.setStartAsEXE(true);
+        }
+        // mind here 0=visible
+        if (settings.getStartBackground()!=0 && screenres.isTurnOnBackground()) {
+          hasToBeSaved = true;
+          settings.setStartBackground(0);
+        }
+
+        if (hasToBeSaved) {
+          saveTableSettings(game.getId(), settings);
+        }
+      }
+    }
   }
 
   public String setScreenResFrame(int emulatorId, String filename, String screenName, InputStream is) throws IOException {
@@ -623,19 +669,14 @@ public class BackglassService {
     File frameFolder = new File(emulator.getTablesDirectory(), "_Frames");
     if (frameFolder.exists() || is != null && frameFolder.mkdir()) {
       File frameFile = new File(frameFolder, screenName);
-      if (!frameFile.exists() || frameFile.delete()) {
-        if (is != null) {
-          try (FileOutputStream out = new FileOutputStream(frameFile)) {
-            StreamUtils.copy(is, out);
-          }
+      Files.deleteIfExists(frameFile.toPath());
+      if (is != null) {
+        try (FileOutputStream out = new FileOutputStream(frameFile)) {
+          StreamUtils.copy(is, out);
         }
-        // return the filename created or deleted in case of success
-        return frameFile.getAbsolutePath();
       }
-      else {
-        LOG.error("Cannot delete existing frame res file " + frameFile.getAbsolutePath());
-        return null;
-      }
+      // return the filename created or deleted in case of success
+      return frameFile.getAbsolutePath();
     }
     else {
       LOG.error("Cannot create _frames Folder " + emulator.getTablesDirectory());

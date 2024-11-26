@@ -5,6 +5,9 @@ public class DirectB2sScreenRes {
   private int emulatorId;
   private String fileName;
 
+  /** optional associated game */
+  private int gameId = -1;
+
   /** Whether this instance represent the global screenres.txt (true) or a per table one (false) */
   private boolean global;
 
@@ -46,6 +49,11 @@ public class DirectB2sScreenRes {
 
   private String b2SWindowPunch;
 
+  private boolean turnOnRunAsExe;
+
+  private boolean turnOnBackground;
+
+
   public int getEmulatorId() {
     return emulatorId;
   }
@@ -60,6 +68,14 @@ public class DirectB2sScreenRes {
 
   public void setFileName(String fileName) {
     this.fileName = fileName;
+  }
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 
   public String getScreenresFilePath() {
@@ -220,5 +236,21 @@ public class DirectB2sScreenRes {
 
   public void setB2SWindowPunch(String b2sWindowPunch) {
     b2SWindowPunch = b2sWindowPunch;
+  }
+
+  public boolean isTurnOnRunAsExe() {
+    return turnOnRunAsExe;
+  }
+
+  public void setTurnOnRunAsExe(boolean turnOnRunAsExe) {
+    this.turnOnRunAsExe = turnOnRunAsExe;
+  }
+
+  public boolean isTurnOnBackground() {
+    return turnOnBackground;
+  }
+
+  public void setTurnOnBackground(boolean turnOnBackground) {
+    this.turnOnBackground = turnOnBackground;
   }
 }

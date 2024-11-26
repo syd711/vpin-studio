@@ -167,6 +167,10 @@ public class SystemInfo {
       return null;
     }
   }
+  public String readRegistryValue(String location, String key) {
+    String reg = readRegistry(location, key);
+    return StringUtils.isNotEmpty(reg) ? extractRegistryValue(reg) : null;
+  }
 
   /**
    * REG ADD "HKEY_CURRENT_USER\SOFTWARE\Freeware\Visual PinMame\tz_94ch" /v sound_mode /t REG_DWORD /d 1 /f

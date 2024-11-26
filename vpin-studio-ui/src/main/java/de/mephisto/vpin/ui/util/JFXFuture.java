@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -53,10 +54,13 @@ public class JFXFuture<T> {
   }
 
   public static <U> JFXFuture<U> onErrorLater(CompletableFuture<U> future, Consumer<Throwable> fn) {
-    Function<Throwable, ? extends U> f2 = (ex) -> { 
+    Function<Throwable, ? extends U> f2 = (ex) -> {
+      if (ex instanceof CompletionException) {
+        ex = ((CompletionException) ex).getCause();
+      }
       JFXRuntimeException jfxe = ex instanceof JFXRuntimeException ? 
         (JFXRuntimeException) ex :
-        new JFXRuntimeException(ex.getMessage(), ex);
+        new JFXRuntimeException(ex.getMessage());
       Platform.runLater(() -> fn.accept(jfxe)); 
       throw jfxe; 
     };
