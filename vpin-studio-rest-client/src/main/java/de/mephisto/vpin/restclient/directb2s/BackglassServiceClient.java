@@ -170,8 +170,9 @@ public class BackglassServiceClient extends VPinStudioClientService {
   //--------------------------------
   // screen res management
 
-  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s) {
-    return getRestClient().post(API + "directb2s/screenRes", directb2s, DirectB2sScreenRes.class);
+  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean tableOnly) {
+    return getRestClient().post(API + "directb2s/screenRes" + (tableOnly ? "?tableOnly=true" : ""), 
+        directb2s, DirectB2sScreenRes.class);
   }
 
   public InputStream getScreenResFrame(DirectB2sScreenRes screenres) throws IOException {

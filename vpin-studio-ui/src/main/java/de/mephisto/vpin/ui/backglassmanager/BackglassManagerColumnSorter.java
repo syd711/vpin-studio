@@ -37,6 +37,12 @@ public class BackglassManagerColumnSorter implements BaseColumnSorter<DirectB2SM
       else if (column.equals(backglassManagerController.scoreColumn)) {
         comp = Comparator.comparing(o -> o.getNbScores() > 0);
       }
+      else if (column.equals(backglassManagerController.resColumn)) {
+        comp = Comparator.comparing(o -> o.getResPath() != null);
+      }
+      else if (column.equals(backglassManagerController.frameColumn)) {
+        comp = Comparator.comparing(o -> o.getFramePath() != null);
+      }
 
       // optionally reverse order 
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {

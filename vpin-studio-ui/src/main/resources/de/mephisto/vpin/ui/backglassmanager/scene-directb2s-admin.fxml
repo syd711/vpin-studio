@@ -195,6 +195,8 @@
                                  <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
                                  <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
                                  <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Score" />
+                                 <TableColumn fx:id="resColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="RES" />
+                                 <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Frame" />
                            </columns>
                         </TableView>
                      </children>

@@ -100,6 +100,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   @FXML
   private CheckBox turnOnBackground;
 
+  // The dialog frame
+  private Stage stage;
+  
   private DirectB2sScreenRes screenres;
 
   private BufferedImage frameImg;
@@ -117,13 +120,11 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     
   @FXML
   private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @FXML
   private void onGenerateClick(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     JFXFuture.runAsync(() -> {
       if (stretchedBackglass) {
         screenres.setBackglassX(0);
@@ -191,8 +192,6 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   @FXML
   private void onFileSelect(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
     this.generateBtn.setDisable(true);
 
     StudioFileChooser fileChooser = new StudioFileChooser();
@@ -323,8 +322,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   }
 
   public void setData(Stage stage, DirectB2S directB2S) {
+    this.stage = stage;
 
-    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(directB2S))
+    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(directB2S, false))
     .thenAcceptLater(res -> setScreenRes(res));
 
     JFXFuture.supplyAsync(() -> {
@@ -375,13 +375,20 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
         radioStretchBackglass.setSelected(true);
       }
       if (StringUtils.isNotEmpty(screenres.getBackgroundFilePath())) {
-        try {
-          frameImg = ImageIO.read(client.getBackglassServiceClient().getScreenResFrame(screenres));
-          fileNameField.setText(screenres.getBackgroundFilePath());
-        }
-        catch (IOException ioe) {
-          LOG.error("Cannot load frame image so remove it", ioe);
-        }
+        fileNameField.setText(screenres.getBackgroundFilePath());
+        JFXFuture.supplyAsync(() -> {
+          try {
+            return ImageIO.read(client.getBackglassServiceClient().getScreenResFrame(screenres));
+          }
+          catch (IOException ioe) {
+            LOG.error("Cannot load frame image so remove it", ioe);
+            return null;
+          }
+        })
+        .thenAcceptLater(img -> {
+            frameImg = img;
+            refreshPreview();
+        });
       }
     }
     else {
@@ -395,7 +402,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private String formatLocationAndDimension(int x, int y, int width, int height) {
     StringBuilder bld = new StringBuilder();
     if (x != -1 || y != -1) {
-      bld.append(x).append(",").append(y).append(" ");
+      bld.append(x).append("/").append(y).append("   ");
     }
     bld.append(width).append("x").append(height);
     return bld.toString();
