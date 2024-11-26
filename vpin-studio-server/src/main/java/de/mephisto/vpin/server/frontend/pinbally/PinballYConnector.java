@@ -287,9 +287,6 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
 
   @Override
   protected void updateGameInDb(int emuId, String game, TableDetails details) {
-    // force gameName = gameFileName
-    String gameName = FilenameUtils.getBaseName(details.getGameFileName());
-    details.setGameName(gameName);
     mapTableDetails.put(compose(emuId, game), details);
   }
 

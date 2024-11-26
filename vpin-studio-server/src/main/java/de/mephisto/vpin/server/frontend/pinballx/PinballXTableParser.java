@@ -243,26 +243,17 @@ public class PinballXTableParser extends DefaultHandler {
       for (GameEntry entry : games) {
         TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), entry.getFilename()));
         if (detail!=null) {
-          String gameName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGamesExt());
-          writer.append("  <game name=\"").append(escapeXml(gameName)).append("\">\n");
+          // <game name= /> stores the filename without extension 
+          String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGamesExt());
+          writer.append("  <game name=\"").append(escapeXml(gameFileName)).append("\">\n");
 
-          // three cases supported (third used by pinballY only for handling specific mediaName 
-          // <game name= />  
-          // <game name= > <description /> </game>
-          // <game name= > <description /> </title > </game>
-          // if title provided, displayName should be title and gameName from description
-          // if no title provided, displayName should be description and gameName default from filename 
-
-          if (!StringUtils.equals(detail.getGameName(), gameName)) {
-            appendValue(writer, "description", detail.getGameName());
+          // <title /> stores the gameDisplayName if different from filename without extension
+          if (!StringUtils.equals(detail.getGameDisplayName(), gameFileName)) {
             appendValue(writer, "title", detail.getGameDisplayName());
           }
-          else if (!StringUtils.equals(detail.getGameDisplayName(), gameName)) {
-            appendValue(writer, "description", detail.getGameDisplayName());
-          }
-          else {
-            appendValue(writer, "description", detail.getGameName());
-          }
+          
+          // <description /> stores the gameName (used for media assets in PinballY)
+          appendValue(writer, "description", detail.getGameName());
 
           appendValue(writer, "rom", detail.getRomName());
           appendValue(writer, "manufacturer", detail.getManufacturer());
