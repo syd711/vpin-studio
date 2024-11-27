@@ -89,7 +89,7 @@ public class BackglassExportService extends ExporterService {
             if (tableSettings != null) {
               records.add(String.valueOf(tableSettings.isHideB2SBackglass()));
               records.add(String.valueOf(tableSettings.isHideB2SDMD()));
-              records.add(String.valueOf(tableSettings.isStartBackground()));
+              records.add(String.valueOf(tableSettings.getStartBackground()));
               records.add(String.valueOf(tableSettings.getHideGrill()));
             }
             else {

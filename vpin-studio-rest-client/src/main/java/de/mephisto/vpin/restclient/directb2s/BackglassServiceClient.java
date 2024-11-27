@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import de.mephisto.vpin.restclient.util.ReturnMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -175,8 +177,9 @@ public class BackglassServiceClient extends VPinStudioClientService {
   //--------------------------------
   // screen res management
 
-  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s) {
-    return getRestClient().post(API + "directb2s/screenRes", directb2s, DirectB2sScreenRes.class);
+  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean tableOnly) {
+    return getRestClient().post(API + "directb2s/screenRes" + (tableOnly ? "?tableOnly=true" : ""), 
+        directb2s, DirectB2sScreenRes.class);
   }
 
   public InputStream getScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
@@ -185,9 +188,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return new URL(url).openStream();
   }
 
-  public DirectB2sScreenRes saveScreenRes(DirectB2sScreenRes screenres) {
-   
-    return getRestClient().post(API + "directb2s/screenRes/save", screenres, DirectB2sScreenRes.class);
+  public ReturnMessage saveScreenRes(DirectB2sScreenRes screenres) {
+    return getRestClient().post(API + "directb2s/screenRes/save", screenres, ReturnMessage.class);
   }
 
   public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {

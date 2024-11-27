@@ -6,7 +6,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -51,35 +50,23 @@ public class B2STableSettingsSerializer {
       if (list.getLength() == 0) {
         rootNodeByRom = doc.createElement(settings.getRom());
         doc.getDocumentElement().appendChild(rootNodeByRom);
-        for (String tableEntry : tableEntries) {
-          Element child = doc.createElement(tableEntry);
-          rootNodeByRom.appendChild(child);
-        }
       }
       else {
-        //check if all children are present
         rootNodeByRom = list.item(0);
+      }
+
+     if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {       
         for (String tableEntry : tableEntries) {
-          if (!isChildOf(rootNodeByRom.getChildNodes(), tableEntry)) {
-            Element child = doc.createElement(tableEntry);
-            rootNodeByRom.appendChild(child);
+          Node settingsNode = findChild(rootNodeByRom.getChildNodes(), tableEntry);
+          if (settingsNode==null) {
+            settingsNode = doc.createElement(tableEntry);
+            rootNodeByRom.appendChild(settingsNode);
           }
-        }
-      }
-
-
-      if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) rootNodeByRom;
-        NodeList childNodes = element.getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-          Node settingsNode = childNodes.item(i);
           if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
-            String name = settingsNode.getNodeName();
-            writeNode(settings, name, settingsNode);
+            writeNode(settings, tableEntry, rootNodeByRom, settingsNode);
           }
         }
       }
-
       write(xmlFile, doc);
     }
     catch (Exception e) {
@@ -88,14 +75,14 @@ public class B2STableSettingsSerializer {
     }
   }
 
-  private boolean isChildOf(NodeList childNodes, String tableEntry) {
+  private Node findChild(NodeList childNodes, String tableEntry) {
     for (int i = 0; i < childNodes.getLength(); i++) {
       Node settingsNode = childNodes.item(i);
       if (settingsNode.getNodeName().equals(tableEntry)) {
-        return true;
+        return settingsNode;
       }
     }
-    return false;
+    return null;
   }
 
   private static void write(File povFile, Document doc) throws IOException, TransformerException {
@@ -118,8 +105,7 @@ public class B2STableSettingsSerializer {
     }
   }
 
-
-  private static void writeNode(DirectB2STableSettings settings, String qName, Node node) {
+  private static void writeNode(DirectB2STableSettings settings, String qName, Node parent, Node node) {
     switch (qName) {
       case "HideGrill": {
         node.setTextContent(String.valueOf(settings.getHideGrill()));
@@ -176,7 +162,12 @@ public class B2STableSettingsSerializer {
         break;
       }
       case "StartBackground": {
-        node.setTextContent(intValue(settings.isStartBackground()));
+        // absence of settings means standard, else a boolean encoded as 0/1n which is invers from visibility (0=visible)
+        if (settings.getStartBackground()==2) {
+          parent.removeChild(node);
+        } else {
+          node.setTextContent(settings.getStartBackground()==1 ? "0" : "1");
+        }
         break;
       }
       case "FormToFront": {

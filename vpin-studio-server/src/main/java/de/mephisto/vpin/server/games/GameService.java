@@ -220,7 +220,7 @@ public class GameService implements InitializingBean {
   @Nullable
   public synchronized Game getGame(int id) {
     Game game = frontendService.getGame(id);
-    if (game != null) {
+    if (game != null && game.getEmulator() != null) {
       applyGameDetails(game, false, true);
       return game;
     }
@@ -405,7 +405,7 @@ public class GameService implements InitializingBean {
     }
 
     GameEmulator emulator = game.getEmulator();
-    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe().exists()) {
+    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe() != null && emulator.getExe().exists()) {
       game.setLauncher(emulator.getExe().getName());
     }
 

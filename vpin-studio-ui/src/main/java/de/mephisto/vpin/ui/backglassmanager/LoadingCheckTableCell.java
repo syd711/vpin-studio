@@ -7,7 +7,10 @@ import javafx.scene.control.Tooltip;
 abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<DirectB2SModel> {
 
   /**
-   * should return true if the checked mark is visible. Model is never null
+   * should return the value display the checked mark. Model is never null
+   * 0 => display nothing
+   * 1 => display a Check Icon
+   * 2 => display an Exclamation Icon 
    */
   protected abstract int isChecked(DirectB2SModel model);
 
