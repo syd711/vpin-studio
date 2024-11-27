@@ -35,21 +35,18 @@ public class SortedScoreAdapter implements ScoreNvRamAdapter {
       Matcher matcher = scorePattern.matcher(line);
       if (matcher.find()) {
         String player = matcher.group(1);
-        String scoreString = matcher.group(2);
-        scoreString = scoreString.replace(".", "");
-        scoreString = scoreString.replace(",","");
-        int score = Integer.parseInt(scoreString);
+        String score = matcher.group(2);
         scores.add(new HighScore(player, score));
       }
     }
 
     // Sort scores in descending order
-    scores.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
+    scores.sort((a, b) -> Integer.compare(b.getScoreValue(), a.getScoreValue()));
 
     StringBuilder converted = new StringBuilder();
     int i = 1;
     for (HighScore score : scores) {
-      converted.append(String.format("#%d %s     %d%n", i++, score.getPlayer(), score.getScore()));
+      converted.append(String.format("#%d %s     %s%n", i++, score.getPlayer(), score.getScore()));
     }
 
     return converted.toString();
@@ -58,19 +55,28 @@ public class SortedScoreAdapter implements ScoreNvRamAdapter {
   // Only used in SortedScoreAdapter
   private class HighScore {
     private final String player;
-    private final int score;
+    private final String score;
+    private final int scoreValue;
 
-    public HighScore(String player, int score) {
+    public HighScore(String player, String score) {
       this.player = player;
       this.score = score;
+      String scoreToParse = score.replace(".", "");
+      scoreToParse = scoreToParse.replace(",","");
+      this.scoreValue = Integer.parseInt(scoreToParse);
     }
 
     public String getPlayer() {
       return player;
     }
 
-    public int getScore() {
+    public String getScore() {
       return score;
     }
+
+    public int getScoreValue() {
+      return scoreValue;
+    }
+
   }
 }
