@@ -243,6 +243,20 @@ public class PinballXTableParser extends DefaultHandler {
           String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGamesExt());
           writer.append("  <game name=\"").append(escapeXml(gameFileName)).append("\">\n");
 
+<<<<<<< HEAD
+=======
+          // 1) In most cases, media files have exact same filename as tables filename, 
+          //    and then <description> contains the display Name of the game and can contain : or / 
+          //    (which are forbidden characters in file names)
+          //    This is also the default and sole mode of pinballX
+         
+          // 2) And if there is a need for media file names different from tables filename, 
+          //    then the media file names goes into <description>  field, and display name is then in <title> 
+          
+          // <description>  if gameName!=gameFileName then gameName (case 3) else GameDisplayName (case 2)
+          // <title>        if gameName!=gameFileName then gameDisplayName (case 3) else <not generated> (case 2)
+
+>>>>>>> be474af31 (Fix: store and use gameName for media assets - pinballX Compatiblity)
           appendDescription(writer, detail);
 
           appendValue(writer, "rom", detail.getRomName());
