@@ -6,13 +6,11 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
-import de.mephisto.vpin.server.frontend.pinballx.PinballXTableParser;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,7 +258,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     List<String> games = new ArrayList<>();
     File pinballXDb = new File(emu.getDatabase());
     if (pinballXDb.exists()) {
-      PinballXTableParser parser = new PinballXTableParser();
+      PinballYTableParser parser = new PinballYTableParser();
       parser.addGames(pinballXDb, games, mapTableDetails, emu);
     }
     return games;
@@ -286,9 +284,6 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
 
   @Override
   protected void updateGameInDb(int emuId, String game, TableDetails details) {
-    // force gameName = gameFileName
-    String gameName = FilenameUtils.getBaseName(details.getGameFileName());
-    details.setGameName(gameName);
     mapTableDetails.put(compose(emuId, game), details);
   }
 
@@ -300,7 +295,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   @Override
   protected void commitDb(Emulator emu) {
     File pinballXDb = new File(emu.getDatabase());
-    PinballXTableParser parser = new PinballXTableParser();
+    PinballYTableParser parser = new PinballYTableParser();
     parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);
   }
 
