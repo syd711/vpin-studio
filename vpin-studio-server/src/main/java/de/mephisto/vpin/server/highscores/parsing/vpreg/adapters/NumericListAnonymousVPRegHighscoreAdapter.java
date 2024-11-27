@@ -6,6 +6,7 @@ import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -65,7 +66,8 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
     while (gameFolder.hasEntry(key)) {
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(key);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
+      byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+      scoreDocument.replaceContents(new ByteArrayInputStream(array));
 
       index++;
       key = String.format(scoreKey, index);
