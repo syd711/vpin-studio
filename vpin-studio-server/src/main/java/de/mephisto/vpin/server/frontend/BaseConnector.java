@@ -767,40 +767,15 @@ public abstract class BaseConnector implements FrontendConnector {
 
   protected abstract String getFrontendExe();
 
-  protected File getVPXExe() {
-    SystemInfo si = new SystemInfo();
-    File f = new File(si.resolveVpx64InstallFolder(), "VPinballX64.exe");
-    if (f.exists()) {
-      return f;
-    }
-
-    f = new File(si.resolveVpxInstallFolder(), "VPinballX.exe");
-    if (f.exists()) {
-      return f;
-    }
-    return null;
-  }
-
-  protected File getVPTExe() {
-    SystemInfo si = new SystemInfo();
-    File f = new File(si.resolveVptInstallFolder(), "VPinball995.exe");
-    return f.exists() ? f : null;
-  }
-
-  protected File getFpExe() {
-    SystemInfo si = new SystemInfo();
-    File f = new File(si.resolveFpInstallFolder(), "Future Pinball.exe");
-    return f.exists() ? f : null;
-  }
-
   protected File resolveExe(EmulatorType type) {
+    SystemInfo si = new SystemInfo();
     switch (type) {
       case VisualPinball:
-        return getVPXExe();
+        return si.resolveVpx64Exe();
       case VisualPinball9:
-        return getVPTExe();
+        return si.resolveVptExe();
       case FuturePinball:
-        return getFpExe();
+        return si.resolveFpExe();
       default:
         return null;
     }

@@ -193,13 +193,13 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
 
     // exe can be a full path, or just the exename that has to be resolved with default folder or empty
     String executable = s.getProperty(system + ".Exe");
-    File resolved = resolveExe(type);
+    File resolvedExe = resolveExe(type);
 
     File exe = StringUtils.isNotEmpty(executable) ? new File(executable) : null;
     if (exe == null || !exe.exists()) {
-      exe = StringUtils.isNotEmpty(executable) && resolved != null ? new File(resolved.getParentFile(), executable) : null;
+      exe = StringUtils.isNotEmpty(executable) && resolvedExe != null ? new File(resolvedExe.getParentFile(), executable) : null;
       if (exe == null || !exe.exists()) {
-        exe = resolved;
+        exe = resolvedExe;
       }
     }
 
@@ -208,7 +208,8 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
       e.setExeName(exe.getName());
     }
     else {
-      LOG.error("Executable not set for " + emuname + " in pinballY options, studio won't be able to lauch tables. "
+      LOG.error("Executable '" + executable + "' not or wrongly set for " + emuname + " in pinballY options "
+        + "default exe couldn't be determined. studio won't be able to lauch tables. "
         + "Please fill in the full path to executable !");
     }
 
@@ -218,7 +219,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     String tablePath = StringUtils.defaultIfEmpty(s.getProperty(system + ".TablePath"), "Tables");
     File dirGames = new File(tablePath);
     if (!dirGames.exists()) {
-      dirGames = resolved != null ? new File(resolved.getParentFile(), tablePath) : null;
+      dirGames = resolvedExe != null ? new File(resolvedExe.getParentFile(), tablePath) : null;
       if (dirGames == null || !dirGames.exists()) {
         dirGames = null;
       }

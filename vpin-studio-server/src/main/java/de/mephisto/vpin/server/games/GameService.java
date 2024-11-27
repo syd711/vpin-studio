@@ -405,7 +405,7 @@ public class GameService implements InitializingBean {
     }
 
     GameEmulator emulator = game.getEmulator();
-    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe().exists()) {
+    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe() != null && emulator.getExe().exists()) {
       game.setLauncher(emulator.getExe().getName());
     }
 

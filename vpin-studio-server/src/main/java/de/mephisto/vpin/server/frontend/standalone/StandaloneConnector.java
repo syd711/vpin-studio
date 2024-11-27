@@ -34,8 +34,27 @@ public class StandaloneConnector extends BaseConnector {
 
   @Autowired
   private SystemService systemService;
+
+  /** The resolved execution file, cannot be null but can be dummy ! */
+  private File vpxExe;
+
   @Override
   public void initializeConnector() {
+    vpxExe = resolveExe();
+  }
+
+  private File resolveExe() {
+    File installFolder = getInstallationFolder();
+    String[] exes = {"VPinballX64.exe", "VPinballX.exe", "VPinball995.exe" };
+    for (String exe : exes) {
+      File fexe = new File(installFolder, exe);
+      if (fexe.exists()) {
+        return fexe;
+      }
+    }
+    LOG.error("Cannot find a valid standard executable in " + installFolder + ", tables cannot be properly launched !");
+    // cannot be null
+    return new File(installFolder, "vpx_not_found.exe");
   }
 
   @Override
@@ -104,9 +123,8 @@ public class StandaloneConnector extends BaseConnector {
 
     e.setDirGames(tablesDir.getAbsolutePath());
 
-    File exe = getVPXExe();
-    e.setEmuLaunchDir(exe.getParentFile().getAbsolutePath());
-    e.setExeName(exe.getName());
+    e.setEmuLaunchDir(vpxExe.getParentFile().getAbsolutePath());
+    e.setExeName(vpxExe.getName());
 
     e.setGamesExt(type.getExtension());
 
@@ -170,6 +188,6 @@ public class StandaloneConnector extends BaseConnector {
 
   @Override
   protected String getFrontendExe() {
-    return getVPXExe().getName();
+    return vpxExe.getName();
   }
 }

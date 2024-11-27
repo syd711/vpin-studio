@@ -251,9 +251,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> grillColumn;
 
-
   @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> scoreColumn;
+
+  @FXML
+  TableColumn<DirectB2SModel, DirectB2SModel> resColumn;
+
+  @FXML
+  TableColumn<DirectB2SModel, DirectB2SModel> frameColumn;
 
 //-------------
 
@@ -791,11 +796,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureLoadingColumn(grillColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected String getLoading(DirectB2SModel model) {
-        return "";
-      }
-
-      @Override
       protected int isChecked(DirectB2SModel model) {
         return model.getGrillHeight() > 0 ? 1 : 0;
       }
@@ -808,11 +808,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureLoadingColumn(scoreColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected String getLoading(DirectB2SModel model) {
-        return "";
-      }
-
-      @Override
       protected int isChecked(DirectB2SModel model) {
         return model.getNbScores() > 0 ? 1 : 0;
       }
@@ -822,6 +817,34 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         return model.getNbScores() > 0 ? "Backglass contains " + model.getNbScores() + " scores" : "";
       }
     });
+
+
+    BaseLoadingColumn.configureLoadingColumn(resColumn, cell -> new LoadingCheckTableCell() {
+      @Override
+      protected int isChecked(DirectB2SModel model) {
+        return model.getResPath() != null ? 1 : 0;
+      }
+
+      @Override
+      protected String getTooltip(DirectB2SModel model) {
+        return model.getResPath() != null ? "Backglass uses a specific .res file: " + model.getResPath() : "";
+      }
+    });
+
+
+    
+    BaseLoadingColumn.configureLoadingColumn(frameColumn, cell -> new LoadingCheckTableCell() {
+      @Override
+      protected int isChecked(DirectB2SModel model) {
+        return model.getFramePath() != null ? 1 : 0;
+      }
+
+      @Override
+      protected String getTooltip(DirectB2SModel model) {
+        return model.getFramePath() != null ? "Backglass uses a background frame: " + model.getFramePath() : "";
+      }
+    });
+
   }
 
   @Override

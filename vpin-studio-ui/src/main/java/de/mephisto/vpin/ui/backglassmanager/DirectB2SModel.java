@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.backglassmanager;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,10 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
   private boolean hideBackglass;
   private int hideDMD;
 
+  private String resPath;
+  private String framePath;
+
+
   public DirectB2SModel(DirectB2S backglass) {
     super(backglass);
   }
@@ -42,6 +47,12 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
   private void setDirectB2SData(DirectB2SData b2sdata) {
     this.backglassData = b2sdata;
     if (backglassData != null) {
+      DirectB2sScreenRes screenres = client.getBackglassServiceClient().getScreenRes(b2sdata.toDirectB2S(), true);
+      if (screenres != null) {
+        this.resPath = screenres.getScreenresFilePath();
+        this.framePath = screenres.getBackgroundFilePath();
+      }
+
       if (backglassData.getGameId() > 0) {
         DirectB2STableSettings tmpTableSettings = client.getBackglassServiceClient().getTableSettings(backglassData.getGameId());
         if (tmpTableSettings != null) {
@@ -123,6 +134,14 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
 
   public int getNbScores() {
     return backglassData != null ? backglassData.getScores() : 0;
+  }
+
+  public String getResPath() {
+    return resPath;
+  }
+
+  public String getFramePath() {
+    return framePath;
   }
 
   @Override

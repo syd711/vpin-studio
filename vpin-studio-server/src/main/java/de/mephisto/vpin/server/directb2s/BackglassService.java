@@ -64,6 +64,13 @@ public class BackglassService {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
+  /** 
+   * The default filename ScreenRes.txt can be altered by setting the registry key
+   * Software\B2S\B2SScreenResFileNameOverride to a different filename.
+   * Read once
+   */
+  private String screenresTxt;
+
   /**
    * Cache between filename and data
    */
@@ -456,11 +463,11 @@ public class BackglassService {
 
   //------------------------------------
 
-  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s) {
+  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
     File b2sFile = new File(emulator.getTablesDirectory(), directb2s.getFileName());
 
-    List<String> lines = readScreenRes(b2sFile, false);
+    List<String> lines = readScreenRes(b2sFile, false, perTableOnly);
     if (lines == null) {
       return null;
     }
@@ -520,7 +527,7 @@ public class BackglassService {
   public File getScreenResFile(int emuId, String filename) {
     GameEmulator emulator = frontendService.getGameEmulator(emuId);
     File b2sFile = new File(emulator.getTablesDirectory(), filename);
-    List<String> lines = readScreenRes(b2sFile, false);
+    List<String> lines = readScreenRes(b2sFile, false, false);
     if (lines == null || lines.size() < 16) {
       return null;
     }
@@ -529,12 +536,21 @@ public class BackglassService {
     return framePath.exists() ? framePath : null;
   }
 
-  private List<String> readScreenRes(File b2sFile, boolean withComment) {
-    // The default filename ScreenRes.txt can be altered by setting the registry key
-    // Software\B2S\B2SScreenResFileNameOverride to a different filename.
-    String screenresTxt = StringUtils.defaultIfEmpty(
-      systemService.readRegistryValue("HKEY_CURRENT_USER\\Software\\B2S", "B2SScreenResFileNameOverride"),
-      "ScreenRes.txt");
+  /**
+   * Load a screen.res file and returns the lines
+   * @param b2sFile The associated directb2s file to get table filename
+   * @param withComment Whether comment lines must be returned (true) or filtered (false)
+   * @param perTableOnly Load only the file if it is table dedicated one, else null
+   * @return the List of all lines in the file 
+   */
+  private List<String> readScreenRes(File b2sFile, boolean withComment, boolean perTableOnly) {
+    if (screenresTxt == null) {
+      // The default filename ScreenRes.txt can be altered by setting the registry key
+      // Software\B2S\B2SScreenResFileNameOverride to a different filename.
+      screenresTxt = StringUtils.defaultIfEmpty(
+        systemService.readRegistryValue("HKEY_CURRENT_USER\\Software\\B2S", "B2SScreenResFileNameOverride"),
+        "ScreenRes.txt");
+    }
 
     // see https://github.com/vpinball/b2s-backglass/wiki/Screenres.txt
     // When the B2S Server starts, it tries to find the ScreenRes files in this order  (from backglassServer documentation):
@@ -543,11 +559,11 @@ public class BackglassService {
     if (!target.exists()) {
       //  2) Screenres.txt (or whatever set in the registry) in the same folder as tablename.vpx
       target = new File(b2sFile.getParentFile(), screenresTxt);
-      if (!target.exists()) {
+      if (perTableOnly || !target.exists()) {
         //  3) Screenres.txt (or whatever set in the registry) as tablename/Screenres.txt
         File tableFolder = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()));
         target = new File(tableFolder, screenresTxt);
-        if (!target.exists()) {
+        if (!perTableOnly && !target.exists()) {
           //  4) Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
           target = new File(getBackglassServerFolder(), screenresTxt);
         }
@@ -579,7 +595,7 @@ public class BackglassService {
     GameEmulator emulator = frontendService.getGameEmulator(screenres.getEmulatorId());
     File b2sFile = new File(emulator.getTablesDirectory(), screenres.getFileName());
 
-    List<String> lines = readScreenRes(b2sFile, true);
+    List<String> lines = readScreenRes(b2sFile, true, false);
     if (lines == null) {
       throw new IOException("Cannot find an existing table nor table .res");
     }

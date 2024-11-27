@@ -227,10 +227,9 @@ public class DirectB2SResource {
     return backglassService.setDmdImage(directB2S.getEmulatorId(), directB2S.getFileName(), null, null);
   }
 
-
   @PostMapping("/screenRes")
-  public DirectB2sScreenRes getScreenRes(@RequestBody DirectB2S directb2s) {
-    return backglassService.getScreenRes(directb2s);
+  public DirectB2sScreenRes getScreenRes(@RequestBody DirectB2S directb2s, @RequestParam(required=false) boolean tableOnly) {
+    return backglassService.getScreenRes(directb2s, tableOnly);
   }
 
   @GetMapping("/frame/{emuId}/{filename}")
