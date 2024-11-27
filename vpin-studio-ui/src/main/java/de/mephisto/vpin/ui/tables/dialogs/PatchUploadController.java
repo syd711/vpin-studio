@@ -1,12 +1,15 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController;
 import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
@@ -26,6 +29,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class PatchUploadController extends BaseUploadController {
   private final static Logger LOG = LoggerFactory.getLogger(PropperRenamingController.class);
@@ -90,16 +96,33 @@ public class PatchUploadController extends BaseUploadController {
 
     result = UniversalUploadUtil.upload(getSelection(), game.getId(), uploadDescriptor.getUploadType(), game.getEmulatorId());
     if (result.isPresent()) {
-      UploadDescriptor uploadDescriptor = result.get();
-      uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
-      uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
-      uploadDescriptor.setAutoFill(false);
+      try {
+        UploadDescriptor uploadDescriptor = result.get();
+        uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
+        uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
+        uploadDescriptor.setAutoFill(false);
 
-      GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
-      result = UniversalUploadUtil.postProcess(progressModel);
-      if (result.isPresent()) {
-        // notify listeners of table import done
-        EventManager.getInstance().notifyTableUploaded(result.get());
+        GameRepresentation gameRepresentation = client.getGameService().getGame(uploadDescriptor.getGameId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
+
+        File gameFile = new File(gameRepresentation.getGameFilePath());
+        File emuDir = new File(emulatorRepresentation.getTablesDirectory());
+        if (!gameFile.getParentFile().equals(emuDir)) {
+          uploadDescriptor.setFolderBasedImport(true);
+          uploadDescriptor.setSubfolderName(FilenameUtils.getBaseName(gameRepresentation.getGameFileName()) + "_[Patched]");
+        }
+
+
+        GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
+        result = UniversalUploadUtil.postProcess(progressModel);
+        if (result.isPresent()) {
+          // notify listeners of table import done
+          EventManager.getInstance().notifyTableUploaded(result.get());
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Patching table post upload failed: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Patching table post upload failed: " + e.getMessage());
       }
     }
   }

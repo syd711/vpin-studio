@@ -1007,7 +1007,7 @@
                   </HBox>
                </right>
                <left>
-                  <Label fx:id="titleLabel" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
+                  <Label fx:id="titleLabel" prefWidth="670.0" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>
