@@ -18,7 +18,6 @@
 - **Tables / Asset Manager**: Fixed styling of list selection which was not highlighted properly.
 - **Tables / Asset Manager**: Provided "undock" button in the header. Using this options removes the "modal" option of the dialog, so it can be kept open. The selection is automatically updated for the current table.
 - **Tables / Highscore Resetting**: Fixed resetting VPReg.stg based highscores using the correct charset this time.
-- **Tables / Highscore Parsing**: **"Autobots, roll out!"** @Marten added the first highscore parser that combines highscores from different modes into one list, starting with the table **Transformers**.
 - **Overlays**: Fixed the issue that highscore cards shown centered on the playfield or displayed via popper screens were a bit off.
 - **PinballY**: Fixed the parsing of tables database preventing visualisation of medias when **mediaName** was different from **fileName**.
 ---

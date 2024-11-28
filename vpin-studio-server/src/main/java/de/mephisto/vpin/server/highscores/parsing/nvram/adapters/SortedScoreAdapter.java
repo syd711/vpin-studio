@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.*;
 import java.util.regex.*;
@@ -61,8 +62,7 @@ public class SortedScoreAdapter implements ScoreNvRamAdapter {
     public HighScore(String player, String score) {
       this.player = player;
       this.score = score;
-      String scoreToParse = score.replace(".", "");
-      scoreToParse = scoreToParse.replace(",","");
+      String scoreToParse = ScoreFormatUtil.cleanScore(score);
       this.scoreValue = Integer.parseInt(scoreToParse);
     }
 

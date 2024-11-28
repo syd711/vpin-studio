@@ -28,7 +28,7 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
     adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
     adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
-    adapters.add(new SortedScoreAdapter("tf_180.nv"));
+//    adapters.add(new SortedScoreAdapter("tf_180.nv")); //TODO this must run AFTER the adapters execution to leave the RAW value untouched
     adapters.add(new FixTitleScoreAdapter("rs_l6.nv", "TODAY'S HIGHEST SCORES", "ALL TIME HIGHEST SCORES"));
     adapters.add(new SinglePlayerScoreAdapter());
   }
@@ -102,6 +102,7 @@ public class NvRamHighscoreToRawConverter {
     List<String> lines = Arrays.asList(stdOut.trim().split("\n"));
     for (ScoreNvRamAdapter adapter : adapters) {
       if (adapter.isApplicable(nvRamFileName, lines)) {
+        LOG.info("Converted score using {}", adapter.getClass().getSimpleName());
         return adapter.convert(nvRamFileName, lines);
       }
     }
