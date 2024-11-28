@@ -2201,7 +2201,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       executor.setDir(getInstallationFolder());
       executor.executeCommandAsync();
 
-      systemService.waitForProcess("PinUpMenu.exe", 5, 2000);
+      systemService.waitForProcess("PinUpMenu.exe", 5, 3000);
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
