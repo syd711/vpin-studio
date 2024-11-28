@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.scene.image.Image;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -31,11 +31,15 @@ import org.springframework.util.StreamUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
+
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -84,19 +88,31 @@ public class BackglassService {
     return true;
   }
 
+  public DirectB2S getDirectB2S(int gameId) {
+    Game game = gameService.getGame(gameId);
+    DirectB2S b2s = new DirectB2S();
+    b2s.setEmulatorId(game.getEmulatorId());
+    b2s.setFileName(FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s");
+    b2s.setVpxAvailable(true);
+    return b2s;
+  }
+
   public DirectB2SData getDirectB2SData(int gameId) {
     Game game = gameService.getGame(gameId);
     return getDirectB2SData(game);
   }
 
   public DirectB2SData getDirectB2SData(@Nonnull DirectB2S directB2S) {
-    Game game = frontendService.getGameByBaseFilename(directB2S.getEmulatorId(), 
-        FilenameUtils.getBaseName(directB2S.getName()));
+    return getDirectB2SData(directB2S.getEmulatorId(), directB2S.getFileName());
+  }
+
+  public DirectB2SData getDirectB2SData(int emuId, String filename) {
+    Game game = frontendService.getGameByBaseFilename(emuId, FilenameUtils.getBaseName(filename));
     if (game != null) {
       return getDirectB2SData(game);
     }
-    File b2sFile = getB2sFile(directB2S.getEmulatorId(), directB2S.getFileName());
-    return getDirectB2SData(b2sFile, directB2S.getEmulatorId(), null, directB2S.getFileName());
+    File b2sFile = getB2sFile(emuId, filename);
+    return getDirectB2SData(b2sFile, emuId, null, filename);
   }
 
   public DirectB2SData getDirectB2SData(Game game) {
@@ -162,7 +178,7 @@ public class BackglassService {
       String backgroundBase64 = getBackgroundBase64(data.getEmulatorId(), filename);
       if (backgroundBase64 != null) {
         byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
-        Image image = new Image(new ByteArrayInputStream(imageData));
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
         int backgroundWidth = (int) image.getWidth();
         int backgroundHeight = (int) image.getHeight();
         data.setBackgroundWidth(backgroundWidth);
@@ -196,7 +212,7 @@ public class BackglassService {
       String dmdBase64 = getDmdBase64(data.getEmulatorId(), filename);
       if (dmdBase64 != null) {
         byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
-        Image dmdImage = new Image(new ByteArrayInputStream(dmdData));
+        BufferedImage dmdImage = ImageIO.read(new ByteArrayInputStream(dmdData));
         int dmdWidth = (int) dmdImage.getWidth();
         int dmdHeight = (int) dmdImage.getHeight();
         data.setDmdWidth(dmdWidth);
@@ -476,7 +492,7 @@ public class BackglassService {
     return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
   }
 
-  private DirectB2sScreenRes getScreenRes(GameEmulator emulator, String filename, Game game, boolean perTableOnly) {
+  private DirectB2sScreenRes getScreenRes(GameEmulator emulator, String filename, @Nullable Game game, boolean perTableOnly) {
     File b2sFile = new File(emulator.getTablesDirectory(), filename);
 
     List<String> lines = readScreenRes(b2sFile, false, perTableOnly);
@@ -709,4 +725,80 @@ public class BackglassService {
       return null;
     }
   }
+
+	public byte[] getPreviewBackground(int gameId, boolean includeFrame) {
+    //user gameService as we need the enriched game with rom
+    Game game = gameService.getGame(gameId);
+    DirectB2SData tableData = getDirectB2SData(game);
+    return getPreviewBackground(tableData, game, includeFrame);
+	}
+
+  public byte[] getPreviewBackground(int emuId, String filename, boolean includeFrame) {
+    //user gameService as we need the enriched game with rom
+    Game game = gameService.getGameByBaseFilename(emuId, FilenameUtils.getBaseName(filename));
+    DirectB2SData tableData = null;
+    if (game != null) {
+      tableData = getDirectB2SData(game);
+    } else {
+      File b2sFile = getB2sFile(emuId, filename);
+      tableData = getDirectB2SData(b2sFile, emuId, null, filename);
+    }
+    return getPreviewBackground(tableData, game, includeFrame);
+  }
+
+  //TODO add frame
+  public byte[] getPreviewBackground(DirectB2SData tableData, @Nullable Game game, boolean includeFrame) {
+    if (tableData != null && tableData.isBackgroundAvailable()) {
+      String base64 = getBackgroundBase64(tableData.getEmulatorId(), tableData.getFilename());
+      if (base64 != null) {
+        byte[] bytes = DatatypeConverter.parseBase64Binary(base64);
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
+          BufferedImage preview = ImageIO.read(bais);
+          if (tableData.getGrillHeight() > 0) {
+            DirectB2STableSettings tableSettings = game != null? getTableSettings(game) : null;
+            if (tableSettings != null && tableSettings.getHideGrill() == 1) {
+              preview = preview.getSubimage(0, 0, preview.getWidth(), preview.getHeight() - tableData.getGrillHeight());
+            }
+          }
+
+          if (includeFrame) {
+            GameEmulator emulator = game != null? game.getEmulator() : frontendService.getGameEmulator(tableData.getEmulatorId());
+            DirectB2sScreenRes screenres = getScreenRes(emulator, tableData.getFilename(), game, true);
+            if (screenres != null && screenres.hasFrame()) {
+              File frameFile = new File(screenres.getBackgroundFilePath());
+              if (frameFile.exists()) {
+                BufferedImage combined = new BufferedImage(screenres.getBackgroundWidth(), screenres.getBackgroundHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics g = combined.getGraphics();
+
+                BufferedImage frameImage = ImageIO.read(frameFile);
+                g.drawImage(frameImage,0, 0,
+                  screenres.getBackgroundWidth(), 
+                  screenres.getBackgroundHeight(), 
+                  null);
+                
+                g.drawImage(preview, 
+                  screenres.getBackglassX() - screenres.getBackgroundX(), 
+                  screenres.getBackglassY() - screenres.getBackgroundY(), 
+                  screenres.getBackglassWidth(), 
+                  screenres.getBackglassHeight(), 
+                  null);
+                g.dispose();
+                preview = combined;
+              }
+            }
+          }
+
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          ImageIO.write(preview, "png", baos);
+          return baos.toByteArray();
+        }
+        catch (IOException ioe) {
+          LOG.error("Cannot generate preview image for {]}", tableData.getFilename(), ioe);
+        }
+      }
+    }
+    // not found or error
+    return null;
+  }
+
 }

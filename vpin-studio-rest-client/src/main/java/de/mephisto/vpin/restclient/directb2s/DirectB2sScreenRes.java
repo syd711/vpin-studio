@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.directb2s;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class DirectB2sScreenRes {
 
   private int emulatorId;
@@ -286,6 +288,14 @@ public class DirectB2sScreenRes {
 
   public boolean isOnDmd(double x, double y) {
     return getDmdMinX()<= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
+  }
+
+  public boolean isBackglassCentered() {
+    return getBackgroundWidth() > 0 && getBackgroundHeight() > 0;
+  }
+
+  public boolean hasFrame() {
+    return StringUtils.isNotEmpty(backgroundFilePath) && isBackglassCentered();
   }
 
 }
