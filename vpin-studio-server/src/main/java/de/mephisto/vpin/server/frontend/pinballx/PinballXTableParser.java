@@ -30,7 +30,7 @@ public class PinballXTableParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXTableParser.class);
 
   /** Parser for dates */
-  private final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+  protected final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
 
   @Nullable
@@ -55,14 +55,9 @@ public class PinballXTableParser extends DefaultHandler {
           if (StringUtils.equalsIgnoreCase(element.getTagName(), "game")) {
             
             String gameName = element.getAttribute("name");
-            String gameFileName =  gameName + "." + emu.getGamesExt();
 
             TableDetails detail = new TableDetails();
-            detail.setGameName(gameName);
-            detail.setGameFileName(gameFileName);
-            detail.setEmulatorId(emu.getId());
-            // will be overriden but enabled by default
-            detail.setStatus(1);  // STATUS_NORMAL
+            doPreParsing(detail, emu, gameName);
 
             NodeList childNodes = element.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
@@ -78,20 +73,10 @@ public class PinballXTableParser extends DefaultHandler {
                 }
               }
             }
+            doPostParsing(detail);
 
-            // three cases supported (third used by pinballY only for handling specific mediaName 
-            // <game name= />  
-            // <game name= > <description /> </game>
-            // <game name= > <description /> </title > </game>
-            // form xml parsing <title> => gameDisplayName and <description> => gameName
-            
-            // if no title provided, displayName should be description and gameName defaulted from filename 
-            if (StringUtils.isEmpty(detail.getGameDisplayName())) {
-              detail.setGameDisplayName(detail.getGameName()); 
-            }
-
-            games.add(gameFileName);
-            tabledetails.put(PinballXConnector.compose(emu.getId(), gameFileName), detail);
+            games.add(detail.getGameFileName());
+            tabledetails.put(PinballXConnector.compose(emu.getId(), detail.getGameFileName()), detail);
           }
         }
       }
@@ -103,6 +88,14 @@ public class PinballXTableParser extends DefaultHandler {
     return gamecount;
   }
 
+  protected void doPreParsing(TableDetails detail, Emulator emu, String name) {
+    String gameFileName =  name + "." + emu.getGamesExt();
+    detail.setGameFileName(gameFileName);
+    detail.setGameName(name);
+    detail.setEmulatorId(emu.getId());
+    // will be overriden but enabled by default
+    detail.setStatus(1);  // STATUS_NORMAL
+  }
 
   /**
    <game name="007 Goldeneye (Sega 1996)">
@@ -126,13 +119,9 @@ public class PinballXTableParser extends DefaultHandler {
   </game>
    * @param detail 
    */
-  private void readNode(TableDetails detail, String qName, String content) throws ParseException {
+  protected void readNode(TableDetails detail, String qName, String content) throws ParseException {
     switch (qName) {
       case "description": {
-        detail.setGameName(content);
-        break;
-      }
-      case "title": {
         detail.setGameDisplayName(content);
         break;
       }
@@ -224,6 +213,13 @@ public class PinballXTableParser extends DefaultHandler {
     }
   }
 
+  protected void doPostParsing(TableDetails detail) {
+    // if no description provided (should never happen), let's initiate displayName with gameName 
+    if (StringUtils.isEmpty(detail.getGameDisplayName())) {
+      detail.setGameDisplayName(detail.getGameName()); 
+    }
+  }
+
   //----------------------------------------
 
   public void writeGames(File pinballXDb, List<GameEntry> games, Map<String, TableDetails> mapTableDetails, Emulator emu) {
@@ -247,13 +243,7 @@ public class PinballXTableParser extends DefaultHandler {
           String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGamesExt());
           writer.append("  <game name=\"").append(escapeXml(gameFileName)).append("\">\n");
 
-          // <title /> stores the gameDisplayName if different from filename without extension
-          if (!StringUtils.equals(detail.getGameDisplayName(), gameFileName)) {
-            appendValue(writer, "title", detail.getGameDisplayName());
-          }
-          
-          // <description /> stores the gameName (used for media assets in PinballY)
-          appendValue(writer, "description", detail.getGameName());
+          appendDescription(writer, detail);
 
           appendValue(writer, "rom", detail.getRomName());
           appendValue(writer, "manufacturer", detail.getManufacturer());
@@ -284,39 +274,48 @@ public class PinballXTableParser extends DefaultHandler {
     }
   }
 
-  private void appendKeepDisplays(BufferedWriter writer, String tag,String keepDisplays, String screen) throws IOException {
+  protected void appendDescription(BufferedWriter writer, TableDetails detail) throws IOException {
+    appendValue(writer, "description", detail.getGameDisplayName());
+  }
+
+  protected void appendKeepDisplays(BufferedWriter writer, String tag,String keepDisplays, String screen) throws IOException {
     // cf constants in TableDataTabScreensController
     boolean keep = keepDisplays!=null && keepDisplays.contains(screen);
     writer.append("    <" + tag + ">").append(keep? "False": "True" ).append("</" + tag + ">\n");   
   }
 
-  private void appendValue(BufferedWriter writer, String tag, String value) throws IOException {
+  protected void appendValue(BufferedWriter writer, String tag, String value) throws IOException {
     if (value != null) {
-      writer.append("    <" + tag + ">").append(escapeXml(value)).append("</" + tag + ">\n");
-    }
-  }  private void appendValue(BufferedWriter writer, String tag, Integer value) throws IOException {
-    if (value != null) {
-      writer.append("    <" + tag + ">").append(value.toString()).append("</" + tag + ">\n");
+      appendValueNoEscape(writer, tag, escapeXml(value));
     }
   }
-  private void appendValue(BufferedWriter writer, String tag, Boolean value) throws IOException {
+  protected void appendValue(BufferedWriter writer, String tag, Integer value) throws IOException {
     if (value != null) {
-      writer.append("    <" + tag + ">").append(value? "True": "False").append("</" + tag + ">\n");
+      appendValueNoEscape(writer, tag, value.toString());
     }
   }
-  private void appendValue(BufferedWriter writer, String tag, Date value) throws IOException {
+  protected void appendValue(BufferedWriter writer, String tag, Boolean value) throws IOException {
     if (value != null) {
-      writer.append("    <" + tag + ">").append(sdf.format(value)).append("</" + tag + ">\n");
+      appendValueNoEscape(writer, tag, value? "True": "False");
     }
   }
+  protected void appendValue(BufferedWriter writer, String tag, Date value) throws IOException {
+    if (value != null) {
+      appendValueNoEscape(writer, tag, sdf.format(value));
+    }
+  }
+
+  protected void appendValueNoEscape(BufferedWriter writer, String tag, String value) throws IOException {
+    writer.append("    <" + tag + ">").append(value).append("</" + tag + ">\n");
+  }
+
   /**
    * Specific XML escape utilities (vs StringEscapeUtils) to not escape '
    */
-  private String escapeXml(String value) {
+  protected String escapeXml(String value) {
     value = value.replace("&", "&amp;");
     value = value.replace("<", "&lt;");
     value = value.replace(">", "&gt;");
     return value;
   }
-
 }
