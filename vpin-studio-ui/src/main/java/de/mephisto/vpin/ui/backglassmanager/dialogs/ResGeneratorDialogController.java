@@ -368,7 +368,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
           screenres.getBackglassWidth(), screenres.getBackglassHeight()));
       dmdDimensionLabel.setText(formatLocationAndDimension(screenres.getDmdX(), screenres.getDmdY(), 
           screenres.getDmdWidth(), screenres.getDmdHeight()));
-      if (res.getBackglassX() != 0 || res.getBackglassY() != 0) {
+      if (res.isBackglassCentered()) {
         radioCenterBackglass.setSelected(true);
       } 
       else {

@@ -1037,18 +1037,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     Image thumbnail = null;
     String thumbnailError = null;
     if (tableData.isBackgroundAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
-        thumbnail = new Image(in);
-        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
-          PixelReader reader = thumbnail.getPixelReader();
-          thumbnail = new WritableImage(reader, 0, 0, (int) thumbnail.getWidth(), (int) (thumbnail.getHeight() - tableData.getGrillHeight()));
-        }
-      }
-      catch (IOException ioe) {
-        LOG.error("Cannot download background image for game " + tableData.getGameId(), ioe);
-        thumbnail = null;
-        thumbnailError = "Failed to read image data.";
-      }
+      String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(), 
+        tableData.getFilename(), true);
+      thumbnail = new Image(url);
     }
     else {
       thumbnailError = "No Image data available.";
@@ -1073,13 +1064,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     Image dmdThumbnail = null;
     String dmdThumbnailError = null;
     if (tableData.isDmdImageAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
-        dmdThumbnail = new Image(in);
-      }
-      catch (IOException ioe) {
-        LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
-        dmdThumbnailError = "Failed to read DMD image data.";
-      }
+      String url = client.getBackglassServiceClient().getDirectB2sDmdUrl(tableData.getEmulatorId(), tableData.getFilename());
+      dmdThumbnail = new Image(url);
     }
     else {
       dmdThumbnailError = "No DMD background available.";

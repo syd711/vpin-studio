@@ -333,8 +333,17 @@ public class GameService implements InitializingBean {
     return null;
   }
 
-  public Game getGameByFilename(int emuId, String name) {
-    Game game = this.frontendService.getGameByFilename(emuId, name);
+  public Game getGameByBaseFilename(int emuId, String baseFilename) {
+    Game game = this.frontendService.getGameByBaseFilename(emuId, baseFilename);
+    if (game != null) {
+      //this will ensure that a scanned table is fetched
+      game = this.getGame(game.getId());
+    }
+    return game;
+  }
+
+  public Game getGameByFilename(int emuId, String filename) {
+    Game game = this.frontendService.getGameByFilename(emuId, filename);
     if (game != null) {
       //this will ensure that a scanned table is fetched
       game = this.getGame(game.getId());

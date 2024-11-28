@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.games.UniversalUploadService;
 
 import de.mephisto.vpin.server.system.DefaultPictureService;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -66,40 +68,100 @@ public class DirectB2SResource {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
-  @GetMapping("/{id}")
-  public DirectB2SData getData(@PathVariable("id") int gameId) {
+  //--------------------------------------------------
+
+  @GetMapping("/{gameId}")
+  public DirectB2SData getData(@PathVariable("gameId") int gameId) {
     return backglassService.getDirectB2SData(gameId);
   }
+
+  @PostMapping("/get")
+  public DirectB2SData getData(@RequestBody DirectB2S directB2S) {
+    return backglassService.getDirectB2SData(directB2S);
+  }
+
+  @GetMapping
+  public List<DirectB2S> getBackglasses() {
+    return backglassService.getBackglasses();
+  }
+
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return backglassService.clearCache();
   }
 
+  //--------------------------------------------------
+  // DOWNLOAD IMAGES
+
+  @GetMapping("/background/{gameId}")
+  public ResponseEntity<Resource> getBackgroundForGame(@PathVariable("gameId") int gameId) {
+    DirectB2S directb2s = backglassService.getDirectB2S(gameId);
+    return getBackground(directb2s.getEmulatorId(), directb2s.getFileName());
+  }
   @GetMapping("/background/{emuId}/{filename}")
   public ResponseEntity<Resource> getBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
     // first decoding done by the RestService but an extra one is needed
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
-    return download(backglassService.getBackgroundBase64(emuId, filename), filename, ".png");
+
+    String name = StringUtils.indexOf(filename, '/') >= 0 ? StringUtils.substringAfterLast(filename, "/") : filename;
+    name = StringUtils.substringBeforeLast(name, ".") + ".png";
+    return download(backglassService.getBackgroundBase64(emuId, filename), name);
   }
 
+  @GetMapping("/dmdimage/{gameId}")
+  public ResponseEntity<Resource> getDmdImageForGame(@PathVariable("gameId") int gameId) {
+    DirectB2S directb2s = backglassService.getDirectB2S(gameId);
+    return getDmdImage(directb2s.getEmulatorId(), directb2s.getFileName());
+  }
   @GetMapping("/dmdimage/{emuId}/{filename}")
   public ResponseEntity<Resource> getDmdImage(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
     // first decoding done by the RestService but an extra one is needed
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
-    return download(backglassService.getDmdBase64(emuId, filename), filename, ".dmd.png");
-  }
 
-  protected ResponseEntity<Resource> download(String base64, String filename, String extension) {
-    byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
     String name = StringUtils.indexOf(filename, '/') >= 0 ? StringUtils.substringAfterLast(filename, "/") : filename;
-    name = StringUtils.substringBeforeLast(name, ".") + extension;
-    return download(image, name);
+    name = StringUtils.substringBeforeLast(name, ".") + ".dmd.png";
+    return download(backglassService.getDmdBase64(emuId, filename), name);
   }
 
-  protected ResponseEntity<Resource> download(byte[] image, String name) {
+  @GetMapping("/previewBackground/{gameId}.png")
+  public ResponseEntity<Resource> getPreviewBackgroundForGame(@PathVariable("gameId") int gameId, @RequestParam(required = false) boolean includeFrame) {
+    return download(backglassService.getPreviewBackground(gameId, includeFrame), gameId + ".png", false);
+  }
+  @GetMapping("/previewBackground/{emuId}/{filename}.png")
+  public ResponseEntity<Resource> getPreviewBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename, @RequestParam(required = false) boolean includeFrame) {
+    // first decoding done by the RestService but an extra one is needed as filename is encoded by caller too
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+    return download(backglassService.getPreviewBackground(emuId, filename, includeFrame), FilenameUtils.getBaseName(filename)+".png", false);
+  }
+
+  @GetMapping("/croppedBackground/{gameId}")
+  public ResponseEntity<StreamingResponseBody> getCroppedBackground(@PathVariable("gameId") int gameId) {
+    return download(gameId, game -> defaultPictureService.getCroppedDefaultPicture(game));
+  }
+  @GetMapping("/croppedDmd/{gameId}")
+  public ResponseEntity<StreamingResponseBody> getCroppedDmd(@PathVariable("gameId") int gameId) {
+    return download(gameId, game -> defaultPictureService.getDMDPicture(game));
+  }
+
+  //-------
+  // download utilities
+
+  protected ResponseEntity<Resource> download(String base64, String filename) {
+    byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
+    //TODO check impact if we turn to false
+    return download(image, filename, true);
+  }
+
+  protected ResponseEntity<Resource> download(byte[] image, String name, boolean forceDownload) {
+    if (image == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
     HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
+    if (forceDownload) {
+      headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
+    }
     headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");
@@ -112,14 +174,42 @@ public class DirectB2SResource {
     return ResponseEntity.ok()
         .headers(headers)
         .contentLength(resource.contentLength())
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        .contentType(forceDownload ? MediaType.APPLICATION_OCTET_STREAM : MediaType.IMAGE_PNG)
         .body(resource);
   }
 
-  @PostMapping("/get")
-  public DirectB2SData getData(@RequestBody DirectB2S directB2S) {
-    return backglassService.getDirectB2SData(directB2S);
+  private ResponseEntity<StreamingResponseBody> download(int gameId, Function<Game, File> provider) {
+    Game game = gameService.getGame(gameId);
+    if (game == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    return download(provider.apply(game));
   }
+
+  private ResponseEntity<StreamingResponseBody> download(File file) {
+    if (file == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.add("Pragma", "no-cache");
+    headers.add("Expires", "0");
+    headers.add("X-Frame-Options", "SAMEORIGIN");
+
+    return ResponseEntity.ok()
+      .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(file)))
+      .headers(headers)
+      .body(out -> {
+        try (FileInputStream fis = new FileInputStream(file)) {
+          StreamUtils.copy(fis, out);
+        }
+      });
+  }
+
+  //--------------------------------------------------
+  // OPERATIONS
 
   @PostMapping("/delete")
   public boolean deleteBackglass(@RequestBody DirectB2S directB2S) {
@@ -141,10 +231,8 @@ public class DirectB2SResource {
     return null;
   }
 
-  @GetMapping
-  public List<DirectB2S> getBackglasses() {
-    return backglassService.getBackglasses();
-  }
+  //--------------------------------------------------
+  // SETTINGS
 
   @GetMapping("/tablesettings/{gameId}")
   public DirectB2STableSettings getTableSettings(@PathVariable("gameId") int gameId) {
@@ -176,6 +264,9 @@ public class DirectB2SResource {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving b2s server settings failed: " + e.getMessage());
     }
   }
+
+  //--------------------------------------------------
+  // UPLOADS
 
   @PostMapping("/upload")
   public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
@@ -226,6 +317,9 @@ public class DirectB2SResource {
     return backglassService.setDmdImage(directB2S.getEmulatorId(), directB2S.getFileName(), null, null);
   }
 
+  //--------------------------------------------------
+  // SCREENRES & FRAME
+
   @PostMapping("/screenRes")
   public DirectB2sScreenRes getScreenRes(@RequestBody DirectB2S directb2s, @RequestParam(required=false) boolean tableOnly) {
     return backglassService.getScreenRes(directb2s, tableOnly);
@@ -237,24 +331,7 @@ public class DirectB2SResource {
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
 
     File screenRes = backglassService.getScreenResFile(emuId, filename);
-    if (screenRes == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + screenRes.getName());
-    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-    headers.add("Pragma", "no-cache");
-    headers.add("Expires", "0");
-
-    return ResponseEntity.ok()
-      .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(screenRes)))
-      .header("X-Frame-Options", "SAMEORIGIN")
-      .body(out -> {
-        try (FileInputStream fis = new FileInputStream(screenRes)) {
-          StreamUtils.copy(fis, out);
-        }
-      });
+    return download(screenRes);
   }
 
   @PostMapping("/screenRes/save")
