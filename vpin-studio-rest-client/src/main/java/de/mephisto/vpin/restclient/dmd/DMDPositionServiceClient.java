@@ -23,6 +23,10 @@ public class DMDPositionServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "dmdposition/move?target=" + target, dmdInfo, DMDInfo.class);
   }
 
+  public DMDInfo autoPositionDMDInfo(DMDInfo dmdInfo) {
+    return getRestClient().post(API + "dmdposition/autoPosition", dmdInfo, DMDInfo.class);
+  }
+
   public boolean saveDMDInfo(DMDInfo dmdInfo) {
     return getRestClient().post(API + "dmdposition/save", dmdInfo, Boolean.class);
   }

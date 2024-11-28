@@ -40,73 +40,97 @@ public class DMDPositionService {
     Game game = gameService.getGame(gameId);
     INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
     if (iniConfiguration != null) {
-      if (useregistry(iniConfiguration)) {
-        return getDMDInfoFromRegistry(game);
+      DMDInfo info = new DMDInfo();
+      info.setGameId(game.getId());
+      info.setGameRom(game.getRom());
+      info.setKeepAspectRatio(keepAspectRatio(iniConfiguration));
+      info.setUseRegistry(useregistry(iniConfiguration));
+      if (info.isUseRegistry()) {
+        fillDMDInfoFromRegistry(info);
       }
       else {
-        return getDMDInfoFromIni(game, iniConfiguration);
+        fillDMDInfoFromIni(info, iniConfiguration);
       }
+      // then add screen information, must be done after x,y are set
+      fillScreenInfo(info);
+      return info;
     }
     return null;
   }
 
-  private DMDInfo getDMDInfoFromRegistry(Game game) {
-    //TODO
-    throw new UnsupportedOperationException("Unimplemented method 'getDMDInfoFromRegistry'");
+  private void fillDMDInfoFromRegistry(DMDInfo dmdinfo) {
   }
 
-  private DMDInfo getDMDInfoFromIni(Game game, INIConfiguration iniConfiguration) {
-    String rom = game.getRom();
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom);
+  private void fillDMDInfoFromIni(DMDInfo info, INIConfiguration iniConfiguration) {
+    SubnodeConfiguration conf = iniConfiguration.getSection(info.getGameRom());
     if (!conf.isEmpty()) {
-      DMDInfo info = new DMDInfo();
-      info.setGameId(game.getId());
+      info.setLocallySaved(true);
       info.setX(safeGet(conf, "virtualdmd left"));
       info.setY(safeGet(conf, "virtualdmd top"));
       info.setWidth(safeGet(conf, "virtualdmd width"));
       info.setHeight(safeGet(conf, "virtualdmd height"));
-      return addScreenInfo(info);
     }
     else {
       // take default
       conf = iniConfiguration.getSection("virtualdmd");
+      info.setLocallySaved(false);
       if (!conf.isEmpty()) {
-        DMDInfo info = new DMDInfo();
-        info.setGameId(game.getId());
         info.setX(safeGet(conf, "left"));
         info.setY(safeGet(conf, "top"));
         info.setWidth(safeGet(conf, "width"));
         info.setHeight(safeGet(conf, "height"));
-        return addScreenInfo(info);
       }  
-    }    
-    return null;
+    }
   }
 
-  private DMDInfo addScreenInfo(DMDInfo dmdinfo) {
+  private void fillScreenInfo(DMDInfo dmdinfo) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
-
     // determine on which screen the DMD is positionned onto
-    // then relativize to display
+    VPinScreen onScreen = null;
     if (dmdinfo.getCenterX() < 0) {
-      dmdinfo.setX(dmdinfo.getX() + screenres.getPlayfieldWidth());
-      dmdinfo.setOnScreen(VPinScreen.PlayField);
-      dmdinfo.setScreenWidth(screenres.getPlayfieldWidth());
-      dmdinfo.setScreenHeight(screenres.getPlayfieldHeight());
+      onScreen = VPinScreen.PlayField;
     }
     else if (screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
-      dmdinfo.setX(dmdinfo.getX() - screenres.getBackglassMinX());
-      dmdinfo.setY(dmdinfo.getY() - screenres.getBackglassMinY());
-      dmdinfo.setOnScreen(VPinScreen.BackGlass);
-      dmdinfo.setScreenWidth(screenres.getBackglassWidth());
-      dmdinfo.setScreenHeight(screenres.getBackglassHeight());
+      onScreen = VPinScreen.BackGlass;
     }
     else if (screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+      onScreen = VPinScreen.DMD;
+    }
+    fillScreenInfo(dmdinfo, screenres, onScreen);
+  }
+
+  private void fillScreenInfo(DMDInfo dmdinfo, DirectB2sScreenRes screenres, VPinScreen onScreen) {
+    // All coordinates in DMDInfo are relative to display
+    if (VPinScreen.PlayField.equals(onScreen)) {
+      dmdinfo.setOnScreen(VPinScreen.PlayField);
+      dmdinfo.setX(dmdinfo.getX() + screenres.getPlayfieldWidth());
+      dmdinfo.setScreenWidth(screenres.getPlayfieldWidth());
+      dmdinfo.setScreenHeight(screenres.getPlayfieldHeight());
+      dmdinfo.setImageCentered(false);
+    }
+    else if (VPinScreen.BackGlass.equals(onScreen)) {
+      dmdinfo.setOnScreen(VPinScreen.BackGlass);
+      if (screenres.hasFrame()) {
+        dmdinfo.setX(dmdinfo.getX() - screenres.getBackgroundX());
+        dmdinfo.setY(dmdinfo.getY() - screenres.getBackgroundY());
+        dmdinfo.setScreenWidth(screenres.getBackgroundWidth());
+        dmdinfo.setScreenHeight(screenres.getBackgroundHeight());  
+        dmdinfo.setImageCentered(screenres.isBackglassCentered());
+      }
+      else {
+        dmdinfo.setX(dmdinfo.getX() - screenres.getBackglassMinX());
+        dmdinfo.setY(dmdinfo.getY() - screenres.getBackglassMinY());
+        dmdinfo.setScreenWidth(screenres.getBackglassWidth());
+        dmdinfo.setScreenHeight(screenres.getBackglassHeight());  
+      }
+    }
+    else if (VPinScreen.DMD.equals(onScreen)) {
+      dmdinfo.setOnScreen(VPinScreen.DMD);
       dmdinfo.setX(dmdinfo.getX() - screenres.getDmdMinX() - screenres.getBackglassMinX());
       dmdinfo.setY(dmdinfo.getY() - screenres.getDmdMinY() - screenres.getBackglassMinY());
-      dmdinfo.setOnScreen(VPinScreen.DMD);
       dmdinfo.setScreenWidth(screenres.getDmdWidth());
       dmdinfo.setScreenHeight(screenres.getDmdHeight());
+      dmdinfo.setImageCentered(false);
     }
     else {
       // moveback on backglass
@@ -117,40 +141,35 @@ public class DMDPositionService {
       dmdinfo.setScreenHeight(screenres.getBackglassHeight());
     }
 
-    return dmdinfo;
+    // optionally reposition the dmd within the bound of the new screen
+    // mind dmdinfo coordinates are relatives so no need to consider x,y of the screen 
+    if (dmdinfo.getX() + dmdinfo.getWidth() >= dmdinfo.getScreenWidth()) {
+      if (dmdinfo.getScreenWidth() < dmdinfo.getWidth()) {
+        dmdinfo.setWidth(dmdinfo.getScreenWidth());
+      }
+      dmdinfo.setX(dmdinfo.getScreenWidth() - dmdinfo.getWidth());
+    }
+    if (dmdinfo.getY() + dmdinfo.getHeight() >= dmdinfo.getScreenHeight()) {
+      if (dmdinfo.getScreenHeight() < dmdinfo.getHeight()) {
+        dmdinfo.setHeight(dmdinfo.getScreenHeight());
+      }
+      dmdinfo.setY(dmdinfo.getScreenHeight() - dmdinfo.getHeight());
+    }
   }
+
+  //------------------------------------
+  // MOVE AND POSITION
 
   public DMDInfo moveDMDInfo(DMDInfo dmdinfo, VPinScreen targetScreen) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
-    
-    // optionally reposition the dmd within the bound of the new screen
-    // mind dmdinfo coordinates are relatives so no need to consider x,y of the screen 
-    if (VPinScreen.PlayField.equals(targetScreen)) {
-      reposition(dmdinfo, screenres.getPlayfieldWidth(), screenres.getPlayfieldHeight());
-    }
-    else if (VPinScreen.DMD.equals(targetScreen)) {
-      reposition(dmdinfo, screenres.getDmdWidth(), screenres.getDmdHeight());
-    }
-    else {
-      reposition(dmdinfo, screenres.getBackglassWidth(), screenres.getBackglassHeight());
-    }
-    dmdinfo.setOnScreen(targetScreen);
+    fillScreenInfo(dmdinfo, screenres, targetScreen);
     return dmdinfo;
   }
 
-  public void reposition(DMDInfo dmdinfo, double displayWidth, double displayHeight) {
-    if (dmdinfo.getX() + dmdinfo.getWidth() >= displayWidth) {
-      if (displayWidth < dmdinfo.getWidth()) {
-        dmdinfo.setWidth(displayWidth);
-      }
-      dmdinfo.setX(displayWidth - dmdinfo.getWidth());
-    }
-    if (dmdinfo.getY() + dmdinfo.getHeight() >= displayHeight) {
-      if (displayHeight < dmdinfo.getHeight()) {
-        dmdinfo.setHeight(displayHeight);
-      }
-      dmdinfo.setY(displayHeight - dmdinfo.getHeight());
-    }
+  public DMDInfo autoPositionDMDInfo(DMDInfo dmdinfo) {
+    //TODO do the real magic
+    dmdinfo.centerOnScreen();
+    return dmdinfo;
   }
 
   //------------------------------------
@@ -169,10 +188,16 @@ public class DMDPositionService {
       dmdinfo.setX(dmdinfo.getX() + screenres.getBackglassMinX());
       dmdinfo.setY(dmdinfo.getY() + screenres.getBackglassMinY());
     }
-    if (VPinScreen.PlayField.equals(dmdinfo.getOnScreen())) {
+    if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
       dmdinfo.setX(dmdinfo.getX() + screenres.getDmdMinX() + screenres.getBackglassMinX());
       dmdinfo.setY(dmdinfo.getY() + screenres.getDmdMinY() + screenres.getBackglassMinY());
     }
+
+    // round to int all number
+    dmdinfo.setX(Math.round(dmdinfo.getX()));
+    dmdinfo.setY(Math.round(dmdinfo.getY()));
+    dmdinfo.setWidth(Math.round(dmdinfo.getWidth()));
+    dmdinfo.setHeight(Math.round(dmdinfo.getHeight()));
 
     Game game = gameService.getGame(dmdinfo.getGameId());
     INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
@@ -195,11 +220,22 @@ public class DMDPositionService {
     String rom = game.getRom();
     SubnodeConfiguration conf = iniConfiguration.getSection(rom);
 
-    conf.setProperty("virtualdmd left", dmdinfo.getX());
-    conf.setProperty("virtualdmd top", dmdinfo.getY());
-    conf.setProperty("virtualdmd width", dmdinfo.getWidth());
-    conf.setProperty("virtualdmd height", dmdinfo.getHeight());
-
+    if (dmdinfo.isLocallySaved()) {
+      conf.setProperty("virtualdmd left", (int) dmdinfo.getX());
+      conf.setProperty("virtualdmd top", (int) dmdinfo.getY());
+      conf.setProperty("virtualdmd width", (int) dmdinfo.getWidth());
+      conf.setProperty("virtualdmd height", (int) dmdinfo.getHeight());
+    }
+    else {
+      // first clear local values if any
+      conf.clear();
+      // then update the global ones
+      conf = iniConfiguration.getSection("virtualdmd");
+      conf.setProperty("left", (int) dmdinfo.getX());
+      conf.setProperty("top", (int) dmdinfo.getY());
+      conf.setProperty("width", (int) dmdinfo.getWidth());
+      conf.setProperty("height", (int) dmdinfo.getHeight());
+    }
     return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
   }
 
@@ -214,7 +250,7 @@ public class DMDPositionService {
 
     INIConfiguration iniConfiguration = new INIConfiguration();
     iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-    iniConfiguration.setSeparatorUsedInOutput("=");
+    iniConfiguration.setSeparatorUsedInOutput(" = ");
     iniConfiguration.setSeparatorUsedInInput("=");
 
     String defaultCharset = "UTF-8";
@@ -261,6 +297,10 @@ public class DMDPositionService {
   private boolean useregistry(INIConfiguration iniConfiguration) {
     SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
     return conf.containsKey("useregistry") ? conf.getBoolean("useregistry") : true;
+  }
+  private boolean keepAspectRatio(INIConfiguration iniConfiguration) {
+    SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
+    return conf.containsKey("ignorear") ? !conf.getBoolean("ignorear") : true;
   }
 
   private double safeGet(SubnodeConfiguration conf, String key) {

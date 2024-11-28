@@ -6,6 +6,16 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class DMDInfo {
   private int gameId;
+  private String gameRom;
+
+  /** global aspect ratio setting */ 
+  private boolean keepAspectRatio;
+  /** whether save uses registry or ini */ 
+  private boolean useRegistry;
+
+  /** Whether dmd position is a per table one (true) or a global settings (false) */
+  private boolean locallySaved;
+
   private double x;
   private double y;
   private double width;
@@ -14,6 +24,7 @@ public class DMDInfo {
   private VPinScreen onScreen;
   private double screenWidth;
   private double screenHeight;
+  private boolean imageCentered;
 
   public int getGameId() {
     return gameId;
@@ -23,7 +34,39 @@ public class DMDInfo {
     this.gameId = gameId;
   }
 
-  public double getX() {
+  public String getGameRom() {
+		return gameRom;
+	}
+
+	public void setGameRom(String gameRom) {
+		this.gameRom = gameRom;
+	}
+
+	public boolean isKeepAspectRatio() {
+		return keepAspectRatio;
+	}
+
+	public void setKeepAspectRatio(boolean keepAspectRatio) {
+		this.keepAspectRatio = keepAspectRatio;
+	}
+
+	public boolean isUseRegistry() {
+		return useRegistry;
+	}
+
+	public void setUseRegistry(boolean useRegistry) {
+		this.useRegistry = useRegistry;
+	}
+
+  public boolean isLocallySaved() {
+		return locallySaved;
+	}
+
+	public void setLocallySaved(boolean locallySaved) {
+		this.locallySaved = locallySaved;
+	}
+
+	public double getX() {
     return x;
   }
 
@@ -79,6 +122,14 @@ public class DMDInfo {
 		this.screenHeight = screenHeight;
 	}
 
+	public boolean isImageCentered() {
+		return imageCentered;
+	}
+
+	public void setImageCentered(boolean imageCentered) {
+		this.imageCentered = imageCentered;
+	}
+  
   //-----------------------
 
   public double getCenterX() {
@@ -99,6 +150,12 @@ public class DMDInfo {
   public boolean isOnDMD() {
     return onScreen != null && VPinScreen.DMD.equals(onScreen);
   }
+
+  public void centerOnScreen() {
+    setX(getScreenWidth() / 2 - getWidth() / 2);
+    setY(getScreenHeight() / 2 - getHeight() / 2);
+  }
+
 
   @Override
   public boolean equals(Object object) {

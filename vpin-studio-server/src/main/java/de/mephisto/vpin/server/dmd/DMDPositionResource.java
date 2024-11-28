@@ -36,6 +36,11 @@ public class DMDPositionResource {
     return dmdPositionService.moveDMDInfo(dmdInfo, target);
   }
 
+  @PostMapping("/autoPosition")
+  public DMDInfo autoPosition(@RequestBody DMDInfo dmdInfo) {
+    return dmdPositionService.autoPositionDMDInfo(dmdInfo);
+  }
+
   @PostMapping("/save")
   public boolean saveDMD(@RequestBody DMDInfo dmdInfo) {
     try {
@@ -46,9 +51,4 @@ public class DMDPositionResource {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Saving DMD position failed: " + e.getMessage());
     }
   }
-
-  /*@GetMapping("/background/{gameId}")
-  public ResponseEntity<byte[]> getFullDMDBackground(@PathVariable("gameId") int gameId) throws Exception {
-    return dmdPositionService.getFullDMDBackground(gameId);
-  }*/
 }
