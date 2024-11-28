@@ -71,7 +71,6 @@ public class DirectB2SResource {
     return backglassService.getDirectB2SData(gameId);
   }
 
-
   @GetMapping("/clearcache")
   public boolean clearCache() {
     return backglassService.clearCache();
@@ -97,8 +96,8 @@ public class DirectB2SResource {
     name = StringUtils.substringBeforeLast(name, ".") + extension;
     return download(image, name);
   }
-  protected ResponseEntity<Resource> download(byte[] image, String name) {
 
+  protected ResponseEntity<Resource> download(byte[] image, String name) {
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
     headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

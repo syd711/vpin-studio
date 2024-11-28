@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -296,7 +297,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onResEdit(ActionEvent e) {
     DirectB2S selection = getSelection();
-    if(selection != null) {
+    if (selection != null) {
       BackglassManagerDialogs.openResGenerator(selection);
     }
   }
@@ -582,7 +583,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
-
+    resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
+    resBtn.setVisible(Features.RES_EDITOR);
     EventManager.getInstance().addListener(this);
 
     serverSettings = client.getBackglassServiceClient().getServerSettings();
@@ -818,7 +820,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
     });
 
-
     BaseLoadingColumn.configureLoadingColumn(resColumn, cell -> new LoadingCheckTableCell() {
       @Override
       protected int isChecked(DirectB2SModel model) {
@@ -830,9 +831,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         return model.getResPath() != null ? "Backglass uses a specific .res file: " + model.getResPath() : "";
       }
     });
+    resColumn.setVisible(Features.RES_EDITOR);
 
-
-    
     BaseLoadingColumn.configureLoadingColumn(frameColumn, cell -> new LoadingCheckTableCell() {
       @Override
       protected int isChecked(DirectB2SModel model) {
@@ -844,7 +844,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         return model.getFramePath() != null ? "Backglass uses a background frame: " + model.getFramePath() : "";
       }
     });
-
+    frameColumn.setVisible(Features.RES_EDITOR);
   }
 
   @Override
@@ -972,10 +972,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           }
         }
         JFXFuture.supplyAsync(() -> {
-            int emuId = game != null ? game.getEmulatorId() : newValue.getEmulatorId();
-            return client.getFrontendService().getGameEmulator(emuId);
-          })
-          .thenAcceptLater(emu -> emulatorNameLabel.setText(emu != null ? emu.getName(): "?"));
+              int emuId = game != null ? game.getEmulatorId() : newValue.getEmulatorId();
+              return client.getFrontendService().getGameEmulator(emuId);
+            })
+            .thenAcceptLater(emu -> emulatorNameLabel.setText(emu != null ? emu.getName() : "?"));
 
         nameLabel.setText(tableData.getName());
         typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));

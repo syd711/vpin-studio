@@ -7,10 +7,6 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder-dialog.png" width="700" />
 
 - **Tables / Media Recorder**: Disabled VPin Studio overlay when Popper is started for recordings. 
-- **Tables / Backglass Manager**: Added .res designer dialog.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="600" />
-
 - **Tables / Date Columns**: Added missing modification date column data.
 - **Tables / Patching**: Fixed issues that tables located in subfolders were not cloned into a new subfolder.
 - **Tables / Playlist Column**: Added missing tooltips for custom playlists.
@@ -19,6 +15,7 @@
 - **Tables / Asset Manager**: Fixed styling of list selection which was not highlighted properly.
 - **Tables / Asset Manager**: Provided "undock" button in the header. Using this options removes the "modal" option of the dialog, so it can be kept open. The selection is automatically updated for the current table.
 - **Tables / Highscore Resetting**: Fixed resetting VPReg.stg based highscores using the correct charset this time.
+- **Tables / Backglass Manager**: Fixed issue finding the matching game for a backglass.
 - **Overlays**: Fixed the issue that highscore cards shown centered on the playfield or displayed via popper screens were a bit off.
 - **PinballY**: Fixed the parsing of tables database preventing visualisation of medias when **mediaName** was different from **fileName**.
 ---

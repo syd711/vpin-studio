@@ -90,8 +90,7 @@ public class BackglassService {
   }
 
   public DirectB2SData getDirectB2SData(@Nonnull DirectB2S directB2S) {
-    Game game = frontendService.getGameByBaseFilename(directB2S.getEmulatorId(), 
-        FilenameUtils.getBaseName(directB2S.getName()));
+    Game game = frontendService.getGameByBaseFilename(directB2S.getEmulatorId(), directB2S.getName());
     if (game != null) {
       return getDirectB2SData(game);
     }
