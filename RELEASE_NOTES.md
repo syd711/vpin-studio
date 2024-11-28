@@ -15,6 +15,7 @@
 - **Tables / Patching**: Fixed issues that tables located in subfolders were not cloned into a new subfolder.
 - **Tables / Playlist Column**: Added missing tooltips for custom playlists.
 - **Tables / Data Manager**: Fixed layout issue for super long names.
+- **Tables / Asset Columns**: Darkened the in-active/empty state icons in tables so have a better contract to see which assets are available or not. 
 - **Tables / Asset Manager**: Fixed styling of list selection which was not highlighted properly.
 - **Tables / Asset Manager**: Provided "undock" button in the header. Using this options removes the "modal" option of the dialog, so it can be kept open. The selection is automatically updated for the current table.
 - **Tables / Highscore Resetting**: Fixed resetting VPReg.stg based highscores using the correct charset this time.
