@@ -463,19 +463,31 @@ public class BackglassService {
 
   //------------------------------------
 
+  public DirectB2sScreenRes getScreenRes(int gameId, boolean perTableOnly) {
+    Game game = gameService.getGame(gameId);
+    String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
+    return getScreenRes(game.getEmulator(),filename, game, perTableOnly);   
+  }
+
   public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
-    File b2sFile = new File(emulator.getTablesDirectory(), directb2s.getFileName());
+    Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(), 
+      FilenameUtils.getBaseName(directb2s.getFileName()));
+    return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
+  }
+
+  private DirectB2sScreenRes getScreenRes(GameEmulator emulator, String filename, Game game, boolean perTableOnly) {
+    File b2sFile = new File(emulator.getTablesDirectory(), filename);
 
     List<String> lines = readScreenRes(b2sFile, false, perTableOnly);
     if (lines == null) {
       return null;
     }
     DirectB2sScreenRes res = new DirectB2sScreenRes();
-    res.setEmulatorId(directb2s.getEmulatorId());
-    res.setFileName(directb2s.getFileName());
+    res.setEmulatorId(emulator.getId());
+    res.setFileName(filename);
     res.setScreenresFilePath(lines.remove(0));
-    res.setGlobal(StringUtils.containsIgnoreCase(res.getScreenresFilePath(), FilenameUtils.getBaseName(directb2s.getFileName())));
+    res.setGlobal(StringUtils.containsIgnoreCase(res.getScreenresFilePath(), FilenameUtils.getBaseName(filename)));
 
     // cf https://github.com/vpinball/b2s-backglass/blob/7842b3638b62741e21ebb511e2a886fa2091a40f/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L105
     res.setPlayfieldWidth(Integer.parseInt(lines.get(0)));
@@ -512,12 +524,10 @@ public class BackglassService {
     }
 
     // Now add the associated game if any
-    Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(), 
-        FilenameUtils.getBaseName(directb2s.getFileName()));
-    if (game != null) {
+    //if (game != null) {
       //this will ensure that a scanned table is fetched and get the rom
-      game = gameService.getGame(game.getId());
-    }
+    //  game = gameService.getGame(game.getId());
+    //}
     if (game != null) {
       res.setGameId(game.getId());
     }

@@ -253,4 +253,39 @@ public class DirectB2sScreenRes {
   public void setTurnOnBackground(boolean turnOnBackground) {
     this.turnOnBackground = turnOnBackground;
   }
+
+  public double getBackglassMinX() {
+    return getBackglassX();
+  }
+  public double getBackglassMaxX() {
+    return getBackglassX() + getBackglassWidth();
+  }
+  public double getBackglassMinY() {
+    return getBackglassY();
+  }
+  public double getBackglassMaxY() {
+    return getBackglassY() + getBackglassHeight();
+  }
+
+  public double getDmdMinX() {
+    return getDmdX();
+  }
+  public double getDmdMaxX() {
+    return getDmdX() + getDmdWidth();
+  }
+  public double getDmdMinY() {
+    return getDmdY();
+  }
+  public double getDmdMaxY() {
+    return getDmdY() + getDmdHeight();
+  }
+
+	public boolean isOnBackglass(double x, double y) {
+    return getBackglassMinX()<= x && x <= getBackglassMaxX() && getBackglassMinY() <= y && y <= getBackglassMaxY();
+	}
+
+  public boolean isOnDmd(double x, double y) {
+    return getDmdMinX()<= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
+  }
+
 }

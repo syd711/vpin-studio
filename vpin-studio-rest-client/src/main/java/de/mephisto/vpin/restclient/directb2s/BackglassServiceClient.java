@@ -75,6 +75,14 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return new URL(url).openStream();
   }
 
+  public String getDirectB2sCroppedBackgroundUrl(int gameId) {
+    return getRestClient().getBaseUrl() + API + "directb2s/croppedBackground/" + gameId;
+  } 
+
+  public String getDirectB2sCroppedDmdUrl(int gameId) {
+    return getRestClient().getBaseUrl() + API + "directb2s/croppedDmd/" + gameId;
+  }
+
   public DirectB2SData getDirectB2SData(DirectB2S directB2S) {
     return getRestClient().post(API + "directb2s/get", directB2S, DirectB2SData.class);
   }

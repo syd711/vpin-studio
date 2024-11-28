@@ -6,21 +6,14 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class DMDInfo {
   private int gameId;
-  private int x;
-  private int y;
-  private int width;
-  private int height;
+  private double x;
+  private double y;
+  private double width;
+  private double height;
   
   private VPinScreen onScreen;
-  private String backgroundUrl;
-
-  public String getBackgroundUrl() {
-    return backgroundUrl;
-  }
-
-  public void setBackgroundUrl(String backgroundUrl) {
-    this.backgroundUrl = backgroundUrl;
-  }
+  private double screenWidth;
+  private double screenHeight;
 
   public int getGameId() {
     return gameId;
@@ -30,35 +23,35 @@ public class DMDInfo {
     this.gameId = gameId;
   }
 
-  public int getX() {
+  public double getX() {
     return x;
   }
 
-  public void setX(int x) {
+  public void setX(double x) {
     this.x = x;
   }
 
-  public int getY() {
+  public double getY() {
     return y;
   }
 
-  public void setY(int y) {
+  public void setY(double y) {
     this.y = y;
   }
 
-  public int getWidth() {
+  public double getWidth() {
     return width;
   }
 
-  public void setWidth(int width) {
+  public void setWidth(double width) {
     this.width = width;
   }
 
-  public int getHeight() {
+  public double getHeight() {
     return height;
   }
 
-  public void setHeight(int height) {
+  public void setHeight(double height) {
     this.height = height;
   }
 
@@ -67,19 +60,61 @@ public class DMDInfo {
   }
 
   public void setOnScreen(VPinScreen onScreen) {
-    this.onScreen = onScreen;
+		this.onScreen = onScreen;
+	}
+
+	public double getScreenWidth() {
+		return screenWidth;
+	}
+
+	public void setScreenWidth(double screenWidth) {
+		this.screenWidth = screenWidth;
+	}
+
+	public double getScreenHeight() {
+		return screenHeight;
+	}
+
+	public void setScreenHeight(double screenHeight) {
+		this.screenHeight = screenHeight;
+	}
+
+  //-----------------------
+
+  public double getCenterX() {
+    return x + width / 2;
   }
-  
+  public double getCenterY() {
+    return y + height / 2;
+  }
+
+  public boolean isOnPlayfield() {
+    return onScreen != null && VPinScreen.PlayField.equals(onScreen);
+  }
+
+  public boolean isOnBackglass() {
+    return onScreen != null && VPinScreen.BackGlass.equals(onScreen);
+  }
+
+  public boolean isOnDMD() {
+    return onScreen != null && VPinScreen.DMD.equals(onScreen);
+  }
+
   @Override
   public boolean equals(Object object) {
     if (this == object) return true;
     if (object == null || getClass() != object.getClass()) return false;
-    DMDInfo dmdInfo = (DMDInfo) object;
-    return gameId == dmdInfo.gameId && x == dmdInfo.x && y == dmdInfo.y && width == dmdInfo.width && height == dmdInfo.height && Objects.equals(backgroundUrl, dmdInfo.backgroundUrl);
+    DMDInfo that = (DMDInfo) object;
+    return gameId == that.gameId && x == that.x && y == that.y && width == that.width && height == that.height && Objects.equals(onScreen, that.onScreen);
+  }
+
+  @Override
+  public String toString() {
+    return "[" + x + "/" + y + " - " + width + "x" + height + " @ " + onScreen + "]";
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(gameId, x, y, width, height, backgroundUrl);
+    return Objects.hash(gameId, x, y, width, height);
   }
 }

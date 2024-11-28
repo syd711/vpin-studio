@@ -2,6 +2,8 @@ package de.mephisto.vpin.restclient.dmd;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,4 +19,11 @@ public class DMDPositionServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "dmdposition/" + gameId, DMDInfo.class);
   }
 
+  public DMDInfo moveDMDInfo(DMDInfo dmdInfo, VPinScreen target) {
+    return getRestClient().post(API + "dmdposition/move?target=" + target, dmdInfo, DMDInfo.class);
+  }
+
+  public boolean saveDMDInfo(DMDInfo dmdInfo) {
+    return getRestClient().post(API + "dmdposition/save", dmdInfo, Boolean.class);
+  }
 }
