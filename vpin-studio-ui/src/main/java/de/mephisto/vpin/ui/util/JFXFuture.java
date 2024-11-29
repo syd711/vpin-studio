@@ -1,10 +1,14 @@
 package de.mephisto.vpin.ui.util;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
+
+import de.mephisto.vpin.restclient.util.ReturnMessage;
 import javafx.application.Platform;
 
 /**
@@ -49,6 +53,25 @@ public class JFXFuture<T> {
     return thenLater(res, f);
   }
 
+  public static <U> JFXFuture<U> onErrorLater(CompletableFuture<U> future, Consumer<Throwable> fn) {
+    Function<Throwable, ? extends U> f2 = (ex) -> {
+      if (ex instanceof CompletionException) {
+        ex = ((CompletionException) ex).getCause();
+      }
+      JFXRuntimeException jfxe = ex instanceof JFXRuntimeException ? 
+        (JFXRuntimeException) ex :
+        new JFXRuntimeException(ex.getMessage());
+      Platform.runLater(() -> fn.accept(jfxe)); 
+      throw jfxe; 
+    };
+    return new JFXFuture<U>(future.exceptionally(f2));
+  }
+
+  public JFXFuture<T> onErrorLater(Consumer<Throwable> fn) {
+    return onErrorLater(res, fn);
+  }
+
+
   //-----------
 
   public static <U> JFXFuture<U> supplyAsync(Supplier<U> u) {
@@ -62,7 +85,7 @@ public class JFXFuture<T> {
   public JFXFuture<Void> thenAcceptLater(Consumer<? super T> c) {
     return thenAcceptLater(res, c);
   }
-    
+
   public static <U> JFXFuture<U> onErrorSupply(CompletableFuture<U> future, Function<Throwable, ? extends U> fn) {
     Function<Throwable, ? extends U> f2 = (ex) -> { return fn.apply(ex); };
     return new JFXFuture<U>(future.exceptionally(f2));
@@ -72,4 +95,74 @@ public class JFXFuture<T> {
     return onErrorSupply(res, fn);
   }
 
+  //-------------------------------
+
+  /**
+   * Because CompletableFuture encode the exception using toString(), it adds to the message 
+   * the type of teh exception, so provode our own RuntimeException that overrides toString() 
+   */
+  public static void throwException(String error) {
+    throw new JFXRuntimeException(error);
+  }
+  /**
+   * Throw an exception only of error message is not null and not empty
+   */
+  public static void throwExceptionIfError(String error) {
+    if (StringUtils.isNotEmpty(error)) {
+      throwException(error);
+    }
+  }
+  /**
+   * Throw an exception only of error message is not null and not empty
+   */
+  public static void throwExceptionIfError(ReturnMessage status) {
+    if (status != null && ! status.isOk()) {
+      throwException(status.getMessage());
+    }
+  }
+
+  public static class JFXRuntimeException extends RuntimeException {
+   
+    public JFXRuntimeException(String message) {
+      super(message);
+    }
+    public JFXRuntimeException(String message, Throwable cause) {
+      super(message, cause);
+    }
+    public JFXRuntimeException(Throwable cause) {
+        super(cause);
+    }
+
+    @Override
+    public String toString() {
+      return getMessage();
+    }
+  }
+
+  //-----------
+  public static void main(String[] args) {
+    // To try, adjust code below
+    Platform.startup(() -> {
+
+      System.out.println("start");
+      JFXFuture.supplyAsync(() -> {
+        System.out.println(">> throw exception");
+        System.out.println("   on FXThread "+ Platform.isFxApplicationThread());
+        //return "world";
+        throw new RuntimeException("something wrong"); 
+      })
+      .thenAcceptLater(message -> {
+        System.out.println(">> hello " + message);
+        System.out.println("   on FXThread "+ Platform.isFxApplicationThread());
+        Platform.exit();
+      })
+      .onErrorLater(ex -> {
+        System.out.println(">> exception: "+ ex.getMessage());
+        System.out.println("   on FXThread "+ Platform.isFxApplicationThread());
+        Platform.exit();
+      })
+      ;
+      System.out.println("end");
+    });
+  }
 }

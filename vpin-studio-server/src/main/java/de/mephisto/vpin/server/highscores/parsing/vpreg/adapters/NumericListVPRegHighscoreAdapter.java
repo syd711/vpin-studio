@@ -7,6 +7,8 @@ import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
   private static final String HIGH_SCORE = "HighScore";
@@ -52,12 +54,14 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
       String scoreKey = getHighScorePrefix() + index;
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(scoreKey);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(VPRegHighscoreAdapter.BASE64_ZERO_SCORE)));
+      byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+      scoreDocument.replaceContents(new ByteArrayInputStream(array));
 
       String nameKey = getNameKey(index);
       DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(nameKey);
       POIFSDocument nameDocument = new POIFSDocument(nameEntry);
-      nameDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
+      array = StandardCharsets.UTF_16LE.encode("???").array();
+      nameDocument.replaceContents(new ByteArrayInputStream(array));
 
       index++;
 

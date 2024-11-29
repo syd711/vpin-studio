@@ -1,13 +1,15 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.JFXFuture;
+import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -24,16 +27,28 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 public class DMDPositionController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
+
+  @FXML
+  private Label romLabel;
+
+  @FXML
+  private Label tablePositionLabel;
 
   @FXML
   private CheckBox aspectRatioCheckbox;
@@ -42,6 +57,8 @@ public class DMDPositionController implements Initializable, DialogController {
   private RadioButton radioOnBackglass;
   @FXML
   private RadioButton radioOnB2sDMD;
+  @FXML
+  private RadioButton radioOnPlayfield;
 
   @FXML
   private Spinner<Double> xSpinner;
@@ -53,6 +70,9 @@ public class DMDPositionController implements Initializable, DialogController {
   private Spinner<Double> heightSpinner;
 
   @FXML
+  private Button saveLocallyBtn;
+
+  @FXML
   private Pane imagepane;
 
   @FXML
@@ -62,11 +82,18 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private DMDPositionResizer dragBox;
 
+  private DMDInfo dmdinfo;
+
   // The image bounds
   private ObjectProperty<Bounds> area = new SimpleObjectProperty<>();
 
   private ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
 
+  /** The converter for displaying numbers in spinners */
+  private final DecimalFormat df = new DecimalFormat("#.##");
+
+  /** The zoom factor : <screen coordinates> x zoom = <resizer pixels> */
+  private DoubleProperty zoom = new SimpleDoubleProperty(1);
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -75,22 +102,43 @@ public class DMDPositionController implements Initializable, DialogController {
   }
 
   @FXML
-  private void onSaveClick(ActionEvent e) {
+  private void onSaveGloballyClick(ActionEvent e) {
+    onSaveClick(e, false);
+  }
 
+  @FXML
+  private void onSaveLocallyClick(ActionEvent e) {
+    onSaveClick(e, true);
+  }
+
+  private void onSaveClick(ActionEvent e, boolean locally) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    JFXFuture.runAsync(() -> {
+      DMDInfo dmdinfo = fillDmdInfo();
+      dmdinfo.setLocallySaved(locally);
+      LOG.info("Saving dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
+      client.getDmdPositionService().saveDMDInfo(dmdinfo);
+    })
+    .thenLater(() -> {
+      stage.close();
+    });
   }
 
   @FXML
   private void onAutoPosition() {
-
+    DMDInfo movedDmdinfo = fillDmdInfo();
+    LOG.info("Autoposition dmdinfo for game {}", game.getGameFileName());
+    CompletableFuture
+      .supplyAsync(() -> client.getDmdPositionService().autoPositionDMDInfo(movedDmdinfo))
+      .thenAccept(dmd -> setDmdInfo(dmd));
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
     // The lime box that is used to position the DMD
     dragBox = new DMDPositionResizer(area, aspectRatioCheckbox.selectedProperty(), color);
     dragBox.addToPane(imagepane);
-
+   
     // setup linkages between spinner and our dragbox
     configureSpinner(xSpinner, dragBox.xProperty(),dragBox.xMinProperty(), dragBox.xMaxProperty());
     configureSpinner(ySpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
@@ -123,17 +171,50 @@ public class DMDPositionController implements Initializable, DialogController {
     ToggleGroup tg = new ToggleGroup(); 
     radioOnBackglass.setToggleGroup(tg);
     radioOnB2sDMD.setToggleGroup(tg);
+    radioOnPlayfield.setToggleGroup(tg);
     tg.selectedToggleProperty().addListener((obs, o, n) -> {
-      //TODO     
+      VPinScreen selectedScreen = getSelectedScreen();
+      // prevent a double load of image at dialog opening
+      if (!selectedScreen.equals(dmdinfo.getOnScreen())) {
+        DMDInfo movedDmdinfo = fillDmdInfo();
+        LOG.info("Moving dmdinfo for game {} : {}", game.getGameFileName(), movedDmdinfo);
+        CompletableFuture
+          .supplyAsync(() -> client.getDmdPositionService().moveDMDInfo(movedDmdinfo, selectedScreen))
+          .thenAccept(dmd -> setDmdInfo(dmd));
+      }
     });
   }
 
   private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property, 
         ReadOnlyObjectProperty<Double> minProperty, ReadOnlyObjectProperty<Double> maxProperty) {
+
     SpinnerValueFactory.DoubleSpinnerValueFactory factory = 
       new SpinnerValueFactory.DoubleSpinnerValueFactory(minProperty.get(), maxProperty.get());
+
+      // install a converter that convert pixels into screen coordinates using the zoom factor
+    factory.setConverter(new StringConverter<Double>() {
+			@Override public String toString(Double value) {
+        if (value == null) {
+          return "";
+        }
+        Double screenValue = value / zoom.get();
+        return df.format(screenValue);
+			}
+      @Override public Double fromString(String value) {
+        if (StringUtils.isBlank(value)) {
+          return null;
+        }
+        try {
+          double screenValue = df.parse(value).doubleValue();
+          return screenValue * zoom.get();
+        } catch (ParseException ex) {
+            throw new RuntimeException(ex);
+        }
+      }
+    });
+    
     spinner.setValueFactory(factory);
-    spinner.setEditable(true);
+    spinner.setEditable(true);  
 
     factory.valueProperty().bindBidirectional(property);
     factory.minProperty().bind(minProperty);
@@ -142,45 +223,102 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @Override
   public void onDialogCancel() {
-
   }
 
   public void setGame(GameRepresentation gameRepresentation) {
     this.game = gameRepresentation;
-    JFXFuture
+    CompletableFuture
       .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
-      .thenAcceptLater(dmdinfo -> setDmdInfo(dmdinfo));
+      .thenAccept(dmd -> setDmdInfo(dmd));
   }
 
+  /**
+   * To be called on a Thread, from a Future, as it loads the image synchronously
+   * in order to calculate the bounds of the image
+   */
   private void setDmdInfo(DMDInfo dmdinfo) {
-    Image image = new Image(client.getRestClient().getBaseUrl() + VPinStudioClientService.API + dmdinfo.getBackgroundUrl());
-    fullDMDImage.setImage(image);
-    fullDMDImage.setPreserveRatio(true);
+    LOG.info("Received dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
+    this.dmdinfo = dmdinfo;
 
-    if (VPinScreen.BackGlass.equals(dmdinfo.getOnScreen())) {
-      radioOnBackglass.setSelected(true);
-    }
-    else if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
-      radioOnB2sDMD.setSelected(true);
-    }
+    String backgroundUrl = 
+      dmdinfo.isOnBackglass() ? client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(dmdinfo.getGameId(), true) :
+      dmdinfo.isOnDMD() ? client.getBackglassServiceClient().getDirectB2sDmdUrl(dmdinfo.getGameId()) :
+      null; 
 
-    // The bounds for the DMD resizer 
-    Bounds bounds = fullDMDImage.getLayoutBounds();
-    area.set(bounds);
-
-    // Position our box
-    dragBox.setX(dmdinfo.getX());
-    dragBox.setY(dmdinfo.getY());
-    dragBox.setWidth(dmdinfo.getWidth());
-    dragBox.setHeight(dmdinfo.getHeight());
-
-    // if existing dmd size ratio is close to 4:1, activate the checkbox
-    if (dmdinfo != null) {
-      double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
-      if (Math.abs(ratio - 4) < 0.01) {
-        aspectRatioCheckbox.setSelected(true);
+    Image image = backgroundUrl != null ? new Image(backgroundUrl) : null;
+    // when loaded, fill now the screen
+    Platform.runLater(() -> {
+      // resize the preview proportionnaly to the real screen size, 
+      // determine if this is fitWidth or fitHeight that must be adjusted 
+      double fitWidth=1024.0;
+      double fitHeight=768.0;
+      if (dmdinfo.getScreenWidth() / dmdinfo.getScreenHeight() < fitWidth / fitHeight) {
+        fitWidth = fitHeight * dmdinfo.getScreenWidth() / dmdinfo.getScreenHeight();
       }
-    }
+      else {
+        fitHeight = fitWidth * dmdinfo.getScreenHeight() / dmdinfo.getScreenWidth();
+      }
+      fullDMDImage.setFitWidth(fitWidth);
+      fullDMDImage.setFitHeight(fitHeight);
+      fullDMDImage.setImage(image);
+      fullDMDImage.setPreserveRatio(dmdinfo.isImageCentered());
+
+      romLabel.setText(dmdinfo.getGameRom());
+      tablePositionLabel.setText((dmdinfo.isLocallySaved() ? "Locally" : "Globally") + " in " +
+        (dmdinfo.isUseRegistry() ? "registry" : "dmddevice.ini"));
+      saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+
+      if (dmdinfo.isOnBackglass()) {
+        radioOnBackglass.setSelected(true);
+      }
+      else if (dmdinfo.isOnDMD()) {
+        radioOnB2sDMD.setSelected(true);
+      }
+      else {
+        radioOnPlayfield.setSelected(true);
+      }
+
+      // The bounds for the DMD resizer
+      Bounds bounds = fullDMDImage.getLayoutBounds();
+
+      // calculate our zoom
+      double zoomX = bounds.getWidth() / dmdinfo.getScreenWidth();
+      double zoomY = bounds.getHeight() / dmdinfo.getScreenHeight();
+      zoom.set(zoomX);
+
+      // configure min / max of spinners 
+      area.set(bounds);
+
+      // aspect ratio forced in dmddevice.ini, force it there too and disable 
+      if (dmdinfo.isKeepAspectRatio()) {
+        aspectRatioCheckbox.setSelected(true);
+        aspectRatioCheckbox.setDisable(true);
+      }
+      else {
+        // if existing dmd size ratio is close to 4:1, activate the checkbox
+        double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
+        boolean aspectRatio = (Math.abs(ratio - 4) < 0.01);
+        aspectRatioCheckbox.setSelected(aspectRatio);
+      }
+
+      // Finally position our box, maybe resized, moved or rescaled keeping in account above constraints
+      dragBox.setX(dmdinfo.getX() * zoomX);
+      dragBox.setY(dmdinfo.getY() * zoomX);
+      dragBox.setWidth(dmdinfo.getWidth() * zoomX);
+      dragBox.setHeight(dmdinfo.getHeight() * zoomX);
+    });
   }
 
+  private VPinScreen getSelectedScreen() {
+    return radioOnBackglass.isSelected() ? VPinScreen.BackGlass:
+      radioOnB2sDMD.isSelected() ? VPinScreen.DMD: VPinScreen.PlayField;
+  }
+
+  private DMDInfo fillDmdInfo() {
+    dmdinfo.setX(dragBox.getX() / zoom.get());
+    dmdinfo.setY(dragBox.getY() / zoom.get());
+    dmdinfo.setWidth(dragBox.getWidth() / zoom.get());
+    dmdinfo.setHeight(dragBox.getHeight() / zoom.get());
+    return dmdinfo;
+  }
 }

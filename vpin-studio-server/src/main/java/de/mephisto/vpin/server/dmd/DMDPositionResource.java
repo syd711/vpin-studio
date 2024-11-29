@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,6 +31,16 @@ public class DMDPositionResource {
     return dmdPositionService.getDMDInfo(gameId);
   }
 
+  @PostMapping("/move")
+  public DMDInfo moveDMD(@RequestBody DMDInfo dmdInfo, @RequestParam VPinScreen target) {
+    return dmdPositionService.moveDMDInfo(dmdInfo, target);
+  }
+
+  @PostMapping("/autoPosition")
+  public DMDInfo autoPosition(@RequestBody DMDInfo dmdInfo) {
+    return dmdPositionService.autoPositionDMDInfo(dmdInfo);
+  }
+
   @PostMapping("/save")
   public boolean saveDMD(@RequestBody DMDInfo dmdInfo) {
     try {
@@ -39,9 +51,4 @@ public class DMDPositionResource {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Saving DMD position failed: " + e.getMessage());
     }
   }
-
-  /*@GetMapping("/background/{gameId}")
-  public ResponseEntity<byte[]> getFullDMDBackground(@PathVariable("gameId") int gameId) throws Exception {
-    return dmdPositionService.getFullDMDBackground(gameId);
-  }*/
 }

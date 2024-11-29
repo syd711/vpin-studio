@@ -167,6 +167,8 @@ public class GameService implements InitializingBean {
     else {
       games.addAll(frontendService.getGamesByEmulator(emulatorId));
     }
+
+    games = games.stream().filter(g -> g.getEmulator() != null).collect(Collectors.toList());
     boolean killFrontend = false;
     for (Game game : games) {
       boolean newGame = applyGameDetails(game, false, false);
@@ -220,7 +222,7 @@ public class GameService implements InitializingBean {
   @Nullable
   public synchronized Game getGame(int id) {
     Game game = frontendService.getGame(id);
-    if (game != null) {
+    if (game != null && game.getEmulator() != null) {
       applyGameDetails(game, false, true);
       return game;
     }
@@ -333,8 +335,17 @@ public class GameService implements InitializingBean {
     return null;
   }
 
-  public Game getGameByFilename(int emuId, String name) {
-    Game game = this.frontendService.getGameByFilename(emuId, name);
+  public Game getGameByBaseFilename(int emuId, String baseFilename) {
+    Game game = this.frontendService.getGameByBaseFilename(emuId, baseFilename);
+    if (game != null) {
+      //this will ensure that a scanned table is fetched
+      game = this.getGame(game.getId());
+    }
+    return game;
+  }
+
+  public Game getGameByFilename(int emuId, String filename) {
+    Game game = this.frontendService.getGameByFilename(emuId, filename);
     if (game != null) {
       //this will ensure that a scanned table is fetched
       game = this.getGame(game.getId());
@@ -405,7 +416,7 @@ public class GameService implements InitializingBean {
     }
 
     GameEmulator emulator = game.getEmulator();
-    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe().exists()) {
+    if (emulator != null && emulator.isVpxEmulator() && emulator.getExe() != null && emulator.getExe().exists()) {
       game.setLauncher(emulator.getExe().getName());
     }
 

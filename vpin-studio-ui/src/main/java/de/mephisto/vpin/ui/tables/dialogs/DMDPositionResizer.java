@@ -139,13 +139,13 @@ public class DMDPositionResizer {
 
     areaProperty.addListener((v, o, area) -> {
       // set max then min to avoid error
-      xMaxProperty.set(area.getMaxX() - getWidth());
+      xMaxProperty.set(area.getMaxX() - getWidth() < area.getMinX() ? area.getMinX() : area.getMaxX() - getWidth());
       xMinProperty.set(area.getMinX());
-      yMaxProperty.set(area.getMaxY() - getHeight());
+      yMaxProperty.set(area.getMaxY() - getHeight() < area.getMinY() ? area.getMinY() : area.getMaxY() - getHeight());
       yMinProperty.set(area.getMinY());
-      widthMaxProperty.set(area.getMaxX() - getX());
+      widthMaxProperty.set(area.getMaxX() - getX() < minSize ? minSize : area.getMaxX() - getX());
       widthMinProperty.set(minSize);
-      heightMaxProperty.set(area.getMaxY() - getY());
+      heightMaxProperty.set(area.getMaxY() - getY() < minSize ? minSize : area.getMaxY() - getY());
       heightMinProperty.set(minSize);
     });
   }
@@ -211,8 +211,15 @@ public class DMDPositionResizer {
     return xProperty.get();
   }
 
-  public void setX(double x) {
-    xProperty.set(x);
+  public void setX(double newX) {
+    Bounds area = areaProperty.get();
+    if (newX < area.getMinX()) {
+      newX = area.getMinX();
+    }
+    if (newX + getWidth() > area.getMaxX()) {
+      newX = area.getMaxX() - getWidth();
+    }
+    xProperty.set(newX);
   }
 
   public double getY() {
@@ -220,6 +227,13 @@ public class DMDPositionResizer {
   }
 
   public void setY(double y) {
+    Bounds area = areaProperty.get();
+    if (y < area.getMinY()) {
+      y = area.getMinY();
+    }
+    if (y + getHeight() > area.getMaxY()) {
+      y = area.getMaxY() - getHeight();
+    }
     yProperty.set(y);
   }
 
@@ -470,7 +484,7 @@ public class DMDPositionResizer {
       }
       width = checkWidth(width);
       newX = x + w - width;
-      setX(newX);
+      xProperty.set(newX);
     } 
     else {
       if (newX > area.getMaxX()) {
@@ -500,7 +514,7 @@ public class DMDPositionResizer {
       }
 	    height = checkHeight(height);
       newY = y + h - height;
-      setY(newY);
+      yProperty.set(newY);
     } 
     else {
       if (newY > area.getMaxY()) {
@@ -559,21 +573,6 @@ public class DMDPositionResizer {
   }
 
   void relocateInArea(double x, double y) {
-    Bounds area = areaProperty.get();
-    double maxX = area.getMaxX() - getWidth();
-    double maxY = area.getMaxY() - getHeight();
-    if (x < area.getMinX()) {
-      x = area.getMinX();
-    }
-    if (y < area.getMinY()) {
-      y = area.getMinY();
-    }
-    if (x > maxX) {
-      x = maxX;
-    }
-    if (y > maxY) {
-      y = maxY;
-    }
     setX(x);
     setY(y);
   }

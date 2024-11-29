@@ -92,23 +92,23 @@ public class FrontendPlayerDisplay {
   /**
    * Return true if the _x, _y point is within the bounds of that display
    */
-  public boolean contains(int _x, int _y) {
+  public boolean contains(double _x, double _y) {
     return _x >= getMinX() && _x <= getMaxX() && _y >= getMinY() && _y <= getMaxY();
   }
     
-  private int getMinX() {
+  public int getMinX() {
     return getX();
   }
 
-  private int getMaxX() {
+  public int getMaxX() {
     return getX() + getWidth();
   }
 
-  private int getMinY() {
+  public int getMinY() {
     return getY();
   }
 
-  private int getMaxY() {
+  public int getMaxY() {
     return getY() + getHeight();
   }
           

@@ -1,9 +1,14 @@
 package de.mephisto.vpin.restclient.directb2s;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class DirectB2sScreenRes {
 
   private int emulatorId;
   private String fileName;
+
+  /** optional associated game */
+  private int gameId = -1;
 
   /** Whether this instance represent the global screenres.txt (true) or a per table one (false) */
   private boolean global;
@@ -46,6 +51,11 @@ public class DirectB2sScreenRes {
 
   private String b2SWindowPunch;
 
+  private boolean turnOnRunAsExe;
+
+  private boolean turnOnBackground;
+
+
   public int getEmulatorId() {
     return emulatorId;
   }
@@ -60,6 +70,14 @@ public class DirectB2sScreenRes {
 
   public void setFileName(String fileName) {
     this.fileName = fileName;
+  }
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 
   public String getScreenresFilePath() {
@@ -221,4 +239,63 @@ public class DirectB2sScreenRes {
   public void setB2SWindowPunch(String b2sWindowPunch) {
     b2SWindowPunch = b2sWindowPunch;
   }
+
+  public boolean isTurnOnRunAsExe() {
+    return turnOnRunAsExe;
+  }
+
+  public void setTurnOnRunAsExe(boolean turnOnRunAsExe) {
+    this.turnOnRunAsExe = turnOnRunAsExe;
+  }
+
+  public boolean isTurnOnBackground() {
+    return turnOnBackground;
+  }
+
+  public void setTurnOnBackground(boolean turnOnBackground) {
+    this.turnOnBackground = turnOnBackground;
+  }
+
+  public double getBackglassMinX() {
+    return getBackglassX();
+  }
+  public double getBackglassMaxX() {
+    return getBackglassX() + getBackglassWidth();
+  }
+  public double getBackglassMinY() {
+    return getBackglassY();
+  }
+  public double getBackglassMaxY() {
+    return getBackglassY() + getBackglassHeight();
+  }
+
+  public double getDmdMinX() {
+    return getDmdX();
+  }
+  public double getDmdMaxX() {
+    return getDmdX() + getDmdWidth();
+  }
+  public double getDmdMinY() {
+    return getDmdY();
+  }
+  public double getDmdMaxY() {
+    return getDmdY() + getDmdHeight();
+  }
+
+	public boolean isOnBackglass(double x, double y) {
+    return getBackglassMinX()<= x && x <= getBackglassMaxX() && getBackglassMinY() <= y && y <= getBackglassMaxY();
+	}
+
+  public boolean isOnDmd(double x, double y) {
+    return getDmdMinX()<= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
+  }
+
+  public boolean isBackglassCentered() {
+    return getBackgroundWidth() > 0 && getBackgroundHeight() > 0;
+  }
+
+  public boolean hasFrame() {
+    return StringUtils.isNotEmpty(backgroundFilePath) && isBackglassCentered();
+  }
+
 }

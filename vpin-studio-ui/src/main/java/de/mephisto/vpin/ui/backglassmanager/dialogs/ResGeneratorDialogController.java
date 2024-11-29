@@ -1,11 +1,14 @@
 package de.mephisto.vpin.ui.backglassmanager.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.ReturnMessage;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.JFXFuture;
@@ -16,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -24,6 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +94,15 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   @FXML
   private RadioButton radioCenterBackglass;
 
+  @FXML
+  private CheckBox turnOnRunAsExe;
+
+  @FXML
+  private CheckBox turnOnBackground;
+
+  // The dialog frame
+  private Stage stage;
+  
   private DirectB2sScreenRes screenres;
 
   private BufferedImage frameImg;
@@ -100,22 +114,18 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   private FrontendPlayerDisplay backglassDisplay;
   
-private File uploadedFrame = null;
+  private File uploadedFrame = null;
 
   private boolean stretchedBackglass;
     
   @FXML
   private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @FXML
   private void onGenerateClick(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-    
-    JFXFuture.supplyAsync(() -> {
-
+    JFXFuture.runAsync(() -> {
       if (stretchedBackglass) {
         screenres.setBackglassX(0);
         screenres.setBackglassY(0);
@@ -134,6 +144,9 @@ private File uploadedFrame = null;
           if (newFrameName != null) {
             screenres.setBackgroundFilePath(newFrameName);
             uploadedFrame = null;
+          }
+          else {
+            JFXFuture.throwException("Cannot store frame " + uploadedFrame);
           }
         }
   
@@ -159,15 +172,26 @@ private File uploadedFrame = null;
         screenres.setBackgroundHeight(backglassDisplay.getHeight());
       }
 
-      return client.getBackglassServiceClient().saveScreenRes(screenres);
+      screenres.setTurnOnRunAsExe(turnOnRunAsExe.isSelected());
+      screenres.setTurnOnBackground(turnOnBackground.isSelected());
+
+      ReturnMessage status = client.getBackglassServiceClient().saveScreenRes(screenres);
+      JFXFuture.throwExceptionIfError(status);
     })
-    .thenAcceptLater(res -> setScreenRes(res));
+    .thenLater(() -> {
+      stage.close();
+      // refresh screens
+      if (screenres.getGameId() != -1) {
+        EventManager.getInstance().notifyTableChange(screenres.getGameId(), null);
+      }
+    })
+    .onErrorLater(ex -> {
+      WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", ex.getMessage());
+    });
   }
 
   @FXML
   private void onFileSelect(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
     this.generateBtn.setDisable(true);
 
     StudioFileChooser fileChooser = new StudioFileChooser();
@@ -244,11 +268,16 @@ private File uploadedFrame = null;
     this.uploadedFrame = null;
     this.generateBtn.setDisable(true);
 
+    // these options are needed to make frames visible, so propose to turn them on autom
+    turnOnRunAsExe.setSelected(true);
+    turnOnBackground.setSelected(true);
+
     this.clearBtn.visibleProperty().bind(this.fileNameField.textProperty().isNotEmpty());;
 
     root.setOnDragOver(new FileSelectorDragEventHandler(root, "png", "jpg"));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       loadFrame(file);
+      refreshPreview();
     }));
 
     // create a toggle group 
@@ -293,8 +322,9 @@ private File uploadedFrame = null;
   }
 
   public void setData(Stage stage, DirectB2S directB2S) {
+    this.stage = stage;
 
-    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(directB2S))
+    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(directB2S, false))
     .thenAcceptLater(res -> setScreenRes(res));
 
     JFXFuture.supplyAsync(() -> {
@@ -338,20 +368,27 @@ private File uploadedFrame = null;
           screenres.getBackglassWidth(), screenres.getBackglassHeight()));
       dmdDimensionLabel.setText(formatLocationAndDimension(screenres.getDmdX(), screenres.getDmdY(), 
           screenres.getDmdWidth(), screenres.getDmdHeight()));
-      if (res.getBackglassX() != 0 || res.getBackglassY() != 0) {
+      if (res.isBackglassCentered()) {
         radioCenterBackglass.setSelected(true);
       } 
       else {
         radioStretchBackglass.setSelected(true);
       }
-      if (screenres.getBackgroundFilePath() != null) {
-        try {
-          frameImg = ImageIO.read(client.getBackglassServiceClient().getScreenResFrame(screenres));
-          fileNameField.setText(screenres.getBackgroundFilePath());
-        }
-        catch (IOException ioe) {
-          LOG.error("Cannot load frame image so remove it", ioe);
-        }
+      if (StringUtils.isNotEmpty(screenres.getBackgroundFilePath())) {
+        fileNameField.setText(screenres.getBackgroundFilePath());
+        JFXFuture.supplyAsync(() -> {
+          try {
+            return ImageIO.read(client.getBackglassServiceClient().getScreenResFrame(screenres));
+          }
+          catch (IOException ioe) {
+            LOG.error("Cannot load frame image so remove it", ioe);
+            return null;
+          }
+        })
+        .thenAcceptLater(img -> {
+            frameImg = img;
+            refreshPreview();
+        });
       }
     }
     else {
@@ -365,7 +402,7 @@ private File uploadedFrame = null;
   private String formatLocationAndDimension(int x, int y, int width, int height) {
     StringBuilder bld = new StringBuilder();
     if (x != -1 || y != -1) {
-      bld.append(x).append(",").append(y).append(" ");
+      bld.append(x).append("/").append(y).append("   ");
     }
     bld.append(width).append("x").append(height);
     return bld.toString();

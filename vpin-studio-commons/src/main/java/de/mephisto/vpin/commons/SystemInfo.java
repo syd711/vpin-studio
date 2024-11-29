@@ -57,41 +57,95 @@ public class SystemInfo {
   }
 
   public File resolvePinballXInstallationFolder() {
-    return new File("C:/PinballX");
+    return resolveFolder("PinballX");
   }
 
   public File resolvePinballYInstallationFolder() {
-    return new File("C:/PinballY");
+    return resolveFolder("PinballY");
   }
 
   public File resolveVpx64InstallFolder() {
-    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinballX64.exe\\shell\\open\\command", null);
-    return f != null ? f : resolveVpxInstallFolder();
+    File exe = resolveVpx64Exe();
+    return exe != null? exe.getParentFile() : resolveFolder("Visual Pinball");
+  }
+  public File resolveVpx64Exe() {
+    File f = resolveExe("HKEY_CLASSES_ROOT\\Applications\\VPinballX64.exe\\shell\\open\\command", null);
+    if (f == null) {
+      f = new File(resolveFolder("Visual Pinball"), "VPinballX64.exe");
+      if (!f.exists()) {
+        f = resolveVpxExe();
+      }
+    }
+    return null;
   }
 
   public File resolveVpxInstallFolder() {
-    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinballX.exe\\shell\\open\\command",
+    File exe = resolveVpxExe();
+    return exe != null? exe.getParentFile() : resolveFolder("Visual Pinball");
+  }
+  public File resolveVpxExe() {
+    File f = resolveExe("HKEY_CLASSES_ROOT\\Applications\\VPinballX.exe\\shell\\open\\command",
         "HKEY_CLASSES_ROOT\\vpx_auto_file\\shell\\edit\\command");
-    return f != null ? f : new File("C:/vPinball/Visual Pinball");
+    if (f == null) {
+      f = new File(resolveFolder("Visual Pinball"), "VPinballX.exe");
+      if (!f.exists()) {
+        f = null;
+      }
+    }
+    return f;
   }
 
   public File resolveVptInstallFolder() {
-    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinball995.exe\\shell\\open\\command",
+    File exe = resolveVptExe();
+    return exe != null? exe.getParentFile() : resolveFolder("Visual Pinball");
+  }
+  public File resolveVptExe() {
+    File f = resolveExe("HKEY_CLASSES_ROOT\\Applications\\VPinball995.exe\\shell\\open\\command",
         "HKEY_CLASSES_ROOT\\vpt_auto_file\\shell\\edit\\command");
-    return f != null ? f : new File("C:/vPinball/Visual Pinball");
+    if (f == null) {
+      f = new File(resolveFolder("Visual Pinball"), "VPinball995.exe");
+      if (!f.exists()) {
+        f = null;
+      }
+    }
+    return f;  
   }
 
   public File resolveFpInstallFolder() {
-    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Future Pinball Table\\Shell\\Open\\Command", null);
-    return f != null ? f : new File("C:/vPinball/Future Pinball");
+    File exe = resolveFpExe();
+    return exe != null? exe.getParentFile() : resolveFolder("Future Pinball");
+  }
+  public File resolveFpExe() {
+    File f = resolveExe("HKEY_CLASSES_ROOT\\Future Pinball Table\\Shell\\Open\\Command", null);
+    if (f == null) {
+      f = new File(resolveFolder("Future Pinball"), "Future Pinball.exe");
+      if (!f.exists()) {
+        f = null;
+      }
+    }
+    return f;  
   }
 
-  private File resolveInstallFolder(String regkey, String extkey) {
-    File f = regkey != null ? extractFolder(regkey) : null;
-    return f != null ? f : extkey != null ? extractFolder(extkey) : null;
+  private File resolveFolder(String folderName) {
+    File f = new File("C:/" + folderName.replace(" ", ""));
+    if (!f.exists()) {
+      f = new File("C:/" + folderName);
+      if (!f.exists()) {
+        f = new File("C:/vPinball/" + folderName.replace(" ", ""));
+        if (!f.exists()) {
+          f = new File("C:/vPinball/" + folderName);
+        }
+      }
+    }
+    return f;
   }
 
-  private File extractFolder(String regkey) {
+  private File resolveExe(String regkey, String extkey) {
+    File f = regkey != null ? extractExe(regkey) : null;
+    return f != null ? f : extkey != null ? extractExe(extkey) : null;
+  }
+
+  private File extractExe(String regkey) {
     String vpx = extractRegistryValue(readRegistry(regkey, null));
     if (StringUtils.isNotEmpty(vpx)) {
       int indexOf = vpx.toLowerCase().indexOf(".exe");
@@ -99,7 +153,7 @@ public class SystemInfo {
         String exe = StringUtils.removeStart(vpx.substring(0, indexOf + 4), "\"");
         File fexe = new File(exe);
         if (fexe.exists()) {
-          return fexe.getParentFile();
+          return fexe;
         }
       }
     }
@@ -166,6 +220,10 @@ public class SystemInfo {
       LOG.info("Failed to read registry key " + location);
       return null;
     }
+  }
+  public String readRegistryValue(String location, String key) {
+    String reg = readRegistry(location, key);
+    return StringUtils.isNotEmpty(reg) ? extractRegistryValue(reg) : null;
   }
 
   /**

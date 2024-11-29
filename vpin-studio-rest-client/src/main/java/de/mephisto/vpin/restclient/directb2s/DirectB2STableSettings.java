@@ -15,7 +15,7 @@ public class DirectB2STableSettings {
   private boolean isGlowBulbOn = false;
   private int glowIndex = -1;
   private Boolean startAsEXE = null;
-  private boolean startBackground = false;
+  private int startBackground = 2; // standard
   private boolean formToFront = false;
 
   public boolean isHideB2SBackglass() {
@@ -122,11 +122,11 @@ public class DirectB2STableSettings {
     this.glowIndex = glowIndex;
   }
 
-  public boolean isStartBackground() {
+  public int getStartBackground() {
     return startBackground;
   }
 
-  public void setStartBackground(boolean startBackground) {
+  public void setStartBackground(int startBackground) {
     this.startBackground = startBackground;
   }
 

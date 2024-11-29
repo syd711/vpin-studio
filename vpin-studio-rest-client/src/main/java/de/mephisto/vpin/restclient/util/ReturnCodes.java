@@ -1,10 +1,10 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.restclient.util;
 
 /**
  *
  */
 public enum ReturnCodes {
-  OK;
+  OK, ERROR;
 
   @Override
   public String toString() {

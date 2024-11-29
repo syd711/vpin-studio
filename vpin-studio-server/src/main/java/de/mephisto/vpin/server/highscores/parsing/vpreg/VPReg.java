@@ -163,6 +163,7 @@ public class VPReg {
       if (gameFolder != null) {
         for (VPRegHighscoreAdapter adapter : adapters.values()) {
           if (adapter.isApplicable(gameFolder)) {
+            LOG.info("Resetting highscore using " + adapter.getClass().getSimpleName());
             return adapter.resetHighscore(fs, gameFolder);
           }
         }

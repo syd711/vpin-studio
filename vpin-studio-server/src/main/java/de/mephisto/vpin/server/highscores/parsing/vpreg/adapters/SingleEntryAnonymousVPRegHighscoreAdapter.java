@@ -7,6 +7,7 @@ import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
 
@@ -61,7 +62,8 @@ public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
   public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
     DocumentNode highscoreEntry = getHighscoreEntry(gameFolder);
     POIFSDocument scoreDocument = new POIFSDocument(highscoreEntry);
-    scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(VPRegHighscoreAdapter.BASE64_ZERO_SCORE)));
+    byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+    scoreDocument.replaceContents(new ByteArrayInputStream(array));
     return true;
   }
 }

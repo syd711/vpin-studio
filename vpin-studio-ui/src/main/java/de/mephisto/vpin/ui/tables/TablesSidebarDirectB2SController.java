@@ -175,7 +175,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private ComboBox<B2SLedType> usedLEDType;
 
   @FXML
-  private CheckBox startBackground;
+  private ComboBox<B2SVisibility> startBackground;
 
   @FXML
   private CheckBox bringBGFromTop;
@@ -360,8 +360,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       }
     });
 
-    startBackground.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      tableSettings.setStartBackground(newValue);
+    startBackground.setItems(FXCollections.observableList(VISIBILITIES));
+    startBackground.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+      tableSettings.setStartBackground(t1.getId());
       save();
     });
 
@@ -511,7 +512,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
             glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().orElse(null));
             usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
-            startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+            startBackground.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
             bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
 
             boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
