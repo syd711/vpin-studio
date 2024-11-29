@@ -170,6 +170,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       if (emulator != null) {
         game.setEmulator(emulator);
       }
+      else {
+        LOG.info("No emulator found for {}/{}/{}/{}", game, game.getId(), game.getEmulatorId(), game.getGameFilePath());
+      }
 
       FrontendMediaItem frontendMediaItem = getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
       if (frontendMediaItem != null) {
