@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
@@ -783,6 +784,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public boolean killFrontend() {
+    NirCmd.setTaskBarVisible(true);
     return killEmulators(true);
   }
 
