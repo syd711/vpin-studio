@@ -167,6 +167,8 @@ public class GameService implements InitializingBean {
     else {
       games.addAll(frontendService.getGamesByEmulator(emulatorId));
     }
+
+    games = games.stream().filter(g -> g.getEmulator() != null).collect(Collectors.toList());
     boolean killFrontend = false;
     for (Game game : games) {
       boolean newGame = applyGameDetails(game, false, false);
