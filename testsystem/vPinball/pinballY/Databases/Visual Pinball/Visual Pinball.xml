@@ -1,29 +1,35 @@
 <menu>
   <game name="Baseball (1970)">
+    <description>Baseball (1970).vpx</description>
+    <title>Baseball (1970)</title>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-11-10 12:17:06</dateadded>
+    <dateadded>2024-11-29 17:48:42</dateadded>
   </game>
   <game name="Jaws">
+    <description>Jaws.vpx</description>
+    <title>Jaws</title>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-11-10 12:17:06</dateadded>
+    <dateadded>2024-11-29 17:48:42</dateadded>
   </game>
   <game name="Twister (1996)">
+    <description>Twister (1996).vpx</description>
+    <title>Twister (1996)</title>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-11-10 12:17:06</dateadded>
+    <dateadded>2024-11-29 17:48:42</dateadded>
   </game>
 </menu>

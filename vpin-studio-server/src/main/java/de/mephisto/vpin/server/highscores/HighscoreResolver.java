@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
-import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
+import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.system.SystemService;
@@ -219,7 +219,7 @@ public class HighscoreResolver implements InitializingBean {
   private String executePINemHi(@NonNull File nvRam) throws Exception {
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRam);
+      return NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(commandFile, nvRam);
     }
     catch (Exception e) {
       throw e;

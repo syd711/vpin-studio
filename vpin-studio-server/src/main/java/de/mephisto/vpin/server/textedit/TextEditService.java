@@ -101,7 +101,7 @@ public class TextEditService {
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = frontendService.getGame(textFile.getFileId());
+          Game game = frontendService.getOriginalGame(textFile.getFileId());
           File gameFile = game.getGameFile();
           String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());
           textFile.setLastModified(new Date(gameFile.lastModified()));
@@ -193,7 +193,7 @@ public class TextEditService {
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = frontendService.getGame(textFile.getFileId());
+          Game game = frontendService.getOriginalGame(textFile.getFileId());
           if (game != null) {
             File gameFile = game.getGameFile();
             VPXUtil.importVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());

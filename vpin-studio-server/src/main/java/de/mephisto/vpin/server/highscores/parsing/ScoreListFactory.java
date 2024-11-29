@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.highscores.parsing;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
+import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -11,31 +14,36 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RawScoreParser {
-  private final static Logger LOG = LoggerFactory.getLogger(RawScoreParser.class);
+public class ScoreListFactory {
+  private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
 
-  @NonNull
-  private final String raw;
-  @NonNull
-  private final Date createdAt;
-  private final int gameId;
-  private final List<String> titles;
+  private final static List<ScoreListAdapter> adapters = new ArrayList<>();
 
-  public RawScoreParser(@NonNull String raw, @NonNull Date createdAt, int gameId, List<String> titles) {
-    this.raw = raw;
-    this.createdAt = createdAt;
-    this.gameId = gameId;
-    this.titles = titles;
+  static {
+    adapters.add(new SortedScoreAdapter("tf_180"));
   }
 
-  public List<Score> parse() {
+  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, List<String> titles) {
     List<Score> scores = new ArrayList<>();
+    int gameId = -1;
+    if (game != null) {
+      gameId = game.getId();
+    }
 
     try {
       LOG.debug("Parsing Highscore text: " + raw);
       List<String> lines = Arrays.asList(raw.split("\\n"));
       if (lines.isEmpty()) {
         return scores;
+      }
+
+      if (game != null) {
+        for (ScoreListAdapter adapter : adapters) {
+          if (adapter.isApplicable(game)) {
+//            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
+            return adapter.getScores(game, createdAt, lines);
+          }
+        }
       }
 
       int index = 1;
@@ -71,7 +79,7 @@ public class RawScoreParser {
     return filterDuplicates(scores);
   }
 
-  private List<Score> filterDuplicates(List<Score> scores) {
+  private static List<Score> filterDuplicates(List<Score> scores) {
     List<Score> scoreList = new ArrayList<>();
     int pos = 1;
     for (Score s : scores) {
@@ -88,7 +96,7 @@ public class RawScoreParser {
 
 
   @Nullable
-  private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
+  private static Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
     String initials = "???";
     if (line.trim().length() >= 3) {
       initials = line.trim().substring(0, 3);
@@ -111,7 +119,7 @@ public class RawScoreParser {
   }
 
   @Nullable
-  private Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
+  private static Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
     List<String> scoreLineSegments = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     if (scoreLineSegments.size() == 2) {
       String score = scoreLineSegments.get(1);
@@ -149,7 +157,6 @@ public class RawScoreParser {
 
     throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
   }
-
 
   private static double toNumericScore(String score) {
     try {

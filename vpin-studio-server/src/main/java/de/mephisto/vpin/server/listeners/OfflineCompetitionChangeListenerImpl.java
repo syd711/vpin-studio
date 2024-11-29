@@ -90,7 +90,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
                 Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
                 if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
                   String raw = hs.get().getRaw();
-                  List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
+                  List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game, -1);
                   String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
                   subText += "\nHere is the current highscore:\n\n" + highscoreList;
                 }
@@ -137,7 +137,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
             else {
               Platform.runLater(() -> {
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
-                List<Score> scores = highscoreParsingService.parseScores(new Date(), scoreSummary.getRaw(), game.getId(), -1);
+                List<Score> scores = highscoreParsingService.parseScores(new Date(), scoreSummary.getRaw(), game, -1);
                 String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
                 String imageMessage = "Here are the final results:\n" + highscoreList + "\nYou can duplicate the competition to continue it with another table or duration.";
                 discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage);

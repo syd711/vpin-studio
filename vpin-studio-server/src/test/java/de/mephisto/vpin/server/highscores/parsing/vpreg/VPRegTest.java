@@ -4,8 +4,7 @@ import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
-import de.mephisto.vpin.server.highscores.parsing.ScoreParsingEntry;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import org.junit.jupiter.api.Test;
 
@@ -95,8 +94,7 @@ public class VPRegTest {
       assertNotNull(vpRegScoreSummary.getScores().get(0).getInitials(), "No score initials found for " + entry);
       count++;
 
-      RawScoreParser parser = new RawScoreParser(vpRegScoreSummary.toRaw(), new Date(), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
-      List<Score> parse = parser.parse();
+      List<Score> parse = ScoreListFactory.create(vpRegScoreSummary.toRaw(), new Date(), null, DefaultHighscoresTitles.DEFAULT_TITLES);
       assertFalse(parse.isEmpty(), "No scores parsed for " + entry);
     }
     System.out.println("Tested " + count + " entries");

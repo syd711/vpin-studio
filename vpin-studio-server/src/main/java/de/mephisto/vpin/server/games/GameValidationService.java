@@ -232,7 +232,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
+            Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
             if (otherGame != null) {
               //only complain if it is another table or has no VPS mapping
               if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {

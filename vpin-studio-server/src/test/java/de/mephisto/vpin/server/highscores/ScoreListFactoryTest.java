@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
-import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import org.junit.Test;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class RawScoreParserTest {
+public class ScoreListFactoryTest {
 
   private String RAW3 = "GRAND CHAMPION\n" +
     "SLL      52.000.000\n" +
@@ -54,8 +54,7 @@ public class RawScoreParserTest {
 
   @Test
   public void testRawScoreParser() {
-    RawScoreParser parser = new RawScoreParser(RAW3, new Date(), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
-    List<Score> parse = parser.parse();
+    List<Score> parse = ScoreListFactory.create(RAW3, new Date(), null, DefaultHighscoresTitles.DEFAULT_TITLES);
     assertEquals(parse.size(), 5);
   }
 }

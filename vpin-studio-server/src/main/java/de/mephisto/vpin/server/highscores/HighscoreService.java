@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -62,6 +63,8 @@ public class HighscoreService implements InitializingBean {
 
   @Autowired
   private HighscoreResolver highscoreResolver;
+
+  private GameService gameService;
 
   private boolean pauseHighscoreEvents;
 
@@ -142,7 +145,7 @@ public class HighscoreService implements InitializingBean {
 
   @NonNull
   public List<Score> parseScores(Date createdAt, String raw, int gameId, long serverId) {
-    return highscoreParser.parseScores(createdAt, raw, gameId, serverId);
+    return highscoreParser.parseScores(createdAt, raw, gameService.getGame(gameId), serverId);
   }
 
   @NonNull
@@ -200,7 +203,7 @@ public class HighscoreService implements InitializingBean {
     List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (Highscore highscore : byRawIsNotNull) {
-      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), highscore.getGameId(), serverId);
+      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), gameService.getGame(highscore.getGameId()), serverId);
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
     }
     return result;
@@ -256,7 +259,7 @@ public class HighscoreService implements InitializingBean {
       List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), serverId);
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
-          Game game = frontendService.getGame(score.getGameId());
+          Game game = frontendService.getOriginalGame(score.getGameId());
           if (game == null) {
             deleteScores(score.getGameId(), true);
             continue;
@@ -304,7 +307,7 @@ public class HighscoreService implements InitializingBean {
 
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (HighscoreVersion version : all) {
-      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), version.getGameId(), serverId);
+      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), gameService.getGame(version.getGameId()), serverId);
       //change positions start with 1!
       if (version.getChangedPosition() > versionScores.size()) {
         LOG.error("Found invalid change position '" + version.getChangedPosition() + "' for " + version);
@@ -402,7 +405,7 @@ public class HighscoreService implements InitializingBean {
       Highscore newHighscore = Highscore.forGame(game, metadata);
 
       //create artificial empty init version
-      List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), -1);
+      List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, -1);
       StringBuilder emptyRaw = new StringBuilder("HIGHEST SCORES\n");
       for (Score newScore : newScores) {
         emptyRaw.append("#");
@@ -449,7 +452,7 @@ public class HighscoreService implements InitializingBean {
      * Note that this only determines if the highscore has changed locally and a change event should be fired.
      */
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
+    List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
     if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
@@ -511,7 +514,7 @@ public class HighscoreService implements InitializingBean {
   private List<Score> getOrCloneOldHighscores(Highscore oldHighscore, Game game, String oldRaw, long serverId, List<Score> newScores) {
     List<Score> oldScores = new ArrayList<>();
     if (oldRaw != null) {
-      oldScores = highscoreParser.parseScores(oldHighscore.getLastModified(), oldHighscore.getRaw(), game.getId(), serverId);
+      oldScores = highscoreParser.parseScores(oldHighscore.getLastModified(), oldHighscore.getRaw(), game, serverId);
     }
     else {
       for (Score newScore : newScores) {
@@ -663,5 +666,9 @@ public class HighscoreService implements InitializingBean {
   public void afterPropertiesSet() {
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
+  }
+
+  public void setGameService(GameService gameService) {
+    this.gameService = gameService;
   }
 }

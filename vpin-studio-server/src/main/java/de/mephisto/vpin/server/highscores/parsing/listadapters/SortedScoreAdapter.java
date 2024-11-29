@@ -1,13 +1,20 @@
-package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
+package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import java.util.*;
-import java.util.regex.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // E.g. Transformers has a seperate highscore list for Autobots and Decepticons
 // This adapter combines all scores into one list
-public class SortedScoreAdapter implements ScoreNvRamAdapter {
+public class SortedScoreAdapter implements ScoreListAdapter {
 
   private String name;
 
@@ -20,12 +27,12 @@ public class SortedScoreAdapter implements ScoreNvRamAdapter {
   }
 
   @Override
-  public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
-    return nvRam.equals(name);
+  public boolean isApplicable(@NonNull Game game) {
+    return game.getRom() != null && game.getRom().equals(name);
   }
 
-  @Override
-  public String convert(@NonNull String nvRam, @NonNull List<String> lines) {
+  @NonNull
+  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines) {
     List<HighScore> scores = new ArrayList<>();
 
     // Regex for scores with or without thousands seperator (e.g., "OPT 75.000.000", "OPT 30000", "#1 OPT 20.000", OPT 10,000,000)
@@ -42,28 +49,26 @@ public class SortedScoreAdapter implements ScoreNvRamAdapter {
     }
 
     // Sort scores in descending order
-    scores.sort((a, b) -> Integer.compare(b.getScoreValue(), a.getScoreValue()));
-
-    StringBuilder converted = new StringBuilder();
+    scores.sort((a, b) -> Double.compare(b.getScoreValue(), a.getScoreValue()));
+    List<Score> result = new ArrayList<>();
     int i = 1;
     for (HighScore score : scores) {
-      converted.append(String.format("#%d %s     %s%n", i++, score.getPlayer(), score.getScore()));
+      result.add(new Score(createdAt, game.getId(), score.player, null, score.score, score.scoreValue, i));
     }
-
-    return converted.toString();
+    return result;
   }
 
   // Only used in SortedScoreAdapter
   private class HighScore {
     private final String player;
     private final String score;
-    private final int scoreValue;
+    private final double scoreValue;
 
     public HighScore(String player, String score) {
       this.player = player;
       this.score = score;
       String scoreToParse = ScoreFormatUtil.cleanScore(score);
-      this.scoreValue = Integer.parseInt(scoreToParse);
+      this.scoreValue = Double.parseDouble(scoreToParse);
     }
 
     public String getPlayer() {
@@ -74,9 +79,8 @@ public class SortedScoreAdapter implements ScoreNvRamAdapter {
       return score;
     }
 
-    public int getScoreValue() {
+    public double getScoreValue() {
       return scoreValue;
     }
-
   }
 }

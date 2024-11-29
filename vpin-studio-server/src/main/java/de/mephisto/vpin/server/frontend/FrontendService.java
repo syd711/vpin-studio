@@ -143,7 +143,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     TableDetails manifest = frontend.getTableDetails(id);
     if (manifest != null) {
       GameEmulator emu = emulators.get(manifest.getEmulatorId());
-      if(emu != null) {
+      if (emu != null) {
         manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
       }
     }
@@ -189,13 +189,21 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return games;
   }
 
-  public Game getGame(int id) {
+  /**
+   * Returns the original game from the frontend, without any custom field replacements.
+   * <b>Important:</b> This instance may not have any ROM name or not the correct one!
+   *
+   * @param id the id of the game
+   * @return the original un-customized game instance
+   */
+  public Game getOriginalGame(int id) {
     return setGameEmulator(getFrontendConnector().getGame(id));
   }
 
   public Game getGameByFilename(int emulatorId, String filename) {
     return setGameEmulator(getFrontendConnector().getGameByFilename(emulatorId, filename));
   }
+
   /**
    * Same as getGameByFilename() but filename has no extension
    * Usefull to derive a game from a backglass name
@@ -693,7 +701,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public FrontendMedia getGameMedia(int gameId) {
-    Game game = getGame(gameId);
+    Game game = getOriginalGame(gameId);
     return getGameMedia(game);
   }
 

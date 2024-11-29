@@ -97,6 +97,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     return false;
   }
 
+  /**
+   * The card must be drawn synchronized and in a FX thread.
+   * We need to wait until finished, because otherwise the UI would show the previous result
+   *
+   * @param game
+   * @param generateSampleCard
+   * @param template
+   * @return
+   */
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
       Semaphore semaphore = new Semaphore(0);
@@ -165,7 +174,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to generate highscore card: " + e.getMessage(), e);
+      LOG.error("Failed to generate highscore card: {}", e.getMessage(), e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
     }
     return false;

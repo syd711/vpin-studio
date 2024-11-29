@@ -120,7 +120,7 @@ public class GameMediaService {
   public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails oldDetails = getTableDetails(gameId);
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
 
     //fix input and save input
     String gameFilename = updatedTableDetails.getGameFileName();
@@ -505,7 +505,7 @@ public class GameMediaService {
       analysis.analyze();
     }
 
-    Game game = frontendService.getGame(uploadDescriptor.getGameId());
+    Game game = frontendService.getOriginalGame(uploadDescriptor.getGameId());
     List<VPinScreen> values = frontendService.getFrontend().getSupportedScreens();
     for (VPinScreen screen : values) {
       List<String> filesForScreen = analysis.getPopperMediaFiles(screen);

@@ -51,7 +51,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
+      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game, -1);
       String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
       msg = msg + "\nHere is the current highscore:\n" + highscoreList;
     }
@@ -78,7 +78,7 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
+      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game, -1);
       String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
       msg = msg + "\nHere is the current highscore:\n" + highscoreList;
     }
