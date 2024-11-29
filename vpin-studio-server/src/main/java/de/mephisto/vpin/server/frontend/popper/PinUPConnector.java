@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -14,7 +13,6 @@ import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -2110,6 +2108,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public boolean killFrontend() {
+    NirCmd.setTaskBarVisible(true);
     pupEventEmitter.sendPupEvent(11, 2);
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
@@ -46,6 +47,8 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
 
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
+        NirCmd.setTaskBarVisible(false);
+
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
