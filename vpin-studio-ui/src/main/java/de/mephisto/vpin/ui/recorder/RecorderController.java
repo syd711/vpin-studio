@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -207,6 +208,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     startReload("Loading Tables...");
 
     refreshEmulators();
+    refreshPlaylists();
 
     this.searchTextField.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -393,6 +395,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     super.initialize("table", "tables", new RecorderColumnSorter(this));
     recordingOptions.setFillWidth(true);
 
+
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
 
@@ -406,6 +409,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
+    super.loadPlaylistCombo();
 
     RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     List<RecordingScreenOptions> options = new ArrayList<>();

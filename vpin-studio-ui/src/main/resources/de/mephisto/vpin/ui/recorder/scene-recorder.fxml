@@ -67,6 +67,7 @@
                 </StackPane>
             <Separator layoutX="462.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+            <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
                 <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
                <font>
