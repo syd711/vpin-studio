@@ -481,15 +481,21 @@ public class BackglassService {
 
   public DirectB2sScreenRes getScreenRes(int gameId, boolean perTableOnly) {
     Game game = gameService.getGame(gameId);
-    String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
-    return getScreenRes(game.getEmulator(),filename, game, perTableOnly);   
+    if (game != null) {
+      String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
+      return getScreenRes(game.getEmulator(),filename, game, perTableOnly);
+    }
+    return null;
   }
 
   public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
-    Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(), 
-      FilenameUtils.getBaseName(directb2s.getFileName()));
-    return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
+    if (emulator != null) {
+      Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(), 
+        FilenameUtils.getBaseName(directb2s.getFileName()));
+      return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
+    }
+    return null;
   }
 
   private DirectB2sScreenRes getScreenRes(GameEmulator emulator, String filename, @Nullable Game game, boolean perTableOnly) {

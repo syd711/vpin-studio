@@ -270,7 +270,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final DateFormat dateFormat =  DateFormat.getDateInstance();
+  private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;

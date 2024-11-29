@@ -75,7 +75,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
       + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
   }
   public InputStream getDirectB2sBackground(DirectB2SData directB2S) throws IOException {
-    String url = getDirectB2sBackgroundUrl(directB2S.getEmulatorId(), directB2S.getFilename());
+    String url = getRestClient().getBaseUrl() + API + "directb2s/background/" + directB2S.getEmulatorId() + "/" 
+      + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     return new URL(url).openStream();
   }
 
@@ -84,17 +85,27 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
   public String getDirectB2sDmdUrl(int emulatorId, String filename) {
     return getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + emulatorId + "/" 
-    + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+      + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
   }
   public InputStream getDirectB2sDmd(DirectB2SData directB2S) throws IOException {
-    String url = getDirectB2sDmdUrl(directB2S.getEmulatorId(), directB2S.getFilename());
+    String url = getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + directB2S.getEmulatorId() + "/" 
+      + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     return new URL(url).openStream();
   }
 
   public String getDirectB2sPreviewBackgroundUrl(int gameId, boolean includeFrame) {
     return getRestClient().getBaseUrl() + API + "directb2s/previewBackground/" + gameId + ".png"
-        + (includeFrame ? "?includeFrame=true" : "");
+      + (includeFrame ? "?includeFrame=true" : "");
   } 
+  public String getDirectB2sPreviewBackgroundUrl(int emulatorId, String filename, boolean includeFrame) {
+    return getRestClient().getBaseUrl() + API + "directb2s/previewBackground/" + emulatorId + "/" 
+      + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8) + ".png"
+      + (includeFrame ? "?includeFrame=true" : "");
+  }
+
+
+  //--------------------------------
+  // BACKGLASS OPERATIONS
 
   //--------------------------------
   // BACKGLASS OPERATIONS

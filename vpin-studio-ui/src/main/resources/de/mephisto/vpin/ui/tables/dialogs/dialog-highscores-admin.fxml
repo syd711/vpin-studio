@@ -20,7 +20,7 @@
    <center>
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
          <top>
-            <BorderPane BorderPane.alignment="CENTER">
+            <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
