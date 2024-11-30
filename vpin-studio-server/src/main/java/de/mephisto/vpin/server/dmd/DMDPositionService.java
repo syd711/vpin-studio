@@ -329,15 +329,15 @@ public class DMDPositionService {
           return iniConfiguration;
         }
         catch (Exception e) {
-          LOG.error("Cannot parse DMDDevice.ini", e);
+          LOG.error("Cannot parse {}", iniFile.getAbsolutePath(), e);
         }
       }
       catch (Exception e) {
-        LOG.error("Cannot decode charset of DMDDevice.ini", e);
+        LOG.error("Cannot decode charset of {}}", iniFile.getAbsolutePath(), e);
       }
     }
     catch (Exception e) {
-      LOG.error("Cannot open DMDDevice.ini", e);
+      LOG.error("Cannot open {}", iniFile.getAbsolutePath(), e);
     }
     return null;
   }
