@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.mame;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -160,6 +161,36 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     mameCache.remove(rom.toLowerCase());
     return true;
   }
+
+  public boolean fillDmdPosition(DMDInfo dmdinfo) {
+    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    String rom = dmdinfo.getGameRom();
+    boolean existInRegistry = romFolders.contains(rom.toLowerCase());
+
+    Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY +
+        (existInRegistry ? rom : MameOptions.DEFAULT_KEY));
+    dmdinfo.setLocallySaved(existInRegistry);
+    dmdinfo.setX(getInteger(values, "dmd_pos_x"));
+    dmdinfo.setY(getInteger(values, "dmd_pos_y"));
+    dmdinfo.setWidth(getInteger(values, "dmd_width"));
+    dmdinfo.setHeight(getInteger(values, "dmd_height"));
+    return true;
+  }
+
+  public boolean saveDmdPosition(DMDInfo dmdinfo) {
+    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    String rom = dmdinfo.getGameRom();
+    if (!romFolders.contains(rom.toLowerCase())) {
+      WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
+    }
+    String regkey = MAME_REG_FOLDER_KEY + rom;
+    WinRegistry.setIntValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
+    WinRegistry.setIntValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
+    WinRegistry.setIntValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
+    WinRegistry.setIntValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
+    return true;
+  }
+
 
   private boolean getBoolean(Map<String, Object> values, String key) {
     return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);

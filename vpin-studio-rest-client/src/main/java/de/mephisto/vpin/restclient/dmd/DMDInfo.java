@@ -8,8 +8,10 @@ public class DMDInfo {
   private int gameId;
   private String gameRom;
 
-  /** global aspect ratio setting */ 
-  private boolean keepAspectRatio;
+  /** Aspect ratio from dmddevice.ini */ 
+  private boolean forceAspectRatio;
+  /** Selected aspect ratio */ 
+  private boolean selectedAspectRatio;
   /** whether save uses registry or ini */ 
   private boolean useRegistry;
 
@@ -42,15 +44,23 @@ public class DMDInfo {
 		this.gameRom = gameRom;
 	}
 
-	public boolean isKeepAspectRatio() {
-		return keepAspectRatio;
-	}
+	public boolean isForceAspectRatio() {
+    return forceAspectRatio;
+  }
 
-	public void setKeepAspectRatio(boolean keepAspectRatio) {
-		this.keepAspectRatio = keepAspectRatio;
-	}
+  public void setForceAspectRatio(boolean forceAspectRatio) {
+    this.forceAspectRatio = forceAspectRatio;
+  }
 
-	public boolean isUseRegistry() {
+  public boolean isSelectedAspectRatio() {
+    return selectedAspectRatio;
+  }
+
+  public void setSelectedAspectRatio(boolean selectedAspectRatio) {
+    this.selectedAspectRatio = selectedAspectRatio;
+  }
+
+  public boolean isUseRegistry() {
 		return useRegistry;
 	}
 
@@ -173,5 +183,20 @@ public class DMDInfo {
   @Override
   public int hashCode() {
     return Objects.hash(gameId, x, y, width, height);
+  }
+
+  public void adjustAspectRatio() {
+    if (selectedAspectRatio) {
+      if (width / height > 4) {
+        // adjust width
+        x += (width - 4 * height) / 2;
+        width = 4 * height;
+      }
+      else {
+        // adjust height
+        y += (height - width / 4) / 2;
+        height = width / 4;
+      }
+    }
   }
 }

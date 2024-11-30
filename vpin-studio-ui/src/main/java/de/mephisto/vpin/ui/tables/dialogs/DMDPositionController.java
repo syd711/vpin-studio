@@ -18,12 +18,14 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -70,10 +72,18 @@ public class DMDPositionController implements Initializable, DialogController {
   private Spinner<Double> heightSpinner;
 
   @FXML
+  private Button autoPositionBtn;
+  @FXML
   private Button saveLocallyBtn;
+  @FXML
+  private Button saveGloballyBtn;
 
   @FXML
+  private BorderPane parentpane;
+  @FXML
   private Pane imagepane;
+
+  private ProgressIndicator progressIndicator = new ProgressIndicator();
 
   @FXML
   private ImageView fullDMDImage;
@@ -126,6 +136,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private void onAutoPosition() {
+    disableButtons();
     DMDInfo movedDmdinfo = fillDmdInfo();
     LOG.info("Autoposition dmdinfo for game {}", game.getGameFileName());
     CompletableFuture
@@ -135,6 +146,12 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    saveLocallyBtn.managedProperty().bindBidirectional(saveLocallyBtn.visibleProperty());
+    saveGloballyBtn.managedProperty().bindBidirectional(saveGloballyBtn.visibleProperty());
+    saveLocallyBtn.setVisible(false);
+    saveGloballyBtn.setVisible(false);
+
     // The lime box that is used to position the DMD
     dragBox = new DMDPositionResizer(area, aspectRatioCheckbox.selectedProperty(), color);
     dragBox.addToPane(imagepane);
@@ -162,6 +179,13 @@ public class DMDPositionController implements Initializable, DialogController {
         dragBox.setHeight(rect.getHeight());
       });
 
+    aspectRatioCheckbox.selectedProperty().addListener((x, o, selection) -> {
+      if (selection) {
+        DMDInfo dmdinfo = fillDmdInfo();
+        dmdinfo.adjustAspectRatio();
+        loadDmdInfo(dmdinfo);
+      }
+    });
 
     // now set the existing bounds
     Bounds bounds = fullDMDImage.getLayoutBounds();
@@ -176,6 +200,9 @@ public class DMDPositionController implements Initializable, DialogController {
       VPinScreen selectedScreen = getSelectedScreen();
       // prevent a double load of image at dialog opening
       if (!selectedScreen.equals(dmdinfo.getOnScreen())) {
+        disableButtons();
+        parentpane.setCenter(progressIndicator);
+
         DMDInfo movedDmdinfo = fillDmdInfo();
         LOG.info("Moving dmdinfo for game {} : {}", game.getGameFileName(), movedDmdinfo);
         CompletableFuture
@@ -227,9 +254,23 @@ public class DMDPositionController implements Initializable, DialogController {
 
   public void setGame(GameRepresentation gameRepresentation) {
     this.game = gameRepresentation;
+    // loading...
+    parentpane.setCenter(progressIndicator);
+
     CompletableFuture
       .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
-      .thenAccept(dmd -> setDmdInfo(dmd));
+      .thenAccept(dmd -> setDmdInfo(dmd))
+      .exceptionally(ex -> {
+        LOG.error("Error getting dmd information, set an empty one");
+        this.dmdinfo = new DMDInfo();
+        return null;
+      });
+  }
+
+  private void disableButtons() {
+    autoPositionBtn.setDisable(true);
+    saveLocallyBtn.setDisable(true);
+    saveGloballyBtn.setDisable(true);
   }
 
   /**
@@ -248,6 +289,7 @@ public class DMDPositionController implements Initializable, DialogController {
     Image image = backgroundUrl != null ? new Image(backgroundUrl) : null;
     // when loaded, fill now the screen
     Platform.runLater(() -> {
+
       // resize the preview proportionnaly to the real screen size, 
       // determine if this is fitWidth or fitHeight that must be adjusted 
       double fitWidth=1024.0;
@@ -258,16 +300,35 @@ public class DMDPositionController implements Initializable, DialogController {
       else {
         fitHeight = fitWidth * dmdinfo.getScreenHeight() / dmdinfo.getScreenWidth();
       }
+
+      LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
+
       fullDMDImage.setFitWidth(fitWidth);
       fullDMDImage.setFitHeight(fitHeight);
       fullDMDImage.setImage(image);
       fullDMDImage.setPreserveRatio(dmdinfo.isImageCentered());
 
-      romLabel.setText(dmdinfo.getGameRom());
+      parentpane.setCenter(imagepane);
+
+      romLabel.setText(StringUtils.defaultIfEmpty(dmdinfo.getGameRom(), "--"));
       tablePositionLabel.setText((dmdinfo.isLocallySaved() ? "Locally" : "Globally") + " in " +
         (dmdinfo.isUseRegistry() ? "registry" : "dmddevice.ini"));
-      saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+  
+      autoPositionBtn.setDisable(false);
 
+      // no local save if no rom
+      if (dmdinfo.getGameRom() != null) {
+        saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+        saveLocallyBtn.setDisable(false);
+        saveLocallyBtn.setVisible(true);
+      }
+
+      // no global save when using registry
+      if (!dmdinfo.isUseRegistry()) {
+        saveGloballyBtn.setDisable(false);
+        saveGloballyBtn.setVisible(dmdinfo.isUseRegistry());
+      }
+  
       if (dmdinfo.isOnBackglass()) {
         radioOnBackglass.setSelected(true);
       }
@@ -280,32 +341,13 @@ public class DMDPositionController implements Initializable, DialogController {
 
       // The bounds for the DMD resizer
       Bounds bounds = fullDMDImage.getLayoutBounds();
-
       // calculate our zoom
-      double zoomX = bounds.getWidth() / dmdinfo.getScreenWidth();
-      double zoomY = bounds.getHeight() / dmdinfo.getScreenHeight();
-      zoom.set(zoomX);
-
+      zoom.set(bounds.getWidth() / dmdinfo.getScreenWidth());
       // configure min / max of spinners 
       area.set(bounds);
 
-      // aspect ratio forced in dmddevice.ini, force it there too and disable 
-      if (dmdinfo.isKeepAspectRatio()) {
-        aspectRatioCheckbox.setSelected(true);
-        aspectRatioCheckbox.setDisable(true);
-      }
-      else {
-        // if existing dmd size ratio is close to 4:1, activate the checkbox
-        double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
-        boolean aspectRatio = (Math.abs(ratio - 4) < 0.01);
-        aspectRatioCheckbox.setSelected(aspectRatio);
-      }
-
       // Finally position our box, maybe resized, moved or rescaled keeping in account above constraints
-      dragBox.setX(dmdinfo.getX() * zoomX);
-      dragBox.setY(dmdinfo.getY() * zoomX);
-      dragBox.setWidth(dmdinfo.getWidth() * zoomX);
-      dragBox.setHeight(dmdinfo.getHeight() * zoomX);
+      loadDmdInfo(dmdinfo);
     });
   }
 
@@ -314,11 +356,22 @@ public class DMDPositionController implements Initializable, DialogController {
       radioOnB2sDMD.isSelected() ? VPinScreen.DMD: VPinScreen.PlayField;
   }
 
+  private void loadDmdInfo(DMDInfo dmdinfo) {
+    dragBox.setWidth(dmdinfo.getWidth() * zoom.get());
+    dragBox.setHeight(dmdinfo.getHeight() * zoom.get());
+    dragBox.setX(dmdinfo.getX() * zoom.get());
+    dragBox.setY(dmdinfo.getY() * zoom.get());
+    // aspect ratio forced in dmddevice.ini, force it there too and disable 
+    aspectRatioCheckbox.setSelected(dmdinfo.isSelectedAspectRatio());
+    aspectRatioCheckbox.setDisable(dmdinfo.isForceAspectRatio());
+  }
+
   private DMDInfo fillDmdInfo() {
     dmdinfo.setX(dragBox.getX() / zoom.get());
     dmdinfo.setY(dragBox.getY() / zoom.get());
     dmdinfo.setWidth(dragBox.getWidth() / zoom.get());
     dmdinfo.setHeight(dragBox.getHeight() / zoom.get());
+    dmdinfo.setSelectedAspectRatio(aspectRatioCheckbox.isSelected());
     return dmdinfo;
   }
 }
