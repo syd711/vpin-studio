@@ -25,10 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -242,7 +239,9 @@ public class MameService implements InitializingBean, ApplicationContextAware {
               romValidationCache.put(rom, false);
             }
           }
-          LOG.info("MAME rom validation finished: " + romValidationCache.size() + " invalid ROMs found: " + String.join(",", romValidationCache.keySet()));
+          List<String> sorted = new ArrayList<>(romValidationCache.keySet());
+          sorted.sort(String::compareTo);
+          LOG.info("MAME rom validation finished: " + romValidationCache.size() + " invalid ROMs found: " + String.join(",", sorted));
         }
 
 //        StringBuilder err = executor.getStandardErrorFromCommand();
