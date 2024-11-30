@@ -752,7 +752,6 @@ public class BackglassService {
     return getPreviewBackground(tableData, game, includeFrame);
   }
 
-  //TODO add frame
   public byte[] getPreviewBackground(DirectB2SData tableData, @Nullable Game game, boolean includeFrame) {
     if (tableData != null && tableData.isBackgroundAvailable()) {
       String base64 = getBackgroundBase64(tableData.getEmulatorId(), tableData.getFilename());
@@ -807,4 +806,20 @@ public class BackglassService {
     return null;
   }
 
+  public byte[] getPreviewDmd(int gameId) {
+    Game game = gameService.getGame(gameId);
+    DirectB2SData tableData = getDirectB2SData(game);
+    return getPreviewDmd(tableData, game);
+  }
+
+  public byte[] getPreviewDmd(DirectB2SData tableData, @Nullable Game game) {
+    if (tableData != null && tableData.isBackgroundAvailable()) {
+      String base64 = getDmdBase64(tableData.getEmulatorId(), tableData.getFilename());
+      if (base64 != null) {
+        return DatatypeConverter.parseBase64Binary(base64);
+      }
+    }
+    // not found or error
+    return null;
+  }
 }

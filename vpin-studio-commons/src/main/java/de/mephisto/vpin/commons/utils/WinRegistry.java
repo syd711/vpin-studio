@@ -174,6 +174,16 @@ public class WinRegistry {
     }
   }
 
+  public static void deleteValue(@NonNull String key, @NonNull String value) {
+    try {
+      Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, key, value);
+      LOG.info("Deleted value key {}\\{}", key, value);
+    }
+    catch (Exception e) {
+      LOG.info("Deletion failed for registry path '" + key + "\\" + value + ": " + e.getMessage());
+    }
+  }
+
   public static int getIntValue(@NonNull String path, @NonNull String key) {
     try {
       return Advapi32Util.registryGetIntValue(WinReg.HKEY_CURRENT_USER, path, key);
