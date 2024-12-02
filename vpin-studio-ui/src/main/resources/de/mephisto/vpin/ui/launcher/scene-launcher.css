@@ -5,11 +5,11 @@
 .wol-button {
     -fx-border-radius: 3px;
     -fx-background-radius: 3px;
-    -fx-border-color: transparent; /* Teal */
+    -fx-border-color: transparent;
     -fx-background-color: #B2DFEE; /* Darker cyan */
-    -fx-padding: 3 6 3 6;
-    -fx-text-fill: #000000;
-    -fx-cursor: hand;
+    -fx-padding: 2 8 2 8;
+    -fx-text-fill: black; /* Ensure text color is valid */
+    -fx-cursor: hand; /* Add hand cursor */
 }
 
 .wol-button:hover {
