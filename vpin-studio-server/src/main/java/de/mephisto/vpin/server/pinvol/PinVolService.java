@@ -67,16 +67,6 @@ public class PinVolService implements InitializingBean {
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    setSystemVolume();
-    this.enabled = getPinVolAutoStart();
-    if (enabled) {
-      startPinVol();
-      LOG.info("Auto-started PinVol");
-    }
-  }
-
   public boolean setSystemVolume() {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     if (serverSettings.getVolume() > 0) {
@@ -91,5 +81,17 @@ public class PinVolService implements InitializingBean {
     killPinVol();
     startPinVol();
     return true;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    setSystemVolume();
+    this.enabled = getPinVolAutoStart();
+    if (enabled) {
+      startPinVol();
+      LOG.info("Auto-started PinVol");
+    }
+
+
   }
 }

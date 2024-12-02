@@ -17,28 +17,27 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-public class FolderMonitoringThread {
-  private final static Logger LOG = LoggerFactory.getLogger(FolderMonitoringThread.class);
+public class FileMonitoringThread {
+  private final static Logger LOG = LoggerFactory.getLogger(FileMonitoringThread.class);
   private final AtomicBoolean running = new AtomicBoolean(false);
 
-  private FolderChangeListener listener;
+  private final FileChangeListener listener;
   private final boolean modifyEvents;
-  private final boolean recursive;
 
   private Thread monitorThread;
-  private File folder;
+  private final File file;
   private WatchService watchService;
   private Consumer<Path> register;
 
-  public FolderMonitoringThread(FolderChangeListener listener, boolean modifyEvents, boolean recursive) {
+  public FileMonitoringThread(FileChangeListener listener, File file, boolean modifyEvents) {
     this.listener = listener;
     this.modifyEvents = modifyEvents;
-    this.recursive = recursive;
+    this.file = file;
   }
 
 
   public void startMonitoring() {
-    if (this.monitorThread == null && folder != null) {
+    if (this.monitorThread == null && file != null) {
       startMonitor();
     }
   }
@@ -65,57 +64,21 @@ public class FolderMonitoringThread {
       LOG.error("Failed to create watch service: " + e.getMessage(), e);
     }
 
-    final Path path = folder.toPath();
+    final Path path = file.toPath();
     final Map<WatchKey, Path> keys = new HashMap<>();
 
-    if (recursive) {
-      if (OSUtil.isWindows()) {
-        try {
-          WatchKey register = path.register(watchService, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
-                  StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY},
-              ExtendedWatchEventModifier.FILE_TREE);
-          keys.put(register, path);
-        }
-        catch (IOException e) {
-          LOG.error("Error registering path " + path);
-        }
-      }
-      else {
-        register = p -> {
-          if (!p.toFile().exists() || !p.toFile().isDirectory()) {
-            throw new RuntimeException("folder " + p + " does not exist or is not a directory");
-          }
-          try {
-            Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
-              @Override
-              public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-                LOG.info("registering " + path + " in watcher service");
-                WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-                keys.put(watchKey, path);
-                return FileVisitResult.CONTINUE;
-              }
-            });
-          }
-          catch (IOException e) {
-            LOG.error("Error registering path " + p);
-          }
-        };
-        register.accept(folder.toPath());
-      }
+    try {
+      WatchKey register = path.register(watchService, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
+              StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY},
+          ExtendedWatchEventModifier.FILE_TREE);
+      keys.put(register, path);
     }
-    else {
-      try {
-        WatchKey register = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-        keys.put(register, path);
-      }
-      catch (IOException e) {
-        LOG.error("Error registering path " + path);
-      }
+    catch (IOException e) {
+      LOG.error("Error registering path " + path);
     }
-
 
     monitorThread = new Thread(() -> {
-      Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder + "\"");
+      Thread.currentThread().setName("File Monitoring Thread for \"" + file.getAbsolutePath() + "\"");
       try {
         while (running.get()) {
           try {
@@ -145,21 +108,10 @@ public class FolderMonitoringThread {
                   notifyUpdates(f);
                 }
               }
-              else if (f.isDirectory() && recursive && !OSUtil.isWindows()) {
-                if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-                  Path absPath = dir.resolve(filedropped);
-                  register.accept(absPath);
-                  notifyGlobal = true;
-                }
-              }
 
               if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-                notifyGlobal = true;
+                notifyUpdates(null);
               }
-            }
-
-            if (notifyGlobal) {
-              notifyUpdates(null);
             }
 
             wk.reset();
@@ -176,7 +128,7 @@ public class FolderMonitoringThread {
       finally {
         LOG.info(Thread.currentThread().getName() + " terminated.");
       }
-    }, "Folder Monitor (" + folder.getAbsolutePath() + ")");
+    }, "File Monitor (" + file.getAbsolutePath() + ")");
     monitorThread.start();
   }
 
@@ -211,16 +163,6 @@ public class FolderMonitoringThread {
   }
 
   private void notifyUpdates(@Nullable File file) {
-    listener.notifyFolderChange(folder, file);
-  }
-
-  public void setFolder(@Nullable File folder) {
-    this.folder = folder;
-
-    if (monitorThread != null) {
-      stopMonitoring();
-      monitorThread = null;
-    }
-    startMonitoring();
+    listener.notifyFileChange(file);
   }
 }
