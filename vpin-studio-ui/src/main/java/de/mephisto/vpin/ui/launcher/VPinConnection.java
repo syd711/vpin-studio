@@ -7,6 +7,9 @@ public class VPinConnection {
   private String name;
   private Image avatar;
   private boolean discovered = false;
+  private String macAddress;
+  private boolean maybeAsleep = false;
+  private Integer connectionId; // Nullable reference to saved configuration
 
   public String getHost() {
     return host;
@@ -38,6 +41,30 @@ public class VPinConnection {
 
   public void setDiscovered(boolean discovered) {
     this.discovered = discovered;
+  }
+
+  public String getMacAddress() {
+    return macAddress;
+  }
+
+  public void setMacAddress(String macAddress) {
+    this.macAddress = macAddress;
+  }
+
+  public boolean isMaybeAsleep() {
+    return maybeAsleep;
+  }
+
+  public void setMaybeAsleep(boolean maybeAsleep) {
+    this.maybeAsleep = maybeAsleep;
+  }
+
+  public Integer getConnectionId() {
+    return connectionId;
+  }
+
+  public void setConnectionId(Integer connectionId) {
+    this.connectionId = connectionId;
   }
 
   @Override

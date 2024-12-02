@@ -163,6 +163,19 @@ public class PropertiesStore {
     }
   }
 
+  public void remove(String key) {
+    properties.remove(key);
+    save();
+  }
+
+  public void removeAll(List<String> keys) {
+    // Remove each key
+    for (String key : keys) {
+      properties.remove(key);
+    }
+    save();
+  }
+
   private void save() {
     try {
       if (propertiesFile != null) {

@@ -69,8 +69,8 @@ public class MacOS {
 
         while (System.currentTimeMillis() - startTime < maxWaitTime) {
             if (process.isAlive()) {
-            isRunning = true;
-            break;
+                isRunning = true;
+                break;
             }
             // Optional: Small sleep to avoid busy waiting
             Thread.sleep(100); // Check every 100 milliseconds
