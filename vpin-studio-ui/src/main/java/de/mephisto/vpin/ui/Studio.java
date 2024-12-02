@@ -144,7 +144,7 @@ public class Studio extends Application {
       Parent root = loader.load();
 
 
-      Scene scene = new Scene(root, 800, 500);
+      Scene scene = new Scene(root);
       scene.setFill(Paint.valueOf("#212529"));
       stage.setTitle("VPin Studio Launcher");
       stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));

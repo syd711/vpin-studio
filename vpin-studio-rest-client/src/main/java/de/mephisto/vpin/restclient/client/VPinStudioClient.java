@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
@@ -22,7 +21,6 @@ import de.mephisto.vpin.restclient.dmd.DMDPositionServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -50,7 +48,6 @@ import de.mephisto.vpin.restclient.video.VideoConversionServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
