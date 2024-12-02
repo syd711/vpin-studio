@@ -64,7 +64,7 @@ public class FileMonitoringThread {
       LOG.error("Failed to create watch service: " + e.getMessage(), e);
     }
 
-    final Path path = file.toPath();
+    final Path path = file.getParentFile().toPath();
     final Map<WatchKey, Path> keys = new HashMap<>();
 
     try {
@@ -90,11 +90,10 @@ public class FileMonitoringThread {
               continue;
             }
 
-            boolean notifyGlobal = false;
             for (WatchEvent<?> event : wk.pollEvents()) {
               final Path filedropped = (Path) event.context();
               File f = new File(dir.toFile(), filedropped.toString());
-              if (f.isFile()) {
+              if (f.isFile() && f.equals(file)) {
                 if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                   if (FileUtils.isTempFile(f)) {
                     waitABit(f, 3000);
