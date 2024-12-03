@@ -77,6 +77,7 @@ public class UISettings extends JsonSettings {
   private boolean columnRes = true;
   private boolean columnPlaylists = true;
   private boolean columnPov = false;
+  private boolean columnPinVol = false;
   private boolean columnPupPack = true;
   private boolean columnRom = true;
   private boolean columnVersion = true;
@@ -334,6 +335,14 @@ public class UISettings extends JsonSettings {
 
   public boolean isColumnPlaylists() {
     return columnPlaylists;
+  }
+
+  public boolean isColumnPinVol() {
+    return columnPinVol;
+  }
+
+  public void setColumnPinVol(boolean columnPinVol) {
+    this.columnPinVol = columnPinVol;
   }
 
   public void setColumnPlaylists(boolean columnPlaylists) {

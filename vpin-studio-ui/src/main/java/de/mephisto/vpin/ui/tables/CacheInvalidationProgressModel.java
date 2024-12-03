@@ -58,6 +58,7 @@ public class CacheInvalidationProgressModel extends ProgressModel<String> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, String msg) {
     try {
+      client.getPinVolService().clearCache();
       client.getFrontendService().reload();
       client.getGameService().reload();
 //      client.getMameService().clearCache();

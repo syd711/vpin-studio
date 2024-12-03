@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.pinvol;
 
+import de.mephisto.vpin.restclient.pinvol.PinVolTablePreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,11 @@ public class PinVolResource {
   @GetMapping("/kill")
   public boolean kill() {
     return pinVolService.killPinVol();
+  }
+
+  @GetMapping("/preferences")
+  public PinVolTablePreferences getPreferences() {
+    return pinVolService.getPinVolTablePreferences();
   }
 
   @GetMapping("/setvolume")

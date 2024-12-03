@@ -391,7 +391,7 @@ public class VPinStudioClient implements OverlayClient {
       if (in != null) {
         FileOutputStream out = new FileOutputStream(file);
         IOUtils.copy(in, out);
-        LOG.info("Persisted for cache '"  + cache + "': " + file.getAbsolutePath());
+        LOG.info("Persisted for cache '" + cache + "': " + file.getAbsolutePath());
         in.close();
         out.close();
       }
@@ -491,6 +491,7 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   public void clearCache() {
+    getPinVolService().clearCache();
     getBackglassServiceClient().clearCache();
     getDiscordService().clearCache();
     getImageCache().clearCache();

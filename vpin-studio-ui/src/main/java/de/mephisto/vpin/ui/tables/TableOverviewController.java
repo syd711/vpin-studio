@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
+import de.mephisto.vpin.restclient.pinvol.PinVolTablePreferences;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -111,6 +113,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnAltColor;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPinVol;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPOV;
@@ -1175,6 +1180,51 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return btn;
     }, true);
 
+    BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
+      Label label = new Label("-");
+      PinVolTablePreferences prefs = client.getPinVolService().getPinVolTablePreferences();
+      PinVolTableEntry entry = prefs.getTableEntry(model.getGame());
+      if (entry != null) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(entry.getPrimaryVolume());
+        builder.append(" / ");
+        builder.append(entry.getSecondaryVolume());
+
+        if (entry.getSsfBassVolume() > 0 || entry.getSsfFrontVolume() > 0 || entry.getSsfRearVolume() > 0) {
+          builder.append(" / ");
+          builder.append(entry.getSsfBassVolume());
+          builder.append(" / ");
+          builder.append(entry.getSsfRearVolume());
+          builder.append(" / ");
+          builder.append(entry.getSsfFrontVolume());
+        }
+
+        StringBuilder tt = new StringBuilder();
+        tt.append("Primary Volume:\t");
+        tt.append(entry.getPrimaryVolume());
+        tt.append("\n");
+        tt.append("Secondary Volume:\t");
+        tt.append(entry.getPrimaryVolume());
+        tt.append("\n");
+        if (entry.getSsfBassVolume() > 0 || entry.getSsfFrontVolume() > 0 || entry.getSsfRearVolume() > 0) {
+          tt.append("Bass Volume:\t\t");
+          tt.append(entry.getSsfBassVolume());
+          tt.append("\n");
+          tt.append("Front Volume:\t\t");
+          tt.append(entry.getSsfRearVolume());
+          tt.append("\n");
+          tt.append("Rear Volume:\t\t");
+          tt.append(entry.getSsfFrontVolume());
+        }
+
+
+        label.setTooltip(new Tooltip(tt.toString()));
+        label.setText(builder.toString());
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
@@ -1774,6 +1824,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
+    columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());

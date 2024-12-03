@@ -4,7 +4,9 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -41,11 +43,15 @@ public class PinVolPreferencesController implements Initializable {
   private Button stopBtn;
 
   @FXML
+  private CheckBox columnPinVol;
+
+  @FXML
   private Spinner<Integer> volumeSpinner;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     openBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getPinVolService().isRunning());
@@ -65,6 +71,13 @@ public class PinVolPreferencesController implements Initializable {
         serverSettings.setVolume(newValue);
         client.getPreferenceService().setJsonPreference(serverSettings);
       }, 300);
+    });
+
+    columnPinVol.setSelected(uiSettings.isColumnPinVol());
+    columnPinVol.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnPinVol(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
   }
 
