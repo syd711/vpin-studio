@@ -76,7 +76,7 @@ public class SystemInfo {
         f = resolveVpxExe();
       }
     }
-    return null;
+    return f;
   }
 
   public File resolveVpxInstallFolder() {
@@ -134,7 +134,7 @@ public class SystemInfo {
         f = new File("C:/vPinball/" + folderName.replace(" ", ""));
         if (!f.exists()) {
           f = new File("C:/vPinball/" + folderName);
-        }
+        }                                                           
       }
     }
     return f;
