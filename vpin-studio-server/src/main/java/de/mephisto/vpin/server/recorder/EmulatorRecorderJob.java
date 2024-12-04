@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.*;
 
 public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
+  public static final int EMULATOR_WAITING_TIMEOUT_SECONDS = 60;
   private final VPXService vpxService;
   private final FPService fpService;
 
@@ -85,7 +85,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
           throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
         }
 
-        int secondToWait = 30;
+        int secondToWait = EMULATOR_WAITING_TIMEOUT_SECONDS;
         while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player") && secondToWait > 0) {
           Thread.sleep(1000);
           secondToWait--;

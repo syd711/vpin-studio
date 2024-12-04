@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -39,6 +40,8 @@ public class TableOverviewContextMenu {
     this.ctxMenu = ctxMenu;
     this.ctxMenu.getItems().clear();
     FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    List<GameRepresentation> games = tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList());
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
     ImageView iconMedia = new ImageView(image3);
@@ -131,6 +134,14 @@ public class TableOverviewContextMenu {
     eventLogItem.setDisable(!game.isEventLogAvailable());
     eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
     ctxMenu.getItems().add(eventLogItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem pinVolItem = new MenuItem("PinVol Settings");
+    pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
+    pinVolItem.setDisable(games.isEmpty());
+    pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
+    ctxMenu.getItems().add(pinVolItem);
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 

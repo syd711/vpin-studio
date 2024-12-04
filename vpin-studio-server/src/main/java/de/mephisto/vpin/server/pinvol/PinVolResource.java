@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.pinvol;
 
-import de.mephisto.vpin.restclient.pinvol.PinVolTablePreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class PinVolResource {
   }
 
   @GetMapping("/preferences")
-  public PinVolTablePreferences getPreferences() {
+  public PinVolPreferences getPreferences() {
     return pinVolService.getPinVolTablePreferences();
   }
 

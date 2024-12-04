@@ -4,6 +4,10 @@
  
 - **Tables / Media Recorder**: Added playlists to table selection options.
 - **Tables / Highscore Parsing**: **"Autobots, roll out!"** @marten Added the first highscore parser that combines highscores from different modes into one list, starting with the table **Transformers**.
+- **Tables / Backglass Manager**: Added .res designer dialog.
+
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="600" />
+
 - **VPin Studio Launcher**: Added Wake-on-LAN (WOL) functionality using a Magic Packet to power on any VPin Studio Servers that are in sleep mode. To enable WOL, follow these steps:
   1. **Enable Wake-on-LAN in BIOS**:
      - Restart your computer and enter the BIOS/UEFI settings (typically by pressing **DEL** or **F2** during boot).
@@ -29,3 +33,5 @@ This allows users to remotely wake VPin Studio Servers even if they are in sleep
 
 ## Bugfixes
 
+- **Tables / Media Recorder**: Increased timeout to wait for an emulator to 60 seconds. The recording was cancelled for some users, because the launch took longer than 30 seconds. 
+- **Tables / Media Recorder**: Added hiding of the Windows taskbar for emulator based recordings. 

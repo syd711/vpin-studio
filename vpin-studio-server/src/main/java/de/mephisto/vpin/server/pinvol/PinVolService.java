@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.FileMonitoringThread;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
-import de.mephisto.vpin.restclient.pinvol.PinVolTablePreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -94,8 +94,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     return true;
   }
 
-  public PinVolTablePreferences getPinVolTablePreferences() {
-    PinVolTablePreferences prefs = new PinVolTablePreferences();
+  public PinVolPreferences getPinVolTablePreferences() {
+    PinVolPreferences prefs = new PinVolPreferences();
     prefs.setTableEntries(pinVolTableEntries);
     return prefs;
   }

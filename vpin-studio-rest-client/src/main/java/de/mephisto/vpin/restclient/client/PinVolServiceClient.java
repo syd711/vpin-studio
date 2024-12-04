@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
-import de.mephisto.vpin.restclient.pinvol.PinVolTablePreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ public class PinVolServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
 
-  private PinVolTablePreferences pinVolTablePreferences;
+  private PinVolPreferences pinVolTablePreferences;
 
   public PinVolServiceClient(VPinStudioClient client) {
     super(client);
@@ -25,9 +25,9 @@ public class PinVolServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "pinvol/autostart/toggle", Boolean.class);
   }
 
-  public PinVolTablePreferences getPinVolTablePreferences() {
+  public PinVolPreferences getPinVolTablePreferences() {
     if (pinVolTablePreferences == null) {
-      pinVolTablePreferences = getRestClient().get(API + "pinvol/preferences", PinVolTablePreferences.class);
+      pinVolTablePreferences = getRestClient().get(API + "pinvol/preferences", PinVolPreferences.class);
     }
     return pinVolTablePreferences;
   }

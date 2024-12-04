@@ -131,6 +131,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openPinVolSettings(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", "PinVol Settings");
+    PinVolSettingsDialogController controller = (PinVolSettingsDialogController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+  }
+
   public static void openMetadataDialog(AssetRequest request) {
     Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for\"" + request.getName() + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();

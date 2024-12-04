@@ -1,0 +1,168 @@
+package de.mephisto.vpin.ui.tables.panels;
+
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
+import de.mephisto.vpin.ui.events.EventManager;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
+
+public class PinVolSettingsController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(PinVolSettingsController.class);
+
+  @FXML
+  private VBox root;
+
+  @FXML
+  private Label tableLabel;
+
+  @FXML
+  private Spinner<Integer> systemVolPrimarySpinner;
+  @FXML
+  private Spinner<Integer> systemVolSecondarySpinner;
+  @FXML
+  private Spinner<Integer> systemVolBassSpinner;
+  @FXML
+  private Spinner<Integer> systemVolRearSpinner;
+  @FXML
+  private Spinner<Integer> systemVolFrontSpinner;
+
+  @FXML
+  private Spinner<Integer> tableVolPrimarySpinner;
+  @FXML
+  private Spinner<Integer> tableVolSecondarySpinner;
+  @FXML
+  private Spinner<Integer> tableVolBassSpinner;
+  @FXML
+  private Spinner<Integer> tableVolRearSpinner;
+  @FXML
+  private Spinner<Integer> tableVolFrontSpinner;
+
+  private List<GameRepresentation> games;
+
+  private PinVolTableEntry entry;
+
+  @FXML
+  private void onDefaults() {
+  }
+
+  public void setData(List<GameRepresentation> games) {
+    this.games = games;
+
+    if (games.size() == 1) {
+      tableLabel.setText("PinVol Settings for \"" + games.get(0).getGameDisplayName() + "\"");
+    }
+    else {
+      tableLabel.setText("PinVol Settings for " + games.size() + " tables");
+    }
+
+    PinVolPreferences pinVolTablePreferences = client.getPinVolService().getPinVolTablePreferences();
+    PinVolTableEntry systemVolume = pinVolTablePreferences.getSystemVolume();
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getPrimaryVolume());
+    systemVolPrimarySpinner.setValueFactory(factory1);
+    factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      systemVolume.setPrimaryVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getSecondaryVolume());
+    systemVolSecondarySpinner.setValueFactory(factory2);
+    factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      systemVolume.setSecondaryVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getSsfBassVolume());
+    systemVolBassSpinner.setValueFactory(factory3);
+    factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      systemVolume.setSsfBassVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory4 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getSsfFrontVolume());
+    systemVolFrontSpinner.setValueFactory(factory4);
+    factory4.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      systemVolume.setSsfFrontVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getSsfRearVolume());
+    systemVolRearSpinner.setValueFactory(factory5);
+    factory5.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      systemVolume.setSsfRearVolume(t1);
+    }, 300));
+
+    if (games.size() == 1) {
+      GameRepresentation gameRepresentation = games.get(0);
+      entry = pinVolTablePreferences.getTableEntry(gameRepresentation);
+    }
+    else {
+      for (GameRepresentation game : games) {
+        entry = pinVolTablePreferences.getTableEntry(game);
+        if (entry != null) {
+          break;
+        }
+      }
+    }
+
+    if (entry == null) {
+      entry = new PinVolTableEntry();
+      entry.setPrimaryVolume(systemVolume.getPrimaryVolume());
+      entry.setSecondaryVolume(systemVolume.getSecondaryVolume());
+      entry.setSsfBassVolume(systemVolume.getSsfBassVolume());
+      entry.setSsfFrontVolume(systemVolume.getSsfFrontVolume());
+      entry.setSsfRearVolume(systemVolume.getSsfRearVolume());
+    }
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory6 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, entry.getPrimaryVolume());
+    tableVolPrimarySpinner.setValueFactory(factory6);
+    factory6.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      entry.setPrimaryVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory7 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, entry.getSecondaryVolume());
+    tableVolSecondarySpinner.setValueFactory(factory7);
+    factory7.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      entry.setSecondaryVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory8 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, entry.getSsfBassVolume());
+    tableVolBassSpinner.setValueFactory(factory8);
+    factory8.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      entry.setSsfBassVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory9 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, entry.getSsfFrontVolume());
+    tableVolFrontSpinner.setValueFactory(factory9);
+    factory9.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      entry.setSsfFrontVolume(t1);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory10 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, entry.getSsfRearVolume());
+    tableVolRearSpinner.setValueFactory(factory10);
+    factory10.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
+      entry.setSsfRearVolume(t1);
+    }, 300));
+  }
+
+  public void save() {
+
+//    EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
+  }
+
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+
+  }
+}

@@ -14,7 +14,7 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
-import de.mephisto.vpin.restclient.pinvol.PinVolTablePreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -1182,7 +1182,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
       Label label = new Label("-");
-      PinVolTablePreferences prefs = client.getPinVolService().getPinVolTablePreferences();
+      PinVolPreferences prefs = client.getPinVolService().getPinVolTablePreferences();
       PinVolTableEntry entry = prefs.getTableEntry(model.getGame());
       if (entry != null) {
         StringBuilder builder = new StringBuilder();
@@ -1204,17 +1204,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tt.append(entry.getPrimaryVolume());
         tt.append("\n");
         tt.append("Secondary Volume:\t");
-        tt.append(entry.getPrimaryVolume());
+        tt.append(entry.getSecondaryVolume());
         tt.append("\n");
         if (entry.getSsfBassVolume() > 0 || entry.getSsfFrontVolume() > 0 || entry.getSsfRearVolume() > 0) {
           tt.append("Bass Volume:\t\t");
           tt.append(entry.getSsfBassVolume());
           tt.append("\n");
-          tt.append("Front Volume:\t\t");
+          tt.append("Rear Volume:\t\t");
           tt.append(entry.getSsfRearVolume());
           tt.append("\n");
-          tt.append("Rear Volume:\t\t");
+          tt.append("Front Volume:\t\t");
           tt.append(entry.getSsfFrontVolume());
+
         }
 
 

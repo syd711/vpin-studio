@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WindowsUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -2266,7 +2267,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         }
       });
 
-      return submit.get(30, TimeUnit.SECONDS);
+      return submit.get(EmulatorRecorderJob.EMULATOR_WAITING_TIMEOUT_SECONDS, TimeUnit.SECONDS);
     }
     catch (Exception e) {
       LOG.error("Waiting for frontend launch failed: {}", e.getMessage(), e);

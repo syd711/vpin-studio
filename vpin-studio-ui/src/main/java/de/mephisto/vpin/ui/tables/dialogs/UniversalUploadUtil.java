@@ -64,7 +64,9 @@ public class UniversalUploadUtil {
     }
     catch (Exception e) {
       LOG.error("Upload post processing failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Post processing failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Post processing failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      });
     }
     return result;
   }
