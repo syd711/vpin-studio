@@ -2,6 +2,8 @@ package de.mephisto.vpin.restclient.directb2s;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class DirectB2sScreenRes {
 
   private int emulatorId;
@@ -13,6 +15,7 @@ public class DirectB2sScreenRes {
   /** Whether this instance represent the global screenres.txt (true) or a per table one (false) */
   private boolean global;
 
+  /** The path to the screenres that is represented in that bean */
   private String screenresFilePath;
 
   //---
@@ -47,14 +50,76 @@ public class DirectB2sScreenRes {
   private int backgroundWidth;
   private int backgroundHeight;
 
+  /** The path to the background image, if any */
   private String backgroundFilePath;
 
   private String b2SWindowPunch;
 
+  /** Optionally turns on runAsExe on B2S that is needed to have background */
   private boolean turnOnRunAsExe;
 
+  /** Optionally turns on background property on B2S that is needed to have background */
   private boolean turnOnBackground;
 
+  //-------------------------------------------
+  // Computed properties
+
+  @JsonIgnore
+  public double getBackglassMinX() {
+    return getBackglassX();
+  }
+  @JsonIgnore
+  public double getBackglassMaxX() {
+    return getBackglassX() + getBackglassWidth();
+  }
+  @JsonIgnore
+  public double getBackglassMinY() {
+    return getBackglassY();
+  }
+  @JsonIgnore
+  public double getBackglassMaxY() {
+    return getBackglassY() + getBackglassHeight();
+  }
+
+  @JsonIgnore
+  public double getDmdMinX() {
+    return getDmdX();
+  }
+  @JsonIgnore
+  public double getDmdMaxX() {
+    return getDmdX() + getDmdWidth();
+  }
+  @JsonIgnore
+  public double getDmdMinY() {
+    return getDmdY();
+  }
+  @JsonIgnore
+  public double getDmdMaxY() {
+    return getDmdY() + getDmdHeight();
+  }
+
+  @JsonIgnore
+	public boolean isOnBackglass(double x, double y) {
+    return getBackglassMinX()<= x && x <= getBackglassMaxX() && getBackglassMinY() <= y && y <= getBackglassMaxY();
+	}
+
+  @JsonIgnore
+  public boolean isOnDmd(double x, double y) {
+    return getDmdMinX()<= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
+  }
+
+  @JsonIgnore
+  public boolean isBackglassCentered() {
+    return getBackgroundWidth() > 0 && getBackgroundHeight() > 0;
+  }
+
+  @JsonIgnore
+  public boolean hasFrame() {
+    return StringUtils.isNotEmpty(backgroundFilePath) && isBackglassCentered();
+  }
+
+  //-------------------------------------------
+  // Getters / Setters
 
   public int getEmulatorId() {
     return emulatorId;
@@ -255,47 +320,4 @@ public class DirectB2sScreenRes {
   public void setTurnOnBackground(boolean turnOnBackground) {
     this.turnOnBackground = turnOnBackground;
   }
-
-  public double getBackglassMinX() {
-    return getBackglassX();
-  }
-  public double getBackglassMaxX() {
-    return getBackglassX() + getBackglassWidth();
-  }
-  public double getBackglassMinY() {
-    return getBackglassY();
-  }
-  public double getBackglassMaxY() {
-    return getBackglassY() + getBackglassHeight();
-  }
-
-  public double getDmdMinX() {
-    return getDmdX();
-  }
-  public double getDmdMaxX() {
-    return getDmdX() + getDmdWidth();
-  }
-  public double getDmdMinY() {
-    return getDmdY();
-  }
-  public double getDmdMaxY() {
-    return getDmdY() + getDmdHeight();
-  }
-
-	public boolean isOnBackglass(double x, double y) {
-    return getBackglassMinX()<= x && x <= getBackglassMaxX() && getBackglassMinY() <= y && y <= getBackglassMaxY();
-	}
-
-  public boolean isOnDmd(double x, double y) {
-    return getDmdMinX()<= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
-  }
-
-  public boolean isBackglassCentered() {
-    return getBackgroundWidth() > 0 && getBackgroundHeight() > 0;
-  }
-
-  public boolean hasFrame() {
-    return StringUtils.isNotEmpty(backgroundFilePath) && isBackglassCentered();
-  }
-
 }

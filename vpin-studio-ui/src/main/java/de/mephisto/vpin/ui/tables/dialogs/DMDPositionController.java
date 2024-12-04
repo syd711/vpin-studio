@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.JFXFuture;
@@ -28,6 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -40,6 +42,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
@@ -88,9 +91,16 @@ public class DMDPositionController implements Initializable, DialogController {
   @FXML
   private ImageView fullDMDImage;
 
+  @FXML
+  private Rectangle emptyImage;
+
   private GameRepresentation game;
 
   private DMDPositionResizer dragBox;
+
+  private boolean hasBackglass;
+
+  private boolean hasDMD;
 
   private DMDInfo dmdinfo;
 
@@ -191,11 +201,35 @@ public class DMDPositionController implements Initializable, DialogController {
     Bounds bounds = fullDMDImage.getLayoutBounds();
     area.set(bounds);
 
+    emptyImage = new Rectangle();
+    emptyImage.setFill(Color.grayRgb(20));
+    emptyImage.setStroke(Color.BLACK);
+
     // create a toggle group 
-    ToggleGroup tg = new ToggleGroup(); 
-    radioOnBackglass.setToggleGroup(tg);
-    radioOnB2sDMD.setToggleGroup(tg);
-    radioOnPlayfield.setToggleGroup(tg);
+    List<FrontendPlayerDisplay> displays = client.getFrontendService().getScreenDisplays();
+    hasBackglass = VPinScreen.valueOfScreen(displays, VPinScreen.BackGlass) != null;
+    hasDMD = VPinScreen.valueOfScreen(displays, VPinScreen.DMD) != null;
+
+    ToggleGroup tg = new ToggleGroup();
+    if (hasBackglass || hasDMD) {
+      radioOnPlayfield.setToggleGroup(tg);
+    } else {
+      radioOnPlayfield.setManaged(false);
+      radioOnPlayfield.setVisible(false);
+    }
+    if (hasBackglass) {
+      radioOnBackglass.setToggleGroup(tg);
+    } else {
+      radioOnBackglass.setManaged(false);
+      radioOnBackglass.setVisible(false);
+    }
+    if (hasDMD) {
+      radioOnB2sDMD.setToggleGroup(tg);
+    } else {
+      radioOnB2sDMD.setManaged(false);
+      radioOnB2sDMD.setVisible(false);
+    }
+
     tg.selectedToggleProperty().addListener((obs, o, n) -> {
       VPinScreen selectedScreen = getSelectedScreen();
       // prevent a double load of image at dialog opening
@@ -300,14 +334,18 @@ public class DMDPositionController implements Initializable, DialogController {
       else {
         fitHeight = fitWidth * dmdinfo.getScreenHeight() / dmdinfo.getScreenWidth();
       }
-
-      LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
-
       fullDMDImage.setFitWidth(fitWidth);
       fullDMDImage.setFitHeight(fitHeight);
       fullDMDImage.setImage(image);
       fullDMDImage.setPreserveRatio(dmdinfo.isImageCentered());
+      LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
 
+      imagepane.getChildren().remove(emptyImage);
+      if (image == null) {
+        emptyImage.setWidth(fitWidth);
+        emptyImage.setHeight(fitHeight);
+        imagepane.getChildren().add(0, emptyImage);
+      }
       parentpane.setCenter(imagepane);
 
       romLabel.setText(StringUtils.defaultIfEmpty(dmdinfo.getGameRom(), "--"));
@@ -329,10 +367,10 @@ public class DMDPositionController implements Initializable, DialogController {
         saveGloballyBtn.setVisible(dmdinfo.isUseRegistry());
       }
   
-      if (dmdinfo.isOnBackglass()) {
+      if (hasBackglass && dmdinfo.isOnBackglass()) {
         radioOnBackglass.setSelected(true);
       }
-      else if (dmdinfo.isOnDMD()) {
+      else if (hasDMD && dmdinfo.isOnDMD()) {
         radioOnB2sDMD.setSelected(true);
       }
       else {
