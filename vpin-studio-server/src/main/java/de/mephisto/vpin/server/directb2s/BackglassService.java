@@ -68,7 +68,7 @@ public class BackglassService {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
-  /** 
+  /**
    * The default filename ScreenRes.txt can be altered by setting the registry key
    * Software\B2S\B2SScreenResFileNameOverride to a different filename.
    * Read once
@@ -265,7 +265,7 @@ public class BackglassService {
         if (game != null) {
           defaultPictureService.deleteDefaultPictures(game);
           defaultPictureService.extractDefaultPicture(game);
-        } 
+        }
 
         return true;
       }
@@ -405,7 +405,7 @@ public class BackglassService {
     }
     catch (IOException e) {
       LOG.error("Cannot find nor create file " + xml.getAbsolutePath(), e);
-      throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath() +", " + e.getMessage());
+      throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath() + ", " + e.getMessage());
     }
   }
 
@@ -483,7 +483,7 @@ public class BackglassService {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
-      return getScreenRes(game.getEmulator(),filename, game, perTableOnly);
+      return getScreenRes(game.getEmulator(), filename, game, perTableOnly);
     }
     return null;
   }
@@ -491,8 +491,8 @@ public class BackglassService {
   public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
     if (emulator != null) {
-      Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(), 
-        FilenameUtils.getBaseName(directb2s.getFileName()));
+      Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(),
+          FilenameUtils.getBaseName(directb2s.getFileName()));
       return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
     }
     return null;
@@ -537,17 +537,20 @@ public class BackglassService {
 
       res.setBackgroundWidth(Integer.parseInt(lines.get(14)));
       res.setBackgroundHeight(Integer.parseInt(lines.get(15)));
-  
-      res.setBackgroundFilePath(lines.get(16)); 
+
+      File file = new File(lines.get(16));
+      if (file.exists()) {
+        res.setBackgroundFilePath(lines.get(16));
+      }
 
       if (lines.size() > 17) {
         res.setB2SWindowPunch(lines.get(17));
-      }  
+      }
     }
 
     // Now add the associated game if any
     //if (game != null) {
-      //this will ensure that a scanned table is fetched and get the rom
+    //this will ensure that a scanned table is fetched and get the rom
     //  game = gameService.getGame(game.getId());
     //}
     if (game != null) {
@@ -570,18 +573,19 @@ public class BackglassService {
 
   /**
    * Load a screen.res file and returns the lines
-   * @param b2sFile The associated directb2s file to get table filename
-   * @param withComment Whether comment lines must be returned (true) or filtered (false)
+   *
+   * @param b2sFile      The associated directb2s file to get table filename
+   * @param withComment  Whether comment lines must be returned (true) or filtered (false)
    * @param perTableOnly Load only the file if it is table dedicated one, else null
-   * @return the List of all lines in the file 
+   * @return the List of all lines in the file
    */
   private List<String> readScreenRes(File b2sFile, boolean withComment, boolean perTableOnly) {
     if (screenresTxt == null) {
       // The default filename ScreenRes.txt can be altered by setting the registry key
       // Software\B2S\B2SScreenResFileNameOverride to a different filename.
       screenresTxt = StringUtils.defaultIfEmpty(
-        systemService.readRegistryValue("HKEY_CURRENT_USER\\Software\\B2S", "B2SScreenResFileNameOverride"),
-        "ScreenRes.txt");
+          systemService.readRegistryValue("HKEY_CURRENT_USER\\Software\\B2S", "B2SScreenResFileNameOverride"),
+          "ScreenRes.txt");
     }
 
     // see https://github.com/vpinball/b2s-backglass/wiki/Screenres.txt
@@ -634,7 +638,7 @@ public class BackglassService {
     String templateName = lines.remove(0);
     // if already a table file exists, replace it 
     File screenresFile = StringUtils.containsIgnoreCase(templateName, FilenameUtils.getBaseName(screenres.getFileName())) ?
-      new File(templateName) : new File(emulator.getTablesDirectory(), FilenameUtils.getBaseName(screenres.getFileName()) + ".res");
+        new File(templateName) : new File(emulator.getTablesDirectory(), FilenameUtils.getBaseName(screenres.getFileName()) + ".res");
 
     if (!screenresFile.exists() || screenresFile.delete()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(screenresFile))) {
@@ -648,22 +652,41 @@ public class BackglassService {
           writer.write(System.lineSeparator());
         }
         int currentLine = 0;
-        for (String line: lines) {
+        for (String line : lines) {
           if (line.startsWith("#")) {
             writer.write(line);
           }
           else {
             switch (currentLine++) {
-              case 2: writer.write(Integer.toString(screenres.getBackglassWidth())); break;
-              case 3: writer.write(Integer.toString(screenres.getBackglassHeight())); break;
-              case 5: writer.write(Integer.toString(screenres.getBackglassX())); break;
-              case 6: writer.write(Integer.toString(screenres.getBackglassY())); break;
-              case 12: writer.write(Integer.toString(screenres.getBackgroundX())); break;
-              case 13: writer.write(Integer.toString(screenres.getBackgroundY())); break;
-              case 14: writer.write(Integer.toString(screenres.getBackgroundWidth())); break;
-              case 15: writer.write(Integer.toString(screenres.getBackgroundHeight())); break;
-              case 16: writer.write(StringUtils.defaultString(screenres.getBackgroundFilePath())); break;
-              default : writer.write(line);
+              case 2:
+                writer.write(Integer.toString(screenres.getBackglassWidth()));
+                break;
+              case 3:
+                writer.write(Integer.toString(screenres.getBackglassHeight()));
+                break;
+              case 5:
+                writer.write(Integer.toString(screenres.getBackglassX()));
+                break;
+              case 6:
+                writer.write(Integer.toString(screenres.getBackglassY()));
+                break;
+              case 12:
+                writer.write(Integer.toString(screenres.getBackgroundX()));
+                break;
+              case 13:
+                writer.write(Integer.toString(screenres.getBackgroundY()));
+                break;
+              case 14:
+                writer.write(Integer.toString(screenres.getBackgroundWidth()));
+                break;
+              case 15:
+                writer.write(Integer.toString(screenres.getBackgroundHeight()));
+                break;
+              case 16:
+                writer.write(StringUtils.defaultString(screenres.getBackgroundFilePath()));
+                break;
+              default:
+                writer.write(line);
             }
           }
           writer.write(System.lineSeparator());
@@ -700,7 +723,7 @@ public class BackglassService {
           settings.setStartAsEXE(true);
         }
         // mind here 0=visible
-        if (settings.getStartBackground()!=0 && screenres.isTurnOnBackground()) {
+        if (settings.getStartBackground() != 0 && screenres.isTurnOnBackground()) {
           hasToBeSaved = true;
           settings.setStartBackground(0);
         }
@@ -732,12 +755,12 @@ public class BackglassService {
     }
   }
 
-	public byte[] getPreviewBackground(int gameId, boolean includeFrame) {
+  public byte[] getPreviewBackground(int gameId, boolean includeFrame) {
     //user gameService as we need the enriched game with rom
     Game game = gameService.getGame(gameId);
     DirectB2SData tableData = getDirectB2SData(game);
     return getPreviewBackground(tableData, game, includeFrame);
-	}
+  }
 
   public byte[] getPreviewBackground(int emuId, String filename, boolean includeFrame) {
     //user gameService as we need the enriched game with rom
@@ -745,7 +768,8 @@ public class BackglassService {
     DirectB2SData tableData = null;
     if (game != null) {
       tableData = getDirectB2SData(game);
-    } else {
+    }
+    else {
       File b2sFile = getB2sFile(emuId, filename);
       tableData = getDirectB2SData(b2sFile, emuId, null, filename);
     }
@@ -760,14 +784,14 @@ public class BackglassService {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
           BufferedImage preview = ImageIO.read(bais);
           if (tableData.getGrillHeight() > 0) {
-            DirectB2STableSettings tableSettings = game != null? getTableSettings(game) : null;
+            DirectB2STableSettings tableSettings = game != null ? getTableSettings(game) : null;
             if (tableSettings != null && tableSettings.getHideGrill() == 1) {
               preview = preview.getSubimage(0, 0, preview.getWidth(), preview.getHeight() - tableData.getGrillHeight());
             }
           }
 
           if (includeFrame) {
-            GameEmulator emulator = game != null? game.getEmulator() : frontendService.getGameEmulator(tableData.getEmulatorId());
+            GameEmulator emulator = game != null ? game.getEmulator() : frontendService.getGameEmulator(tableData.getEmulatorId());
             DirectB2sScreenRes screenres = getScreenRes(emulator, tableData.getFilename(), game, true);
             if (screenres != null && screenres.hasFrame()) {
               File frameFile = new File(screenres.getBackgroundFilePath());
@@ -776,17 +800,17 @@ public class BackglassService {
                 Graphics g = combined.getGraphics();
 
                 BufferedImage frameImage = ImageIO.read(frameFile);
-                g.drawImage(frameImage,0, 0,
-                  screenres.getBackgroundWidth(), 
-                  screenres.getBackgroundHeight(), 
-                  null);
-                
-                g.drawImage(preview, 
-                  screenres.getBackglassX() - screenres.getBackgroundX(), 
-                  screenres.getBackglassY() - screenres.getBackgroundY(), 
-                  screenres.getBackglassWidth(), 
-                  screenres.getBackglassHeight(), 
-                  null);
+                g.drawImage(frameImage, 0, 0,
+                    screenres.getBackgroundWidth(),
+                    screenres.getBackgroundHeight(),
+                    null);
+
+                g.drawImage(preview,
+                    screenres.getBackglassX() - screenres.getBackgroundX(),
+                    screenres.getBackglassY() - screenres.getBackgroundY(),
+                    screenres.getBackglassWidth(),
+                    screenres.getBackglassHeight(),
+                    null);
                 g.dispose();
                 preview = combined;
               }

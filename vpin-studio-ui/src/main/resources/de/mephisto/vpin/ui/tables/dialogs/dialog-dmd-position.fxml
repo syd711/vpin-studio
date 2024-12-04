@@ -3,16 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -48,7 +47,7 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <Pane fx:id="imagepane">
+            <Pane fx:id="imagepane" styleClass="media-parent">
                <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
                </ImageView>
             </Pane>
@@ -64,17 +63,17 @@
                         <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label fx:id="tablePositionLabel" text="--" GridPane.columnSpan="2" GridPane.rowIndex="0" >
+                        <Label fx:id="tablePositionLabel" text="--" GridPane.columnSpan="2" GridPane.rowIndex="0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <Label styleClass="default-text" text="ROM:" GridPane.rowIndex="1" />
-                        <Label fx:id="romLabel" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1" >
+                        <Label fx:id="romLabel" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -85,24 +84,24 @@
                      </VBox.margin>
                   </GridPane>
 
-                  <Label styleClass="default-headline" text="Position" >
+                  <Label styleClass="default-headline" text="Position">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox>
+                  <VBox spacing="3.0">
                      <children>
-                        <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="On Backglass" textFill="WHITE" >
+                        <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="On Backglass" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="On B2S DMD" textFill="WHITE" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="On B2S DMD" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioOnPlayfield" mnemonicParsing="false" text="On Playfield" textFill="WHITE" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                        <RadioButton fx:id="radioOnPlayfield" mnemonicParsing="false" text="On Playfield" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -124,7 +123,7 @@
                      </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="X:" GridPane.rowIndex="0" />
-                        <Spinner fx:id="xSpinner" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                        <Spinner GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="xSpinner" />
                         <Label styleClass="default-text" text="Y:" GridPane.rowIndex="1" />
                         <Spinner fx:id="ySpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
