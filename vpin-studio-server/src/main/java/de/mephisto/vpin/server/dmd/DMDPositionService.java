@@ -2,8 +2,10 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -40,6 +42,8 @@ public class DMDPositionService {
   @Autowired
   private GameService gameService;
   @Autowired
+  private FrontendService frontendService;
+  @Autowired
   private BackglassService backglassService;
   @Autowired
   private MameService mameService;
@@ -52,6 +56,22 @@ public class DMDPositionService {
       DMDInfo dmdinfo = new DMDInfo();
       dmdinfo.setGameId(game.getId());
       dmdinfo.setGameRom(game.getRom());
+
+      dmdinfo.setUseRegistry(useregistry(iniConfiguration));
+      if (dmdinfo.isUseRegistry()) {
+        fillDMDInfoFromRegistry(dmdinfo);
+      }
+      else {
+        fillDMDInfoFromIni(dmdinfo, iniConfiguration);
+      }
+
+      if (dmdinfo.getWidth() == 0) {
+        dmdinfo.setWidth(100);
+      }
+      if (dmdinfo.getHeight() == 0) {
+        dmdinfo.setHeight(dmdinfo.getWidth() / 4);
+      }
+
       boolean forceAspectRatio = keepAspectRatio(iniConfiguration);
       dmdinfo.setForceAspectRatio(forceAspectRatio);
       if (forceAspectRatio) {
@@ -63,13 +83,6 @@ public class DMDPositionService {
         dmdinfo.setSelectedAspectRatio(aspectRatio);
       }
 
-      dmdinfo.setUseRegistry(useregistry(iniConfiguration));
-      if (dmdinfo.isUseRegistry()) {
-        fillDMDInfoFromRegistry(dmdinfo);
-      }
-      else {
-        fillDMDInfoFromIni(dmdinfo, iniConfiguration);
-      }
       // then add screen information, must be done after x,y are set
       fillScreenInfo(dmdinfo);
       // enforce aspect ratio is selected
@@ -110,25 +123,34 @@ public class DMDPositionService {
 
   private void fillScreenInfo(DMDInfo dmdinfo) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    List<FrontendPlayerDisplay> displays = frontendService.getFrontendPlayerDisplays();
+    boolean hasBackglass = VPinScreen.valueOfScreen(displays, VPinScreen.BackGlass) != null;
+    boolean hasDMD = VPinScreen.valueOfScreen(displays, VPinScreen.DMD) != null;
+
     // determine on which screen the DMD is positionned onto
-    VPinScreen onScreen = VPinScreen.BackGlass;
     if (dmdinfo.getCenterX() < 0) {
-      onScreen = VPinScreen.PlayField;
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.PlayField);
     }
-    else if (screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
-      onScreen = VPinScreen.BackGlass;
+    else if (hasBackglass && screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
     }
-    else if (screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
-      onScreen = VPinScreen.DMD;
+    else if (hasDMD && screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.DMD);
     }
-    fillScreenInfo(dmdinfo, screenres, onScreen);
+    else if (hasBackglass) {
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
+      dmdinfo.centerOnScreen();
+    }
+    else {
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.PlayField);
+      dmdinfo.centerOnScreen();
+    }
   }
 
   private void fillScreenInfo(DMDInfo dmdinfo, DirectB2sScreenRes screenres, VPinScreen onScreen) {
     // All coordinates in DMDInfo are relative to display
     if (VPinScreen.PlayField.equals(onScreen)) {
       dmdinfo.setOnScreen(VPinScreen.PlayField);
-      dmdinfo.setX(dmdinfo.getX() + screenres.getPlayfieldWidth());
       dmdinfo.setScreenWidth(screenres.getPlayfieldWidth());
       dmdinfo.setScreenHeight(screenres.getPlayfieldHeight());
       dmdinfo.setImageCentered(false);
