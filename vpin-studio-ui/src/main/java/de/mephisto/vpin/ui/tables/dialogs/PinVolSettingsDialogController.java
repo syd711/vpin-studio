@@ -62,7 +62,7 @@ public class PinVolSettingsDialogController implements Initializable, DialogCont
   public void onDialogCancel() {
   }
 
-  public void setGames(List<GameRepresentation> games) {
-    pinVolController.setData(games);
+  public void setData(Stage stage, List<GameRepresentation> games) {
+    pinVolController.setData(stage, games);
   }
 }

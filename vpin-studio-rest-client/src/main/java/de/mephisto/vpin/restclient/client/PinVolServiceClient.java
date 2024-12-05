@@ -36,7 +36,8 @@ public class PinVolServiceClient extends VPinStudioClientService {
 
   public PinVolPreferences save(PinVolUpdate update) throws Exception {
     try {
-      return getRestClient().post(API + "pinvol/save", update, PinVolPreferences.class);
+      pinVolTablePreferences = getRestClient().post(API + "pinvol/save", update, PinVolPreferences.class);
+      return getPinVolTablePreferences();
     }
     catch (Exception e) {
       LOG.error("Failed to save pinvol settings: " + e.getMessage(), e);

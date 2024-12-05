@@ -168,7 +168,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
           preferences.applyValues(key, update.getTableVolume());
         }
         else {
-          PinVolTableEntry entry = preferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+          PinVolTableEntry entry = new PinVolTableEntry();
+          entry.setName(key);
           entry.applyValues(update.getTableVolume());
           preferences.getTableEntries().add(entry);
         }
@@ -187,7 +188,6 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     for (PinVolTableEntry tableEntry : tableEntries) {
       String value = tableEntry.toSettingsString();
       builder.append(value);
-      builder.append("\n");
     }
 
     File iniFile = getPinVolTablesIniFile();
@@ -206,7 +206,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       LOG.error("Failed to write {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
     }
 
-    return preferences;
+    loadIni();
+    return getPinVolTablePreferences();
   }
 
   @Override
