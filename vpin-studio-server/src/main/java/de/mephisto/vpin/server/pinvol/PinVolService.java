@@ -4,11 +4,14 @@ import de.mephisto.vpin.commons.utils.FileChangeListener;
 import de.mephisto.vpin.commons.utils.FileMonitoringThread;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
+import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -21,9 +24,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,6 +42,9 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private GameService gameService;
 
   private boolean enabled = false;
 
@@ -142,6 +152,61 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private void initListener() {
     FileMonitoringThread monitoringThread = new FileMonitoringThread(this, getPinVolTablesIniFile(), true);
     monitoringThread.startMonitoring();
+  }
+
+  public PinVolPreferences save(PinVolUpdate update) {
+    PinVolPreferences preferences = getPinVolTablePreferences();
+    PinVolTableEntry systemVolume = preferences.getSystemVolume();
+    preferences.applyValues(systemVolume.getName(), update.getSystemVolume());
+
+    List<Integer> gameIds = update.getGameIds();
+    for (Integer gameId : gameIds) {
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        String key = PinVolPreferences.getKey(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+        if (preferences.contains(key)) {
+          preferences.applyValues(key, update.getTableVolume());
+        }
+        else {
+          PinVolTableEntry entry = preferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+          entry.applyValues(update.getTableVolume());
+          preferences.getTableEntries().add(entry);
+        }
+      }
+    }
+
+
+    StringBuilder builder = new StringBuilder();
+    builder.append("# PinVol volume levels list\n");
+    builder.append("# Saved ");
+    builder.append(new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()));
+    builder.append("\n");
+    builder.append("\n");
+
+    List<PinVolTableEntry> tableEntries = preferences.getTableEntries();
+    for (PinVolTableEntry tableEntry : tableEntries) {
+      String value = tableEntry.toSettingsString();
+      builder.append(value);
+      builder.append("\n");
+    }
+
+    File iniFile = getPinVolTablesIniFile();
+    try {
+      if (iniFile.exists() && !iniFile.delete()) {
+        LOG.error("Saving failed, can not delete {}", iniFile.getAbsolutePath());
+      }
+      else {
+        String value = builder.toString();
+        FileOutputStream out = new FileOutputStream(iniFile);
+        IOUtils.write(value, out, StandardCharsets.UTF_8);
+        out.close();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to write {}: {}", iniFile.getAbsolutePath(), e.getMessage(), e);
+    }
+
+    return preferences;
   }
 
   @Override

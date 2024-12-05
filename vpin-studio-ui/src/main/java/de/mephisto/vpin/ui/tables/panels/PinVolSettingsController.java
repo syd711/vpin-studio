@@ -1,9 +1,11 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
+import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,12 +13,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
@@ -52,15 +56,47 @@ public class PinVolSettingsController implements Initializable {
   @FXML
   private Spinner<Integer> tableVolFrontSpinner;
 
+  private Stage stage;
   private List<GameRepresentation> games;
 
   private PinVolTableEntry entry;
+  private PinVolTableEntry systemVolume;
 
   @FXML
   private void onDefaults() {
+    PinVolPreferences pinVolTablePreferences = client.getPinVolService().getPinVolTablePreferences();
+
+    int primary = 0;
+    int secondary = 0;
+    int bass = 0;
+    int rear = 0;
+    int front = 0;
+    List<PinVolTableEntry> tableEntries = pinVolTablePreferences.getTableEntries();
+    for (PinVolTableEntry tableEntry : tableEntries) {
+      primary += tableEntry.getPrimaryVolume();
+      secondary += tableEntry.getSecondaryVolume();
+      bass += tableEntry.getSsfBassVolume();
+      rear += tableEntry.getSsfRearVolume();
+      front += tableEntry.getSsfFrontVolume();
+    }
+
+    if (!tableEntries.isEmpty()) {
+      primary = primary / tableEntries.size();
+      secondary = secondary / tableEntries.size();
+      bass = bass / tableEntries.size();
+      rear = rear / tableEntries.size();
+      front = front / tableEntries.size();
+    }
+
+    tableVolPrimarySpinner.getValueFactory().setValue(primary);
+    tableVolSecondarySpinner.getValueFactory().setValue(secondary);
+    tableVolBassSpinner.getValueFactory().setValue(bass);
+    tableVolRearSpinner.getValueFactory().setValue(rear);
+    tableVolFrontSpinner.getValueFactory().setValue(front);
   }
 
-  public void setData(List<GameRepresentation> games) {
+  public void setData(Stage stage, List<GameRepresentation> games) {
+    this.stage = stage;
     this.games = games;
 
     if (games.size() == 1) {
@@ -71,7 +107,7 @@ public class PinVolSettingsController implements Initializable {
     }
 
     PinVolPreferences pinVolTablePreferences = client.getPinVolService().getPinVolTablePreferences();
-    PinVolTableEntry systemVolume = pinVolTablePreferences.getSystemVolume();
+    systemVolume = pinVolTablePreferences.getSystemVolume();
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getPrimaryVolume());
     systemVolPrimarySpinner.setValueFactory(factory1);
@@ -104,18 +140,22 @@ public class PinVolSettingsController implements Initializable {
     }, 300));
 
     if (games.size() == 1) {
-      GameRepresentation gameRepresentation = games.get(0);
-      entry = pinVolTablePreferences.getTableEntry(gameRepresentation);
+      GameRepresentation game = games.get(0);
+      entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
     }
     else {
       for (GameRepresentation game : games) {
-        entry = pinVolTablePreferences.getTableEntry(game);
+        entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
         if (entry != null) {
           break;
         }
       }
     }
 
+    setTableValues(systemVolume);
+  }
+
+  private void setTableValues(PinVolTableEntry systemVolume) {
     if (entry == null) {
       entry = new PinVolTableEntry();
       entry.setPrimaryVolume(systemVolume.getPrimaryVolume());
@@ -157,8 +197,27 @@ public class PinVolSettingsController implements Initializable {
   }
 
   public void save() {
+    PinVolUpdate update = new PinVolUpdate();
+    update.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
+    update.setSystemVolume(systemVolume);
+    update.setTableVolume(entry);
 
-//    EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
+    try {
+      client.getPinVolService().save(update);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save pinvol update: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(stage, "Error", "Failed to save PinVol update: " + e.getMessage());
+    }
+
+    if (games.size() < 10) {
+      for (GameRepresentation game : games) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+    }
+    else {
+      EventManager.getInstance().notifyTablesChanged();
+    }
   }
 
   @Override

@@ -1183,7 +1183,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
       Label label = new Label("-");
       PinVolPreferences prefs = client.getPinVolService().getPinVolTablePreferences();
-      PinVolTableEntry entry = prefs.getTableEntry(model.getGame());
+      GameRepresentation game = model.getGame();
+      PinVolTableEntry entry = prefs.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
       if (entry != null) {
         StringBuilder builder = new StringBuilder();
         builder.append(entry.getPrimaryVolume());
