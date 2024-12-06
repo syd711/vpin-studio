@@ -32,11 +32,16 @@ public class SortedScoreAdapter implements ScoreListAdapter {
   }
 
   @NonNull
-  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines) {
-    List<HighScore> scores = new ArrayList<>();
+  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles) {
+    List<Score> scores = new ArrayList<>();
 
-    // Regex for scores with or without thousands seperator (e.g., "OPT 75.000.000", "OPT 30000", "#1 OPT 20.000", OPT 10,000,000)
-    Pattern scorePattern = Pattern.compile("([A-Z]{3})\\s+(\\d+([.,]\\d{3})*)$");
+    // Regex for scores with or without thousands seperator 
+    // Could start with #1<space>, 1#<space> or 1)<space>
+    // Starts with or is followed by 1 to 3 characters or spaces => player initials
+    // Followed by one or more spaces
+    // Followed by decimals which might include dots and comma's => score
+    // Followed by an <eol> (so no more characters)
+    Pattern scorePattern = Pattern.compile("(?:^|#\\d+ |\\d+# |\\d+\\) )([\\S ]{1,3})\\s+(\\d+([.,]\\d{3})*)$");
 
     // Process each line
     for (String line : lines) {
@@ -44,43 +49,20 @@ public class SortedScoreAdapter implements ScoreListAdapter {
       if (matcher.find()) {
         String player = matcher.group(1);
         String score = matcher.group(2);
-        scores.add(new HighScore(player, score));
+        String scoreToParse = ScoreFormatUtil.cleanScore(score);
+        Double scoreValue = Double.parseDouble(scoreToParse);
+        scores.add(new Score(createdAt, game.getId(), player, null, score, scoreValue, 0));
       }
     }
 
     // Sort scores in descending order
-    scores.sort((a, b) -> Double.compare(b.getScoreValue(), a.getScoreValue()));
-    List<Score> result = new ArrayList<>();
+    scores.sort((a, b) -> Double.compare(b.getNumericScore(), a.getNumericScore()));
+
     int i = 1;
-    for (HighScore score : scores) {
-      result.add(new Score(createdAt, game.getId(), score.player, null, score.score, score.scoreValue, i));
+    for (Score score : scores) {
+      score.setPosition(i);
+      i++;
     }
-    return result;
-  }
-
-  // Only used in SortedScoreAdapter
-  private class HighScore {
-    private final String player;
-    private final String score;
-    private final double scoreValue;
-
-    public HighScore(String player, String score) {
-      this.player = player;
-      this.score = score;
-      String scoreToParse = ScoreFormatUtil.cleanScore(score);
-      this.scoreValue = Double.parseDouble(scoreToParse);
-    }
-
-    public String getPlayer() {
-      return player;
-    }
-
-    public String getScore() {
-      return score;
-    }
-
-    public double getScoreValue() {
-      return scoreValue;
-    }
+    return scores;
   }
 }
