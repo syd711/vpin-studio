@@ -640,7 +640,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public boolean killFrontend() {
     getFrontendConnector().killFrontend();
-    frontendStatusService.notifyFrontendExit();
+    if (frontendStatusService != null) {
+      frontendStatusService.notifyFrontendExit();
+    }
     return true;
   }
 
