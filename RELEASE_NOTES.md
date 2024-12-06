@@ -1,3 +1,13 @@
+## Release Notes 3.10.4
+
+## Changes
+
+- **Tables / Overview**: Fixed critical loading issue which results 
+- **Tables / Media Recorder**: When emululator based recording is selected, the Windows taskbar is hidden for the duration of the recording now.
+- **Tables / Media Recorder**: Increased timeout to wait for the launched game from 30 seconds to 1 minute.
+
+---
+
 ## Release Notes 3.10.3
 
 ## Changes
