@@ -28,7 +28,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
 
   @Override
   public boolean isApplicable(@NonNull Game game) {
-    return game.getRom() != null && game.getRom().equals(name);
+    return game != null && game.getRom() != null && game.getRom().equals(name);
   }
 
   @NonNull
