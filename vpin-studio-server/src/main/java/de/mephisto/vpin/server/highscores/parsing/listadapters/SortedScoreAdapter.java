@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 // E.g. Transformers has a seperate highscore list for Autobots and Decepticons
 // This adapter combines all scores into one list
-public class SortedScoreAdapter implements ScoreListAdapter {
+public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreListAdapter {
 
   private String name;
 
@@ -49,12 +49,16 @@ public class SortedScoreAdapter implements ScoreListAdapter {
       if (matcher.find()) {
         String player = matcher.group(1);
         String score = matcher.group(2);
-        String scoreToParse = ScoreFormatUtil.cleanScore(score);
-        Double scoreValue = Double.parseDouble(scoreToParse);
-        scores.add(new Score(createdAt, game.getId(), player, null, score, scoreValue, 0));
+        Double scoreValue = toNumericScore(score);
+        if (scoreValue != -1) {
+          scores.add(new Score(createdAt, game.getId(), player, null, score, scoreValue, 0));
+        }
       }
     }
 
+    // remove duplicates
+    scores = filterDuplicates(scores);
+    
     // Sort scores in descending order
     scores.sort((a, b) -> Double.compare(b.getNumericScore(), a.getNumericScore()));
 
@@ -63,6 +67,7 @@ public class SortedScoreAdapter implements ScoreListAdapter {
       score.setPosition(i);
       i++;
     }
+    
     return scores;
   }
 }

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
@@ -11,15 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class DefaultAdapter implements ScoreListAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
+public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAdapter {
 
   @Override
   public boolean isApplicable(@NonNull Game game) {
@@ -27,8 +22,7 @@ public class DefaultAdapter implements ScoreListAdapter {
   }
 
   @NonNull
-  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines,
-      List<String> titles) {
+  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines,List<String> titles) {
     List<Score> scores = new ArrayList<>();
     int gameId = -1;
 
@@ -129,30 +123,5 @@ public class DefaultAdapter implements ScoreListAdapter {
     }
 
     throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
-  }
-
-  private static double toNumericScore(String score) {
-    try {
-      String cleanScore = ScoreFormatUtil.cleanScore(score);
-      return Double.parseDouble(cleanScore);
-    } catch (NumberFormatException e) {
-      LOG.info("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
-      return -1;
-    }
-  }
-
-  private static List<Score> filterDuplicates(List<Score> scores) {
-    List<Score> scoreList = new ArrayList<>();
-    int pos = 1;
-    for (Score s : scores) {
-      Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
-      if (match.isPresent()) {
-        continue;
-      }
-      s.setPosition(pos);
-      scoreList.add(s);
-      pos++;
-    }
-    return scoreList;
   }
 }
