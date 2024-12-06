@@ -64,7 +64,8 @@ public class TableDeleteProgressModel extends ProgressModel<Integer> {
   @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
     super.finalizeModel(progressResultModel);
-
+    //TODO mpf, better client cache handling
+    client.getPinVolService().clearCache();
     tableOverviewController.doReload(false);
   }
 

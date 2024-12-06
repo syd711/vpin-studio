@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.pinvol;
 
+import java.util.Objects;
+
 public class PinVolTableEntry {
   private String name;
   private int primaryVolume;
@@ -78,5 +80,23 @@ public class PinVolTableEntry {
     builder.append(getSsfFrontVolume());
     builder.append("\n");
     return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || getClass() != object.getClass()) return false;
+    PinVolTableEntry entry = (PinVolTableEntry) object;
+    return Objects.equals(name, entry.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(name);
+  }
+
+  @Override
+  public String toString() {
+    return "PinVol Entry \"" + name + "\"";
   }
 }

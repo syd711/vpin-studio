@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.pinvol;
 
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
-import de.mephisto.vpin.server.games.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,7 @@ public class PinVolResource {
 
   @PostMapping("/save")
   public PinVolPreferences save(@RequestBody PinVolUpdate update) throws Exception {
-    return pinVolService.save(update);
+    return pinVolService.update(update);
   }
 
 }

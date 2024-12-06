@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -154,7 +154,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     monitoringThread.startMonitoring();
   }
 
-  public PinVolPreferences save(PinVolUpdate update) {
+  public PinVolPreferences update(PinVolUpdate update) {
     PinVolPreferences preferences = getPinVolTablePreferences();
     PinVolTableEntry systemVolume = preferences.getSystemVolume();
     preferences.applyValues(systemVolume.getName(), update.getSystemVolume());
@@ -176,7 +176,10 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       }
     }
 
+    return saveIniFile(preferences);
+  }
 
+  private PinVolPreferences saveIniFile(PinVolPreferences preferences) {
     StringBuilder builder = new StringBuilder();
     builder.append("# PinVol volume levels list\n");
     builder.append("# Saved ");
@@ -196,9 +199,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
         LOG.error("Saving failed, can not delete {}", iniFile.getAbsolutePath());
       }
       else {
-        String value = builder.toString();
         FileOutputStream out = new FileOutputStream(iniFile);
-        IOUtils.write(value, out, StandardCharsets.UTF_8);
+        IOUtils.write(builder.toString(), out, StandardCharsets.UTF_8);
         out.close();
       }
     }
@@ -208,6 +210,16 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
     loadIni();
     return getPinVolTablePreferences();
+  }
+
+  public void delete(@NonNull Game game) {
+    PinVolPreferences pinVolTablePreferences = getPinVolTablePreferences();
+    PinVolTableEntry entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+    if (entry != null) {
+      pinVolTablePreferences.getTableEntries().remove(entry);
+      saveIniFile(pinVolTablePreferences);
+      LOG.info("Deleted {}", entry);
+    }
   }
 
   @Override

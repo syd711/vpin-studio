@@ -75,6 +75,9 @@ public class TableDeleteController implements Initializable, DialogController {
   private CheckBox pupPackCheckbox;
 
   @FXML
+  private CheckBox pinVolCheckbox;
+
+  @FXML
   private CheckBox musicCheckbox;
 
   @FXML
@@ -127,6 +130,7 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteIni(iniCheckbox.isSelected());
     descriptor.setDeleteRes(resCheckbox.isSelected());
     descriptor.setDeleteVbs(vbsCheckbox.isSelected());
+    descriptor.setDeletePinVol(pinVolCheckbox.isSelected());
     descriptor.setKeepAssets(keepAssetsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
@@ -160,6 +164,7 @@ public class TableDeleteController implements Initializable, DialogController {
     vbsCheckbox.setSelected(true);
     povCheckbox.setSelected(true);
     resCheckbox.setSelected(true);
+    pinVolCheckbox.setSelected(true);
     confirmationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteBtn.setDisable(!newValue));
 
     deleteAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -177,6 +182,7 @@ public class TableDeleteController implements Initializable, DialogController {
       iniCheckbox.setSelected(newValue);
       resCheckbox.setSelected(newValue);
       povCheckbox.setSelected(newValue);
+      pinVolCheckbox.setSelected(newValue);
     });
 
     frontendCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
