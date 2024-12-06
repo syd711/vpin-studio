@@ -2,7 +2,10 @@
 
 ## Changes
  
-- **Tables / PinVol Integration**: 
+- **Tables / PinVol Integration**: VPin Studio integrates deeper with PinVol now.
+  - The PinVol system and table volume can be updated via context menu in the table overview. Multi-selection is supported.
+  - The PinVol preferences allow to configure the PinVol system sound. An additional validator has been added there that shows potential conflicts with PinUP Popper.
+  - The Table Data Manager dialog has also a configuration panel for the PinVol settings now, located under the tab "Settings".
 - **Tables / Media Recorder**: Added playlists to table selection options.
 - **Tables / Data Manager Dialog**: Renamed tab "Customizations" to "Settings" and moved some fields to the "Meta Data" tab from there.
 - **Tables / Highscore Parsing**: **"Autobots, roll out!"** @marten Added the first highscore parser that combines highscores from different modes into one list, starting with the table **Transformers**.
