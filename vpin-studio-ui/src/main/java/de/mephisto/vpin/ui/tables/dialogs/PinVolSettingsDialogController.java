@@ -63,6 +63,6 @@ public class PinVolSettingsDialogController implements Initializable, DialogCont
   }
 
   public void setData(Stage stage, List<GameRepresentation> games) {
-    pinVolController.setData(stage, games);
+    pinVolController.setData(stage, games, true);
   }
 }

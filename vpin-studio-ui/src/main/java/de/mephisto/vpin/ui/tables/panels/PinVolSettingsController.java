@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -32,7 +33,19 @@ public class PinVolSettingsController implements Initializable {
   private VBox root;
 
   @FXML
+  private VBox systemVolumeRoot;
+
+  @FXML
+  private VBox tableSettingsBox;
+
+  @FXML
   private Label tableLabel;
+
+  @FXML
+  private Label systemVolumeLabel;
+
+  @FXML
+  private Button saveBtn;
 
   @FXML
   private Spinner<Integer> systemVolPrimarySpinner;
@@ -61,6 +74,11 @@ public class PinVolSettingsController implements Initializable {
 
   private PinVolTableEntry entry;
   private PinVolTableEntry systemVolume;
+
+  @FXML
+  private void onSave() {
+    save();
+  }
 
   @FXML
   private void onDefaults() {
@@ -95,9 +113,18 @@ public class PinVolSettingsController implements Initializable {
     tableVolFrontSpinner.getValueFactory().setValue(front);
   }
 
-  public void setData(Stage stage, List<GameRepresentation> games) {
+  public void setData(Stage stage, List<GameRepresentation> games, boolean showSystemVolume) {
     this.stage = stage;
     this.games = games;
+
+    if (!showSystemVolume) {
+      systemVolumeRoot.setVisible(false);
+      tableLabel.setVisible(false);
+    }
+
+    tableSettingsBox.setVisible(!games.isEmpty());
+    systemVolumeLabel.setVisible(!games.isEmpty());
+    saveBtn.setVisible(games.isEmpty());
 
     if (games.size() == 1) {
       tableLabel.setText("PinVol Settings for \"" + games.get(0).getGameDisplayName() + "\"");
@@ -152,7 +179,9 @@ public class PinVolSettingsController implements Initializable {
       }
     }
 
-    setTableValues(systemVolume);
+    if (!games.isEmpty()) {
+      setTableValues(systemVolume);
+    }
   }
 
   private void setTableValues(PinVolTableEntry systemVolume) {
@@ -222,6 +251,10 @@ public class PinVolSettingsController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-
+    systemVolumeRoot.managedProperty().bindBidirectional(systemVolumeRoot.visibleProperty());
+    tableLabel.managedProperty().bindBidirectional(tableLabel.visibleProperty());
+    systemVolumeLabel.managedProperty().bindBidirectional(systemVolumeLabel.visibleProperty());
+    tableSettingsBox.managedProperty().bindBidirectional(tableSettingsBox.visibleProperty());
+    saveBtn.managedProperty().bindBidirectional(saveBtn.visibleProperty());
   }
 }

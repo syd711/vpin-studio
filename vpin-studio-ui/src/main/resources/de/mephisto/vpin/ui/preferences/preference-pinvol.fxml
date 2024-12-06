@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -14,118 +15,127 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PinVolPreferencesController">
-   <top>
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
-         <children>
-            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="PinVol">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the PinVol service." textFill="WHITE" />
-            <Label styleClass="preference-description" text="For more information, visit" textFill="WHITE">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <Hyperlink onAction="#onLink" text="http://mjrnet.org/pinscape/PinVol.html" />
-            <VBox>
+   <center>
+      <ScrollPane vbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <CheckBox fx:id="columnPinVol" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Show &quot;PinVol&quot; Column in Table Overview" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows the PinVol settings for every table in the table overview." textFill="WHITE" wrapText="true" />
-                  <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-Start PinVol with VPin Studio Server" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label styleClass="checkbox-description" text="The PinVol.exe is launched together with the VPin Studio Server." textFill="WHITE" wrapText="true">
+                  <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="PinVol">
                      <VBox.margin>
-                        <Insets bottom="6.0" />
+                        <Insets />
                      </VBox.margin>
                   </Label>
-                  <HBox spacing="6.0">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the PinVol service." textFill="WHITE" />
+                  <Label styleClass="preference-description" text="For more information, visit" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Hyperlink onAction="#onLink" text="http://mjrnet.org/pinscape/PinVol.html" />
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="columnPinVol" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Show &quot;PinVol&quot; Column in Table Overview" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows the PinVol settings for every table in the table overview." textFill="WHITE" wrapText="true" />
+                        <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-Start PinVol with VPin Studio Server" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="The PinVol.exe is launched together with the VPin Studio Server." textFill="WHITE" wrapText="true">
+                           <VBox.margin>
+                              <Insets bottom="6.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox spacing="6.0">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                           <children>
+                              <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="Open PinVol UI">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PinVol">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop PinVol" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="System Volume Settings">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Adjust system volume settings." textFill="WHITE" />
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
-                        <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="external-component" text="Open PinVol UI">
+                        <Label styleClass="default-text" text="Initial System Volume:" textFill="WHITE" />
+                        <Spinner fx:id="volumeSpinner" prefWidth="80.0" />
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" />
+                        <Label>
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Set the value to '0' to disable the volume initialization." wrapText="true" />
+                           </tooltip>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
-                        </Button>
-                        <Button fx:id="restartBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestart" text="(Re)start PinVol">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
-                           </graphic>
-                        </Button>
-                        <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop PinVol" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
-                           </graphic>
-                        </Button>
+                        </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </HBox>
-               </children>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </VBox>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Volume Settings">
-               <VBox.margin>
-                  <Insets top="24.0" />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Adjust system volume settings." textFill="WHITE" />
-            <HBox alignment="CENTER_LEFT" spacing="6.0">
-               <children>
-                  <Label styleClass="default-text" text="Initial System Volume:" textFill="WHITE" />
-                  <Spinner fx:id="volumeSpinner" prefWidth="80.0" />
-                  <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" />
-                  <Label>
+                  <Button mnemonicParsing="false" onAction="#onVolumeApply" text="Apply Now" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <tooltip>
-                        <Tooltip prefWidth="300.0" text="Set the value to '0' to disable the volume initialization." wrapText="true" />
-                     </tooltip>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-high" iconSize="18" />
                      </graphic>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Label layoutX="34.0" layoutY="390.0" styleClass="preference-subtitle" text="PinVol System Volume Settings">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
                   </Label>
                </children>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </HBox>
-            <Button mnemonicParsing="false" onAction="#onVolumeApply" text="Apply Now" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-high" iconSize="18" />
-               </graphic>
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-            </Button>
-         </children>
-         <padding>
-            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </padding>
-      </VBox>
-   </top>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
 </BorderPane>

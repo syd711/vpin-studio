@@ -151,6 +151,9 @@ public class TableDeleteController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     pupPackCheckbox.managedProperty().bindBidirectional(pupPackCheckbox.visibleProperty());
+    validationContainer.managedProperty().bindBidirectional(validationContainer.visibleProperty());
+    validationDescription.managedProperty().bindBidirectional(validationDescription.visibleProperty());
+    validationTitle.managedProperty().bindBidirectional(validationTitle.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 

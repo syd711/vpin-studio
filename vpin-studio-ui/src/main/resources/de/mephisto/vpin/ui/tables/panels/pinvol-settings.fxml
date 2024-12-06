@@ -14,13 +14,13 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PinVolSettingsController">
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
    <children>
-      <VBox>
+      <VBox fx:id="systemVolumeRoot">
          <children>
-            <Label styleClass="default-title" text="System Volume" />
+            <Label fx:id="systemVolumeLabel" styleClass="default-title" text="System Volume">
+               <VBox.margin>
+                  <Insets bottom="12.0" top="12.0" />
+               </VBox.margin></Label>
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
@@ -47,15 +47,20 @@
                   <Spinner fx:id="systemVolRearSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets />
                </VBox.margin>
             </GridPane>
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" text="Save Settings" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Button>
          </children>
-         <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </padding>
       </VBox>
-      <VBox styleClass="navigation-panel">
+      <VBox fx:id="tableSettingsBox" styleClass="navigation-panel">
          <children>
             <Label fx:id="tableLabel" prefWidth="500.0" styleClass="default-title" text="Table Volume" />
             <GridPane hgap="3.0" vgap="3.0">
