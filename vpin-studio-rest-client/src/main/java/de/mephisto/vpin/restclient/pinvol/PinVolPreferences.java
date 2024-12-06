@@ -2,11 +2,39 @@ package de.mephisto.vpin.restclient.pinvol;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class PinVolPreferences {
-  private List<PinVolTableEntry> tableEntries;
+  private List<PinVolTableEntry> tableEntries = new ArrayList<>();
+  private int global = 0;
+  private int night = 0;
+  private int defaultVol = 0;
+
+  public int getGlobal() {
+    return global;
+  }
+
+  public void setGlobal(int global) {
+    this.global = global;
+  }
+
+  public int getNight() {
+    return night;
+  }
+
+  public void setNight(int night) {
+    this.night = night;
+  }
+
+  public int getDefaultVol() {
+    return defaultVol;
+  }
+
+  public void setDefaultVol(int defaultVol) {
+    this.defaultVol = defaultVol;
+  }
 
   public List<PinVolTableEntry> getTableEntries() {
     return tableEntries;

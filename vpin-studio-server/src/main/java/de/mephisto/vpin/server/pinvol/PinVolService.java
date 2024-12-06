@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,8 +49,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private GameService gameService;
 
   private boolean enabled = false;
-
-  private List<PinVolTableEntry> pinVolTableEntries = new ArrayList<>();
+  private PinVolPreferences preferences = null;
 
   public boolean getPinVolAutoStart() {
     return preferencesService.getPreferences().getPinVolAutoStartEnabled();
@@ -105,13 +106,11 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   public PinVolPreferences getPinVolTablePreferences() {
-    PinVolPreferences prefs = new PinVolPreferences();
-    prefs.setTableEntries(pinVolTableEntries);
-    return prefs;
+    return preferences;
   }
 
   private void loadIni() {
-    pinVolTableEntries.clear();
+    preferences = new PinVolPreferences();
     try {
       File tablesIni = getPinVolTablesIniFile();
       FileInputStream fileInputStream = new FileInputStream(tablesIni);
@@ -119,14 +118,39 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       for (String entry : entries) {
         PinVolTableEntry e = createEntry(entry);
         if (e != null) {
-          pinVolTableEntries.add(e);
+          preferences.getTableEntries().add(e);
         }
       }
       fileInputStream.close();
-      LOG.info("Loaded " + pinVolTableEntries.size() + " PinVOL table entries.");
+      LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
+
+      File volIni = getPinVolVolIniFile();
+      if (volIni.exists()) {
+        INIConfiguration iniConfiguration = new INIConfiguration();
+        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setSeparatorUsedInOutput("=");
+        iniConfiguration.setSeparatorUsedInInput("=");
+
+
+        FileReader fileReader = new FileReader(volIni);
+        try {
+          iniConfiguration.read(fileReader);
+        }
+        finally {
+          fileReader.close();
+        }
+
+        preferences.setDefaultVol(iniConfiguration.getInt("Default", 0));
+        preferences.setNight(iniConfiguration.getInt("Night", 0));
+        preferences.setGlobal(iniConfiguration.getInt("Global", 0));
+        LOG.info("Loaded {}", volIni.getAbsolutePath());
+      }
+      else {
+        LOG.info("Skipped loading of {}, file not found.", volIni.getAbsolutePath());
+      }
     }
     catch (Exception e) {
-      LOG.error("Failed to load pin");
+      LOG.error("Failed to load PinVol settings: {}", e.getMessage(), e);
     }
   }
 
@@ -147,6 +171,10 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   private static File getPinVolTablesIniFile() {
     return new File(SystemService.RESOURCES, "PinVolTables.ini");
+  }
+
+  private static File getPinVolVolIniFile() {
+    return new File(SystemService.RESOURCES, "PinVolVol.ini");
   }
 
   private void initListener() {

@@ -158,7 +158,7 @@ public class PinVolSettingsController implements Initializable {
   private void setTableValues(PinVolTableEntry systemVolume) {
     if (entry == null) {
       entry = new PinVolTableEntry();
-      entry.setPrimaryVolume(systemVolume.getPrimaryVolume());
+      entry.setPrimaryVolume(client.getPinVolService().getPinVolTablePreferences().getDefaultVol());
       entry.setSecondaryVolume(systemVolume.getSecondaryVolume());
       entry.setSsfBassVolume(systemVolume.getSsfBassVolume());
       entry.setSsfFrontVolume(systemVolume.getSsfFrontVolume());
