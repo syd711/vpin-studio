@@ -62,7 +62,10 @@
       </VBox>
       <VBox fx:id="tableSettingsBox" styleClass="navigation-panel">
          <children>
-            <Label fx:id="tableLabel" prefWidth="500.0" styleClass="default-title" text="Table Volume" />
+            <Label fx:id="tableLabel" prefWidth="500.0" styleClass="default-title" text="Table Volume">
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin></Label>
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
@@ -110,7 +113,7 @@
                   </HBox>
                </children>
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets />
                </VBox.margin>
             </GridPane>
          </children>

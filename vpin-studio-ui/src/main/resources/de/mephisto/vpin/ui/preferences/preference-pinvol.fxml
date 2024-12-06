@@ -51,6 +51,17 @@
                               <Insets bottom="6.0" />
                            </VBox.margin>
                         </Label>
+                        <VBox fx:id="errorContainer" styleClass="error-container">
+                           <children>
+                              <Label styleClass="error-title" text="Frontend Volume Control Enabled" />
+                              <Label layoutX="22.0" layoutY="16.0" styleClass="error-message" text="The system volume control is enabled in the settings of the frontend." />
+                              <Label layoutX="22.0" layoutY="36.0" styleClass="error-message" text="This will conflict with the PinVol settings." />
+                              <Label layoutX="22.0" layoutY="56.0" styleClass="error-message" text="Disable the auto-start or the frontend setting to get rid of this message." />
+                           </children>
+                           <VBox.margin>
+                              <Insets left="28.0" />
+                           </VBox.margin>
+                        </VBox>
                         <HBox spacing="6.0">
                            <VBox.margin>
                               <Insets top="24.0" />
@@ -127,7 +138,7 @@
                   </Button>
                   <Label layoutX="34.0" layoutY="390.0" styleClass="preference-subtitle" text="PinVol System Volume Settings">
                      <VBox.margin>
-                        <Insets top="24.0" />
+                        <Insets bottom="12.0" top="24.0" />
                      </VBox.margin>
                   </Label>
                </children>

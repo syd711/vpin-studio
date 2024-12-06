@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -40,6 +41,9 @@ public class PinVolPreferencesController implements Initializable {
   private VBox preferenceList;
 
   @FXML
+  private VBox errorContainer;
+
+  @FXML
   private Button openBtn;
 
   @FXML
@@ -58,8 +62,14 @@ public class PinVolPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
+
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    Frontend frontendCached = client.getFrontendService().getFrontend();
+
+    boolean volConflict = client.getPinVolService().isAutoStartEnabled() && frontendCached.isSystemVolumeControlEnabled();
+    errorContainer.setVisible(volConflict);
 
     openBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getPinVolService().isRunning());
@@ -69,6 +79,9 @@ public class PinVolPreferencesController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
         client.getPinVolService().toggleAutoStart();
+
+        boolean volConflict = t1 && frontendCached.isSystemVolumeControlEnabled();
+        errorContainer.setVisible(volConflict);
       }
     });
 

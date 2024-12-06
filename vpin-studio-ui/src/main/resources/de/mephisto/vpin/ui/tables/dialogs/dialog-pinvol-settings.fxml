@@ -33,7 +33,7 @@
          <center>
             <VBox fx:id="center" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets bottom="12.0" left="12.0" right="12.0" />
                </BorderPane.margin>
             </VBox>
          </center>

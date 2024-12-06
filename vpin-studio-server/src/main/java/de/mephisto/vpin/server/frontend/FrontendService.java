@@ -234,7 +234,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  // no more used ?
+  //TODO no more used ?
   public int getVersion() {
     return getFrontendConnector().getVersion();
   }
