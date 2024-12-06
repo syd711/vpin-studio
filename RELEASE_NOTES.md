@@ -37,3 +37,4 @@
 - **Tables / Media Recorder**: Added hiding of the Windows taskbar for emulator based recordings.
 - **Tables / Deletion Dialog**: Switched to a two column layout here to support smaller screens.
 - **Preferences / Popper Settings**: Added missing "Watchdog" setting.
+- **Tables / Invalid Highscores Filter**: The filter did not check properly the highscore type so the table list contained a lot of false positives.

@@ -671,7 +671,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //ROM is not supported
-    if (!StringUtils.isEmpty(rom) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
+    if (!StringUtils.isEmpty(rom) && HighscoreType.NVRam.equals(game.getHighscoreType()) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
@@ -698,7 +698,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
