@@ -33,10 +33,12 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -56,6 +58,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -956,24 +959,101 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
+    BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
+      return new Label();
+    }, true);
+
+    columnStatus.setCellFactory(param -> {
+      LockedTableCell<GameRepresentationModel, GameRepresentationModel> cell = new LockedTableCell<>();
+      cell.itemProperty().addListener((obs, old, model) -> {
+        if (model != null) {
+          int rowIndex = cell.getTableRow().getIndex();
+          if (rowIndex % 2 == 0) {
+            cell.setStyle("-fx-background-color: #303733;");
+          } else {
+            cell.setStyle("-fx-background-color: #283335;");
+          }
+          GameRepresentation value = model.getBean();
+          ValidationState validationState = value.getValidationState();
+          FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+          if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
+            if (validationState != null && validationState.getCode() > 0) {
+              statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
+            }
+          }
+
+          Button btn = new Button();
+          btn.getStyleClass().add("table-media-button");
+          HBox graphics = new HBox(3);
+          graphics.setAlignment(Pos.CENTER_RIGHT);
+          graphics.setMinWidth(34);
+          graphics.getChildren().add(statusIcon);
+
+          if (!StringUtils.isEmpty(value.getNotes())) {
+            String notes = value.getNotes();
+            Tooltip tooltip = new Tooltip(value.getNotes());
+            tooltip.setWrapText(true);
+            btn.setTooltip(tooltip);
+
+            FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+            icon.setIconSize(16);
+            graphics.getChildren().add(0, icon);
+
+            if (notes.toLowerCase().contains("//error")) {
+              icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+            }
+            else if (notes.toLowerCase().contains("//todo")) {
+              icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
+            }
+            else if (notes.toLowerCase().contains("//outdated")) {
+              icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+            }
+          }
+
+          btn.setGraphic(graphics);
+          btn.setOnAction(event -> {
+            tableView.getSelectionModel().clearSelection();
+            tableView.getSelectionModel().select(model);
+            Platform.runLater(() -> {
+              TableDialogs.openNotesDialog(value);
+            });
+          });
+
+          cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(btn));
+        }
+      });
+      return cell;
+    });
+
     // set ValueCellFactory and CellFactory, and get a renderer that is responsible to render the cell
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
-      Label label = new Label(value.getGameDisplayName());
-      label.getStyleClass().add("default-text");
-      label.setStyle(getLabelCss(value));
-
-      String tooltip = value.getGameFilePath();
-      if (status != null) {
-        if (status.getLastActiveId() == value.getId() || status.getGameId() == value.getId()) {
-          label.setStyle("-fx-text-fill: " + WidgetFactory.OK_COLOR + ";-fx-font-weight: bold;");
-          tooltip += "\nThis is the last played game.";
-        }
-      }
-      if (value.getGameFilePath() != null) {
-        label.setTooltip(new Tooltip(tooltip));
-      }
-      return label;
+      return new Label();
     }, true);
+
+    columnDisplayName.setCellFactory(param -> {
+      LockedTableCell<GameRepresentationModel, GameRepresentationModel> cell = new LockedTableCell<>();
+      cell.itemProperty().addListener((obs, old, model) -> {
+        if (model != null) {
+          GameRepresentation value = model.getGame();
+          Label label = new Label(value.getGameDisplayName());
+          label.getStyleClass().add("default-text");
+          label.setStyle(getLabelCss(value));
+
+          String tooltip = value.getGameFilePath();
+          if (status != null) {
+            if (status.getLastActiveId() == value.getId() || status.getGameId() == value.getId()) {
+              label.setStyle("-fx-text-fill: " + WidgetFactory.OK_COLOR + ";-fx-font-weight: bold;");
+              tooltip += "\nThis is the last played game.";
+            }
+          }
+          if (value.getGameFilePath() != null) {
+            label.setTooltip(new Tooltip(tooltip));
+          }
+          cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(label));
+        }
+      });
+      return cell;
+    });
 
     BaseLoadingColumn.configureLoadingColumn(columnEmulator, "", (value, model) -> {
       GameEmulatorRepresentation gameEmulator = model.getGameEmulator();
@@ -1131,54 +1211,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return null;
     }, true);
 
-    BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
-      ValidationState validationState = value.getValidationState();
-      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
-      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
-        if (validationState != null && validationState.getCode() > 0) {
-          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
-        }
-      }
-
-      Button btn = new Button();
-      btn.getStyleClass().add("table-media-button");
-      HBox graphics = new HBox(3);
-      graphics.setAlignment(Pos.CENTER_RIGHT);
-      graphics.setMinWidth(34);
-      graphics.getChildren().add(statusIcon);
-
-      if (!StringUtils.isEmpty(value.getNotes())) {
-        String notes = value.getNotes();
-        Tooltip tooltip = new Tooltip(value.getNotes());
-        tooltip.setWrapText(true);
-        btn.setTooltip(tooltip);
-
-        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
-        icon.setIconSize(16);
-        graphics.getChildren().add(0, icon);
-
-        if (notes.toLowerCase().contains("//error")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
-        }
-        else if (notes.toLowerCase().contains("//todo")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
-        }
-        else if (notes.toLowerCase().contains("//outdated")) {
-          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
-        }
-      }
-
-      btn.setGraphic(graphics);
-      btn.setOnAction(event -> {
-        tableView.getSelectionModel().clearSelection();
-        tableView.getSelectionModel().select(model);
-        Platform.runLater(() -> {
-          TableDialogs.openNotesDialog(value);
-        });
-      });
-
-      return btn;
-    }, true);
 
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
       Label label = new Label("-");
@@ -1368,7 +1400,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
               contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
             }
           });
-
           row.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) ->
               row.setContextMenu(isNowEmpty ? null : menu));
 
@@ -1574,6 +1605,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   public void onChanged(Change<? extends GameRepresentationModel> c) {
+    ObservableList<TablePosition> selectedCells = tableView.getSelectionModel().getSelectedCells();
+
+
     boolean disable = c.getList().isEmpty() || c.getList().size() > 1;
     altColorUploadItem.setDisable(disable);
     mediaUploadItem.setDisable(disable);
