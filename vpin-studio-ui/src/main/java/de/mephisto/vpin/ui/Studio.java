@@ -44,6 +44,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StreamUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -81,10 +83,14 @@ public class Studio extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
-    LOG.info("-------------- Studio Starts -------------");
+    try (InputStream banner = getClass().getResourceAsStream("/banner.txt")) {
+      String txt = StreamUtils.copyToString(banner, StandardCharsets.UTF_8);
+      LOG.info("\n" + txt + "\n");
+    }
+
+    LOG.info("Studio Starting...");
     LOG.info("Locale: "  + Locale.getDefault().getDisplayName());
     LOG.info("OS: "  + System.getProperty("os.name"));
-    LOG.info("------------------------------------------");
     try {
       ss = new ServerSocket(1044);
     }
