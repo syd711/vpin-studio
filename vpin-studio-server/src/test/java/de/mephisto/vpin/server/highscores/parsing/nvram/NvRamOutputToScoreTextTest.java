@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,8 +56,6 @@ public class NvRamOutputToScoreTextTest {
       System.out.println("Reading '" + entry.getName() + "'");
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
-      System.out.println(raw);
-
       assertNotNull(raw);
       List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
@@ -70,14 +69,25 @@ public class NvRamOutputToScoreTextTest {
 
       if (listFile.exists()) {
         // compare with test output
-        String fileContents = Files.readString(listFile.toPath());
+        String fileContents = Files.readString(listFile.toPath(), StandardCharsets.UTF_8);
         if (!fileContents.equals(scoreList.toString())) {
           failedList.add(entry.getName());
+          System.out.println(fileContents);
+          System.out.println(scoreList.toString());
+
+          byte[] scBytes = scoreList.toString().getBytes();
+          byte[] fcBytes = fileContents.getBytes();
+          for (int i = 0; i < fcBytes.length; i++) {
+            if (scBytes[i] != fcBytes[i]) {
+              System.out.println(scBytes[i] + "|" + fcBytes[i]);
+            }
+          }
         }
-      } else {
+      }
+      else {
         // create for next test
         listFile.createNewFile();
-        try (FileWriter writer = new FileWriter(listFile)) {
+        try (FileWriter writer = new FileWriter(listFile, StandardCharsets.UTF_8)) {
           writer.write(scoreList.toString());
         }
         created++;
@@ -90,7 +100,7 @@ public class NvRamOutputToScoreTextTest {
 
     System.out.println("Tested " + count + " entries, " + failedList.size() + " failed, " + created + " new list files created.");
     for (String item : failedList) {
-      System.out.println("  '" + item + "' failed."); 
+      System.out.println("  '" + item + "' failed.");
     }
 
     assertEquals(0, failedList.size());
@@ -110,7 +120,7 @@ public class NvRamOutputToScoreTextTest {
     System.out.println(raw);
 
     assertNotNull(raw);
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null,DefaultHighscoresTitles.DEFAULT_TITLES);
+    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
     System.out.println("Parsed " + parse.size() + " score entries.");
 
     for (Score score : parse) {
