@@ -162,6 +162,11 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    if (isValidationEnabled(game, CODE_SCREEN_SIZE_ISSUE)) {
+      //TODO add impl
+      result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCREEN_SIZE_ISSUE));
+    }
+
     //screen assets are validated for all emulators
     List<ValidationState> screenValidationResult = validateScreenAssets(game, findFirst, result);
     if (screenValidationResult != null) {
@@ -357,6 +362,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
     }
+
     return null;
   }
 
