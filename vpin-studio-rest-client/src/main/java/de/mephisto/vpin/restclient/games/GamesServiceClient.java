@@ -70,7 +70,8 @@ public class GamesServiceClient extends VPinStudioClientService {
       Map<String, Object> params = new HashMap<>();
       params.put("altExe", altExe);
       getRestClient().put(API + "games/play/" + id, params);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
     }
   }
@@ -357,7 +358,8 @@ public class GamesServiceClient extends VPinStudioClientService {
           continue;
         }
 
-        games.addAll(getGamesCached(gameEmulator.getId()));
+        List<GameRepresentation> gamesCached = getGamesCached(gameEmulator.getId());
+        games.addAll(gamesCached);
       }
       return games;
     }
@@ -391,7 +393,16 @@ public class GamesServiceClient extends VPinStudioClientService {
         }
       }
     }
-    return this.allGames.get(emulatorId);
+
+    List<GameRepresentation> gameRepresentations = Collections.emptyList();
+    if (allGames.containsKey(emulatorId) && allGames.get(emulatorId) != null) {
+      gameRepresentations = this.allGames.get(emulatorId);
+    }
+    else {
+      LOG.warn("Failed to load client cached games, there is no emulator with id {} available!", emulatorId);
+    }
+
+    return gameRepresentations;
   }
 
   public List<GameRepresentation> getVpxGamesCached() {
@@ -399,7 +410,9 @@ public class GamesServiceClient extends VPinStudioClientService {
     List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       if (gameEmulator.isVpxEmulator()) {
-        games.addAll(getGamesCached(gameEmulator.getId()));
+        int emulatorId = gameEmulator.getId();
+        List<GameRepresentation> gamesCached = getGamesCached(emulatorId);
+        games.addAll(gamesCached);
       }
     }
     return games;

@@ -47,8 +47,6 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
 
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
-        NirCmd.setTaskBarVisible(false);
-
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
@@ -59,6 +57,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         }
 
         frontend.killFrontend();
+        NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
         jobDescriptor.setStatus("Launching Emulator");

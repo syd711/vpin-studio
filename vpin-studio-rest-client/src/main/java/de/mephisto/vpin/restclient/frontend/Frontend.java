@@ -16,11 +16,24 @@ public class Frontend {
    */
   private boolean playfieldMediaInverted;
 
+  /**
+   * Potential conflict with external volume programs, e.g. PinVol
+   */
+  private boolean systemVolumeControlEnabled = false;
+
   private List<VPinScreen> supportedScreens = new ArrayList<>();
   private List<VPinScreen> supportedRecordingScreens = new ArrayList<>();
   private List<Integer> ignoredValidations = new ArrayList<>();
 
   private FieldLookups fieldLookups = new FieldLookups();
+
+  public boolean isSystemVolumeControlEnabled() {
+    return systemVolumeControlEnabled;
+  }
+
+  public void setSystemVolumeControlEnabled(boolean systemVolumeControlEnabled) {
+    this.systemVolumeControlEnabled = systemVolumeControlEnabled;
+  }
 
   public FieldLookups getFieldLookups() {
     return fieldLookups;

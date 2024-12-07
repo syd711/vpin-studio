@@ -25,6 +25,7 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.system.DefaultPictureService;
@@ -55,6 +56,9 @@ public class GameMediaService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private PinVolService pinVolService;
 
   @Autowired
   private AssetRepository assetRepository;
@@ -607,6 +611,10 @@ public class GameMediaService {
           if (pupPack != null && !pupPack.delete()) {
             success = false;
           }
+        }
+
+        if (descriptor.isDeletePinVol()) {
+          pinVolService.delete(game);
         }
 
         if (descriptor.isDeleteDMDs()) {

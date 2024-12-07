@@ -275,7 +275,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
@@ -1183,7 +1183,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
       Label label = new Label("-");
       PinVolPreferences prefs = client.getPinVolService().getPinVolTablePreferences();
-      PinVolTableEntry entry = prefs.getTableEntry(model.getGame());
+      GameRepresentation game = model.getGame();
+      PinVolTableEntry entry = prefs.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
       if (entry != null) {
         StringBuilder builder = new StringBuilder();
         builder.append(entry.getPrimaryVolume());

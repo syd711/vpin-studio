@@ -598,7 +598,27 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return script;
   }
 
-  @NonNull
+  public boolean isSystemVolumeControlled() {
+    boolean systemVolumeControlled = false;
+    Connection connect = this.connect();
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
+      rs.next();
+      int on = rs.getInt("SYSVOLUME");
+      systemVolumeControlled = (on != -1);
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to sysvolume setting: " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return systemVolumeControlled;
+  }
+
   public int getVersion() {
     int version = -1;
     Connection connect = this.connect();
@@ -2081,6 +2101,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.setAdminExe("PinUpMenuSetup.exe");
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
+    frontend.setSystemVolumeControlEnabled(isSystemVolumeControlled());
     frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD, VPinScreen.Topper, VPinScreen.Menu));
 
     Map<String, String> lookups = getLookups();

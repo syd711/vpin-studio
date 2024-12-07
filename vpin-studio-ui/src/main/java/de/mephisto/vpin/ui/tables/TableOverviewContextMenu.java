@@ -139,7 +139,7 @@ public class TableOverviewContextMenu {
 
     MenuItem pinVolItem = new MenuItem("PinVol Settings");
     pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
-    pinVolItem.setDisable(games.isEmpty());
+//    pinVolItem.setDisable(games.isEmpty());
     pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
     ctxMenu.getItems().add(pinVolItem);
 

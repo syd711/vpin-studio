@@ -134,7 +134,7 @@ public class TableDialogs {
   public static void openPinVolSettings(List<GameRepresentation> games) {
     Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", "PinVol Settings");
     PinVolSettingsDialogController controller = (PinVolSettingsDialogController) stage.getUserData();
-    controller.setGames(games);
+    controller.setData(stage, games);
     stage.showAndWait();
   }
 

@@ -452,9 +452,23 @@
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                       <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                                    </rowConstraints>
                                                    <children>
+                                                      <Label styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="16">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="13">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
                                                       <Label layoutX="13.0" layoutY="120.0" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
@@ -563,8 +577,8 @@
                                                             <Insets />
                                                          </GridPane.margin>
                                                       </Button>
-                                                      <TextArea fx:id="notes" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="13">
+                                                      <TextArea fx:id="notes" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="17">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -599,6 +613,61 @@
                                                             <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
                                                          </tooltip>
                                                       </Button>
+                                                      <Label styleClass="default-text" text="Web Link:" GridPane.rowIndex="14">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="webDbId" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label fx:id="hintWebId" GridPane.columnIndex="2" GridPane.rowIndex="13">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                         </tooltip>
+                                                      </Label>
+                                                      <TextField fx:id="webLink" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="14">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                         </tooltip>
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
+                                                      </Button>
+                                                      <Label styleClass="default-text" text="Is Mod:" GridPane.rowIndex="15">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </CheckBox>
+                                                      <TextField fx:id="tourneyId" GridPane.columnIndex="1" GridPane.rowIndex="16">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="6.0" />
@@ -618,13 +687,13 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="customizationTab" closable="false" text=" Customization ">
+                        <Tab fx:id="customizationTab" closable="false" text="Settings">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <VBox>
+                                    <VBox fx:id="customizationRoot">
                                        <children>
-                                          <Label styleClass="default-title" text="Launch and Runtime Customizations" textFill="WHITE">
+                                          <Label styleClass="default-title" text="Launch and Runtime Settings" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -649,11 +718,6 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
@@ -685,60 +749,6 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="13.0" layoutY="86.0" styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="10">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Is Mod:" GridPane.rowIndex="12">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="13">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Web Link:" GridPane.rowIndex="11">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <TextField fx:id="webDbId" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
-                                                <TextField fx:id="webLink" layoutX="171.0" layoutY="115.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
-                                                <TextField fx:id="tourneyId" layoutX="171.0" layoutY="148.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
-                                                <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </CheckBox>
-                                                <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="11">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
-                                                   </tooltip>
-                                                   <GridPane.margin>
-                                                      <Insets />
-                                                   </GridPane.margin>
-                                                </Button>
                                                 <Label styleClass="default-text" text="Custom 2:" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
@@ -795,7 +805,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
-                                                <HBox GridPane.rowIndex="15">
+                                                <HBox GridPane.rowIndex="10">
                                                    <children>
                                                       <Label text="Table Volume:  " textFill="WHITE">
                                                          <font>
@@ -815,7 +825,7 @@
                                                       </Label>
                                                    </children>
                                                 </HBox>
-                                                <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                                                <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                                                 <Label fx:id="hintCustom2" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
@@ -860,22 +870,19 @@
                                                       <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
                                                    </tooltip>
                                                 </Label>
-                                                <Label fx:id="hintWebId" layoutX="667.0" layoutY="251.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
-                                                   </tooltip>
-                                                </Label>
                                                 <ComboBox fx:id="launchCustomVar" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                 <ComboBox fx:id="custom2" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                 <ComboBox fx:id="custom3" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                              </children>
                                           </GridPane>
+                                          <Label layoutX="22.0" layoutY="22.0" styleClass="default-title" text="PinVol Settings" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" top="24.0" />
+                                             </VBox.margin>
+                                          </Label>
                                        </children>
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

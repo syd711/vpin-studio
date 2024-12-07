@@ -118,6 +118,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Spinner<Integer> refreshInterval;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
+
+  @FXML
   private ToolBar toolbar;
 
   private Map<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> screenColumns;
@@ -457,6 +460,19 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       return label;
     }, true);
 
+    BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
+      Label label = null;
+      if (value.getDateAdded() != null) {
+        label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
+      }
+      else {
+        label = new Label("-");
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
       CheckBox columnCheckbox = new CheckBox();
       columnCheckbox.setUserData(value);
@@ -479,6 +495,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }, true);
 
     screenColumns = new HashMap<>();
+    Collections.reverse(recordingScreens);
     for (RecordingScreen screen : recordingScreens) {
       TableColumn<GameRepresentationModel, GameRepresentationModel> column = new TableColumn<>(screen.getName());
       column.setPrefWidth(130);
@@ -492,7 +509,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       column.setGraphic(cb);
       cb.selectedProperty().addListener(new ColumnCheckboxListener(screen.getScreen()));
 
-      tableView.getColumns().add(column);
+      tableView.getColumns().add(2, column);
       screenColumns.put(screen.getScreen(), column);
     }
 

@@ -234,7 +234,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  // no more used ?
+  //TODO no more used ?
   public int getVersion() {
     return getFrontendConnector().getVersion();
   }
@@ -640,7 +640,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public boolean killFrontend() {
     getFrontendConnector().killFrontend();
-    frontendStatusService.notifyFrontendExit();
+    if (frontendStatusService != null) {
+      frontendStatusService.notifyFrontendExit();
+    }
     return true;
   }
 

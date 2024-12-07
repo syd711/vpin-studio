@@ -42,6 +42,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().getCached(API + API_SEGMENT_FRONTEND, Frontend.class);
   }
 
+  public Frontend getFrontend() {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND, Frontend.class);
+  }
+
   public FrontendType getFrontendType() {
     if (frontendType == null) {
       frontendType = getFrontendCached().getFrontendType();
