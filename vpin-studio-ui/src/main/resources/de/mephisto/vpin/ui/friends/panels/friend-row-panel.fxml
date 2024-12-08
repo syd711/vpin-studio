@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.friends.panels.FriendRowPanelController">
+   <children>
+      <Label styleClass="default-headline" text="Additional Assets" textFill="WHITE" wrapText="true" />
+      <Label styleClass="preference-description" text="The following assets have been found:" textFill="WHITE" wrapText="true" />
+   </children>
+</HBox>

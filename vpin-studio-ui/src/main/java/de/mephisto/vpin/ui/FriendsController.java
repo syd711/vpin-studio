@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.ui.friends.FriendsOnlineController;
+import de.mephisto.vpin.ui.friends.FriendsListController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
@@ -19,7 +19,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class FriendsController extends  SettingsSceneController implements Initi
 
   private Node preferencesRoot;
 
-  private String lastScreen = "friends-online.fxml";
+  private String lastScreen = "friends-list.fxml";
   private static boolean open = false;
 
   public static boolean toggle() {
@@ -128,13 +127,8 @@ public class FriendsController extends  SettingsSceneController implements Initi
   }
 
   @FXML
-  private void onFriendsOnline(ActionEvent event) throws IOException {
-    load("friends-online.fxml", event);
-  }
-
-  @FXML
-  private void onFriendsAll(ActionEvent event) throws IOException {
-    load("friends-all.fxml", event);
+  private void onFriendsList(ActionEvent event) throws IOException {
+    load("friends-list.fxml", event);
   }
 
   @FXML
@@ -185,7 +179,7 @@ public class FriendsController extends  SettingsSceneController implements Initi
     lastScreen = screen;
 
     try {
-      FXMLLoader loader = new FXMLLoader(FriendsOnlineController.class.getResource(screen));
+      FXMLLoader loader = new FXMLLoader(FriendsListController.class.getResource(screen));
       Node node = loader.load();
       preferencesMain.setCenter(node);
     }

@@ -12,10 +12,6 @@ import java.util.ResourceBundle;
 public class FriendsPrivacySettingsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(FriendsPrivacySettingsController.class);
 
-  @FXML
-  private BorderPane avatarBorderPane;
-
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }

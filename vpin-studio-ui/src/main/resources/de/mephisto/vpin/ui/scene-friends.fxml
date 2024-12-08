@@ -26,8 +26,7 @@
                                     <Font size="13.0" />
                                  </font>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onFriendsOnline" styleClass="preference-button" text="Online" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="32.0" mnemonicParsing="false" onAction="#onFriendsAll" styleClass="preference-button" text="All" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="66.0" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
                               <Label alignment="BASELINE_LEFT" layoutX="28.0" layoutY="10.0" styleClass="preference-section" text="SETTINGS">
                                  <font>
@@ -85,7 +84,6 @@
                         <Insets bottom="12.0" left="12.0" top="24.0" />
                      </BorderPane.margin>
                      <center>
-                       <fx:include fx:id="friendsOnline" source="friends/friends-online.fxml" BorderPane.alignment="TOP_LEFT" />
                      </center>
                   </BorderPane>
                </left>

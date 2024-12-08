@@ -12,10 +12,6 @@ import java.util.ResourceBundle;
 public class FriendsPendingInvitesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(FriendsPendingInvitesController.class);
 
-  @FXML
-  private BorderPane avatarBorderPane;
-
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
