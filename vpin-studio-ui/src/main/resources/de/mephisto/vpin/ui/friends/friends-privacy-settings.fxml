@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.friends.FriendsPrivacySettingsController">
    <center>
@@ -13,12 +15,28 @@
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="FRIENDS" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Privacy Settings" />
-                  <Label styleClass="preference-description" text="Set the name that should be shown for this VPin connection." textFill="WHITE">
+                  <Label styleClass="preference-subtitle" text="Privacy Settings">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin></Label>
+                  <CheckBox fx:id="showOnlineStatusCheckbox" layoutX="34.0" layoutY="116.0" mnemonicParsing="false" text="Show Online Status">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
-                  </Label>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="Your friends can see if your cabinet is online." textFill="WHITE" />
+                  <CheckBox fx:id="showActiveGameCheckbox" layoutX="34.0" layoutY="257.0" mnemonicParsing="false" text="Share Activity Status">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="277.0" styleClass="checkbox-description" text="Your friends can see which table you are playing right now." textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

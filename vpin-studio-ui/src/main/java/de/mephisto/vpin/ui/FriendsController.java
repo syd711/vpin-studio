@@ -15,6 +15,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -191,5 +193,14 @@ public class FriendsController extends  SettingsSceneController implements Initi
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    versionLink.setText("VPin Studio Version " + Studio.getVersion());
+    versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
+    hostLabel.setText(System.getProperty("os.name"));
+
+    Image image6 = new Image(Studio.class.getResourceAsStream("ko-fi.png"));
+    ImageView view6 = new ImageView(image6);
+    view6.setPreserveRatio(true);
+    view6.setFitHeight(32);
+    kofiLink.setGraphic(view6);
   }
 }
