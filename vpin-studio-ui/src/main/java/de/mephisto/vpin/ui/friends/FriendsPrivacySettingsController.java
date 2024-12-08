@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class FriendsPrivacySettingsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(FriendsPrivacySettingsController.class);

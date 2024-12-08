@@ -14,8 +14,8 @@
          <content>
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="FRIENDS" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Privacy Settings">
+                  <Label styleClass="preference-title" text="ACTIVITY SETTINGS" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Activity Privacy">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin></Label>

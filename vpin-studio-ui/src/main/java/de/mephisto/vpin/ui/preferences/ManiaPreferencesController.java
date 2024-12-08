@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
@@ -20,8 +19,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -42,8 +39,6 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 public class ManiaPreferencesController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaPreferencesController.class);
 
-  private final Debouncer debouncer = new Debouncer();
-
   @FXML
   private VBox preferencesPanel;
 
@@ -55,21 +50,6 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
 
   @FXML
   private CheckBox submitAllCheckbox;
-
-  @FXML
-  private CheckBox tournamentsCheckbox;
-
-  @FXML
-  private TextField dashboardUrl;
-
-  @FXML
-  private TextField discordLink;
-
-  @FXML
-  private TextField websiteLink;
-
-  @FXML
-  private TextArea descriptionText;
 
   @FXML
   private Label idLabel;
@@ -185,20 +165,6 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       }
       registrationCheckbox.setSelected(false);
     });
-    dashboardUrl.setText(settings.getDefaultDashboardUrl());
-    discordLink.setText(settings.getDefaultDiscordLink());
-    websiteLink.setText(settings.getDefaultWebsite());
-    descriptionText.setText(settings.getDefaultDescription());
-
-    dashboardUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("dashboardUrl", () -> {
-      try {
-        settings.setDefaultDashboardUrl(t1);
-        settings = client.getTournamentsService().saveSettings(settings);
-      }
-      catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-      }
-    }, 300));
 
     submitAllCheckbox.setSelected(settings.isSubmitAllScores());
     submitAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -213,55 +179,6 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
         }
       }
     });
-
-    tournamentsCheckbox.setSelected(settings.isTournamentsEnabled());
-    tournamentsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        try {
-          settings.setTournamentsEnabled(newValue);
-          settings = client.getTournamentsService().saveSettings(settings);
-        }
-        catch (Exception e) {
-          LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-        }
-      }
-    });
-
-    discordLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("discordLink", () -> {
-      try {
-        settings.setDefaultDiscordLink(t1);
-        settings = client.getTournamentsService().saveSettings(settings);
-      }
-      catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-      }
-    }, 300));
-
-    websiteLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("websiteLink", () -> {
-      try {
-        settings.setDefaultWebsite(t1);
-        settings = client.getTournamentsService().saveSettings(settings);
-      }
-      catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-      }
-    }, 300));
-
-    descriptionText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("descriptionText", () -> {
-      String value = String.valueOf(t1);
-      if (!StringUtils.isEmpty(String.valueOf(value)) && value.length() > 4096) {
-        value = value.substring(0, 4000);
-      }
-      try {
-        settings.setDefaultDescription(value);
-        settings = client.getTournamentsService().saveSettings(settings);
-      }
-      catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-      }
-    }, 300));
-
     client.getPreferenceService().addListener(this);
   }
 

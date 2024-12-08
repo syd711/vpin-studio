@@ -28,7 +28,7 @@
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="66.0" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
-                              <Label alignment="BASELINE_LEFT" layoutX="28.0" layoutY="10.0" styleClass="preference-section" text="SETTINGS">
+                              <Label alignment="BASELINE_LEFT" layoutX="28.0" layoutY="10.0" styleClass="preference-section" text="ACTIVITY SETTINGS">
                                  <font>
                                     <Font size="13.0" />
                                  </font>
@@ -36,7 +36,7 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="100.0" mnemonicParsing="false" onAction="#onFriendsPrivacySettings" styleClass="preference-button" text="Privacy Settings" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="100.0" mnemonicParsing="false" onAction="#onFriendsPrivacySettings" styleClass="preference-button" text="Activity Privacy" />
                            </children>
                            <opaqueInsets>
                               <Insets />

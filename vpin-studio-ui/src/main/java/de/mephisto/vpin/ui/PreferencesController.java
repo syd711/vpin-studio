@@ -27,7 +27,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +93,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button pinballXSettingsBtn;
 
   @FXML
+  private Button tournamentsBtn;
+
+  @FXML
   private Button vpbmBtn;
 
   @FXML
@@ -121,7 +123,7 @@ public class PreferencesController extends SettingsSceneController implements In
   private VBox navigationBox;
 
   @FXML
-  private VBox tournamentGroup;
+  private VBox maniaGroup;
 
   @FXML
   private VBox frontendPreferences;
@@ -218,6 +220,12 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onAccount(ActionEvent event) throws IOException {
     load("preference-mania.fxml", event);
+  }
+
+
+  @FXML
+  private void onTournaments(ActionEvent event) throws IOException {
+    load("preference-tournaments.fxml", event);
   }
 
   @FXML
@@ -431,6 +439,7 @@ public class PreferencesController extends SettingsSceneController implements In
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
     validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
+    tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
 
@@ -451,8 +460,8 @@ public class PreferencesController extends SettingsSceneController implements In
     highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
     validators_screensBtn.setVisible(frontendType.isNotStandalone());
 
-    tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
-    tournamentGroup.setVisible(Features.MANIA_ENABLED);
+    maniaGroup.managedProperty().bindBidirectional(maniaGroup.visibleProperty());
+    maniaGroup.setVisible(Features.MANIA_ENABLED);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);
@@ -469,5 +478,14 @@ public class PreferencesController extends SettingsSceneController implements In
     kofiLink.setGraphic(view6);
 
     EventManager.getInstance().addListener(this);
+    tournamentsBtn.setVisible(false);
+    try {
+      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+        tournamentsBtn.setVisible(true);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Mania initialization failed: {}", e.getMessage(), e);
+    }
   }
 }
