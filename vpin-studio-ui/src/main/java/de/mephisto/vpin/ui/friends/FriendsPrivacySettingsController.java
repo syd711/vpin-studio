@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.friends;
 
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,11 +26,16 @@ public class FriendsPrivacySettingsController implements Initializable {
   @FXML
   private CheckBox showActiveGameCheckbox;
 
+  @FXML
+  private CheckBox searchableCheckbox;
+
   private TournamentSettings settings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     settings = client.getTournamentsService().getSettings();
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    CabinetSettings cabinetSettings = cabinet.getSettings();
 
     showOnlineStatusCheckbox.setSelected(settings.isShowOnlineStatus());
     showOnlineStatusCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -54,6 +61,20 @@ public class FriendsPrivacySettingsController implements Initializable {
         }
         catch (Exception e) {
           LOG.error("Failed to save mania settings: " + e.getMessage(), e);
+        }
+      }
+    });
+
+    searchableCheckbox.setSelected(cabinetSettings.isSearchable());
+    searchableCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        try {
+          cabinetSettings.setSearchable(newValue);
+          maniaClient.getCabinetClient().update(cabinet);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to save cabinet data: " + e.getMessage(), e);
         }
       }
     });

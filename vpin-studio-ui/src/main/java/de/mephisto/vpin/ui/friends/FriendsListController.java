@@ -49,6 +49,10 @@ public class FriendsListController implements Initializable {
     textfieldSearch.setText("");
   }
 
+  @FXML
+  private void onInvite() {
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());

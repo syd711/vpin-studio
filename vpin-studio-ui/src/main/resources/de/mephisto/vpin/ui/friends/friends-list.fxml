@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
@@ -34,7 +35,7 @@
                      <items>
                         <StackPane alignment="CENTER_RIGHT">
                            <children>
-                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Friend...">
+                              <TextField fx:id="textfieldSearch" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search...">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -49,13 +50,22 @@
                               </Button>
                            </children>
                         </StackPane>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button mnemonicParsing="false" onAction="#onInvite" text="Add Friend" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-plus" iconSize="18" />
+                           </graphic>
+                        </Button>
                      </items>
                   </ToolBar>
                   <VBox fx:id="emptyBox" alignment="CENTER">
                      <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="300.0" prefWidth="500.0">
                            <graphic>
-                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2a-account-plus" iconSize="300" textOrigin="CENTER" />
+                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2a-account-group" iconSize="300" textOrigin="CENTER" />
                            </graphic>
                         </Label>
                         <Label text="No friends found." textFill="#605e5e">
@@ -63,7 +73,7 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <Label text="Add a friend by sending an invite." textFill="#605e5e">
+                        <Label text="Add friends to compete with them." textFill="#605e5e">
                            <font>
                               <Font size="14.0" />
                            </font>

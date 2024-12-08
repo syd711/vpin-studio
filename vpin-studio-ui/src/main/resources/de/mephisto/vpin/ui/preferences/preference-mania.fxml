@@ -55,7 +55,7 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Button>
-                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="Account Id" />
+                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="Cabinet Id" />
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                            <VBox.margin>
                               <Insets top="12.0" />
