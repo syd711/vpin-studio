@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import javafx.application.Platform;
@@ -21,6 +22,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class HeaderResizeableController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
@@ -30,6 +32,9 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private Button minimizeBtn;
+
+  @FXML
+  private Button friendsBtn;
 
   @FXML
   private Label titleLabel;
@@ -44,6 +49,17 @@ public class HeaderResizeableController implements Initializable {
     if (e.getClickCount() == 2) {
       FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
       helper.switchWindowedMode(e);
+    }
+  }
+
+  @FXML
+  private void onFriends() {
+    boolean open = FriendsController.toggle();
+    if(open) {
+      friendsBtn.getStyleClass().add("friends-button-selected");
+    }
+    else {
+      friendsBtn.getStyleClass().remove("friends-button-selected");
     }
   }
 
@@ -92,6 +108,13 @@ public class HeaderResizeableController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
+
+    friendsBtn.managedProperty().bindBidirectional(friendsBtn.visibleProperty());
+
+    //TODO add cached
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+//    friendsBtn.setVisible(cabinet != null);
+
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;

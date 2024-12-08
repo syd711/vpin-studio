@@ -355,6 +355,7 @@
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
+    -fx-background-radius: 6 6 6 6;
     -fx-border-color: #6666FF;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
@@ -365,7 +366,39 @@
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-border-radius: 6 6 6 6;
+    -fx-background-radius: 6 6 6 6;
     -fx-border-color: #6666FF;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+/**
+ * Friends Buttons
+ */
+.friends-button {
+    -fx-min-width: 96px;
+    -fx-padding: 2 0 1 0;
+    -fx-border-radius: 0 0 4 4;
+    -fx-background-radius: 0 0 4 4;
+    -fx-background-color: #3D3D7A;
+    -fx-border-style: solid inside;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #30304E;
+    -fx-text-fill: #DDDDDD;
+}
+
+.friends-button:hover {
+    -fx-background-color: -fx-font-hover;
+    -fx-background-color: #5858D3;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.friends-button-selected {
+    -fx-background-color: -fx-font-hover;
+    -fx-background-color: #6666FF;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }
