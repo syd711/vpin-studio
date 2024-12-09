@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
@@ -162,7 +163,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isValidationEnabled(game, CODE_SCREEN_SIZE_ISSUE)) {
+    if (Features.SCREEN_VALIDATOR && isValidationEnabled(game, CODE_SCREEN_SIZE_ISSUE)) {
       //TODO add impl
       result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCREEN_SIZE_ISSUE));
     }
