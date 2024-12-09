@@ -2,6 +2,7 @@
 
 ## Changes
 - **Tables / Highscores Section"**: Fixed yellow open folder button not working for all score types.
+- **Tables / Media Recorder**: Increased timeout to wait for the launched game from 30 seconds to 1 minute (this time right!).
 
 ---
 
@@ -10,7 +11,7 @@
 ## Changes
 
 - **Tables / Overview**: Fixed critical loading issue of games where no matching emulator is found. This is more of a workaround while the root problem has not been fixed yet.
-- **Tables / Media Recorder**: When emululator based recording is selected, the Windows taskbar is hidden for the duration of the recording now.
+- **Tables / Media Recorder**: When emulator based recording is selected, the Windows taskbar is hidden for the duration of the recording now.
 - **Tables / Media Recorder**: Increased timeout to wait for the launched game from 30 seconds to 1 minute.
 
 ---

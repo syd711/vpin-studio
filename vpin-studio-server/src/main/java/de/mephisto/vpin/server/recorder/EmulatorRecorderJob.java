@@ -23,6 +23,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
   private final VPXService vpxService;
   private final FPService fpService;
+  private final static int EMULATOR_TIMEOUT = 60;
 
   GameRecorder gameRecorder;
 
@@ -84,7 +85,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
           throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
         }
 
-        int secondToWait = 30;
+        int secondToWait = EMULATOR_TIMEOUT;
         while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player") && secondToWait > 0) {
           Thread.sleep(1000);
           secondToWait--;
