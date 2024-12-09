@@ -3,33 +3,25 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.ManiaRegistration;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -130,31 +122,12 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       if (!newValue) {
         return;
       }
-
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "VPin Mania Registration", "Cancel", "Register", "This registers your cabinet for the online service \"VPin Mania\".", "The account is bound to your cabinet.", "I understand, register my cabinet.");
-      if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
+      boolean register = ManiaRegistration.register();
+      if(register) {
+        registrationPanel.setVisible(true);
+        Cabinet cab = maniaClient.getCabinetClient().getCabinet();
+        idLabel.setText(cab.getUuid());
         try {
-          PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-          PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
-          Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-          if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-            image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
-          }
-
-          BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-
-          Cabinet newCab = new Cabinet();
-          newCab.setCreationDate(new Date());
-          newCab.setSettings(new CabinetSettings());
-          newCab.setDisplayName(systemName.getValue() != null ? systemName.getValue() : "My VPin");
-          Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, bufferedImage, null);
-          registrationPanel.setVisible(registeredCabinet == null);
-
-          if (registeredCabinet != null) {
-            idLabel.setText(registeredCabinet.getUuid());
-          }
-
-          settings.setEnabled(true);
           settings = client.getTournamentsService().saveSettings(settings);
         }
         catch (Exception e) {
@@ -162,8 +135,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for details).");
         }
+        registrationCheckbox.setSelected(false);
       }
-      registrationCheckbox.setSelected(false);
     });
 
     submitAllCheckbox.setSelected(settings.isSubmitAllScores());
