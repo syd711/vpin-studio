@@ -1,3 +1,10 @@
+## Release Notes 3.10.5
+
+## Changes
+- **Tables / Highscores Section"**: Fixed yellow open folder button not working for all score types.
+
+---
+
 ## Release Notes 3.10.4
 
 ## Changes

@@ -203,13 +203,18 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
             GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-            if (new File(gameRepresentation.getHsFileName()).exists()) {
-              SystemUtil.openFile(new File(gameRepresentation.getHsFileName()));
+            String hsName = gameRepresentation.getHsFileName();
+            if (!StringUtils.isEmpty(hsName)) {
+              if (new File(gameRepresentation.getHsFileName()).exists()) {
+                SystemUtil.openFile(new File(gameRepresentation.getHsFileName()));
+                return;
+              }
+              if (new File(gameRepresentation.getHsFileName()).getParentFile().exists()) {
+                SystemUtil.openFolder(new File(gameRepresentation.getHsFileName()).getParentFile());
+                return;
+              }
             }
-            else {
-              SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
-            }
-
+            SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
             return;
           }
         }
@@ -749,6 +754,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   public TablesController getTablesController() {
     return tablesController.getTablesController();
   }
+
   public TableOverviewController getTableOverviewController() {
     return tablesController;
   }
