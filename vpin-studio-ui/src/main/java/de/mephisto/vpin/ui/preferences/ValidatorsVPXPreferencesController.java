@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import javafx.event.ActionEvent;
@@ -58,6 +60,13 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
       String validationCode = id.split("_")[1];
+
+      if (!Features.SCREEN_VALIDATOR) {
+        if (validationCode.equals(String.valueOf(GameValidationCode.CODE_SCREEN_SIZE_ISSUE))) {
+          checkBox.managedProperty().bindBidirectional(checkBox.visibleProperty());
+          checkBox.setVisible(false);
+        }
+      }
 
       boolean ignored = ignoredValidationSettings.isIgnored(validationCode);
       checkBox.setSelected(!ignored);

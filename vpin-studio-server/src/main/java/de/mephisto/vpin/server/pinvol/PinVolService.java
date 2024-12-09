@@ -113,6 +113,11 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     preferences = new PinVolPreferences();
     try {
       File tablesIni = getPinVolTablesIniFile();
+      if (!tablesIni.exists()) {
+        LOG.info("PinVol service table settings have not been loaded, because {} was not found.", tablesIni.getAbsolutePath());
+        return;
+      }
+
       FileInputStream fileInputStream = new FileInputStream(tablesIni);
       List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
       for (String entry : entries) {
