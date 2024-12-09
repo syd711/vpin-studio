@@ -146,7 +146,7 @@
                             <children>
                                 <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                     <columns>
-                                        <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: BASELINE_CENTER;">
+                                        <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="40.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;">
                                             <graphic>
                                                 <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
                                             </graphic>
