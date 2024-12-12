@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -30,11 +31,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 @Service
-public class CardService implements InitializingBean, HighscoreChangeListener {
+public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
 
   @Autowired
@@ -51,6 +51,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
   @Autowired
   private CardTemplatesService cardTemplatesService;
+
+  private CardSettings cardSettings;
 
   public File generateTableCardFile(Game game) {
     generateCard(game);
@@ -99,15 +101,16 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
-      Semaphore semaphore = new Semaphore(0);
       Platform.runLater(() -> {
         doGenerateCard(game, generateSampleCard, template);
-        semaphore.release();
       });
-      semaphore.acquire();
+
+      synchronized (this) {
+        this.wait();
+      }
       return true;
     }
-    catch (InterruptedException e) {
+    catch (Exception e) {
       LOG.error("Failed to generate image: " + e.getMessage(), e);
       return false;
     }
@@ -118,12 +121,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
-        //otherwise check if the card rendering is enabled
-        CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-        if (cardSettings == null) {
-          cardSettings = new CardSettings();
-        }
-
         //sample card are always generated
         if (generateSampleCard) {
           BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
@@ -168,6 +165,11 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       LOG.error("Failed to generate highscore card: " + e.getMessage(), e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
     }
+    finally {
+      synchronized (this) {
+        notifyAll();
+      }
+    }
     return false;
   }
 
@@ -193,7 +195,19 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equalsIgnoreCase(propertyName)) {
+      cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      if (cardSettings == null) {
+        cardSettings = new CardSettings();
+      }
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     this.highscoreService.addHighscoreChangeListener(this);
+    this.preferencesService.addChangeListener(this);
+    this.preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
   }
 }
