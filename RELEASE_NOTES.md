@@ -1,3 +1,12 @@
+## Release Notes 3.10.6
+
+## Changes
+
+- **Tables / Overview**: Fixed critical error of the card generator that resulted in stalling the whole client.
+- **Tables / Asset Manager**: Added bulk conversion. The list of client assets in the asset management view/dialog supports multi-selection now so that you can bulk convert the selected media.
+
+---
+
 ## Release Notes 3.10.5
 
 ## Changes
