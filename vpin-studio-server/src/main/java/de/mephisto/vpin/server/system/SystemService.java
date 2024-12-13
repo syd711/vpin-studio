@@ -164,6 +164,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private void logSystemInfo() {
     LOG.info("********************************* Installation Overview ***********************************************");
     LOG.info(formatPathLog("Locale", Locale.getDefault().getDisplayName()));
+    LOG.info(formatPathLog("TimeZone", TimeZone.getDefault().getDisplayName()));
     LOG.info(formatPathLog("Charset", Charset.defaultCharset().displayName()));
     LOG.info(formatPathLog("Frontend Type", this.getFrontendType().name()));
     if (pinupInstallationFolder != null) {
