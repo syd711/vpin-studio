@@ -61,6 +61,9 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private CheckBox iscoredScoresEnabled;
 
   @FXML
+  private CheckBox iscoredReadAPIScoresEnabled;
+
+  @FXML
   private TextField dashboardUrlField;
 
   @FXML
@@ -77,6 +80,9 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
   @FXML
   private TableColumn<CompetitionRepresentation, Label> statusColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, Label> visibilityColumn;
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> tableColumn;
@@ -154,6 +160,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         }
 
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresReadingEnabled());
+        iscoredReadAPIScoresEnabled.setSelected(gameRoom.getSettings().isApiReadingEnabled());
 
         List<IScoredGame> games = gameRoom.getGames();
         List<IScoredGame> errornousGames = new ArrayList<>();
@@ -262,6 +269,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         if (iconColor != null) {
           exclamationIcon.setIconColor(Paint.valueOf(iconColor));
         }
+        label.setTooltip(new Tooltip("No matching table set."));
         label.setGraphic(exclamationIcon);
       }
       else {
@@ -270,6 +278,23 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
           checkIcon.setIconColor(Paint.valueOf(iconColor));
         }
         label.setGraphic(checkIcon);
+      }
+      return new SimpleObjectProperty<>(label);
+    });
+
+    visibilityColumn.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+      IScoredGame gameByVps = gameRoom.getGameByVps(value.getVpsTableId(), value.getVpsTableVersionId());
+      Label label = new Label();
+      if (gameByVps != null) {
+        FontIcon icon = WidgetFactory.createIcon("mdi2e-eye-outline");
+        label.setTooltip(new Tooltip("Game is visible"));
+        if (gameByVps.isGameHidden()) {
+          icon = WidgetFactory.createIcon("mdi2e-eye-off-outline");
+          label.setTooltip(new Tooltip("Game is hidden"));
+        }
+        label.setGraphic(icon);
       }
       return new SimpleObjectProperty<>(label);
     });

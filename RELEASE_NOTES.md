@@ -3,6 +3,7 @@
 ## Changes
 
 - **Tables / Overview**: Fixed critical error of the card generator that resulted in stalling the whole client.
+- **Tables / Overview**: Fixed date format (modified, added, ...) issue where the day might have been a day off. 
 - **Tables / Asset Manager**: Added bulk conversion. The list of client assets in the asset management view/dialog supports multi-selection now so that you can bulk convert the selected media.
 
 ---

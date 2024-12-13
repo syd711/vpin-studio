@@ -52,6 +52,9 @@ public class IScoredInfoDialogController implements DialogController, Initializa
   private Label publicReadHint;
 
   @FXML
+  private Label publicReadAPIHint;
+
+  @FXML
   private Label publicWriteHint;
 
   @FXML
@@ -60,6 +63,8 @@ public class IScoredInfoDialogController implements DialogController, Initializa
   private CheckBox readOnlyCheckbox;
   @FXML
   private CheckBox scoreEntriesCheckbox;
+  @FXML
+  private CheckBox readAPICheckbox;
   @FXML
   private CheckBox longNamesCheckbox;
   @FXML
@@ -93,6 +98,9 @@ public class IScoredInfoDialogController implements DialogController, Initializa
 
       scoreEntriesCheckbox.setSelected(gameRoom.getSettings().isPublicScoreEnteringEnabled());
       publicWriteHint.setVisible(!scoreEntriesCheckbox.isSelected());
+
+      readAPICheckbox.setSelected(gameRoom.getSettings().isApiReadingEnabled());
+      publicReadAPIHint.setVisible(!gameRoom.getSettings().isApiReadingEnabled());
 
       adminApprovalCheckbox.setSelected(gameRoom.getSettings().isAdminApprovalEnabled());
       longNamesCheckbox.setSelected(gameRoom.getSettings().isLongNameInputEnabled());

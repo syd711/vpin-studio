@@ -24,6 +24,7 @@
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
                         <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Status" />
+                        <TableColumn fx:id="visibilityColumn" sortable="false" style="-fx-alignment: CENTER;" text="Visibility" />
                         <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: CENTER;" text="Your Table" />
                         <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="GameRoom" />
                         <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="Virtual Pinball Spreadsheet Table" />
