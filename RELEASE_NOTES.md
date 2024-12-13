@@ -5,6 +5,7 @@
 - **Tables / Overview**: Fixed critical error of the card generator that resulted in stalling the whole client.
 - **Tables / Overview**: Fixed date format (modified, added, ...) issue where the day might have been a day off. 
 - **Tables / Asset Manager**: Added bulk conversion. The list of client assets in the asset management view/dialog supports multi-selection now so that you can bulk convert the selected media.
+- **Competitions / iScored**: Added hidden flag support. With the new API of iScored, hidden games can now retrieved too. This includes posting highscores to tables that are not even visible on the dashboard! Note that you have to enable **Allow Read Access through the iScored API [ALPHA]** in the iScored options for this.
 
 ---
 
