@@ -101,9 +101,12 @@ public class PatchUploadController extends BaseUploadController {
         uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
         uploadDescriptor.setAutoFill(false);
+        LOG.info("Created Upload Descriptor for patching");
 
         GameRepresentation gameRepresentation = client.getGameService().getGame(uploadDescriptor.getGameId());
+        LOG.info("Fetched Game " + gameRepresentation.getGameDisplayName());
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
+        LOG.info("Fetched Emulator " + gameRepresentation.getGameDisplayName());
 
         File gameFile = new File(gameRepresentation.getGameFilePath());
         File emuDir = new File(emulatorRepresentation.getTablesDirectory());
@@ -113,6 +116,7 @@ public class PatchUploadController extends BaseUploadController {
         }
 
 
+        LOG.info("Starting Game Patcher");
         GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
         result = UniversalUploadUtil.postProcess(progressModel);
         if (result.isPresent()) {
