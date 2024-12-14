@@ -1,5 +1,8 @@
 package de.mephisto.vpin.connectors.iscored;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +12,22 @@ public class IScoredGame {
   private String name;
   private List<Score> scores = new ArrayList<>();
   private List<String> tags = new ArrayList<>();
+
+  @JsonProperty("Hidden")
+  private String hidden;
+
+  public String getHidden() {
+    return hidden;
+  }
+
+  public void setHidden(String hidden) {
+    this.hidden = hidden;
+  }
+
+  @JsonIgnore
+  public boolean isGameHidden() {
+    return hidden != null && hidden.equalsIgnoreCase("TRUE");
+  }
 
   public boolean isDisabled() {
     return tags.contains("vps:disabled");

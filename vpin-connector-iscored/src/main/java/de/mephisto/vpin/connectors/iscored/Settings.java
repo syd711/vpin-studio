@@ -19,6 +19,16 @@ public class Settings {
 
   private String tournamentColumn;
 
+  private String apiReadAccess;
+
+  public String getApiReadAccess() {
+    return apiReadAccess;
+  }
+
+  public void setApiReadAccess(String apiReadAccess) {
+    this.apiReadAccess = apiReadAccess;
+  }
+
   public String getLongNamesEnabled() {
     return longNamesEnabled;
   }
@@ -67,6 +77,13 @@ public class Settings {
     this.tournamentColumn = tournamentColumn;
   }
 
+  @JsonIgnore//do not use original name!
+  public boolean isApiReadingEnabled() {
+    if (this.apiReadAccess != null && (this.apiReadAccess.equalsIgnoreCase("true") || this.apiReadAccess.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.apiReadAccess.toLowerCase());
+    }
+    return false;
+  }
   @JsonIgnore//do not use original name!
   public boolean isPublicScoresReadingEnabled() {
     if (this.publicScoresEnabled != null && (this.publicScoresEnabled.equalsIgnoreCase("true") || this.publicScoresEnabled.equalsIgnoreCase("false"))) {

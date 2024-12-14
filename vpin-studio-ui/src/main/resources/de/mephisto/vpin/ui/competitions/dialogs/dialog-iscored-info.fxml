@@ -42,6 +42,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label styleClass="default-text" text="Game Room Name:" textFill="WHITE">
@@ -64,27 +65,27 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="Long Names Enabled:" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="Long Names Enabled:" textFill="WHITE" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Dates Enabled:" textFill="WHITE" GridPane.rowIndex="5">
+                  <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Dates Enabled:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="Number of Tables:" textFill="WHITE" GridPane.rowIndex="7">
+                  <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="Number of Tables:" textFill="WHITE" GridPane.rowIndex="8">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="198.0" styleClass="default-text" text="Number of VPS Tagged Tables:" textFill="WHITE" GridPane.rowIndex="8">
+                  <Label layoutX="10.0" layoutY="198.0" styleClass="default-text" text="Number of VPS Tagged Tables:" textFill="WHITE" GridPane.rowIndex="9">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="228.0" styleClass="default-text" text="Total Scores:" textFill="WHITE" GridPane.rowIndex="9">
+                  <Label layoutX="10.0" layoutY="228.0" styleClass="default-text" text="Total Scores:" textFill="WHITE" GridPane.rowIndex="10">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -94,17 +95,17 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="scoresCountLabel" layoutX="10.0" layoutY="259.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                  <Label fx:id="scoresCountLabel" layoutX="10.0" layoutY="259.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="vpsTableCountLabel" layoutX="217.0" layoutY="259.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                  <Label fx:id="vpsTableCountLabel" layoutX="217.0" layoutY="259.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="tableCountLabel" layoutX="217.0" layoutY="228.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                  <Label fx:id="tableCountLabel" layoutX="217.0" layoutY="228.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -154,26 +155,51 @@
                         </Label>
                      </children>
                   </HBox>
-                  <CheckBox fx:id="longNamesCheckbox" disable="true" layoutX="217.0" layoutY="106.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <CheckBox fx:id="longNamesCheckbox" disable="true" layoutX="217.0" layoutY="106.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <CheckBox fx:id="datesCheckbox" disable="true" layoutX="217.0" layoutY="137.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <CheckBox fx:id="datesCheckbox" disable="true" layoutX="217.0" layoutY="137.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="Tournament Column Enabled:" textFill="WHITE" GridPane.rowIndex="6">
+                  <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="Tournament Column Enabled:" textFill="WHITE" GridPane.rowIndex="7">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <CheckBox fx:id="tournamentColumnCheckbox" disable="true" layoutX="217.0" layoutY="168.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                  <CheckBox fx:id="tournamentColumnCheckbox" disable="true" layoutX="217.0" layoutY="168.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="7">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
+                  <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="Public READ API Enabled:" textFill="WHITE" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <children>
+                        <CheckBox fx:id="readAPICheckbox" disable="true" mnemonicParsing="false">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label fx:id="publicReadAPIHint" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="This flag must be enabled to post highscores for hidden tables too." />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
             </GridPane>
             <HBox>

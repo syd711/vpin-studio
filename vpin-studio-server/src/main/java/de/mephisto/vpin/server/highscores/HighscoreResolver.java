@@ -123,6 +123,7 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
+      metadata.setStatus(null);
 
       return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
     }
