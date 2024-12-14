@@ -18,7 +18,7 @@ public class TableHighscoresScanProgressModel extends ProgressModel<GameRepresen
   private final Iterator<GameRepresentation> gameIterator;
 
   public TableHighscoresScanProgressModel(List<GameRepresentation> games) {
-    super("Scanning Highsore Updates");
+    super("Scanning Highscore Updates");
     this.games = games;
     this.gameIterator = games.iterator();
   }

@@ -52,7 +52,7 @@ public class ExporterResource {
   public @ResponseBody byte[] exportScores(@RequestParam Map<String, String> customQuery, HttpServletResponse response) throws Exception {
     OutputStream output = response.getOutputStream();
     response.reset();
-    response.setHeader("Content-disposition", "attachment; filename=highsores.xls");
+    response.setHeader("Content-disposition", "attachment; filename=highscores.xls");
     response.setContentType("application/msexcel");
 
     String export = highscoreExportService.export(customQuery);
