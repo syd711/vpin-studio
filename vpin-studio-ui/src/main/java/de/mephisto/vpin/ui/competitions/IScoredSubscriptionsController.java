@@ -39,6 +39,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private TableColumn<CompetitionRepresentation, Label> statusColumn;
+
+  @FXML
+  private TableColumn<CompetitionRepresentation, Label> visibilityColumn;
 
   @FXML
   private TableColumn<CompetitionRepresentation, String> tableColumn;
@@ -100,7 +104,6 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
   private BorderPane competitionWidgetRoot;
-
 
   private ObservableList<CompetitionRepresentation> data;
   private List<CompetitionRepresentation> competitions;
@@ -269,6 +272,23 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       }
 
       return new SimpleObjectProperty(new IScoredGameCellContainer(value, table, gameRoom, getLabelCss(cellData.getValue())));
+    });
+
+    visibilityColumn.setCellValueFactory(cellData -> {
+      CompetitionRepresentation value = cellData.getValue();
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+      IScoredGame gameByVps = gameRoom.getGameByVps(value.getVpsTableId(), value.getVpsTableVersionId());
+      Label label = new Label();
+      if (gameByVps != null) {
+        FontIcon icon = WidgetFactory.createIcon("mdi2e-eye-outline");
+        label.setTooltip(new Tooltip("Game is visible"));
+        if (gameByVps.isGameHidden()) {
+          icon = WidgetFactory.createIcon("mdi2e-eye-off-outline");
+          label.setTooltip(new Tooltip("Game is hidden"));
+        }
+        label.setGraphic(icon);
+      }
+      return new SimpleObjectProperty<>(label);
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {

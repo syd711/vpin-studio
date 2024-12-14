@@ -140,6 +140,40 @@
                                           <Insets top="6.0" />
                                        </VBox.margin>
                                     </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="80.0" spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="iscoredReadAPIScoresEnabled" disable="true" mnemonicParsing="false" text="Read API enabled" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <Label textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="" wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                          <Label fx:id="publicReadAPIHint" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="This flag must be enabled to post highscores for hidden tables too." />
+                                             </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="2.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                               <VBox>
@@ -250,6 +284,7 @@
                                        </graphic>
                                     </TableColumn>
                                     <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" sortable="false" style="-fx-alignment: CENTER;" text="Status" />
+                                    <TableColumn fx:id="visibilityColumn" sortable="false" style="-fx-alignment: CENTER;" text="Visibility" />
                                     <TableColumn fx:id="tableColumn" prefWidth="430.0" sortable="false" style="-fx-alignment: CENTER;" text="Your Table" />
                                     <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" sortable="false" text="Virtual Pinball Spreadsheet Table" />
                                     <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="Table Version" />

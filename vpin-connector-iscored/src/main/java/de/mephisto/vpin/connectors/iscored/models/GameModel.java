@@ -5,7 +5,16 @@ import java.util.List;
 public class GameModel {
   private int gameID;
   private String gameName;
+  private String hidden;
   private List<String> tags;
+
+  public String getHidden() {
+    return hidden;
+  }
+
+  public void setHidden(String hidden) {
+    this.hidden = hidden;
+  }
 
   public List<String> getTags() {
     return tags;

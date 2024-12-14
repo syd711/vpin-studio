@@ -85,6 +85,11 @@ public class IScored {
         gameRoom.setName(gameRoomModel.getSettings().getRoomName());
 
         URL gamesInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
+        if (gameRoom.getSettings().isApiReadingEnabled()) {
+          LOG.info("READ API enabled, using API endpoint for game infos.");
+          gamesInfoURL = new URL(BASE_URL + "/api/" + userName);
+        }
+
         String gamesInfo = loadJson(gamesInfoURL);
         GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
 
@@ -97,6 +102,7 @@ public class IScored {
           game.setId(gameModel.getGameID());
           game.setName(gameModel.getGameName());
           game.setTags(gameModel.getTags());
+          game.setHidden(gameModel.getHidden());
 
           for (Score score : scores) {
             if (score.getGame().equals(String.valueOf(game.getId()))) {
@@ -111,7 +117,7 @@ public class IScored {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to load iScored Game Room: " + e.getMessage());
+      LOG.error("Failed to load iScored Game Room: {}", e.getMessage(), e);
     }
 
     return null;
@@ -131,6 +137,7 @@ public class IScored {
       out.close();
       conn.disconnect();
 
+      LOG.info("iScored: " + url);
       return new String(out.toByteArray());
     }
     catch (Exception e) {
