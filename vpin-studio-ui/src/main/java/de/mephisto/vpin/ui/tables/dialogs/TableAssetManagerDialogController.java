@@ -35,6 +35,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -267,8 +268,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         for (FrontendMediaItemRepresentation item : assetList.getItems()) {
           if (isPlaylistMode()) {
 
-          }
-          else {
+          } else {
             client.getGameMediaService().deleteMedia(game.getId(), screen, item.getName());
           }
         }
@@ -293,8 +293,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       if (isPlaylistMode()) {
 
-      }
-      else {
+      } else {
         client.getGameMediaService().deleteMedia(game.getId());
       }
     }
@@ -374,8 +373,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         return;
       }
       SystemUtil.openFolder(screenDir);
-    }
-    else if (this.game != null) {
+    } else if (this.game != null) {
       File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen.name());
       if (selectedItem != null) {
         screenDir = new File(screenDir, selectedItem.getName());
@@ -416,8 +414,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     if (isPlaylistMode()) {
       TableDialogs.directAssetUpload(stage, playlist, screen);
-    }
-    else {
+    } else {
       TableDialogs.directAssetUpload(stage, game, screen);
     }
     refreshTableMediaView();
@@ -454,8 +451,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         if (isPlaylistMode()) {
           client.getPlaylistMediaService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
-        }
-        else {
+        } else {
           client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
         }
 
@@ -513,8 +509,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           LOG.error("Renaming table asset failed: " + e.getMessage(), e);
           WidgetFactory.showAlert(localStage, "Error", "Renaming failed: " + e.getMessage());
         }
-      }
-      else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
+      } else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
         WidgetFactory.showAlert(localStage, "Error", "Renaming cancelled, invalid character found.");
         onRename();
       }
@@ -583,12 +578,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         if (baseType.equals("image")) {
           new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
-        }
-        else if (baseType.equals("audio")) {
+        } else if (baseType.equals("audio")) {
           AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
           audioMediaPlayer.render();
-        }
-        else if (baseType.equals("video")) {
+        } else if (baseType.equals("video")) {
           VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
           videoMediaPlayer.render();
         }
@@ -614,19 +607,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           "Overwrite existing asset or append new asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
 
-      }
-      else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+      } else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         append = true;
-      }
-      else {
+      } else {
         return;
       }
     }
 
     if (isPlaylistMode()) {
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, playlist, tableAsset, append));
-    }
-    else {
+    } else {
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append));
       EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
     }
@@ -679,8 +669,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (game != null) {
             setGame(localStage, overviewController, game, screen, embedded);
-          }
-          else {
+          } else {
             setGame(localStage, overviewController, tablesCombo.getValue(), screen, embedded);
           }
 
@@ -694,8 +683,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (playlist != null) {
             setPlaylist(localStage, overviewController, playlist, screen);
-          }
-          else {
+          } else {
             setPlaylist(localStage, overviewController, playlistCombo.getValue(), screen);
           }
 
@@ -782,6 +770,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     serverAssetsList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
+    assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     if (!isEmbeddedMode()) {
       EventManager.getInstance().addListener(this);
@@ -806,28 +795,30 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<FrontendMediaItemRepresentation>() {
+    this.assetList.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<FrontendMediaItemRepresentation>() {
       @Override
-      public void changed(ObservableValue<? extends FrontendMediaItemRepresentation> observable, FrontendMediaItemRepresentation oldValue, FrontendMediaItemRepresentation mediaItem) {
+      public void onChanged(Change<? extends FrontendMediaItemRepresentation> c) {
+        List<? extends FrontendMediaItemRepresentation> list = c.getList();
         if (screen.equals(VPinScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
 
         WidgetFactory.disposeMediaPane(mediaPane);
-        infoBtn.setDisable(mediaItem == null);
-        renameBtn.setDisable(mediaItem == null);
-        downloadAssetBtn.setDisable(mediaItem == null);
+        infoBtn.setDisable(list.size() != 1);
+        renameBtn.setDisable(list.size() != 1);
+        downloadAssetBtn.setDisable(list.size() != 1);
 
-        if (mediaItem == null) {
+        if (list.isEmpty()) {
           conversionMenu.setDisable(true);
 
           Label label = new Label("No media selected");
           label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-          label.setUserData(mediaItem);
+          label.setUserData(null);
           mediaPane.setCenter(label);
           return;
         }
-        // else 
+        // else
+        FrontendMediaItemRepresentation mediaItem = list.get(0);
         String mimeType = mediaItem.getMimeType();
         String baseType = mimeType.split("/")[0];
 
@@ -845,12 +836,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         if (baseType.equals("image")) {
           new ImageViewer(mediaPane, url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
-        }
-        else if (baseType.equals("audio")) {
+        } else if (baseType.equals("audio")) {
           AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(mediaPane, mediaItem, url);
           audioMediaPlayer.render();
-        }
-        else if (baseType.equals("video")) {
+        } else if (baseType.equals("video")) {
           VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
           videoMediaPlayer.render();
         }
@@ -859,8 +848,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (isEmbeddedMode()) {
       assetList.prefHeightProperty().bind(root.prefHeightProperty());
-    }
-    else {
+    } else {
       clearCacheBtn.setVisible(frontend.getFrontendType().isSupportMediaCache());
 
       if (tableAssetConf != null && tableAssetConf.getAssetSearchIcon() != null) {
@@ -885,16 +873,22 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         @Override
         public void handle(ActionEvent event) {
           Platform.runLater(() -> {
-            FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
-            String name = selectedItem.getName();
-            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VideoConversionProgressModel("Video Conversion", game.getId(), screen, name, command));
+            List<FrontendMediaItemRepresentation> selectedItems = assetList.getSelectionModel().getSelectedItems();
+            if (selectedItems.isEmpty()) {
+              return;
+            }
+
+            String name = "Video Conversion of " + selectedItems.size() + " media items";
+            if (selectedItems.size() == 1) {
+              name = "Video Conversion " + "\"" + selectedItems.get(0).getName() + "\"";
+            }
+            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VideoConversionProgressModel(name, game.getId(), screen, selectedItems, command));
             List<Object> results = progressDialog.getResults();
 
             Platform.runLater(() -> {
               if (!results.isEmpty()) {
                 WidgetFactory.showAlert(stage, "Error", "Error converting video: " + results.get(0));
-              }
-              else {
+              } else {
                 refreshTableMediaView();
               }
             });
@@ -916,8 +910,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (mediaItems.isEmpty()) {
       borderPane.getStyleClass().removeAll("green");
-    }
-    else {
+    } else {
       borderPane.getStyleClass().add("green");
     }
 
@@ -943,8 +936,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!borderPane.equals(lastSelected)) {
       if (hovered) {
         borderPane.setStyle("-fx-cursor: hand;-fx-background-color: #6666FF");
-      }
-      else {
+      } else {
         borderPane.setStyle(null);
       }
     }
@@ -1047,8 +1039,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (game == null) {
       searchField.setText("");
-    }
-    else {
+    } else {
       String term = game.getGameDisplayName();
       term = term.replaceAll("the", "");
       term = term.replaceAll("The", "");
@@ -1090,8 +1081,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       if (StringUtils.isEmpty(this.searchField.getText())) {
         if (sanitizedTerms.isEmpty()) {
           this.searchField.setText(game.getGameDisplayName());
-        }
-        else {
+        } else {
           this.searchField.setText(String.join(" ", sanitizedTerms));
         }
       }
@@ -1175,8 +1165,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (isPlaylistMode()) {
       this.frontendMedia = client.getPlaylistMediaService().getPlaylistMedia(this.playlist.getId());
-    }
-    else {
+    } else {
       if (this.game == null) {
         this.game = tablesCombo.getItems().get(0);
       }
@@ -1207,8 +1196,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
       this.addToPlaylistBtn.setDisable(!convertable);
-    }
-    else {
+    } else {
       assetList.setItems(FXCollections.emptyObservableList());
       assetList.refresh();
       addToPlaylistBtn.setDisable(true);
@@ -1260,8 +1248,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Platform.runLater(() -> {
       if (playlistsRadio.isSelected()) {
         TableDialogs.openTableAssetsDialog(overviewController, game, playlist, screen);
-      }
-      else {
+      } else {
         TableDialogs.openTableAssetsDialog(overviewController, game, screen);
       }
     });

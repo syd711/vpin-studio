@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
@@ -57,7 +58,10 @@ public class RestClient implements ClientHttpRequestInterceptor {
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
     converter.setPrettyPrint(true);
-    converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    converter.getObjectMapper()
+        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .setTimeZone(TimeZone.getDefault())
+        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
     // Note: here we are making this converter to process any kind of response,
     // not only application/*json, which is the default behaviour

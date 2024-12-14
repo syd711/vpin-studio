@@ -58,3 +58,13 @@ Assuming you use IDEA:
 - Copy new resetted nvram files to **resources/nvrams**.
 - Open the NVRamSynchronizer from the tools module and adapter author and target folder for the nvrams project. You need to clone this separately. The nvram project is supposed to be cloned next to the vpin-studio folder.
 - Run the synchronizer.
+
+## How to setup SceneBuilder
+
+- Download SceneBuilder and link it in idea by doing a right click on a fxml file.
+- Add jar: In the left outliner, press the tiny gear icon. Add a jar from the local system and select vpin-studio-commons.jar.
+- Add jar: In the left outliner, press the tiny gear icon. Add a jar from the local system and select vpin-studio-ui.jar.
+- Add the following icon sets:
+  - https://kordamp.org/ikonli/cheat-sheet-materialdesign2.html#_s_materialdesigns
+  - https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
+  - https://kordamp.org/ikonli/cheat-sheet-simplelineicons.html

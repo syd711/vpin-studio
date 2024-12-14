@@ -101,18 +101,22 @@ public class PatchUploadController extends BaseUploadController {
         uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
         uploadDescriptor.setAutoFill(false);
+        LOG.info("Created Upload Descriptor for patching");
 
         GameRepresentation gameRepresentation = client.getGameService().getGame(uploadDescriptor.getGameId());
+        LOG.info("Fetched Game " + gameRepresentation.getGameDisplayName());
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
+        LOG.info("Fetched Emulator " + emulatorRepresentation.getTablesDirectory());
 
         File gameFile = new File(gameRepresentation.getGameFilePath());
         File emuDir = new File(emulatorRepresentation.getTablesDirectory());
-        if (!gameFile.getParentFile().equals(emuDir)) {
+        if (!gameFile.getAbsoluteFile().getParentFile().equals(emuDir)) {
           uploadDescriptor.setFolderBasedImport(true);
           uploadDescriptor.setSubfolderName(FilenameUtils.getBaseName(gameRepresentation.getGameFileName()) + "_[Patched]");
         }
 
 
+        LOG.info("Starting Game Patcher");
         GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
         result = UniversalUploadUtil.postProcess(progressModel);
         if (result.isPresent()) {
