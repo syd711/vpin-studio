@@ -3,9 +3,12 @@
 ## Changes
 
 - **Tables / Overview**: Fixed critical error of the card generator that resulted in stalling the whole client.
+- **Tables / Table Patcher**: Fixed critical error for the table patcher that happened when executed from a remote client.
 - **Tables / Overview**: Fixed date format (modified, added, ...) issue where the day might have been a day off. 
 - **Tables / Asset Manager**: Added bulk conversion. The list of client assets in the asset management view/dialog supports multi-selection now so that you can bulk convert the selected media.
+- **Tables / Highscore Parsing**: Fixed error in highscore resolving. When a table had a non-highscore related entry in the VPReg.stg, text-file based highscores have been ignored, even if they have been parsed successfully. (Hi Diver problem) 
 - **Competitions / iScored**: Added hidden flag support. With the new API of iScored, hidden games can now retrieved too. This includes posting highscores to tables that are not even visible on the dashboard! Note that you have to enable **Allow Read Access through the iScored API [ALPHA]** in the iScored options for this.
+- **Highscore Cards / Templating**: The list of games inside the Card-Designer supports multi-selection now. This way, you can apply a template for multiple/all tables. 
 
 ---
 

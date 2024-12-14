@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateAssigmentProgressModel.class);
+  public static final int MAX_REFRESH_COUNT = 3;
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;
@@ -61,12 +61,24 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
+
+    if (games.size() > MAX_REFRESH_COUNT) {
+      EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     game.setTemplateId(templateId);
     try {
       client.getGameService().saveGame(game);
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    } catch (Exception e) {
+      if (games.size() <= MAX_REFRESH_COUNT) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+    }
+    catch (Exception e) {
       LOG.error("Failed to save template mapping: " + e.getMessage(), e);
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save template mapping: " + e.getMessage());

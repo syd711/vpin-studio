@@ -175,16 +175,18 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   private void setBusy(boolean b) {
-    if (b) {
-      tableView.setVisible(false);
-      if (!loaderStack.getChildren().contains(tablesLoadingOverlay)) {
-        loaderStack.getChildren().add(tablesLoadingOverlay);
+    Platform.runLater(() -> {
+      if (b) {
+        tableView.setVisible(false);
+        if (!loaderStack.getChildren().contains(tablesLoadingOverlay)) {
+          loaderStack.getChildren().add(tablesLoadingOverlay);
+        }
       }
-    }
-    else {
-      tableView.setVisible(true);
-      loaderStack.getChildren().remove(tablesLoadingOverlay);
-    }
+      else {
+        tableView.setVisible(true);
+        loaderStack.getChildren().remove(tablesLoadingOverlay);
+      }
+    });
   }
 
   @FXML
@@ -435,7 +437,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     tableView.setItems(data);
     tableView.setEditable(true);
-    tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     tableView.setSortPolicy(new Callback<TableView<GameRepresentation>, Boolean>() {
       @Override
@@ -561,6 +563,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         tableView.refresh();
       });
     }
+  }
+
+  public List<GameRepresentation> getSelection() {
+    return tableView.getSelectionModel().getSelectedItems();
   }
 
   @Override

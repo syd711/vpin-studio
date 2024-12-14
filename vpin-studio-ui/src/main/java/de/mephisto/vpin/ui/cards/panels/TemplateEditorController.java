@@ -872,10 +872,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   private void assignTemplate(CardTemplate newValue) {
-    GameRepresentation game = gameRepresentation.get();
-    if (!newValue.getId().equals(gameRepresentation.get().getTemplateId())) {
-      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(Arrays.asList(game), newValue.getId()));
-    }
+    List<GameRepresentation> selection = highscoreCardsController.getSelection();
+    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, newValue.getId()));
   }
 
   public void setCardsController(HighscoreCardsController highscoreCardsController) {
