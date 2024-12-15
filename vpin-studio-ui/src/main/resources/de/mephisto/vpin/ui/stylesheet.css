@@ -122,6 +122,11 @@
     -fx-text-fill: #FFFFFF;
 }
 
+.widget-item-inverted {
+    -fx-background-radius: 3 3 3 3;
+    -fx-background-color: -fx-base-6;
+}
+
 /**
  * Breadcrumb
  */
@@ -1089,6 +1094,13 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 6 6 6 6;
     -fx-background-color: #222222;
+}
+
+
+.floating-toolbar-inverted {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: #111111;
 }
 
 .context-menu {

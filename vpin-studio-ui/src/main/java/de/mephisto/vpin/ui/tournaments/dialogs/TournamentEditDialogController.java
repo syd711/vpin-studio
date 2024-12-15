@@ -530,7 +530,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    cabinet = maniaClient.getCabinetClient().getCabinet();
+    cabinet = maniaClient.getCabinetClient().getCabinetCached();
 
     editTableBtn.setDisable(true);
     validationContainer.setVisible(false);

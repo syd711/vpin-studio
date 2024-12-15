@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -8,11 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.friends.FriendsPrivacySettingsController">
+<BorderPane stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.friends.FriendsPrivacySettingsController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                <children>
                   <Label styleClass="preference-title" text="ACTIVITY SETTINGS" textFill="WHITE" />
                   <Label styleClass="preference-subtitle" text="Activity Privacy">
@@ -46,6 +47,12 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="Other people can search for your cabinet name or id to send an invite to you." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Cabinet Players Privacy">
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="playersBox" prefWidth="850.0" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
@@ -54,4 +61,8 @@
          </content>
       </ScrollPane>
    </center>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="subpanel-tabbed" />
+   </styleClass>
 </BorderPane>

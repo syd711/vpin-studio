@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.friends.panels.FriendRowPanelController;
+import de.mephisto.vpin.ui.friends.panels.FriendCabinetRowPanelController;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,12 +15,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class FriendsListController implements Initializable {
@@ -40,6 +43,9 @@ public class FriendsListController implements Initializable {
   private VBox loadingBox;
 
   @FXML
+  private VBox emptySearchBox;
+
+  @FXML
   private void onSearchKeyPressed(KeyEvent e) {
     String term = textfieldSearch.getText();
   }
@@ -51,6 +57,7 @@ public class FriendsListController implements Initializable {
 
   @FXML
   private void onInvite() {
+    FriendsDialogs.openAccountSearchDialog();
   }
 
   @Override
@@ -58,35 +65,41 @@ public class FriendsListController implements Initializable {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyBox.managedProperty().bindBidirectional(emptyBox.visibleProperty());
     loadingBox.managedProperty().bindBidirectional(loadingBox.visibleProperty());
-
-    dataBox.setVisible(false);
-    emptyBox.setVisible(false);
-    loadingBox.setVisible(true);
+    emptySearchBox.managedProperty().bindBidirectional(emptySearchBox.visibleProperty());
 
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
       debouncer.debounce("search", () -> {
         Platform.runLater(() -> {
-          String term = textfieldSearch.getText();
-
+          reload();
         });
-      }, 300);
+      }, 500);
     });
+    reload();
+  }
 
+  public void reload() {
+    dataBox.getChildren().removeAll(dataBox.getChildren());
+    dataBox.setVisible(false);
+    emptyBox.setVisible(false);
+    emptySearchBox.setVisible(false);
+    loadingBox.setVisible(true);
 
     JFXFuture.supplyAsync(() -> {
-          List<Cabinet> contacts = Studio.maniaClient.getContactClient().getContacts();
+          List<Cabinet> contacts = getFilteredContacts();
           List<Node> friendPanels = new ArrayList<>();
           for (Cabinet contact : contacts) {
             try {
-              FXMLLoader loader = new FXMLLoader(FriendRowPanelController.class.getResource("friend-row-panel.fxml"));
+              FXMLLoader loader = new FXMLLoader(FriendCabinetRowPanelController.class.getResource("friend-cabinet-row-panel.fxml"));
               Pane node = loader.load();
-              FriendRowPanelController friendController = loader.getController();
-              friendController.setData(contact);
+              FriendCabinetRowPanelController friendController = loader.getController();
+              friendController.setData(this, contact);
               friendPanels.add(node);
             }
             catch (Exception e) {
               LOG.error("Failed to loading friends data: " + e.getMessage(), e);
-              WidgetFactory.showAlert(Studio.stage, "Error", "Error loading friends data: " + e.getMessage());
+              Platform.runLater(() -> {
+                WidgetFactory.showAlert(Studio.stage, "Error", "Error loading friends data: " + e.getMessage());
+              });
               return Collections.emptyList();
             }
           }
@@ -94,13 +107,22 @@ public class FriendsListController implements Initializable {
         })
         .onErrorSupply(e -> {
           LOG.error("Loading friend list failed", e);
-          Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading friend list failed: " + e.getMessage()));
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(stage, "Error", "Loading friend list failed: " + e.getMessage());
+          });
           return Collections.emptyList();
         })
         .thenAcceptLater(data -> {
+          loadingBox.setVisible(false);
+
+          String term = textfieldSearch.getText();
+          if (data.isEmpty() && !StringUtils.isEmpty(term)) {
+            emptySearchBox.setVisible(true);
+            return;
+          }
+
           if (data.isEmpty()) {
             emptyBox.setVisible(true);
-            loadingBox.setVisible(false);
             return;
           }
 
@@ -108,6 +130,14 @@ public class FriendsListController implements Initializable {
           dataBox.getChildren().removeAll(dataBox.getChildren());
           dataBox.getChildren().addAll((Collection<? extends Node>) data);
         });
+  }
 
+  private List<Cabinet> getFilteredContacts() {
+    List<Cabinet> contacts = maniaClient.getContactClient().getContacts();
+    String term = textfieldSearch.getText();
+    if (!StringUtils.isEmpty(term)) {
+      return contacts.stream().filter(c -> c.getDisplayName().toLowerCase().contains(term.toLowerCase())).collect(Collectors.toList());
+    }
+    return contacts;
   }
 }

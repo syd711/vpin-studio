@@ -1,17 +1,25 @@
 package de.mephisto.vpin.ui.friends;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.friends.panels.FriendCabinetRowPanelController;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -28,6 +36,9 @@ public class FriendsPrivacySettingsController implements Initializable {
 
   @FXML
   private CheckBox searchableCheckbox;
+
+  @FXML
+  private VBox playersBox;
 
   private TournamentSettings settings;
 
@@ -78,5 +89,19 @@ public class FriendsPrivacySettingsController implements Initializable {
         }
       }
     });
+
+    try {
+      FXMLLoader loader = new FXMLLoader(FriendCabinetRowPanelController.class.getResource("friend-cabinet-row-panel.fxml"));
+      Pane node = loader.load();
+      FriendCabinetRowPanelController friendController = loader.getController();
+      friendController.setData(this, maniaClient.getCabinetClient().getCabinetCached());
+      playersBox.getChildren().add(node);
+    }
+    catch (Exception e) {
+      LOG.error("Error loading cabinet player data: " + e.getMessage(), e);
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error loading cabinet player data: " + e.getMessage());
+      });
+    }
   }
 }

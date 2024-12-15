@@ -9,12 +9,14 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.mania.ManiaRegistration;
 import de.mephisto.vpin.ui.preferences.ManiaPreferencesController;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -24,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -70,10 +73,19 @@ public class HeaderResizeableController implements Initializable {
     }
 
     if (cabinet == null) {
-      WidgetFactory.showInformation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services to connect your cabinet with friends.", "Go to the preferences and register your cabinet.");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services to connect your cabinet with friends.", null, "Register Cabinet");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        boolean register = ManiaRegistration.register();
+        if (register) {
+          toggleFriendsView();
+        }
+      }
       return;
     }
+    toggleFriendsView();
+  }
 
+  private void toggleFriendsView() {
     boolean open = FriendsController.toggle();
     if (open) {
       friendsBtn.getStyleClass().add("friends-button-selected");
@@ -130,7 +142,7 @@ public class HeaderResizeableController implements Initializable {
     header.setUserData(this);
 
     friendsBtn.managedProperty().bindBidirectional(friendsBtn.visibleProperty());
-    friendsBtn.setVisible(Features.MANIA_ENABLED);
+    friendsBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
 
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);

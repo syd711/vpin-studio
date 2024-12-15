@@ -6,7 +6,7 @@ import javafx.scene.layout.StackPane;
 
 abstract public class SettingsSceneController {
 
-  protected void switchNode(Node childNode) {
+  protected static void switchNode(Node childNode) {
     Node lookup = Studio.stage.getScene().lookup("#root");
     BorderPane main = (BorderPane) lookup;
     StackPane stack = (StackPane) main.getCenter();

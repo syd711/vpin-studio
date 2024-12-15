@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class FriendsController extends  SettingsSceneController implements Initializable {
+public class FriendsController extends SettingsSceneController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(FriendsController.class);
 
   // Add a public no-args constructor
@@ -65,13 +65,24 @@ public class FriendsController extends  SettingsSceneController implements Initi
   private Button lastSelection;
 
   private Node preferencesRoot;
+  private static Node rootPane;
 
   private String lastScreen = "friends-list.fxml";
   private static boolean open = false;
+  private static FriendsController INSTANCE = null;
+
+  public static void navigateTo(String id) {
+    try {
+      INSTANCE.load(id + ".fxml", null);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to navigate to: {}", id, e);
+    }
+  }
 
   public static boolean toggle() {
     if (open) {
-      instance.switchNode(null);
+      switchNode(null);
     }
     else {
       if (instance == null) {
@@ -112,7 +123,11 @@ public class FriendsController extends  SettingsSceneController implements Initi
 
   @FXML
   private void onClose(ActionEvent event) {
-    FadeTransition outFader = TransitionUtil.createOutFader(root, UIDefaults.FADER_DURATION);
+    doClose();
+  }
+
+  private static void doClose() {
+    FadeTransition outFader = TransitionUtil.createOutFader(rootPane, UIDefaults.FADER_DURATION);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -193,6 +208,8 @@ public class FriendsController extends  SettingsSceneController implements Initi
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    INSTANCE = this;
+
     versionLink.setText("VPin Studio Version " + Studio.getVersion());
     versionLink.setStyle("-fx-font-size : 12px;-fx-font-color: #B0ABAB;");
     hostLabel.setText(System.getProperty("os.name"));

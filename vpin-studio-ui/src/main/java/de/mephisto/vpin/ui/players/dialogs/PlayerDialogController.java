@@ -244,7 +244,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
     if (Features.MANIA_ENABLED) {
-      cabinet = maniaClient.getCabinetClient().getCabinet();
+      cabinet = maniaClient.getCabinetClient().getCabinetCached();
     }
 
     this.player = new PlayerRepresentation();
