@@ -122,6 +122,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
             cabinet.setStatus(new CabinetStatus());
           }
           cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
+          cabinet.getStatus().setActiveGame(null);
 
           TournamentSettings settings = getSettings();
           settings.setEnabled(true);
