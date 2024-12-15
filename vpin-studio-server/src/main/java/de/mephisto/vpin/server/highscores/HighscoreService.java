@@ -260,7 +260,7 @@ public class HighscoreService implements InitializingBean {
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
           Game game = frontendService.getOriginalGame(score.getGameId());
-          if (game == null) {
+          if (game == null && score.getGameId() > 0) {
             deleteScores(score.getGameId(), true);
             continue;
           }
