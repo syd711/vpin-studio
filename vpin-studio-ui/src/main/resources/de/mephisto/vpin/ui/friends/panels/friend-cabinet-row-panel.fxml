@@ -17,7 +17,28 @@
     <HBox alignment="CENTER_LEFT">
 
         <children>
-            <Label fx:id="nameLabel" styleClass="default-title" text="-" textFill="WHITE" wrapText="true" />
+            <VBox alignment="CENTER_LEFT" spacing="6.0">
+               <children>
+                  <Label fx:id="nameLabel" styleClass="default-title" text="-" textFill="WHITE" wrapText="true" />
+                  <HBox spacing="6.0">
+                     <children>
+                        <Label fx:id="statusLabel" styleClass="default-headline" text="Online" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-blank-circle" iconSize="18" />
+                           </graphic>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label fx:id="activeGameLabel" text="Playing" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
         </children>
          <BorderPane.margin>
             <Insets left="12.0" />

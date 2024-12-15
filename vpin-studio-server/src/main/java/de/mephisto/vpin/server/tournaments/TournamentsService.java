@@ -72,13 +72,38 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-
+    if (Features.MANIA_ENABLED) {
+      try {
+        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
+        TournamentSettings settings = getSettings();
+        if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          cabinet.getStatus().setActiveGame(event.getGame().getGameDisplayName());
+        }
+        maniaService.getClient().getCabinetClient().update(cabinet);
+      }
+      catch (Exception e) {
+        LOG.error("Error updating mania online status: {}", e.getMessage(), e);
+      }
+    }
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     if (Features.MANIA_ENABLED) {
       tournamentSynchronizer.synchronizeTournaments();
+      try {
+        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
+        TournamentSettings settings = getSettings();
+        if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          cabinet.getStatus().setActiveGame(null);
+        }
+        maniaService.getClient().getCabinetClient().update(cabinet);
+      }
+      catch (Exception e) {
+        LOG.error("Error updating mania online status: {}", e.getMessage(), e);
+      }
     }
   }
 

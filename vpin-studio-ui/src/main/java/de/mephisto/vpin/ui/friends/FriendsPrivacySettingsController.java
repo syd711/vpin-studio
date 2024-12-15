@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Collections;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -48,13 +47,19 @@ public class FriendsPrivacySettingsController implements Initializable {
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     CabinetSettings cabinetSettings = cabinet.getSettings();
 
+    showActiveGameCheckbox.setDisable(!settings.isShowOnlineStatus());
+
     showOnlineStatusCheckbox.setSelected(settings.isShowOnlineStatus());
     showOnlineStatusCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
           settings.setShowOnlineStatus(newValue);
+          if (!newValue) {
+            settings.setShowActiveGameStatus(false);
+          }
           settings = client.getTournamentsService().saveSettings(settings);
+          showActiveGameCheckbox.setDisable(!settings.isShowOnlineStatus());
         }
         catch (Exception e) {
           LOG.error("Failed to save mania settings: " + e.getMessage(), e);

@@ -61,6 +61,7 @@ public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+  public static final String TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
   public static final String DISABLED_COLOR = "#767272";
   public static final String LOCAL_FAVS_COLOR = "#ffcc00";
   public static final String GLOBAL_FAVS_COLOR = "#cc6600";
@@ -70,6 +71,7 @@ public class WidgetFactory {
   public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
+  public static final String OK_STYLE = "-fx-font-color: " + OK_COLOR + ";-fx-text-fill:" + OK_COLOR + ";";
   public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
 
 

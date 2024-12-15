@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.CabinetOnlineStatus;
 import de.mephisto.vpin.ui.FriendsController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.friends.FriendsListController;
 import de.mephisto.vpin.ui.friends.FriendsPendingInvitesController;
 import de.mephisto.vpin.ui.friends.FriendsPrivacySettingsController;
@@ -23,12 +23,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -43,6 +44,12 @@ public class FriendCabinetRowPanelController implements Initializable {
 
   @FXML
   private Label nameLabel;
+
+  @FXML
+  private Label activeGameLabel;
+
+  @FXML
+  private Label statusLabel;
 
   @FXML
   private ImageView avatarView;
@@ -120,6 +127,24 @@ public class FriendCabinetRowPanelController implements Initializable {
         Image image = new Image(in);
         avatarView.setImage(image);
         CommonImageUtil.setClippedImage(avatarView, (int) (image.getWidth() / 2));
+
+        if (contact.getStatus().getStatus() != null && contact.getStatus().getStatus().equals(CabinetOnlineStatus.online)) {
+          statusLabel.setText("Online");
+          FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle");
+          icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
+          statusLabel.setGraphic(icon);
+          statusLabel.setStyle(WidgetFactory.OK_STYLE);
+          activeGameLabel.setVisible(true);
+          activeGameLabel.setText("Playing \"" + contact.getStatus().getActiveGame() + "\"");
+        }
+        else {
+          statusLabel.setText("Offline");
+          FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle-outline");
+          icon.setIconColor(Paint.valueOf("#FFFFFF"));
+          statusLabel.setGraphic(icon);
+          statusLabel.setStyle(WidgetFactory.TEXT_STYLE);
+          activeGameLabel.setVisible(false);
+        }
 
         nameLabel.setText(contact.getDisplayName());
         List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contact.getUuid());
