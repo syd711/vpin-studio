@@ -114,6 +114,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         doGenerateCard(game, generateSampleCard, template);
       });
 
+      Thread.currentThread().setName("Card Generator Thread for " + game.getGameDisplayName());
       synchronized (this) {
         this.wait();
       }
