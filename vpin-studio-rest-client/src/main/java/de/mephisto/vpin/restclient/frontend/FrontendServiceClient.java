@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,11 +103,13 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public List<FrontendPlayerDisplay> getScreenDisplays() {
-    return Arrays.asList(getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendPlayerDisplay[].class));
+    FrontendPlayerDisplay[] displays = getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendPlayerDisplay[].class);
+    return displays != null? Arrays.asList(displays): Collections.emptyList();
   }
 
   public List<GameEmulatorRepresentation> getGameEmulators() {
-    return Arrays.asList(getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class));
+    GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class);
+    return emus != null? Arrays.asList(emus): Collections.emptyList();
   }
 
   public List<GameEmulatorRepresentation> getVpxGameEmulators() {

@@ -1,11 +1,12 @@
 package de.mephisto.vpin.server.dmd;
 
+import de.mephisto.vpin.commons.MonitorInfo;
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.directb2s.BackglassService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -20,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -42,8 +45,6 @@ public class DMDPositionService {
   @Autowired
   private GameService gameService;
   @Autowired
-  private FrontendService frontendService;
-  @Autowired
   private BackglassService backglassService;
   @Autowired
   private MameService mameService;
@@ -51,102 +52,142 @@ public class DMDPositionService {
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
-    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
-    if (iniConfiguration != null) {
-      DMDInfo dmdinfo = new DMDInfo();
-      dmdinfo.setGameId(game.getId());
-      dmdinfo.setGameRom(game.getRom());
 
-      dmdinfo.setUseRegistry(useregistry(iniConfiguration));
-      if (dmdinfo.isUseRegistry()) {
-        fillDMDInfoFromRegistry(dmdinfo);
-      }
-      else {
-        fillDMDInfoFromIni(dmdinfo, iniConfiguration);
-      }
+    DMDInfo dmdinfo = new DMDInfo();
+    dmdinfo.setGameId(game.getId());
+    dmdinfo.setGameRom(game.getRom());
 
-      if (dmdinfo.getWidth() == 0) {
-        dmdinfo.setWidth(100);
-      }
-      if (dmdinfo.getHeight() == 0) {
-        dmdinfo.setHeight(dmdinfo.getWidth() / 4);
-      }
+    boolean useExternalDmd = useExternalDmd(game.getRom());
+    boolean forceAspectRatio = false;
 
-      boolean forceAspectRatio = keepAspectRatio(iniConfiguration);
-      dmdinfo.setForceAspectRatio(forceAspectRatio);
-      if (forceAspectRatio) {
-        dmdinfo.setSelectedAspectRatio(true);
-      } else {
-      // if existing dmd size ratio is close to 4:1, activate the checkbox
-        double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
-        boolean aspectRatio = (Math.abs(ratio - 4) < 0.01);
-        dmdinfo.setSelectedAspectRatio(aspectRatio);
+    if (useExternalDmd) {
+      INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
+      if (iniConfiguration != null) {
+        boolean hasRomInDmdDeviceIni = fillDMDInfoFromIni(dmdinfo, iniConfiguration);
+        if (!hasRomInDmdDeviceIni && useRegistry(iniConfiguration)) {
+          fillDMDInfoFromRegistry(dmdinfo);
+        }
+        forceAspectRatio = keepAspectRatio(iniConfiguration);
       }
-
-      // then add screen information, must be done after x,y are set
-      fillScreenInfo(dmdinfo);
-      // enforce aspect ratio is selected
-      dmdinfo.adjustAspectRatio();
-      return dmdinfo;
     }
-    return null;
+    else {
+      fillDMDInfoFromRegistry(dmdinfo);
+    }
+
+    if (dmdinfo.getWidth() == 0) {
+      dmdinfo.setWidth(100);
+    }
+    if (dmdinfo.getHeight() == 0) {
+      dmdinfo.setHeight(dmdinfo.getWidth() / 4);
+    }
+
+    dmdinfo.setForceAspectRatio(forceAspectRatio);
+    if (forceAspectRatio) {
+      dmdinfo.setSelectedAspectRatio(true);
+    } else {
+      // if existing dmd size ratio is close to 4:1, activate the checkbox
+      double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
+      boolean aspectRatio = (Math.abs(ratio - 4) < 0.01);
+      dmdinfo.setSelectedAspectRatio(aspectRatio);
+    }
+
+    // then add screen information, must be done after x,y are set
+    fillScreenInfo(dmdinfo);
+    // enforce aspect ratio if selected
+    dmdinfo.adjustAspectRatio();
+    return dmdinfo;
   }
 
   private void fillDMDInfoFromRegistry(DMDInfo dmdinfo) {
     if (dmdinfo.getGameRom() != null) {
+      dmdinfo.setUseRegistry(true);
       mameService.fillDmdPosition(dmdinfo);
     }
   }
 
-  private void fillDMDInfoFromIni(DMDInfo info, INIConfiguration iniConfiguration) {
+  private boolean fillDMDInfoFromIni(DMDInfo info, INIConfiguration iniConfiguration) {
     if (info.getGameRom() != null) {
       SubnodeConfiguration conf = iniConfiguration.getSection(info.getGameRom());
       if (!conf.isEmpty()) {
         info.setLocallySaved(true);
+        info.setUseRegistry(false);
         info.setX(safeGet(conf, "virtualdmd left"));
         info.setY(safeGet(conf, "virtualdmd top"));
         info.setWidth(safeGet(conf, "virtualdmd width"));
         info.setHeight(safeGet(conf, "virtualdmd height"));
-        return;
+        return true;
       }
     }
     //else take default...
     SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
     info.setLocallySaved(false);
+    info.setUseRegistry(false);
     if (!conf.isEmpty()) {
       info.setX(safeGet(conf, "left"));
       info.setY(safeGet(conf, "top"));
       info.setWidth(safeGet(conf, "width"));
       info.setHeight(safeGet(conf, "height"));
-    }  
+    } 
+    return false;
   }
 
   private void fillScreenInfo(DMDInfo dmdinfo) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
-    List<FrontendPlayerDisplay> displays = frontendService.getFrontendPlayerDisplays();
-    boolean hasBackglass = VPinScreen.valueOfScreen(displays, VPinScreen.BackGlass) != null;
-    boolean hasDMD = VPinScreen.valueOfScreen(displays, VPinScreen.DMD) != null;
-
+    addDeviceOffsets(screenres);
+  
     // determine on which screen the DMD is positionned onto
     if (dmdinfo.getCenterX() < 0) {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.PlayField);
     }
-    else if (hasBackglass && screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+    else if (screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
     }
-    else if (hasDMD && screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+    else if (screenres.hasDMD() && screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.DMD);
     }
-    else if (hasBackglass) {
+    else {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
       dmdinfo.centerOnScreen();
     }
-    else {
-      fillScreenInfo(dmdinfo, screenres, VPinScreen.PlayField);
-      dmdinfo.centerOnScreen();
-    }
+
+    dmdinfo.setDmdScreenSet(screenres.hasDMD());
   }
 
+  private void addDeviceOffsets(DirectB2sScreenRes screenres) {
+    List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
+    // sort by xPosition
+    monitors.sort((m1, m2) -> m1.getScreenX() - m2.getScreenX());
+
+    MonitorInfo monitor = null;
+
+    // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
+    String backglassDisplay = screenres.getBackglassDisplay();
+    if (backglassDisplay.startsWith("@")) {
+      int xPos = Integer.parseInt(backglassDisplay.substring(1)); 
+      for (MonitorInfo m : monitors) {
+        if (m.getScreenX() == xPos) {
+          monitor = m;
+        }
+      }
+    }
+    else if (backglassDisplay.startsWith("=")) {
+      int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
+      monitor = idx < monitors.size() ? monitors.get(idx) : null;
+    }
+    else {
+      for (MonitorInfo m : monitors) {
+        if (m.getDeviceName().endsWith(backglassDisplay)) {
+          monitor = m;
+        }
+      }
+    }
+
+    if (monitor != null) {
+      screenres.setBackglassDisplayX(monitor.getScreenX());
+      screenres.setBackglassDisplayY(monitor.getScreenY());
+    }
+  }
+  
   private void fillScreenInfo(DMDInfo dmdinfo, DirectB2sScreenRes screenres, VPinScreen onScreen) {
     // All coordinates in DMDInfo are relative to display
     if (VPinScreen.PlayField.equals(onScreen)) {
@@ -173,8 +214,8 @@ public class DMDPositionService {
     }
     else if (VPinScreen.DMD.equals(onScreen)) {
       dmdinfo.setOnScreen(VPinScreen.DMD);
-      dmdinfo.setX(dmdinfo.getX() - screenres.getDmdMinX() - screenres.getBackglassMinX());
-      dmdinfo.setY(dmdinfo.getY() - screenres.getDmdMinY() - screenres.getBackglassMinY());
+      dmdinfo.setX(dmdinfo.getX() - screenres.getDmdMinX());
+      dmdinfo.setY(dmdinfo.getY() - screenres.getDmdMinY());
       dmdinfo.setScreenWidth(screenres.getDmdWidth());
       dmdinfo.setScreenHeight(screenres.getDmdHeight());
       dmdinfo.setImageCentered(false);
@@ -263,6 +304,8 @@ public class DMDPositionService {
 
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    addDeviceOffsets(screenres);
+
     // enforce aspect ratio
     dmdinfo.adjustAspectRatio();
 
@@ -277,8 +320,8 @@ public class DMDPositionService {
       dmdinfo.setY(dmdinfo.getY() + screenres.getBackglassMinY());
     }
     if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
-      dmdinfo.setX(dmdinfo.getX() + screenres.getDmdMinX() + screenres.getBackglassMinX());
-      dmdinfo.setY(dmdinfo.getY() + screenres.getDmdMinY() + screenres.getBackglassMinY());
+      dmdinfo.setX(dmdinfo.getX() + screenres.getDmdMinX());
+      dmdinfo.setY(dmdinfo.getY() + screenres.getDmdMinY());
     }
 
     // round to int all number
@@ -288,19 +331,37 @@ public class DMDPositionService {
     dmdinfo.setHeight(Math.round(dmdinfo.getHeight()));
 
     Game game = gameService.getGame(dmdinfo.getGameId());
-    INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
-    if (iniConfiguration != null) {
-      if (useregistry(iniConfiguration)) {
-        return saveDMDInfoInRegistry(game, dmdinfo);
+
+    boolean useExternalDmd = useExternalDmd(dmdinfo.getGameRom());
+
+    if (useExternalDmd) {
+      INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
+      if (iniConfiguration != null) {
+        if (useRegistry(iniConfiguration)) {
+          return saveDMDInfoInRegistry(game, dmdinfo, iniConfiguration);
+        }
+        else {
+          return saveDMDInfoInIni(game, dmdinfo, iniConfiguration);
+        }
       }
-      else {
-        return saveDMDInfoInIni(game, dmdinfo, iniConfiguration);
-      }
+    }
+    else {
+      return saveDMDInfoInRegistry(game, dmdinfo, null);      
     }
     return false;
   }
 
-  private boolean saveDMDInfoInRegistry(Game game, DMDInfo dmdinfo) {
+  private boolean saveDMDInfoInRegistry(Game game, DMDInfo dmdinfo, INIConfiguration iniConfiguration) {
+    // clear any values in dmddevice that could overwrite registry values
+    String rom = game.getRom();
+
+    // mind that iniConfiguration can be null id externalDMD is not used
+    if (iniConfiguration != null) {
+      SubnodeConfiguration conf = iniConfiguration.getSection(rom);
+      conf.clear();
+      saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
+    }
+
     return mameService.saveDmdPosition(dmdinfo);
   }
 
@@ -382,7 +443,11 @@ public class DMDPositionService {
     }
   }
 
-  private boolean useregistry(INIConfiguration iniConfiguration) {
+  private boolean useExternalDmd(String rom) {
+    return rom != null ? mameService.getOptions(rom).isUseExternalDmd() : false;
+  }
+
+  private boolean useRegistry(INIConfiguration iniConfiguration) {
     SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
     return conf.containsKey("useregistry") ? conf.getBoolean("useregistry") : true;
   }

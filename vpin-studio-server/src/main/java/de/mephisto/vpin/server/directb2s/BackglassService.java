@@ -686,6 +686,7 @@ public class BackglassService {
                 writer.write(StringUtils.defaultString(screenres.getBackgroundFilePath()));
                 break;
               default:
+                // write all other lines unchanged 
                 writer.write(line);
             }
           }
