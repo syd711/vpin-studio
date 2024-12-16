@@ -203,7 +203,11 @@ public class HighscoreService implements InitializingBean {
     List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (Highscore highscore : byRawIsNotNull) {
-      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), gameService.getGame(highscore.getGameId()), serverId);
+      Game game = gameService.getGame(highscore.getGameId());
+      if (game == null) {
+        continue;
+      }
+      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), game, serverId);
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
     }
     return result;
@@ -307,7 +311,12 @@ public class HighscoreService implements InitializingBean {
 
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (HighscoreVersion version : all) {
-      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), gameService.getGame(version.getGameId()), serverId);
+      Game game = gameService.getGame(version.getGameId());
+      if (game == null) {
+        continue;
+      }
+
+      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
       //change positions start with 1!
       if (version.getChangedPosition() > versionScores.size()) {
         LOG.error("Found invalid change position '" + version.getChangedPosition() + "' for " + version);

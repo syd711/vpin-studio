@@ -135,7 +135,12 @@ public class FriendCabinetRowPanelController implements Initializable {
           statusLabel.setGraphic(icon);
           statusLabel.setStyle(WidgetFactory.OK_STYLE);
           activeGameLabel.setVisible(true);
-          activeGameLabel.setText("Playing \"" + contact.getStatus().getActiveGame() + "\"");
+          if (contact.getStatus().getActiveGame() != null) {
+            activeGameLabel.setText("Playing \"" + contact.getStatus().getActiveGame() + "\"");
+          }
+          else {
+            activeGameLabel.setVisible(false);
+          }
         }
         else {
           statusLabel.setText("Offline");
