@@ -7,6 +7,7 @@
   - The PinVol preferences allow to configure the PinVol system sound. An additional validator has been added there that shows potential conflicts with PinUP Popper.
   - The Table Data Manager dialog has also a configuration panel for the PinVol settings now, located under the tab "Settings".
 - **Tables / Media Recorder**: Added playlists to table selection options.
+- **Tables / Media Recorder**: Added "Last Update" column to see which table was touched last.
 - **Tables / Data Manager Dialog**: Renamed tab "Customizations" to "Settings" and moved some fields to the "Meta Data" tab from there.
 - **Tables / Highscore Parsing**: **"Autobots, roll out!"** @marten Added the first highscore parser that combines highscores from different modes into one list, starting with the table **Transformers**.
 - **Tables / Backglass Manager**: Added .res designer dialog.
@@ -36,9 +37,9 @@
 
 ## Bugfixes
 
+- **Tables / Overview**: Fixed critical error of the card generator that resulted in stalling the whole client (again, the last fix did work properly).
 - **Tables / Media Recorder**: Increased timeout to wait for an emulator to 60 seconds. The recording was cancelled for some users, because the launch took longer than 30 seconds. 
 - **Tables / Media Recorder**: Added hiding of the Windows taskbar for emulator based recordings.
-- **Tables / Media Recorder**: Added "Last Update" column to see which table was touched last.
 - **Tables / Deletion Dialog**: Switched to a two column layout here to support smaller screens.
 - **Preferences / Popper Settings**: Added missing "Watchdog" setting.
 - **Tables / Invalid Highscores Filter**: The filter did not check properly the highscore type so the table list contained a lot of false positives.
