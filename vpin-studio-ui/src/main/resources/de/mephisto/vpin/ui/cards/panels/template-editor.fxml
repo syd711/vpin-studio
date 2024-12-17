@@ -23,6 +23,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.layout.Pane?>
 <BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.TemplateEditorController">
    <right>
       <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
@@ -856,11 +857,9 @@
             <StackPane fx:id="previewStack" styleClass="media-container" BorderPane.alignment="CENTER">
                <children>
                   <BorderPane fx:id="previewOverlayPanel" prefHeight="200.0" prefWidth="200.0" />
-                  <VBox fx:id="previewPanel" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="media-container">
-                     <children>
-                        <ImageView fx:id="cardPreview" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                  </VBox>
+                  <Pane fx:id="previewPanel" styleClass="media-container">
+                     <ImageView fx:id="cardPreview" pickOnBounds="true" preserveRatio="true" />
+                  </Pane>
                </children>
             </StackPane>
          </center>

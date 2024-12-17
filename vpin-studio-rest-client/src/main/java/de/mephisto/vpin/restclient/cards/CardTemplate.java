@@ -51,10 +51,11 @@ public class CardTemplate extends JsonSettings {
   private boolean renderPositions = true;
   private boolean renderCanvas = false;
 
-  private int canvasX = 100;
-  private int canvasY = 100;
-  private int canvasWidth = 100;
-  private int canvasHeight = 100;
+  private double canvasX = 100;
+  private double canvasY = 100;
+  private double canvasWidth = 100;
+  private double canvasHeight = 100;
+
   private String canvasBackground;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
@@ -102,35 +103,35 @@ public class CardTemplate extends JsonSettings {
     this.renderCanvas = renderCanvas;
   }
 
-  public int getCanvasX() {
+  public double getCanvasX() {
     return canvasX;
   }
 
-  public void setCanvasX(int canvasX) {
+  public void setCanvasX(double canvasX) {
     this.canvasX = canvasX;
   }
 
-  public int getCanvasY() {
+  public double getCanvasY() {
     return canvasY;
   }
 
-  public void setCanvasY(int canvasY) {
+  public void setCanvasY(double canvasY) {
     this.canvasY = canvasY;
   }
 
-  public int getCanvasWidth() {
+  public double getCanvasWidth() {
     return canvasWidth;
   }
 
-  public void setCanvasWidth(int canvasWidth) {
+  public void setCanvasWidth(double canvasWidth) {
     this.canvasWidth = canvasWidth;
   }
 
-  public int getCanvasHeight() {
+  public double getCanvasHeight() {
     return canvasHeight;
   }
 
-  public void setCanvasHeight(int canvasHeight) {
+  public void setCanvasHeight(double canvasHeight) {
     this.canvasHeight = canvasHeight;
   }
 

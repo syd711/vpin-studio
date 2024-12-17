@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
@@ -17,10 +18,13 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.tables.dialogs.DMDPositionResizer;
+import de.mephisto.vpin.ui.tables.dialogs.DMDPositionSelection;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -29,15 +33,20 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,6 +56,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +66,8 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TemplateEditorController implements Initializable, BindingChangedListener, MediaPlayerListener {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
+  private final static int MAX_DEBOUNCE = 500;
+  public static Debouncer debouncer = new Debouncer();
 
   @FXML
   private ComboBox<CardTemplate> templateCombo;
@@ -174,16 +187,16 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private ColorPicker canvasColorSelector;
 
   @FXML
-  private Spinner<Integer> canvasXSpinner;
+  private Spinner<Double> canvasXSpinner;
 
   @FXML
-  private Spinner<Integer> canvasYSpinner;
+  private Spinner<Double> canvasYSpinner;
 
   @FXML
-  private Spinner<Integer> canvasWidthSpinner;
+  private Spinner<Double> canvasWidthSpinner;
 
   @FXML
-  private Spinner<Integer> canvasHeightSpinner;
+  private Spinner<Double> canvasHeightSpinner;
 
   @FXML
   private Spinner<Integer> canvasBorderRadiusSpinner;
@@ -218,6 +231,22 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private Label resolutionLabel;
 
+  private CanvasPositionResizer dragBox;
+
+  private ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
+
+  // The image bounds
+  private ObjectProperty<Bounds> area = new SimpleObjectProperty<>();
+
+  /**
+   * The converter for displaying numbers in spinners
+   */
+  private final DecimalFormat df = new DecimalFormat("#.##");
+
+  /**
+   * The zoom factor : <screen coordinates> x zoom = <resizer pixels>
+   */
+  private DoubleProperty zoom = new SimpleDoubleProperty(1);
 
   private BeanBinder templateBeanBinder;
   private ObservableList<String> imageList;
@@ -470,6 +499,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   private void setTemplate(CardTemplate cardTemplate) {
+    previewPanel.getChildren().removeAll(previewPanel.getChildren().stream().filter(c -> !(c instanceof ImageView)).collect(Collectors.toList()));
+
     if (templateBeanBinder == null) {
       initBindings();
     }
@@ -522,10 +553,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
     renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
-    canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
-    canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
-    canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
-    canvasHeightSpinner.getValueFactory().setValue(cardTemplate.getCanvasHeight());
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
 
@@ -539,9 +566,110 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     templateBeanBinder.setPaused(false);
 
+    // now set the existing bounds
+    Bounds bounds = cardPreview.getLayoutBounds();
+    // calculate our zoom
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    zoom.set(cardSettings.getCardResolution().toWidth() / bounds.getWidth());
+    area.set(bounds);
+
+    // The lime box that is used to position the DMD
+    dragBox = new CanvasPositionResizer(area, color);
+    renderCanvasCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          dragBox.addToPane(previewPanel);
+        }
+        else {
+          previewPanel.getChildren().remove(dragBox);
+        }
+      }
+    });
+    if (cardTemplate.isRenderCanvas()) {
+      dragBox.widthProperty().setValue(cardTemplate.getCanvasWidth());
+      dragBox.heightProperty().setValue(cardTemplate.getCanvasHeight());
+      dragBox.xProperty().setValue(cardTemplate.getCanvasX());
+      dragBox.yProperty().setValue(cardTemplate.getCanvasY());
+      dragBox.addToPane(previewPanel);
+    }
+
+
+    // setup linkages between spinner and our dragbox
+    configureSpinner(canvasXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty(), "canvasX");
+    configureSpinner(canvasYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty(), "canvasY");
+    configureSpinner(canvasWidthSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty(), "canvasWidth");
+    configureSpinner(canvasHeightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty(), "canvasHeight");
+
+
+
+    // add a selector in the pane to draw a rectangle.
+    new CanvasPositionSelection(previewPanel, area, BooleanProperty.booleanProperty(new SimpleObjectProperty<>(false)), color,
+        // called on drag start, hide the lime dragbox
+        () -> {
+          dragBox.setVisible(false);
+        },
+        // called once dragged, show the dragbox back and reposition/resize it
+        rect -> {
+          dragBox.setVisible(true);
+          dragBox.select();
+
+          dragBox.setX(rect.getMinX());
+          dragBox.setY(rect.getMinY());
+          dragBox.setWidth(rect.getWidth());
+          dragBox.setHeight(rect.getHeight());
+        });
+
+
     refreshPreview(this.gameRepresentation, true);
   }
 
+  private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property,
+                                ReadOnlyObjectProperty<Double> minProperty, ReadOnlyObjectProperty<Double> maxProperty, String propertyName) {
+
+    SpinnerValueFactory.DoubleSpinnerValueFactory factory =
+        new SpinnerValueFactory.DoubleSpinnerValueFactory(minProperty.get(), maxProperty.get());
+    factory.setAmountToStepBy(1.0);
+
+    // install a converter that convert pixels into screen coordinates using the zoom factor
+    factory.setConverter(new StringConverter<Double>() {
+      @Override
+      public String toString(Double value) {
+        if (value == null) {
+          return "";
+        }
+        int screenValue = (int) (value * zoom.get());
+        return df.format(screenValue);
+      }
+
+      @Override
+      public Double fromString(String value) {
+        if (StringUtils.isBlank(value)) {
+          return null;
+        }
+        try {
+          double screenValue = df.parse(value).doubleValue();
+          int v = (int) (screenValue / zoom.get());
+          return new Double(v);
+        }
+        catch (ParseException ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    });
+
+    spinner.setValueFactory(factory);
+    spinner.setEditable(true);
+
+    factory.valueProperty().bindBidirectional(property);
+    factory.minProperty().bind(minProperty);
+    factory.maxProperty().bind(maxProperty);
+
+    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(propertyName, () -> {
+      int value1 = (int) (t1 * zoom.get());
+      templateBeanBinder.setProperty(propertyName, new Double(value1));
+    }, MAX_DEBOUNCE));
+  }
 
   private void initBindings() {
     try {
@@ -625,10 +753,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder.bindSpinner(maxScoresSpinner, getCardTemplate(), "maxScores", 0, 100);
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
 
-      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
-      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
-      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
-      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
+//      templateBeanBinder.bindDoubleSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
+//      templateBeanBinder.bindDoubleSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
+//      templateBeanBinder.bindDoubleSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
+//      templateBeanBinder.bindDoubleSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
+
       templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
 
       renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -865,10 +994,20 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       accordion.setExpandedPane(backgroundSettingsPane);
 
       cardPreview.setPreserveRatio(true);
+      stage.widthProperty().addListener((observable, oldValue, newValue) -> onStageResize());
+      stage.heightProperty().addListener((observable, oldValue, newValue) -> onStageResize());
     }
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
     }
+  }
+
+  private void onStageResize() {
+    Platform.runLater(() -> {
+      Bounds bounds = cardPreview.getLayoutBounds();
+      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+      zoom.set(cardSettings.getCardResolution().toWidth() / bounds.getWidth());
+    });
   }
 
   private void assignTemplate(CardTemplate newValue) {

@@ -73,6 +73,17 @@ public class BeanBinder {
     }, MAX_DEBOUNCE));
   }
 
+
+  public void bindDoubleSpinner(Spinner spinner, Object beanObject, String property, int min, int max) {
+    double value = getDoubleProperty(beanObject, property);
+    SpinnerValueFactory.DoubleSpinnerValueFactory factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(min, max, value);
+    spinner.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(property, () -> {
+      int value1 = Integer.parseInt(String.valueOf(t1));
+      setProperty(property, new Double(value1));
+    }, MAX_DEBOUNCE));
+  }
+
   public void bindSpinner(Spinner spinner, Object beanObject, String property) {
     bindSpinner(spinner, beanObject, property, 0, 2000);
   }
@@ -201,6 +212,15 @@ public class BeanBinder {
     return 0;
   }
 
+  private double getDoubleProperty(Object beanObject, String property) {
+    try {
+      return (double) PropertyUtils.getProperty(beanObject, property);
+    } catch (Exception e) {
+      LOG.error("Failed to read property " + property + ": " + e.getMessage());
+    }
+    return 0;
+  }
+
   private int getIntProperty(Object beanObject, String property, int defaultValue) {
     try {
       String value = String.valueOf(PropertyUtils.getProperty(beanObject, property));
@@ -211,7 +231,7 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private void setProperty(String property, Object value) {
+  public void setProperty(String property, Object value) {
     setProperty(property, value, false);
   }
 
