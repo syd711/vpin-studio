@@ -6,14 +6,14 @@
   - The PinVol system and table volume can be updated via context menu in the table overview. Multi-selection is supported.
   - The PinVol preferences allow to configure the PinVol system sound. An additional validator has been added there that shows potential conflicts with PinUP Popper.
   - The Table Data Manager dialog has also a configuration panel for the PinVol settings now, located under the tab "Settings".  
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/pinvol-dialog.png" width="500" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/pinvol-dialog.png" width="350" />
 
 - **Tables / Backglass Manager**: Added DMD position dialog. Finally, you don't have to search for your mouse cursor to position the DMD anymore. The dialog comes with an auto-position option so you don't even have to adjust anything manually.
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/pinvol-dialog.png" width="500" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/dmd-positioner.png" width="500" />
 
 - **Tables / Backglass Manager**: Added .res designer dialog. Create fancy background for your backglass!
 
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/dmd-positioner.png" width="600" />
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="400" />
 
 - **VPin Studio Launcher**: Added Wake-on-LAN (WOL) functionality using a Magic Packet to power on any VPin Studio Servers that are in sleep mode. To enable WOL, follow these steps:
   1. **Enable Wake-on-LAN in BIOS**:
