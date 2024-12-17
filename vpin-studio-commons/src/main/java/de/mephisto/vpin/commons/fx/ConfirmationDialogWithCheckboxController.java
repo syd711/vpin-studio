@@ -106,6 +106,7 @@ public class ConfirmationDialogWithCheckboxController implements DialogControlle
   public ConfirmationResult getResult() {
     ConfirmationResult r = new ConfirmationResult();
     r.setChecked(checked);
+    r.setOkClicked(result.isPresent() && result.get().equals(ButtonType.OK));
     r.setApplyClicked(result.isPresent() && result.get().equals(ButtonType.APPLY));
     return r;
   }

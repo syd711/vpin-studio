@@ -77,6 +77,18 @@
                      </font>
                   </Button>
                   <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Remove Score" textFill="#ff3333">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2p-playlist-remove" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Delete all scores of your accounts" />
+                     </tooltip>
+                  </Button>
+                  <Separator fx:id="deleteSeparator" layoutX="442.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="link-component" text="Open Table" textFill="WHITE">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />

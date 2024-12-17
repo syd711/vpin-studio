@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -48,8 +49,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class ManiaWidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetPlayerRankController.class);
@@ -217,35 +217,52 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
           tableStack.getChildren().add(loadingOverlay);
         }
 
-        searchResult = maniaClient.getAccountClient().getRankedAccounts(page, UIDefaults.PLAYERS_PAGE_SIZE);
-        List<RankedAccount> rankedAccounts = searchResult.getResults();
+        JFXFuture.supplyAsync(() -> {
+              try {
+                return searchResult = maniaClient.getAccountClient().getRankedAccounts(page, UIDefaults.PLAYERS_PAGE_SIZE);
+              }
+              catch (Exception e) {
+                LOG.error("Loading ranked accounts: {}", e.getMessage(), e);
+              }
+              return new RankedAccountPagingResult();
+            })
+            .onErrorSupply(e -> {
+              LOG.error("Loading ranked accounts: {}", e.getMessage(), e);
+              Platform.runLater(() -> {
+                WidgetFactory.showAlert(stage, "Error", "Loading ranked accounts: " + e.getMessage());
+              });
+              return new RankedAccountPagingResult();
+            })
+            .thenAcceptLater(searchResult -> {
+              this.searchResult = searchResult;
+              List<RankedAccount> rankedAccounts = searchResult.getResults();
 
-        int from = searchResult.getPage() * UIDefaults.PLAYERS_PAGE_SIZE;
-        int to = from + UIDefaults.PLAYERS_PAGE_SIZE;
-        if (to > searchResult.getTotal()) {
-          to = searchResult.getTotal();
-        }
+              int from = searchResult.getPage() * UIDefaults.PLAYERS_PAGE_SIZE;
+              int to = from + UIDefaults.PLAYERS_PAGE_SIZE;
+              if (to > searchResult.getTotal()) {
+                to = searchResult.getTotal();
+              }
 
-        pagingInfo.setText((from + 1) + " to " + to + " of " + searchResult.getTotal());
-        pagingInfo.setVisible(searchResult.getTotal() > 0);
-        previousBtn.setDisable(true);
-        nextBtn.setDisable(true);
+              pagingInfo.setText((from + 1) + " to " + to + " of " + searchResult.getTotal());
+              pagingInfo.setVisible(searchResult.getTotal() > 0);
+              previousBtn.setDisable(true);
+              nextBtn.setDisable(true);
 
-        if (!rankedAccounts.isEmpty()) {
-          boolean hasNext = to < searchResult.getTotal();
-          boolean hasPrevious = searchResult.getPage() > 0;
-          nextBtn.setDisable(!hasNext);
-          previousBtn.setDisable(!hasPrevious);
-        }
+              if (!rankedAccounts.isEmpty()) {
+                boolean hasNext = to < searchResult.getTotal();
+                boolean hasPrevious = searchResult.getPage() > 0;
+                nextBtn.setDisable(!hasNext);
+                previousBtn.setDisable(!hasPrevious);
+              }
 
-        Platform.runLater(() -> {
-          tableStack.getChildren().remove(loadingOverlay);
-          tableView.setVisible(true);
+              tableStack.getChildren().remove(loadingOverlay);
+              tableView.setVisible(true);
 
-          ObservableList<RankedAccount> data = FXCollections.observableList(rankedAccounts);
-          tableView.setItems(data);
-          tableView.refresh();
-        });
+              ObservableList<RankedAccount> data = FXCollections.observableList(rankedAccounts);
+              tableView.setItems(data);
+              tableView.refresh();
+            });
+
       }
       catch (Exception e) {
         LOG.error("Player fetch failed: " + e.getMessage(), e);

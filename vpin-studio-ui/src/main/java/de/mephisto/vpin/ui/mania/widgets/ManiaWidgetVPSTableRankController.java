@@ -1,11 +1,15 @@
 package de.mephisto.vpin.ui.mania.widgets;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.RankedAccount;
+import de.mephisto.vpin.connectors.mania.model.RankedAccountPagingResult;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -18,16 +22,15 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
-import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,6 +57,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -61,6 +65,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ManiaWidgetVPSTableRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetVPSTableRankController.class);
@@ -96,6 +101,12 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private Button syncBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
+  private Separator deleteSeparator;
+
+  @FXML
   private Button showPlayerBtn;
 
   @FXML
@@ -118,6 +129,17 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   public ManiaWidgetVPSTableRankController() {
   }
 
+  @FXML
+  private void onDelete() {
+    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "Remove Score", null,
+        "Delete Highscore", "Delete the selected scores from VPin Mania?",
+        "Adding the highscore to the deny-list will also prohibit any future submission of the score with the given initials and value.",
+        "Add highscore to deny list",
+        true);
+    if (confirmationResult.isOkClicked()) {
+      setData(vpsTable);
+    }
+  }
 
   @FXML
   private void onPlayerView() {
@@ -183,6 +205,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
+    deleteSeparator.managedProperty().bindBidirectional(deleteSeparator.visibleProperty());
+
     syncBtn.setDisable(true);
     showPlayerBtn.setDisable(true);
     tableView.setPlaceholder(new Label("         No scores listed here?\nBe the first and create a highscore!"));
@@ -284,10 +309,13 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
-    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableScoreDetails>() {
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TableScoreDetails>() {
       @Override
-      public void changed(ObservableValue<? extends TableScoreDetails> observable, TableScoreDetails oldValue, TableScoreDetails newValue) {
-        showPlayerBtn.setDisable(newValue == null);
+      public void onChanged(Change<? extends TableScoreDetails> c) {
+        showPlayerBtn.setDisable(c.getList().size() != 1);
+        deleteBtn.setDisable(c.getList().isEmpty());
+        openBtn.setDisable(c.getList().size() != 1);
       }
     });
 
@@ -301,6 +329,31 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     catch (IOException e) {
       LOG.error("failed to load play button: " + e.getMessage(), e);
     }
+
+    deleteBtn.setVisible(false);
+    deleteSeparator.setVisible(false);
+    deleteBtn.setDisable(true);
+    openBtn.setDisable(true);
+
+    JFXFuture.supplyAsync(() -> {
+          List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
+          List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid()) && p.isAdministrative()).collect(Collectors.toList());
+          if (collect.isEmpty()) {
+            return null;
+          }
+          return collect.get(0);
+        })
+        .onErrorSupply(e -> {
+          LOG.error("Loading admin account: {}", e.getMessage(), e);
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(stage, "Error", "Loading admin account failed: " + e.getMessage());
+          });
+          return null;
+        })
+        .thenAcceptLater(account -> {
+          deleteBtn.setVisible(account != null);
+          deleteSeparator.setVisible(account != null);
+        });
   }
 
 
@@ -329,15 +382,23 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     }
 
     titleLabel.setText("Ranking for \"" + vpsTable.getDisplayName() + "\"");
-    new Thread(() -> {
-      tableScores = maniaClient.getHighscoreClient().getHighscoresByTable(vpsTable.getId());
 
-      Platform.runLater(() -> {
-        ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
-        tableView.setItems(data);
-        tableView.refresh();
-      });
-    }).start();
+    JFXFuture.supplyAsync(() -> {
+          return maniaClient.getHighscoreClient().getHighscoresByTable(vpsTable.getId());
+        })
+        .onErrorSupply(e -> {
+          LOG.error("Loading ranked accounts: {}", e.getMessage(), e);
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(stage, "Error", "Loading ranked accounts: " + e.getMessage());
+          });
+          return Collections.emptyList();
+        })
+        .thenAcceptLater(searchResult -> {
+          tableScores = searchResult;
+          ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
+          tableView.setItems(data);
+          tableView.refresh();
+        });
   }
 
   public void setManiaController(ManiaController maniaController) {
