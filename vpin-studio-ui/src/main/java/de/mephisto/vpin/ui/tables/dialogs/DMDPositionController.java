@@ -210,7 +210,7 @@ public class DMDPositionController implements Initializable, DialogController {
       // prevent a double load of image at dialog opening
       if (!selectedScreen.equals(dmdinfo.getOnScreen())) {
         disableButtons();
-        parentpane.setCenter(progressIndicator);
+//        parentpane.setCenter(progressIndicator);
 
         DMDInfo movedDmdinfo = fillDmdInfo();
         LOG.info("Moving dmdinfo for game {} : {}", game.getGameFileName(), movedDmdinfo);
@@ -264,7 +264,7 @@ public class DMDPositionController implements Initializable, DialogController {
   public void setGame(GameRepresentation gameRepresentation) {
     this.game = gameRepresentation;
     // loading...
-    parentpane.setCenter(progressIndicator);
+//    parentpane.setCenter(progressIndicator);
 
     CompletableFuture
       .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
