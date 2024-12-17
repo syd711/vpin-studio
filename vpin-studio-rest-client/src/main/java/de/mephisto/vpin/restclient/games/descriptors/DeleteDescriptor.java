@@ -18,7 +18,16 @@ public class DeleteDescriptor {
   private boolean deleteRes;
   private boolean deleteIni;
   private boolean deleteVbs;
+  private boolean deletePinVol;
   private boolean keepAssets;
+
+  public boolean isDeletePinVol() {
+    return deletePinVol;
+  }
+
+  public void setDeletePinVol(boolean deletePinVol) {
+    this.deletePinVol = deletePinVol;
+  }
 
   public boolean isKeepAssets() {
     return keepAssets;

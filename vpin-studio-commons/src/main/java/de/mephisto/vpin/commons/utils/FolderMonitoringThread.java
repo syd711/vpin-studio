@@ -116,7 +116,6 @@ public class FolderMonitoringThread {
 
     monitorThread = new Thread(() -> {
       Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder + "\"");
-      LOG.info("Launched " + Thread.currentThread().getName());
       try {
         while (running.get()) {
           try {

@@ -1,0 +1,17 @@
+.root {
+    -fx-text-base-color: black; /* Define base color for text */
+}
+
+.wol-button {
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-border-color: transparent;
+    -fx-background-color: #B2DFEE; /* Darker cyan */
+    -fx-padding: 2 8 2 8;
+    -fx-text-fill: black; /* Ensure text color is valid */
+    -fx-cursor: hand; /* Add hand cursor */
+}
+
+.wol-button:hover {
+    -fx-background-color: #80C7D7; /* Slightly darker cyan on hover */
+}

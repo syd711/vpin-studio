@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WindowsUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -597,7 +598,27 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return script;
   }
 
-  @NonNull
+  public boolean isSystemVolumeControlled() {
+    boolean systemVolumeControlled = false;
+    Connection connect = this.connect();
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
+      rs.next();
+      int on = rs.getInt("SYSVOLUME");
+      systemVolumeControlled = (on != -1);
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to sysvolume setting: " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return systemVolumeControlled;
+  }
+
   public int getVersion() {
     int version = -1;
     Connection connect = this.connect();
@@ -2080,6 +2101,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.setAdminExe("PinUpMenuSetup.exe");
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
+    frontend.setSystemVolumeControlEnabled(isSystemVolumeControlled());
     frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD, VPinScreen.Topper, VPinScreen.Menu));
 
     Map<String, String> lookups = getLookups();
@@ -2138,6 +2160,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
     }
 
+    //actually redundant, but who knows what else is in there
     File showTaskbarExe = new File(getInstallationFolder(), "showtaskbar.exe");
     if (showTaskbarExe.exists()) {
       SystemCommandExecutor exec = new SystemCommandExecutor(Arrays.asList("showtaskbar.exe"));
@@ -2145,7 +2168,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       exec.executeCommandAsync();
     }
     else {
-      LOG.error("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found.");
+      LOG.info("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found, nircmd.exe has been used before.");
     }
 
     return true;
@@ -2266,7 +2289,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         }
       });
 
-      return submit.get(30, TimeUnit.SECONDS);
+      return submit.get(EmulatorRecorderJob.EMULATOR_WAITING_TIMEOUT_SECONDS, TimeUnit.SECONDS);
     }
     catch (Exception e) {
       LOG.error("Waiting for frontend launch failed: {}", e.getMessage(), e);

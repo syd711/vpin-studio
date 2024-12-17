@@ -33,8 +33,8 @@
                   <Label styleClass="checkbox-description" text="Checks if a ROM name was resolved for the table." textFill="WHITE" />
                   <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPX File Check" />
                   <Label styleClass="checkbox-description" text="Checks if the VPX file for the selected table was found." textFill="WHITE" />
-                  <CheckBox fx:id="pref_20" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="DirectB2S or Pup Pack Required" />
-                  <Label styleClass="checkbox-description" text="Checks if either a PUP pack or a directb2s file was found." textFill="WHITE" />
+                  <CheckBox fx:id="pref_10" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Screen Settings Check" />
+                  <Label styleClass="checkbox-description" text="Checks if the frontend and emulator screens are properly setup." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="532.0" styleClass="preference-subtitle" text="Script Validators">
                      <VBox.margin>
                         <Insets top="12.0" />

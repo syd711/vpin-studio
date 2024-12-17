@@ -68,7 +68,7 @@ public class GameMediaResource {
 
   @GetMapping("/{id}")
   public FrontendMedia getGameMedia(@PathVariable("id") int id) {
-    Game game = frontendService.getGame(id);
+    Game game = frontendService.getOriginalGame(id);
     if (game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
@@ -83,7 +83,7 @@ public class GameMediaResource {
 
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
-    Game game = frontendService.getGame(search.getGameId());
+    Game game = frontendService.getOriginalGame(search.getGameId());
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
     List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
@@ -98,7 +98,7 @@ public class GameMediaResource {
                                     @RequestBody TableAsset asset) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix());
     File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
@@ -123,7 +123,7 @@ public class GameMediaResource {
                                                         @PathVariable("gameId") int gameId,
                                                         @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
@@ -146,7 +146,7 @@ public class GameMediaResource {
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    Game game = frontendService.getGame(id);
+    Game game = frontendService.getOriginalGame(id);
     if (game != null) {
       FrontendMedia frontendMedia = frontendService.getGameMedia(game);
       FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
@@ -193,7 +193,7 @@ public class GameMediaResource {
         return JobDescriptorFactory.error("Upload request did not contain a file object.");
       }
 
-      Game game = frontendService.getGame(gameId);
+      Game game = frontendService.getOriginalGame(gameId);
       if (game == null) {
         LOG.error("No game found for media upload.");
         return JobDescriptorFactory.error("No game found for media upload.");
@@ -214,7 +214,7 @@ public class GameMediaResource {
 
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     String suffix = FilenameUtils.getExtension(filename);
     File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
     File media = new File(mediaFolder, filename);
@@ -231,7 +231,7 @@ public class GameMediaResource {
 
   @DeleteMapping("/media/{gameId}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId) {
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     VPinScreen[] values = VPinScreen.values();
     for (VPinScreen screen : values) {
       FrontendMedia gameMedia = frontendService.getGameMedia(game);
@@ -271,7 +271,7 @@ public class GameMediaResource {
   }
 
   private boolean renameAsset(int gameId, VPinScreen screen, String oldName, String newName) {
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
     for (File file : mediaFiles) {
       if (file.getName().equals(oldName)) {
@@ -286,7 +286,7 @@ public class GameMediaResource {
   }
 
   private boolean toFullscreenMedia(int gameId, VPinScreen screen) throws IOException {
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
     if (mediaFiles.size() == 1) {
       File mediaFile = mediaFiles.get(0);
@@ -316,7 +316,7 @@ public class GameMediaResource {
   }
 
   private boolean addBlank(int gameId, VPinScreen screen) throws IOException {
-    Game game = frontendService.getGame(gameId);
+    Game game = frontendService.getOriginalGame(gameId);
     File target = gameMediaService.uniqueMediaAsset(game, screen);
     FileOutputStream out = new FileOutputStream(target);
     //copy base64 asset

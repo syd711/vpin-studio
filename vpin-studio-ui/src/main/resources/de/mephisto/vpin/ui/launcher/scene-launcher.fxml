@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="860.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.launcher.LauncherController">
    <top>
       <fx:include fx:id="header" source="../scene-header.fxml" />
    </top>
@@ -55,11 +55,11 @@
       </BorderPane>
    </left>
    <center>
-      <BorderPane fx:id="main" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <BorderPane fx:id="main" BorderPane.alignment="CENTER">
          <top>
             <ToolBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
               <items>
-                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="516.0">
+                  <BorderPane layoutX="10.0" layoutY="10.0" prefWidth="574.0">
                      <right>
                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
                            <children>
@@ -129,12 +129,13 @@
             </ToolBar>
          </top>
          <center>
-            <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" styleClass="accordion-container" BorderPane.alignment="CENTER">
+            <TableView fx:id="tableView" styleClass="accordion-container" BorderPane.alignment="CENTER">
               <columns>
-                <TableColumn fx:id="avatarColumn" prefWidth="78.39990091323853" style="-fx-alignment: BASELINE-CENTER;" />
-                <TableColumn fx:id="nameColumn" prefWidth="244.79993438720703" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                  <TableColumn fx:id="hostColumn" prefWidth="149.60009765625" style="-fx-alignment: BASELINE_LEFT;" text="Host" />
-                  <TableColumn fx:id="actionColumn" prefWidth="53.60003051757815" style="-fx-alignment: BASELINE_LEFT;" />
+                <TableColumn fx:id="avatarColumn" prefWidth="65" style="-fx-alignment: BASELINE-CENTER;" />
+                <TableColumn fx:id="nameColumn" prefWidth="227" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                <TableColumn fx:id="hostColumn" prefWidth="115" style="-fx-alignment: BASELINE_LEFT;" text="Host" />
+                <TableColumn fx:id="statusColumn" style="-fx-alignment: BASELINE_CENTER;" />
+                <TableColumn fx:id="actionColumn" prefWidth="60.0" style="-fx-alignment: BASELINE_LEFT;" />
               </columns>
             </TableView>
          </center>

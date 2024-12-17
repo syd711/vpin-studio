@@ -74,11 +74,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private Label dmdDimensionLabel;
 
   @FXML
+  private Label dmdPositionLabel;
+
+  @FXML
   private Label playfieldScreenLabel;
-  
+
   @FXML
   private Label backglassScreenLabel;
-  
+
+  @FXML
+  private Label backglassPositionLabel;
+
   @FXML
   private Label dmdScreenLabel;
 
@@ -102,22 +108,22 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   // The dialog frame
   private Stage stage;
-  
+
   private DirectB2sScreenRes screenres;
 
   private BufferedImage frameImg;
 
   private BufferedImage backglassImg;
-  
+
   private int previewWidth = -1;
   private int previewHeight = -1;
 
   private FrontendPlayerDisplay backglassDisplay;
-  
+
   private File uploadedFrame = null;
 
   private boolean stretchedBackglass;
-    
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     stage.close();
@@ -126,68 +132,68 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   @FXML
   private void onGenerateClick(ActionEvent event) {
     JFXFuture.runAsync(() -> {
-      if (stretchedBackglass) {
-        screenres.setBackglassX(0);
-        screenres.setBackglassY(0);
-        screenres.setBackglassWidth(backglassDisplay.getWidth());
-        screenres.setBackglassHeight(backglassDisplay.getHeight());
-      
-        screenres.setBackgroundX(0);
-        screenres.setBackgroundY(0);
-        screenres.setBackgroundWidth(0);
-        screenres.setBackgroundHeight(0);
-        screenres.setBackgroundFilePath(null);
-      }
-      else {
-        if (uploadedFrame != null) {
-          String newFrameName = client.getBackglassServiceClient().uploadScreenResFrame(screenres, uploadedFrame);
-          if (newFrameName != null) {
-            screenres.setBackgroundFilePath(newFrameName);
-            uploadedFrame = null;
+          if (stretchedBackglass) {
+            screenres.setBackglassX(0);
+            screenres.setBackglassY(0);
+            screenres.setBackglassWidth(backglassDisplay.getWidth());
+            screenres.setBackglassHeight(backglassDisplay.getHeight());
+
+            screenres.setBackgroundX(0);
+            screenres.setBackgroundY(0);
+            screenres.setBackgroundWidth(0);
+            screenres.setBackgroundHeight(0);
+            screenres.setBackgroundFilePath(null);
           }
           else {
-            JFXFuture.throwException("Cannot store frame " + uploadedFrame);
+            if (uploadedFrame != null) {
+              String newFrameName = client.getBackglassServiceClient().uploadScreenResFrame(screenres, uploadedFrame);
+              if (newFrameName != null) {
+                screenres.setBackgroundFilePath(newFrameName);
+                uploadedFrame = null;
+              }
+              else {
+                JFXFuture.throwException("Cannot store frame " + uploadedFrame);
+              }
+            }
+
+            int backglassFitWidth = backglassDisplay.getWidth();
+            int backglassFitHeight = backglassDisplay.getHeight();
+            // If background is centered, fit new backgroundWidth and backgroundHeight within the screen
+            // case where height constraint => add horizontal bezels
+            if (backglassImg.getWidth() * backglassFitHeight < backglassImg.getHeight() * backglassFitWidth) {
+              backglassFitWidth = (int) ((0.0 + backglassFitHeight) * backglassImg.getWidth() / backglassImg.getHeight());
+            }
+            else {
+              backglassFitHeight = (int) ((0.0 + backglassFitWidth) * backglassImg.getHeight() / backglassImg.getWidth());
+            }
+
+            screenres.setBackglassX((backglassDisplay.getWidth() - backglassFitWidth) / 2);
+            screenres.setBackglassY((backglassDisplay.getHeight() - backglassFitHeight) / 2);
+            screenres.setBackglassWidth(backglassFitWidth);
+            screenres.setBackglassHeight(backglassFitHeight);
+
+            screenres.setBackgroundX(0);
+            screenres.setBackgroundY(0);
+            screenres.setBackgroundWidth(backglassDisplay.getWidth());
+            screenres.setBackgroundHeight(backglassDisplay.getHeight());
           }
-        }
-  
-        int backglassFitWidth = backglassDisplay.getWidth();
-        int backglassFitHeight = backglassDisplay.getHeight();
-        // If background is centered, fit new backgroundWidth and backgroundHeight within the screen
-        // case where height constraint => add horizontal bezels
-        if (backglassImg.getWidth() * backglassFitHeight < backglassImg.getHeight() * backglassFitWidth) {
-          backglassFitWidth = (int) ((0.0 + backglassFitHeight)  * backglassImg.getWidth() / backglassImg.getHeight());
-        }
-        else {
-          backglassFitHeight = (int) ((0.0 + backglassFitWidth)  * backglassImg.getHeight() / backglassImg.getWidth());
-        }
 
-        screenres.setBackglassX((backglassDisplay.getWidth() - backglassFitWidth) / 2);
-        screenres.setBackglassY((backglassDisplay.getHeight() - backglassFitHeight) / 2);
-        screenres.setBackglassWidth(backglassFitWidth);
-        screenres.setBackglassHeight(backglassFitHeight);
+          screenres.setTurnOnRunAsExe(turnOnRunAsExe.isSelected());
+          screenres.setTurnOnBackground(turnOnBackground.isSelected());
 
-        screenres.setBackgroundX(0);
-        screenres.setBackgroundY(0);
-        screenres.setBackgroundWidth(backglassDisplay.getWidth());
-        screenres.setBackgroundHeight(backglassDisplay.getHeight());
-      }
-
-      screenres.setTurnOnRunAsExe(turnOnRunAsExe.isSelected());
-      screenres.setTurnOnBackground(turnOnBackground.isSelected());
-
-      ReturnMessage status = client.getBackglassServiceClient().saveScreenRes(screenres);
-      JFXFuture.throwExceptionIfError(status);
-    })
-    .thenLater(() -> {
-      stage.close();
-      // refresh screens
-      if (screenres.getGameId() != -1) {
-        EventManager.getInstance().notifyTableChange(screenres.getGameId(), null);
-      }
-    })
-    .onErrorLater(ex -> {
-      WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", ex.getMessage());
-    });
+          ReturnMessage status = client.getBackglassServiceClient().saveScreenRes(screenres);
+          JFXFuture.throwExceptionIfError(status);
+        })
+        .thenLater(() -> {
+          stage.close();
+          // refresh screens
+          if (screenres.getGameId() != -1) {
+            EventManager.getInstance().notifyTableChange(screenres.getGameId(), null);
+          }
+        })
+        .onErrorLater(ex -> {
+          WidgetFactory.showAlert(stage, "Error", "Error saving .res file :", ex.getMessage());
+        });
   }
 
   @FXML
@@ -229,7 +235,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   }
 
   private void refreshPreview() {
-    
+
     if (previewWidth > 0 && previewHeight > 0 && backglassImg != null) {
       BufferedImage preview = new BufferedImage((int) previewWidth, (int) previewHeight, BufferedImage.TYPE_INT_ARGB);
 
@@ -244,10 +250,10 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
         // If background is centered, fit new backgroundWidth and backgroundHeight within the preview
         // case where height constraint => add horizontal bezels
         if (backglassImg.getWidth() * previewHeight < backglassImg.getHeight() * previewWidth) {
-          backgroundWidth = (int) ((0.0 + previewHeight)  * backglassImg.getWidth() / backglassImg.getHeight());
+          backgroundWidth = (int) ((0.0 + previewHeight) * backglassImg.getWidth() / backglassImg.getHeight());
         }
         else {
-          backgroundHeight = (int) ((0.0 + previewWidth)  * backglassImg.getHeight() / backglassImg.getWidth());
+          backgroundHeight = (int) ((0.0 + previewWidth) * backglassImg.getHeight() / backglassImg.getWidth());
         }
       }
       Image rescaledBackground = backglassImg.getScaledInstance(backgroundWidth, backgroundHeight, Image.SCALE_DEFAULT);
@@ -272,7 +278,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     turnOnRunAsExe.setSelected(true);
     turnOnBackground.setSelected(true);
 
-    this.clearBtn.visibleProperty().bind(this.fileNameField.textProperty().isNotEmpty());;
+    this.clearBtn.visibleProperty().bind(this.fileNameField.textProperty().isNotEmpty());
 
     root.setOnDragOver(new FileSelectorDragEventHandler(root, "png", "jpg"));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
@@ -281,7 +287,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     }));
 
     // create a toggle group 
-    ToggleGroup tg = new ToggleGroup(); 
+    ToggleGroup tg = new ToggleGroup();
     radioStretchBackglass.setToggleGroup(tg);
     radioCenterBackglass.setToggleGroup(tg);
     tg.selectedToggleProperty().addListener((obs, o, n) -> {
@@ -292,29 +298,29 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
     // load screen dimensions
     JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplays())
-      .thenAcceptLater(displays -> {
-        if (displays != null) {
-          for (FrontendPlayerDisplay display : displays) {
-            if (VPinScreen.PlayField.equals(display.getScreen())) {
-              playfieldScreenLabel.setText(formatLocationAndDimension(-1, -1, display.getWidth(), display.getHeight()));
-            }
-            else if (VPinScreen.BackGlass.equals(display.getScreen())) {
-              this.backglassDisplay = display;
-              backglassScreenLabel.setText(formatLocationAndDimension(-1, -1, display.getWidth(), display.getHeight()));
+        .thenAcceptLater(displays -> {
+          if (displays != null) {
+            for (FrontendPlayerDisplay display : displays) {
+              if (VPinScreen.PlayField.equals(display.getScreen())) {
+                playfieldScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+              }
+              else if (VPinScreen.BackGlass.equals(display.getScreen())) {
+                this.backglassDisplay = display;
+                backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
 
-              // resize the preview proportionnaly 
-              this.previewHeight = (int) previewImage.getFitHeight();
-              double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
-              previewImage.setFitWidth(width);
-              this.previewWidth = (int) width;
+                // resize the preview proportionnaly
+                this.previewHeight = (int) previewImage.getFitHeight();
+                double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
+                previewImage.setFitWidth(width);
+                this.previewWidth = (int) width;
+              }
+              else if (VPinScreen.DMD.equals(display.getScreen())) {
+                dmdScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+              }
             }
-            else if (VPinScreen.DMD.equals(display.getScreen())) {
-              dmdScreenLabel.setText(formatLocationAndDimension(-1, -1, display.getWidth(), display.getHeight()));
-            }
+            refreshPreview();
           }
-          refreshPreview();
-        }
-      });
+        });
   }
 
   @Override
@@ -325,37 +331,37 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     this.stage = stage;
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(directB2S, false))
-    .thenAcceptLater(res -> setScreenRes(res));
+        .thenAcceptLater(res -> setScreenRes(res));
 
     JFXFuture.supplyAsync(() -> {
-      DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(directB2S);
-      if (data != null) {
-        try {
-          return client.getBackglassServiceClient().getDirectB2sBackground(data);
-        }
-        catch (IOException ioe) {
-          LOG.error("Cannot get background for backglass {} of emulator {} : {}", 
-            directB2S.getFileName(), directB2S.getEmulatorId(), ioe.getMessage());
-        }
-      }
-      return null;
-    })
-    .thenAcceptLater((is) -> {
-      if (is != null) {
-        try {
-          backglassImg = ImageIO.read(is);
-        }
-        catch (IOException ioe) {
-          backglassImg = null;
-          LOG.error("Cannot load background image for backglass {} of emulator {} : {}", 
-            directB2S.getFileName(), directB2S.getEmulatorId(), ioe.getMessage());
-        }
-      }
-      else {
-        backglassImg = null;
-      }
-      refreshPreview();
-    });
+          DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(directB2S);
+          if (data != null) {
+            try {
+              return client.getBackglassServiceClient().getDirectB2sBackground(data);
+            }
+            catch (IOException ioe) {
+              LOG.error("Cannot get background for backglass {} of emulator {} : {}",
+                  directB2S.getFileName(), directB2S.getEmulatorId(), ioe.getMessage());
+            }
+          }
+          return null;
+        })
+        .thenAcceptLater((is) -> {
+          if (is != null) {
+            try {
+              backglassImg = ImageIO.read(is);
+            }
+            catch (IOException ioe) {
+              backglassImg = null;
+              LOG.error("Cannot load background image for backglass {} of emulator {} : {}",
+                  directB2S.getFileName(), directB2S.getEmulatorId(), ioe.getMessage());
+            }
+          }
+          else {
+            backglassImg = null;
+          }
+          refreshPreview();
+        });
   }
 
   private void setScreenRes(DirectB2sScreenRes res) {
@@ -363,32 +369,33 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
     if (screenres != null) {
       screenResLabel.setText(screenres.getScreenresFilePath());
-      playfieldDimensionLabel.setText(formatLocationAndDimension(-1, -1, screenres.getPlayfieldWidth(), screenres.getPlayfieldHeight()));
-      backglassDimensionLabel.setText(formatLocationAndDimension(screenres.getBackglassX(), screenres.getBackglassY(), 
-          screenres.getBackglassWidth(), screenres.getBackglassHeight()));
-      dmdDimensionLabel.setText(formatLocationAndDimension(screenres.getDmdX(), screenres.getDmdY(), 
-          screenres.getDmdWidth(), screenres.getDmdHeight()));
+      playfieldDimensionLabel.setText(formatDimension(screenres.getPlayfieldWidth(), screenres.getPlayfieldHeight()));
+      backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
+      backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
+      dmdPositionLabel.setText(formatLocation(screenres.getBackglassX() + screenres.getDmdX(), screenres.getBackglassY() + screenres.getDmdY()));
+      dmdDimensionLabel.setText(formatDimension(screenres.getDmdWidth(), screenres.getDmdHeight()));
+
       if (res.isBackglassCentered()) {
         radioCenterBackglass.setSelected(true);
-      } 
+      }
       else {
         radioStretchBackglass.setSelected(true);
       }
       if (StringUtils.isNotEmpty(screenres.getBackgroundFilePath())) {
         fileNameField.setText(screenres.getBackgroundFilePath());
         JFXFuture.supplyAsync(() -> {
-          try {
-            return ImageIO.read(client.getBackglassServiceClient().getScreenResFrame(screenres));
-          }
-          catch (IOException ioe) {
-            LOG.error("Cannot load frame image so remove it", ioe);
-            return null;
-          }
-        })
-        .thenAcceptLater(img -> {
-            frameImg = img;
-            refreshPreview();
-        });
+              try {
+                return ImageIO.read(client.getBackglassServiceClient().getScreenResFrame(screenres));
+              }
+              catch (IOException ioe) {
+                LOG.error("Cannot load frame image so remove it", ioe);
+                return null;
+              }
+            })
+            .thenAcceptLater(img -> {
+              frameImg = img;
+              refreshPreview();
+            });
       }
     }
     else {
@@ -399,12 +406,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     }
   }
 
-  private String formatLocationAndDimension(int x, int y, int width, int height) {
+  private String formatLocation(int x, int y) {
     StringBuilder bld = new StringBuilder();
     if (x != -1 || y != -1) {
-      bld.append(x).append("/").append(y).append("   ");
+      bld.append(x).append(" / ").append(y);
     }
-    bld.append(width).append("x").append(height);
+    return bld.toString();
+  }
+
+  private String formatDimension(int width, int height) {
+    StringBuilder bld = new StringBuilder();
+    bld.append(width).append(" x ").append(height);
     return bld.toString();
   }
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
@@ -162,6 +163,11 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    if (Features.SCREEN_VALIDATOR && isValidationEnabled(game, CODE_SCREEN_SIZE_ISSUE)) {
+      //TODO add impl
+      result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCREEN_SIZE_ISSUE));
+    }
+
     //screen assets are validated for all emulators
     List<ValidationState> screenValidationResult = validateScreenAssets(game, findFirst, result);
     if (screenValidationResult != null) {
@@ -232,7 +238,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
+            Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
             if (otherGame != null) {
               //only complain if it is another table or has no VPS mapping
               if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {
@@ -357,6 +363,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
     }
+
     return null;
   }
 
@@ -671,7 +678,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //ROM is not supported
-    if (!StringUtils.isEmpty(rom) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
+    if (!StringUtils.isEmpty(rom) && HighscoreType.NVRam.equals(game.getHighscoreType()) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
@@ -698,7 +705,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

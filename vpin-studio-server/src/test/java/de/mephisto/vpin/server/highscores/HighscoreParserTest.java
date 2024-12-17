@@ -192,7 +192,7 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
   @Test
   public void testParsing() {
     for (String testling : testlings) {
-      List<Score> test = highscoreParsingService.parseScores(new Date(), testling, -1, -1l);
+      List<Score> test = highscoreParsingService.parseScores(new Date(), testling, null, -1l);
       assertFalse(test.isEmpty());
       assertTrue(test.size() > 3);
     }
@@ -200,35 +200,35 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
 
   @Test
   public void testRaw() {
-    List<Score> test = highscoreParsingService.parseScores(new Date(), RAW3, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), RAW3, null, -1l);
     assertFalse(test.isEmpty());
     assertEquals(test.size(), 5);
   }
 
   @Test
   public void testSingleton() {
-    List<Score> test = highscoreParsingService.parseScores(new Date(), singleton, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), singleton, null, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }
 
   @Test
   public void testInvalidTitle() {
-    List<Score> test = highscoreParsingService.parseScores(new Date(), invalidTitle, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), invalidTitle, null, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }
 
   @Test
   public void testBlankScores() {
-    List<Score> test = highscoreParsingService.parseScores(new Date(), blankValues, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), blankValues, null, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
   }
 
   @Test
   public void testOrder() {
-    List<Score> test = highscoreParsingService.parseScores(new Date(), orderCheck, -1, -1l);
+    List<Score> test = highscoreParsingService.parseScores(new Date(), orderCheck, null, -1l);
     assertFalse(test.isEmpty());
     assertTrue(test.size() > 3);
 

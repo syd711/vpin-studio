@@ -501,7 +501,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, message.getCreatedAt());
     String raw = message.getRaw();
-    scores.addAll(highscoreParser.parseScores(message.getCreatedAt(), raw, -1, message.getServerId()));
+    scores.addAll(highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId()));
     return summary;
   }
 

@@ -165,10 +165,7 @@ public class DirectB2SResource {
     headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");
-
-    if (image == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
+    headers.add("X-Frame-Options", "SAMEORIGIN");
 
     ByteArrayResource resource = new ByteArrayResource(image);
     return ResponseEntity.ok()

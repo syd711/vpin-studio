@@ -46,6 +46,9 @@ public class TablesSidebarDMDController implements Initializable {
   private Button flexDMDUIBtn;
 
   @FXML
+  private Button dmdPositionBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -123,6 +126,12 @@ public class TablesSidebarDMDController implements Initializable {
   }
 
   @FXML
+  private void onDMDPosition() {
+    GameRepresentation g = game.get();
+    TableDialogs.openDMDPositionDialog(g);
+  }
+
+  @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
 
@@ -167,6 +176,7 @@ public class TablesSidebarDMDController implements Initializable {
     this.dmdPackage = null;
     this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
+    dmdPositionBtn.setDisable(g.isEmpty());
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);

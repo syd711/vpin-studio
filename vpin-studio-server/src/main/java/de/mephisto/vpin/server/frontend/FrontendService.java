@@ -7,13 +7,11 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -26,11 +24,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -194,7 +189,14 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return games;
   }
 
-  public Game getGame(int id) {
+  /**
+   * Returns the original game from the frontend, without any custom field replacements.
+   * <b>Important:</b> This instance may not have any ROM name or not the correct one!
+   *
+   * @param id the id of the game
+   * @return the original un-customized game instance
+   */
+  public Game getOriginalGame(int id) {
     return setGameEmulator(getFrontendConnector().getGame(id));
   }
 
@@ -232,7 +234,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  // no more used ?
+  //TODO no more used ?
   public int getVersion() {
     return getFrontendConnector().getVersion();
   }
@@ -701,7 +703,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public FrontendMedia getGameMedia(int gameId) {
-    Game game = getGame(gameId);
+    Game game = getOriginalGame(gameId);
     return getGameMedia(game);
   }
 

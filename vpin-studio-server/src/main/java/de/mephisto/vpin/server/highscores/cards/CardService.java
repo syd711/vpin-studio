@@ -99,12 +99,25 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return false;
   }
 
+  /**
+   * The card must be drawn synchronized and in a FX thread.
+   * We need to wait until finished, because otherwise the UI would show the previous result
+   *
+   * @param game
+   * @param generateSampleCard
+   * @param template
+   * @return
+   */
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
+      long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+      ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
       Platform.runLater(() -> {
-        doGenerateCard(game, generateSampleCard, template);
+        Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
+        doGenerateCard(game, summary, generateSampleCard, template);
       });
 
+      Thread.currentThread().setName("Card Generator Thread for " + game.getGameDisplayName());
       synchronized (this) {
         this.wait();
       }
@@ -116,10 +129,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     }
   }
 
-  private boolean doGenerateCard(Game game, boolean generateSampleCard, CardTemplate template) {
+  private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
     try {
-      long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-      ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         //sample card are always generated
         if (generateSampleCard) {
@@ -162,7 +173,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to generate highscore card: " + e.getMessage(), e);
+      LOG.error("Failed to generate highscore card: {}", e.getMessage(), e);
       SLOG.error("Failed to generate highscore card: " + e.getMessage());
     }
     finally {

@@ -61,6 +61,9 @@
                         <Label layoutX="34.0" layoutY="875.0" styleClass="checkbox-description" text="This will change volume back to original when returning from games. You can disable it with this." textFill="WHITE" />
                         <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use Alt Wheels" />
                         <Label layoutX="34.0" layoutY="929.0" styleClass="checkbox-description" text="Use your own wheels for an altmode." textFill="WHITE" />
+                        <CheckBox fx:id="watchDog" layoutX="10.0" layoutY="910.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Watchdog" />
+                        <Label layoutX="10.0" layoutY="948.0" styleClass="checkbox-description" text="If you run cab 24/7 and notice that your media crashes and you no longer see playfield videos. " textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="1008.0" styleClass="checkbox-description" text="This will monitor the VLC playfield media and if there's a crash it will auto-restart popper. (experimental)" textFill="WHITE" />
                         <GridPane vgap="3.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />

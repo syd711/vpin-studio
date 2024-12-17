@@ -102,7 +102,7 @@ public class AssetService {
     AssetMetaData metaData = new AssetMetaData();
     request.setMetaData(metaData);
     try {
-      Game game = frontendService.getGame(request.getGameId());
+      Game game = frontendService.getOriginalGame(request.getGameId());
       if (game == null) {
         LOG.info("No game found for " + request.getGameId());
         request.setResult("No game found for " + request.getGameId());

@@ -6,14 +6,13 @@ import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.lang.invoke.StringConcatException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NvRamOutToRawTest {
+public class NvRamOutputToScoreTextTest {
 
 
   private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv");
@@ -49,13 +48,12 @@ public class NvRamOutToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+      String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
       System.out.println(raw);
 
       assertNotNull(raw);
-      RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
-      List<Score> parse = parser.parse();
+      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
       System.out.println("Parsed " + parse.size() + " score entries.");
       System.out.println("*******************************************************************************************");
@@ -73,13 +71,12 @@ public class NvRamOutToRawTest {
     PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
 
     File entry = new File(gameEmulator.getNvramFolder(), "punchy.nv");
-    String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
+    String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
     System.out.println(raw);
 
     assertNotNull(raw);
-    RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
-    List<Score> parse = parser.parse();
+    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
     System.out.println("Parsed " + parse.size() + " score entries.");
 
     for (Score score : parse) {

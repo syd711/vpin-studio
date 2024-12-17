@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.pinvol;
 
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -43,9 +43,19 @@ public class PinVolResource {
     return pinVolService.killPinVol();
   }
 
+  @GetMapping("/preferences")
+  public PinVolPreferences getPreferences() {
+    return pinVolService.getPinVolTablePreferences();
+  }
+
   @GetMapping("/setvolume")
   public boolean setVolume() {
     return pinVolService.setSystemVolume();
+  }
+
+  @PostMapping("/save")
+  public PinVolPreferences save(@RequestBody PinVolUpdate update) throws Exception {
+    return pinVolService.update(update);
   }
 
 }

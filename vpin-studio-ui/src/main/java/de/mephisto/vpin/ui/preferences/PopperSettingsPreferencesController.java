@@ -88,6 +88,9 @@ public class PopperSettingsPreferencesController implements Initializable {
   private CheckBox useAltWheels;
 
   @FXML
+  private CheckBox watchDog;
+
+  @FXML
   private Spinner<Integer> wheelUpdateMS;
 
   @FXML
@@ -274,6 +277,12 @@ public class PopperSettingsPreferencesController implements Initializable {
     useAltWheels.setSelected(popperSettings.isUseAltWheels());
     useAltWheels.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       popperSettings.setUseAltWheels(t1);
+      save();
+    });
+
+    watchDog.setSelected(popperSettings.isWatchDog());
+    watchDog.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      popperSettings.setWatchDog(t1);
       save();
     });
   }

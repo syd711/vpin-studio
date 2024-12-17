@@ -105,7 +105,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               if (!competition.isHighscoreReset()) {
                 if (highscore.isPresent()) {
                   Highscore hs = highscore.get();
-                  List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), competition.getGameId(), serverId);
+                  List<Score> scores = highscoreParser.parseScores(hs.getCreatedAt(), hs.getRaw(), game, serverId);
 
                   if (!scores.isEmpty()) {
                     String msg = discordSubscriptionMessageFactory.createFirstSubscriptionHighscoreMessage(game, competition, scores.get(0), competition.getScoreLimit());

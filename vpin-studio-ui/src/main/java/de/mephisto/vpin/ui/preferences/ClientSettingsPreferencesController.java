@@ -137,6 +137,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnEmulator;
   @FXML
+  private CheckBox columnPinVol;
+  @FXML
   private CheckBox columnIni;
   @FXML
   private CheckBox columnPlaylists;
@@ -563,6 +565,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPov.setSelected(uiSettings.isColumnPov());
     columnPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPov(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnPinVol.setSelected(uiSettings.isColumnPinVol());
+    columnPinVol.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnPinVol(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

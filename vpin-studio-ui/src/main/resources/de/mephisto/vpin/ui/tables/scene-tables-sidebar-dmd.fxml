@@ -135,6 +135,14 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
+            <Button fx:id="dmdPositionBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Position">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
+               </graphic>
+            </Button>
             <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button" text="DmdDevice.ini" textFill="WHITE">
                <font>
@@ -147,7 +155,7 @@
                   <Tooltip text="Open DmdDevice.ini configuration file" />
                </tooltip>
             </Button>
-            <Button fx:id="flexDMDUIBtn" mnemonicParsing="false" onAction="#onFlexDMDUI" styleClass="external-component" text="FlexDMD Helper">
+            <Button fx:id="flexDMDUIBtn" mnemonicParsing="false" onAction="#onFlexDMDUI" styleClass="external-component" text="FlexDMD">
                <font>
                   <Font size="14.0" />
                </font>

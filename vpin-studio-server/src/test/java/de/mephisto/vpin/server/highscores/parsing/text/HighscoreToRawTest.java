@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
+import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapterImpl;
 import org.apache.commons.io.FileUtils;
@@ -47,8 +47,7 @@ public class HighscoreToRawTest {
       assertNotNull(raw);
       assertTrue(raw.contains(ScoreTextFileAdapterImpl.HIGHEST_SCORES));
 
-      RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
-      List<Score> parse = parser.parse();
+      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
       assertFalse(parse.isEmpty());
     }
     System.out.println("Tested " + count + " entries");

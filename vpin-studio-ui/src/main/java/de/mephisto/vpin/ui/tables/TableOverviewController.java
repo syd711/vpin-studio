@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -111,6 +113,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnAltColor;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPinVol;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPOV;
@@ -270,7 +275,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
@@ -1175,6 +1180,53 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return btn;
     }, true);
 
+    BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
+      Label label = new Label("-");
+      PinVolPreferences prefs = client.getPinVolService().getPinVolTablePreferences();
+      GameRepresentation game = model.getGame();
+      PinVolTableEntry entry = prefs.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+      if (entry != null) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(entry.getPrimaryVolume());
+        builder.append(" / ");
+        builder.append(entry.getSecondaryVolume());
+
+        if (entry.getSsfBassVolume() > 0 || entry.getSsfFrontVolume() > 0 || entry.getSsfRearVolume() > 0) {
+          builder.append(" / ");
+          builder.append(entry.getSsfBassVolume());
+          builder.append(" / ");
+          builder.append(entry.getSsfRearVolume());
+          builder.append(" / ");
+          builder.append(entry.getSsfFrontVolume());
+        }
+
+        StringBuilder tt = new StringBuilder();
+        tt.append("Primary Volume:\t");
+        tt.append(entry.getPrimaryVolume());
+        tt.append("\n");
+        tt.append("Secondary Volume:\t");
+        tt.append(entry.getSecondaryVolume());
+        tt.append("\n");
+        if (entry.getSsfBassVolume() > 0 || entry.getSsfFrontVolume() > 0 || entry.getSsfRearVolume() > 0) {
+          tt.append("Bass Volume:\t\t");
+          tt.append(entry.getSsfBassVolume());
+          tt.append("\n");
+          tt.append("Rear Volume:\t\t");
+          tt.append(entry.getSsfRearVolume());
+          tt.append("\n");
+          tt.append("Front Volume:\t\t");
+          tt.append(entry.getSsfFrontVolume());
+
+        }
+
+
+        label.setTooltip(new Tooltip(tt.toString()));
+        label.setText(builder.toString());
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
@@ -1608,6 +1660,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
+    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
@@ -1773,6 +1826,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
+    columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());

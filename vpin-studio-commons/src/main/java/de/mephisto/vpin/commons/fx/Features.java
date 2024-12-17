@@ -12,5 +12,7 @@ public class Features {
   public static boolean DROP_IN_FOLDER = true;
 
   public static boolean RECORDER = true;
-  public static boolean RES_EDITOR = false;
+  public static boolean RES_EDITOR = true;
+
+  public static boolean SCREEN_VALIDATOR = false;
 }

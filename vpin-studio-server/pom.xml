@@ -65,9 +65,11 @@
             <version>2.9.2</version>
         </dependency>
 
-
-
-
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>boofcv-core</artifactId>
+            <version>1.1.7</version>
+        </dependency>
 
         <dependency>
             <groupId>net.java.dev.jna</groupId>

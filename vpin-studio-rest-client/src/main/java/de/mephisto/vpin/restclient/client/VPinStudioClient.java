@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
 import de.mephisto.vpin.restclient.OverlayClient;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
@@ -18,10 +17,10 @@ import de.mephisto.vpin.restclient.components.ComponentServiceClient;
 import de.mephisto.vpin.restclient.directb2s.BackglassServiceClient;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
+import de.mephisto.vpin.restclient.dmd.DMDPositionServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -49,7 +48,6 @@ import de.mephisto.vpin.restclient.video.VideoConversionServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +76,7 @@ public class VPinStudioClient implements OverlayClient {
   private final BackglassServiceClient backglassServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final DMDServiceClient dmdServiceClient;
+  private final DMDPositionServiceClient dmdPositionServiceClient;
   private final DOFServiceClient dofServiceClient;
   private final DOFLinxServiceClient dofLinxServiceClient;
   private final GamesServiceClient gamesServiceClient;
@@ -124,6 +123,7 @@ public class VPinStudioClient implements OverlayClient {
     this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
+    this.dmdPositionServiceClient = new DMDPositionServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
     this.dofLinxServiceClient = new DOFLinxServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
@@ -157,6 +157,10 @@ public class VPinStudioClient implements OverlayClient {
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public DMDPositionServiceClient getDmdPositionService() {
+    return dmdPositionServiceClient;
   }
 
   public PatcherServiceClient getPatcherService() {
@@ -387,7 +391,7 @@ public class VPinStudioClient implements OverlayClient {
       if (in != null) {
         FileOutputStream out = new FileOutputStream(file);
         IOUtils.copy(in, out);
-        LOG.info("Persisted for cache '"  + cache + "': " + file.getAbsolutePath());
+        LOG.info("Persisted for cache '" + cache + "': " + file.getAbsolutePath());
         in.close();
         out.close();
       }
@@ -487,6 +491,7 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   public void clearCache() {
+    getPinVolService().clearCache();
     getBackglassServiceClient().clearCache();
     getDiscordService().clearCache();
     getImageCache().clearCache();

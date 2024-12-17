@@ -53,7 +53,12 @@ public class GameValidationTexts {
       }
       case CODE_ROM_INVALID: {
         label = "ROM file is invalid.";
-        text = "The VPinMAME ROM check failed for this ROM. Upload a correct ROM file for this table.";
+        text = "The VPinMAME ROM check failed for this ROM. Upload a correct ROM file for this table if you are having issues playing it.";
+        break;
+      }
+      case CODE_SCREEN_SIZE_ISSUE: {
+        label = "Invalid screen size configuration";
+        text = "FILL THIS text here!";
         break;
       }
       case CODE_VR_DISABLED: {

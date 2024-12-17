@@ -15,8 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class NvRamHighscoreToRawConverter {
-  private final static Logger LOG = LoggerFactory.getLogger(NvRamHighscoreToRawConverter.class);
+
+/**
+ * This converter does not ensure a unified output for all text documents that are outputted through pinemhi.
+ * Instead, it just converts the output from pinemhi so that unexpected empty lines for missing positions are applied already.
+ */
+public class NvRamOutputToScoreTextConverter {
+  private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextConverter.class);
 
   private final static List<ScoreNvRamAdapter> adapters = new ArrayList<>();
 
@@ -28,7 +33,6 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
     adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
     adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
-//    adapters.add(new SortedScoreAdapter("tf_180.nv")); //TODO this must run AFTER the adapters execution to leave the RAW value untouched
     adapters.add(new FixTitleScoreAdapter("rs_l6.nv", "TODAY'S HIGHEST SCORES", "ALL TIME HIGHEST SCORES"));
     adapters.add(new SinglePlayerScoreAdapter());
   }

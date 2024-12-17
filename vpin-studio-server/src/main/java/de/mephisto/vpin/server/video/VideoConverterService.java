@@ -41,7 +41,7 @@ public class VideoConverterService implements InitializingBean {
   public String convert(@NonNull VideoOperation converterParams) {
     LOG.info("Executing video conversion for " + converterParams.getName() + "/" + converterParams.getCommand());
     try {
-      Game game = frontendService.getGame(converterParams.getGameId());
+      Game game = frontendService.getOriginalGame(converterParams.getGameId());
       if (game == null) {
         LOG.info("No game found for " + converterParams.getGameId());
         return "No game found for " + converterParams.getGameId();

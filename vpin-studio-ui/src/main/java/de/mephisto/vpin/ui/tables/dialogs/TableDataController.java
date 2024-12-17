@@ -23,6 +23,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
+import de.mephisto.vpin.ui.tables.panels.PinVolSettingsController;
 import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
@@ -256,6 +257,8 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private Tab customizationTab;
   @FXML
+  private VBox customizationRoot;
+  @FXML
   private Tab scoreDataTab;
   @FXML
   private Tab screensTab;
@@ -296,6 +299,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TableDataTabScoreDataController tableDataTabScoreDataController;
   private PropperRenamingController propperRenamingController;
   private Pane propertRenamingRoot;
+  private PinVolSettingsController pinVolController;
 
   @FXML
   private void onAssetManager(ActionEvent e) {
@@ -591,6 +595,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
 
+    pinVolController.save();
     tableScreensController.save();
     tableDataTabScoreDataController.save();
 
@@ -704,6 +709,16 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
     catch (IOException e) {
       LOG.error("Failed to load propper-renaming.fxml: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
+      Parent builtInRoot = loader.load();
+      pinVolController = loader.getController();
+      customizationRoot.getChildren().add(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load pinvol settings panel: " + e.getMessage(), e);
     }
   }
 
@@ -971,8 +986,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
         modCheckbox.setSelected(tableDetails.isMod());
         modCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> tableDetails.setMod(t1));
-
-
       }
       else {
         custom4.setDisable(true);
@@ -1035,6 +1048,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
     tableScreensController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);
+
+    pinVolController.setData(stage, Arrays.asList(game), false);
   }
 
   private void setVpsTableIdValue(String value) {

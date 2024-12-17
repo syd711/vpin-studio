@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.*;
+import de.mephisto.vpin.commons.utils.ConnectionEntry.ConnectionType;
+import de.mephisto.vpin.commons.utils.network.WakeOnLan;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -18,6 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -36,9 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -79,11 +82,13 @@ public class LauncherController implements Initializable {
   private TableColumn<VPinConnection, String> hostColumn;
 
   @FXML
+  private TableColumn<VPinConnection, String> statusColumn;
+
+  @FXML
   private TableColumn<VPinConnection, String> actionColumn;
 
   @FXML
   private TableView<VPinConnection> tableView;
-
 
   @FXML
   private Hyperlink helpBtn;
@@ -91,17 +96,15 @@ public class LauncherController implements Initializable {
   private ObservableList<VPinConnection> data;
 
   private Stage stage;
-  private PropertiesStore store;
-
-  private final Map<InetAddress, BroadcastInfo> broadcastData = new ConcurrentHashMap<>();
+  private ConnectionProperties connectionProperties;
+  private final DiscoveryListener discoveryListener = new DiscoveryListener();
 
   @FXML
   private void onHelp() {
     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       try {
         Desktop.getDesktop().browse(new URI("https://github.com/syd711/vpin-studio/wiki/Troubleshooting"));
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         LOG.error("Failed to open link: {}", ex.getMessage(), ex);
       }
     }
@@ -112,14 +115,14 @@ public class LauncherController implements Initializable {
     boolean dotNetInstalled = false;
     try {
       dotNetInstalled = WinRegistry.isDotNetInstalled();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Error checking .net framework: {}", e.getMessage(), e);
       WidgetFactory.showAlert(stage, "Error", "Error checking .net framework: " + e.getMessage());
     }
 
     if (!dotNetInstalled) {
-      WidgetFactory.showAlert(stage, "Error", "No .NET framework > 3.5 found.", "The .NET framework is required for some server operations.");
+      WidgetFactory.showAlert(stage, "Error", "No .NET framework > 3.5 found.",
+          "The .NET framework is required for some server operations.");
       return;
     }
 
@@ -146,26 +149,52 @@ public class LauncherController implements Initializable {
         result.add(connection);
       }
 
-      List<Object> entries = store.getEntries();
-      for (Object entry : entries) {
-        LOG.info("Checking connection to {}", entry);
-        connection = checkConnection(String.valueOf(entry));
+      LOG.info("Checking connection to configured connections");
+      List<ConnectionEntry> entries = connectionProperties.getConnections();
+      for (ConnectionEntry entry : entries) {
+        String ipAddress = entry.getIp();
+        LOG.info("Checking connection to {}", ipAddress);
+
+        connection = checkConnection(ipAddress);
+
         if (connection != null) {
+          connection.setConnectionId(entry.getId());
+          connection.setDiscovered(entry.getType().equals(ConnectionEntry.ConnectionType.DISCOVERED));
           result.add(connection);
+        } else {
+          // Create a placeholder for an asleep connection
+          VPinConnection maybeAsleepConnection = new VPinConnection();
+          maybeAsleepConnection.setConnectionId(entry.getId());
+          maybeAsleepConnection.setHost(ipAddress);
+          maybeAsleepConnection.setName(entry.getName()); // Use stored name from properties
+          maybeAsleepConnection.setAvatar(new Image(Studio.class.getResourceAsStream("avatar-default.png"))); // Default
+          maybeAsleepConnection.setDiscovered(entry.getType().equals(ConnectionEntry.ConnectionType.DISCOVERED));
+          maybeAsleepConnection.setMaybeAsleep(true);
+          maybeAsleepConnection.setMacAddress(entry.getMacAddress());
+          LOG.info("Connection to {} is asleep or unreachable.", ipAddress);
+          result.add(maybeAsleepConnection);
         }
       }
 
-      for (Map.Entry<InetAddress, BroadcastInfo> entry : broadcastData.entrySet()) {
+      LOG.info("Checking connection to broadcasted connections");
+      for (Map.Entry<InetAddress, BroadcastInfo> entry : discoveryListener.getBroadcasts().entrySet()) {
         InetAddress ip = entry.getKey();
         BroadcastInfo info = entry.getValue();
         String systemName = info.getSystemName();
 
         LOG.info("Checking broadcasted connection to {} with system name {}", ip.getHostAddress(), systemName);
+
         connection = checkConnection(ip.getHostAddress());
-        VPinConnection finalConnection = connection;
-        if (connection != null && result.stream().noneMatch(conn -> conn.getHost().equals(finalConnection.getHost()))) {
+        if (connection != null) {
           connection.setDiscovered(true);
-          result.add(connection);
+
+          LOG.info("Adding discovered connection: {}", ip.getHostAddress());
+
+          // Ensure the connection isn't duplicated in the result list
+          VPinConnection finalConnection = connection;
+          if (result.stream().noneMatch(conn -> conn.getHost().equals(finalConnection.getHost()))) {
+            result.add(connection);
+          }
         }
       }
 
@@ -182,7 +211,8 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onNewConnection() {
-    String host = WidgetFactory.showInputDialog(stage, "New VPin Studio Connection", "IP or Hostname", "Enter the IP address or the hostname to connect to.", null, null);
+    String host = WidgetFactory.showInputDialog(stage, "New VPin Studio Connection", "IP or Hostname",
+        "Enter the IP address or the hostname to connect to.", null, null);
     if (!StringUtils.isEmpty(host)) {
       boolean found = false;
       for (VPinConnection vpinConnection : data) {
@@ -194,8 +224,7 @@ public class LauncherController implements Initializable {
 
       if (found) {
         WidgetFactory.showAlert(stage, "A VPin Studio Connection already exists for '" + host + "'.");
-      }
-      else {
+      } else {
         refreshBtn.setDisable(true);
         connectBtn.setDisable(true);
         newConnectionBtn.setDisable(true);
@@ -206,11 +235,12 @@ public class LauncherController implements Initializable {
           Platform.runLater(() -> {
             stage.getScene().setCursor(Cursor.DEFAULT);
             if (connection != null) {
-              store.set(String.valueOf(store.getEntries().size()), host);
+              connectionProperties.upsertConnection(host, connection.getName(), connection.getMacAddress(),
+                  ConnectionEntry.ConnectionType.CREATED);
               data.add(connection);
-            }
-            else {
-              WidgetFactory.showAlert(stage, "No service found for '" + host + "'.", "Please check the IP or hostname and try again.");
+            } else {
+              WidgetFactory.showAlert(stage, "No service found for '" + host + "'.",
+                  "Please check the IP or hostname and try again.");
             }
 
             refreshBtn.setDisable(false);
@@ -221,19 +251,29 @@ public class LauncherController implements Initializable {
     }
   }
 
-
   @FXML
   private void onConnect() {
-    VPinConnection selectedItem = tableView.getSelectionModel().getSelectedItem();
-    VPinStudioClient client = new VPinStudioClient(selectedItem.getHost());
+    VPinConnection selectedConnection = tableView.getSelectionModel().getSelectedItem();
+    VPinStudioClient client = new VPinStudioClient(selectedConnection.getHost());
     String clientVersion = Studio.getVersion();
     String serverVersion = client.getSystemService().getVersion();
 
     if (serverVersion != null) {
+      // If this connection was discovered add it to our properties.
+      if (selectedConnection.getDiscovered()) {
+        connectionProperties.upsertConnection(
+            selectedConnection.getHost(),
+            selectedConnection.getName(),
+            selectedConnection.getMacAddress(),
+            ConnectionType.DISCOVERED);
+      }
+
       if (!serverVersion.equals(clientVersion)) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update your client.", "Install Update");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Incompatible Version",
+            "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update your client.",
+            "Install Update");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          // laucnh update of the remote client
+          // Launch update of the remote client
           Dialogs.openUpdateDialog(client);
         }
         return;
@@ -244,16 +284,32 @@ public class LauncherController implements Initializable {
     }
   }
 
+  @FXML
+  private void onWakeOnLan(VPinConnection connection) {
+    Integer connectionId = connection.getConnectionId();
+    if (connectionId != null) {
+      ConnectionEntry connectionEntry = connectionProperties.getConnection(connectionId);
+      if (connectionEntry != null && !connectionEntry.getMacAddress().isEmpty()) {
+        try {
+          WakeOnLan.sendMagicPacket(connectionEntry.getIp(), connectionEntry.getMacAddress(), connectionEntry.getMagicPacketPort());
+        } catch (Exception e) {
+          LOG.error("WakeOnLan failed: {}", e.getMessage(), e);
+          WidgetFactory.showAlert(stage, "WakeOnLan failed.", "Error: " + e.getMessage());
+        }
+      }
+    }
+  }
+
   public void setStage(Stage stage) {
     this.stage = stage;
     this.onConnectionRefresh();
 
     // Start listening when the window opens
-    this.startBroadcastListener();
+    discoveryListener.startBroadcastListener();
 
     // Stop the listener when the window is closed
-    stage.setOnHidden(event -> this.stopBroadcastListener());
-    stage.setOnCloseRequest(event -> this.stopBroadcastListener());
+    stage.setOnHidden(event -> discoveryListener.stopBroadcastListener());
+    stage.setOnCloseRequest(event -> discoveryListener.stopBroadcastListener());
   }
 
   private void installServer() {
@@ -274,22 +330,21 @@ public class LauncherController implements Initializable {
           try {
             LOG.info("Waiting for server...");
             Thread.sleep(2000);
-          }
-          catch (InterruptedException e) {
+          } catch (InterruptedException e) {
             LOG.error("server wait error");
           }
         }
 
-        LOG.info("Found server startup, running on version {}, starting table scan.", client.getSystemService().getVersion());
+        LOG.info("Found server startup, running on version {}, starting table scan.",
+            client.getSystemService().getVersion());
         Platform.runLater(() -> {
           stage.close();
           ProgressDialog.createProgressDialog(new ServiceInstallationProgressModel(Studio.client));
           Studio.loadStudio(WidgetFactory.createStage(), client);
         });
       }).start();
-    }
-    catch (Exception e) {
-        LOG.error("Server installation failed: {}", e.getMessage(), e);
+    } catch (Exception e) {
+      LOG.error("Server installation failed: {}", e.getMessage(), e);
       WidgetFactory.showAlert(stage, "Server installation failed.", "Error: " + e.getMessage());
     }
   }
@@ -304,7 +359,8 @@ public class LauncherController implements Initializable {
     this.helpBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
 
     connectBtn.setDisable(true);
-    tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
+    tableView.getSelectionModel().selectedItemProperty()
+        .addListener((observable, oldValue, newValue) -> connectBtn.setDisable(newValue == null));
 
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 28);
     studioLabel.setFont(font);
@@ -334,6 +390,63 @@ public class LauncherController implements Initializable {
       return new SimpleObjectProperty(view);
     });
 
+    statusColumn.setCellFactory(col -> new TableCell<>() {
+      @Override
+      protected void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+        setText(null);
+
+        if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+          setGraphic(null);
+          return;
+        }
+
+        VPinConnection connection = getTableRow().getItem();
+
+        HBox statusBox = new HBox();
+        statusBox.setSpacing(5); // Space between icons
+        statusBox.setAlignment(Pos.CENTER_LEFT);
+
+        // Add discovered icon (if discovered)
+        if (connection.getDiscovered()) {
+          FontIcon discoveredIcon = new FontIcon("mdi2a-antenna");
+          discoveredIcon.setIconSize(18);
+          discoveredIcon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR)); // Green for discovered
+          Tooltip discoveredTooltip = new Tooltip("This connection was discovered on the local network.");
+          Tooltip.install(discoveredIcon, discoveredTooltip); // Attach tooltip to the icon
+          statusBox.getChildren().add(discoveredIcon);
+        }
+
+        // Add WOL button (if asleep) and we have a MAC Address
+        if (connection.isMaybeAsleep() && connection.getMacAddress() != null && !connection.getMacAddress().isEmpty()
+            && !"127.0.0.1".equals(connection.getHost())) {
+          Button wolButton = new Button();
+          FontIcon wolIcon = new FontIcon("mdi2w-wifi-arrow-right");
+          wolIcon.setIconSize(18);
+          wolIcon.setIconColor(Paint.valueOf("#008080")); // Teal for WOL
+          wolButton.setGraphic(wolIcon);
+          wolButton.getStyleClass().add("wol-button");
+          stage.getScene().getStylesheets().add(getClass().getResource("scene-launcher.css").toExternalForm());
+          Tooltip wolTooltip = new Tooltip("Send a Wake-on-LAN signal to wake this device.");
+          Tooltip.install(wolButton, wolTooltip); // Attach tooltip to the button
+
+          wolButton.setOnAction(event -> {
+            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage,
+                "Send WOL packet to " + connection.getHost() + "?");
+            if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+              onWakeOnLan(connection);
+              onConnectionRefresh();
+            }
+
+            LOG.info("Sending WOL packet to {}", connection.getHost());
+          });
+          statusBox.getChildren().add(wolButton);
+        }
+
+        setGraphic(statusBox);
+      }
+    });
+
     actionColumn.setCellFactory(col -> new TableCell<>() {
       @Override
       protected void updateItem(String item, boolean empty) {
@@ -345,34 +458,39 @@ public class LauncherController implements Initializable {
           return;
         }
 
-        VPinConnection value = getTableRow().getItem();
+        VPinConnection connection = getTableRow().getItem();
 
-        // No icon for localhost
-        if (value.getHost().equals("localhost")) {
-          setGraphic(null);
-        } else if (value.getDiscovered()) {
-          // Show a custom icon for discovered connections
-          FontIcon discoveredIcon = new FontIcon("mdi2a-antenna");
-          discoveredIcon.setIconSize(16);
-          discoveredIcon.setIconColor(Paint.valueOf("#2196F3"));
-          setGraphic(discoveredIcon);
-        } else {
-          // Show the delete button for non-discovered connections
-          Button button = new Button();
-          button.setStyle("-fx-border-radius: 6px;");
-          FontIcon deleteIcon = new FontIcon("mdi2d-delete-outline");
-          deleteIcon.setIconSize(8);
-          deleteIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-          button.setGraphic(deleteIcon);
-          button.setOnAction(event -> {
-            Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete connection to '" + value.getHost() + "'?");
-            if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-              store.removeValue(String.valueOf(value.getHost()));
-              onConnectionRefresh();
-            }
-          });
-          setGraphic(button);
+        if (connection.getConnectionId() == null) {
+          return;
         }
+
+        HBox actionBox = new HBox();
+        actionBox.setStyle("-fx-alignment: center;");
+        actionBox.setSpacing(20); // Extra spacing for delete button
+
+        // Add delete icon
+        FontIcon deleteIcon = new FontIcon("mdi2d-delete-outline");
+        deleteIcon.setIconSize(16);
+        deleteIcon.setIconColor(Paint.valueOf("#F08080")); // Red for delete
+
+        Button deleteButton = new Button();
+        deleteButton.setGraphic(deleteIcon);
+        deleteButton.setStyle("-fx-border-radius: 6px; -fx-cursor: hand;");
+        deleteButton.setOnAction(event -> {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage,
+              "Delete connection to '" + connection.getHost() + "'?");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            connectionProperties.removeConnection(connection.getHost());
+            onConnectionRefresh();
+          }
+        });
+
+        // Add tooltip to the delete button
+        Tooltip deleteTooltip = new Tooltip("Permanently delete this connection.");
+        Tooltip.install(deleteButton, deleteTooltip);
+
+        actionBox.getChildren().add(deleteButton);
+        setGraphic(actionBox);
       }
     });
 
@@ -386,9 +504,11 @@ public class LauncherController implements Initializable {
       return row;
     });
 
-    File propertiesFile = new File("config/connection.properties");
-    propertiesFile.getParentFile().mkdirs();
-    store = PropertiesStore.create(propertiesFile);
+    // Initialize our connection properties object.
+    connectionProperties = new ConnectionProperties();
+
+    // Initialize our Discovery Broadcaster.
+    discoveryListener.setBroadcastDataChangeListener(this::onConnectionRefresh);
   }
 
   private VPinConnection checkConnection(String host) {
@@ -405,13 +525,17 @@ public class LauncherController implements Initializable {
         if (StringUtils.isEmpty(name)) {
           name = UIDefaults.VPIN_NAME;
         }
-        connection.setHost(host);
         connection.setName(name);
+
+        connection.setHost(host);
+
+        // Detect MAC Address
+        String macAddress = detectMacAddressViaArp(host);
+        connection.setMacAddress(macAddress);
 
         if (!StringUtils.isEmpty(avatarEntry.getValue())) {
           connection.setAvatar(new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue())));
-        }
-        else {
+        } else {
           Image image = new Image(Studio.class.getResourceAsStream("avatar-default.png"));
           connection.setAvatar(image);
         }
@@ -424,153 +548,40 @@ public class LauncherController implements Initializable {
     try {
       connection = future.get(3000, TimeUnit.MILLISECONDS);
       LOG.info("connection to {} can be established", host);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.info("connection to {} took too long to answer", host);
     }
     executor.shutdownNow();
     return connection;
   }
 
-  private Thread broadcastListenerThread;
-  private Thread staleEntriesRemoverThread;
-  private DatagramSocket socket;
-  private boolean shouldListen = false;
-
-  private void listenForBroadcast() {
+  private String detectMacAddressViaArp(String host) {
     try {
-      socket = new DatagramSocket(50505);
-      byte[] buffer = new byte[256];
-      DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+      // Run the 'arp -a' command
+      Process process = Runtime.getRuntime().exec("arp -a " + host);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-      while (shouldListen) {
-        socket.receive(packet);
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (line.contains(host)) {
+          LOG.info("ARP entry found for host: {}", host);
 
-        String receivedSystemName = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.US_ASCII);
-        if (receivedSystemName.isEmpty()) {
-          receivedSystemName = UIDefaults.VPIN_NAME;
-        }
-
-        InetAddress senderAddress = packet.getAddress();
-
-        long currentTime = System.currentTimeMillis();
-        if (!broadcastData.containsKey(senderAddress)) {
-          // Log the received information
-            LOG.info("Received broadcast for the first time from IP: {}, System Name: {}", senderAddress.getHostAddress(), receivedSystemName);
-
-          // Store the IP and system name
-          broadcastData.put(senderAddress, new BroadcastInfo(receivedSystemName, currentTime));
-
-          // Notify that broadcast data has changed
-          onBroadcastDataChanged();
-        } else {
-          BroadcastInfo existingInfo = broadcastData.get(senderAddress);
-          existingInfo.updateLastBroadcastTime(currentTime);
+          // Parse the MAC address from the output
+          String[] tokens = line.split("\\s+"); // Handles spaces and tabs
+          for (String token : tokens) {
+            // Match standard MAC address format
+            if (token.matches("([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}")) {
+              LOG.info("MAC Address detected for host {}: {}", host, token.toUpperCase());
+              return token.toUpperCase();
+            }
+          }
         }
       }
     } catch (Exception e) {
-        LOG.error("Error receiving broadcast: {}", e.getMessage(), e);
-    }
-  }
-
-  public synchronized void startBroadcastListener() {
-    if (broadcastListenerThread != null) {
-      LOG.info("Broadcast listener already started");
-      return;
+      LOG.error("Error detecting MAC Address for host {}: {}", host, e.getMessage());
     }
 
-    shouldListen = true;
-
-    broadcastListenerThread = new Thread(this::listenForBroadcast);
-
-    broadcastListenerThread.start();
-
-    // Start the thread that removes stale entries
-    startStaleEntriesRemover();
-  }
-
-  public synchronized void stopBroadcastListener() {
-    new Thread( () -> {
-      if (broadcastListenerThread == null) {
-        LOG.info("Broadcast listener not running");
-        return;
-      }
-
-      shouldListen = false;
-
-      try {
-        broadcastListenerThread.join(); // Wait for the listener thread to stop
-      } catch (InterruptedException e) {
-        LOG.error("Failed to stop broadcast listener: {}", e.getMessage(), e);
-      }
-
-      // Close the DatagramSocket to release the port
-      if (socket != null && !socket.isClosed()) {
-        socket.close();
-      }
-
-      LOG.info("Broadcast listener stopped");
-      broadcastListenerThread = null;
-
-      stopStaleEntriesRemover();
-    }).start();
-  }
-
-  private void onBroadcastDataChanged() {
-    Platform.runLater(this::onConnectionRefresh);
-  }
-
-  public synchronized void startStaleEntriesRemover() {
-    if (staleEntriesRemoverThread != null) {
-      LOG.info("Stale entries remover already started");
-      return;
-    }
-
-    staleEntriesRemoverThread = new Thread(() -> {
-      while (shouldListen) { // Stop checking if shouldListen is false
-        long currentTime = System.currentTimeMillis();
-        boolean dataChanged = false;
-
-        // Iterate over the broadcastData and remove stale entries
-        for (InetAddress ip : new ArrayList<>(broadcastData.keySet())) {
-          BroadcastInfo info = broadcastData.get(ip);
-          if (currentTime - info.getLastBroadcastTime() > 10000) { // More than 10 seconds have passed
-              LOG.info("Removing stale broadcast data for IP: {}", ip.getHostAddress());
-            broadcastData.remove(ip);
-            dataChanged = true;
-          }
-        }
-
-        if (dataChanged) {
-          onBroadcastDataChanged();
-        }
-
-        try {
-          Thread.sleep(2000); // Check every 2 seconds
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
-    });
-
-    staleEntriesRemoverThread.start();
-  }
-
-  public synchronized void stopStaleEntriesRemover() {
-    if (staleEntriesRemoverThread == null) {
-      LOG.info("Stale entries remover not running");
-      return;
-    }
-
-    shouldListen = false; // This will stop the stale entries remover loop
-
-    try {
-      staleEntriesRemoverThread.join(); // Wait for the stale entries remover thread to stop
-    } catch (InterruptedException e) {
-        LOG.error("Failed to stop stale entries remover: {}", e.getMessage(), e);
-    }
-
-    LOG.info("Stale entries remover stopped");
-    staleEntriesRemoverThread = null;
+    LOG.warn("No MAC Address found for host: {}", host);
+    return "";
   }
 }

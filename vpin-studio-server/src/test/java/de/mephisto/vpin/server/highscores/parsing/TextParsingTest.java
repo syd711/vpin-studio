@@ -34,7 +34,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
       String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
       assertNull(highscoreMetadata.getStatus());
       if (raw != null) {
-        List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);
+        List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, null, -1);
         assertNotNull(scores, "Reading failed for " + entry);
         assertFalse(scores.isEmpty(), "No score entry found for " + entry);
         assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);
@@ -57,7 +57,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
         String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
         assertNull(highscoreMetadata.getStatus());
         if (raw != null) {
-          List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);
+          List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, null, -1);
           assertNotNull(scores, "Reading failed for " + entry);
           assertFalse(scores.isEmpty(), "No score entry found for " + entry);
           assertNotNull(scores.get(0).getPlayerInitials(), "No score initials found for " + entry);

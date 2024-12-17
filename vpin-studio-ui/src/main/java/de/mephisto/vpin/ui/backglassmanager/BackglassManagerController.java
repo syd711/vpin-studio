@@ -238,6 +238,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button openBtn;
 
   @FXML
+  private Button dmdPositionBtn;
+
+  @FXML
   private Button tableNavigateBtn;
 
   @FXML
@@ -270,6 +273,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private GameRepresentation game;
   private DirectB2ServerSettings serverSettings;
   private FileDragEventHandler fileDragEventHandler;
+
+
+  @FXML
+  private void onDMDPosition() {
+    if (game != null) {
+      TableDialogs.openDMDPositionDialog(game);
+    }
+  }
 
   @FXML
   private void onUpload(ActionEvent e) {
@@ -595,6 +606,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     this.renameBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
     this.resBtn.setDisable(true);
+    this.dmdPositionBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.reloadBackglassBtn.setDisable(true);
@@ -891,6 +903,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     useAsMediaDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
     resBtn.setDisable(true);
+    dmdPositionBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -937,6 +950,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
             this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
             this.dataManagerBtn.setDisable(false);
             this.tableNavigateBtn.setDisable(false);
+            this.dmdPositionBtn.setDisable(false);
+            this.resBtn.setDisable(false);
             this.uploadBtn.setDisable(false);
           }
         }
@@ -954,14 +969,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         this.renameBtn.setDisable(false);
         this.duplicateBtn.setDisable(false);
         this.deleteBtn.setDisable(false);
-        this.resBtn.setDisable(false);
         this.reloadBackglassBtn.setDisable(false);
 
+        this.dmdPositionBtn.setDisable(true);
+        this.resBtn.setDisable(true);
         if (game != null) {
           gameLabel.setText(game.getGameDisplayName());
           gameFilenameLabel.setText(game.getGameFileName());
           dataManagerBtn.setDisable(false);
           tableNavigateBtn.setDisable(false);
+          dmdPositionBtn.setDisable(false);
+          resBtn.setDisable(false);
           this.uploadBtn.setDisable(false);
         }
         else {
@@ -1037,8 +1055,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     Image thumbnail = null;
     String thumbnailError = null;
     if (tableData.isBackgroundAvailable()) {
-      String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(), 
-        tableData.getFilename(), true);
+      String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(),
+          tableData.getFilename(), true);
       thumbnail = new Image(url);
     }
     else {

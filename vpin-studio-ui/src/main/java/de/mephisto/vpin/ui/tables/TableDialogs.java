@@ -131,6 +131,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openPinVolSettings(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", "PinVol Settings");
+    PinVolSettingsDialogController controller = (PinVolSettingsDialogController) stage.getUserData();
+    controller.setData(stage, games);
+    stage.showAndWait();
+  }
+
   public static void openMetadataDialog(AssetRequest request) {
     Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for\"" + request.getName() + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
@@ -328,6 +335,13 @@ public class TableDialogs {
     stage.showAndWait();
 
     return true;
+  }
+
+  public static void openDMDPositionDialog(GameRepresentation game) {
+    Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position");
+    DMDPositionController controller = (DMDPositionController) stage.getUserData();
+    controller.setGame(game);
+    stage.showAndWait();
   }
 
   public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {

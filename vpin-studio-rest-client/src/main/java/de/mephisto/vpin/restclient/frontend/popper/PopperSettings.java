@@ -31,6 +31,15 @@ public class PopperSettings extends JsonSettings {
   private boolean joyAxisMove = false;
   private boolean volumeChange = true;
   private boolean useAltWheels = false;
+  private boolean watchDog;
+
+  public boolean isWatchDog() {
+    return watchDog;
+  }
+
+  public void setWatchDog(boolean watchDog) {
+    this.watchDog = watchDog;
+  }
 
   public boolean isUseAltWheels() {
     return useAltWheels;
@@ -354,6 +363,10 @@ public class PopperSettings extends JsonSettings {
               }
               case "useAltWheels": {
                 this.useAltWheels = value == 1;
+                break;
+              }
+              case "Watchdog": {
+                this.watchDog = value == 1;
                 break;
               }
             }

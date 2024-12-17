@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
@@ -83,6 +85,12 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnRES)) {
         comp = Comparator.comparing(o -> o.getGame().getResPath() != null);
+      }
+      else if (column.equals(tableOverviewController.columnPinVol)) {
+        comp = Comparator.comparing(o -> {
+          String key = PinVolPreferences.getKey(o.getGame().getGameFileName(), o.getGame().isVpxGame(), o.getGame().isFpGame());
+          return client.getPinVolService().getPinVolTablePreferences().contains(key);
+        });
       }
       else if (column.equals(tableOverviewController.columnINI)) {
         comp = Comparator.comparing(o -> o.getGame().getIniPath() != null);

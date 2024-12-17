@@ -1,23 +1,26 @@
 <menu>
   <game name="Baseball (1970)">
+    <description>Baseball (1970)</description>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-11-10 12:17:07</dateadded>
+    <dateadded>2024-11-29 17:48:43</dateadded>
   </game>
   <game name="Jaws">
+    <description>Jaws</description>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-11-10 12:17:07</dateadded>
+    <dateadded>2024-11-29 17:48:43</dateadded>
   </game>
   <game name="Twister (1996)">
+    <description>Twister (1996)</description>
     <year></year>
     <type></type>
     <hidedmd>True</hidedmd>
@@ -25,6 +28,6 @@
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
     <author>Test Osterone</author>
-    <dateadded>2024-11-10 12:17:07</dateadded>
+    <dateadded>2024-11-29 17:48:43</dateadded>
   </game>
 </menu>

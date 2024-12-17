@@ -221,10 +221,12 @@ public class GameService implements InitializingBean {
   @SuppressWarnings("unused")
   @Nullable
   public synchronized Game getGame(int id) {
-    Game game = frontendService.getGame(id);
-    if (game != null && game.getEmulator() != null) {
-      applyGameDetails(game, false, true);
-      return game;
+    if (id >= 0) {
+      Game game = frontendService.getOriginalGame(id);
+      if (game != null && game.getEmulator() != null) {
+        applyGameDetails(game, false, true);
+        return game;
+      }
     }
     return null;
   }
@@ -283,7 +285,7 @@ public class GameService implements InitializingBean {
         continue;
       }
 
-      Game rawGame = frontendService.getGame(version.getGameId());
+      Game rawGame = frontendService.getOriginalGame(version.getGameId());
       if (rawGame != null && !scores.contains(version)) {
         scores.add(version);
       }
@@ -302,7 +304,7 @@ public class GameService implements InitializingBean {
   public Game scanGame(int gameId) {
     Game game = null;
     try {
-      game = frontendService.getGame(gameId);
+      game = frontendService.getOriginalGame(gameId);
       if (game != null) {
         applyGameDetails(game, true, true);
         mameService.clearCacheFor(game.getRom());
@@ -362,7 +364,7 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  private synchronized boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
+  private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     boolean newGame = (gameDetails == null);
 
@@ -728,6 +730,7 @@ public class GameService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     try {
       vpsService.update(this.getKnownGames(-1));
+      highscoreService.setGameService(this);
     }
     catch (Exception e) {
       LOG.error("Error initializing GameService: " + e.getMessage(), e);

@@ -26,7 +26,7 @@ public class WinRegistry {
       return Arrays.asList(Advapi32Util.registryGetKeys(WinReg.HKEY_CURRENT_USER, path));
     }
     catch (Exception e) {
-      LOG.error("Failed to read registry folder " + path + ": " + e.getMessage(), e);
+      LOG.error("Failed to read registry folder HKCU\\" + path + ": " + e.getMessage());
     }
     return Collections.emptyList();
   }
@@ -171,6 +171,16 @@ public class WinRegistry {
     }
     catch (Exception e) {
       LOG.info("Deletion failed for registry path '" + key + "\\" + key + ": " + e.getMessage());
+    }
+  }
+
+  public static void deleteValue(@NonNull String key, @NonNull String value) {
+    try {
+      Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, key, value);
+      LOG.info("Deleted value key {}\\{}", key, value);
+    }
+    catch (Exception e) {
+      LOG.info("Deletion failed for registry path '" + key + "\\" + value + ": " + e.getMessage());
     }
   }
 
