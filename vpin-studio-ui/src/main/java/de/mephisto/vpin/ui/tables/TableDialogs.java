@@ -337,19 +337,11 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openDMDPositionDialog(GameRepresentation game) {
+  public static void openDMDPositionDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position", "dmdPosition");
     DMDPositionController controller = (DMDPositionController) stage.getUserData();
     controller.setGame(game);
-
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(1024);
-    stage.setMinHeight(770);
-
     stage.showAndWait();
-
-    return true;
   }
 
   public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
