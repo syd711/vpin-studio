@@ -338,7 +338,7 @@ public class TableDialogs {
   }
 
   public static void openDMDPositionDialog(GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position", "dmdPosition");
+    Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position");
     DMDPositionController controller = (DMDPositionController) stage.getUserData();
     controller.setGame(game);
     stage.showAndWait();
