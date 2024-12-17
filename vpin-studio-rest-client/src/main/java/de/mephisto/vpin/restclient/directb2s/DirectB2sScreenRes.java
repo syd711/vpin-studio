@@ -29,6 +29,11 @@ public class DirectB2sScreenRes {
   /** Define Backglass screen using Display Devicename screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x) */
   private String backglassDisplay;
 
+  // the offset of the backlass display relative to playfield
+  private int backglassDisplayX;
+  private int backglassDisplayY;
+
+  // the offset relative x,y to the backglass display 
   private int backglassX;
   private int backglassY;
 
@@ -36,6 +41,7 @@ public class DirectB2sScreenRes {
   private int dmdWidth;
   private int dmdHeight;
 
+  // the offset relative x,y to the backglass top left 
   private int dmdX;
   private int dmdY;
 
@@ -66,36 +72,36 @@ public class DirectB2sScreenRes {
 
   @JsonIgnore
   public double getBackglassMinX() {
-    return getBackglassX();
+    return getBackglassDisplayX() + getBackglassX();
   }
   @JsonIgnore
   public double getBackglassMaxX() {
-    return getBackglassX() + getBackglassWidth();
+    return getBackglassMinX() + getBackglassWidth();
   }
   @JsonIgnore
   public double getBackglassMinY() {
-    return getBackglassY();
+    return getBackglassDisplayY() + getBackglassY();
   }
   @JsonIgnore
   public double getBackglassMaxY() {
-    return getBackglassY() + getBackglassHeight();
+    return getBackglassMinY() + getBackglassHeight();
   }
 
   @JsonIgnore
   public double getDmdMinX() {
-    return getDmdX();
+    return getBackglassMinX() + getDmdX();
   }
   @JsonIgnore
   public double getDmdMaxX() {
-    return getDmdX() + getDmdWidth();
+    return getDmdMinX() + getDmdWidth();
   }
   @JsonIgnore
   public double getDmdMinY() {
-    return getDmdY();
+    return getBackglassMinY() + getDmdY();
   }
   @JsonIgnore
   public double getDmdMaxY() {
-    return getDmdY() + getDmdHeight();
+    return getDmdMinY() + getDmdHeight();
   }
 
   @JsonIgnore
@@ -105,7 +111,7 @@ public class DirectB2sScreenRes {
 
   @JsonIgnore
   public boolean isOnDmd(double x, double y) {
-    return getDmdMinX()<= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
+    return getDmdMinX() <= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
   }
 
   @JsonIgnore
@@ -199,6 +205,22 @@ public class DirectB2sScreenRes {
 
   public void setBackglassDisplay(String backglassDisplay) {
     this.backglassDisplay = backglassDisplay;
+  }
+
+  public int getBackglassDisplayX() {
+    return backglassDisplayX;
+  }
+
+  public void setBackglassDisplayX(int backglassDisplayX) {
+    this.backglassDisplayX = backglassDisplayX;
+  }
+
+  public int getBackglassDisplayY() {
+    return backglassDisplayY;
+  }
+
+  public void setBackglassDisplayY(int backglassDisplayY) {
+    this.backglassDisplayY = backglassDisplayY;
   }
 
   public int getBackglassX() {
@@ -319,5 +341,9 @@ public class DirectB2sScreenRes {
 
   public void setTurnOnBackground(boolean turnOnBackground) {
     this.turnOnBackground = turnOnBackground;
+  }
+
+  public boolean hasDMD() {
+    return (dmdWidth > 0) && (dmdHeight > 0); 
   }
 }

@@ -361,6 +361,9 @@ public class PinballXConnector extends BaseConnector {
     SubnodeConfiguration display = iniConfiguration.getSection("Display");
     int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
     GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+    // sort by xPosition
+    Arrays.sort(gds, (g1, g2) -> g1.getDefaultConfiguration().getBounds().x - g2.getDefaultConfiguration().getBounds().x);
+
     if (monitor < gds.length) {
       java.awt.Rectangle bounds = gds[monitor].getDefaultConfiguration().getBounds();
       int mX = (int) bounds.getX();
