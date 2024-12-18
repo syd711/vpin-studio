@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.fxml.FXML;
@@ -67,7 +66,12 @@ public class PropperRenamingController implements Initializable {
       screenNameField.setText(displayName.getText());
     }
     if (fileNameCheckBox.isSelected() && !fileName.getText().equals("-")) {
-      fileNameField.setText(FileUtils.replaceWindowsChars(fileName.getText()));
+      String base = fileNameField.getText();
+      if (base.contains("\\")) {
+        base = base.substring(0, base.indexOf("\\") + 1);
+      }
+      String value = fileName.getText();
+      fileNameField.setText(base + FileUtils.replaceWindowsChars(value));
     }
     if (gameNameCheckBox.isSelected() && !gameName.getText().equals("-")) {
       gameNameField.setText(FileUtils.replaceWindowsChars(gameName.getText()));
@@ -119,12 +123,16 @@ public class PropperRenamingController implements Initializable {
       refreshNames();
     });
 
-    if (tableDetails==null ||  StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\")) {
+    if (tableDetails == null || isGameNameDisabled(tableDetails)) {
       fileNameCheckBox.setSelected(false);
       fileNameCheckBox.setDisable(true);
     }
 
     refreshNames();
+  }
+
+  private static boolean isGameNameDisabled(TableDetails tableDetails) {
+    return false; //StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\");
   }
 
   @Override
@@ -145,7 +153,7 @@ public class PropperRenamingController implements Initializable {
     fileNameCheckBox.setDisable(vpsTable == null);
     fileName.setDisable(vpsTable == null);
 
-    if (tableDetails==null ||  StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\")) {
+    if (tableDetails == null || isGameNameDisabled(tableDetails)) {
       fileNameCheckBox.setSelected(false);
       fileNameCheckBox.setDisable(true);
     }
