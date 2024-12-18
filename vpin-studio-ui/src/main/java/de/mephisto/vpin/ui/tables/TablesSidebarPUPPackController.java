@@ -342,8 +342,6 @@ public class TablesSidebarPUPPackController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
-
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackLoadProgressModel(game));
       pupPack = (PupPackRepresentation) resultModel.getResults().get(0);
       boolean pupPackAvailable = pupPack != null;

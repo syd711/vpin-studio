@@ -488,7 +488,7 @@ public class GameService implements InitializingBean {
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
     game.setPupPackName(gameDetails.getPupPack());
-    PupPack pupPack = pupPackService.getPupPack(game);
+    PupPack pupPack = pupPackService.getPupPackCached(game);
     if (pupPack != null) {
       game.setPupPack(pupPack);
       game.setPupPackName(pupPack.getName());
