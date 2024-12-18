@@ -1,10 +1,13 @@
 package de.mephisto.vpin.server.components.facades;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,6 +19,10 @@ import java.util.List;
 
 @Service
 public class VPinMAMEComponent implements ComponentFacade {
+
+  @Autowired
+  private MameService mameService;
+
   @NonNull
   @Override
   public String[] getDiffList() {
@@ -35,16 +42,22 @@ public class VPinMAMEComponent implements ComponentFacade {
 
   @NonNull
   @Override
-  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
-    return gameEmulator.getMameFolder();
+  public File getTargetFolder() {
+    File mameFolder = mameService.getMameFolder();
+    if (mameFolder != null) {
+      return mameFolder;
+    }
+    SystemInfo si = new SystemInfo();
+    File vpxFolder = si.resolveVpx64InstallFolder();
+    return vpxFolder.exists() ? new File(vpxFolder, "VPinMAME") : null;
   }
 
   @Nullable
   @Override
-  public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File setupExe = new File(gameEmulator.getMameFolder(), "Setup64.exe");
+  public Date getModificationDate() {
+    File setupExe = new File(mameService.getMameFolder(), "Setup64.exe");
     if (!setupExe.exists()) {
-      setupExe = new File(gameEmulator.getMameFolder(), "Setup.exe");
+      setupExe = new File(mameService.getMameFolder(), "Setup.exe");
     }
     if (setupExe.exists()) {
       return new Date(setupExe.lastModified());

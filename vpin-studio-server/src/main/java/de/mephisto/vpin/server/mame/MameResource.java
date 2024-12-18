@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
+import java.io.File;
+
 @RestController
 @RequestMapping(API_SEGMENT + "mame")
 public class MameResource {
@@ -28,6 +30,11 @@ public class MameResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @GetMapping("/folder")
+  public File getMameFolder() {
+    return mameService.getMameFolder();
+  }
 
   @GetMapping("/options/{rom}")
   public MameOptions getOptions(@PathVariable("rom") String rom) {

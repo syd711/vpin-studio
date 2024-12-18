@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -53,17 +51,29 @@ abstract public class AbstractComponentTab implements StudioEventListener {
   protected void refresh() {
     component = client.getComponentService().getComponent(getComponentType());
     componentSummaryController.refreshComponent(component);
+    componentUpdateController.refreshComponent(component);
+    refreshTab(component);
+  }
+
+  /**
+   * Called when a component is updated, gives opportunity to the tab to refresh itself
+   * @param component The updated component
+  */
+  protected void refreshTab(ComponentRepresentation component2) {
   }
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    Platform.runLater(() -> {
-      if (getComponentType().equals(type)) {
+    if (getComponentType().equals(type)) {
+      Platform.runLater(() -> {
         refresh();
-      }
-    });
+      });
+    }
   }
 
+  /**
+   * Additional and specific installation processing
+   */
   public void postProcessing(boolean simulate) {
 
   }
@@ -92,8 +102,9 @@ abstract public class AbstractComponentTab implements StudioEventListener {
     }
 
     component = client.getComponentService().getComponent(getComponentType());
+    componentSummaryController.setComponent(this, component);
     componentUpdateController.setComponent(this, component);
-    componentSummaryController.refreshComponent(component);
+    refreshTab(component);
 
     EventManager.getInstance().addListener(this);
   }

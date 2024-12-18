@@ -7,8 +7,6 @@ import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
-import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +27,6 @@ public class ComponentsResource {
 
   @Autowired
   private ComponentService componentService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   @GetMapping
   public List<ComponentRepresentation> getComponents() {
@@ -63,8 +58,8 @@ public class ComponentsResource {
                                                 @PathVariable("tag") String tag,
                                                 @PathVariable("artifact") String artifact,
                                                 @PathVariable("forceDownload") boolean forceDownload) {
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, tag, artifact, forceDownload);
+    //GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    ReleaseArtifactActionLog log = componentService.check(type, tag, artifact, forceDownload);
     return toActionLog(log);
   }
 
@@ -72,8 +67,8 @@ public class ComponentsResource {
   public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type,
                                                   @PathVariable("tag") String tag,
                                                   @PathVariable("artifact") String artifact) {
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, tag, artifact, false);
+    //GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    ReleaseArtifactActionLog log = componentService.install(type, tag, artifact, false);
     return toActionLog(log);
   }
 
@@ -81,8 +76,8 @@ public class ComponentsResource {
   public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type,
                                                    @PathVariable("tag") String tag,
                                                    @PathVariable("artifact") String artifact) {
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-    ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, tag, artifact, true);
+    //GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    ReleaseArtifactActionLog log = componentService.install(type, tag, artifact, true);
     return toActionLog(log);
   }
 
@@ -118,21 +113,18 @@ public class ComponentsResource {
     representation.setExclusions(componentFacade.getExcludedFilenames());
     representation.setInstalled(componentFacade.isInstalled());
 
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-    if (defaultGameEmulator != null) {
-      try {
-        representation.setLastModified(componentFacade.getModificationDate(defaultGameEmulator));
-        File targetFolder = componentFacade.getTargetFolder(defaultGameEmulator);
-        if (targetFolder != null) {
-          representation.setTargetFolder(targetFolder.getAbsolutePath());
-        }
-        else {
-          LOG.warn("No target folder resolved for {}", component);
-        }
+    try {
+      representation.setLastModified(componentFacade.getModificationDate());
+      File targetFolder = componentFacade.getTargetFolder();
+      if (targetFolder != null) {
+        representation.setTargetFolder(targetFolder.getAbsolutePath());
       }
-      catch (Exception e) {
-        LOG.error("Error returning component data for " + component + ": " + e.getMessage(), e);
+      else {
+        LOG.warn("No target folder resolved for {}", component);
       }
+    }
+    catch (Exception e) {
+      LOG.error("Error returning component data for " + component + ": " + e.getMessage(), e);
     }
     return representation;
   }
