@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.util.JFXFuture;
@@ -37,14 +36,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class DMDPositionController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
@@ -97,10 +95,6 @@ public class DMDPositionController implements Initializable, DialogController {
   private GameRepresentation game;
 
   private DMDPositionResizer dragBox;
-
-  private boolean hasBackglass;
-
-  private boolean hasDMD;
 
   private DMDInfo dmdinfo;
 
@@ -202,40 +196,21 @@ public class DMDPositionController implements Initializable, DialogController {
     area.set(bounds);
 
     emptyImage = new Rectangle();
-    emptyImage.setFill(Color.grayRgb(20));
+    emptyImage.setFill(Color.grayRgb(30));
     emptyImage.setStroke(Color.BLACK);
 
     // create a toggle group 
-    List<FrontendPlayerDisplay> displays = client.getFrontendService().getScreenDisplays();
-    hasBackglass = VPinScreen.valueOfScreen(displays, VPinScreen.BackGlass) != null;
-    hasDMD = VPinScreen.valueOfScreen(displays, VPinScreen.DMD) != null;
-
     ToggleGroup tg = new ToggleGroup();
-    if (hasBackglass || hasDMD) {
-      radioOnPlayfield.setToggleGroup(tg);
-    } else {
-      radioOnPlayfield.setManaged(false);
-      radioOnPlayfield.setVisible(false);
-    }
-    if (hasBackglass) {
-      radioOnBackglass.setToggleGroup(tg);
-    } else {
-      radioOnBackglass.setManaged(false);
-      radioOnBackglass.setVisible(false);
-    }
-    if (hasDMD) {
-      radioOnB2sDMD.setToggleGroup(tg);
-    } else {
-      radioOnB2sDMD.setManaged(false);
-      radioOnB2sDMD.setVisible(false);
-    }
+    radioOnPlayfield.setToggleGroup(tg);
+    radioOnBackglass.setToggleGroup(tg);
+    radioOnB2sDMD.setToggleGroup(tg);
 
     tg.selectedToggleProperty().addListener((obs, o, n) -> {
       VPinScreen selectedScreen = getSelectedScreen();
       // prevent a double load of image at dialog opening
       if (!selectedScreen.equals(dmdinfo.getOnScreen())) {
         disableButtons();
-        parentpane.setCenter(progressIndicator);
+//        parentpane.setCenter(progressIndicator);
 
         DMDInfo movedDmdinfo = fillDmdInfo();
         LOG.info("Moving dmdinfo for game {} : {}", game.getGameFileName(), movedDmdinfo);
@@ -289,7 +264,7 @@ public class DMDPositionController implements Initializable, DialogController {
   public void setGame(GameRepresentation gameRepresentation) {
     this.game = gameRepresentation;
     // loading...
-    parentpane.setCenter(progressIndicator);
+//    parentpane.setCenter(progressIndicator);
 
     CompletableFuture
       .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
@@ -341,7 +316,7 @@ public class DMDPositionController implements Initializable, DialogController {
       LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
 
       imagepane.getChildren().remove(emptyImage);
-      if (image == null) {
+      if (image == null || image.isError()) {
         emptyImage.setWidth(fitWidth);
         emptyImage.setHeight(fitHeight);
         imagepane.getChildren().add(0, emptyImage);
@@ -366,8 +341,13 @@ public class DMDPositionController implements Initializable, DialogController {
         saveGloballyBtn.setDisable(false);
         saveGloballyBtn.setVisible(dmdinfo.isUseRegistry());
       }
-  
-      if (hasBackglass && dmdinfo.isOnBackglass()) {
+
+      // when dmd is auto positioned on grill, size can be 0x0so turn option off 
+      boolean hasDMD = dmdinfo.isDmdScreenSet();
+      radioOnB2sDMD.setManaged(hasDMD);
+      radioOnB2sDMD.setVisible(hasDMD);
+
+      if (dmdinfo.isOnBackglass()) {
         radioOnBackglass.setSelected(true);
       }
       else if (hasDMD && dmdinfo.isOnDMD()) {

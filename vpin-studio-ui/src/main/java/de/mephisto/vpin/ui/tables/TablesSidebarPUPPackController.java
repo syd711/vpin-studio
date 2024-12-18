@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -124,7 +126,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   private Label errorText;
 
   @FXML
-  private Button pupPackEditorBtn;
+  private SplitMenuButton pupPackEditorBtn;
 
   @FXML
   private Pane pupRoot;
@@ -233,6 +235,20 @@ public class TablesSidebarPUPPackController implements Initializable {
     }
     else {
       Studio.open(file);
+    }
+  }
+
+  @FXML
+  private void onPupPackScreenTweaker() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    File file = new File(frontend.getInstallationDirectory(), "PupPackScreenTweaker.exe");
+    if (!file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find PupPackScreenTweaker.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+    }
+    else {
+      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(file.getName()));
+      executor.setDir(file.getParentFile());
+      executor.executeCommandAsync();
     }
   }
 

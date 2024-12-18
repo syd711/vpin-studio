@@ -162,6 +162,8 @@ public class FileMonitoringThread {
   }
 
   private void notifyUpdates(@Nullable File file) {
-    listener.notifyFileChange(file);
+    if (file != null && file.equals(this.file)) {
+      listener.notifyFileChange(file);
+    }
   }
 }

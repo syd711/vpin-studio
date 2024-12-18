@@ -293,7 +293,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Open ALT Color Folder" />
+                                    <Tooltip text="Open highscore file or folder" />
                                  </tooltip>
                                  <font>
                                     <Font size="10.0" />

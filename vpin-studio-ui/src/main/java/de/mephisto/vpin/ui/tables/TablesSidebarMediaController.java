@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -381,11 +382,6 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g, boolean preview) {
-    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    VPinScreen cardScreen = null;
-    if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-      cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
-    }
 
     btn_edit_Audio.setDisable(g.isEmpty());
     btn_edit_AudioLaunch.setDisable(g.isEmpty());
@@ -400,51 +396,70 @@ public class TablesSidebarMediaController implements Initializable {
     btn_edit_PlayField.setDisable(g.isEmpty());
     btn_edit_Wheel.setDisable(g.isEmpty());
 
-    FrontendMediaRepresentation frontendMedia = new FrontendMediaRepresentation();
+    //FrontendMediaRepresentation frontendMedia = new FrontendMediaRepresentation();
     if (g.isPresent()) {
-      frontendMedia = client.getFrontendService().getFrontendMedia(g.get().getId());
-    }
+      CompletableFuture<FrontendMediaRepresentation> f1 = 
+        CompletableFuture.supplyAsync(() -> client.getFrontendService().getFrontendMedia(g.get().getId()));
+      CompletableFuture<DirectB2SData> f2 = 
+        CompletableFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(g.get().getId()));
+      CompletableFuture<CardSettings> f3 = 
+        CompletableFuture.supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class));
 
-    btn_view_Topper.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Topper).isEmpty());
-    btn_view_Menu.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Menu).isEmpty());
-    btn_view_BackGlass.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.BackGlass).isEmpty());
-    btn_view_Loading.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Loading).isEmpty());
-    btn_view_GameInfo.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameInfo).isEmpty());
-    btn_view_DMD.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.DMD).isEmpty());
-    btn_view_Other2.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Other2).isEmpty());
-    btn_view_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
-    btn_view_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
-    btn_view_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
+      CompletableFuture.allOf(f1, f2, f3).thenRunAsync(() -> {
+        try {
+          FrontendMediaRepresentation frontendMedia = f1.get();
+          DirectB2SData directB2SData = f2.get();
+          CardSettings cardSettings = f3.get();
 
-    btn_delete_Topper.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Topper).isEmpty());
-    btn_delete_Menu.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Menu).isEmpty());
-    btn_delete_BackGlass.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.BackGlass).isEmpty());
-    btn_delete_Loading.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Loading).isEmpty());
-    btn_delete_GameInfo.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameInfo).isEmpty());
-    btn_delete_DMD.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.DMD).isEmpty());
-    btn_delete_Other2.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Other2).isEmpty());
-    btn_delete_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
-    btn_delete_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
-    btn_delete_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
+          VPinScreen cardScreen = null;
+          if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
+            cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
+          }
 
-    if (g.isPresent()) {
-      GameRepresentation game = g.get();
-      DirectB2SData directB2SData = client.getBackglassServiceClient().getDirectB2SData(game.getId());
+          btn_view_Topper.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Topper).isEmpty());
+          btn_view_Menu.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Menu).isEmpty());
+          btn_view_BackGlass.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.BackGlass).isEmpty());
+          btn_view_Loading.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Loading).isEmpty());
+          btn_view_GameInfo.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameInfo).isEmpty());
+          btn_view_DMD.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.DMD).isEmpty());
+          btn_view_Other2.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Other2).isEmpty());
+          btn_view_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
+          btn_view_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
+          btn_view_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
+      
+          btn_delete_Topper.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Topper).isEmpty());
+          btn_delete_Menu.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Menu).isEmpty());
+          btn_delete_BackGlass.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.BackGlass).isEmpty());
+          btn_delete_Loading.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Loading).isEmpty());
+          btn_delete_GameInfo.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameInfo).isEmpty());
+          btn_delete_DMD.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.DMD).isEmpty());
+          btn_delete_Other2.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Other2).isEmpty());
+          btn_delete_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
+          btn_delete_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
+          btn_delete_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());      
 
-      btn_edit_Audio.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Audio).size()));
-      btn_edit_AudioLaunch.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.AudioLaunch).size()));
-      btn_edit_Topper.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Topper).size()));
-      btn_edit_Menu.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Menu).size()));
-      btn_edit_BackGlass.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.BackGlass).size()));
-      btn_edit_Loading.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Loading).size()));
-      btn_edit_GameInfo.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.GameInfo).size()));
-      btn_edit_DMD.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.DMD).size()));
-      btn_edit_Other2.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Other2).size()));
-      btn_edit_GameHelp.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.GameHelp).size()));
-      btn_edit_PlayField.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.PlayField).size()));
-      btn_edit_Wheel.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Wheel).size()));
+          btn_edit_Audio.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Audio).size()));
+          btn_edit_AudioLaunch.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.AudioLaunch).size()));
+          btn_edit_Topper.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Topper).size()));
+          btn_edit_Menu.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Menu).size()));
+          btn_edit_BackGlass.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.BackGlass).size()));
+          btn_edit_Loading.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Loading).size()));
+          btn_edit_GameInfo.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.GameInfo).size()));
+          btn_edit_DMD.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.DMD).size()));
+          btn_edit_Other2.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Other2).size()));
+          btn_edit_GameHelp.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.GameHelp).size()));
+          btn_edit_PlayField.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.PlayField).size()));
+          btn_edit_Wheel.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Wheel).size()));  
 
-      refreshMedia(frontendMedia, cardScreen, preview, directB2SData);
+          refreshMedia(frontendMedia, cardScreen, preview, directB2SData);
+        }
+        catch (Exception e) {
+          
+        }
+      }, Platform::runLater)
+      .exceptionally(e -> {
+        return null;
+      });
     }
     else {
       btn_edit_Audio.setText(" ");
@@ -459,7 +474,6 @@ public class TablesSidebarMediaController implements Initializable {
       btn_edit_GameHelp.setText(" ");
       btn_edit_PlayField.setText(" ");
       btn_edit_Wheel.setText(" ");
-
       resetMedia();
     }
   }

@@ -57,7 +57,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   private final Map<String, Boolean> romValidationCache = new ConcurrentHashMap<>();
 
   @Autowired
-  private FrontendService frontendServie;
+  private FrontendService frontendService;
 
   private ApplicationContext applicationContext;
 
@@ -79,7 +79,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
 
     l = System.currentTimeMillis();
     romValidationCache.clear();
-    List<GameEmulator> gameEmulators = frontendServie.getGameEmulators();
+    List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       validateRoms(gameEmulator);
     }
@@ -202,12 +202,12 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   }
 
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = frontendServie.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
   }
 
   public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = frontendServie.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
   }
 
@@ -236,7 +236,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
           LOG.error("MAME command failed: " + executor.getStandardErrorFromCommand());
         }
         else {
-          LOG.error("MAME exe \"" + mameExe.getAbsolutePath() + "\" not found.");
+          LOG.error("MAME exe not found.");
           return false;
         }
       }
@@ -288,13 +288,13 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   }
 
   public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = frontendServie.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
   }
 
   public void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {
     if (analysis == null) {
-      analysis = new UploaderAnalysis(frontendServie.getFrontend(), tempFile);
+      analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
       analysis.analyze();
     }
 

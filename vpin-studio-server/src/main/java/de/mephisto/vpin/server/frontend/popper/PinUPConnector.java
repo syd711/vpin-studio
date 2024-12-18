@@ -2160,6 +2160,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
     }
 
+    //actually redundant, but who knows what else is in there
     File showTaskbarExe = new File(getInstallationFolder(), "showtaskbar.exe");
     if (showTaskbarExe.exists()) {
       SystemCommandExecutor exec = new SystemCommandExecutor(Arrays.asList("showtaskbar.exe"));
@@ -2167,7 +2168,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       exec.executeCommandAsync();
     }
     else {
-      LOG.error("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found.");
+      LOG.info("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found, nircmd.exe has been used before.");
     }
 
     return true;

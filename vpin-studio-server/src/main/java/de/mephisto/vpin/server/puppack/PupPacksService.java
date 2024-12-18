@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -29,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class PupPacksService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PupPacksService.class);
+
+  private final static String PUP_PACK_TWEAKER_EXE = "PupPackScreenTweaker.exe";
 
   @Autowired
   private SystemService systemService;
@@ -262,6 +265,18 @@ public class PupPacksService implements InitializingBean {
     FrontendType frontendType = frontendService.getFrontendType();
     if (!frontendType.supportPupPacks()) {
       return;
+    }
+
+    try {
+      File pupPackScreenTweakerExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
+      if (!pupPackScreenTweakerExe.exists()) {
+        File source = new File(SystemInfo.RESOURCES, PUP_PACK_TWEAKER_EXE);
+        FileUtils.copyFile(source, pupPackScreenTweakerExe);
+        LOG.info("Copied {}", pupPackScreenTweakerExe.getAbsolutePath());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy {}: {}", PUP_PACK_TWEAKER_EXE, e.getMessage(), e);
     }
 
     new Thread(() -> {

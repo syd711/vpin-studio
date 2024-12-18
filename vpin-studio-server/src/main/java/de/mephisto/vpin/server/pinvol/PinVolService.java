@@ -30,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -113,17 +112,19 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     preferences = new PinVolPreferences();
     try {
       File tablesIni = getPinVolTablesIniFile();
-      if (tablesIni.exists()) {
-        try (FileInputStream fileInputStream = new FileInputStream(tablesIni)) {
-          List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
-          for (String entry : entries) {
-            PinVolTableEntry e = createEntry(entry);
-            if (e != null) {
-              preferences.getTableEntries().add(e);
-            }
+      if (!tablesIni.exists()) {
+        LOG.info("PinVol service table settings have not been loaded, because {} was not found.", tablesIni.getAbsolutePath());
+        return;
+      }
+      try (FileInputStream fileInputStream = new FileInputStream(tablesIni)) {
+        List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
+        for (String entry : entries) {
+          PinVolTableEntry e = createEntry(entry);
+          if (e != null) {
+            preferences.getTableEntries().add(e);
           }
-          LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
         }
+        LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
       }
       File volIni = getPinVolVolIniFile();
       if (volIni.exists()) {
