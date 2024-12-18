@@ -201,7 +201,7 @@
                <children>
                   <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                      <children>
-                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;">
+                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
                            <columns>
                                  <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
                                  <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
