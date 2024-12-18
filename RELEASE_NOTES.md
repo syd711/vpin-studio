@@ -2,7 +2,7 @@
 
 ## Changes
  
-- **Tables / PinVol Integration**: VPin Studio integrates deeper with PinVol now.
+- **Tables / PinVol Integration**: VPin Studio integrates deeper with PinVol now. (The integration might need some adjustments since I haven't used it myself yet). 
   - The PinVol system and table volume can be updated via context menu in the table overview. Multi-selection is supported.
   - The PinVol preferences allow to configure the PinVol system sound. An additional validator has been added there that shows potential conflicts with PinUP Popper.
   - The Table Data Manager dialog has also a configuration panel for the PinVol settings now, located under the tab "Settings".  
