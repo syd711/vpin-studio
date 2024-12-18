@@ -259,9 +259,10 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         Frontend frontend = client.getFrontendService().getFrontendCached();
         File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
-        if (!gamePupFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+        if (!StringUtils.isEmpty(game.get().getRomAlias())) {
           gamePupFolder = new File(pupFolder, game.get().getRomAlias());
         }
+
         SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
       }
     }
