@@ -8,12 +8,17 @@
   - The Table Data Manager dialog has also a configuration panel for the PinVol settings now, located under the tab "Settings".  
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/pinvol-dialog.png" width="350" />
 
-- **Tables / Backglass Manager**: Added DMD position dialog. Finally, you don't have to search for your mouse cursor to position the DMD anymore. The dialog comes with an auto-position option so you don't even have to adjust anything manually.
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/dmd-positioner.png" width="500" />
+- **Tables / Backglass Manager**: Tables / Backglass Manager: Added DMD position dialog. Finally, you don't have to search for your mouse cursor to position the DMD anymore.
+  - Choose whether the freezy / VPinMAME DMD appears on backglass our full DMD screen
+  - Drag and draw with your mouse the dmd position, adjust with handlers or precisely entering numbers or using +/- buttons
+  - And don't miss our auto-position option so you don't even have to adjust anything manually.
+   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/dmd-positioner.png" width="500" />
 
 - **Tables / Backglass Manager**: Added .res designer dialog. Create fancy background for your backglass!
-
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="400" />
+  - This new dialog helps creating table res file. It is possible to choose wether the backglass is stretched in the screen or centered.
+  - When centered, you can upload or drop an image that is used as a background.
+  
+   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor.png" width="330" /> <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/res-editor-frame.png" width="330" />
 
 - **VPin Studio Launcher**: Added Wake-on-LAN (WOL) functionality using a Magic Packet to power on any VPin Studio Servers that are in sleep mode. To enable WOL, follow these steps:
   1. **Enable Wake-on-LAN in BIOS**:
