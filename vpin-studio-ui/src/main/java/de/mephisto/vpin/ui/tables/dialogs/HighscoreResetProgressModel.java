@@ -21,11 +21,13 @@ public class HighscoreResetProgressModel extends ProgressModel<GameRepresentatio
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;
+  private final long value;
 
-  public HighscoreResetProgressModel(List<GameRepresentation> games) {
+  public HighscoreResetProgressModel(List<GameRepresentation> games, long value) {
     super("Resetting Highscores");
     this.games = games;
     this.gameIterator = games.iterator();
+    this.value = value;
   }
 
   @Override
@@ -61,7 +63,7 @@ public class HighscoreResetProgressModel extends ProgressModel<GameRepresentatio
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      client.getGameService().resetHighscore(game.getId());
+      client.getGameService().resetHighscore(game.getId(), value);
       if (games.size() <= MAX_REFRESH_COUNT) {
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }

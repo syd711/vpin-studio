@@ -8,10 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-
-import static org.apache.naming.SelectorContext.prefix;
 
 public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
   private static final String NAME_SUFFIX = "Name";
@@ -60,13 +57,13 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
   }
 
   @Override
-  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder, long score) throws IOException {
     int index = 1;
     String key = String.format(scoreKey, index);
     while (gameFolder.hasEntry(key)) {
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(key);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+      byte[] array = StandardCharsets.UTF_16LE.encode(String.valueOf(score)).array();
       scoreDocument.replaceContents(new ByteArrayInputStream(array));
 
       index++;

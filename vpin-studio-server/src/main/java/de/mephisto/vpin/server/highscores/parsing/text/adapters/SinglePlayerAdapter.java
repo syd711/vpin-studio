@@ -54,12 +54,12 @@ public class SinglePlayerAdapter extends ScoreTextFileAdapterImpl {
   }
 
   @Override
-  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines, long score) {
     List<String> newScoreText = new ArrayList<>();
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
       if (i == scoreLine) {
-        newScoreText.add("0");
+        newScoreText.add(String.valueOf(score));
         continue;
       }
       newScoreText.add(line);

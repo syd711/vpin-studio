@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -432,8 +432,11 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/recent/" + count + "/" + gameId, ScoreSummaryRepresentation.class);
   }
 
-  public boolean resetHighscore(int gameId) {
-    return getRestClient().delete(API + "games/reset/" + gameId);
+  public boolean resetHighscore(int gameId, long value) {
+    Map<String, Long> values = new HashMap<>();
+    values.put("gameId", (long) gameId);
+    values.put("scoreValue", value);
+    return getRestClient().post(API + "games/reset", values, Boolean.class);
   }
 
   public GameScoreValidation getGameScoreValidation(int gameId) {

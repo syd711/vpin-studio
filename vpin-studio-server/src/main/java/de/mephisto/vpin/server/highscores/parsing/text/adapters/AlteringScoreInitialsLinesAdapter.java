@@ -62,12 +62,12 @@ public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl 
   }
 
   @Override
-  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines, long score) {
     List<String> newScoreText = new ArrayList<>();
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
       if (i >= start && i < start + (size * 2) && i % 2 == 0) {
-        line = "0";
+        line = String.valueOf(score);
       }
       else if (i >= start && i < start + (size * 2) && i % 2 == 1) {
         line = "???";

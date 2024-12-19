@@ -73,7 +73,7 @@ public class TextHighscoreAdapters implements InitializingBean {
 //    adapters.add(new TwoPlayersAdapter(8));
   }
 
-  public boolean resetHighscores(@NonNull ScoringDB scoringDB, @NonNull File file) {
+  public boolean resetHighscores(@NonNull ScoringDB scoringDB, @NonNull File file, long score) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
       LOG.info("\"" + file.getName() + "\" was marked as to be ignored for text file based and will not be resetted.");
       return false;
@@ -87,7 +87,7 @@ public class TextHighscoreAdapters implements InitializingBean {
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
           LOG.info("Resetting \"" + file.getAbsolutePath() + "\" using " + adapter.getClass().getSimpleName());
-          List<String> resetHighscoreText = adapter.resetHighscore(file, lines);
+          List<String> resetHighscoreText = adapter.resetHighscore(file, lines, score);
           if (resetHighscoreText != null) {
             FileUtils.writeLines(file, StandardCharsets.UTF_8.name(), resetHighscoreText);
             LOG.info("Resetted \"" + file.getAbsolutePath() + "\"");

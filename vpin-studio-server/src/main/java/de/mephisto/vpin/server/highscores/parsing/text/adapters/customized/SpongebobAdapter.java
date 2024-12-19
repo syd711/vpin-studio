@@ -50,15 +50,15 @@ public class SpongebobAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines, long score) {
     List<String> newScoreText = new ArrayList<>();
     newScoreText.add(lines.get(0));
-    newScoreText.add("1.:???:0");
-    newScoreText.add("2.:???:0");
-    newScoreText.add("3.:???:0");
-    newScoreText.add("4.:???:0");
-    newScoreText.add("5.:???:0");
-    newScoreText.add("6.:???:0");
+    newScoreText.add("1.:???:" + score);
+    newScoreText.add("2.:???:" + score);
+    newScoreText.add("3.:???:" + score);
+    newScoreText.add("4.:???:" + score);
+    newScoreText.add("5.:???:" + score);
+    newScoreText.add("6.:???:" + score);
     return newScoreText;
   }
 }

@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,8 +64,16 @@ public class HighscoreResetController implements Initializable, DialogController
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    HighscoreResetProgressModel highscoreResetProgressModel = new HighscoreResetProgressModel(this.games);
+    String value = scoreField.getText();
+    long score = 99;
+    try {
+      score = Long.parseLong(value);
+    }
+    catch (NumberFormatException ex) {
+      //ignore
+    }
 
+    HighscoreResetProgressModel highscoreResetProgressModel = new HighscoreResetProgressModel(this.games, score);
     Platform.runLater(() -> {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       stage.close();
@@ -100,6 +110,15 @@ public class HighscoreResetController implements Initializable, DialogController
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
+
+    this.scoreField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!newValue.matches("\\d*")) {
+          scoreField.setText(newValue.replaceAll("[^\\d]", ""));
+        }
+      }
+    });
 
     scoreValueBox.managedProperty().bindBidirectional(scoreValueBox.visibleProperty());
     multiNVRamLabel.managedProperty().bindBidirectional(multiNVRamLabel.visibleProperty());

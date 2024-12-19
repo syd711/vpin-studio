@@ -200,7 +200,7 @@ public class GameService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
-  public boolean resetGame(int gameId) {
+  public boolean resetGame(int gameId, long score) {
     Game game = this.getGame(gameId);
     if (game == null) {
       return false;
@@ -208,7 +208,7 @@ public class GameService implements InitializingBean {
 
 
     if (highscoreBackupService.backup(game)) {
-      return highscoreService.resetHighscore(game);
+      return highscoreService.resetHighscore(game, score);
     }
 
     return false;
