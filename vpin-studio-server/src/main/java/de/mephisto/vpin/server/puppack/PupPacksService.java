@@ -91,11 +91,11 @@ public class PupPacksService implements InitializingBean {
     if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackCache.containsKey(game.getPupPackName().toLowerCase())) {
       return pupPackCache.get(game.getPupPackName().toLowerCase());
     }
-    if (!StringUtils.isEmpty(game.getRom()) && pupPackCache.containsKey(game.getRom().toLowerCase())) {
-      return pupPackCache.get(game.getRom().toLowerCase());
-    }
     if (!StringUtils.isEmpty(game.getRomAlias()) && pupPackCache.containsKey(game.getRomAlias().toLowerCase())) {
       return pupPackCache.get(game.getRomAlias().toLowerCase());
+    }
+    if (!StringUtils.isEmpty(game.getRom()) && pupPackCache.containsKey(game.getRom().toLowerCase())) {
+      return pupPackCache.get(game.getRom().toLowerCase());
     }
     if (!StringUtils.isEmpty(game.getTableName()) && pupPackCache.containsKey(game.getTableName().toLowerCase())) {
       return pupPackCache.get(game.getTableName().toLowerCase());
