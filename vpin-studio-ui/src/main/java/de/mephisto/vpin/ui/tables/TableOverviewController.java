@@ -273,6 +273,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   private ToolBar toolbar;
 
+  @FXML
+  private HBox importUploadButtonGroup;
+
+  @FXML
+  private HBox validationButtonGroup;
+
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -319,10 +325,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
           assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
         }
+        importUploadButtonGroup.setVisible(false);
+        validationButtonGroup.setVisible(false);
       }
       else {
         assetManagerViewBtn.getStyleClass().remove("toggle-selected");
         assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
+        importUploadButtonGroup.setVisible(true);
+        validationButtonGroup.setVisible(true);
       }
 
       refreshViewAssetColumns(assetManagerMode);
@@ -1662,6 +1672,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
     validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
+    validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
+    importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
