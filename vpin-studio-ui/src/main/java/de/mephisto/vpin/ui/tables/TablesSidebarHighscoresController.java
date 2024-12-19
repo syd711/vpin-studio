@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
@@ -177,7 +178,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onBackup() {
-    if (this.game.isPresent()) {
+    if (this.games.size() == 1) {
       GameRepresentation g = this.game.get();
       String last = null;
       if (highscoreBackups != null && !this.highscoreBackups.isEmpty()) {
@@ -194,6 +195,12 @@ public class TablesSidebarHighscoresController implements Initializable {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed create highscore backup: " + e.getMessage());
         }
         EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
+      }
+    }
+    else if (this.games.size() > 1) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for " + games.size() + " tables?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(this.games));
       }
     }
   }
