@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -54,8 +54,7 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @Override
   public void postProcessing(boolean simulate) {
     if (!simulate) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-      File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
+      File file = new File(component.getTargetFolder(), "Setup64.exe");
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(file.getName()));
       executor.setDir(file.getParentFile());
       executor.executeCommandAsync();
@@ -71,6 +70,14 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    mameBtn.setDisable(!client.getSystemService().isLocal());
+
+    openFolderButton.setDisable(!component.isInstalled());
+    mameBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());
+  }
+
+  @Override
+  public void refreshTab(ComponentRepresentation component) {
+    openFolderButton.setDisable(!component.isInstalled());
+    mameBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());  
   }
 }

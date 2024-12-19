@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
@@ -52,7 +53,12 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    openBtn.setDisable(client.getVpxService().getVpxFile() == null);
     componentUpdateController.setLocalInstallOnly(false);
+  }
+
+  @Override
+  protected void refreshTab(ComponentRepresentation component) {
+    openFolderButton.setDisable(!component.isInstalled());
+    openBtn.setDisable(!component.isInstalled() || client.getVpxService().getVpxFile() == null);
   }
 }

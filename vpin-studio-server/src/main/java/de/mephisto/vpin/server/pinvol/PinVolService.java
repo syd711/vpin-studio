@@ -30,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -117,18 +116,16 @@ public class PinVolService implements InitializingBean, FileChangeListener {
         LOG.info("PinVol service table settings have not been loaded, because {} was not found.", tablesIni.getAbsolutePath());
         return;
       }
-
-      FileInputStream fileInputStream = new FileInputStream(tablesIni);
-      List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
-      for (String entry : entries) {
-        PinVolTableEntry e = createEntry(entry);
-        if (e != null) {
-          preferences.getTableEntries().add(e);
+      try (FileInputStream fileInputStream = new FileInputStream(tablesIni)) {
+        List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
+        for (String entry : entries) {
+          PinVolTableEntry e = createEntry(entry);
+          if (e != null) {
+            preferences.getTableEntries().add(e);
+          }
         }
+        LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
       }
-      fileInputStream.close();
-      LOG.info("Loaded " + preferences.getTableEntries().size() + " PinVOL table entries.");
-
       File volIni = getPinVolVolIniFile();
       if (volIni.exists()) {
         INIConfiguration iniConfiguration = new INIConfiguration();
@@ -136,13 +133,8 @@ public class PinVolService implements InitializingBean, FileChangeListener {
         iniConfiguration.setSeparatorUsedInOutput("=");
         iniConfiguration.setSeparatorUsedInInput("=");
 
-
-        FileReader fileReader = new FileReader(volIni);
-        try {
+        try (FileReader fileReader = new FileReader(volIni)) {
           iniConfiguration.read(fileReader);
-        }
-        finally {
-          fileReader.close();
         }
 
         preferences.setDefaultVol(iniConfiguration.getInt("Default", 0));

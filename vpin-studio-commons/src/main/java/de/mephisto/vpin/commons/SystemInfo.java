@@ -127,13 +127,13 @@ public class SystemInfo {
   }
 
   private File resolveFolder(String folderName) {
-    File f = new File("C:/" + folderName.replace(" ", ""));
+    File f = new File("C:/vPinball/" + folderName.replace(" ", ""));
     if (!f.exists()) {
-      f = new File("C:/" + folderName);
+      f = new File("C:/vPinball/" + folderName);
       if (!f.exists()) {
-        f = new File("C:/vPinball/" + folderName.replace(" ", ""));
+        f = new File("C:/" + folderName.replace(" ", ""));
         if (!f.exists()) {
-          f = new File("C:/vPinball/" + folderName);
+          f = new File("C:/" + folderName);
         }                                                           
       }
     }

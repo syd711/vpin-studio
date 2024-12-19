@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.components.facades;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.directb2s.BackglassService;
-import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -43,13 +42,13 @@ public class BackglassComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
+  public File getTargetFolder() {
     return backglassService.getBackglassServerFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
+  public Date getModificationDate() {
     File file = new File(backglassService.getBackglassServerFolder(), "B2S_ScreenResIdentifier.exe");
     if (file.exists()) {
       return new Date(file.lastModified());
