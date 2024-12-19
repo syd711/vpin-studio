@@ -1,3 +1,8 @@
+## Release Notes 3.11.1
+
+## Bugfixes
+- **Tables / PUP Packs**: Fixed wrong order of PUP pack detection when an alias was used.
+
 ## Release Notes 3.11.0
 
 ## Changes
