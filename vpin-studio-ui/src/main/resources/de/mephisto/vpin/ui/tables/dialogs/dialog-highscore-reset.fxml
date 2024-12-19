@@ -60,7 +60,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TextField fx:id="scoreField" editable="false" prefHeight="26.0" prefWidth="400.0" promptText="Enter Score Value..." GridPane.columnIndex="1">
+                              <TextField fx:id="scoreField" prefHeight="26.0" prefWidth="400.0" promptText="Enter Score Value..." GridPane.columnIndex="1">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

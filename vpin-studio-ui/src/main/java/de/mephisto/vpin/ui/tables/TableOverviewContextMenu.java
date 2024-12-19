@@ -170,12 +170,12 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(importsItem);
     }
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
-
-    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
-    b2sItem.setGraphic(iconBackglassManager);
-    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
-    ctxMenu.getItems().add(b2sItem);
+    //Declutter
+//    ctxMenu.getItems().add(new SeparatorMenuItem());
+//    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
+//    b2sItem.setGraphic(iconBackglassManager);
+//    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
+//    ctxMenu.getItems().add(b2sItem);
 
     if (game.isVpxGame()) {
 
@@ -300,30 +300,31 @@ public class TableOverviewContextMenu {
       launchItem.setOnAction(actionEvent -> tableOverviewController.onPlay());
       ctxMenu.getItems().add(launchItem);
 
-      if (frontendType.supportArchive()) {
-        ctxMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem exportItem = new MenuItem("Backup Table");
-        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
-        ctxMenu.getItems().add(exportItem);
-
-        ctxMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-        vpbmItem.setGraphic(iconVpbm);
-        vpbmItem.setOnAction(actionEvent -> {
-          new Thread(() -> {
-            List<String> commands = Arrays.asList("vPinBackupManager.exe");
-            LOG.info("Executing vpbm: " + String.join(" ", commands));
-            File dir = new File("./resources/", "vpbm");
-            SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-            executor.setDir(dir);
-            executor.executeCommandAsync();
-          }).start();
-        });
-        ctxMenu.getItems().add(vpbmItem);
-      }
+      //decluttering
+//      if (frontendType.supportArchive()) {
+//        ctxMenu.getItems().add(new SeparatorMenuItem());
+//
+//        MenuItem exportItem = new MenuItem("Backup Table");
+//        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+//        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
+//        ctxMenu.getItems().add(exportItem);
+//
+//        ctxMenu.getItems().add(new SeparatorMenuItem());
+//
+//        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
+//        vpbmItem.setGraphic(iconVpbm);
+//        vpbmItem.setOnAction(actionEvent -> {
+//          new Thread(() -> {
+//            List<String> commands = Arrays.asList("vPinBackupManager.exe");
+//            LOG.info("Executing vpbm: " + String.join(" ", commands));
+//            File dir = new File("./resources/", "vpbm");
+//            SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+//            executor.setDir(dir);
+//            executor.executeCommandAsync();
+//          }).start();
+//        });
+//        ctxMenu.getItems().add(vpbmItem);
+//      }
     }
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
