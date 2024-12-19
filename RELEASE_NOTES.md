@@ -14,6 +14,12 @@
 - **Tables / Overview:** De-cluttering:
   - **Context Menu**: Removing less used entries.
   - **Toolbar**: When switching into asset-view mode, unnecessary actions are hidden.
+- **Hook Support**: The VPin Studio allows to execute customs scripts from any client. You can add these "hooks" by adding .exe or .bat files into the server installation directory **resources/hooks**. The list of files is picked up and added to the preferences split button of the Studio client and will be executed on click.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
+
+- **sdfs**: sdfsf
+
 
 ## Bugfixes
 
