@@ -1507,7 +1507,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     }
     else {
-      this.tablesController.getTablesSideBarController().setGame(game != null ? Optional.of(game) : Optional.empty());
+      List<GameRepresentation> games = this.tableView.getSelectionModel().getSelectedItems().stream().map(GameRepresentationModel::getGame).collect(Collectors.toList());
+      this.tablesController.getTablesSideBarController().setGames(game != null ? Optional.of(game) : Optional.empty(), games);
     }
     if (game != null) {
       boolean errorneous = game.getValidationState() != null && game.getValidationState().getCode() > 0;
@@ -1780,7 +1781,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
     boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
 
-    this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
+    this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
+    this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.uploadTableBtn.setVisible(vpxOrFpEmulator);

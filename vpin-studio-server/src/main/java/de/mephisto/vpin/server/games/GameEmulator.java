@@ -46,6 +46,9 @@ public class GameEmulator {
   private String exeParameters;
   private final String gameExt;
 
+  private String launchScript;
+  private String exitScript;
+
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.type = emulator.getType();
@@ -56,6 +59,9 @@ public class GameEmulator {
     this.exeParameters = emulator.getExeParameters();
     this.visible = emulator.isVisible();
     this.gameExt = emulator.getGamesExt();
+
+    this.launchScript = emulator.getLaunchScript();
+    this.exitScript = emulator.getExitScript();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
@@ -93,6 +99,22 @@ public class GameEmulator {
       this.romFolder = new File(emulator.getDirRoms());
     }
     this.romDirectory = this.romFolder.getAbsolutePath();
+  }
+
+  public String getLaunchScript() {
+    return launchScript;
+  }
+
+  public void setLaunchScript(String launchScript) {
+    this.launchScript = launchScript;
+  }
+
+  public String getExitScript() {
+    return exitScript;
+  }
+
+  public void setExitScript(String exitScript) {
+    this.exitScript = exitScript;
   }
 
   @JsonIgnore

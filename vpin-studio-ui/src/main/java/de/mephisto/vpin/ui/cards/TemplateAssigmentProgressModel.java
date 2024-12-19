@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
+import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.MAX_REFRESH_COUNT;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateAssigmentProgressModel.class);
-  public static final int MAX_REFRESH_COUNT = 3;
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;

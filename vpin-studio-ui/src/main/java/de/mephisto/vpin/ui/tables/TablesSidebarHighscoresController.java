@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.ui.NavigationController;
@@ -122,8 +120,12 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private CheckBox cardsEnabledCheckbox;
 
+  @FXML
+  private VBox multiSelectionPane;
+
 
   private Optional<GameRepresentation> game = Optional.empty();
+  private List<GameRepresentation> games = new ArrayList<>();
 
   private TablesSidebarController tablesSidebarController;
   private List<HighscoreBackup> highscoreBackups;
@@ -213,22 +215,19 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScoreReset() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
-          "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
-      if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
-        if (!Studio.client.getGameService().resetHighscore(g.getId())) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Reset Failed", "Check the log files for details and make sure that no process is blocking the highscore file.");
-        }
-        this.refreshView(this.game);
-      }
+    if (!this.games.isEmpty()) {
+      TableDialogs.openHighscoresResetDialog(this.games);
     }
   }
 
-  public void setGame(Optional<GameRepresentation> game) {
+  public void setGames(List<GameRepresentation> games) {
     this.highscoreBackups = new ArrayList<>();
-    this.game = game;
+    this.game = Optional.empty();
+    this.games = games;
+
+    if (!games.isEmpty()) {
+      this.game = Optional.of(games.get(0));
+    }
 
     Platform.runLater(() -> {
       this.refreshView(game);
@@ -237,7 +236,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     HighscoreMetadataRepresentation metadata = null;
-    if(g.isPresent()) {
+    if (g.isPresent()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
       if (!progressDialog.getResults().isEmpty()) {
         metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
@@ -263,15 +262,20 @@ public class TablesSidebarHighscoresController implements Initializable {
 
     scanHighscoreBtn.setDisable(true);
     cardBtn.setDisable(true);
-    resetBtn.setDisable(true);
+    resetBtn.setDisable(games.size() == 1);
 
-    backupBtn.setDisable(true);
+    backupBtn.setDisable(games.size() == 1);
+    restoreBtn.setDisable(games.size() > 1);
     restoreBtn.setText("Restore");
 
     cardsEnabledCheckbox.setDisable(true);
     eventLogBtn.setDisable(true);
 
-    if (g.isPresent()) {
+    this.multiSelectionPane.setVisible(games.size() > 1);
+    this.statusPane.setVisible(games.size() == 1);
+    this.dataPane.setVisible(games.size() == 1);
+
+    if (g.isPresent() && this.games.size() == 1) {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
       restoreBtn.setDisable(false);
