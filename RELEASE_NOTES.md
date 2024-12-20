@@ -2,7 +2,9 @@
 
 ## Bugfixes
 
-- **Tables / PUP Packs**: Fixed wrong order of PUP pack detection when an alias was used.
+- **Tables / PUP Packs**: Fixed alias lookups.
+- **Tables / ALT Sound**: Added "name" field, fixed alias lookups, fixed "Open Folder" button for alias names.
+- **Tables / ALT Color**: Added "name" field and fixed alias lookups, fixed "Open Folder" button for alias names.
 - **Tables / VPS Updates**: Fixed filtering issues.
 
 ## Release Notes 3.11.0

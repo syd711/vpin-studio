@@ -84,7 +84,10 @@ public class AltColorService implements InitializingBean {
     String tableName = game.getTableName();
 
     File altColorFolder = null;
-    if (!StringUtils.isEmpty(rom)) {
+    if (!StringUtils.isEmpty(game.getRomAlias())) {
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRomAlias());
+    }
+    else if (!StringUtils.isEmpty(rom)) {
       altColorFolder = new File(game.getEmulator().getAltColorFolder(), rom);
     }
 
