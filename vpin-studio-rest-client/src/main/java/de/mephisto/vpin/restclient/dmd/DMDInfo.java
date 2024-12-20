@@ -28,6 +28,9 @@ public class DMDInfo {
   private double screenHeight;
   private boolean imageCentered;
 
+  /** when dmd is positioned on grill, dmd size is 0x0, then option to position on dmd should be turned off */ 
+  private boolean dmdScreenSet;
+
   public int getGameId() {
     return gameId;
   }
@@ -139,7 +142,15 @@ public class DMDInfo {
 	public void setImageCentered(boolean imageCentered) {
 		this.imageCentered = imageCentered;
 	}
-  
+
+  public boolean isDmdScreenSet() {
+    return dmdScreenSet;
+  }
+
+  public void setDmdScreenSet(boolean dmdScreenSet) {
+    this.dmdScreenSet = dmdScreenSet;
+  }
+
   //-----------------------
 
   public double getCenterX() {

@@ -1,10 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Predicate;
@@ -13,7 +16,7 @@ public class TableOverviewPredicateFactory {
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings) {
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings, UISettings uiSettings) {
     return new Predicate<GameRepresentationModel>() {
       @Override
       public boolean test(GameRepresentationModel model) {
@@ -55,9 +58,19 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
-        if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
+        if (filterSettings.isVpsUpdates() && (StringUtils.isEmpty(game.getExtTableId()) || game.getVpsUpdates() == null || game.getVpsUpdates().isEmpty())) {
           return false;
         }
+
+        if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null) {
+          for (VPSChange change : game.getVpsUpdates().getChanges()) {
+            if (!VpsTableColumn.isFiltered(uiSettings, change)) {
+              continue;
+            }
+            return false;
+          }
+        }
+
         if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
           return false;
         }

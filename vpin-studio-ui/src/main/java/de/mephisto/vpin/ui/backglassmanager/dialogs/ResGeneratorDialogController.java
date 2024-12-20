@@ -372,7 +372,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
       playfieldDimensionLabel.setText(formatDimension(screenres.getPlayfieldWidth(), screenres.getPlayfieldHeight()));
       backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
       backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
-      dmdPositionLabel.setText(formatLocation(screenres.getDmdX(), screenres.getDmdY()));
+      dmdPositionLabel.setText(formatLocation(screenres.getBackglassX() + screenres.getDmdX(), screenres.getBackglassY() + screenres.getDmdY()));
       dmdDimensionLabel.setText(formatDimension(screenres.getDmdWidth(), screenres.getDmdHeight()));
 
       if (res.isBackglassCentered()) {

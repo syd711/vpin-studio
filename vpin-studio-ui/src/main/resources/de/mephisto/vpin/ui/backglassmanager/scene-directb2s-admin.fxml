@@ -141,7 +141,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-edit-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Generate .res file" />
+                  <Tooltip text="Open .res editor" />
                </tooltip>
             </Button>
             <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
@@ -152,7 +152,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Generate .res file" />
+                  <Tooltip text="Adjust DMD position" />
                </tooltip>
             </Button>
             <Separator layoutX="914.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -201,7 +201,7 @@
                <children>
                   <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                      <children>
-                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;">
+                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
                            <columns>
                                  <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
                                  <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />

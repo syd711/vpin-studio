@@ -42,6 +42,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -274,6 +276,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private DirectB2ServerSettings serverSettings;
   private FileDragEventHandler fileDragEventHandler;
 
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+        onDMDPosition();
+      }
+    }
+  }
 
   @FXML
   private void onDMDPosition() {

@@ -26,7 +26,7 @@ public class WinRegistry {
       return Arrays.asList(Advapi32Util.registryGetKeys(WinReg.HKEY_CURRENT_USER, path));
     }
     catch (Exception e) {
-      LOG.error("Failed to read registry folder " + path + ": " + e.getMessage(), e);
+      LOG.error("Failed to read registry folder HKCU\\" + path + ": " + e.getMessage());
     }
     return Collections.emptyList();
   }
