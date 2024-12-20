@@ -7,10 +7,7 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.RankedAccount;
-import de.mephisto.vpin.connectors.mania.model.RankedAccountPagingResult;
-import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -77,6 +74,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private TableView<TableScoreDetails> tableView;
 
   @FXML
+  private TableView<DeniedScore> denyListView;
+
+  @FXML
   private TableColumn<TableScoreDetails, String> columnRank;
 
   @FXML
@@ -87,6 +87,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @FXML
   private TableColumn<TableScoreDetails, String> columnVersion;
+
+  @FXML
+  private TableColumn<DeniedScore, String> columnDenyVersion;
+
+  @FXML
+  private TableColumn<DeniedScore, String> columnDenyInitials;
+
+  @FXML
+  private TableColumn<DeniedScore, String> columnDenyScore;
 
   @FXML
   private TableColumn<TableScoreDetails, String> columnDate;
@@ -110,6 +119,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private Button showPlayerBtn;
 
   @FXML
+  private Button removeFromDenyListBtn;
+
+  @FXML
   private Separator reloadSeparator;
 
   @FXML
@@ -127,6 +139,17 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTableRankController() {
+  }
+
+  @FXML
+  private void onDenyListRemove() {
+
+  }
+
+
+  @FXML
+  private void onDenyListReload() {
+
   }
 
   @FXML
@@ -229,7 +252,6 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       return new SimpleObjectProperty(label);
     });
 
-
     columnVersion.setCellValueFactory(cellData -> {
       TableScoreDetails value = cellData.getValue();
       VpsTable tableById = Studio.client.getVpsService().getTableById(value.getVpsTableId());
@@ -299,6 +321,37 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       return new SimpleObjectProperty(label);
     });
 
+    //deny list table
+    columnDenyVersion.setCellValueFactory(cellData -> {
+      DeniedScore deniedScore = cellData.getValue();
+      VpsTable tableById = Studio.client.getVpsService().getTableById(deniedScore.getVpsTableId());
+      if (tableById != null) {
+        VpsTableVersion tableVersionById = tableById.getTableVersionById(deniedScore.getVpsVersionId());
+        if (tableVersionById != null) {
+          VpsVersionContainer vpsVersionContainer = new VpsVersionContainer(tableById, tableVersionById, "", false);
+          return new SimpleObjectProperty(vpsVersionContainer);
+        }
+
+      }
+      return new SimpleObjectProperty("-not available-");
+    });
+
+    columnDenyScore.setCellValueFactory(cellData -> {
+      DeniedScore value = cellData.getValue();
+      Label label = new Label(ScoreFormatUtil.formatScore(String.valueOf(value.getScore())));
+      label.getStyleClass().add("default-text-color");
+      label.setFont(getScoreFontSmall());
+      return new SimpleObjectProperty(label);
+    });
+
+    columnDenyInitials.setCellValueFactory(cellData -> {
+      DeniedScore value = cellData.getValue();
+      Label label = new Label(value.getInitials());
+      label.getStyleClass().add("default-text-color");
+      label.setFont(getScoreFontSmall());
+      return new SimpleObjectProperty(label);
+    });
+
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
       loadingOverlay = loader.load();
@@ -313,9 +366,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TableScoreDetails>() {
       @Override
       public void onChanged(Change<? extends TableScoreDetails> c) {
-        showPlayerBtn.setDisable(c.getList().size() != 1);
-        deleteBtn.setDisable(c.getList().isEmpty());
-        openBtn.setDisable(c.getList().size() != 1);
+        removeFromDenyListBtn.setDisable(c.getList().isEmpty());
+      }
+    });
+
+    denyListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    denyListView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<DeniedScore>() {
+      @Override
+      public void onChanged(Change<? extends DeniedScore> c) {
+
       }
     });
 
@@ -338,10 +397,11 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     JFXFuture.supplyAsync(() -> {
           List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
           List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid()) && p.isAdministrative()).collect(Collectors.toList());
-          if (collect.isEmpty()) {
-            return null;
+          if (!collect.isEmpty()) {
+            PlayerRepresentation playerRepresentation = collect.get(0);
+            return maniaClient.getAccountClient().getAccountByUuid(playerRepresentation.getTournamentUserUuid());
           }
-          return collect.get(0);
+          return null;
         })
         .onErrorSupply(e -> {
           LOG.error("Loading admin account: {}", e.getMessage(), e);
@@ -351,8 +411,8 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
           return null;
         })
         .thenAcceptLater(account -> {
-          deleteBtn.setVisible(account != null);
-          deleteSeparator.setVisible(account != null);
+          deleteBtn.setVisible(account != null && (AccountType.editor.equals(account.getAccountType()) || AccountType.administrator.equals(account.getAccountType())));
+          deleteSeparator.setVisible(account != null && (AccountType.editor.equals(account.getAccountType()) || AccountType.administrator.equals(account.getAccountType())));
         });
   }
 
