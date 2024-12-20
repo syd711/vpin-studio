@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
@@ -488,7 +489,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onVpsReset() {
     List<GameRepresentation> selectedItems = getSelections();
-    TableActions.onVpsReset(selectedItems);
+    onVpsReset(selectedItems);
+  }
+
+  public static void onVpsReset(List<GameRepresentation> selectedItems) {
+    List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getVpsUpdates().isEmpty()).collect(Collectors.toList());
+    ProgressDialog.createProgressDialog(new VPSResetProgressModel(collect));
   }
 
   @FXML
