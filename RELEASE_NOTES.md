@@ -6,6 +6,7 @@
 - **Tables / ALT Sound**: Added "name" field, fixed alias lookups, fixed "Open Folder" button for alias names.
 - **Tables / ALT Color**: Added "name" field and fixed alias lookups, fixed "Open Folder" button for alias names.
 - **Tables / VPS Updates**: Fixed filtering issues.
+- **Tables / Media Recorder**: Added missing sorting for the "Last Update" column.
 
 ## Release Notes 3.11.0
 
