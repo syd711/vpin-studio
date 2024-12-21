@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
       <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -290,7 +290,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Download the latest VPS database." />
+                  <Tooltip text="Download the latest VPS database. The database is automatically refresh on server start." />
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" />

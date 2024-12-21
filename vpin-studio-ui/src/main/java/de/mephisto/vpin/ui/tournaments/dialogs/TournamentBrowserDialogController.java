@@ -12,6 +12,7 @@ import de.mephisto.vpin.connectors.mania.model.TournamentSearchResultItem;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchTableSummary;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchText;
 import de.mephisto.vpin.ui.util.AvatarFactory;
@@ -266,8 +267,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         new Thread(() -> {
           Platform.runLater(() -> {
             for (TournamentSearchResultItem result : results) {
-              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
-              client.getCachedUrlImage(avatarUrl);
+              ManiaAvatarCache.getAvatarImage(result.getOwnerUuid());
             }
             tableView.setItems(FXCollections.observableList(results));
             if (!results.isEmpty()) {
@@ -324,8 +324,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         }
 
         ownerLabel.setText(item.getOwnerName());
-        String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
-        ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+        ImageView imageView = AvatarFactory.createAvatarImageView(ManiaAvatarCache.getAvatarImage(item.getOwnerUuid()));
         avatarPane.getChildren().add(imageView);
       }
       catch (Exception e) {

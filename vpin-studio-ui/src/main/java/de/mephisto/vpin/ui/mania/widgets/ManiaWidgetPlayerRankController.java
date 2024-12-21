@@ -13,6 +13,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.util.JFXFuture;
@@ -44,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -105,7 +105,6 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   private int page = 0;
   private ManiaController maniaController;
 
-  private Map<String, Image> rankedPlayersAvatarCache = new HashMap<>();
   private RankedAccountPagingResult searchResult;
 
   // Add a public no-args constructor
@@ -133,16 +132,25 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Highscores", "Delete Highscores?", "This will delete all registered scores from all your accounts on VPin-Mania.");
+    boolean deleted = true;
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       int count = 0;
       for (PlayerRepresentation playerRepresentation : collect) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(playerRepresentation.getTournamentUserUuid());
         if (accountByUuid != null) {
-          maniaClient.getHighscoreClient().deleteHighscores(accountByUuid.getId());
+          if (!maniaClient.getHighscoreClient().deleteHighscores(accountByUuid.getId())) {
+            deleted = false;
+          }
           count++;
         }
       }
-      WidgetFactory.showInformation(Studio.stage, "Information", "Highscore deletion successful.", "Deleted highscores of " + count + " account(s).");
+
+      if (deleted) {
+        WidgetFactory.showInformation(Studio.stage, "Information", "Highscore deletion successful.", "Deleted highscores of " + count + " account(s).");
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "Deletion Failed", "One or more highscore deletions failed");
+      }
       onReload();
     }
   }
@@ -183,7 +191,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onReload() {
-    rankedPlayersAvatarCache.clear();
+    ManiaAvatarCache.clear();
     refresh();
   }
 
@@ -325,7 +333,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       hBox.getChildren().add(label);
 
       new Thread(() -> {
-        Image avatarImage = getAvatarImage(value);
+        Image avatarImage = ManiaAvatarCache.getAvatarImage(value.getUuid());
         if (avatarImage != null) {
           Platform.runLater(() -> {
             view.setImage(avatarImage);
@@ -381,24 +389,6 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
-  }
-
-  private Image getAvatarImage(RankedAccount value) {
-    Image avatarImage = null;
-    if (rankedPlayersAvatarCache.containsKey(value.getUuid())) {
-      return rankedPlayersAvatarCache.get(value.getUuid());
-    }
-
-    InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
-    if (in != null) {
-      rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
-      avatarImage = new Image(in);
-    }
-    else {
-      avatarImage = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
-    }
-    rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
-    return avatarImage;
   }
 
   public void refresh() {

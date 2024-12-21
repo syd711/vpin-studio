@@ -6,11 +6,11 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.preferences.ManiaPreferencesController;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.util.Date;
+import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -56,6 +57,33 @@ public class ManiaRegistration {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for details).");
       }
+    }
+    return false;
+  }
+
+  public static boolean deregister() {
+    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Delete VPin Mania Account", "Cancel", "Delete", "Delete your VPin Mania account?",
+        "This will delete all active tournaments and recorded highscores.", "I understand, delete my account.");
+    if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
+      maniaClient.getCabinetClient().deleteCabinet();
+
+      List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
+      for (PlayerRepresentation player : players) {
+        if (player.getTournamentUserUuid() != null) {
+          player.setTournamentUserUuid(null);
+          try {
+            client.getPlayerService().savePlayer(player);
+            LOG.info("Resetted VPin Mania account for " + player);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to de-register player account: " + e.getMessage(), e);
+          }
+
+        }
+      }
+      ManiaAvatarCache.clear();
+      ManiaPermissions.invalidate();
+      return true;
     }
     return false;
   }

@@ -252,12 +252,15 @@ public class PlayerDialogController implements Initializable, DialogController {
 
     if (Features.MANIA_ENABLED) {
       cabinet = maniaClient.getCabinetClient().getCabinetCached();
+      tournamentGroup.setVisible(cabinet != null);
     }
 
     this.player = new PlayerRepresentation();
     nameField.setText(player.getName());
+    maniaNameField.setPromptText(player.getName());
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       player.setName(t1);
+      maniaNameField.setPromptText(t1);
       validateInput();
     });
 
@@ -281,6 +284,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
+    this.tournamentPlayerCheckbox.setDisable(cabinet == null);
     this.tournamentPlayerCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

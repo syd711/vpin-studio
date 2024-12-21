@@ -61,25 +61,8 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
 
   @FXML
   private void onAccountDelete() {
-    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Delete VPin Mania Account", "Cancel", "Delete", "Delete your VPin Mania account?", "This will delete all active tournaments and recorded highscores.", "I understand, delete my account.");
-    if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
-      maniaClient.getCabinetClient().deleteCabinet();
-
-      List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
-      for (PlayerRepresentation player : players) {
-        if (player.getTournamentUserUuid() != null) {
-          player.setTournamentUserUuid(null);
-          try {
-            client.getPlayerService().savePlayer(player);
-            LOG.info("Resetted VPin Mania account for " + player);
-          }
-          catch (Exception e) {
-            LOG.error("Failed to de-register player account: " + e.getMessage(), e);
-          }
-
-        }
-      }
-
+    boolean deregistered = ManiaRegistration.deregister();
+    if(deregistered) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       registrationPanel.setVisible(cabinet == null);
       preferencesPanel.setVisible(cabinet != null);

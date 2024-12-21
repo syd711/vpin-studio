@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.friends.panels;
 
-import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
@@ -8,6 +7,7 @@ import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.friends.FriendsListController;
+import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,11 +22,9 @@ import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class FriendAccountRowPanelController implements Initializable {
@@ -81,14 +79,9 @@ public class FriendAccountRowPanelController implements Initializable {
   private void refresh(Account account) {
     new Thread(() -> {
       Platform.runLater(() -> {
-        InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(account.getUuid()));
-        if (in == null) {
-          in = ServerFX.class.getResourceAsStream("avatar-blank.png");
-        }
-        Image image = new Image(in);
-        avatarView.setImage(image);
-        CommonImageUtil.setClippedImage(avatarView, (int) (image.getWidth() / 2));
-
+        Image avatarImage = ManiaAvatarCache.getAvatarImage(account.getUuid());
+        avatarView.setImage(avatarImage);
+        CommonImageUtil.setClippedImage(avatarView, (int) (avatarImage.getWidth() / 2));
         nameLabel.setText(account.getDisplayName() + " [" + account.getInitials() + "]");
       });
     }).start();
