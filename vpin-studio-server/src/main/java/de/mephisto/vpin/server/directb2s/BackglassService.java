@@ -88,11 +88,17 @@ public class BackglassService {
     return true;
   }
 
+  private Game getGameByDirectB2S(int emuId, String filename) {
+    String basefileName = StringUtils.removeEndIgnoreCase(filename, ".directb2s");
+    return frontendService.getGameByBaseFilename(emuId, basefileName);
+  }
+
   public DirectB2S getDirectB2S(int gameId) {
     Game game = gameService.getGame(gameId);
     DirectB2S b2s = new DirectB2S();
     b2s.setEmulatorId(game.getEmulatorId());
-    b2s.setFileName(FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s");
+    String filename = StringUtils.removeEndIgnoreCase(game.getGameFileName(), game.getEmulator().getGameExt())+ "directb2s";
+    b2s.setFileName(filename);
     b2s.setVpxAvailable(true);
     return b2s;
   }
@@ -107,7 +113,7 @@ public class BackglassService {
   }
 
   public DirectB2SData getDirectB2SData(int emuId, String filename) {
-    Game game = frontendService.getGameByBaseFilename(emuId, FilenameUtils.getBaseName(filename));
+    Game game = getGameByDirectB2S(emuId, filename);
     if (game != null) {
       return getDirectB2SData(game);
     }
@@ -128,7 +134,7 @@ public class BackglassService {
 
   private DirectB2SData getDirectB2SData(File directB2SFile, int emulatorId, @Nullable Game game, String filename) {
     if (cacheDirectB2SData.containsKey(directB2SFile.getPath())) {
-      return cacheDirectB2SData.get(directB2SFile.getPath());
+      return cacheDirectB2SData.remove(directB2SFile.getPath());
     }
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
     DirectB2SData data = extractor.extractData(directB2SFile, emulatorId, filename, game != null ? game.getId() : -1);
@@ -137,13 +143,13 @@ public class BackglassService {
 
     // now fill images dimension
     try {
-      extractBackgroundData(data, game, forceBackglassExtraction);
+      extractBackgroundData(data, game, extractor.getBackgroundBase64(), forceBackglassExtraction);
     }
     catch (IOException ioe) {
       LOG.error("cannot extract background dimension", ioe);
     }
     try {
-      exportDMDData(data, game, forceBackglassExtraction);
+      exportDMDData(data, game, extractor.getDmdBase64(), forceBackglassExtraction);
     }
     catch (IOException ioe) {
       LOG.error("cannot extract background dimension", ioe);
@@ -153,7 +159,7 @@ public class BackglassService {
     return data;
   }
 
-  private void extractBackgroundData(DirectB2SData data, @Nullable Game game, boolean forceBackglassExtraction) throws IOException {
+  private void extractBackgroundData(DirectB2SData data, @Nullable Game game, String backgroundBase64, boolean forceBackglassExtraction) throws IOException {
     if (!forceBackglassExtraction && game != null) {
       File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
       if (!rawDefaultPicture.exists()) {
@@ -174,8 +180,6 @@ public class BackglassService {
       }
     }
     else {
-      String filename = FilenameUtils.getBaseName(data.getFilename());
-      String backgroundBase64 = getBackgroundBase64(data.getEmulatorId(), filename);
       if (backgroundBase64 != null) {
         byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
@@ -191,7 +195,7 @@ public class BackglassService {
     }
   }
 
-  private void exportDMDData(DirectB2SData data, @Nullable Game game, boolean forceBackglassExtraction) throws IOException {
+  private void exportDMDData(DirectB2SData data, @Nullable Game game, String dmdBase64, boolean forceBackglassExtraction) throws IOException {
     if (!forceBackglassExtraction && game != null) {
       File picture = defaultPictureService.getDMDPicture(game);
       if (picture.exists()) {
@@ -207,9 +211,6 @@ public class BackglassService {
       }
     }
     else if (data.isDmdImageAvailable()) {
-      String filename = FilenameUtils.getBaseName(data.getFilename());
-
-      String dmdBase64 = getDmdBase64(data.getEmulatorId(), filename);
       if (dmdBase64 != null) {
         byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
         BufferedImage dmdImage = ImageIO.read(new ByteArrayInputStream(dmdData));
@@ -261,7 +262,7 @@ public class BackglassService {
         cacheDirectB2SData.remove(b2sFile.getPath());
 
         // also clean then re-extract the default picture
-        Game game = frontendService.getGameByBaseFilename(emuId, FilenameUtils.getBaseName(filename));
+        Game game = getGameByDirectB2S(emuId, filename);
         if (game != null) {
           defaultPictureService.deleteDefaultPictures(game);
           defaultPictureService.extractDefaultPicture(game);
@@ -400,13 +401,16 @@ public class BackglassService {
 
     // else create a blank one
     try {
-      Files.writeString(xml.toPath(), "<B2STableSettings></B2STableSettings>");
-      return xml;
+      File folder = xml.getParentFile();
+      if (folder.exists() || folder.mkdirs()) {
+        Files.writeString(xml.toPath(), "<B2STableSettings></B2STableSettings>");
+        return xml;
+      }
     }
     catch (IOException e) {
-      LOG.error("Cannot find nor create file " + xml.getAbsolutePath(), e);
-      throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath() + ", " + e.getMessage());
+      LOG.error("Cannot create file " + xml.getAbsolutePath(), e);
     }
+    throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath());
   }
 
   //--------------------------
@@ -491,8 +495,7 @@ public class BackglassService {
   public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
     if (emulator != null) {
-      Game game = frontendService.getGameByBaseFilename(directb2s.getEmulatorId(),
-          FilenameUtils.getBaseName(directb2s.getFileName()));
+      Game game = getGameByDirectB2S(directb2s.getEmulatorId(), directb2s.getFileName());
       return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
     }
     return null;
