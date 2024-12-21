@@ -54,6 +54,7 @@ public class SortedScoreAdapter implements ScoreListAdapter {
     int i = 1;
     for (HighScore score : scores) {
       result.add(new Score(createdAt, game.getId(), score.player, null, score.score, score.scoreValue, i));
+      i++;
     }
     return result;
   }

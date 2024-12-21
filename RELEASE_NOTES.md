@@ -1,7 +1,13 @@
 ## Release Notes 3.11.1
 
 ## Bugfixes
-- **Tables / PUP Packs**: Fixed wrong order of PUP pack detection when an alias was used.
+
+- **Tables / PUP Packs**: Fixed alias lookups.
+- **Tables / ALT Sound**: Added "name" field, fixed alias lookups, fixed "Open Folder" button for alias names.
+- **Tables / ALT Color**: Added "name" field and fixed alias lookups, fixed "Open Folder" button for alias names.
+- **Tables / VPS Updates**: Fixed filtering issues.
+- **Tables / Media Recorder**: Added missing sorting for the "Last Update" column.
+- **Backglasses / Sub-folders**: Extract DMD image when backglass is in a sub-folder of tables
 
 ## Release Notes 3.11.0
 

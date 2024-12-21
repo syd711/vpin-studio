@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -104,6 +105,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private ComboBox<NoteType> notesCombo;
 
   private FilterSettings filterSettings;
+  private UISettings uiSettings;
 
   private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
 
@@ -111,6 +113,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   public void applyFilters() {
     // as we do not call filterGames() anymore, manually call saveFilterSettings to persist the reset
     client.getPreferenceService().setJsonPreference(filterSettings);
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     super.applyFilters();
   }
 
@@ -127,7 +130,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   @Override
   public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings);
+    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings, uiSettings);
   }
 
   protected void resetFilters() {
