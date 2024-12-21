@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,7 @@ public class TableActions {
     try {
       List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getVpsUpdates().isEmpty()).collect(Collectors.toList());
       for (GameRepresentation gameRepresentation : collect) {
-        gameRepresentation.setUpdates(new VPSChanges());
+        gameRepresentation.setVpsUpdates(new VPSChanges());
         client.getGameService().saveGame(gameRepresentation);
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }

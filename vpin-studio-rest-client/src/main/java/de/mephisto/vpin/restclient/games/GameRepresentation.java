@@ -233,7 +233,7 @@ public class GameRepresentation {
     return vpsUpdates;
   }
 
-  public void setUpdates(VPSChanges updates) {
+  public void setVpsUpdates(VPSChanges updates) {
     this.vpsUpdates = updates;
   }
 

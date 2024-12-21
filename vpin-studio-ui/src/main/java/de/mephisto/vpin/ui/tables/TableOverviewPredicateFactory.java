@@ -55,7 +55,7 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
-        if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
+        if (filterSettings.isVpsUpdates() && (game.getVpsUpdates() == null || game.getVpsUpdates().isEmpty())) {
           return false;
         }
         if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
