@@ -31,9 +31,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.*;
 
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
@@ -242,7 +241,7 @@ public class CardGraphics {
     }
 
     //format score lines
-    List<String> scoreLines = new ArrayList<>();
+    Map<String, Score> scoreLines = new LinkedHashMap<>();
     for (Score score : scores) {
       String renderString = score.getPlayerInitials() + "   ";
       if (template.isRenderPositions()) {
@@ -253,7 +252,7 @@ public class CardGraphics {
         scoreText = " " + scoreText;
       }
       renderString = renderString + scoreText;
-      scoreLines.add(renderString);
+      scoreLines.put(renderString, score);
     }
 
 
@@ -268,7 +267,7 @@ public class CardGraphics {
 
     if (template.getMarginLeft() == 0 && template.getMarginRight() == 0) {
       if (!scoreLines.isEmpty()) {
-        String line = scoreLines.get(0);
+        String line = scoreLines.keySet().iterator().next();
         double textWidth = getTextWidth(line, font);
         scoreStartX = (imageWidth / 2) - (textWidth / 2);
 
@@ -300,15 +299,25 @@ public class CardGraphics {
     }
 
     int count = 0;
-    for (String scoreString : scoreLines) {
+    for (Map.Entry<String, Score> entry : scoreLines.entrySet()) {
+      String scoreLine = entry.getKey();
+      Score score = entry.getValue();
+      if (score.isExternal()) {
+        g.setFill(Paint.valueOf(template.getFriendsFontColor()));
+      }
+      else {
+        g.setFill(Paint.valueOf(template.getFontColor()));
+      }
+
       scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
-      g.fillText(scoreString, scoreStartX, scoreY);
+      g.fillText(scoreLine, scoreStartX, scoreY);
       count++;
 
       if (template.getMaxScores() > 0 && count == template.getMaxScores()) {
         break;
       }
     }
+    g.setFill(Paint.valueOf(template.getFontColor()));
   }
 
   private void renderRawScore(Game game, int imageHeight, int imageWidth, GraphicsContext g, int yStart) throws IOException {

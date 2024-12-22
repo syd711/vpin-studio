@@ -23,8 +23,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.ui.Studio.maniaClient;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class FriendsListController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(FriendsListController.class);
@@ -78,6 +77,8 @@ public class FriendsListController implements Initializable {
   }
 
   public void reload() {
+    client.getManiaService().clearCache();
+
     dataBox.getChildren().removeAll(dataBox.getChildren());
     dataBox.setVisible(false);
     emptyBox.setVisible(false);

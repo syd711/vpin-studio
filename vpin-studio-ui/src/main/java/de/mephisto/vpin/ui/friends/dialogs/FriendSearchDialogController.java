@@ -62,7 +62,7 @@ public class FriendSearchDialogController implements DialogController {
         stage.close();
         maniaClient.getContactClient().createInvite(search.get(0));
         Platform.runLater(() -> {
-          WidgetFactory.showInformation(Studio.stage, "Invite Sent", "An invite has been sent.");
+          WidgetFactory.showInformation(Studio.stage, "Invite Sent", "An invite has been sent.", "The friend will appear in the friends list once the invite has been accepted.");
         });
       }
       else {

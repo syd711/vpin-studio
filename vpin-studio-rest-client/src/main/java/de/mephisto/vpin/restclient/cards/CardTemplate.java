@@ -25,6 +25,7 @@ public class CardTemplate extends JsonSettings {
   private int wheelSize = 200;
   private int blur = 6;
   private String fontColor = "#FFFFFF";
+  private String friendsFontColor = "#CCCCCC";
   private boolean grayScale = false;
   private boolean rawScore = true;
   private int maxScores = 0;
@@ -59,8 +60,25 @@ public class CardTemplate extends JsonSettings {
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
 
+  private boolean renderFriends = true;
   private boolean overlayMode = false;
   private String overlayScreen = null;
+
+  public String getFriendsFontColor() {
+    return friendsFontColor;
+  }
+
+  public void setFriendsFontColor(String friendsFontColor) {
+    this.friendsFontColor = friendsFontColor;
+  }
+
+  public boolean isRenderFriends() {
+    return renderFriends;
+  }
+
+  public void setRenderFriends(boolean renderFriends) {
+    this.renderFriends = renderFriends;
+  }
 
   public boolean isOverlayMode() {
     return overlayMode;

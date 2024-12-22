@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -64,8 +66,8 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private HighscoreResolver highscoreResolver;
 
+  private ManiaService maniaService;
   private GameService gameService;
-
   private boolean pauseHighscoreEvents;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
@@ -293,6 +295,33 @@ public class HighscoreService implements InitializingBean {
         summary.getScores().addAll(scores);
       }
     }
+    return summary;
+  }
+
+  /**
+   * Returns a list of all scores for the given game
+   *
+   * @param game the game to retrieve the highscores for
+   * @return all highscores of the given player
+   */
+  @NonNull
+  public ScoreSummary getMergedScoreSummary(long serverId, Game game) {
+    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
+    if (highscore.isPresent()) {
+      Highscore h = highscore.get();
+      if (!StringUtils.isEmpty(h.getRaw())) {
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId(), serverId);
+        summary.setRaw(h.getRaw());
+        summary.getScores().addAll(scores);
+      }
+    }
+
+    if (Features.MANIA_ENABLED) {
+      List<Score> scores = maniaService.getFriendsScoresFor(game);
+      summary.mergeExternalScores(scores);
+    }
+
     return summary;
   }
 
@@ -675,6 +704,10 @@ public class HighscoreService implements InitializingBean {
   public void afterPropertiesSet() {
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
+  }
+
+  public void setManiaService(ManiaService maniaService) {
+    this.maniaService = maniaService;
   }
 
   public void setGameService(GameService gameService) {

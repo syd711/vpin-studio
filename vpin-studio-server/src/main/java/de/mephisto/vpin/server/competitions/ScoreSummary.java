@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.competitions;
 
-import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -45,8 +45,17 @@ public class ScoreSummary {
     return scores.stream().anyMatch(s -> s.matches(newScore));
   }
 
+  public void mergeExternalScores(List<Score> externalScores) {
+    this.scores.addAll(externalScores);
+    Collections.sort(scores, (o1, o2) -> (int) (o2.getNumericScore() - o1.getNumericScore()));
+    for (int i = 1; i <= scores.size(); i++) {
+      Score score = scores.get(i - 1);
+      score.setPosition(i);
+    }
+  }
+
   public List<Score> cloneEmptyScores() {
-    List<Score> emptyClone= new ArrayList<>();
+    List<Score> emptyClone = new ArrayList<>();
     for (Score score : scores) {
       emptyClone.add(score.cloneEmpty());
     }

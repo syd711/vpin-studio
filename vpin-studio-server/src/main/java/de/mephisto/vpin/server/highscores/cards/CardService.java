@@ -21,6 +21,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -110,8 +111,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    */
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
-      long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-      ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
+      ScoreSummary summary = getScoreSummary(game, template);
       Platform.runLater(() -> {
         Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
         doGenerateCard(game, summary, generateSampleCard, template);
@@ -127,6 +127,19 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       LOG.error("Failed to generate image: " + e.getMessage(), e);
       return false;
     }
+  }
+
+  @NonNull
+  private ScoreSummary getScoreSummary(Game game, CardTemplate template) {
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+    ScoreSummary summary = null;
+    if (template.isRenderFriends()) {
+      summary = highscoreService.getMergedScoreSummary(serverId, game);
+    }
+    else {
+      summary = highscoreService.getScoreSummary(serverId, game);
+    }
+    return summary;
   }
 
   private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
