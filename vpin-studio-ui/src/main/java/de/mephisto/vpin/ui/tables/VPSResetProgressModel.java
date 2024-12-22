@@ -71,7 +71,7 @@ public class VPSResetProgressModel extends ProgressModel<GameRepresentation> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      game.setUpdates(new VPSChanges());
+      game.setVpsUpdates(new VPSChanges());
       client.getGameService().saveGame(game);
       if (games.size() <= MAX_REFRESH_COUNT) {
         EventManager.getInstance().notifyTableChange(game.getId(), null);

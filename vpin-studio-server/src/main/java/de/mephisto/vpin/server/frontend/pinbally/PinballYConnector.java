@@ -265,14 +265,6 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     return games;
   }
 
-  @Override
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName,
-                        @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    // pinballY does not support gameName, so force equality with gameFileName
-    String gameNameFromFileName = gameFileName;
-    return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
-  }
-
   //---------------------------------------------------
   public static String compose(int emuId, String game) {
     return emuId + "@" + game;

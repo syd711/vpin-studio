@@ -722,6 +722,10 @@ public class UploaderAnalysis<T> {
         if (path.contains("/")) {
           path = path.substring(0, path.lastIndexOf("/") + 1);
         }
+
+        if (path.toLowerCase().endsWith(".mp3") || path.toLowerCase().endsWith(".ogg")) {
+          return null;
+        }
         return path;
       }
     }
@@ -741,7 +745,10 @@ public class UploaderAnalysis<T> {
           return filenameWithPath.substring(0, filenameWithPath.indexOf(segment) + segment.length());
         }
 
-        if (segment.endsWith("DMD") && !segment.equalsIgnoreCase("DMD") && !segment.equalsIgnoreCase("FullDMD") && !segment.contains(" ")) {
+        if ((segment.endsWith("DMD") || segment.toLowerCase().endsWith(".flex"))
+            && !segment.equalsIgnoreCase("DMD")
+            && !segment.equalsIgnoreCase("FullDMD")
+            && !segment.contains(" ")) {
           return filenameWithPath;
         }
       }
