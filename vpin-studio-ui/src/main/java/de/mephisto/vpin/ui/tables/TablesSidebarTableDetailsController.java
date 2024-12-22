@@ -271,7 +271,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       gameDisplayName.setText(StringUtils.defaultIfEmpty(game.getGameDisplayName(), "-"));
       // will be overriden by tableDetails status
       status.setText(game.isDisabled() ? "Disabled" : "Enabled");
-      notes.setText(StringUtils.defaultIfEmpty(game.getNotes(), ""));
+      notes.setText(StringUtils.defaultIfEmpty(game.getComment(), ""));
 
       romName.setText(StringUtils.defaultIfEmpty(game.getRom(), "-"));
     }

@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.ui.NavigationController;
@@ -13,6 +11,7 @@ import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
@@ -122,8 +121,12 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private CheckBox cardsEnabledCheckbox;
 
+  @FXML
+  private VBox multiSelectionPane;
+
 
   private Optional<GameRepresentation> game = Optional.empty();
+  private List<GameRepresentation> games = new ArrayList<>();
 
   private TablesSidebarController tablesSidebarController;
   private List<HighscoreBackup> highscoreBackups;
@@ -175,7 +178,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onBackup() {
-    if (this.game.isPresent()) {
+    if (this.games.size() == 1) {
       GameRepresentation g = this.game.get();
       String last = null;
       if (highscoreBackups != null && !this.highscoreBackups.isEmpty()) {
@@ -192,6 +195,12 @@ public class TablesSidebarHighscoresController implements Initializable {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed create highscore backup: " + e.getMessage());
         }
         EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
+      }
+    }
+    else if (this.games.size() > 1) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for " + games.size() + " tables?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(this.games));
       }
     }
   }
@@ -213,22 +222,19 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScoreReset() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
-          "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
-      if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
-        if (!Studio.client.getGameService().resetHighscore(g.getId())) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Reset Failed", "Check the log files for details and make sure that no process is blocking the highscore file.");
-        }
-        this.refreshView(this.game);
-      }
+    if (!this.games.isEmpty()) {
+      TableDialogs.openHighscoresResetDialog(this.games);
     }
   }
 
-  public void setGame(Optional<GameRepresentation> game) {
+  public void setGames(List<GameRepresentation> games) {
     this.highscoreBackups = new ArrayList<>();
-    this.game = game;
+    this.game = Optional.empty();
+    this.games = games;
+
+    if (!games.isEmpty()) {
+      this.game = Optional.of(games.get(0));
+    }
 
     Platform.runLater(() -> {
       this.refreshView(game);
@@ -237,7 +243,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     HighscoreMetadataRepresentation metadata = null;
-    if(g.isPresent()) {
+    if (g.isPresent()) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
       if (!progressDialog.getResults().isEmpty()) {
         metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
@@ -263,15 +269,20 @@ public class TablesSidebarHighscoresController implements Initializable {
 
     scanHighscoreBtn.setDisable(true);
     cardBtn.setDisable(true);
-    resetBtn.setDisable(true);
+    resetBtn.setDisable(games.size() == 1);
 
-    backupBtn.setDisable(true);
+    backupBtn.setDisable(games.size() == 1);
+    restoreBtn.setDisable(games.size() > 1);
     restoreBtn.setText("Restore");
 
     cardsEnabledCheckbox.setDisable(true);
     eventLogBtn.setDisable(true);
 
-    if (g.isPresent()) {
+    this.multiSelectionPane.setVisible(games.size() > 1);
+    this.statusPane.setVisible(games.size() == 1);
+    this.dataPane.setVisible(games.size() == 1);
+
+    if (g.isPresent() && this.games.size() == 1) {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
       restoreBtn.setDisable(false);

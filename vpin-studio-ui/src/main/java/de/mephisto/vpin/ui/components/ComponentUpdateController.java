@@ -1,18 +1,15 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -26,11 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentUpdateController implements Initializable, StudioEventListener, ChangeListener<GithubReleaseRepresentation> {
+public class ComponentUpdateController implements Initializable, ChangeListener<GithubReleaseRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
 
   @FXML
@@ -55,13 +51,13 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private ComboBox<GithubReleaseRepresentation> releasesCombo;
 
   private AbstractComponentTab componentTab;
-  private ComponentType type;
   private ComponentRepresentation component;
 
   private boolean localInstallOnly = true;
 
   @FXML
   private void onFetch() {
+    ComponentType type = component.getType();
     ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-", "-latest-");
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
@@ -95,6 +91,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private void onCheck() {
     Platform.runLater(() -> {
       try {
+        ComponentType type = component.getType();
         GithubReleaseRepresentation release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
         ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, release.getTag(), artifact);
@@ -130,6 +127,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     textArea.setText("");
     Platform.runLater(() -> {
       try {
+        ComponentType type = component.getType();
         GithubReleaseRepresentation release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
         ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release.getTag(), artifact);
@@ -153,16 +151,13 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   public void setComponent(AbstractComponentTab tab, ComponentRepresentation component) {
     this.componentTab = tab;
-    this.type = component.getType();
     this.component = component;
-
-    artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
-      checkBtn.setDisable(t1 == null);
-      installBtn.setDisable(t1 == null || (localInstallOnly && !client.getSystemService().isLocal()));
-      simBtn.setDisable(t1 == null);
-    });
-
     refresh(null, null);
+  }
+
+  public void refreshComponent(ComponentRepresentation component) {
+    this.component = component;
+    refresh(releasesCombo.getValue(), artifactCombo.getValue());
   }
 
   public void setLocalInstallOnly(boolean localInstallOnly) {
@@ -177,6 +172,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
       installBtn.setText("Start Installation (on cabinet only)");
     }
 
+    checkBtn.setVisible(component.isInstalled());
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || (localInstallOnly && !client.getSystemService().isLocal()));
@@ -215,16 +211,6 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   }
 
   @Override
-  public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    if (type.equals(this.type)) {
-      Platform.runLater(() -> {
-        this.component = client.getComponentService().getComponent(type);
-        refresh(releasesCombo.getValue(), artifactCombo.getValue());
-      });
-    }
-  }
-
-  @Override
   public void changed(ObservableValue<? extends GithubReleaseRepresentation> observable, GithubReleaseRepresentation oldValue, GithubReleaseRepresentation newValue) {
     this.releasesCombo.valueProperty().removeListener(this);
     refresh(newValue, null);
@@ -233,8 +219,6 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    EventManager.getInstance().addListener(this);
-
     simBtn.setDisable(true);
     installBtn.setDisable(true);
     artifactCombo.setDisable(true);
@@ -242,6 +226,12 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     checkBtn.setDisable(true);
 
     releasesCombo.valueProperty().addListener(this);
+
+    artifactCombo.valueProperty().addListener((observableValue, s, t1) -> {
+      checkBtn.setDisable(!component.isInstalled() || t1 == null);
+      installBtn.setDisable(t1 == null || (localInstallOnly && !client.getSystemService().isLocal()));
+      simBtn.setDisable(t1 == null);
+    });
   }
 
   private void setText(String text) {

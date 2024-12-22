@@ -9,6 +9,7 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.hooks.HookCommand;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.dropins.DropInManager;
@@ -19,6 +20,7 @@ import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -326,6 +329,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
     Platform.runLater(() -> {
       DropInManager.getInstance().init(dropInsBtn);
+      MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+      if (settings.isOpen()) {
+        toggleMonitor();
+      }
     });
 
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
@@ -343,10 +350,23 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
 
-    Platform.runLater(() -> {
-      MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-      if (settings.isOpen()) {
-        toggleMonitor();
+    JFXFuture.supplyAsync(() -> {
+      return client.getHooksService().getHookList();
+    }).thenAcceptLater((hookList) -> {
+      if (!hookList.getHooks().isEmpty()) {
+        preferencesBtn.getItems().add(new SeparatorMenuItem());
+
+        List<String> hooks = hookList.getHooks();
+        for (String hook : hooks) {
+          MenuItem item = new MenuItem(hook);
+          item.setOnAction(actionEvent -> {
+            HookCommand cmd = new HookCommand();
+            cmd.setHooks(hook);
+            client.getHooksService().executeHook(cmd);
+          });
+          item.setGraphic(WidgetFactory.createIcon("mdi2m-motion-play-outline"));
+          preferencesBtn.getItems().add(item);
+        }
       }
     });
   }

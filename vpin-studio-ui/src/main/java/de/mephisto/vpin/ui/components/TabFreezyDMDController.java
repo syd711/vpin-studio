@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
@@ -34,8 +35,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getMameDirectory());
+    File folder = client.getMameService().getMameFolder();
     openFolder(folder);
   }
 
@@ -47,8 +47,8 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFlexDMD() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File file = new File(defaultGameEmulator.getMameDirectory(), "FlexDMDUI.exe");
+    File folder = client.getMameService().getMameFolder();
+    File file = new File(folder, "FlexDMDUI.exe");
     if (!file.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
     }
@@ -60,8 +60,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @FXML
   private void onDmdDevice() {
     if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-      File folder = new File(defaultGameEmulator.getMameDirectory());
+      File folder = client.getMameService().getMameFolder();
       File exe = new File(folder, "DmdDevice.ini");
       super.editFile(exe);
     }
@@ -110,7 +109,12 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    flexDMDBtn.setDisable(!client.getSystemService().isLocal());
     refreshCustomValues();
+  }
+
+  @Override
+  protected void refreshTab(ComponentRepresentation component) {
+    openFolderButton.setDisable(!component.isInstalled());
+    flexDMDBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());
   }
 }

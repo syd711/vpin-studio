@@ -381,7 +381,7 @@ public class BackglassService {
       }
     }
     // not installed, use default folder
-    return new File("C:/vPinball/B2SServer");
+    return new File("C:/B2SServer");
   }
 
   @NonNull

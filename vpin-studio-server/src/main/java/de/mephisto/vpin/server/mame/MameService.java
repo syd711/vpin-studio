@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mame;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
@@ -314,6 +315,13 @@ public class MameService implements InitializingBean, ApplicationContextAware {
       org.apache.commons.io.FileUtils.copyFile(tempFile, out);
       LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
+  }
+
+  public File getMameFolder() {
+    SystemInfo si = new SystemInfo();
+    File vpxFolder = si.resolveVpx64InstallFolder();
+    File mameFolder = new File(vpxFolder, "VPinMAME");
+    return mameFolder.exists() ? mameFolder : null;
   }
 
   @Nullable

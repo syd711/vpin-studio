@@ -50,7 +50,7 @@ public class Route66Adapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines, long score) {
     List<String> newScoreText = new ArrayList<>();
     for (String line : lines) {
       if (!StringUtils.isEmpty(line) && line.startsWith("Score=")) {

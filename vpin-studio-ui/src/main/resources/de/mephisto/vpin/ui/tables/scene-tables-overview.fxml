@@ -110,6 +110,8 @@
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
+                                 <TableColumn fx:id="columnComment" minWidth="100.0" prefWidth="400" style="-fx-alignment: BASELINE_LEFT;" text="Comment">
+                                 </TableColumn>
                               </columns>
                            </TableView>
                         </children>
@@ -276,113 +278,117 @@
                   <Tooltip text="Edit Table Data (Ctrl+O)" />
                </tooltip>
             </Button>
-            <Separator fx:id="importSeparator" layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-            <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Import existing games files into [Frontend]" />
-               </tooltip>
-            </Button>
-            <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
-               <items>
-                  <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="Upload ALT Color File">
+            <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
+               <children>
+                  <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="9.0" />
+                  <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Import existing games files into [Frontend]" />
+                     </tooltip>
+                  </Button>
+                  <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
+                     <items>
+                        <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="Upload ALT Color File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="altSoundUploadItem" mnemonicParsing="false" onAction="#onAltSoundUpload" text="Upload ALT Sound Pack">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="backglassUploadItem" mnemonicParsing="false" onAction="#onBackglassUpload" text="Upload Backglass">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="cfgUploadItem" mnemonicParsing="false" onAction="#onCfgUpload" text="Upload .cfg File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="patchItem" mnemonicParsing="false" onAction="#onPatchUpload" text="Upload .dif File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload .ini File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload Media Pack">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="Upload Music Pack">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="nvUploadMenuItem" mnemonicParsing="false" onAction="#onNvRamUpload" text="Upload .nv File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload .pov File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="resItem" mnemonicParsing="false" onAction="#onResUpload" text="Upload .res File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="Upload PUP Pack">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="romsUploadItem" mnemonicParsing="false" onAction="#onRomsUpload" text="Upload ROMs">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                     </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Upload game files to [Frontend]" />
+                     </tooltip>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="altSoundUploadItem" mnemonicParsing="false" onAction="#onAltSoundUpload" text="Upload ALT Sound Pack">
+                  </SplitMenuButton>
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                     <font>
+                           <Font size="14.0" />
+                     </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                      </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="backglassUploadItem" mnemonicParsing="false" onAction="#onBackglassUpload" text="Upload Backglass">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="cfgUploadItem" mnemonicParsing="false" onAction="#onCfgUpload" text="Upload .cfg File">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="patchItem" mnemonicParsing="false" onAction="#onPatchUpload" text="Upload .dif File">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload .ini File">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload Media Pack">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="Upload Music Pack">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="nvUploadMenuItem" mnemonicParsing="false" onAction="#onNvRamUpload" text="Upload .nv File">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload .pov File">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="resItem" mnemonicParsing="false" onAction="#onResUpload" text="Upload .res File">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="Upload PUP Pack">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem fx:id="romsUploadItem" mnemonicParsing="false" onAction="#onRomsUpload" text="Upload ROMs">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-               </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Upload game files to [Frontend]" />
-               </tooltip>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-               </graphic>
-            </SplitMenuButton>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
-               <font>
-                     <Font size="14.0" />
-               </font>
-               <graphic>
-                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Delete table and assets (Delete)" />
-               </tooltip>
-            </Button>
-            <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                     <tooltip>
+                        <Tooltip text="Delete table and assets (Delete)" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+            <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="9.0" />
             <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
                <font>
                      <Font size="14.0" />
@@ -394,43 +400,47 @@
                      <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
                </tooltip>
             </Button>
-            <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
-               <items>
-                  <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+            <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
+               <children>
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="9.0" />
+                  <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
+                     <items>
+                        <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                     </items>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
                      </graphic>
-                  </MenuItem>
-               </items>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Scans the selected tables to extract metadata" />
-               </tooltip>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </SplitMenuButton>
-            <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
-               <items>
-                  <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
+                     <tooltip>
+                        <Tooltip text="Scans the selected tables to extract metadata" />
+                     </tooltip>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </SplitMenuButton>
+                  <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                     <items>
+                        <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
+                     </items>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                      </graphic>
-                  </MenuItem>
-               </items>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
-               </tooltip>
-            </SplitMenuButton>
+                     <tooltip>
+                        <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                     </tooltip>
+                  </SplitMenuButton>
+               </children>
+            </HBox>
          </items>
       </ToolBar>
    </top>

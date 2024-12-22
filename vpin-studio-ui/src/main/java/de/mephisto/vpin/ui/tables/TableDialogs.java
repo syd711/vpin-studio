@@ -311,8 +311,16 @@ public class TableDialogs {
     return true;
   }
 
+  public static boolean openHighscoresResetDialog(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(HighscoreResetController.class, "dialog-highscore-reset.fxml", "Reset Highscores");
+    HighscoreResetController controller = (HighscoreResetController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+    return true;
+  }
 
-  public static boolean openNotesDialog(GameRepresentation game) {
+
+  public static boolean openCommentDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");
     TableNotesController controller = (TableNotesController) stage.getUserData();
     controller.setGame(game);

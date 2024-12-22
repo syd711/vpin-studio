@@ -101,13 +101,17 @@ public class HighscoreService implements InitializingBean {
   }
 
   public boolean resetHighscore(@NonNull Game game) {
+    return resetHighscore(game, 99);
+  }
+
+  public boolean resetHighscore(@NonNull Game game, long score) {
     try {
       HighscoreType highscoreType = game.getHighscoreType();
       boolean result = false;
       if (highscoreType != null) {
         switch (highscoreType) {
           case EM: {
-            result = highscoreResolver.deleteTextScore(game);
+            result = highscoreResolver.deleteTextScore(game, score);
             break;
           }
           case NVRam: {
@@ -116,7 +120,7 @@ public class HighscoreService implements InitializingBean {
           }
           case VPReg: {
             VPReg reg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
-            result = reg.resetHighscores();
+            result = reg.resetHighscores(score);
             break;
           }
           default: {

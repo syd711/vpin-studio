@@ -67,7 +67,7 @@ public class Game {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
-  private String notes;
+  private String comment;
   private String launcher;
   private Long numberPlayed;
 
@@ -179,12 +179,12 @@ public class Game {
     this.dateUpdated = dateUpdated;
   }
 
-  public String getNotes() {
-    return notes;
+  public String getComment() {
+    return comment;
   }
 
-  public void setNotes(String notes) {
-    this.notes = notes;
+  public void setComment(String comment) {
+    this.comment = comment;
   }
 
   public boolean isVpxGame() {

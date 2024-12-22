@@ -35,7 +35,7 @@ public class GameRepresentation {
   private boolean disabled;
   private boolean updateAvailable;
   private int id;
-  private String notes;
+  private String comment;
   private Date modified;
   private ValidationState validationState;
   private boolean hasMissingAssets;
@@ -173,12 +173,12 @@ public class GameRepresentation {
     this.pupPackPath = pupPackPath;
   }
 
-  public String getNotes() {
-    return notes;
+  public String getComment() {
+    return comment;
   }
 
-  public void setNotes(String notes) {
-    this.notes = notes;
+  public void setComment(String comment) {
+    this.comment = comment;
   }
 
   public boolean isVpxGame() {

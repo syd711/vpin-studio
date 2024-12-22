@@ -4,4 +4,4 @@
 | |/ / /_/ / / / / /_____(__  ) /_/ /_/ / /_/ / / /_/ /
 |___/ .___/_/_/ /_/     /____/\__/\__,_/\__,_/_/\____/ 
    /_/                                                 
-vpin-studio-ui  @project.version@
+vpin-studio-ui @project.version@

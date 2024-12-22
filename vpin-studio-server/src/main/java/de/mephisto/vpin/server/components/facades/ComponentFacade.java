@@ -23,10 +23,10 @@ public interface ComponentFacade {
   List<GithubRelease> loadReleases() throws IOException;
 
   @Nullable
-  File getTargetFolder(@NonNull GameEmulator gameEmulator);
+  File getTargetFolder();
 
   @Nullable
-  Date getModificationDate(@NonNull GameEmulator gameEmulator);
+  Date getModificationDate();
 
   @NonNull
   List<String> getExcludedFilenames();
@@ -43,20 +43,19 @@ public interface ComponentFacade {
   List<String> getRootFolderInArchiveIndicators();
 
   default boolean isInstalled() {
-    return true;
+    return getModificationDate() != null;
   }
 
   /**
    * Executed after the installation of an update.
-   * @param gameEmulator
    * @param releaseArtifact
    * @param install
    */
-  default void postProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
+  default void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
 
   }
 
-  default void preProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
+  default void preProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
 
   }
 }

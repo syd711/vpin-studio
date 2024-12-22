@@ -14,8 +14,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -179,6 +179,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnOther2;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnComment;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   @FXML
@@ -274,6 +277,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   private ToolBar toolbar;
 
+  @FXML
+  private HBox importUploadButtonGroup;
+
+  @FXML
+  private HBox validationButtonGroup;
+
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -320,10 +329,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
           assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
         }
+        importUploadButtonGroup.setVisible(false);
+        validationButtonGroup.setVisible(false);
       }
       else {
         assetManagerViewBtn.getStyleClass().remove("toggle-selected");
         assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
+        importUploadButtonGroup.setVisible(true);
+        validationButtonGroup.setVisible(true);
       }
 
       refreshViewAssetColumns(assetManagerMode);
@@ -1153,9 +1166,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       graphics.setMinWidth(34);
       graphics.getChildren().add(statusIcon);
 
-      if (!StringUtils.isEmpty(value.getNotes())) {
-        String notes = value.getNotes();
-        Tooltip tooltip = new Tooltip(value.getNotes());
+      if (!StringUtils.isEmpty(value.getComment())) {
+        String notes = value.getComment();
+        Tooltip tooltip = new Tooltip(value.getComment());
         tooltip.setWrapText(true);
         btn.setTooltip(tooltip);
 
@@ -1179,7 +1192,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tableView.getSelectionModel().clearSelection();
         tableView.getSelectionModel().select(model);
         Platform.runLater(() -> {
-          TableDialogs.openNotesDialog(value);
+          TableDialogs.openCommentDialog(value);
         });
       });
 
@@ -1259,6 +1272,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnLauncher, (value, model) -> {
       Label label = new Label(model.getGame().getLauncher());
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    columnComment.setSortable(false);
+    BaseLoadingColumn.configureColumn(columnComment, (value, model) -> {
+      String text = model.getGame().getComment();
+      Label label = new Label();
+      if(!StringUtils.isEmpty(text)) {
+        label.setText(text.replaceAll("\\n", " "));
+        label.setTooltip(new Tooltip(text));
+      }
       label.getStyleClass().add("default-text");
       return label;
     }, true);
@@ -1513,7 +1538,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     }
     else {
-      this.tablesController.getTablesSideBarController().setGame(game != null ? Optional.of(game) : Optional.empty());
+      List<GameRepresentation> games = this.tableView.getSelectionModel().getSelectedItems().stream().map(GameRepresentationModel::getGame).collect(Collectors.toList());
+      this.tablesController.getTablesSideBarController().setGames(game != null ? Optional.of(game) : Optional.empty(), games);
     }
     if (game != null) {
       boolean errorneous = game.getValidationState() != null && game.getValidationState().getCode() > 0;
@@ -1667,6 +1693,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
     validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
+    validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
+    importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
@@ -1786,7 +1814,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
     boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
 
-    this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
+    this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
+    this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.uploadTableBtn.setVisible(vpxOrFpEmulator);
@@ -1842,6 +1871,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
+    columnComment.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnComment());
     columnPlaylists.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 

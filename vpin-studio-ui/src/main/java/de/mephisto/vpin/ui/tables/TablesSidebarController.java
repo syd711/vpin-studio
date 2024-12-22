@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -176,6 +178,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private TablesSidebarIniController tablesSidebarIniController; //fxml magic! Not unused
 
   private Optional<GameRepresentation> game = Optional.empty();
+  private List<GameRepresentation> games = Collections.emptyList();
 
   private TableOverviewController tablesController;
   private POVRepresentation pov;
@@ -259,9 +262,10 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         Frontend frontend = client.getFrontendService().getFrontendCached();
         File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
-        if (!gamePupFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+        if (!StringUtils.isEmpty(game.get().getRomAlias())) {
           gamePupFolder = new File(pupFolder, game.get().getRomAlias());
         }
+
         SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
       }
     }
@@ -760,13 +764,18 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     return tablesController;
   }
 
-  public void setGame(Optional<GameRepresentation> g) {
+  public void setGames(Optional<GameRepresentation> game, List<GameRepresentation> games) {
     this.pov = null;
-    this.game = g;
-    this.refreshView(g);
+    this.game = game;
+    this.games = games;
+    this.refreshView(game, games);
   }
 
   private void refreshView(Optional<GameRepresentation> g) {
+    refreshView(g, this.games);
+  }
+
+  private void refreshView(Optional<GameRepresentation> g, List<GameRepresentation> games) {
     Platform.runLater(() -> {
       if (titledPaneMedia != null && tablesSidebarMediaController != null) {
         if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
@@ -795,11 +804,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         this.tablesSidebarAudioController.setGame(g);
       }
       if (titledPaneHighscores.isExpanded() && titledPaneHighscores.isVisible()) {
-        this.tablesSidebarHighscoresController.setGame(g);
+        this.tablesSidebarHighscoresController.setGames(games);
       }
-//      if (titledPaneDefaultBackground.isExpanded()) {
-//        this.tablesSidebarDefaultBackgroundController.setGame(g);
-//      }
       if (titledPanePov.isExpanded() && titledPanePov.isVisible()) {
         this.tablesSidebarPovController.setGame(g);
       }

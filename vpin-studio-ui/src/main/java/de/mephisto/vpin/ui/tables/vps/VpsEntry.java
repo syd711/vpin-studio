@@ -192,7 +192,7 @@ public class VpsEntry extends HBox {
       if (game != null) {
         MenuItem addTodoItem = new MenuItem("Add //TODO");
         addTodoItem.setOnAction(actionEvent -> {
-          String notes = game.getNotes();
+          String notes = game.getComment();
           if (notes != null && notes.length() > 0) {
             notes = notes + "\n";
           }
@@ -200,7 +200,7 @@ public class VpsEntry extends HBox {
             notes = "";
           }
           notes += "//TODO " + link;
-          game.setNotes(notes);
+          game.setComment(notes);
           try {
             client.getGameService().saveGame(game);
             EventManager.getInstance().notifyTableChange(game.getId(), null);
