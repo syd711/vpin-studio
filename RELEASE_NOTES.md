@@ -11,6 +11,9 @@
   - Re-implemented the highscore reset dialog which shows more information about the actual reset, e.g. if a resetted nvram is available.
   - Added reset value input option for the highscore reset dialog.
 - **Preferences / Controller Setup**: Added error message that is displayed when "SET FSMODE=EnableTrueFullScreen" is set in the emulator launch script, as this will avoid any VPin Studio overlays from getting the focus.
+- **Tables / Overview:** Added new column "Comment". The colum is hidden by default, not sortable and placed as last table column. 
+- **Tables / Overview:** Added context menu item "Edit Comment". 
+- **Tables / Filter:** Added filter option "No comment". 
 - **Tables / Overview:** De-cluttering:
   - **Context Menu**: Removing less used entries.
   - **Toolbar**: When switching into asset-view mode, unnecessary actions are hidden.

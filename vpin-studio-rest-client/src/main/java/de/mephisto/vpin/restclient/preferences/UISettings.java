@@ -82,6 +82,7 @@ public class UISettings extends JsonSettings {
   private boolean columnRom = true;
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
+  private boolean columnComment = false;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
 
@@ -115,6 +116,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideFrontendLaunchQuestion(boolean hideFrontendLaunchQuestion) {
     this.hideFrontendLaunchQuestion = hideFrontendLaunchQuestion;
+  }
+
+  public boolean isColumnComment() {
+    return columnComment;
+  }
+
+  public void setColumnComment(boolean columnComment) {
+    this.columnComment = columnComment;
   }
 
   public boolean isShowPlayerScores() {

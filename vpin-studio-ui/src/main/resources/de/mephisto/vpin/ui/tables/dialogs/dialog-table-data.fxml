@@ -84,17 +84,17 @@
                                                             <Tooltip text="Every table will be added to the first playlist that is found." />
                                                          </tooltip>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Game Screen Name:" textFill="WHITE">
+                                                      <Label styleClass="default-text" text="Screen Name:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="1">
+                                                      <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="File Name:" GridPane.rowIndex="1">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Asset Name:" textFill="WHITE" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -113,7 +113,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Game Version:*" GridPane.rowIndex="3">
+                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Version:*" GridPane.rowIndex="3">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>

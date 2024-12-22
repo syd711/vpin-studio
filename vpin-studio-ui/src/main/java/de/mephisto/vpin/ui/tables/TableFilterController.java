@@ -101,7 +101,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private ComboBox<TableStatus> statusCombo;
 
   @FXML
-  private ComboBox<NoteType> notesCombo;
+  private ComboBox<CommentType> commentsCombo;
 
   private FilterSettings filterSettings;
 
@@ -136,7 +136,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       this.filterSettings = new FilterSettings();
 
       statusCombo.setValue(null);
-      notesCombo.setValue(null);
+      commentsCombo.setValue(null);
       missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
       otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
       vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
@@ -283,11 +283,11 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
-    List<NoteType> noteTypes = new ArrayList<>(Arrays.asList(NoteType.values()));
+    List<CommentType> noteTypes = new ArrayList<>(Arrays.asList(CommentType.values()));
     noteTypes.add(0, null);
-    notesCombo.setItems(FXCollections.observableList(noteTypes));
-    notesCombo.setValue(filterSettings.getNoteType());
-    notesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+    commentsCombo.setItems(FXCollections.observableList(noteTypes));
+    commentsCombo.setValue(filterSettings.getNoteType());
+    commentsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {
         filterSettings.setNoteType(null);
       }

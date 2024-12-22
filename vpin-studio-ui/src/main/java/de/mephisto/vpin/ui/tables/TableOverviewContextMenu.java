@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -15,12 +14,11 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,6 +106,18 @@ public class TableOverviewContextMenu {
       assetsViewItem.setOnAction(actionEvent -> tableOverviewController.onAssetView());
       ctxMenu.getItems().add(assetsViewItem);
     }
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem notesItem = new MenuItem("Edit Comment");
+    FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+    icon.setIconSize(16);
+    KeyCombination notesItemKey = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
+    notesItem.setAccelerator(notesItemKey);
+    notesItem.setOnAction(actionEvent -> TableDialogs.openCommentDialog(game));
+    notesItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+    notesItem.setGraphic(icon);
+    ctxMenu.getItems().add(notesItem);
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 

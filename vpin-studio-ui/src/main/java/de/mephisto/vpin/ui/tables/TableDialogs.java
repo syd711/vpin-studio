@@ -320,7 +320,7 @@ public class TableDialogs {
   }
 
 
-  public static boolean openNotesDialog(GameRepresentation game) {
+  public static boolean openCommentDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");
     TableNotesController controller = (TableNotesController) stage.getUserData();
     controller.setGame(game);

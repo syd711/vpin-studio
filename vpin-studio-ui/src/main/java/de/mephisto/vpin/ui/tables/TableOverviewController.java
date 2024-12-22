@@ -13,8 +13,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
+import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -176,6 +176,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnOther2;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnComment;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
@@ -1157,9 +1160,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       graphics.setMinWidth(34);
       graphics.getChildren().add(statusIcon);
 
-      if (!StringUtils.isEmpty(value.getNotes())) {
-        String notes = value.getNotes();
-        Tooltip tooltip = new Tooltip(value.getNotes());
+      if (!StringUtils.isEmpty(value.getComment())) {
+        String notes = value.getComment();
+        Tooltip tooltip = new Tooltip(value.getComment());
         tooltip.setWrapText(true);
         btn.setTooltip(tooltip);
 
@@ -1183,7 +1186,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tableView.getSelectionModel().clearSelection();
         tableView.getSelectionModel().select(model);
         Platform.runLater(() -> {
-          TableDialogs.openNotesDialog(value);
+          TableDialogs.openCommentDialog(value);
         });
       });
 
@@ -1263,6 +1266,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnLauncher, (value, model) -> {
       Label label = new Label(model.getGame().getLauncher());
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    columnComment.setSortable(false);
+    BaseLoadingColumn.configureColumn(columnComment, (value, model) -> {
+      String text = model.getGame().getComment();
+      Label label = new Label();
+      if(!StringUtils.isEmpty(text)) {
+        label.setText(text.replaceAll("\\n", " "));
+        label.setTooltip(new Tooltip(text));
+      }
       label.getStyleClass().add("default-text");
       return label;
     }, true);
@@ -1850,6 +1865,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
+    columnComment.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnComment());
     columnPlaylists.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 

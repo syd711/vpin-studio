@@ -110,6 +110,8 @@
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
+                                 <TableColumn fx:id="columnComment" minWidth="100.0" prefWidth="400" style="-fx-alignment: BASELINE_LEFT;" text="Comment">
+                                 </TableColumn>
                               </columns>
                            </TableView>
                         </children>

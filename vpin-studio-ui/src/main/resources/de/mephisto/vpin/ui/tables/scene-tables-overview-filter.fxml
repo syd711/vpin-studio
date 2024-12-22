@@ -138,7 +138,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <ComboBox fx:id="notesCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
+                  <ComboBox fx:id="commentsCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
                   <HBox fx:id="notPlayedSettings" alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
                      <children>
                         <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet" />

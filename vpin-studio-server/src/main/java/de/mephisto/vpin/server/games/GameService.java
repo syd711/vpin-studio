@@ -484,7 +484,7 @@ public class GameService implements InitializingBean {
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
-    game.setNotes(gameDetails.getNotes());
+    game.setComment(gameDetails.getNotes());
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
     game.setPupPackName(gameDetails.getPupPack());
@@ -587,7 +587,7 @@ public class GameService implements InitializingBean {
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
-    gameDetails.setNotes(game.getNotes());
+    gameDetails.setNotes(game.getComment());
     gameDetails.setCardsDisabled(game.isCardDisabled());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     if (game.getVpsUpdates() != null) {
