@@ -18,5 +18,5 @@
 - **Open in VPin Mania Action**: For more convenience you can open a VPin Mania table overview directly from 
   - the table overview using the corresponding context menu action.
   - the highscore editor by clicking on the VPin Mania icon.
-- **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. 
+- **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. Default highscores that are posted on VPin Mania can be ignored this way. 
 
