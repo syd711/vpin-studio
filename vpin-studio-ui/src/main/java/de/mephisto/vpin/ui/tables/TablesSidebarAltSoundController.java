@@ -49,6 +49,9 @@ public class TablesSidebarAltSoundController implements Initializable {
   private Button uploadBtn;
 
   @FXML
+  private Label nameLabel;
+
+  @FXML
   private Label entriesLabel;
 
   @FXML
@@ -184,6 +187,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     uploadBtn.setDisable(true);
     deleteBtn.setDisable(true);
 
+    nameLabel.setText("-");
     entriesLabel.setText("-");
     bundleSizeLabel.setText("-");
     filesLabel.setText("-");
@@ -209,6 +213,7 @@ public class TablesSidebarAltSoundController implements Initializable {
       restoreBtn.setDisable(!altSoundAvailable);
 
       if (altSoundAvailable) {
+        nameLabel.setText(altSound.getName());
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));
 

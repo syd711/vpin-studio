@@ -190,9 +190,11 @@ public class Game {
   public boolean isVpxGame() {
     return this.emulator.isVpxEmulator();
   }
+
   public boolean isFpGame() {
     return this.emulator.isFpEmulator();
   }
+
   public boolean isFxGame() {
     return this.emulator.isFxEmulator();
   }
@@ -301,7 +303,7 @@ public class Game {
 
   @JsonIgnore
   public File getWheelImage() {
-   return wheelImageFile;
+    return wheelImageFile;
   }
 
   public void setWheelImage(File wheelFile) {
@@ -671,6 +673,9 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getAltSoundFolder() {
+    if (!StringUtils.isEmpty(this.getRomAlias()) && emulator != null) {
+      return new File(emulator.getAltSoundFolder(), this.getRomAlias());
+    }
     if (!StringUtils.isEmpty(this.getRom()) && emulator != null) {
       return new File(emulator.getAltSoundFolder(), this.getRom());
     }
@@ -690,7 +695,10 @@ public class Game {
   @Nullable
   @JsonIgnore
   public File getAltColorFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
+    if (!StringUtils.isEmpty(this.getRomAlias()) && emulator != null) {
+      return new File(new File(emulator.getMameFolder(), "altcolor"), this.getRomAlias());
+    }
+    if (!StringUtils.isEmpty(this.getRom()) && emulator != null) {
       return new File(new File(emulator.getMameFolder(), "altcolor"), this.getRom());
     }
     return null;

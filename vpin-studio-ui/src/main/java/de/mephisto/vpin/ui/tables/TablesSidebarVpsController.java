@@ -209,7 +209,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private void onVpsReset() {
     if (!this.game.isEmpty()) {
       GameRepresentation gameRepresentation = this.game.get();
-      TableActions.onVpsReset(Arrays.asList(gameRepresentation));
+      TableOverviewController.onVpsReset(Arrays.asList(gameRepresentation));
     }
   }
 

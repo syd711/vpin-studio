@@ -29,7 +29,10 @@ public class RecorderColumnSorter implements BaseColumnSorter<GameRepresentation
 
       if (column.equals(recorderController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getGame().getGameDisplayName());
-      }      
+      }
+      else if (column.equals(recorderController.columnDateModified)) {
+        comp = Comparator.comparing(o -> o.getGame().getDateUpdated());
+      }
       else {
         VPinScreen screen = recorderController.screenFromColumn(column);
         if (screen != null) {

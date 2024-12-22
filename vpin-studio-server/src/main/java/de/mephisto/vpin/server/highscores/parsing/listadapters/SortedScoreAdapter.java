@@ -35,7 +35,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
   public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles) {
     List<Score> scores = new ArrayList<>();
 
-    // Regex for scores with or without thousands seperator 
+    // Regex for scores with or without thousands seperator
     // Could start with #1<space>, 1#<space> or 1)<space>
     // Starts with or is followed by 1 to 3 characters or spaces => player initials
     // Followed by one or more spaces
@@ -58,7 +58,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
 
     // remove duplicates
     scores = filterDuplicates(scores);
-    
+
     // Sort scores in descending order
     scores.sort((a, b) -> Double.compare(b.getNumericScore(), a.getNumericScore()));
 
@@ -66,8 +66,9 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
     for (Score score : scores) {
       score.setPosition(i);
       i++;
+      i++;
     }
-    
+
     return scores;
   }
 }

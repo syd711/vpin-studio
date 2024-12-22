@@ -205,7 +205,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
       }
 
       for (PlaylistRepresentation playlist : playlists) {
-
         boolean linkedToEmu = playlist.getEmulatorId() == null || playlist.getEmulatorId() == game.getEmulatorId();
 
         HBox root = new HBox();
@@ -214,7 +213,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
         CheckBox gameCheckbox = new CheckBox();
         gameCheckbox.setUserData(playlist);
         gameCheckbox.setSelected(playlist.containsGame(game.getId()));
-        gameCheckbox.setDisable(playlist.isSqlPlayList() || !linkedToEmu);
+        boolean disabled = playlist.isSqlPlayList() || !linkedToEmu;
+        gameCheckbox.setDisable(disabled);
         gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
 
         boolean wasPlayed = playlist.wasPlayed(game.getId());
@@ -311,7 +311,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
           }
         });
 
-        Label name = new Label(playlist.getName());
+        String playlistTitle = playlist.getName();
+        Label name = new Label(playlistTitle);
         name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
         name.setPrefWidth(370);
 

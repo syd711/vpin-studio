@@ -281,7 +281,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
         if (!altSoundFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
-          altSoundFolder = new File(altSoundFolder, game.get().getRomAlias());
+          altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRomAlias());
         }
         SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
@@ -300,7 +300,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
         if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
-          folder = new File(folder, game.get().getRomAlias());
+          folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
         }
         SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }

@@ -109,7 +109,7 @@ public class VpsTableColumn extends HBox {
     }
   }
 
-  private static boolean isFiltered(UISettings uiSettings, VPSChange change) {
+  public static boolean isFiltered(UISettings uiSettings, VPSChange change) {
     if (uiSettings != null) {
       if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.b2s) && !uiSettings.isVpsBackglass()) {
         return true;
