@@ -7,7 +7,9 @@
 - **Tables / ALT Color**: Added "name" field and fixed alias lookups, fixed "Open Folder" button for alias names.
 - **Tables / VPS Updates**: Fixed filtering issues.
 - **Tables / Media Recorder**: Added missing sorting for the "Last Update" column.
-- **Backglasses / Sub-folders**: Extract DMD image when backglass is in a sub-folder of tables
+- **Tables / Universal Uploader**: Improved detection of FlexDMD folders.
+- **Tables / Universal Uploader**: Fixed issue importing music files.
+- **Backglasses / Sub-folders**: Fixed extraction of DMD images when backglass is in a sub-folder of tables.
 
 ## Release Notes 3.11.0
 
