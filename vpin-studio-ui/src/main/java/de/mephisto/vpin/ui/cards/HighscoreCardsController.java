@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -32,6 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -57,6 +59,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private Button openDefaultPictureBtn;
+
+  @FXML
+  private Button maniaBtn;
 
   @FXML
   private ImageView rawDirectB2SImage;
@@ -132,6 +137,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private void onReloadPressed() {
     onReload(true);
+  }
+
+  @FXML
+  private void onManiaTable() {
+    GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null) {
+      NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(selection.getExtTableId()));
+    }
   }
 
   @FXML
@@ -243,6 +256,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
     templateEditorPane.setVisible(game.isPresent());
     tableEditBtn.setDisable(game.isEmpty());
+    maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
+
     if (game.isPresent()) {
       breadcrumb.add(game.get().getGameDisplayName());
     }
@@ -344,6 +359,15 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
+    maniaBtn.setVisible(Features.MANIA_ENABLED);
+
+    Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
+    ImageView iconMania = new ImageView(imageMania);
+    iconMania.setFitWidth(18);
+    iconMania.setFitHeight(18);
+    maniaBtn.setGraphic(iconMania);
+
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
     games = client.getGameService().getVpxGamesCached();
     cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();

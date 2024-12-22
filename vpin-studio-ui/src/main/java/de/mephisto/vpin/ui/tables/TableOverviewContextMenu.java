@@ -1,9 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -56,6 +60,12 @@ public class TableOverviewContextMenu {
     ImageView iconBackglassManager = new ImageView(image5);
     iconBackglassManager.setFitWidth(18);
     iconBackglassManager.setFitHeight(18);
+
+
+    Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
+    ImageView iconMania = new ImageView(imageMania);
+    iconMania.setFitWidth(18);
+    iconMania.setFitHeight(18);
 
 
     Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
@@ -134,6 +144,17 @@ public class TableOverviewContextMenu {
     vpsUpdateItem.setDisable(game.getVpsUpdates().isEmpty());
     vpsUpdateItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsUpdateItem);
+
+    if (Features.MANIA_ENABLED) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
+      MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
+      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaEntry.setOnAction(actionEvent -> NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(game.getExtTableId())));
+      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaEntry.setGraphic(iconMania);
+      ctxMenu.getItems().add(maniaEntry);
+    }
+
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 

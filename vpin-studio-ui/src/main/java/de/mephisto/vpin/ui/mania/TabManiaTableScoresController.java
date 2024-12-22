@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania;
 
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -52,15 +53,23 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
   @FXML
   private void onTableSearch() {
     VpsTable selection = ManiaDialogs.openVPSTableSearchDialog();
-    if(selection != null) {
+    if (selection != null) {
       selectVpsTable(selection);
     }
   }
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
-    if(group.getSelectedToggle() == null) {
+    if (group.getSelectedToggle() == null) {
       ((ToggleButton) lettersContainer.getChildren().get(0)).setSelected(true);
+    }
+
+    if (options != null && options.getModel() != null && options.getModel() instanceof String) {
+      String tableId = (String) options.getModel();
+      VpsTable tableById = Studio.client.getVpsService().getTableById(tableId);
+      if (tableById != null) {
+        selectVpsTable(tableById);
+      }
     }
   }
 
@@ -134,11 +143,11 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
     List<String> letters = new ArrayList<>();
     List<VpsTable> tables = Studio.client.getVpsService().getTables();
     for (VpsTable table : tables) {
-      if(table.getTableFiles() == null || table.getTableFiles().isEmpty()) {
+      if (table.getTableFiles() == null || table.getTableFiles().isEmpty()) {
         continue;
       }
       List<VpsTableVersion> vpx = table.getTableFiles().stream().filter(t -> table.getTableVersionById("VPX") == null).collect(Collectors.toList());
-      if(vpx.isEmpty()) {
+      if (vpx.isEmpty()) {
         continue;
       }
 

@@ -32,7 +32,7 @@
                <center>
                   <SplitPane fx:id="splitPane" dividerPositions="0.23" BorderPane.alignment="CENTER">
                     <items>
-                        <BorderPane maxWidth="440.0" minWidth="440.0" prefWidth="440.0">
+                        <BorderPane maxWidth="460.0" minWidth="460.0" prefWidth="460.0">
                            <center>
                               <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
                                  <children>
@@ -47,7 +47,7 @@
                               </StackPane>
                            </center>
                            <top>
-                              <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                              <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
                                  <items>
                                     <MenuButton fx:id="filterButton" mnemonicParsing="false" textFill="WHITE">
                                        <graphic>
@@ -87,6 +87,17 @@
                                        </font>
                                        <tooltip>
                                           <Tooltip text="Open Table in Table Overview" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="maniaBtn" layoutX="339.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Open Table on VPin Mania" />
                                        </tooltip>
                                     </Button>
                                     <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings">

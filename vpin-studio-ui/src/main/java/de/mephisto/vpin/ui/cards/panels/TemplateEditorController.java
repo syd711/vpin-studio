@@ -739,6 +739,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       else {
         ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get()));
       }
+      refreshPreview(this.gameRepresentation, true);
     }
   }
 

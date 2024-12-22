@@ -21,7 +21,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,7 +30,9 @@ import org.springframework.stereotype.Service;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +55,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private CardTemplatesService cardTemplatesService;
 
   private CardSettings cardSettings;
+
+  private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
 
   public File generateTableCardFile(Game game) {
     generateCard(game);
@@ -111,7 +114,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    */
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
-      ScoreSummary summary = getScoreSummary(game, template);
+      ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
       Platform.runLater(() -> {
         Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
         doGenerateCard(game, summary, generateSampleCard, template);
@@ -130,10 +133,20 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   @NonNull
-  private ScoreSummary getScoreSummary(Game game, CardTemplate template) {
+  private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generateSampleCard) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     ScoreSummary summary = null;
     if (template.isRenderFriends()) {
+      //add simply caching until a real card is generated, should be sufficient while editing
+      if (generateSampleCard) {
+        if (!scoreCache.containsKey(game.getId())) {
+          scoreCache.put(game.getId(), highscoreService.getMergedScoreSummary(serverId, game));
+        }
+
+        return scoreCache.get(game.getId());
+      }
+
+      scoreCache.clear();
       summary = highscoreService.getMergedScoreSummary(serverId, game);
     }
     else {
