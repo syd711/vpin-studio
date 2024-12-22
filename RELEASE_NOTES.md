@@ -9,6 +9,7 @@
 - **Tables / Media Recorder**: Added missing sorting for the "Last Update" column.
 - **Tables / Universal Uploader**: Improved detection of FlexDMD folders.
 - **Tables / Universal Uploader**: Fixed issue importing music files.
+- **PinVol Integration**: Fixed label and spinner inputs.
 - **Backglasses / Sub-folders**: Fixed extraction of DMD images when backglass is in a sub-folder of tables.
 
 ## Release Notes 3.11.0
