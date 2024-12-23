@@ -15,4 +15,6 @@ public class Features {
   public static boolean RES_EDITOR = true;
 
   public static boolean SCREEN_VALIDATOR = false;
+
+  public static boolean PLAYLIST_MANAGER = true;
 }

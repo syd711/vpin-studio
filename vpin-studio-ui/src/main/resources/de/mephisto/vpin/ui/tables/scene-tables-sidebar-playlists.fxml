@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -55,7 +56,7 @@
                     <VBox fx:id="dataBox" spacing="1.0" />
                </content>
                <VBox.margin>
-                  <Insets left="12.0" top="12.0"  bottom="12.0" />
+                  <Insets bottom="12.0" left="12.0" top="12.0" />
                </VBox.margin>
             </ScrollPane>
          </children>
@@ -67,6 +68,18 @@
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
+            <Button fx:id="playlistManagerBtn" layoutX="26.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" text="Playlist Manager" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Edit Playlist Assets" />
+               </tooltip>
+            </Button>
+            <Separator fx:id="playlistManagerSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="Edit Playlist Assets" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
