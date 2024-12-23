@@ -735,7 +735,8 @@ public class WidgetFactory {
     if (baseType.equals("image") && !audioOnly) {
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
       Image image = gameMediaItem != null ? new Image(gameMediaItem) : null;
-      new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
+      ImageViewer imageViewer = new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
+      parent.setUserData(imageViewer);
     }
     else if (baseType.equals("audio")) {
       AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(parent, mediaItem, url);

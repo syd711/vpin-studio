@@ -162,17 +162,6 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     }
   }
 
-  public void scaleForDialog(String screen) {
-    if (VPinScreen.PlayField.name().equals(screen) || VPinScreen.Loading.name().equals(screen)) {
-      //mediaView.setFitWidth(parent.getPrefWidth() - 300);
-      //mediaView.setFitHeight(parent.getPrefHeight() - 300);
-    }
-    else {
-      //mediaView.setFitWidth(parent.getPrefWidth() - 12);
-      //mediaView.setFitHeight(parent.getPrefHeight() - 50);
-    }
-  }
-
   @Override
   public void setSize(double fitWidth, double fitHeight) {
     this.fitHeight = fitHeight;

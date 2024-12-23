@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -36,12 +37,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,6 +145,13 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for\"" + request.getName() + "\"");
     AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
     controller.setData(request);
+    stage.showAndWait();
+  }
+
+  public static void openPlaylistManager() {
+    Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", "Playlist Manager");
+    PlaylistManagerController controller = (PlaylistManagerController) stage.getUserData();
+    controller.setData(stage);
     stage.showAndWait();
   }
 
@@ -676,36 +686,15 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, FrontendMediaItemRepresentation item) {
-    Parent root = null;
-    try {
-      root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
+  public static void openMediaDialog(GameRepresentation game, FrontendMediaItemRepresentation item) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaPreviewController.class, "dialog-media-preview.fxml", game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
+    MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
 
-    Stage owner = Studio.stage;
-    BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
-
-    AssetMediaPlayer assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
-    final Stage stage = WidgetFactory.createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setTitle(game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
-    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
-      if (t.getCode() == KeyCode.ESCAPE) {
-        stage.close();
-      }
-    });
-
-    if (assetMediaPlayer instanceof VideoMediaPlayer) {
-      VideoMediaPlayer player = (VideoMediaPlayer) assetMediaPlayer;
-      player.scaleForDialog(item.getScreen());
-    }
+    double height = Studio.stage.getHeight() - 200;
+    double width = height / 9 * 16;
+    stage.setWidth(width);
+    stage.setHeight(height);
+    controller.setData(stage, game, item);
 
     stage.showAndWait();
   }

@@ -45,6 +45,10 @@ public class ImageViewer extends BorderPane {
     render(mediaItem, mediaItem.getScreen(), invertPlayfield, prefWidth - 10, prefHeight - 60);
   }
 
+  public ImageView getImageView() {
+    return imageView;
+  }
+
   private void render(Object userdata, String screenName, boolean invertPlayfield, double width, double height) {
 
     this.setCenter(new ProgressIndicator());
@@ -78,7 +82,7 @@ public class ImageViewer extends BorderPane {
   }
 
   public void scaleForTemplate(ImageView cardPreview) {
-    if(imageView != null) {
+    if (imageView != null) {
       imageView.setPreserveRatio(false);
       imageView.setFitWidth(cardPreview.getFitWidth());
       imageView.setFitHeight(cardPreview.getFitWidth() / 16 * 9);
