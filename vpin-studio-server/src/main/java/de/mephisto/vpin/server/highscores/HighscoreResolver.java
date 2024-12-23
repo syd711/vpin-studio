@@ -152,6 +152,11 @@ public class HighscoreResolver implements InitializingBean {
 
     File vpRegFile = game.getEmulator().getVPRegFile();
     VPReg reg = new VPReg(vpRegFile, game.getRom(), tableName);
+
+    if (!reg.containsGame()) {
+      reg = new VPReg(vpRegFile, game.getRom() + "_VPX", tableName);
+    }
+
     if (reg.containsGame()) {
       metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(vpRegFile.getCanonicalPath());

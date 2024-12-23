@@ -1,3 +1,11 @@
+## Release Notes 3.11.2
+
+## Bugfixes
+
+- **Tables / Highscore Parsing**: Improved detection of VPReg.stg based highscore entries. The lookup is now completely case-insensitive. Also, an additional lookup is made using the ROM name plus the **_VPX** suffix which some tables use to store the highscore.
+
+---
+
 ## Release Notes 3.11.1
 
 ## Bugfixes

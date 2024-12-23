@@ -312,20 +312,19 @@ public class VPReg {
    * @throws FileNotFoundException
    */
   private DirectoryEntry getGameDirectory(DirectoryEntry root) throws FileNotFoundException {
-    if (root.hasEntry(rom)) {
-      return (DirectoryEntry) root.getEntry(rom);
+    Set<String> entryNames = root.getEntryNames();
+    for (String entryName : entryNames) {
+      if (entryName.equalsIgnoreCase(rom)) {
+        return (DirectoryEntry) root.getEntry(entryName);
+      }
     }
 
-    if (root.hasEntry(rom.toLowerCase())) {
-      return (DirectoryEntry) root.getEntry(rom.toLowerCase());
-    }
-
-    if (tablename != null && root.hasEntry(tablename)) {
-      return (DirectoryEntry) root.getEntry(tablename);
-    }
-
-    if (tablename != null && root.hasEntry(tablename.toLowerCase())) {
-      return (DirectoryEntry) root.getEntry(tablename.toLowerCase());
+    if (tablename != null) {
+      for (String entryName : entryNames) {
+        if (entryName.equalsIgnoreCase(tablename)) {
+          return (DirectoryEntry) root.getEntry(entryName);
+        }
+      }
     }
 
     return null;
