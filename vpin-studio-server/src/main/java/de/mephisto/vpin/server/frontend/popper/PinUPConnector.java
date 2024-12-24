@@ -973,7 +973,48 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  public List<Playlist> getPlayLists() {
+  public List<Playlist> getPlaylistTree() {
+    List<Playlist> result = new ArrayList<>();
+    List<Playlist> playLists = getPlaylists();
+    Playlist root = playLists.stream().filter(p -> p.getParentId() == -1).findFirst().get();
+    result.add(root);
+    buildPlaylistTree(root);
+    return result;
+  }
+
+  private void buildPlaylistTree(Playlist parent) {
+    List<Playlist> children = getPlaylistChildren(parent.getId());
+    for (Playlist playList : children) {
+      parent.getChildren().add(playList);
+      buildPlaylistTree(playList);
+    }
+  }
+
+  @NonNull
+  private List<Playlist> getPlaylistChildren(long parentId) {
+    Connection connect = this.connect();
+    List<Playlist> result = new ArrayList<>();
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE PlayListParent = " + parentId);
+      while (rs.next()) {
+        Playlist playlist = createPlaylist(rs);
+        result.add(playlist);
+      }
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to get playlist: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  @NonNull
+  public List<Playlist> getPlaylists() {
     Connection connect = this.connect();
     List<Playlist> result = new ArrayList<>();
     try {
@@ -987,7 +1028,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get playlist: " + e.getMessage(), e);
+      LOG.error("Failed to get playlist: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1357,7 +1398,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
-      LOG.info("Update of NumberPlays for '" + gameId + "' successful.");
+      LOG.info("Update of NumberPlays for '{}' successful.", gameId);
     }
     catch (Exception e) {
       LOG.error("Failed to update NumberPlays for " + gameId + " [" + sql + "]: " + e.getMessage(), e);
@@ -1777,6 +1818,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     String name = rs.getString("PlayName");
     boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
     playlist.setId(rs.getInt("PlayListID"));
+    playlist.setParentId(rs.getInt("PlayListParent"));
     playlist.setMediaName(rs.getString("Logo"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);

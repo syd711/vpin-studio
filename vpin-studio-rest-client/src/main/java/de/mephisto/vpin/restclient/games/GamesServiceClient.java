@@ -168,6 +168,19 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/eventlog/" + gameId, HighscoreEventLog.class);
   }
 
+  //TODO there is no method to get a single cached game???
+  public GameRepresentation getGameCached(int id) {
+    Collection<List<GameRepresentation>> values = allGames.values();
+    for (List<GameRepresentation> value : values) {
+      for (GameRepresentation gameRepresentation : value) {
+        if(gameRepresentation.getId() == id) {
+          return gameRepresentation;
+        }
+      }
+    }
+    return getGame(id);
+  }
+
   public GameRepresentation getGame(int id) {
     try {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);

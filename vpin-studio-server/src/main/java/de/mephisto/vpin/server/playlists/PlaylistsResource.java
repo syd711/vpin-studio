@@ -19,6 +19,11 @@ public class PlaylistsResource {
     return playlistService.getPlaylists();
   }
 
+  @GetMapping("/tree")
+  public List<Playlist> getPlaylistTree() {
+    return playlistService.getPlaylistTree();
+  }
+
   @GetMapping("/{playlistId}")
   public Playlist getPlaylist(@PathVariable("playlistId") int playlistId) {
     return playlistService.getPlaylist(playlistId);

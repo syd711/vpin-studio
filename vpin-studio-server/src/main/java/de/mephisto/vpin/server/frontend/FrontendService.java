@@ -491,8 +491,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   @NonNull
-  public List<Playlist> getPlayLists() {
-    return getFrontendConnector().getPlayLists();
+  public List<Playlist> getPlaylists() {
+    return getFrontendConnector().getPlaylists();
+  }
+
+  @NonNull
+  public List<Playlist> getPlaylistTree() {
+    return getFrontendConnector().getPlaylistTree();
   }
 
   public void setPlaylistColor(int playlistId, long color) {

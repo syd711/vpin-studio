@@ -105,7 +105,10 @@ public interface FrontendConnector {
   Playlist getPlayList(int id);
 
   @NonNull
-  List<Playlist> getPlayLists();
+  List<Playlist> getPlaylists();
+
+  @NonNull
+  List<Playlist> getPlaylistTree();
 
   void setPlaylistColor(int playlistId, long color);
 

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Playlist {
   private int id;
+  private int parentId;
   private Integer menuColor;
   private String name;
   private String playListSQL;
@@ -16,9 +17,26 @@ public class Playlist {
   private String mediaName;
   private boolean addFavCheckboxes;
   private List<PlaylistGame> games = new ArrayList<>();
+  private List<Playlist> children = new ArrayList<>();
 
   // optional emulator id when playlist is linked to an emulator, leave null if not
   private Integer emulatorId;
+
+  public List<Playlist> getChildren() {
+    return children;
+  }
+
+  public void setChildren(List<Playlist> children) {
+    this.children = children;
+  }
+
+  public int getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(int parentId) {
+    this.parentId = parentId;
+  }
 
   public String getMediaName() {
     return mediaName;

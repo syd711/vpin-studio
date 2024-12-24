@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.frontend;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -8,7 +11,8 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FPService;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -16,28 +20,16 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
@@ -529,8 +521,14 @@ public abstract class BaseConnector implements FrontendConnector {
                 playlists.get(id);
   }
 
+  @NotNull
   @Override
-  public List<Playlist> getPlayLists() {
+  public List<Playlist> getPlaylistTree() {
+    return getPlaylists();
+  }
+
+  @Override
+  public List<Playlist> getPlaylists() {
     List<Playlist> result = new ArrayList<>();
 
     result.add(getFavPlaylist());

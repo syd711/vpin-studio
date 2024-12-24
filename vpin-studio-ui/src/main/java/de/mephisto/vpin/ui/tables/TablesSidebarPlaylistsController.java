@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -10,6 +11,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
@@ -64,6 +66,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
   @FXML
   private Button assetManagerBtn;
 
+  @FXML
+  private Button playlistManagerBtn;
+
+  @FXML
+  private Separator playlistManagerSeparator;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -72,20 +80,15 @@ public class TablesSidebarPlaylistsController implements Initializable {
   public TablesSidebarPlaylistsController() {
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
-    emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
-    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
-    errorBox.setVisible(false);
-
-    dismissLink.setVisible(false);
-  }
-
   @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
 //    DismissalUtil..dismissValidation(g, options.getValidationStates().get(0));
+  }
+
+  @FXML
+  private void onPlaylistManager() {
+    PlaylistDialogs.openPlaylistManager();
   }
 
   @FXML
@@ -384,5 +387,22 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
+    playlistManagerSeparator.managedProperty().bindBidirectional(playlistManagerSeparator.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    playlistManagerBtn.setVisible(frontendType.equals(FrontendType.Popper) && Features.PLAYLIST_MANAGER);
+    playlistManagerSeparator.setVisible(frontendType.equals(FrontendType.Popper) && Features.PLAYLIST_MANAGER);
+
+    dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
+    emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    errorBox.setVisible(false);
+
+    dismissLink.setVisible(false);
   }
 }

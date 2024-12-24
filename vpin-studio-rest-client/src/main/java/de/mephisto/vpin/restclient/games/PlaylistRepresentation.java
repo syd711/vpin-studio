@@ -16,6 +16,15 @@ public class PlaylistRepresentation {
   private boolean sqlPlayList;
   private boolean addFavCheckboxes;
   private List<PlaylistGame> games = new ArrayList<>();
+  private List<PlaylistRepresentation> children = new ArrayList<>();
+
+  public List<PlaylistRepresentation> getChildren() {
+    return children;
+  }
+
+  public void setChildren(List<PlaylistRepresentation> children) {
+    this.children = children;
+  }
 
   private Integer emulatorId;
 

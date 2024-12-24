@@ -16,7 +16,11 @@ public class PlaylistService {
   private FrontendService frontendService;
 
   public List<Playlist> getPlaylists() {
-    return frontendService.getPlayLists();
+    return frontendService.getPlaylists();
+  }
+
+  public List<Playlist> getPlaylistTree() {
+    return frontendService.getPlaylistTree();
   }
 
   public Playlist getPlaylist(int playlistId) {

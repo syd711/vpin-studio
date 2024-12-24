@@ -27,5 +27,6 @@
 ## Bugfixes
 
 - **Tables / PUP Packs**: The PUP pack data in the PUP pack section is now refreshed on table selection.
+- **Tables / Asset Preview Dialog**: The dialog has been re-implemented to ensure the shown media is properly scaled.
 
 

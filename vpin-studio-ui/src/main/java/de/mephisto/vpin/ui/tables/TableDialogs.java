@@ -3,8 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -12,7 +10,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -24,6 +21,7 @@ import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
@@ -34,24 +32,15 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -147,14 +136,6 @@ public class TableDialogs {
     controller.setData(request);
     stage.showAndWait();
   }
-
-  public static void openPlaylistManager() {
-    Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", "Playlist Manager");
-    PlaylistManagerController controller = (PlaylistManagerController) stage.getUserData();
-    controller.setData(stage);
-    stage.showAndWait();
-  }
-
 
   public static void openNvRamUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");

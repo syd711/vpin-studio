@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistTableController">
+   <center>
+      <StackPane fx:id="tableStack" style="-fx-background-color: #222222;" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+               <columns>
+                  <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+               </columns>
+            </TableView>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>
