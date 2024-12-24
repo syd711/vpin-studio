@@ -752,6 +752,7 @@
  * Tree View
  */
 .tree-view {
+    -fx-background-color: #2a2a2a;
     -fx-font-size : 14px;
     -fx-text-fill: white;
     -fx-text-background-color: #FFFFFF;
@@ -759,39 +760,41 @@
     -fx-border-color: #111111;
     -fx-border-width: 1;
 }
-.tree-row-cell {
+. tree-cell {
     -fx-cell-size: 40px;
 }
 .tree-view .cell{
     -fx-border-color: transparent;
 }
-.tree-row-cell: hover {
+. tree-cell: hover {
     -fx-border-width: 1;
+    -fx-text-fill: white;
     -fx-background-color: #33333311;
     -fx-text-background-color: #6666FF;
 }
-.tree-row-cell: odd{
+. tree-cell: odd{
     -fx-background-color: #93f9b911;
 }
-.tree-row-cell: even{
+. tree-cell: even{
     -fx-background-color: #1dbbdd11;
 }
-.tree-row-cell: selected {
+. tree-cell: selected {
+    -fx-font-weight: bold;
     -fx-text-background-color: #FFFFFF;
     -fx-background-color: #6666FFAA;
 }
 /* Row hovered */
-.tree-view:row-selection .tree-row-cell:filled:hover {
+.tree-view: selection .tree-cell:filled:hover {
     -fx-background-color: #6666FF55;
     -fx-text-fill: #FFFFFF;
 }
 /* Selected row hovered when table not focused */
-.tree-view:row-selection .tree-row-cell:filled:focused:hover {
+.tree-view: selection .tree-cell:filled:focused:hover {
     -fx-background-color: #6666FF55;
     -fx-text-fill: #FFFFFF;
 }
 /* Selected row hovered */
-.tree-view:focused .tree-row-cell:filled:focused:selected:hover {
+.tree-view:focused .tree-cell:filled:focused:selected:hover {
     -fx-text-background-color: #FFFFFF;
     -fx-font-weight: bold;
     -fx-background-color: #6666FFAA;
