@@ -5,8 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.control.TreeView?>
@@ -64,7 +62,7 @@
                                                 <Tooltip text="Create a new playlist" />
                                              </tooltip>
                                              <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-plus" iconSize="18" />
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-star" iconSize="18" />
                                              </graphic>
                                           </Button>
                                           <Separator layoutX="125.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -105,17 +103,6 @@
                      <center>
                         <fx:include fx:id="playlistTable" source="/de/mephisto/vpin/ui/playlistmanager/playlist-table.fxml" />
                      </center>
-                     <top>
-                        <ToolBar BorderPane.alignment="CENTER">
-                           <items>
-                              <Button mnemonicParsing="false" text="New" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </items>
-                        </ToolBar>
-                     </top>
                      <BorderPane.margin>
                         <Insets left="6.0" />
                      </BorderPane.margin>
@@ -126,7 +113,7 @@
          <top>
             <HBox styleClass="default-title" BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Label" fx:id="playlistNameLabel" />
+                  <Label fx:id="playlistNameLabel" text="Label" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="12.0" />
