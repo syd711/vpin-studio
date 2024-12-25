@@ -330,7 +330,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
               try {
-                PlaylistRepresentation update = client.getPlaylistsService().setPlaylistColor(playlist, PreferenceBindingUtil.toHexString(t1));
+                String colorhex = PreferenceBindingUtil.toHexString(t1);
+                if (colorhex.startsWith("#")) {
+                  colorhex = colorhex.substring(1);
+                }
+                playlist.setMenuColor((int) Long.parseLong(colorhex, 16));
+                PlaylistRepresentation update = client.getPlaylistsService().saveGame(playlist);
                 refreshPlaylist(update, true);
               }
               catch (Exception e) {

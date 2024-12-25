@@ -1062,22 +1062,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return updated;
   }
 
-  public void setPlaylistColor(int playlistId, long color) {
-    Connection connect = this.connect();
-    String sql = "UPDATE PlayLists SET 'MenuColor'=" + color + " WHERE PlayListID = " + playlistId + ";";
-    try {
-      Statement stmt = Objects.requireNonNull(connect).createStatement();
-      stmt.executeUpdate(sql);
-      stmt.close();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to update PlayList: " + e.getMessage(), e);
-    }
-    finally {
-      this.disconnect(connect);
-    }
-  }
-
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
     try {
@@ -1133,6 +1117,87 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
+  }
+
+  @Override
+  public Playlist savePlaylist(Playlist playlist) {
+    Connection connect = this.connect();
+    try {
+      int index = 1;
+
+      PreparedStatement preparedStatement = null;
+      if (playlist.getId() < 0) {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO PlayLists (" +
+                "PlayName, Visible, DisplayOrder, Logo, PlayListParent, PlayDisplay, Notes, PlayListType, PlayListSQL, MenuColor, passcode, UglyList, HideSysLists, ThemeFolder, useDefaults, DOFStuff) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+      }
+      else {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO PlayLists (" +
+                "PlayListID, PlayName, Visible, DisplayOrder, Logo, PlayListParent, PlayDisplay, Notes, PlayListType, PlayListSQL, MenuColor, passcode, UglyList, HideSysLists, ThemeFolder, useDefaults, DOFStuff) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(index++, playlist.getId());
+      }
+
+      preparedStatement.setString(index++, playlist.getName());
+      preparedStatement.setInt(index++, playlist.isVisible() ? 1 : 0);
+      preparedStatement.setInt(index++, 0); // display order - not used yet
+      preparedStatement.setString(index++, playlist.getMediaName());
+      preparedStatement.setInt(index++, playlist.getParentId());
+      preparedStatement.setString(index++, playlist.getName()); //looks the "PlayDisplay" is always the name
+      preparedStatement.setString(index++, ""); //no field for notes
+      preparedStatement.setInt(index++, playlist.isSqlPlayList() ? 1 : 0);
+      preparedStatement.setString(index++, playlist.getPlayListSQL());
+      preparedStatement.setInt(index++, playlist.getMenuColor());
+      preparedStatement.setInt(index++, playlist.getPassCode());
+      preparedStatement.setInt(index++, playlist.isUglyList() ? 1 : 0);
+      preparedStatement.setInt(index++, playlist.isHideSysLists() ? 1 : 0);
+      preparedStatement.setString(index++, null); //theme folder not used yet
+      preparedStatement.setInt(index++, playlist.isUseDefaults() ? 1 : 0);
+      preparedStatement.setString(index++, playlist.getDofCommand());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+        if (keys.next()) {
+          int id = keys.getInt(1);
+          return getPlayList(id);
+        }
+      }
+
+      return playlist;
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to update playlist: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return null;
+  }
+
+  public boolean deletePlaylist(int playlistId) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayLists WHERE PlayListID = ?");
+      preparedStatement.setInt(1, playlistId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE PlayListID = ?");
+      preparedStatement.setInt(1, playlistId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Deleted playlist {}", playlistId);
+      return true;
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return false;
   }
 
   public void deleteFromPlaylist(int playlistId, int gameId) {
@@ -1289,7 +1354,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  private @NonNull EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+  @NonNull
+  private EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
     EmulatorType type = EmulatorType.fromExtension(extension);
     if (type != null) {
       return type;
@@ -1644,31 +1710,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  // no more used
-  private List<Integer> getGameIdsFromPlaylists() {
-    List<Integer> result = new ArrayList<>();
-    Connection connect = connect();
-    try {
-      Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails;");
-
-      while (rs.next()) {
-        int gameId = rs.getInt("GameID");
-        result.add(gameId);
-      }
-
-      rs.close();
-      statement.close();
-    }
-    catch (SQLException e) {
-      LOG.error("Failed to read playlists: {}", e.getMessage(), e);
-    }
-    finally {
-      disconnect(connect);
-    }
-    return result;
-  }
-
   @NonNull
   private Map<Integer, PlaylistGame> getGamesFromPlaylist(int id) {
     Map<Integer, PlaylistGame> result = new LinkedHashMap<>();
@@ -1820,6 +1861,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setId(rs.getInt("PlayListID"));
     playlist.setParentId(rs.getInt("PlayListParent"));
     playlist.setMediaName(rs.getString("Logo"));
+    playlist.setVisible(rs.getInt("Visible") == 1);
+    playlist.setPassCode(rs.getInt("passcode"));
+    playlist.setUglyList(rs.getInt("UglyList") == 1);
+    playlist.setHideSysLists(rs.getInt("HideSysLists") == 1);
+    playlist.setUseDefaults(rs.getInt("useDefaults") == 1);
+    playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
 

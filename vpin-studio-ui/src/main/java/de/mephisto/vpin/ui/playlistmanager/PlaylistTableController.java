@@ -9,7 +9,9 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -43,12 +45,27 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
+  @FXML
+  private Button removeBtn;
+
+  private Stage dialogStage;
+  private Optional<PlaylistRepresentation> playlist;
   private Stage stage;
 
 
   @FXML
   private void onRemove() {
+    if (playlist.isPresent()) {
+      List<GameRepresentationModel> gameModels = this.tableView.getSelectionModel().getSelectedItems();
+      List<GameRepresentation> games = gameModels.stream().map(model -> model.getBean()).collect(Collectors.toList());
+      String title = "Removing " + games.size() + " games from \"" + playlist.get().getName() + "\"";
+      if (games.size() == 1) {
+        title = "Removing \"" + games.get(0).getGameDisplayName() + "\" from \"" + playlist.get().getName() + "\"";
+      }
+      ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist.get(), games, false));
 
+      setData(playlist);
+    }
   }
 
   @FXML
@@ -56,9 +73,14 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
   }
 
-  public void setData(Stage dialogStage, Optional<PlaylistRepresentation> value) {
+  public void setStage(Stage dialogStage) {
+    this.dialogStage = dialogStage;
+  }
+
+  public void setData(Optional<PlaylistRepresentation> value) {
     if (value.isPresent()) {
-      setItems(value.get().getGames().stream().map(this::toGameModel).collect(Collectors.toList()));
+      this.playlist = Optional.of(client.getPlaylistsService().getPlaylist(value.get().getId()));
+      setItems(playlist.get().getGames().stream().map(this::toGameModel).collect(Collectors.toList()));
     }
   }
 
@@ -70,7 +92,15 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("media", "media", new PlaylistTableColumnSorter(this));
 
+    removeBtn.setDisable(true);
+
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<GameRepresentationModel>() {
+      @Override
+      public void onChanged(Change<? extends GameRepresentationModel> c) {
+        removeBtn.setDisable(c.getList().isEmpty());
+      }
+    });
 
     BaseLoadingColumn.configureColumn(columnName, (value, model) -> {
       Label label = new Label(model.getName());

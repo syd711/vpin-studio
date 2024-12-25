@@ -9,14 +9,59 @@ import java.util.Objects;
 
 public class PlaylistRepresentation {
   private int id;
+  private int parentId;
   private Integer menuColor;
   private String name;
   private String playListSQL;
   private String mediaName;
   private boolean sqlPlayList;
+  private int passCode;
+  private boolean hideSysLists;
+  private boolean useDefaults;
   private boolean addFavCheckboxes;
+  private String dofCommand;
   private List<PlaylistGame> games = new ArrayList<>();
   private List<PlaylistRepresentation> children = new ArrayList<>();
+
+  public int getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(int parentId) {
+    this.parentId = parentId;
+  }
+
+  public int getPassCode() {
+    return passCode;
+  }
+
+  public void setPassCode(int passCode) {
+    this.passCode = passCode;
+  }
+
+  public boolean isHideSysLists() {
+    return hideSysLists;
+  }
+
+  public void setHideSysLists(boolean hideSysLists) {
+    this.hideSysLists = hideSysLists;
+  }
+
+  public boolean isUseDefaults() {
+    return useDefaults;
+  }
+
+  public void setUseDefaults(boolean useDefaults) {
+    this.useDefaults = useDefaults;
+  }
+
+  public String getDofCommand() {
+    return dofCommand;
+  }
+
+  public void setDofCommand(String dofCommand) {
+    this.dofCommand = dofCommand;
+  }
 
   public List<PlaylistRepresentation> getChildren() {
     return children;

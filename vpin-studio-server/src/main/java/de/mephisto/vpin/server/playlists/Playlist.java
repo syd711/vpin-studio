@@ -13,14 +13,68 @@ public class Playlist {
   private Integer menuColor;
   private String name;
   private String playListSQL;
-  private boolean sqlPlayList;
+  private boolean sqlPlayList = false;
+  private boolean visible = true;
+  private boolean uglyList = false;
   private String mediaName;
+  private int passCode;
+  private boolean hideSysLists = false;
+  private boolean useDefaults = true;
   private boolean addFavCheckboxes;
+  private String dofCommand;
   private List<PlaylistGame> games = new ArrayList<>();
   private List<Playlist> children = new ArrayList<>();
 
   // optional emulator id when playlist is linked to an emulator, leave null if not
   private Integer emulatorId;
+
+  public String getDofCommand() {
+    return dofCommand;
+  }
+
+  public void setDofCommand(String dofCommand) {
+    this.dofCommand = dofCommand;
+  }
+
+  public boolean isUseDefaults() {
+    return useDefaults;
+  }
+
+  public void setUseDefaults(boolean useDefaults) {
+    this.useDefaults = useDefaults;
+  }
+
+  public boolean isHideSysLists() {
+    return hideSysLists;
+  }
+
+  public void setHideSysLists(boolean hideSysLists) {
+    this.hideSysLists = hideSysLists;
+  }
+
+  public boolean isUglyList() {
+    return uglyList;
+  }
+
+  public void setUglyList(boolean uglyList) {
+    this.uglyList = uglyList;
+  }
+
+  public int getPassCode() {
+    return passCode;
+  }
+
+  public void setPassCode(int passCode) {
+    this.passCode = passCode;
+  }
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
 
   public List<Playlist> getChildren() {
     return children;

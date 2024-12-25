@@ -27,11 +27,6 @@ public class PlaylistService {
     return frontendService.getPlayList(playlistId);
   }
 
-  public Playlist setPlaylistColor(int playlistId, long color) {
-    frontendService.setPlaylistColor(playlistId, color);
-    return frontendService.getPlayList(playlistId);
-  }
-
   public Playlist removeFromPlaylist(int playlistId, int gameId) {
     frontendService.deleteFromPlaylist(playlistId, gameId);
     return frontendService.getPlayList(playlistId);
@@ -49,5 +44,13 @@ public class PlaylistService {
   public Playlist updatePlaylistGame(int playlistId, int gameId, int favMode) {
     frontendService.updatePlaylistGame(playlistId, gameId, favMode);
     return frontendService.getPlayList(playlistId);
+  }
+
+  public boolean delete(int playlistId) {
+    return frontendService.deletePlaylist(playlistId);
+  }
+
+  public Playlist save(Playlist playlist) {
+    return frontendService.savePlaylist(playlist);
   }
 }

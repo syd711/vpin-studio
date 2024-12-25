@@ -12,7 +12,6 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
@@ -22,13 +21,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -464,7 +462,7 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  protected void savePlaylist(int gameId, Playlist pl) {
+  protected void savePlaylistGame(int gameId, Playlist pl) {
     if (pl.getEmulatorId() != null) {
       Emulator emu = getEmulator(pl.getEmulatorId());
       PinballXTableParser parser = new PinballXTableParser();
@@ -474,6 +472,12 @@ public class PinballXConnector extends BaseConnector {
       File playlistDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + pl.getName() + ".xml");
       parser.writeGames(playlistDb, games, mapTableDetails, emu);
     }
+  }
+
+  @Override
+  public Playlist savePlaylist(Playlist playlist) {
+    //TODO not implemented yet
+    return null;
   }
 
   //----------------------------------

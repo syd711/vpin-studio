@@ -110,7 +110,9 @@ public interface FrontendConnector {
   @NonNull
   List<Playlist> getPlaylistTree();
 
-  void setPlaylistColor(int playlistId, long color);
+  boolean deletePlaylist(int playlistId);
+
+  Playlist savePlaylist(Playlist playlist);
 
   void addToPlaylist(int playlistId, int gameId, int favMode);
 
@@ -166,5 +168,4 @@ public interface FrontendConnector {
   void endGameRecording(Game game);
 
   void endFrontendRecording();
-
 }

@@ -459,7 +459,14 @@ public abstract class BaseConnector implements FrontendConnector {
     return null;
   }
 
-  protected void savePlaylist(int gameId, Playlist playlist) {
+  @Override
+  public Playlist savePlaylist(Playlist playlist) {
+    //not used by all connectors
+    return null;
+  }
+
+  protected void savePlaylistGame(int gameId, Playlist playlist) {
+
   }
 
   public Set<Integer> loadFavorites() {
@@ -528,6 +535,12 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
+  public boolean deletePlaylist(int playlistId) {
+    //TODO implement me
+    return false;
+  }
+
+  @Override
   public List<Playlist> getPlaylists() {
     List<Playlist> result = new ArrayList<>();
 
@@ -567,7 +580,7 @@ public abstract class BaseConnector implements FrontendConnector {
       if (!pl.containsGame(gameId)) {
         pl.getGames().add(toPlaylistGame(gameId));
       }
-      savePlaylist(gameId, pl);
+      savePlaylistGame(gameId, pl);
     }
     else {
       gameFavs.add(gameId);
@@ -592,24 +605,13 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistId >= 0) {
       Playlist pl = playlists.get(playlistId);
       if (pl.removeGame(gameId)) {
-        savePlaylist(gameId, pl);
+        savePlaylistGame(gameId, pl);
       }
     }
     else {
       if (gameFavs.remove(gameId)) {
         saveFavorite(gameId, false);
       }
-    }
-  }
-
-  @Override
-  public void setPlaylistColor(int playlistId, long color) {
-    Playlist playlist = getPlayList(playlistId);
-    if (playlist != null) {
-      playlist.setMenuColor((int) color);
-      JsonObject playlistConf = getPlaylistConf(playlist);
-      playlistConf.addProperty("menuColor", color);
-      savePlaylistConf(playlist, playlistConf);
     }
   }
 
@@ -647,7 +649,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private void savePlaylistConf(Playlist playlist, JsonObject playlistConf) {
     JsonObject o = getPlaylistConf();
     o.add(playlist.getName(), playlistConf);
-
+    playlistConf.addProperty("menuColor", playlist.getMenuColor());//TODO just copied from other method, not sure here
     File playlistConfFile = getPlaylistConfFile();
     if (playlistConfFile != null) {
       try {

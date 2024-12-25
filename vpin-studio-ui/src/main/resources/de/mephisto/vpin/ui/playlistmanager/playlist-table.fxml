@@ -49,7 +49,7 @@
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
             <Separator layoutX="214.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onRemove" textFill="WHITE">
+            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

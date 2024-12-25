@@ -500,8 +500,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().getPlaylistTree();
   }
 
-  public void setPlaylistColor(int playlistId, long color) {
-    getFrontendConnector().setPlaylistColor(playlistId, color);
+  public boolean deletePlaylist(int playlistId) {
+    return getFrontendConnector().deletePlaylist(playlistId);
+  }
+
+  public Playlist savePlaylist(Playlist playlist) {
+    return getFrontendConnector().savePlaylist(playlist);
   }
 
   public void addToPlaylist(int playlistId, int gameId, int favMode) {

@@ -25,7 +25,7 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
   public List<PlaylistRepresentation> getPlaylists() {
     PlaylistRepresentation[] playlists = getRestClient().get(API + "playlists", PlaylistRepresentation[].class);
     ArrayList<PlaylistRepresentation> list = new ArrayList<>(Arrays.asList(playlists));
-    return list;    
+    return list;
   }
 
 
@@ -66,11 +66,17 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "playlists/" + playlist.getId() + "/" + game.getId() + "/" + favMode, new HashMap<>(), PlaylistRepresentation.class);
   }
 
-  public PlaylistRepresentation setPlaylistColor(PlaylistRepresentation playlist, String colorhex) throws Exception {
-    if (colorhex.startsWith("#")) {
-      colorhex = colorhex.substring(1);
+  public PlaylistRepresentation saveGame(PlaylistRepresentation playlist) throws Exception {
+    try {
+      return getRestClient().post(API + "playlists/save", playlist, PlaylistRepresentation.class);
     }
-    long color = Long.parseLong(colorhex, 16);
-    return getRestClient().put(API + "playlists/" + playlist.getId() + "/color/" + color, new HashMap<>(), PlaylistRepresentation.class);
+    catch (Exception e) {
+      LOG.error("Failed to save playlist: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public Boolean delete(int id) {
+    return getRestClient().delete(API + "playlists/" + id);
   }
 }

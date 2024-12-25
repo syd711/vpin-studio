@@ -74,7 +74,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <tooltip>
-                                                <Tooltip text="Open Asset Manager" />
+                                                <Tooltip text="Open Asset Manager for Playlist" />
                                              </tooltip>
                                           </Button>
                                           <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -113,7 +113,10 @@
          <top>
             <HBox styleClass="default-title" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="playlistNameLabel" text="Label" />
+                  <Label fx:id="playlistNameLabel" text="Label">
+                     <HBox.margin>
+                        <Insets left="6.0" />
+                     </HBox.margin></Label>
                </children>
                <BorderPane.margin>
                   <Insets bottom="12.0" />

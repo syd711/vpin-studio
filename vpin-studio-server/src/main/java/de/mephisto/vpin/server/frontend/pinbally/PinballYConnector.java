@@ -377,7 +377,13 @@ PlayfieldWindow.Minimized = 0
   }
 
   @Override
-  protected void savePlaylist(int gameId, Playlist pl) {
+  public Playlist savePlaylist(Playlist playlist) {
+    //TODO not implemented yet
+    return null;
+  }
+
+  @Override
+  protected void savePlaylistGame(int gameId, Playlist pl) {
     PinballYStatisticsParser parser = new PinballYStatisticsParser(this);
     parser.writePlaylistGame(getGame(gameId), pl);
   }

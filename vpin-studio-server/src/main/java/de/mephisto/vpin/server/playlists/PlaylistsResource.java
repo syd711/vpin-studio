@@ -45,8 +45,13 @@ public class PlaylistsResource {
     return playlistService.updatePlaylistGame(playlistId, gameId, favMode);
   }
 
-  @PutMapping("/{playlistId}/color/{color}")
-  public Playlist setPlaylistColor(@PathVariable("playlistId") int playlistId, @PathVariable("color") long color) {
-    return playlistService.setPlaylistColor(playlistId, color);
+  @PostMapping("/save")
+  public Playlist saveOrUpdate(@RequestBody Playlist playlist) {
+    return playlistService.save(playlist);
+  }
+
+  @DeleteMapping("{playlistId}")
+  public boolean delete(@PathVariable("playlistId") int playlistId) {
+    return playlistService.delete(playlistId);
   }
 }
