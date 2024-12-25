@@ -20,9 +20,27 @@ public class PlaylistRepresentation {
   private boolean useDefaults;
   private boolean addFavCheckboxes;
   private boolean visible;
+  private boolean uglyList;
   private String dofCommand;
+  private String sqlError;
   private List<PlaylistGame> games = new ArrayList<>();
   private List<PlaylistRepresentation> children = new ArrayList<>();
+
+  public String getSqlError() {
+    return sqlError;
+  }
+
+  public void setSqlError(String sqlError) {
+    this.sqlError = sqlError;
+  }
+
+  public boolean isUglyList() {
+    return uglyList;
+  }
+
+  public void setUglyList(boolean uglyList) {
+    this.uglyList = uglyList;
+  }
 
   public boolean isVisible() {
     return visible;

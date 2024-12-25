@@ -956,7 +956,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     Connection connect = this.connect();
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1 AND PlayListID = " + id + ";");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE PlayListID = " + id + ";");
       while (rs.next()) {
         playlist = createPlaylist(rs);
       }
@@ -1019,7 +1019,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     List<Playlist> result = new ArrayList<>();
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
       while (rs.next()) {
         Playlist playlist = createPlaylist(rs);
         result.add(playlist);
@@ -1037,13 +1037,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
 
-  private Map<Integer, PlaylistGame> updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
+  private Map<Integer, PlaylistGame> updateSQLPlaylist(Playlist playlist, String sql, Map<Integer, PlaylistGame> playlistGameMap) {
     if (StringUtils.isEmpty(sql)) {
       return playlistGameMap;
     }
 
     //fetch the ids of tables applicable for this playlist
-    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql);
+    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(playlist, sql);
     Map<Integer, PlaylistGame> updated = new HashMap<>();
     for (Integer gameId : sqlPlaylistIds) {
       if (playlistGameMap.containsKey(gameId)) {
@@ -1164,7 +1164,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         }
       }
 
-      return playlist;
+      return getPlayList(playlist.getId());
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist: {}", e.getMessage(), e);
@@ -1743,15 +1743,17 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return result;
   }
 
-  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
+  private List<Integer> getGameIdsFromSqlPlaylist(Playlist playlist, String sql) {
     if (StringUtils.isEmpty(sql)) {
       return Collections.emptyList();
     }
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
+    Statement statement = null;
+    ResultSet rs = null;
     try {
-      Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery(sql);
+      statement = Objects.requireNonNull(connect).createStatement();
+      rs = statement.executeQuery(sql);
       while (rs.next()) {
         int gameId = rs.getInt("GameID");
         result.add(gameId);
@@ -1760,7 +1762,25 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (Exception e) {
-      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+      try {
+        if (rs != null) {
+          rs.close();
+        }
+      }
+      catch (SQLException ex) {
+        //ignore
+      }
+      try {
+        if (statement != null) {
+          statement.close();
+        }
+
+      }
+      catch (SQLException ex) {
+        //ignore
+      }
+      LOG.warn("Failed to read playlists: " + e.getMessage());
+      playlist.setSqlError(e.getMessage());
     }
     finally {
       disconnect(connect);
@@ -1878,7 +1898,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
     if (sqlPlaylist) {
-      playlistGameMap = updateSQLPlaylist(sql, playlistGameMap);
+      playlistGameMap = updateSQLPlaylist(playlist, sql, playlistGameMap);
     }
     playlist.setGames(new ArrayList<>(playlistGameMap.values()));
 

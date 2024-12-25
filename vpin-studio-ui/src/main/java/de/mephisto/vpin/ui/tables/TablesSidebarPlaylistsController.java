@@ -88,7 +88,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   @FXML
   private void onPlaylistManager() {
-    PlaylistDialogs.openPlaylistManager(tablesSidebarController.getTableOverviewController());
+    PlaylistDialogs.openPlaylistManager(tablesSidebarController.getTableOverviewController(), null);
   }
 
   @FXML

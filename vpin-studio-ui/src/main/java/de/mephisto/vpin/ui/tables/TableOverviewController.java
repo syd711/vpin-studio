@@ -22,6 +22,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
@@ -212,6 +213,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button deleteBtn;
 
   @FXML
+  private Button playlistManagerBtn;
+
+  @FXML
   private SplitMenuButton scanBtn;
 
   @FXML
@@ -310,6 +314,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onBackglassManager(GameRepresentation game) {
     tablesController.switchToBackglassManagerTab(game);
+  }
+
+  @FXML
+  private void onPlaylistManager() {
+    PlaylistDialogs.openPlaylistManager(this, playlistCombo.getValue());
   }
 
   @FXML

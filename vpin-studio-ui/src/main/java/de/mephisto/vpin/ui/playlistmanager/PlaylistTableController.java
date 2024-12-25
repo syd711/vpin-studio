@@ -49,6 +49,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   @FXML
   private ComboBox<GameEmulatorRepresentation> allEmulatorsCombo;
 
+
   @FXML
   private Button removeBtn;
 

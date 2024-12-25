@@ -61,6 +61,7 @@ public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+  public static final String DEFAULT_TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
   public static final String DISABLED_COLOR = "#767272";
   public static final String LOCAL_FAVS_COLOR = "#ffcc00";
   public static final String GLOBAL_FAVS_COLOR = "#cc6600";

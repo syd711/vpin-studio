@@ -82,7 +82,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   protected BaseFilterController<T, M> filterController;
 
   @FXML
-  private ComboBox<PlaylistRepresentation> playlistCombo;
+  protected ComboBox<PlaylistRepresentation> playlistCombo;
 
   //----------------------
   // Key Pressed

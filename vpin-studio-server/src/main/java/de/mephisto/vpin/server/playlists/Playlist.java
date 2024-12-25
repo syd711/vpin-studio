@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Playlist {
-  private int id;
+  private int id = -1;
   private int parentId;
   private Integer menuColor;
   private String name;
@@ -25,8 +25,17 @@ public class Playlist {
   private List<PlaylistGame> games = new ArrayList<>();
   private List<Playlist> children = new ArrayList<>();
 
+  private String sqlError;
   // optional emulator id when playlist is linked to an emulator, leave null if not
   private Integer emulatorId;
+
+  public String getSqlError() {
+    return sqlError;
+  }
+
+  public void setSqlError(String sqlError) {
+    this.sqlError = sqlError;
+  }
 
   public String getDofCommand() {
     return dofCommand;

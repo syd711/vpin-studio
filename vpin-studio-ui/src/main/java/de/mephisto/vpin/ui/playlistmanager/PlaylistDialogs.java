@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
@@ -8,6 +9,10 @@ import javafx.stage.Stage;
 public class PlaylistDialogs {
 
   public static void openPlaylistManager(TableOverviewController tableOverviewController) {
+    openPlaylistManager(tableOverviewController, null);
+  }
+
+  public static void openPlaylistManager(TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
     Stage stage = Dialogs.createStudioDialogStage(PlaylistManagerController.class, "dialog-playlist-manager.fxml", "Playlist Manager", "playlistManager");
     PlaylistManagerController controller = (PlaylistManagerController) stage.getUserData();
 
@@ -16,7 +21,7 @@ public class PlaylistDialogs {
     stage.setMinWidth(1024);
     stage.setMinHeight(700);
 
-    controller.setData(stage, tableOverviewController);
+    controller.setData(stage, tableOverviewController, selectedPlaylist);
     stage.showAndWait();
   }
 }
