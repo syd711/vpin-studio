@@ -231,7 +231,7 @@
                                     <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="152.0" spacing="6.0">
                                        <children>
                                           <Label prefWidth="100.0" styleClass="default-text" text="Media Name:" />
-                                          <TextField fx:id="dofCommandText1" promptText="Enter media files prefix...">
+                                          <TextField fx:id="mediaNameText" promptText="Enter media files prefix...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -241,7 +241,7 @@
                                     <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="136.0" spacing="6.0">
                                        <children>
                                           <Label prefWidth="100.0" styleClass="default-text" text="Passcode:" />
-                                          <TextField fx:id="dofCommandText11" promptText="Enter 4 digit code...">
+                                          <TextField fx:id="passcodeText" promptText="Enter 4 digit code...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -250,42 +250,10 @@
                                     </HBox>
                                               </children>
                                  <BorderPane.margin>
-                                    <Insets right="12.0" />
+                                    <Insets right="24.0" />
                                  </BorderPane.margin>
                                           </VBox>
                                     </left>
-                                    <center>
-                                        <VBox spacing="6.0" BorderPane.alignment="CENTER">
-                                            <children>
-                                                <BorderPane>
-                                                    <left>
-                                                        <CheckBox fx:id="sqlCheckbox" mnemonicParsing="false" text="SQL Playlist" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                            <font>
-                                                                <Font size="14.0" />
-                                                            </font>
-                                                        </CheckBox>
-                                                    </left>
-                                                    <right>
-                                                        <Button fx:id="reloadSqlBtn" mnemonicParsing="false" onAction="#onSQLReload" BorderPane.alignment="CENTER">
-                                                            <graphic>
-                                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="14" />
-                                                            </graphic>
-                                                        </Button>
-                                                    </right>
-                                                </BorderPane>
-                                                <TextArea fx:id="sqlText" prefHeight="133.0" promptText="Enter SQL Query here...">
-                                                    <VBox.margin>
-                                                        <Insets right="1.0" />
-                                                    </VBox.margin>
-                                                </TextArea>
-                                    <HBox fx:id="errorContainer" styleClass="error-container">
-                                       <children>
-                                          <Label fx:id="errorLabel" styleClass="error-title" text="Label" />
-                                       </children>
-                                    </HBox>
-                                            </children>
-                                        </VBox>
-                                    </center>
                                     <padding>
                                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                     </padding>
@@ -296,6 +264,40 @@
                                             </BorderPane.margin>
                                         </Label>
                                     </top>
+                           <right>
+                                        <VBox spacing="6.0" BorderPane.alignment="CENTER" />
+                           </right>
+                           <center>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                 <top>
+                                                <BorderPane BorderPane.alignment="CENTER">
+                                                    <left>
+                                                        <CheckBox fx:id="sqlCheckbox" mnemonicParsing="false" text="SQL Playlist" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                            <font>
+                                                                <Font size="14.0" />
+                                                            </font>
+                                                        </CheckBox>
+                                                    </left>
+                                       <BorderPane.margin>
+                                          <Insets bottom="3.0" />
+                                       </BorderPane.margin>
+                                                </BorderPane>
+                                 </top>
+                                 <center>
+                                                <TextArea fx:id="sqlText" promptText="Enter SQL Query here..." BorderPane.alignment="CENTER" />
+                                 </center>
+                                 <bottom>
+                                    <HBox fx:id="errorContainer" styleClass="error-container" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label fx:id="errorLabel" styleClass="error-title" text="Label" />
+                                       </children>
+                                       <BorderPane.margin>
+                                          <Insets top="3.0" />
+                                       </BorderPane.margin>
+                                    </HBox>
+                                 </bottom>
+                              </BorderPane>
+                           </center>
                                 </BorderPane>
                             </top>
                         </BorderPane>

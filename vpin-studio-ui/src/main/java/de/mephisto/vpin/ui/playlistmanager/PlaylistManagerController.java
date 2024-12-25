@@ -58,9 +58,6 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Button assetManagerBtn;
 
   @FXML
-  private Button reloadSqlBtn;
-
-  @FXML
   private CheckBox visibilityCheckbox;
   @FXML
   private CheckBox uglyCheckbox;
@@ -121,11 +118,6 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   }
 
   @FXML
-  private void onSQLReload() {
-
-  }
-
-  @FXML
   private void onPlaylistCreate() {
 
   }
@@ -159,7 +151,6 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     deleteBtn.setDisable(true);
 
     sqlText.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
-    reloadSqlBtn.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
 
     sqlCheckbox.setDisable(value.isEmpty());
     visibilityCheckbox.setDisable(value.isEmpty());
@@ -188,6 +179,12 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       defaultMediaCheckbox.setSelected(plList.isUseDefaults());
       disableSysListsCheckbox.setSelected(plList.isHideSysLists());
       dofCommandText.setText(plList.getDofCommand());
+      mediaNameText.setText(plList.getMediaName());
+
+      if (plList.getPassCode() != 0) {
+        passcodeText.setText(String.valueOf(plList.getPassCode()));
+      }
+
       colorPicker.setValue(Color.web(WidgetFactory.hexColor(plList.getMenuColor())));
     }
 
@@ -227,6 +224,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   public void initialize(URL url, ResourceBundle resourceBundle) {
     scrollPane.setFitToHeight(true);
     scrollPane.setFitToWidth(true);
+
+    errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
@@ -363,6 +362,29 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
     });
 
+    passcodeText.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (saveDisabled) {
+          return;
+        }
+        try {
+          Integer.parseInt(newValue);
+        }
+        catch (NumberFormatException e) {
+          passcodeText.setText(oldValue);
+          return;
+        }
+
+        if (newValue.length() > 4) {
+          passcodeText.setText(oldValue);
+          return;
+        }
+        getPlaylist().setPassCode(Integer.parseInt(newValue));
+        savePlaylist();
+      }
+    });
+
     mediaNameText.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -374,7 +396,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           if (!value.startsWith("pl_")) {
             value = "pl_" + value;
           }
-          getPlaylist().setDofCommand(value);
+          getPlaylist().setMediaName(value);
           savePlaylist();
         }, 500);
       }
