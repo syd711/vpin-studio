@@ -13,5 +13,7 @@ public interface UIDefaults {
 
   int TOURNAMENT_BROWSER_PAGE_SIZE = 20;
   int PLAYERS_PAGE_SIZE = 50;
+  int DEFAULT_MAX_REFRESH_COUNT = 5;
+
   String APP_TITLE = "VPin Studio App";
 }
