@@ -136,12 +136,16 @@
                                        <children>
                                           <VBox prefWidth="130.0" spacing="6.0">
                                              <children>
-                                                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Visible" textFill="WHITE">
-                                                                  <font>
-                                                                      <Font size="14.0" />
-                                                                  </font>
-                                                              </CheckBox>
-                                                              <HBox spacing="6.0">
+                                                <HBox fx:id="visibleBox">
+                                                   <children>
+                                                                    <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Visible" textFill="WHITE">
+                                                                        <font>
+                                                                            <Font size="14.0" />
+                                                                        </font>
+                                                                    </CheckBox>
+                                                   </children>
+                                                </HBox>
+                                                              <HBox fx:id="uglyBox" spacing="6.0">
                                                                   <children>
                                                                       <CheckBox fx:id="uglyCheckbox" mnemonicParsing="false" text="Ugly" textFill="WHITE">
                                                                           <font>
@@ -165,7 +169,7 @@
                                           </VBox>
                                           <VBox spacing="6.0">
                                              <children>
-                                                              <HBox spacing="6.0">
+                                                              <HBox fx:id="mediaDefaultsBox" spacing="6.0">
                                                                   <children>
                                                                       <CheckBox fx:id="defaultMediaCheckbox" mnemonicParsing="false" text="Media Defaults" textFill="WHITE">
                                                                           <font>
@@ -185,7 +189,7 @@
                                                                       </Label>
                                                                   </children>
                                                               </HBox>
-                                                              <HBox spacing="6.0">
+                                                              <HBox fx:id="disableSysListsBox" spacing="6.0">
                                                                   <children>
                                                                       <CheckBox fx:id="disableSysListsCheckbox" mnemonicParsing="false" text="Disable All SysLists" textFill="WHITE">
                                                                           <font>
@@ -218,7 +222,7 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                                   </HBox>
-                                                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="89.0" spacing="6.0">
+                                                  <HBox fx:id="dofCommandBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="89.0" spacing="6.0">
                                                       <children>
                                                           <Label prefWidth="100.0" styleClass="default-text" text="DOF Command:" />
                                                           <TextField fx:id="dofCommandText" promptText="Enter DOF Command...">
@@ -228,7 +232,7 @@
                                                           </TextField>
                                                       </children>
                                                   </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="152.0" spacing="6.0">
+                                    <HBox fx:id="mediaNameBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="152.0" spacing="6.0">
                                        <children>
                                           <Label prefWidth="100.0" styleClass="default-text" text="Media Name:" />
                                           <TextField fx:id="mediaNameText" promptText="Enter media files prefix...">
@@ -238,7 +242,7 @@
                                           </TextField>
                                        </children>
                                     </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="136.0" spacing="6.0">
+                                    <HBox fx:id="passcodeBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="136.0" spacing="6.0">
                                        <children>
                                           <Label prefWidth="100.0" styleClass="default-text" text="Passcode:" />
                                           <TextField fx:id="passcodeText" promptText="Enter 4 digit code...">

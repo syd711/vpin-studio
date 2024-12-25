@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -67,7 +68,10 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
-            <Label fx:id="labelCount" text="Label" BorderPane.alignment="CENTER" />
+            <Label fx:id="labelCount" text="Label" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="3.0" />
+               </BorderPane.margin></Label>
          </right>
       </BorderPane>
    </bottom>

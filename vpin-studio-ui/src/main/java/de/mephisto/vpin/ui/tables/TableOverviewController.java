@@ -1759,7 +1759,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       ImageView iconMedia = new ImageView(image3);
       iconMedia.setFitWidth(18);
       iconMedia.setFitHeight(18);
-      assetManagerBtn.setGraphic(iconMedia);
+//      assetManagerBtn.setGraphic(iconMedia);
 
       Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
       ImageView view6 = new ImageView(image6);

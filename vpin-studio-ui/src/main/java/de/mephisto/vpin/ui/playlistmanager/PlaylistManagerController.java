@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -93,11 +94,25 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Label errorLabel;
 
   @FXML
+  private Pane dofCommandBox;
+  @FXML
+  private Pane mediaNameBox;
+  @FXML
+  private Pane passcodeBox;
+  @FXML
+  private Pane uglyBox;
+  @FXML
+  private Pane visibleBox;
+  @FXML
+  private Pane mediaDefaultsBox;
+  @FXML
+  private Pane disableSysListsBox;
+
+  @FXML
   private PlaylistTableController playlistTableController; //fxml magic! Not unused -> id + "Controller"
 
   private Stage dialogStage;
   private TableOverviewController tableOverviewController;
-  private PlaylistRepresentation initialSelection;
   private boolean saveDisabled = true;
 
   @FXML
@@ -139,15 +154,20 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   public void setData(Stage stage, TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
     this.dialogStage = stage;
     this.tableOverviewController = tableOverviewController;
-    this.initialSelection = selectedPlaylist;
     this.playlistTableController.setStage(dialogStage);
 
+    if (selectedPlaylist == null) {
+      treeView.getSelectionModel().selectFirst();
+    }
+    else {
+      treeView.getSelectionModel().select(new TreeItem<>(selectedPlaylist));
+    }
   }
 
   private void refreshView(Optional<PlaylistRepresentation> value) {
     saveDisabled = true;
 
-    stage.setTitle("Playlist Manager");
+    dialogStage.setTitle("Playlist Manager");
     deleteBtn.setDisable(true);
 
     sqlText.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
@@ -165,7 +185,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     assetManagerBtn.setDisable(value.isEmpty());
     if (value.isPresent()) {
       PlaylistRepresentation plList = value.get();
-      stage.setTitle("Playlist Manager - " + plList.getName());
+      dialogStage.setTitle("Playlist Manager - " + plList.getName());
       playlistTableController.setData(value);
       deleteBtn.setDisable(plList.getId() == 0);
 
@@ -183,6 +203,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
       if (plList.getPassCode() != 0) {
         passcodeText.setText(String.valueOf(plList.getPassCode()));
+      }
+      else {
+        passcodeText.setText("");
       }
 
       colorPicker.setValue(Color.web(WidgetFactory.hexColor(plList.getMenuColor())));
@@ -224,6 +247,23 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   public void initialize(URL url, ResourceBundle resourceBundle) {
     scrollPane.setFitToHeight(true);
     scrollPane.setFitToWidth(true);
+
+    dofCommandBox.managedProperty().bindBidirectional(dofCommandBox.visibleProperty());
+    mediaNameBox.managedProperty().bindBidirectional(mediaNameBox.visibleProperty());
+    passcodeBox.managedProperty().bindBidirectional(passcodeBox.visibleProperty());
+    uglyBox.managedProperty().bindBidirectional(uglyBox.visibleProperty());
+    visibleBox.managedProperty().bindBidirectional(visibleBox.visibleProperty());
+    mediaDefaultsBox.managedProperty().bindBidirectional(mediaDefaultsBox.visibleProperty());
+    disableSysListsBox.managedProperty().bindBidirectional(disableSysListsBox.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.equals(FrontendType.Popper)) {
+      uglyBox.setVisible(false);
+      mediaDefaultsBox.setVisible(false);
+      disableSysListsBox.setVisible(false);
+      dofCommandBox.setVisible(false);
+      passcodeBox.setVisible(false);
+    }
 
     errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
 
@@ -304,6 +344,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         sqlText.setDisable(!newValue);
         if (!newValue) {
+          errorContainer.setVisible(false);
           getPlaylist().setSqlError(null);
         }
         getPlaylist().setSqlPlayList(newValue);
@@ -368,11 +409,22 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         if (saveDisabled) {
           return;
         }
+
+        if (StringUtils.isEmpty(newValue)) {
+          getPlaylist().setPassCode(0);
+          savePlaylist();
+          return;
+        }
+
         try {
           Integer.parseInt(newValue);
         }
         catch (NumberFormatException e) {
           passcodeText.setText(oldValue);
+          return;
+        }
+
+        if (newValue.length() < 4) {
           return;
         }
 
@@ -391,12 +443,27 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         if (saveDisabled) {
           return;
         }
+
+        if (StringUtils.isEmpty(newValue)) {
+          String v = "pl_" + getPlaylist().getName();
+          mediaNameText.setText(v);
+          return;
+        }
+
+        String value = FileUtils.replaceWindowsChars(newValue);
+        if(!value.equalsIgnoreCase(newValue)) {
+          mediaNameText.setText(value);
+          return;
+        }
+
+        if (!value.startsWith("pl_")) {
+          value = "pl_" + getPlaylist().getName();
+          mediaNameText.setText(value);
+          return;
+        }
+
         debouncer.debounce("mediaNameText", () -> {
-          String value = FileUtils.replaceWindowsChars(newValue);
-          if (!value.startsWith("pl_")) {
-            value = "pl_" + value;
-          }
-          getPlaylist().setMediaName(value);
+          getPlaylist().setMediaName(newValue);
           savePlaylist();
         }, 500);
       }
@@ -412,13 +479,6 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     });
 
     reload();
-
-    if (initialSelection == null) {
-      treeView.getSelectionModel().selectFirst();
-    }
-    else {
-      treeView.getSelectionModel().select(new TreeItem<>(initialSelection));
-    }
   }
 
   private PlaylistRepresentation getPlaylist() {

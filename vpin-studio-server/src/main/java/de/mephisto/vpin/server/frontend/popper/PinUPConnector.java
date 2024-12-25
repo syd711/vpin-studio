@@ -1153,7 +1153,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setInt(index++, playlist.isHideSysLists() ? 1 : 0);
       preparedStatement.setString(index++, null); //theme folder not used yet
       preparedStatement.setInt(index++, playlist.isUseDefaults() ? 1 : 0);
-      preparedStatement.setString(index++, playlist.getDofCommand());
+      preparedStatement.setString(index++, StringUtils.isEmpty(playlist.getDofCommand()) ? null : playlist.getDofCommand());
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
@@ -1889,6 +1889,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
+    if (StringUtils.isEmpty(sql)) {
+      playlist.setSqlError("Missing SQL query");
+    }
 
     playlist.setMenuColor(rs.getInt("MenuColor"));
     if (rs.wasNull()) {
