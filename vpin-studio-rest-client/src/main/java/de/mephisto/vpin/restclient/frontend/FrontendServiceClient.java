@@ -136,7 +136,13 @@ public class FrontendServiceClient extends VPinStudioClientService {
     List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
     filtered.add(0, createAllVpx());
+    return filtered;
+  }
 
+  public List<GameEmulatorRepresentation> getFilteredEmulatorsWithEmptyOption(UISettings uiSettings) {
+    List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+    filtered.add(0, null);
     return filtered;
   }
 

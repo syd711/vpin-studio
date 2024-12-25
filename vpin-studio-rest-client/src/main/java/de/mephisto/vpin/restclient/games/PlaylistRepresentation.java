@@ -19,9 +19,18 @@ public class PlaylistRepresentation {
   private boolean hideSysLists;
   private boolean useDefaults;
   private boolean addFavCheckboxes;
+  private boolean visible;
   private String dofCommand;
   private List<PlaylistGame> games = new ArrayList<>();
   private List<PlaylistRepresentation> children = new ArrayList<>();
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public void setVisible(boolean visible) {
+    this.visible = visible;
+  }
 
   public int getParentId() {
     return parentId;

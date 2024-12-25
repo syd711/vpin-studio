@@ -2,9 +2,11 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -13,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +42,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Label playlistNameLabel;
 
   @FXML
+  private ScrollPane scrollPane;
+
+  @FXML
   private Button assetManagerBtn;
 
   @FXML
@@ -48,6 +54,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private PlaylistTableController playlistTableController; //fxml magic! Not unused -> id + "Controller"
 
   private Stage dialogStage;
+  private TableOverviewController tableOverviewController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -57,7 +64,10 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @FXML
   private void onMediaEdit() {
-
+    TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      TableDialogs.openTableAssetsDialog(tableOverviewController, null, selectedItem.getValue(), VPinScreen.Wheel);
+    }
   }
 
   @FXML
@@ -68,7 +78,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   @FXML
   private void onPlaylistDelete() {
     TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
-    if(selectedItem != null) {
+    if (selectedItem != null) {
       PlaylistRepresentation value = selectedItem.getValue();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Playlist", "Delete Playlist \"" + value.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -79,16 +89,22 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   }
 
-  public void setData(Stage stage) {
+  public void setData(Stage stage, TableOverviewController tableOverviewController) {
     this.dialogStage = stage;
+    this.tableOverviewController = tableOverviewController;
     this.playlistTableController.setStage(dialogStage);
   }
 
   private void refreshView(Optional<PlaylistRepresentation> value) {
     playlistNameLabel.setText("-");
+    deleteBtn.setDisable(true);
+
+    assetManagerBtn.setDisable(value.isEmpty());
     if (value.isPresent()) {
-      playlistNameLabel.setText(value.get().getName());
+      PlaylistRepresentation plList = value.get();
+      playlistNameLabel.setText(plList.getName());
       playlistTableController.setData(value);
+      deleteBtn.setDisable(plList.getId() == 0);
     }
   }
 
@@ -123,12 +139,13 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    reload();
+    scrollPane.setFitToHeight(true);
+    scrollPane.setFitToWidth(true);
 
     treeView.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<TreeItem<PlaylistRepresentation>>() {
       @Override
       public void changed(ObservableValue<? extends TreeItem<PlaylistRepresentation>> observable, TreeItem<PlaylistRepresentation> oldValue, TreeItem<PlaylistRepresentation> newValue) {
-        if(newValue != null) {
+        if (newValue != null) {
           PlaylistRepresentation value = newValue.getValue();
           refreshView(Optional.of(value));
         }
@@ -137,6 +154,41 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         }
       }
     });
+    treeView.setCellFactory(t -> {
+      final Label label = new Label();
+      label.getStyleClass().add("default-text");
+      TreeCell<PlaylistRepresentation> cell = new TreeCell<PlaylistRepresentation>() {
+        @Override
+        protected void updateItem(PlaylistRepresentation child, boolean empty) {
+          super.updateItem(child, empty);
+          if (empty) {
+            setGraphic(null);
+          }
+          else {
+            setGraphic(label);
+          }
+        }
+      };
+      cell.itemProperty().addListener((obs, oldItem, newItem) -> {
+        if (newItem != null) {
+          label.setText(newItem.getName());
+          if (!newItem.isVisible()) {
+            label.setStyle(WidgetFactory.DISABLED_TEXT_STYLE);
+          }
+          if (newItem.isSqlPlayList()) {
+            FontIcon icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+            label.setGraphic(icon);
+          }
+          else {
+            FontIcon icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
+            label.setGraphic(icon);
+          }
+        }
+      });
+      return cell;
+    });
+
+    reload();
     treeView.getSelectionModel().selectFirst();
   }
 }

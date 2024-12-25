@@ -10,14 +10,18 @@ import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +47,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnEmulator;
 
   @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+  private ComboBox<GameEmulatorRepresentation> allEmulatorsCombo;
 
   @FXML
   private Button removeBtn;
@@ -52,6 +56,10 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   private Optional<PlaylistRepresentation> playlist;
   private Stage stage;
 
+  @Override
+  protected void onDelete(Event e) {
+    onRemove();
+  }
 
   @FXML
   private void onRemove() {
@@ -80,8 +88,29 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   public void setData(Optional<PlaylistRepresentation> value) {
     if (value.isPresent()) {
       this.playlist = Optional.of(client.getPlaylistsService().getPlaylist(value.get().getId()));
-      setItems(playlist.get().getGames().stream().map(this::toGameModel).collect(Collectors.toList()));
+      refresh();
     }
+  }
+
+  private void refresh() {
+    List<GameRepresentation> collect = playlist.get().getGames().stream().map(this::toGameModel).collect(Collectors.toList());
+    setItems(filterItems(collect));
+    labelCount.setText(collect.size() + " tables");
+  }
+
+  private List<GameRepresentation> filterItems(List<GameRepresentation> collect) {
+    List<GameRepresentation> result = new ArrayList<>(collect);
+    String term = searchTextField.getText();
+    if (!StringUtils.isEmpty(term)) {
+      result = result.stream().filter(g -> g.getGameDisplayName().toLowerCase().contains(term.toLowerCase())).collect(Collectors.toList());
+    }
+
+    GameEmulatorRepresentation emulator = this.allEmulatorsCombo.getValue();
+    if (emulator != null) {
+      result = result.stream().filter(g -> g.getEmulatorId() == emulator.getId()).collect(Collectors.toList());
+    }
+
+    return result;
   }
 
   private GameRepresentation toGameModel(PlaylistGame playlistGame) {
@@ -94,11 +123,31 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
     removeBtn.setDisable(true);
 
+    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
+      clearSelection();
+      applyFilter();
+      refresh();
+      clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
+    });
+    searchTextField.setOnKeyPressed(event -> {
+      if (event.getCode().toString().equalsIgnoreCase("ESCAPE")) {
+        searchTextField.setText("");
+        tableView.requestFocus();
+        event.consume();
+      }
+    });
+
+
+    tableView.setOnKeyPressed(event -> {
+      super.onKeyEvent(event);
+    });
+
+    tableView.setPlaceholder(new Label("Empty Playlist"));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<GameRepresentationModel>() {
       @Override
       public void onChanged(Change<? extends GameRepresentationModel> c) {
-        removeBtn.setDisable(c.getList().isEmpty());
+        removeBtn.setDisable(c.getList().isEmpty() || !playlist.isPresent() || playlist.get().isSqlPlayList());
       }
     });
 
@@ -118,8 +167,14 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
     }, true);
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithAllVpx(uiSettings));
-    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithEmptyOption(uiSettings));
+    this.allEmulatorsCombo.setItems(FXCollections.observableList(filtered));
+    this.allEmulatorsCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+        refresh();
+      }
+    });
   }
 
   @Override

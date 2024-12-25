@@ -283,7 +283,8 @@ public class TableDialogs {
     }
     Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
-    controller.loadAllTables(game.getEmulatorId());
+    controller.loadAllTables(game != null ? game.getEmulatorId() : -1);
+    controller.setStage(stage);
     controller.setPlaylistMode();
     controller.setPlaylist(stage, overviewController, playlist, screen);
 

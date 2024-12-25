@@ -153,7 +153,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         KeyCode code = event.getCode();
         switch (code) {
           case DELETE:
-            //onDelete(event);
+            onDelete(event);
+            event.consume();
             break;
           default:
         }

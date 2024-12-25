@@ -1269,4 +1269,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     }
   }
+
+  public void setStage(Stage stage) {
+    this.localStage = stage;
+  }
 }
