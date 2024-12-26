@@ -10,6 +10,9 @@ import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.ToolbarController;
+import de.mephisto.vpin.ui.preferences.LogsDownloadProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,17 +22,20 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class CabMonitorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CabMonitorController.class);
@@ -61,6 +67,21 @@ public class CabMonitorController implements Initializable, DialogController {
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onScreenshot() {
+    DirectoryChooser chooser = new DirectoryChooser();
+    chooser.setTitle("Select Target Folder");
+    File targetFolder = chooser.showDialog(stage);
+
+    if (targetFolder != null && targetFolder.exists()) {
+      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new ScreenshotsDownloadProgressModel("Download Screenshots", targetFolder));
+      if (!resultModel.getResults().isEmpty()) {
+        File target = (File) resultModel.getResults().get(0);
+        WidgetFactory.showInformation(stage, "Screenshots Generated", "Downloaded \"" + target.getAbsolutePath() + "\".");
+      }
+    }
   }
 
   @FXML
