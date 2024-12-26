@@ -131,11 +131,12 @@ public class FriendsController extends SettingsSceneController implements Initia
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        switchNode(null);
+        HeaderResizeableController.toggleFriendsView();
       }
     });
     outFader.play();
     open = false;
+
   }
 
   @FXML

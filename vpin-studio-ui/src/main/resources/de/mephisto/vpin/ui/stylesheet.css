@@ -391,12 +391,12 @@
     -fx-padding: 2 0 1 0;
     -fx-border-radius: 0 0 4 4;
     -fx-background-radius: 0 0 5 5;
-    -fx-background-color: #3D3D7A;
+    -fx-background-color: #494949;
     -fx-border-style: solid inside;
     -fx-border-width: 1;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-border-color: #30304E;
+    -fx-border-color: #373737;
     -fx-text-fill: #DDDDDD;
 }
 

@@ -52,6 +52,7 @@ public class HeaderResizeableController implements Initializable {
   private BorderPane header;
 
   private static MouseEvent event;
+  private static Button FRIENDS_BTN;
 
   @FXML
   private void onMouseClick(MouseEvent e) {
@@ -85,13 +86,15 @@ public class HeaderResizeableController implements Initializable {
     toggleFriendsView();
   }
 
-  private void toggleFriendsView() {
+  public static void toggleFriendsView() {
     boolean open = FriendsController.toggle();
     if (open) {
-      friendsBtn.getStyleClass().add("friends-button-selected");
+      if (!FRIENDS_BTN.getStyleClass().contains("friends-button-selected")) {
+        FRIENDS_BTN.getStyleClass().add("friends-button-selected");
+      }
     }
     else {
-      friendsBtn.getStyleClass().remove("friends-button-selected");
+      FRIENDS_BTN.getStyleClass().remove("friends-button-selected");
     }
   }
 
@@ -140,6 +143,8 @@ public class HeaderResizeableController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
+
+    FRIENDS_BTN = friendsBtn;
 
     friendsBtn.managedProperty().bindBidirectional(friendsBtn.visibleProperty());
     friendsBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
