@@ -147,7 +147,7 @@ public class FriendCabinetRowPanelController implements Initializable {
           FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle-outline");
           icon.setIconColor(Paint.valueOf("#FFFFFF"));
           statusLabel.setGraphic(icon);
-          statusLabel.setStyle(WidgetFactory.TEXT_STYLE);
+          statusLabel.setStyle(WidgetFactory.DEFAULT_TEXT_STYLE);
           activeGameLabel.setVisible(false);
         }
 
