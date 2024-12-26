@@ -318,7 +318,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private void onPlaylistManager() {
-    PlaylistDialogs.openPlaylistManager(this, playlistCombo.getValue());
+    openPlaylistManager(playlistCombo.getValue());
+  }
+
+  private void openPlaylistManager(PlaylistRepresentation playlistRepresentation) {
+    PlaylistDialogs.openPlaylistManager(this, playlistRepresentation);
   }
 
   @FXML
@@ -1289,7 +1293,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnComment, (value, model) -> {
       String text = model.getGame().getComment();
       Label label = new Label();
-      if(!StringUtils.isEmpty(text)) {
+      if (!StringUtils.isEmpty(text)) {
         label.setText(text.replaceAll("\\n", " "));
         label.setTooltip(new Tooltip(text));
       }
@@ -1319,7 +1323,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         }
       }
 
-      int ICON_WIDTH = 26;
+      int ICON_WIDTH = 22;
       double width = 0;
       if (fav && frontendType.supportExtendedPlaylists()) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon(uiSettings.getLocalFavsColor());
@@ -1336,7 +1340,16 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       int count = 0;
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
-          box.getChildren().add(WidgetFactory.createPlaylistIcon(match, uiSettings));
+          Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings);
+          Button plButton = new Button("", playlistIcon.getGraphic());
+          plButton.getStyleClass().add("ghost-button-tiny");
+          plButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              openPlaylistManager(match);
+            }
+          });
+          box.getChildren().add(plButton);
           width += ICON_WIDTH;
           count++;
           continue;
@@ -1345,6 +1358,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Label label = new Label("+" + (matches.size() - count));
         label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
         label.getStyleClass().add("default-text");
+
         box.getChildren().add(label);
         break;
       }

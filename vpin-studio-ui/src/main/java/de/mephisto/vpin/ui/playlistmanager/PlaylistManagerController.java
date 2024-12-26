@@ -37,7 +37,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PlaylistManagerController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlaylistManagerController.class);
@@ -160,7 +159,20 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       treeView.getSelectionModel().selectFirst();
     }
     else {
-      treeView.getSelectionModel().select(new TreeItem<>(selectedPlaylist));
+      TreeItem<PlaylistRepresentation> root = treeView.getRoot();
+      select(root, selectedPlaylist);
+    }
+  }
+
+  private void select(TreeItem<PlaylistRepresentation> root, PlaylistRepresentation selectedPlaylist) {
+    if (root.getValue().getId() == selectedPlaylist.getId()) {
+      treeView.getSelectionModel().select(root);
+    }
+    else {
+      List<TreeItem<PlaylistRepresentation>> children = root.getChildren();
+      for (TreeItem<PlaylistRepresentation> child : children) {
+        select(child, selectedPlaylist);
+      }
     }
   }
 
@@ -451,7 +463,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         }
 
         String value = FileUtils.replaceWindowsChars(newValue);
-        if(!value.equalsIgnoreCase(newValue)) {
+        if (!value.equalsIgnoreCase(newValue)) {
           mediaNameText.setText(value);
           return;
         }
