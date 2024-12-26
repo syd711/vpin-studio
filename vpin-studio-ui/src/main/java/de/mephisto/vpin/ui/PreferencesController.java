@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -9,8 +10,10 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,7 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +38,20 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class PreferencesController implements Initializable, StudioEventListener {
+public class PreferencesController extends SettingsSceneController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
-    // Add a public no-args constructor
-    public PreferencesController() {
-    }
-  
-  /** a singleton */
+  // Add a public no-args constructor
+  public PreferencesController() {
+  }
+
+  /**
+   * a singleton
+   */
   private static PreferencesController instance;
+
+  @FXML
+  private Pane root;
 
   @FXML
   private Hyperlink versionLink;
@@ -85,6 +93,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button pinballXSettingsBtn;
 
   @FXML
+  private Button tournamentsBtn;
+
+  @FXML
   private Button vpbmBtn;
 
   @FXML
@@ -112,7 +123,7 @@ public class PreferencesController implements Initializable, StudioEventListener
   private VBox navigationBox;
 
   @FXML
-  private VBox tournamentGroup;
+  private VBox maniaGroup;
 
   @FXML
   private VBox frontendPreferences;
@@ -159,33 +170,29 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   private void onOpen() {
     switchNode(preferencesRoot);
+    root.setOpacity(0);
     if (lastScreen != null) {
       loadScreen(lastScreen);
     }
+    TransitionUtil.createInFader(root, UIDefaults.FADER_DURATION).play();
   }
 
   @FXML
   private void onClose(ActionEvent event) {
-
-    switchNode(null);
-
+    FadeTransition outFader = TransitionUtil.createOutFader(root, UIDefaults.FADER_DURATION);
+    outFader.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        switchNode(null);
+      }
+    });
+    outFader.play();
     NavigationController.refreshControllerCache();
 
     if (dirtyPreferenceType != null) {
       PreferenceType preferenceType = dirtyPreferenceType;
       dirtyPreferenceType = null;
       EventManager.getInstance().notifyPreferenceChanged(preferenceType);
-    }
-  }
-
-  private void switchNode(Node preferencesNode) {
-    Node lookup = Studio.stage.getScene().lookup("#root");
-    BorderPane main = (BorderPane) lookup;
-    StackPane stack = (StackPane) main.getCenter();
-    if (preferencesNode != null) {
-      stack.getChildren().add(preferencesNode);
-    } else {
-      stack.getChildren().remove(1);
     }
   }
 
@@ -213,6 +220,12 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private void onAccount(ActionEvent event) throws IOException {
     load("preference-mania.fxml", event);
+  }
+
+
+  @FXML
+  private void onTournaments(ActionEvent event) throws IOException {
+    load("preference-tournaments.fxml", event);
   }
 
   @FXML
@@ -426,6 +439,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
     validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
+    tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
 
@@ -446,8 +460,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
     validators_screensBtn.setVisible(frontendType.isNotStandalone());
 
-    tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
-    tournamentGroup.setVisible(Features.MANIA_ENABLED);
+    maniaGroup.managedProperty().bindBidirectional(maniaGroup.visibleProperty());
+    maniaGroup.setVisible(Features.MANIA_ENABLED);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);
@@ -464,5 +478,14 @@ public class PreferencesController implements Initializable, StudioEventListener
     kofiLink.setGraphic(view6);
 
     EventManager.getInstance().addListener(this);
+    tournamentsBtn.setVisible(false);
+    try {
+      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+        tournamentsBtn.setVisible(true);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Mania initialization failed: {}", e.getMessage(), e);
+    }
   }
 }

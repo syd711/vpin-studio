@@ -73,7 +73,7 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
 
     VpsTutorialUrls that = (VpsTutorialUrls) o;
 
-    if (!title.equals(that.title)) return false;
+    if (title != null && !title.equals(that.title)) return false;
     return youtubeId.equals(that.youtubeId);
   }
 

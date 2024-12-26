@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
 import de.mephisto.vpin.ui.players.WidgetPlayerScoreController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;
@@ -16,6 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.Pane;
@@ -291,8 +293,8 @@ public class TournamentsController implements Initializable, StudioFXController 
 
       if (owner != null) {
         ownerLabel.setText(owner.getDisplayName());
-        String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid());
-        avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(avatarUrl)));
+        ImageView avatarImageView = AvatarFactory.createAvatarImageView(ManiaAvatarCache.getAvatarImage(owner.getAccountUuid()));
+        avatarPane.getChildren().add(avatarImageView);
       }
 
       nameLabel.setText(tournament.getDisplayName());

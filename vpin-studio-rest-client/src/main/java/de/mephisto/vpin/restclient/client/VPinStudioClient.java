@@ -498,6 +498,7 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   public void clearCache() {
+    getManiaService().clearCache();
     getHooksService().clearCache();
     getNvRamsService().clearCache();
     getPinVolService().clearCache();

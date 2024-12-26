@@ -8,6 +8,7 @@ public interface UIDefaults {
   String DISCORD_INVITE_LINK = "https://discord.gg/AMPwvAZHvy";
 
   int DEFAULT_AVATARSIZE = 68;
+  int FADER_DURATION = 250;
 
   int DB_VERSION = 64;
 

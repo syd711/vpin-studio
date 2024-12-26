@@ -13,8 +13,10 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -43,13 +45,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class ManiaWidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetPlayerRankController.class);
@@ -105,7 +105,6 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   private int page = 0;
   private ManiaController maniaController;
 
-  private Map<String, Image> rankedPlayersAvatarCache = new HashMap<>();
   private RankedAccountPagingResult searchResult;
 
   // Add a public no-args constructor
@@ -133,16 +132,25 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     }
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Highscores", "Delete Highscores?", "This will delete all registered scores from all your accounts on VPin-Mania.");
+    boolean deleted = true;
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       int count = 0;
       for (PlayerRepresentation playerRepresentation : collect) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(playerRepresentation.getTournamentUserUuid());
         if (accountByUuid != null) {
-          maniaClient.getHighscoreClient().deleteHighscores(accountByUuid.getId());
+          if (!maniaClient.getHighscoreClient().deleteHighscores(accountByUuid.getId())) {
+            deleted = false;
+          }
           count++;
         }
       }
-      WidgetFactory.showInformation(Studio.stage, "Information", "Highscore deletion successful.", "Deleted highscores of " + count + " account(s).");
+
+      if (deleted) {
+        WidgetFactory.showInformation(Studio.stage, "Information", "Highscore deletion successful.", "Deleted highscores of " + count + " account(s).");
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "Deletion Failed", "One or more highscore deletions failed");
+      }
       onReload();
     }
   }
@@ -183,7 +191,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onReload() {
-    rankedPlayersAvatarCache.clear();
+    ManiaAvatarCache.clear();
     refresh();
   }
 
@@ -217,35 +225,52 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
           tableStack.getChildren().add(loadingOverlay);
         }
 
-        searchResult = maniaClient.getAccountClient().getRankedAccounts(page, UIDefaults.PLAYERS_PAGE_SIZE);
-        List<RankedAccount> rankedAccounts = searchResult.getResults();
+        JFXFuture.supplyAsync(() -> {
+              try {
+                return searchResult = maniaClient.getAccountClient().getRankedAccounts(page, UIDefaults.PLAYERS_PAGE_SIZE);
+              }
+              catch (Exception e) {
+                LOG.error("Loading ranked accounts: {}", e.getMessage(), e);
+              }
+              return new RankedAccountPagingResult();
+            })
+            .onErrorSupply(e -> {
+              LOG.error("Loading ranked accounts: {}", e.getMessage(), e);
+              Platform.runLater(() -> {
+                WidgetFactory.showAlert(stage, "Error", "Loading ranked accounts: " + e.getMessage());
+              });
+              return new RankedAccountPagingResult();
+            })
+            .thenAcceptLater(searchResult -> {
+              this.searchResult = searchResult;
+              List<RankedAccount> rankedAccounts = searchResult.getResults();
 
-        int from = searchResult.getPage() * UIDefaults.PLAYERS_PAGE_SIZE;
-        int to = from + UIDefaults.PLAYERS_PAGE_SIZE;
-        if (to > searchResult.getTotal()) {
-          to = searchResult.getTotal();
-        }
+              int from = searchResult.getPage() * UIDefaults.PLAYERS_PAGE_SIZE;
+              int to = from + UIDefaults.PLAYERS_PAGE_SIZE;
+              if (to > searchResult.getTotal()) {
+                to = searchResult.getTotal();
+              }
 
-        pagingInfo.setText((from + 1) + " to " + to + " of " + searchResult.getTotal());
-        pagingInfo.setVisible(searchResult.getTotal() > 0);
-        previousBtn.setDisable(true);
-        nextBtn.setDisable(true);
+              pagingInfo.setText((from + 1) + " to " + to + " of " + searchResult.getTotal());
+              pagingInfo.setVisible(searchResult.getTotal() > 0);
+              previousBtn.setDisable(true);
+              nextBtn.setDisable(true);
 
-        if (!rankedAccounts.isEmpty()) {
-          boolean hasNext = to < searchResult.getTotal();
-          boolean hasPrevious = searchResult.getPage() > 0;
-          nextBtn.setDisable(!hasNext);
-          previousBtn.setDisable(!hasPrevious);
-        }
+              if (!rankedAccounts.isEmpty()) {
+                boolean hasNext = to < searchResult.getTotal();
+                boolean hasPrevious = searchResult.getPage() > 0;
+                nextBtn.setDisable(!hasNext);
+                previousBtn.setDisable(!hasPrevious);
+              }
 
-        Platform.runLater(() -> {
-          tableStack.getChildren().remove(loadingOverlay);
-          tableView.setVisible(true);
+              tableStack.getChildren().remove(loadingOverlay);
+              tableView.setVisible(true);
 
-          ObservableList<RankedAccount> data = FXCollections.observableList(rankedAccounts);
-          tableView.setItems(data);
-          tableView.refresh();
-        });
+              ObservableList<RankedAccount> data = FXCollections.observableList(rankedAccounts);
+              tableView.setItems(data);
+              tableView.refresh();
+            });
+
       }
       catch (Exception e) {
         LOG.error("Player fetch failed: " + e.getMessage(), e);
@@ -308,7 +333,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       hBox.getChildren().add(label);
 
       new Thread(() -> {
-        Image avatarImage = getAvatarImage(value);
+        Image avatarImage = ManiaAvatarCache.getAvatarImage(value.getUuid());
         if (avatarImage != null) {
           Platform.runLater(() -> {
             view.setImage(avatarImage);
@@ -364,24 +389,6 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
-  }
-
-  private Image getAvatarImage(RankedAccount value) {
-    Image avatarImage = null;
-    if (rankedPlayersAvatarCache.containsKey(value.getUuid())) {
-      return rankedPlayersAvatarCache.get(value.getUuid());
-    }
-
-    InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
-    if (in != null) {
-      rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
-      avatarImage = new Image(in);
-    }
-    else {
-      avatarImage = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
-    }
-    rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
-    return avatarImage;
   }
 
   public void refresh() {

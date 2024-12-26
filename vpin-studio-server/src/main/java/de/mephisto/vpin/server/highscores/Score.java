@@ -15,6 +15,7 @@ public class Score {
   private double numericScore;
   private int position;
   private Date createdAt;
+  private boolean external;
 
   public Score(Date createdAt, int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
     this.createdAt = createdAt;
@@ -26,6 +27,15 @@ public class Score {
     if (!StringUtils.isEmpty(playerInitials)) {
       this.playerInitials = playerInitials;
     }
+  }
+
+  @JsonIgnore
+  public boolean isExternal() {
+    return external;
+  }
+
+  public void setExternal(boolean external) {
+    this.external = external;
   }
 
   public Date getCreatedAt() {

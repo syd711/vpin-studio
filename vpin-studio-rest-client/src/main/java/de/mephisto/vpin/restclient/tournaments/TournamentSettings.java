@@ -11,6 +11,24 @@ public class TournamentSettings extends JsonSettings {
   private String defaultDescription;
   private String defaultWebsite;
   private boolean submitAllScores = true;
+  private boolean showOnlineStatus = true;
+  private boolean showActiveGameStatus = true;
+
+  public boolean isShowOnlineStatus() {
+    return showOnlineStatus;
+  }
+
+  public void setShowOnlineStatus(boolean showOnlineStatus) {
+    this.showOnlineStatus = showOnlineStatus;
+  }
+
+  public boolean isShowActiveGameStatus() {
+    return showActiveGameStatus;
+  }
+
+  public void setShowActiveGameStatus(boolean showActiveGameStatus) {
+    this.showActiveGameStatus = showActiveGameStatus;
+  }
 
   public boolean isTournamentsEnabled() {
     return tournamentsEnabled;

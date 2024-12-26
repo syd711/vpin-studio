@@ -347,6 +347,19 @@
                                           <Insets top="6.0" />
                                        </VBox.margin>
                                     </ColorPicker>
+                                    <Label layoutX="22.0" layoutY="207.0" text="Font Color for Friends" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <ColorPicker fx:id="friendsFontColorSelector" layoutX="22.0" layoutY="233.0">
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </ColorPicker>
                                  </children>
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -504,6 +517,9 @@
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
+                                             <HBox.margin>
+                                                <Insets top="12.0" />
+                                             </HBox.margin>
                                           </CheckBox>
                                           <Label>
                                              <graphic>
@@ -515,8 +531,28 @@
                                           </Label>
                                        </children>
                                        <VBox.margin>
-                                          <Insets top="12.0" />
+                                          <Insets top="6.0" />
                                        </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT" layoutX="22.0" layoutY="453.0">
+                                       <children>
+                                          <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="Render Friends Highscore Data  " textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets top="12.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon fx:id="rawHighscoreHelp3" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="The scores of your friends will be merged with yours." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
                                     </HBox>
                                     <HBox alignment="BASELINE_LEFT" spacing="6.0">
                                        <children>

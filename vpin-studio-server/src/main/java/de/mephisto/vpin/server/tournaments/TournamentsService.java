@@ -2,12 +2,13 @@ package de.mephisto.vpin.server.tournaments;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.CabinetOnlineStatus;
+import de.mephisto.vpin.connectors.mania.model.CabinetStatus;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mania.ManiaService;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.annotation.PreDestroy;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -69,13 +72,38 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-
+    if (Features.MANIA_ENABLED) {
+      try {
+        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
+        TournamentSettings settings = getSettings();
+        if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          cabinet.getStatus().setActiveGame(event.getGame().getGameDisplayName());
+        }
+        maniaService.getClient().getCabinetClient().update(cabinet);
+      }
+      catch (Exception e) {
+        LOG.error("Error updating mania online status: {}", e.getMessage(), e);
+      }
+    }
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     if (Features.MANIA_ENABLED) {
       tournamentSynchronizer.synchronizeTournaments();
+      try {
+        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
+        TournamentSettings settings = getSettings();
+        if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          cabinet.getStatus().setActiveGame(null);
+        }
+        maniaService.getClient().getCabinetClient().update(cabinet);
+      }
+      catch (Exception e) {
+        LOG.error("Error updating mania online status: {}", e.getMessage(), e);
+      }
     }
   }
 
@@ -90,9 +118,22 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
         if (cabinet != null) {
+          if (cabinet.getStatus() == null) {
+            cabinet.setStatus(new CabinetStatus());
+          }
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
+          cabinet.getStatus().setActiveGame(null);
+
           TournamentSettings settings = getSettings();
           settings.setEnabled(true);
           preferencesService.savePreference(PreferenceNames.TOURNAMENTS_SETTINGS, settings);
+
+          if (settings.isShowOnlineStatus()) {
+            cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          }
+
+          maniaService.getClient().getCabinetClient().update(cabinet);
+          LOG.info("Switched cabinet to modus: {}", cabinet.getStatus().getStatus());
         }
 
         highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
@@ -103,6 +144,24 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
       catch (Exception e) {
         Features.MANIA_ENABLED = false;
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @PreDestroy
+  public void onShutdown() {
+    if (Features.MANIA_ENABLED) {
+      try {
+        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
+        if (cabinet != null) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
+          cabinet.getStatus().setActiveGame(null);
+          maniaService.getClient().getCabinetClient().update(cabinet);
+        }
+        LOG.info("Switched cabinet to modus: {}", cabinet.getStatus().getStatus());
+      }
+      catch (Exception e) {
+        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
       }
     }
   }

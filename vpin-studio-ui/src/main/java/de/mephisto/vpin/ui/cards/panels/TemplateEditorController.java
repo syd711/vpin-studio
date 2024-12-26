@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
@@ -96,6 +97,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private ColorPicker fontColorSelector;
 
   @FXML
+  private ColorPicker friendsFontColorSelector;
+
+  @FXML
   private ComboBox<String> backgroundImageCombo;
 
   @FXML
@@ -160,6 +164,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private CheckBox renderWheelIconCheckbox;
+
+  @FXML
+  private CheckBox renderFriendsHighscore;
 
   @FXML
   private CheckBox renderPositionsCheckbox;
@@ -485,6 +492,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     scoreFontLabel.setText(cardTemplate.getScoreFontName());
 
     templateBeanBinder.setColorPickerValue(fontColorSelector, getCardTemplate(), "fontColor");
+    templateBeanBinder.setColorPickerValue(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
 
     useDirectB2SCheckbox.setSelected(cardTemplate.isUseDirectB2S());
     backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
@@ -513,6 +521,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
 
+    renderFriendsHighscore.setSelected(cardTemplate.isRenderFriends());
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
     wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
     maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
@@ -536,6 +545,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     canvasWidthSpinner.setDisable(!renderCanvasCheckbox.isSelected());
     canvasHeightSpinner.setDisable(!renderCanvasCheckbox.isSelected());
     canvasBorderRadiusSpinner.setDisable(!renderCanvasCheckbox.isSelected());
+    renderFriendsHighscore.setDisable(renderRawHighscore.isSelected());
 
     templateBeanBinder.setPaused(false);
 
@@ -553,6 +563,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
 
       templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
+      templateBeanBinder.bindColorPicker(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
       templateBeanBinder.bindColorPicker(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
       templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
@@ -664,6 +675,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         wheelImageSpinner.setDisable(t1);
         rowSeparatorSpinner.setDisable(t1);
         renderPositionsCheckbox.setDisable(t1);
+        renderFriendsHighscore.setDisable(t1);
       });
 
       renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -727,6 +739,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       else {
         ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get()));
       }
+      refreshPreview(this.gameRepresentation, true);
     }
   }
 
@@ -830,6 +843,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    friendsFontColorSelector.managedProperty().bindBidirectional(friendsFontColorSelector.visibleProperty());
+    renderFriendsHighscore.managedProperty().bindBidirectional(renderFriendsHighscore.visibleProperty());
+
+    friendsFontColorSelector.setVisible(Features.MANIA_ENABLED && Features.MANIA_SOCIAL_ENABLED);
+    renderFriendsHighscore.setVisible(Features.MANIA_ENABLED && Features.MANIA_SOCIAL_ENABLED);
+
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     resolutionLabel.setText("");
 

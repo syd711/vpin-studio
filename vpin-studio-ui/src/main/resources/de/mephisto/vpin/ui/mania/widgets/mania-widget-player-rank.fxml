@@ -109,7 +109,7 @@
                         <Tooltip text="Reload all table data" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete Scores" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete My Scores" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>

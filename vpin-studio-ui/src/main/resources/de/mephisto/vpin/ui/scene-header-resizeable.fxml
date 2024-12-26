@@ -15,9 +15,6 @@
          <BorderPane.margin>
             <Insets left="24.0" />
          </BorderPane.margin>
-         <top>
-            <VBox BorderPane.alignment="CENTER" />
-         </top>
       </BorderPane>
    </center>
    <right>
@@ -26,32 +23,49 @@
             <Insets />
          </BorderPane.margin>
          <padding>
-            <Insets right="6.0" top="6.0" />
+            <Insets right="6.0" />
          </padding>
          <left>
-            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_RIGHT" BorderPane.alignment="BOTTOM_RIGHT">
                <children>
-                  <Button fx:id="minimizeBtn" mnemonicParsing="false" onAction="#onHideClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="16" />
-                     </graphic>
-                  </Button>
-                  <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="16" />
-                     </graphic>
+                  <VBox>
                      <HBox.margin>
-                        <Insets left="6.0" />
+                        <Insets right="24.0" />
                      </HBox.margin>
-                  </Button>
-                  <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16" />
-                     </graphic>
+                     <children>
+                        <Button fx:id="friendsBtn" mnemonicParsing="false" onAction="#onFriends" styleClass="friends-button" text="Friends">
+                           <graphic>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_RIGHT">
+                     <children>
+                        <Button fx:id="minimizeBtn" mnemonicParsing="false" onAction="#onHideClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-minimize" iconSize="16" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="maximizeBtn" mnemonicParsing="false" onAction="#onMaximize" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-maximize" iconSize="16" />
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onCloseClick" prefHeight="24.0" prefWidth="24.0" styleClass="header-button" stylesheets="@stylesheet.css">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="16" />
+                           </graphic>
+                        </Button>
+                     </children>
                      <HBox.margin>
-                        <Insets left="6.0" />
+                        <Insets top="2.0" />
                      </HBox.margin>
-                  </Button>
+                  </HBox>
                </children>
             </HBox>
          </left>
@@ -63,7 +77,7 @@
             <Font name="Impact" size="18.0" />
          </font>
          <BorderPane.margin>
-            <Insets left="12.0" top="6.0" />
+            <Insets left="12.0" top="3.0" />
          </BorderPane.margin>
       </Label>
    </left>
