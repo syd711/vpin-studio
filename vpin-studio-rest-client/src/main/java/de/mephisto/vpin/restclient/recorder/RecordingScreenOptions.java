@@ -9,6 +9,15 @@ public class RecordingScreenOptions {
   private boolean fps60 = false;
   private boolean inGameRecording = false;
   private boolean recordAudio = false;
+  private boolean rotated = false;
+
+  public boolean isRotated() {
+    return rotated;
+  }
+
+  public void setRotated(boolean rotated) {
+    this.rotated = rotated;
+  }
 
   public boolean isRecordAudio() {
     return recordAudio;

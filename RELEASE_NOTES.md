@@ -2,6 +2,7 @@
 
 ## Changes
 
+- **Tables / Media Recorder**: Added 180 degree rotation option for playfield recordings.
 - **Tables / PUP Packs**: Added [PupPackScreenTweaker.exe](https://github.com/matiou11/PupPackScreenTweaker) as additional PUP pack editor to the PUP pack section. Note that this editor is only available when working on the cabinet itself.
 - **Tables / Table Data Manager**: The auto-naming has no restrictions on VPX files that are located in sub-folders anymore. You can also rename them now.
 - **Tables / Highscores Section**: This section has undergone a revamp:

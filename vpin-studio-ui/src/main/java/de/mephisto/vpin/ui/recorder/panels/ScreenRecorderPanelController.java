@@ -64,6 +64,9 @@ public class ScreenRecorderPanelController implements Initializable {
   private CheckBox inGameRecordingCheckbox;
 
   @FXML
+  private CheckBox rotationCheckbox;
+
+  @FXML
   private CheckBox audioCheckbox;
 
   @FXML
@@ -73,12 +76,14 @@ public class ScreenRecorderPanelController implements Initializable {
   private Spinner<Integer> delaySpinner;
 
   @FXML
+  private Pane rotationPanel;
+
+  @FXML
   private ComboBox<RecordingWriteMode> recordModeComboBox;
 
   private RecordingScreen recordingScreen;
 
   public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
-//    audioPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
     audioPanel.setVisible(false);
 
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
@@ -140,6 +145,15 @@ public class ScreenRecorderPanelController implements Initializable {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
       RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
       option2.setInGameRecording(t1);
+      client.getPreferenceService().setJsonPreference(s);
+    });
+
+    rotationPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
+    rotationCheckbox.setSelected(option.isRotated());
+    rotationCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+      option2.setRotated(t1);
       client.getPreferenceService().setJsonPreference(s);
     });
 
