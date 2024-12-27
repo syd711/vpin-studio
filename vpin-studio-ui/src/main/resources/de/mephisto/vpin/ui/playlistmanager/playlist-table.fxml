@@ -23,6 +23,8 @@
                <columns>
                   <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                   <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
+                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
                </columns>
             </TableView>
          </children>

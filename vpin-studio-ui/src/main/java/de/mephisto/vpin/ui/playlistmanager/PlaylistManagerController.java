@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
@@ -17,6 +18,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -26,21 +28,33 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PlaylistManagerController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlaylistManagerController.class);
   private final Debouncer debouncer = new Debouncer();
+
+  private static final Map<String, String> SQL_TEMPLATES = new LinkedHashMap<>();
+
+  static {
+    SQL_TEMPLATES.put("Top 10 - Most played", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY NumberPlays DESC LIMIT 10) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("Top 10 - Least played", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY NumberPlays ASC LIMIT 10) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("Top 10 - Not played for a long time", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId in (SELECT GameID from GamesStats ORDER BY LastPlayed ASC LIMIT 10) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("Never played tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND GameId NOT IN (SELECT GameID from GamesStats) ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("10 Random tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] ORDER BY RANDOM() LIMIT 10");
+    SQL_TEMPLATES.put("All 'VPin Workshop' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND (tags LIKE '%VPW%' OR GameDisplay LIKE '%VPW%') ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("All 'VR' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%VR%' ORDER BY GameDisplay");
+  }
 
   @FXML
   private VBox dataRoot;
@@ -108,11 +122,16 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Pane disableSysListsBox;
 
   @FXML
+  private MenuButton templateSelector;
+
+  @FXML
   private PlaylistTableController playlistTableController; //fxml magic! Not unused -> id + "Controller"
 
   private Stage dialogStage;
   private TableOverviewController tableOverviewController;
   private boolean saveDisabled = true;
+
+  private boolean dirty = false;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -197,6 +216,15 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     this.tableOverviewController = tableOverviewController;
     this.playlistTableController.setStage(dialogStage);
 
+    dialogStage.setOnHiding(new EventHandler<WindowEvent>() {
+      @Override
+      public void handle(WindowEvent event) {
+        if (dirty) {
+          EventManager.getInstance().notifyTablesChanged();
+        }
+      }
+    });
+
     if (selectedPlaylist == null) {
       treeView.getSelectionModel().selectFirst();
     }
@@ -225,7 +253,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     deleteBtn.setDisable(true);
 
     sqlText.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
-    if(sqlText.isDisabled()) {
+    if (sqlText.isDisabled()) {
       sqlText.setText("");
     }
 
@@ -241,7 +269,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     mediaNameText.setText("");
     passcodeText.setDisable(value.isEmpty());
     passcodeText.setText("");
-
+    templateSelector.setDisable(value.isEmpty());
 
     errorContainer.setVisible(false);
 
@@ -320,12 +348,38 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     disableSysListsBox.managedProperty().bindBidirectional(disableSysListsBox.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
+    templateSelector.setVisible(frontendType.equals(FrontendType.Popper));
     if (!frontendType.equals(FrontendType.Popper)) {
       uglyBox.setVisible(false);
       mediaDefaultsBox.setVisible(false);
       disableSysListsBox.setVisible(false);
       dofCommandBox.setVisible(false);
       passcodeBox.setVisible(false);
+    }
+    else {
+      Set<Map.Entry<String, String>> entries = SQL_TEMPLATES.entrySet();
+      for (Map.Entry<String, String> entry : entries) {
+        MenuItem item = new MenuItem(entry.getKey());
+        item.getStyleClass().add("default-text");
+        item.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            sqlText.setText(formatQuery(entry.getValue()));
+            savePlaylist();
+          }
+
+          private String formatQuery(String value) {
+            TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+            PlaylistRepresentation pl = selectedItem.getValue();
+
+            int emuId = client.getFrontendService().getDefaultGameEmulator().getId();
+            value = value.replaceAll("\\[EMULATOR_ID\\]", String.valueOf(emuId));
+            return value;
+          }
+        });
+        templateSelector.getItems().add(item);
+      }
+
     }
 
     errorContainer.managedProperty().bindBidirectional(errorContainer.visibleProperty());
@@ -559,6 +613,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       try {
         PlaylistRepresentation update = client.getPlaylistsService().saveGame(value);
         selectedItem.setValue(update);
+        dirty = true;
 
         Platform.runLater(() -> {
           playlistTableController.setData(Optional.of(update));

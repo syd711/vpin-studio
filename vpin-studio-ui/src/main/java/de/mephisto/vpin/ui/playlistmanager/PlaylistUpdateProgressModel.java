@@ -42,7 +42,7 @@ public class PlaylistUpdateProgressModel extends ProgressModel<GameRepresentatio
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return games.size() == 1;
   }
 
   @Override

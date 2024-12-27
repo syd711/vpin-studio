@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
@@ -297,6 +298,16 @@
                                        <BorderPane.margin>
                                           <Insets bottom="3.0" />
                                        </BorderPane.margin>
+                                       <right>
+                                          <MenuButton fx:id="templateSelector" mnemonicParsing="false" BorderPane.alignment="CENTER">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-search-outline" iconSize="14" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Choose a pre-defined SQL template." />
+                                             </tooltip>
+                                          </MenuButton>
+                                       </right>
                                                 </BorderPane>
                                  </top>
                                  <center>

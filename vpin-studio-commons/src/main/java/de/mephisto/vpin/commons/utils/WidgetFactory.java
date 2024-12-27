@@ -379,6 +379,9 @@ public class WidgetFactory {
     else if (playlist.getName().contains("VPW")) {
       fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
     }
+    else if (playlist.getName().endsWith(" M")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+    }
 
     label.setGraphic(fontIcon);
     return label;

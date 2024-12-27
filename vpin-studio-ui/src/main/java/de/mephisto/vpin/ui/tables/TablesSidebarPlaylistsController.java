@@ -16,6 +16,8 @@ import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -25,6 +27,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,9 +148,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
         }
       });
       Label name = new Label("Local Favorites");
-      name.setPadding(new Insets(0, 0, 3, 120));
+      name.setPadding(new Insets(0, 0, 3, 132));
       name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
-      name.setPrefWidth(392);
+      name.setPrefWidth(414);
 
       Label playlistIcon = WidgetFactory.createLocalFavoritePlaylistIcon(PreferenceBindingUtil.toHexString(colorPicker.getValue()));
       localFavsRoot.getChildren().add(playlistIcon);
@@ -174,9 +177,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
         }
       });
       name = new Label("Global Favorites");
-      name.setPadding(new Insets(0, 0, 24, 120));
+      name.setPadding(new Insets(0, 0, 24, 132));
       name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
-      name.setPrefWidth(392);
+      name.setPrefWidth(414);
 
       playlistIcon = WidgetFactory.createGlobalFavoritePlaylistIcon(PreferenceBindingUtil.toHexString(colorPicker.getValue()));
       globalFavsRoot.getChildren().add(playlistIcon);
@@ -223,7 +226,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         boolean wasPlayed = playlist.wasPlayed(game.getId());
 
         HBox favLists = new HBox(12);
-        favLists.setPadding(new Insets(0, 0, 3, 27));
+        favLists.setPadding(new Insets(0, 0, 0, 49));
         boolean addFavCheckboxes = playlist.getId() != 0 && playlist.containsGame(game.getId()) && playlist.isAddFavCheckboxes();
         boolean fav = playlist.isFavGame(game.getId());
         boolean globalFav = playlist.isGlobalFavGame(game.getId());
@@ -233,6 +236,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
           favCheckbox.setText("Local Favorite");
           favCheckbox.setUserData(playlist);
           favCheckbox.setDisable(!playlist.containsGame(game.getId()) || !wasPlayed);
+          if (favCheckbox.isDisabled()) {
+            favCheckbox.setTooltip(new Tooltip("Playlist does not contain this game of wasn't played yet."));
+          }
           favCheckbox.setSelected(playlist.isFavGame(game.getId()));
           favCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
           favCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -320,7 +326,31 @@ public class TablesSidebarPlaylistsController implements Initializable {
         name.setPrefWidth(370);
 
         Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
-        root.getChildren().add(playlistIcon);
+        Button plyButton = new Button();
+        plyButton.setGraphic(playlistIcon.getGraphic());
+        plyButton.getStyleClass().add("ghost-button-tiny");
+        plyButton.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            PlaylistDialogs.openPlaylistManager(tablesSidebarController.getTableOverviewController(), playlist);
+          }
+        });
+        root.getChildren().add(plyButton);
+
+        String tooltip = null;
+        FontIcon icon = null;
+        if (playlist.isSqlPlayList()) {
+          tooltip = "SQL Playlist";
+          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+        }
+        else {
+          tooltip = "Curated Playlist";
+          icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
+        }
+        Label playListTypeIcon = new Label(null, icon);
+        playListTypeIcon.setTooltip(new Tooltip(tooltip));
+        root.getChildren().add(playListTypeIcon);
+
         root.getChildren().add(gameCheckbox);
         root.getChildren().add(name);
 
@@ -352,15 +382,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
         if (!favLists.getChildren().isEmpty()) {
           entry.getChildren().add(favLists);
-        }
-
-        if (playlist.isSqlPlayList()) {
-          Label label = new Label("(Dynamic Playlist)");
-
-          label.getStyleClass().add("default-text");
-          label.setStyle("-fx-font-size: 12px;");
-          label.setPadding(new Insets(0, 0, 12, 27));
-          entry.getChildren().add(label);
         }
         dataBox.getChildren().add(entry);
       }

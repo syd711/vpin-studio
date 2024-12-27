@@ -7,9 +7,11 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -26,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -45,6 +44,12 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnEmulator;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateAdded;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> allEmulatorsCombo;
@@ -94,9 +99,13 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   }
 
   private void refresh() {
-    List<GameRepresentation> collect = playlist.get().getGames().stream().map(this::toGameModel).collect(Collectors.toList());
-    setItems(filterItems(collect));
-    labelCount.setText(collect.size() + " tables");
+    Platform.runLater(() -> {
+      ProgressDialog.createProgressDialog(new PlaylistLoadingProgressModel(playlist.get()));
+      List<PlaylistGame> games = playlist.get().getGames();
+      List<GameRepresentation> collect = games.stream().map(this::toGameModel).filter(Objects::nonNull).collect(Collectors.toList());
+      setItems(filterItems(collect));
+      labelCount.setText(collect.size() + " tables");
+    });
   }
 
   private List<GameRepresentation> filterItems(List<GameRepresentation> collect) {
@@ -164,6 +173,30 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setText(model.getGameEmulator().getName());
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
+      Label label = null;
+      if (value.getDateAdded() != null) {
+        label = new Label(TableOverviewController.dateFormat.format(value.getDateAdded()));
+      }
+      else {
+        label = new Label("-");
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
+      Label label = null;
+      if (value.getDateAdded() != null) {
+        label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
+      }
+      else {
+        label = new Label("-");
+      }
+      label.getStyleClass().add("default-text");
       return label;
     }, true);
 

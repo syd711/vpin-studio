@@ -247,6 +247,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   /**
    * Reload just one item in the table
+   *
    * @param The item in the table to be reloaded
    */
   public void reloadItem(T bean) {
@@ -265,7 +266,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         }
         else {
           model = toModel(bean);
-          models.add(0, model);
+          if (model != null) {
+            models.add(0, model);
+          }
         }
         // force refresh the view for elements not observed by the table
         tableView.refresh();
