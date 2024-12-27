@@ -23,6 +23,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -339,6 +341,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     scrollPane.setFitToHeight(true);
     scrollPane.setFitToWidth(true);
 
+    treeView.setEditable(true);
+
     dofCommandBox.managedProperty().bindBidirectional(dofCommandBox.visibleProperty());
     mediaNameBox.managedProperty().bindBidirectional(mediaNameBox.visibleProperty());
     passcodeBox.managedProperty().bindBidirectional(passcodeBox.visibleProperty());
@@ -408,6 +412,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       cellNode.getChildren().add(graphics);
       cellNode.getChildren().add(label);
 
+      final TextField directEditField = new TextField();
+
       TreeCell<PlaylistRepresentation> cell = new TreeCell<PlaylistRepresentation>() {
         @Override
         protected void updateItem(PlaylistRepresentation child, boolean empty) {
@@ -418,6 +424,33 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           else {
             setGraphic(cellNode);
           }
+        }
+
+        @Override
+        public void startEdit() {
+          super.startEdit();
+          directEditField.setText(getPlaylist().getName());
+          Platform.runLater(() -> {
+            directEditField.requestFocus();
+            directEditField.selectAll();
+          });
+          directEditField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+              if (t.getCode() == KeyCode.ENTER) {
+                String name = directEditField.getText();
+                if (!StringUtils.isEmpty(name)) {
+                  getPlaylist().setName(name);
+                }
+                commitEdit(getPlaylist());
+                savePlaylist();
+              }
+              else if (t.getCode() == KeyCode.ESCAPE) {
+                cancelEdit();
+              }
+            }
+          });
+          setGraphic(directEditField);
         }
       };
       cell.itemProperty().addListener((obs, oldItem, newItem) -> {
