@@ -82,11 +82,12 @@ public class RecorderResource {
     try {
       MonitoringSettings monitoringSettings = preferencesService.getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
 
-      File target = new File("vpin-studio-screenshots.zip");
+      File target = File.createTempFile("vpin-studio-screenshots", ".zip");
       target.deleteOnExit();
       if (target.exists() && !target.delete()) {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete existing screenshots archive.");
       }
+      LOG.info("Created temporary screenshot archive {}", target.getAbsolutePath());
 
       List<File> screenshotFiles = takeFrontendScreenshots(monitoringSettings);
 
@@ -105,8 +106,11 @@ public class RecorderResource {
       response.flushBuffer();
 
       for (File screenshotFile : screenshotFiles) {
-        if(!screenshotFile.delete()) {
+        if (!screenshotFile.delete()) {
           LOG.warn("Failed to delete temporary screenshot file " + screenshotFile.getAbsolutePath());
+        }
+        else {
+          LOG.info("Delete temporary screenshot {}", screenshotFile.getAbsolutePath());
         }
       }
       LOG.info("Finished exporting screenshots.");
