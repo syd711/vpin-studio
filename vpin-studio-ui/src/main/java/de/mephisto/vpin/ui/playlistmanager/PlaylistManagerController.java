@@ -132,8 +132,43 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   }
 
   @FXML
-  private void onPlaylistCreate() {
+  private void onReload() {
+    reload();
+    select(treeView.getRoot(), treeView.getRoot().getValue());
+  }
 
+  @FXML
+  private void onPlaylistCreate() {
+    String description = null;
+    String value = WidgetFactory.showInputDialog(dialogStage, "New Playlist", "Enter new playlist name:", description, null, "New Playlist");
+    if (!StringUtils.isEmpty(value)) {
+      try {
+        int parentId = -1;
+        TreeItem<PlaylistRepresentation> parentItem = treeView.getSelectionModel().getSelectedItem();
+        if (parentItem != null) {
+          parentId = parentItem.getValue().getId();
+        }
+        else {
+          parentId = treeView.getRoot().getValue().getId();
+        }
+
+        PlaylistRepresentation newPlayList = new PlaylistRepresentation();
+        newPlayList.setName(value);
+        newPlayList.setUseDefaults(true);
+        newPlayList.setVisible(true);
+        newPlayList.setParentId(parentId);
+        newPlayList.setMediaName("pl_" + FileUtils.replaceWindowsChars(value));
+        PlaylistRepresentation update = client.getPlaylistsService().saveGame(newPlayList);
+
+        reload();
+
+        select(treeView.getRoot(), update);
+      }
+      catch (Exception e) {
+        LOG.error("Playlist creation failed: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
+      }
+    }
   }
 
   @FXML
@@ -141,13 +176,20 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       PlaylistRepresentation value = selectedItem.getValue();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Playlist", "Delete Playlist \"" + value.getName() + "\"?");
+
+      String help2 = null;
+      String btnText = "Delete Playlist";
+      if (!selectedItem.getChildren().isEmpty()) {
+        help2 = "The child playlists of this playlist will be deleted too!";
+        btnText = "Delete All";
+      }
+
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Playlist", "Delete Playlist \"" + value.getName() + "\"?", help2, btnText);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getPlaylistsService().delete(value.getId());
         reload();
       }
     }
-
   }
 
   public void setData(Stage stage, TableOverviewController tableOverviewController, PlaylistRepresentation selectedPlaylist) {
@@ -183,6 +225,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     deleteBtn.setDisable(true);
 
     sqlText.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
+    if(sqlText.isDisabled()) {
+      sqlText.setText("");
+    }
 
     sqlCheckbox.setDisable(value.isEmpty());
     visibilityCheckbox.setDisable(value.isEmpty());
@@ -191,6 +236,12 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     disableSysListsCheckbox.setDisable(value.isEmpty());
     colorPicker.setDisable(value.isEmpty());
     dofCommandText.setDisable(value.isEmpty());
+    dofCommandText.setText("");
+    mediaNameText.setDisable(value.isEmpty());
+    mediaNameText.setText("");
+    passcodeText.setDisable(value.isEmpty());
+    passcodeText.setText("");
+
 
     errorContainer.setVisible(false);
 
@@ -199,7 +250,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       PlaylistRepresentation plList = value.get();
       dialogStage.setTitle("Playlist Manager - " + plList.getName());
       playlistTableController.setData(value);
-      deleteBtn.setDisable(plList.getId() == 0);
+      deleteBtn.setDisable(plList.getId() == 0 || !plList.getChildren().isEmpty());
 
       errorContainer.setVisible(!StringUtils.isEmpty(plList.getSqlError()));
       errorLabel.setText(plList.getSqlError());

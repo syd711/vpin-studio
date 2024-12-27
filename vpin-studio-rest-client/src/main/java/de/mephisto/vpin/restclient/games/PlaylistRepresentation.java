@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class PlaylistRepresentation {
-  private int id;
-  private int parentId;
-  private Integer menuColor;
+  private int id = -1;
+  private int parentId = -1;
+  private Integer menuColor = (int) Long.parseLong("FFFFFF", 16);
   private String name;
   private String playListSQL;
   private String mediaName;
-  private boolean sqlPlayList;
+  private boolean sqlPlayList = false;
   private int passCode;
   private boolean hideSysLists;
   private boolean useDefaults;

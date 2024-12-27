@@ -1166,7 +1166,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       return getPlayList(playlist.getId());
     }
-    catch (SQLException e) {
+    catch (Exception e) {
       LOG.error("Failed to update playlist: {}", e.getMessage(), e);
     }
     finally {
@@ -1176,19 +1176,23 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   public boolean deletePlaylist(int playlistId) {
+    List<Integer> ids = new ArrayList<>();
+    ids.add(playlistId);
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayLists WHERE PlayListID = ?");
-      preparedStatement.setInt(1, playlistId);
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
+      //maybe recursive deletion in the future?
+      for (Integer id : ids) {
+        PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayLists WHERE PlayListID = ?");
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
 
-      preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE PlayListID = ?");
-      preparedStatement.setInt(1, playlistId);
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-
-      LOG.info("Deleted playlist {}", playlistId);
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE PlayListID = ?");
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        LOG.info("Deleted playlist {}", playlistId);
+      }
       return true;
     }
     catch (SQLException e) {
@@ -1889,10 +1893,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
-    if (StringUtils.isEmpty(sql)) {
-      playlist.setSqlError("Missing SQL query");
-    }
-
     playlist.setMenuColor(rs.getInt("MenuColor"));
     if (rs.wasNull()) {
       playlist.setMenuColor(null);
@@ -1907,6 +1907,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     // used for playlist management, moved from TablesSidebarPlaylistsController as it is pinup specific
     playlist.setAddFavCheckboxes(sqlPlaylist && sql != null && sql.contains("EMUID"));
+
+    if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
+      playlist.setSqlError("Missing SQL query");
+    }
 
     return playlist;
   }
