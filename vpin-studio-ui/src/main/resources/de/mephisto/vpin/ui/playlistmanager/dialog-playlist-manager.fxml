@@ -63,7 +63,7 @@
                                        </tooltip>
                                     </Button>
                                     <Separator layoutX="82.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                                <Button mnemonicParsing="false" onAction="#onPlaylistCreate" text="New" textFill="WHITE">
+                                                <Button mnemonicParsing="false" onAction="#onPlaylistCreate" textFill="WHITE">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -74,6 +74,17 @@
                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-star" iconSize="18" />
                                                     </graphic>
                                                 </Button>
+                                    <Button fx:id="renameBtn" layoutX="157.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Open Asset Manager for Playlist" />
+                                       </tooltip>
+                                    </Button>
                                                 <Separator layoutX="125.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                                                 <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
@@ -226,7 +237,7 @@
                                           </VBox>
                                        </children>
                                     </HBox>
-                                                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="116.0" minHeight="30.0" spacing="6.0">
+                                                  <HBox fx:id="colorPickerBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="116.0" minHeight="30.0" spacing="6.0">
                                                       <children>
                                                           <Label prefWidth="100.0" styleClass="default-text" text="Color:" />
                                                           <ColorPicker fx:id="colorPicker" />

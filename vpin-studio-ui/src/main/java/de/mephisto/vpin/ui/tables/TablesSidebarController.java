@@ -825,7 +825,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         this.tablesSidebarMameController.setGame(g);
       }
       if (titledPanePlaylists.isExpanded() && titledPanePlaylists.isVisible()) {
-        this.tablesSidebarPlaylistsController.setGame(g);
+        this.tablesSidebarPlaylistsController.setGames(games);
       }
     });
   }

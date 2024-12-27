@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -12,8 +13,10 @@ import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
+import de.mephisto.vpin.ui.playlistmanager.PlaylistUpdateProgressModel;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -32,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -41,6 +44,8 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class TablesSidebarPlaylistsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPlaylistsController.class);
+  public static final int FAV_PADDING_LEFT = 118;
+  public static final int FAV_WIDTH = 392;
 
   @FXML
   private VBox parentBox;
@@ -75,7 +80,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   @FXML
   private Separator playlistManagerSeparator;
 
-  private Optional<GameRepresentation> game = Optional.empty();
+  private List<GameRepresentation> games = new ArrayList<>();
 
   private TablesSidebarController tablesSidebarController;
 
@@ -85,8 +90,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   @FXML
   private void onDismiss() {
-    GameRepresentation g = game.get();
-//    DismissalUtil..dismissValidation(g, options.getValidationStates().get(0));
   }
 
   @FXML
@@ -96,22 +99,24 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   @FXML
   private void onMediaEdit() {
-    if (this.game.isPresent()) {
+    if (this.games.size() == 1) {
       List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
       if (!playlists.isEmpty()) {
         PlaylistRepresentation playlistRepresentation = playlists.get(0);
-        TableDialogs.openTableAssetsDialog(this.tablesSidebarController.getTableOverviewController(), this.game.get(), playlistRepresentation, VPinScreen.Wheel);
+        TableDialogs.openTableAssetsDialog(this.tablesSidebarController.getTableOverviewController(), this.games.get(0), playlistRepresentation, VPinScreen.Wheel);
       }
     }
   }
 
-  public void setGame(Optional<GameRepresentation> game) {
-    this.game = game;
-    this.refreshView(game);
+  public void setGames(List<GameRepresentation> games) {
+    this.games = games;
+    this.refreshView(games);
   }
 
-  public void refreshView(Optional<GameRepresentation> g) {
+  public void refreshView(List<GameRepresentation> games) {
     dataBox.getChildren().removeAll(dataBox.getChildren());
+
+    assetManagerBtn.setDisable(games.size() != 1);
 
     emptyDataBox.setVisible(true);
     dataRoot.setVisible(true);
@@ -119,11 +124,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
     List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
 
-    emptyDataBox.setVisible(g.isEmpty());
-    dataBox.setVisible(g.isPresent());
-    dataRoot.setVisible(g.isPresent());
-
-    assetManagerBtn.setDisable(g.isEmpty());
+    emptyDataBox.setVisible(games.isEmpty());
+    dataBox.setVisible(!games.isEmpty());
+    dataRoot.setVisible(!games.isEmpty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
@@ -148,9 +151,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
         }
       });
       Label name = new Label("Local Favorites");
-      name.setPadding(new Insets(0, 0, 3, 132));
+      name.setPadding(new Insets(0, 0, 3, FAV_PADDING_LEFT));
       name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
-      name.setPrefWidth(414);
+      name.setPrefWidth(FAV_WIDTH);
 
       Label playlistIcon = WidgetFactory.createLocalFavoritePlaylistIcon(PreferenceBindingUtil.toHexString(colorPicker.getValue()));
       localFavsRoot.getChildren().add(playlistIcon);
@@ -177,9 +180,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
         }
       });
       name = new Label("Global Favorites");
-      name.setPadding(new Insets(0, 0, 24, 132));
+      name.setPadding(new Insets(0, 0, 24, FAV_PADDING_LEFT));
       name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
-      name.setPrefWidth(414);
+      name.setPrefWidth(FAV_WIDTH);
 
       playlistIcon = WidgetFactory.createGlobalFavoritePlaylistIcon(PreferenceBindingUtil.toHexString(colorPicker.getValue()));
       globalFavsRoot.getChildren().add(playlistIcon);
@@ -194,9 +197,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     }
 
     this.errorBox.setVisible(false);
-    if (g.isPresent()) {
-      GameRepresentation game = g.get();
-
+    if (!games.isEmpty()) {
       Frontend frontend = client.getFrontendService().getFrontendCached();
 
       boolean locked = client.getFrontendService().isFrontendRunning();
@@ -211,27 +212,31 @@ public class TablesSidebarPlaylistsController implements Initializable {
       }
 
       for (PlaylistRepresentation playlist : playlists) {
-        boolean linkedToEmu = playlist.getEmulatorId() == null || playlist.getEmulatorId() == game.getEmulatorId();
+        boolean linkedToEmu = playlist.getEmulatorId() == null || (this.games.size() == 1 && playlist.getEmulatorId() == games.get(0).getEmulatorId());
 
         HBox root = new HBox();
         root.setAlignment(Pos.BASELINE_LEFT);
         root.setSpacing(3);
-        CheckBox gameCheckbox = new CheckBox();
+        CheckBox gameCheckbox = new CheckBox(playlist.getName());
+        gameCheckbox.getStyleClass().add("default-text");
+        gameCheckbox.setPrefWidth(370);
         gameCheckbox.setUserData(playlist);
-        gameCheckbox.setSelected(playlist.containsGame(game.getId()));
+        gameCheckbox.setSelected(isFullSelectionInPlaylist(playlist));
         boolean disabled = playlist.isSqlPlayList() || !linkedToEmu;
         gameCheckbox.setDisable(disabled);
         gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
 
-        boolean wasPlayed = playlist.wasPlayed(game.getId());
+        boolean wasPlayed = games.size() == 1 && playlist.wasPlayed(games.get(0).getId());
 
         HBox favLists = new HBox(12);
         favLists.setPadding(new Insets(0, 0, 0, 49));
-        boolean addFavCheckboxes = playlist.getId() != 0 && playlist.containsGame(game.getId()) && playlist.isAddFavCheckboxes();
-        boolean fav = playlist.isFavGame(game.getId());
-        boolean globalFav = playlist.isGlobalFavGame(game.getId());
+        boolean addFavCheckboxes = this.games.size() == 1 && playlist.getId() != 0 && playlist.containsGame(games.get(0).getId()) && playlist.isAddFavCheckboxes();
+        boolean fav = this.games.size() == 1 && playlist.isFavGame(games.get(0).getId());
+        boolean globalFav = this.games.size() == 1 && playlist.isGlobalFavGame(games.get(0).getId());
 
         if (addFavCheckboxes && frontendType.supportExtendedPlaylists() && linkedToEmu) {
+          GameRepresentation game = games.get(0);
+
           CheckBox favCheckbox = new CheckBox();
           favCheckbox.setText("Local Favorite");
           favCheckbox.setUserData(playlist);
@@ -304,14 +309,20 @@ public class TablesSidebarPlaylistsController implements Initializable {
           @Override
           public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
             try {
+              String title = "Removing " + games.size() + " games from \"" + playlist.getName() + "\"";
+              if (games.size() == 1) {
+                title = "Removing \"" + games.get(0).getGameDisplayName() + "\" from \"" + playlist.getName() + "\"";
+              }
+
               if (t1) {
-                PlaylistRepresentation update = client.getPlaylistsService().addToPlaylist(playlist, game, fav, globalFav);
-                refreshPlaylist(update, false);
+                title = "Adding " + games.size() + " games to \"" + playlist.getName() + "\"";
+                if (games.size() == 1) {
+                  title = "Adding \"" + games.get(0).getGameDisplayName() + "\" to \"" + playlist.getName() + "\"";
+                }
               }
-              else {
-                PlaylistRepresentation update = client.getPlaylistsService().removeFromPlaylist(playlist, game);
-                refreshPlaylist(update, false);
-              }
+
+              ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist, games, t1));
+              refreshPlaylist(playlist, false);
             }
             catch (Exception e) {
               LOG.error("Failed to update playlists: " + e.getMessage(), e);
@@ -319,11 +330,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
             }
           }
         });
-
-        String playlistTitle = playlist.getName();
-        Label name = new Label(playlistTitle);
-        name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
-        name.setPrefWidth(370);
 
         Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
         Button plyButton = new Button();
@@ -352,7 +358,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
         root.getChildren().add(playListTypeIcon);
 
         root.getChildren().add(gameCheckbox);
-        root.getChildren().add(name);
 
         if (playlist.getId() >= 0 && linkedToEmu) {
           ColorPicker colorPicker = new ColorPicker(Color.web(WidgetFactory.hexColor(playlist.getMenuColor())));
@@ -388,12 +393,24 @@ public class TablesSidebarPlaylistsController implements Initializable {
     }
   }
 
+  private boolean isFullSelectionInPlaylist(PlaylistRepresentation playlist) {
+    List<PlaylistGame> playlistGames = playlist.getGames();
+
+    for (GameRepresentation game : games) {
+      int id = game.getId();
+      if (!playlistGames.stream().anyMatch(g -> g.getId() == id)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private void refreshPlaylist(PlaylistRepresentation playlist, boolean updateAll) {
     tablesSidebarController.getTableOverviewController().updatePlaylist(playlist);
 
     if (updateAll) {
       List<PlaylistGame> games = playlist.getGames();
-      if (games.size() > 5) {
+      if (games.size() > UIDefaults.DEFAULT_MAX_REFRESH_COUNT) {
         EventManager.getInstance().notifyTablesChanged();
       }
       else {
@@ -403,10 +420,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
       }
     }
     // also update the game if it has not been updated previously
-    if (this.game.isPresent()) {
-      int gameId = this.game.get().getId();
-      if (!updateAll || !playlist.containsGame(gameId)) {
-        EventManager.getInstance().notifyTableChange(gameId, null);
+    if (!this.games.isEmpty()) {
+      for (GameRepresentation game : this.games) {
+        int gameId = game.getId();
+        if (!updateAll || !playlist.containsGame(gameId)) {
+          EventManager.getInstance().notifyTableChange(gameId, null);
+        }
       }
     }
   }

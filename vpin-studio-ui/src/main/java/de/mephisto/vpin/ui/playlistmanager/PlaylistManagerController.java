@@ -68,6 +68,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Button deleteBtn;
 
   @FXML
+  private Button renameBtn;
+
+  @FXML
   private ScrollPane scrollPane;
 
   @FXML
@@ -109,6 +112,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Label errorLabel;
 
   @FXML
+  private Pane colorPickerBox;
+  @FXML
   private Pane dofCommandBox;
   @FXML
   private Pane mediaNameBox;
@@ -139,6 +144,27 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onRename(ActionEvent ae) {
+    TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      PlaylistRepresentation playlist = selectedItem.getValue();
+      String value = WidgetFactory.showInputDialog(dialogStage, "Rename Playlist", "Enter new playlist name:", null, null, playlist.getName());
+      if (!StringUtils.isEmpty(value)) {
+        try {
+          playlist.setName(value);
+          PlaylistRepresentation update = client.getPlaylistsService().saveGame(playlist);
+          reload();
+          select(treeView.getRoot(), update);
+        }
+        catch (Exception e) {
+          LOG.error("Playlist creation failed: {}", e.getMessage(), e);
+          WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
+        }
+      }
+    }
   }
 
   @FXML
@@ -259,6 +285,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       sqlText.setText("");
     }
 
+    renameBtn.setDisable(value.isEmpty());
     sqlCheckbox.setDisable(value.isEmpty());
     visibilityCheckbox.setDisable(value.isEmpty());
     uglyCheckbox.setDisable(value.isEmpty());
@@ -343,6 +370,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
     treeView.setEditable(true);
 
+    colorPickerBox.managedProperty().bindBidirectional(colorPickerBox.visibleProperty());
     dofCommandBox.managedProperty().bindBidirectional(dofCommandBox.visibleProperty());
     mediaNameBox.managedProperty().bindBidirectional(mediaNameBox.visibleProperty());
     passcodeBox.managedProperty().bindBidirectional(passcodeBox.visibleProperty());
@@ -353,6 +381,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     templateSelector.setVisible(frontendType.equals(FrontendType.Popper));
+
+    colorPickerBox.setVisible(frontendType.supportExtendedPlaylists());
+
     if (!frontendType.equals(FrontendType.Popper)) {
       uglyBox.setVisible(false);
       mediaDefaultsBox.setVisible(false);
