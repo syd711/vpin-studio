@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -8,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.Toggle;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
@@ -47,15 +49,17 @@ public class DMDPositionResizer {
     eventTriggered = false;
   };
 
-  private BooleanProperty aspectRatio;
+  private ReadOnlyObjectProperty<Toggle> aspectRatio;
+  private BooleanProperty snapCenter;
 
-  DMDPositionResizer(ObjectProperty<Bounds> areaProperty, BooleanProperty aspectRatio, ObjectProperty<Color> colorProperty) {
+  DMDPositionResizer(ObjectProperty<Bounds> areaProperty, ReadOnlyObjectProperty<Toggle> aspectRatio, BooleanProperty snapCenter, ObjectProperty<Color> colorProperty) {
     this.areaProperty = areaProperty;
     this.aspectRatio = aspectRatio;
+    this.snapCenter = snapCenter;
     this.colorProperty = colorProperty;
 
     initOverlay();
-  
+
     xProperty = new SimpleObjectProperty<>(0d);
     xMinProperty = new SimpleObjectProperty<>(0d);
     xMaxProperty = new SimpleObjectProperty<>(0d);
@@ -149,6 +153,7 @@ public class DMDPositionResizer {
       heightMinProperty.set(minSize);
     });
   }
+
   boolean processing = false;
 
   public void addToPane(Pane pane) {
@@ -163,8 +168,9 @@ public class DMDPositionResizer {
     pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, eventHandler);
   }
 
-  private boolean isKeepRatio() {
-    return aspectRatio != null && aspectRatio.getValue();
+  private int getRatio() {
+    DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue().getUserData();
+    return ratio.getWidth();
   }
 
   //-------------------
@@ -172,37 +178,47 @@ public class DMDPositionResizer {
   public ObjectProperty<Double> xProperty() {
     return xProperty;
   }
+
   public ObjectProperty<Double> yProperty() {
     return yProperty;
   }
+
   public ObjectProperty<Double> widthProperty() {
     return widthProperty;
   }
+
   public ObjectProperty<Double> heightProperty() {
     return heightProperty;
   }
-  
+
   public ReadOnlyObjectProperty<Double> xMinProperty() {
     return xMinProperty;
   }
+
   public ReadOnlyObjectProperty<Double> xMaxProperty() {
     return xMaxProperty;
   }
+
   public ReadOnlyObjectProperty<Double> yMinProperty() {
     return yMinProperty;
   }
+
   public ReadOnlyObjectProperty<Double> yMaxProperty() {
     return yMaxProperty;
   }
+
   public ReadOnlyObjectProperty<Double> widthMinProperty() {
     return widthMinProperty;
   }
+
   public ReadOnlyObjectProperty<Double> widthMaxProperty() {
     return widthMaxProperty;
   }
+
   public ReadOnlyObjectProperty<Double> heightMinProperty() {
     return heightMinProperty;
   }
+
   public ReadOnlyObjectProperty<Double> heightMaxProperty() {
     return heightMaxProperty;
   }
@@ -279,7 +295,7 @@ public class DMDPositionResizer {
           if (event.isControlDown()) {
             if (event.isShiftDown()) {
               moveFrom(true, false);
-              moveXPos(getX() +1);
+              moveXPos(getX() + 1);
             }
             else {
               moveFrom(false, false);
@@ -401,7 +417,7 @@ public class DMDPositionResizer {
     sX = getX() - me.getX();
     sY = getY() - me.getY();
     sWidth = getWidth();
-    sHeight = isKeepRatio() ? sWidth / 4 : getHeight();
+    sHeight = sWidth / getRatio();
     me.consume();
   }
 
@@ -415,21 +431,21 @@ public class DMDPositionResizer {
     else if (source == srNW) {
       moveFrom(true, true);
       moveXPos(x);
-      if (!isKeepRatio()) {
+      if (getRatio() == 1) {
         moveYPos(y);
       }
-    } 
+    }
     else if (source == srN) {
       moveFrom(false, true);
       moveYPos(y);
-    } 
+    }
     else if (source == srNE) {
       moveFrom(false, true);
       moveXPos(x + sWidth);
-      if (!isKeepRatio()) {
+      if (getRatio() == 1) {
         moveYPos(y);
       }
-    } 
+    }
     else if (source == srE) {
       moveFrom(false, false);
       moveXPos(x + sWidth);
@@ -437,10 +453,10 @@ public class DMDPositionResizer {
     else if (source == srSE) {
       moveFrom(false, false);
       moveXPos(x + sWidth);
-      if (!isKeepRatio()) {
+      if (getRatio() == 1) {
         moveYPos(y + sHeight);
       }
-    } 
+    }
     else if (source == srS) {
       moveFrom(false, false);
       moveYPos(y + sHeight);
@@ -448,14 +464,25 @@ public class DMDPositionResizer {
     else if (source == srSW) {
       moveFrom(true, false);
       moveXPos(x);
-      if (!isKeepRatio()) {
+      if (getRatio() == 1) {
         moveYPos(y + sHeight);
       }
-    } 
+    }
     else if (source == srW) {
       moveFrom(true, false);
       moveXPos(x);
     }
+
+    //add snapping
+    if (snapCenter.get()) {
+      double areaMid = areaProperty.get().getWidth() / 2;
+      double snapX = x + srBnd.getWidth() / 2;
+
+      if (Math.abs(areaMid - snapX) < 20) {
+        relocateInArea(areaMid - srBnd.getWidth() / 2, y);
+      }
+    }
+
     me.consume();
   }
 
@@ -477,7 +504,7 @@ public class DMDPositionResizer {
     if (moveWest) {
       if (newX < area.getMinX()) {
         newX = area.getMinX();
-      } 
+      }
       width = x + w - newX;
       if (width < minSize) {
         width = minSize;
@@ -485,7 +512,7 @@ public class DMDPositionResizer {
       width = checkWidth(width);
       newX = x + w - width;
       xProperty.set(newX);
-    } 
+    }
     else {
       if (newX > area.getMaxX()) {
         newX = area.getMaxX();
@@ -506,16 +533,16 @@ public class DMDPositionResizer {
 
     if (moveNorth) {
       if (newY < area.getMinY()) {
-        newY =  area.getMinY();
-      } 
+        newY = area.getMinY();
+      }
       height = y + h - newY;
       if (height < minSize) {
         height = minSize;
       }
-	    height = checkHeight(height);
+      height = checkHeight(height);
       newY = y + h - height;
       yProperty.set(newY);
-    } 
+    }
     else {
       if (newY > area.getMaxY()) {
         newY = area.getMaxY();
@@ -524,7 +551,7 @@ public class DMDPositionResizer {
       if (height < minSize) {
         height = minSize;
       }
-	  height = checkHeight(height);
+      height = checkHeight(height);
     }
     heightProperty.set(height);
     ensureWidthRatio(height);
@@ -532,10 +559,10 @@ public class DMDPositionResizer {
 
   private double checkWidth(double width) {
     Bounds area = areaProperty.get();
-    if (isKeepRatio() && moveNorth && (getY() + getHeight() - width / 4 < area.getMinY())) {
-      width = (getY() + getHeight() - area.getMinY()) * 4;
+    if (getRatio() != 1 && moveNorth && (getY() + getHeight() - width / getRatio() < area.getMinY())) {
+      width = (getY() + getHeight() - area.getMinY()) * getRatio();
     }
-    if (isKeepRatio() && !moveNorth && (getY() + width / 4 > area.getMaxY())) {
+    if (getRatio() != 1 && !moveNorth && (getY() + width / getRatio() > area.getMaxY())) {
       width = (area.getMaxY() - getY()) * 4;
     }
     return width;
@@ -543,18 +570,18 @@ public class DMDPositionResizer {
 
   private double checkHeight(double height) {
     Bounds area = areaProperty.get();
-    if (isKeepRatio() && moveWest && (getX() + getWidth() - height * 4 < area.getMinX())) {
-      height = (getX() + getWidth() - area.getMinX()) / 4;
+    if (getRatio() != 1 && moveWest && (getX() + getWidth() - height * getRatio() < area.getMinX())) {
+      height = (getX() + getWidth() - area.getMinX()) / getRatio();
     }
-    if (isKeepRatio() && !moveWest && (getX() + height * 4 > area.getMaxX())) {
-      height = (area.getMaxX() - getX()) / 4;
+    if (getRatio() != 1 && !moveWest && (getX() + height * getRatio() > area.getMaxX())) {
+      height = (area.getMaxX() - getX()) / getRatio();
     }
     return height;
   }
 
   private void ensureWidthRatio(double height) {
-    double width = height * 4;
-    if (isKeepRatio() && getWidth() != width) {
+    double width = height * getRatio();
+    if (getRatio() != 1 && getWidth() != width) {
       if (moveWest) {
         xProperty.set(getX() + getWidth() - width);
       }
@@ -563,8 +590,8 @@ public class DMDPositionResizer {
   }
 
   private void ensureHeightRatio(double width) {
-    double height = width / 4;
-    if (isKeepRatio() && getHeight() != height) {
+    double height = width / getRatio();
+    if (getRatio() != 1 && getHeight() != height) {
       if (moveNorth) {
         yProperty.set(getY() + getHeight() - height);
       }

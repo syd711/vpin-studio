@@ -119,6 +119,7 @@
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
@@ -127,7 +128,7 @@
                         <Label styleClass="default-text" text="Y:" GridPane.rowIndex="1" />
                         <Spinner fx:id="ySpinner" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="Auto Position" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="Auto Position" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -135,6 +136,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target" iconSize="18" />
                            </graphic>
                         </Button>
+                        <CheckBox fx:id="snapCheckbox" mnemonicParsing="false" styleClass="default-text" text="Snap To Center" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -166,12 +168,35 @@
                         <Insets top="12.0" />
                      </padding>
                   </GridPane>
-
-                  <CheckBox fx:id="aspectRatioCheckbox" mnemonicParsing="false" styleClass="default-text" text="Keep 4:1 Aspect Ratio">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
+                  <VBox spacing="3.0">
+                     <children>
+                        <Label styleClass="default-headline" text="Force Ratio">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <RadioButton fx:id="ratioOff" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" text="Off" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <RadioButton fx:id="ratio3" mnemonicParsing="false" text="3:1" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <RadioButton fx:id="ratio4" mnemonicParsing="false" text="4:1" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <RadioButton fx:id="ratio8" mnemonicParsing="false" text="8:1" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                     </children>
+                  </VBox>
                </children>
                <BorderPane.margin>
                   <Insets left="12.0" />

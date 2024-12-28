@@ -11,7 +11,7 @@ public class DMDInfo {
   /** Aspect ratio from dmddevice.ini */ 
   private boolean forceAspectRatio;
   /** Selected aspect ratio */ 
-  private boolean selectedAspectRatio;
+  private DMDAspectRatio aspectRatio;
   /** whether save uses registry or ini */ 
   private boolean useRegistry;
 
@@ -55,12 +55,12 @@ public class DMDInfo {
     this.forceAspectRatio = forceAspectRatio;
   }
 
-  public boolean isSelectedAspectRatio() {
-    return selectedAspectRatio;
+  public DMDAspectRatio getAspectRatio() {
+    return aspectRatio;
   }
 
-  public void setSelectedAspectRatio(boolean selectedAspectRatio) {
-    this.selectedAspectRatio = selectedAspectRatio;
+  public void setAspectRatio(DMDAspectRatio aspectRatio) {
+    this.aspectRatio = aspectRatio;
   }
 
   public boolean isUseRegistry() {
@@ -197,16 +197,16 @@ public class DMDInfo {
   }
 
   public void adjustAspectRatio() {
-    if (selectedAspectRatio) {
-      if (width / height > 4) {
+    if (aspectRatio != null && !DMDAspectRatio.ratioOff.equals(aspectRatio)) {
+      if (width / height > aspectRatio.getWidth()) {
         // adjust width
         x += (width - 4 * height) / 2;
-        width = 4 * height;
+        width = aspectRatio.getWidth() * height;
       }
       else {
         // adjust height
-        y += (height - width / 4) / 2;
-        height = width / 4;
+        y += (height - width / aspectRatio.getHeight()) / 2;
+        height = width / aspectRatio.getWidth();
       }
     }
   }
