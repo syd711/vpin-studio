@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.server.mame.MameUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -92,6 +93,14 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+
+    if (isVpxEmulator() && StringUtils.isEmpty(emulator.getDirRoms())) {
+      File romDir = new File(MameUtil.getRomsFolder());
+      if (romDir.exists()) {
+        this.romFolder = romDir;
+      }
+    }
+
     this.romDirectory = this.romFolder.getAbsolutePath();
   }
 
@@ -210,6 +219,12 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getNvramFolder() {
+    if (isVpxEmulator()) {
+      File registryFolder = new File(MameUtil.getNvRamFolder());
+      if (registryFolder.exists()) {
+        return registryFolder;
+      }
+    }
     return nvramFolder;
   }
 

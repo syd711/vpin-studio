@@ -191,6 +191,13 @@ public class PupPacksService implements InitializingBean {
       return;
     }
 
+    File pupPackFolder = new File(pupVideosFolder, rom);
+    if (pupPackFolder.exists() && pupPackFolder.isDirectory()) {
+      LOG.info("Existing PUP pack folder \"{}\" found, deleting it first.", rom);
+      de.mephisto.vpin.restclient.util.FileUtils.deleteFolder(pupPackFolder);
+      pupPackFolder.mkdirs();
+    }
+
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom);
     if (!async) {

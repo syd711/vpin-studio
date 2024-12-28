@@ -3,6 +3,10 @@
 ## Bugfixes
 
 - **Tables / Highscore Parsing**: Improved detection of VPReg.stg based highscore entries. The lookup is now completely case-insensitive. Also, an additional lookup is made using the ROM name plus the **_VPX** suffix which some tables use to store the highscore.
+- **Emulator Detection**: The way the **nvram** and **rom** folders are read has been changed. For VPX emulators...
+  - the **nvram** folder is read from the Windows registry first, instead of simply assuming the default folder of PinMAME which is used as fallback now.
+  - the **roms** folder is read from the frontend/Popper first. If the value is empty there or invalid, the Windows registry value for PinMAME roms is used instead.
+- **Preferences / VPX Monitor**: The VPX monitor has been disabled for now. The task of this monitor was to detect the table that is currently running to provide services like the pause menu also to non-Popper users. We used the VPX window title for this, but since the title does not include the active game anymore. I see currently no way to continue the support here.
 
 ---
 
