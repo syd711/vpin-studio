@@ -258,7 +258,6 @@ public class TablesSidebarPlaylistsController implements Initializable {
                 else {
                   client.getPlaylistsService().updatePlaylistGame(playlist, game, t1, playlist.isGlobalFavGame(game.getId()));
                 }
-
                 refreshPlaylist(playlist, false);
               }
               catch (Exception e) {
@@ -322,7 +321,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
               }
 
               ProgressDialog.createProgressDialog(new PlaylistUpdateProgressModel(title, playlist, games, t1));
-              refreshPlaylist(playlist, false);
+              refreshPlaylist(client.getPlaylistsService().getPlaylist(playlist.getId()), false);
             }
             catch (Exception e) {
               LOG.error("Failed to update playlists: " + e.getMessage(), e);
@@ -421,9 +420,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
     }
     // also update the game if it has not been updated previously
     if (!this.games.isEmpty()) {
-      for (GameRepresentation game : this.games) {
-        int gameId = game.getId();
-        if (!updateAll || !playlist.containsGame(gameId)) {
+      if (games.size() > UIDefaults.DEFAULT_MAX_REFRESH_COUNT) {
+        EventManager.getInstance().notifyTablesChanged();
+      }
+      else {
+        for (GameRepresentation game : this.games) {
+          int gameId = game.getId();
           EventManager.getInstance().notifyTableChange(gameId, null);
         }
       }
