@@ -113,6 +113,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private Button uploadBtn;
 
   @FXML
+  private Button dmdPositionBtn;
+
+  @FXML
   private Button deleteBtn;
 
   @FXML
@@ -194,6 +197,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   // Add a public no-args constructor
   public TablesSidebarDirectB2SController() {
+  }
+
+  @FXML
+  private void onDMDPosition() {
+    if (game.isPresent()) {
+      TableDialogs.openDMDPositionDialog(game.get());
+    }
   }
 
   @FXML
@@ -439,6 +449,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     dmdResolutionLabel.setText("");
 
     deleteBtn.setDisable(!g.isPresent() || !directb2sAvailable);
+    dmdPositionBtn.setDisable(!g.isPresent() || !directb2sAvailable);
+    backglassManagerBtn.setDisable(!g.isPresent() || !directb2sAvailable);
 
     if (g.isPresent() && directb2sAvailable) {
       new Thread(() -> {

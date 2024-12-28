@@ -451,7 +451,18 @@
                </graphic>
             </Button>
             <Separator layoutX="176.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
+            <Button fx:id="dmdPositionBtn" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Adjust DMD position" />
+               </tooltip>
+            </Button>
+            <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                </graphic>
@@ -459,7 +470,8 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" text="Backglass Manager">
+            <Separator layoutX="290.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager">
                <font>
                   <Font size="14.0" />
                </font>
