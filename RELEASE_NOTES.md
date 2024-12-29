@@ -1,3 +1,12 @@
+## Release Notes 3.11.3
+
+## Bugfixes
+
+- **Tables / Uploads**: Fixed uploads of DMD packages for tables that are installed into subfolders.
+
+
+---
+
 ## Release Notes 3.11.2
 
 ## Bugfixes

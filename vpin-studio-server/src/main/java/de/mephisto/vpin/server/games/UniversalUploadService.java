@@ -166,7 +166,7 @@ public class UniversalUploadService {
       }
       case DMD_PACK: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
-          dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), uploadDescriptor.getEmulatorId());
+          dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), game.getGameFile());
         }
         break;
       }
