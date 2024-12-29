@@ -6,6 +6,7 @@ import java.util.List;
 
 public class MameOptions {
   public final static String DEFAULT_KEY = "default";
+  public final static String GLOBALS_KEY = "globals";
 
   private String rom;
 

@@ -65,7 +65,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
-  private PupServer pupServer;
   private PupLauncher pupLauncher;
 
   private PinUPMediaAccessStrategy pinUPMediaAccessStrategy;
@@ -86,7 +85,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return systemService.getPinupInstallationFolder();
   }
 
-  private void initVisualPinballXScripts(Emulator emulator) {
+  private void initEmulatorScripts(Emulator emulator) {
     String emulatorName = emulator.getName();
     String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
     if (!emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
@@ -115,7 +114,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       return DriverManager.getConnection(url);
     }
     catch (SQLException e) {
-      LOG.error("Failed to connect to sqlite: " + e.getMessage(), e);
+      LOG.error("Failed to connect to sqlite: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -126,7 +125,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         conn.close();
       }
       catch (SQLException e) {
-        LOG.error("Error disconnecting from sqlite: " + e.getMessage());
+        LOG.error("Error disconnecting from sqlite: {}", e.getMessage());
       }
     }
   }
@@ -150,43 +149,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
+      LOG.error("Failed to get game for id '{}': {}", id, e.getMessage(), e);
     }
     finally {
       disconnect(connect);
     }
     return info;
-  }
-
-  /**
-   * Not used anymore.
-   * I assume this one was used to show additional .exe files for the launcher dialog.
-   * Since we read these from the actual emulator, there is no necessity for this.
-   */
-  @NonNull
-  public List<String> getAltExeList() {
-    Connection connect = connect();
-    try {
-      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement("SELECT Altexe FROM PupLookups");
-      ResultSet rs = statement.executeQuery();
-      if (rs.next()) {
-        String altExe = rs.getString("Altexe");
-        if (!StringUtils.isEmpty(altExe)) {
-          String[] split = altExe.split("\\r\\n");
-          return Arrays.asList(split);
-        }
-      }
-      rs.close();
-      statement.close();
-    }
-    catch (SQLException e) {
-      LOG.error("Failed to load altexe list: " + e.getMessage(), e);
-    }
-    finally {
-      disconnect(connect);
-    }
-
-    return Collections.emptyList();
   }
 
   @Nullable
@@ -279,7 +247,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       }
     }
     catch (SQLException e) {
-      LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
+      LOG.error("Failed to get game for id '{}': {}", id, e.getMessage(), e);
     }
     finally {
       disconnect(connect);
@@ -303,7 +271,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.close();
     }
     catch (Exception e) {
-      LOG.error("Failed to save table details: " + e.getMessage(), e);
+      LOG.error("Failed to save table details: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1274,8 +1242,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     //this can not be executed within a fetch!!!
     for (Emulator emulator : result) {
-      if (emulator.getType().isVpxEmulator()) {
-        initVisualPinballXScripts(emulator);
+      if (emulator.getType().isVpxEmulator() || emulator.getType().isFpEmulator()) {
+        initEmulatorScripts(emulator);
       }
     }
 
@@ -1302,8 +1270,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
-    if (emulator != null && emulator.getType().isVpxEmulator()) {
-      initVisualPinballXScripts(emulator);
+    if (emulator != null && (emulator.getType().isVpxEmulator() || emulator.getType().isFpEmulator())) {
+      initEmulatorScripts(emulator);
     }
     return emulator;
   }
@@ -1614,7 +1582,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read game count for emulator " + emuId + ": " + e.getMessage(), e);
+      LOG.error("Failed to read game count for emulator {}: {}", emuId, e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1666,7 +1634,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get games: " + e.getMessage(), e);
+      LOG.error("Failed to get games: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1739,7 +1707,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+      LOG.error("Failed to read playlists: {}", e.getMessage(), e);
     }
     finally {
       disconnect(connect);
@@ -1783,7 +1751,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       catch (SQLException ex) {
         //ignore
       }
-      LOG.warn("Failed to read playlists: " + e.getMessage());
+      LOG.warn("Failed to read playlists: {}", e.getMessage());
       playlist.setSqlError(e.getMessage());
     }
     finally {
@@ -2024,7 +1992,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PupLookups;");
-      while (rs.next()) {
+      if (rs.next()) {
         results.put("GameType", rs.getString("GameType"));
         results.put("GameTheme", rs.getString("GameTheme"));
         results.put("Manufact", rs.getString("Manufact"));
@@ -2032,7 +2000,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         results.put("Custom1", rs.getString("Custom1"));
         results.put("Custom2", rs.getString("Custom2"));
         results.put("Custom3", rs.getString("Custom3"));
-        break;
       }
       rs.close();
       statement.close();
@@ -2114,12 +2081,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
               display.setRotation(sectionNode.getInt("ScreenRotation"));
             }
             else {
-              LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
+              LOG.warn("Unsupported PinUP display for screen '{}', display has been skipped.", name);
             }
             result.add(display);
           }
           catch (Exception e) {
-            LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
+            LOG.error("Failed to create PinUPPlayerDisplay: {}", e.getMessage());
           }
         }
       }
@@ -2127,7 +2094,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
     }
     catch (Exception e) {
-      LOG.error("Failed to get player displays: " + e.getMessage(), e);
+      LOG.error("Failed to get player displays: {}", e.getMessage(), e);
     }
     return result;
   }
@@ -2263,9 +2230,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball") ||
                     p.info().command().get().contains("Future Pinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE") ||
-                    p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
+                    p.info().command().get().contains("B2SBackglassServerEXE"))).collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No remaining PinUP processes found, termination finished.");
@@ -2444,7 +2409,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      this.pupServer = new PupServer(this, systemService);
       this.pupLauncher = new PupLauncher();
       this.pupEventEmitter = new PupEventEmitter(this.getInstallationFolder());
     }

@@ -1066,7 +1066,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableScreensController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);
 
-    pinVolController.setData(stage, Arrays.asList(game), false);
+    try {
+      pinVolController.setData(stage, Arrays.asList(game), false);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to init PinVol panel: {}", e.getMessage(), e);
+    }
   }
 
   private boolean isGameFileNameDisabled() {

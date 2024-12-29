@@ -166,17 +166,22 @@ public class PinVolSettingsController implements Initializable {
       systemVolume.setSsfRearVolume(t1);
     }, 300));
 
-    if (games.size() == 1) {
-      GameRepresentation game = games.get(0);
-      entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
-    }
-    else {
-      for (GameRepresentation game : games) {
+    try {
+      if (games.size() == 1) {
+        GameRepresentation game = games.get(0);
         entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
-        if (entry != null) {
-          break;
+      }
+      else {
+        for (GameRepresentation game : games) {
+          entry = pinVolTablePreferences.getTableEntry(game.getGameFileName(), game.isVpxGame(), game.isFpGame());
+          if (entry != null) {
+            break;
+          }
         }
       }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to calculate matching PinVOL entry: {}", e.getMessage(), e);
     }
 
     if (!games.isEmpty()) {

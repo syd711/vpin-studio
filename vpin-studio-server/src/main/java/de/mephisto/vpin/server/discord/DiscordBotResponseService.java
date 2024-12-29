@@ -106,7 +106,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
           for (Game game : games) {
             if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter()) || String.valueOf(game.getId()).equals(cmd.getParameter().trim())) {
               HighscoreMetadata metadata = highscoreService.scanScore(game, EventOrigin.BOT_CMD);
-              if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
+              if (metadata == null || (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus()))) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
               }
               ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game);
