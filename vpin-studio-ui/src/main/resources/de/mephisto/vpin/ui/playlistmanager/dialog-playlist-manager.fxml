@@ -82,7 +82,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Open Asset Manager for Playlist" />
+                                          <Tooltip text="Rename Playlist" />
                                        </tooltip>
                                     </Button>
                                                 <Separator layoutX="125.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
