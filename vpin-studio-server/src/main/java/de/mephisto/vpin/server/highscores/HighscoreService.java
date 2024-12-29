@@ -351,7 +351,9 @@ public class HighscoreService implements InitializingBean {
       if (forceScan) {
         if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
           HighscoreMetadata metadata = scanScore(game, eventOrigin);
-          return updateHighscore(game, metadata, eventOrigin);
+          if (metadata != null) {
+            return updateHighscore(game, metadata, eventOrigin);
+          }
         }
       }
     }
@@ -361,11 +363,12 @@ public class HighscoreService implements InitializingBean {
     return highscore;
   }
 
-  @NonNull
+  @Nullable
   public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
     if (!game.isVpxGame()) {
-      SLOG.error("Game " + game.getGameDisplayName() + " is not a VPX game.");
-      throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");
+      SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game, highscore parsing cancelled.");
+      LOG.info("Game " + game.getGameDisplayName() + " is not a VPX game, highscore parsing cancelled.");
+      return null;
     }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
     updateHighscore(game, highscoreMetadata, eventOrigin);

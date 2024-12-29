@@ -45,7 +45,7 @@ public class PinVolPreferences {
   }
 
   public PinVolTableEntry getSystemVolume() {
-    Optional<PinVolTableEntry> system = this.tableEntries.stream().filter(p -> p.getName().equals("System")).findFirst();
+    Optional<PinVolTableEntry> system = this.tableEntries.stream().filter(p -> p != null && p.getName() != null && p.getName().equals("System")).findFirst();
     if (system.isPresent()) {
       return system.get();
     }
@@ -57,8 +57,12 @@ public class PinVolPreferences {
 
   public PinVolTableEntry getTableEntry(String fileName, boolean vpxGame, boolean fpGame) {
     String key = getKey(fileName, vpxGame, fpGame);
+    return getTableEntry(key);
+  }
+
+  public PinVolTableEntry getTableEntry(String key) {
     for (PinVolTableEntry tableEntry : tableEntries) {
-      if (tableEntry.getName().contains(key)) {
+      if (tableEntry != null && tableEntry.getName() != null && tableEntry.getName().contains(key)) {
         return tableEntry;
       }
     }
@@ -66,16 +70,11 @@ public class PinVolPreferences {
   }
 
   public boolean contains(String key) {
-    for (PinVolTableEntry tableEntry : tableEntries) {
-      if (tableEntry.getName().equals(key)) {
-        return true;
-      }
-    }
-    return false;
+    return getTableEntry(key) != null;
   }
 
   public static String getKey(String fileName, boolean vpxGame, boolean fpGame) {
-    String name = FilenameUtils.getBaseName(fileName);
+    String name = FilenameUtils.getBaseName(String.valueOf(fileName));
     String prefix = "";
     if (vpxGame) {
       prefix = "VP.";

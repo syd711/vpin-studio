@@ -1049,7 +1049,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableScreensController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);
 
-    pinVolController.setData(stage, Arrays.asList(game), false);
+    try {
+      pinVolController.setData(stage, Arrays.asList(game), false);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to init PinVol panel: {}", e.getMessage(), e);
+    }
   }
 
   private void setVpsTableIdValue(String value) {
@@ -1147,7 +1152,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void refreshVersionsCombo(VpsTable tableById) {
     if (tableById != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-      List<String> tableFormat  = emulatorRepresentation.getVpsEmulatorFeatures();
+      List<String> tableFormat = emulatorRepresentation.getVpsEmulatorFeatures();
       List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
 
       if (!tableFiles.isEmpty()) {
