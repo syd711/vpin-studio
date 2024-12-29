@@ -20,7 +20,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
@@ -29,7 +28,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -81,8 +79,13 @@ public class MenuController implements Initializable {
   @FXML
   private BorderPane customView;
 
+  @FXML
+  private BorderPane scoreView;
+
   private int selectionIndex = 0;
 
+  private GameStatus gameStatus;
+  private VpsTable vpsTable;
   private VPinScreen cardScreen;
   private FrontendPlayerDisplay tutorialScreen;
   private PauseMenuSettings pauseMenuSettings;
@@ -95,22 +98,6 @@ public class MenuController implements Initializable {
   private MenuCustomViewController customViewController;
   private Node currentSelection;
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    webView.getEngine().setUserStyleSheetLocation(PauseMenu.class.getResource("web-style.css").toString());
-
-    try {
-      String resource = "menu-custom-view.fxml";
-      FXMLLoader loader = new FXMLLoader(MenuCustomViewController.class.getResource(resource));
-      Parent widgetRoot = loader.load();
-      customView.setCenter(widgetRoot);
-      customViewController = loader.getController();
-    }
-    catch (IOException e) {
-      LOG.error("Failed to init custom controller: " + e.getMessage(), e);
-    }
-  }
-
   public void setGame(@NonNull GameRepresentation game,
                       @NonNull FrontendMediaRepresentation frontendMedia,
                       GameStatus gameStatus,
@@ -120,6 +107,8 @@ public class MenuController implements Initializable {
                       @NonNull PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.frontendMedia = frontendMedia;
+    this.gameStatus = gameStatus;
+    this.vpsTable = vpsTable;
     this.cardScreen = cardScreen;
     this.tutorialScreen = tutorialScreen;
     this.pauseMenuSettings = pauseMenuSettings;
@@ -264,9 +253,26 @@ public class MenuController implements Initializable {
     mediaView.setVisible(false);
     webView.setVisible(false);
     customView.setVisible(false);
+    scoreView.setVisible(false);
 
     if (activeSelection.getItemType().equals(PauseMenuItemTypes.exit)) {
       customView.setVisible(true);
+    }
+    else if(activeSelection.getItemType().equals(PauseMenuItemTypes.iScored)) {
+      try {
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png"));
+        String resource = "menu-score-view.fxml";
+        FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
+        Pane widgetRoot = loader.load();
+        MenuScoreViewController customViewController = loader.getController();
+        customViewController.setGame(game, gameStatus, vpsTable, sectionImage);
+//        return widgetRoot;
+        scoreView.setCenter(widgetRoot);
+        scoreView.setVisible(true);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to init pause component: " + e.getMessage(), e);
+      }
     }
     else if (activeSelection.getVideoUrl() != null) {
       mediaView.setVisible(true);
@@ -376,7 +382,7 @@ public class MenuController implements Initializable {
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;
     for (PauseMenuItem pItem : pauseMenuItems) {
-      menuItemsRow.getChildren().add(createItemFor(pItem));
+      menuItemsRow.getChildren().add(PauseMenuItemComponentFactory.createMenuItemFor(pItem));
     }
 
     while (menuItemsRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
@@ -384,39 +390,6 @@ public class MenuController implements Initializable {
       label.setMinWidth(THUMBNAIL_SIZE);
       menuItemsRow.getChildren().add(label);
     }
-  }
-
-  private BorderPane createItemFor(PauseMenuItem menuItem) {
-    Image wheel = menuItem.getImage();
-    if (wheel == null) {
-      wheel = new Image(PauseMenu.class.getResourceAsStream("avatar-blank.png"));
-    }
-    String text = menuItem.getName();
-    return createItem(wheel, text, menuItem);
-  }
-
-  private BorderPane createItem(Image image, String text, Object data) {
-    BorderPane borderPane = new BorderPane();
-    borderPane.setUserData(data);
-    ImageView imageView = new ImageView();
-    imageView.setPreserveRatio(true);
-    imageView.setFitWidth(UIDefaults.THUMBNAIL_SIZE);
-    imageView.setFitHeight(UIDefaults.THUMBNAIL_SIZE);
-
-    imageView.setImage(image);
-    StackPane stackPane = new StackPane();
-    stackPane.getChildren().add(imageView);
-
-    if (text != null && text.length() > 16) {
-      text = text.substring(0, 16) + "...";
-    }
-    Label label = new Label(text);
-    label.setStyle("-fx-font-size: 22px;-fx-text-fill: #444444;");
-//    stackPane.getChildren().add(label);
-    borderPane.setCenter(stackPane);
-    borderPane.setCache(true);
-    borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
-    return borderPane;
   }
 
   public void showYouTubeVideo(PauseMenuItem item) {
@@ -431,5 +404,21 @@ public class MenuController implements Initializable {
 
   public boolean isVisible() {
     return PauseMenu.visible;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    webView.getEngine().setUserStyleSheetLocation(PauseMenu.class.getResource("web-style.css").toString());
+
+    try {
+      String resource = "menu-custom-view.fxml";
+      FXMLLoader loader = new FXMLLoader(MenuCustomViewController.class.getResource(resource));
+      Parent widgetRoot = loader.load();
+      customView.setCenter(widgetRoot);
+      customViewController = loader.getController();
+    }
+    catch (IOException e) {
+      LOG.error("Failed to init custom controller: " + e.getMessage(), e);
+    }
   }
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
@@ -31,6 +32,16 @@ public class PauseMenuItemsFactory {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
+
+    if (pauseMenuSettings.isShowIscoredScores() && Features.ISCORED_ENABLED) {
+      PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png")));
+      pauseMenuItems.add(iScoredItem);
+    }
+
+    if (pauseMenuSettings.isShowManiaScores() && Features.MANIA_ENABLED) {
+      PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
+      pauseMenuItems.add(maniaItem);
+    }
 
     if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
       item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));

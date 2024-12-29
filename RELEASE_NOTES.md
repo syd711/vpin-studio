@@ -2,10 +2,20 @@
 
 ## Changes
 
+- **Tables / Playlist Manager** Added playlist manager to create, edit and delete playlists. Note that the interaction concept differs from Popper here, as you can only remove tables from playlists there and use the table overview to add tables instead. In addition to the base functionality, the dialog lets you choose some pre-defined SQL queries. This feature comes with a bunch of other changes regarding the playlist management.
+  - The playlist section in the table overview has been re-designed to support multi-selection. So you select multiple tables from the table overview and add them to a playlist.
+  - Added icons to indicate if a playlist is a curated one or a SQL playlist.
+  - Added "edit" button next to the playlist selector on the table overview toolbar.
+  - All playlist icon from the table overview and playlist sidebar section have been converted into a button which directly opens the playlist inside the management dialog.
+  - Added separate icon for "Pinball M".
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-manager.png" width="750" />
+
 - **Tables / Cabinet Monitor**: Added screenshot option. The action takes screenshots from the activates screens and writes a timestamp into them. The screens can be used for score submission of online competitions, like https://worldofvirtualpinball.com/.
 - **Tables / Media Recorder**: Added 180 degree rotation option for playfield recordings.
 - **Tables / PUP Packs**: Added [PupPackScreenTweaker.exe](https://github.com/matiou11/PupPackScreenTweaker) as additional PUP pack editor to the PUP pack section. Note that this editor is only available when working on the cabinet itself.
 - **Tables / Table Data Manager**: The auto-naming has no restrictions on VPX files that are located in sub-folders anymore. You can also rename them now.
+- **Tables / Backglasses**: Added button for DMD positioning.
 - **Tables / Highscores Section**: This section has undergone a revamp:
   - Added support for multi-selection from the table overview.
   - Added bulk operation support for highscore resets.
@@ -43,8 +53,6 @@
     - the table overview using the corresponding context menu action.
     - the highscore editor by clicking on the VPin Mania icon.
 - **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. Default highscores that are posted on VPin Mania can be ignored this way.
-
-
 
 
 ## Bugfixes

@@ -176,13 +176,16 @@ public class TablesSidebarDMDController implements Initializable {
     this.dmdPackage = null;
     this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
-    dmdPositionBtn.setDisable(g.isEmpty());
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
     bundleSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
+
+    boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null;
+    dmdPositionBtn.setDisable(g.isEmpty() || !directb2sAvailable);
+
 
     errorBox.setVisible(false);
 
