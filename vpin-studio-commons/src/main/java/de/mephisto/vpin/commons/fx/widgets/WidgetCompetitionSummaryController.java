@@ -288,8 +288,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
             tableNameLabel.setText("Top Scores");
           }
           else if (competitionType.equals(CompetitionType.MANIA)) {
-            durationLabel.setText("VPin Mania Highscores");
-            tableNameLabel.setText("Top Scores");
+            durationLabel.setText("");
+            tableNameLabel.setText("Top-5 Scores");
           }
 
           InputStream competitionBackground = client.getCompetitionBackground(competition.getGameId());

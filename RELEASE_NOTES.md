@@ -33,7 +33,17 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
 
-- **Pause Menu**: Settings saved and new and new views
+- **Pause Menu / iScored**: New highscore views have been added to the pause menu. If the active table is part of an iScored competition, the top-5 iScored dashboard scores are shown as a menu entry now.
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/pause-menu/pause-menu-iscored.png" width="700" />
+
+- **Pause Menu / VPin Mania**: If enabled, the top-5 VPin Mania scores are shown as a menu entry now.
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/pause-menu/pause-menu-mania.png" width="700" />
+
+- **Pause Menu / Preferences**: Both new views are configurable in the preferences. Note that the "Test" parameters for the dialog are also remembered now.
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/pause-menu/pause-menu-scores.png" width="600" />
 
 ## VPin Mania Changes
 
@@ -47,13 +57,13 @@
 
 - **Merged Highscore Cards**: Adding friends means you can merge the highscores from your friends accounts with yours. The highscore card template editors comes with a new preference for this. To highlight these, you and choose another color for these scores.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/merged-card.png" width="700" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/merged-card.png" width="500" />
 
 - **VPin Mania Preferences**: The preferences section "VPin Mania Preferences" has been split into an "Account" and a "Tournaments" section to separate these two.
 - **Open in VPin Mania Action**: For more convenience you can open a VPin Mania table overview directly from
     - the table overview using the corresponding context menu action.
-    - the highscore editor by clicking on the VPin Mania icon.
-- **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. Default highscores that are posted on VPin Mania can be ignored this way.
+    - the highscore editor by clicking on the VPin Mania logo.
+- **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. Default highscores that are posted on VPin Mania can be ignored this way. For more information, visit our Discord server linked in the preferences.
 
 
 ## Bugfixes

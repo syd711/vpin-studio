@@ -59,6 +59,7 @@ public class PauseMenuItemsFactory {
 
         CompetitionRepresentation competition = new CompetitionRepresentation();
         competition.setType(CompetitionType.MANIA.name());
+        competition.setName("VPin Mania Scores");
         competition.setGameId(game.getId());
         maniaItem.setCompetition(competition);
       }

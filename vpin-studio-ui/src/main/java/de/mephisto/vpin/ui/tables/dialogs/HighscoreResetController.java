@@ -65,7 +65,7 @@ public class HighscoreResetController implements Initializable, DialogController
   @FXML
   private void onSaveClick(ActionEvent e) {
     String value = scoreField.getText();
-    long score = 99;
+    long score = 9;
     try {
       score = Long.parseLong(value);
     }
@@ -104,7 +104,7 @@ public class HighscoreResetController implements Initializable, DialogController
       scoreValueBox.setVisible(this.games.stream().anyMatch(g -> !HighscoreType.NVRam.name().equals(g.getHighscoreType())));
       title.setText("Reset the highscores of " + games.size() + " tables?");
     }
-    this.scoreField.setText("99");
+    this.scoreField.setText("9");
   }
 
   @Override
