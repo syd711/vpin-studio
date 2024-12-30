@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
-import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -26,8 +25,10 @@ public class ScoreListFactory {
   public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, List<String> titles) {
     List<Score> scores = new ArrayList<>();
     int gameId = -1;
+    String source = null;
     if (game != null) {
       gameId = game.getId();
+      source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
     }
 
     try {
@@ -51,7 +52,7 @@ public class ScoreListFactory {
         String line = lines.get(i);
         if (titles.contains(line.trim())) {
           String scoreLine = lines.get(i + 1);
-          Score score = createTitledScore(createdAt, scoreLine, gameId);
+          Score score = createTitledScore(createdAt, scoreLine, source, gameId);
           if (score != null) {
             scores.add(score);
           }
@@ -60,7 +61,7 @@ public class ScoreListFactory {
         }
 
         if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1) {
-          Score score = createScore(createdAt, line, gameId);
+          Score score = createScore(createdAt, line, source, gameId);
           if (score != null) {
             score.setPosition(scores.size() + 1);
             scores.add(score);
@@ -96,13 +97,13 @@ public class ScoreListFactory {
 
 
   @Nullable
-  private static Score createTitledScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
+  private static Score createTitledScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
     String initials = "???";
     if (line.trim().length() >= 3) {
       initials = line.trim().substring(0, 3);
 
       String scoreString = line.substring(4).trim();
-      double scoreValue = toNumericScore(scoreString);
+      double scoreValue = toNumericScore(scoreString, source);
       if (scoreValue == -1) {
         return null;
       }
@@ -110,7 +111,7 @@ public class ScoreListFactory {
       return new Score(createdAt, gameId, initials, null, scoreString, scoreValue, 1);
     }
 
-    double scoreValue = toNumericScore(line.trim());
+    double scoreValue = toNumericScore(line.trim(), source);
     if (scoreValue == -1) {
       return null;
     }
@@ -119,11 +120,11 @@ public class ScoreListFactory {
   }
 
   @Nullable
-  private static Score createScore(@NonNull Date createdAt, @NonNull String line, int gameId) {
+  private static Score createScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
     List<String> scoreLineSegments = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     if (scoreLineSegments.size() == 2) {
       String score = scoreLineSegments.get(1);
-      double v = toNumericScore(score);
+      double v = toNumericScore(score, source);
       if (v == -1) {
         return null;
       }
@@ -133,7 +134,7 @@ public class ScoreListFactory {
     if (scoreLineSegments.size() == 3) {
       String score = scoreLineSegments.get(2);
       String initials = scoreLineSegments.get(1);
-      double v = toNumericScore(score);
+      double v = toNumericScore(score, source);
       if (v == -1) {
         return null;
       }
@@ -148,7 +149,7 @@ public class ScoreListFactory {
       }
       String score = scoreLineSegments.get(scoreLineSegments.size() - 1);
       String playerInitials = initials.toString().trim();
-      double v = toNumericScore(score);
+      double v = toNumericScore(score, source);
       if (v == -1) {
         return null;
       }
@@ -158,13 +159,13 @@ public class ScoreListFactory {
     throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
   }
 
-  private static double toNumericScore(String score) {
+  private static double toNumericScore(@NonNull String score, @Nullable String source) {
     try {
       String cleanScore = ScoreFormatUtil.cleanScore(score);
       return Double.parseDouble(cleanScore);
     }
     catch (NumberFormatException e) {
-      LOG.info("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
+      LOG.warn("Failed to parse numeric highscore string '{}', ignoring segment '{}', source: {}", score, score, source);
       return -1;
     }
   }
