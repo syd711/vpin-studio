@@ -9,7 +9,7 @@
   - All playlist icon from the table overview and playlist sidebar section have been converted into a button which directly opens the playlist inside the management dialog.
   - Added separate icon for "Pinball M".
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-manager.png" width="750" />
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-manager.png" width="750" />
 
 - **Tables / Cabinet Monitor**: Added screenshot option. The action takes screenshots from the activates screens and writes a timestamp into them. The screens can be used for score submission of online competitions, like https://worldofvirtualpinball.com/.
 - **Tables / Media Recorder**: Added 180 degree rotation option for playfield recordings.
