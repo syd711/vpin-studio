@@ -41,7 +41,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
+import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.SELECTION_SCALE_DURATION;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);

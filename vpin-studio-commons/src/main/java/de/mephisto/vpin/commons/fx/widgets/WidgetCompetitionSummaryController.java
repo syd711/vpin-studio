@@ -6,8 +6,6 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
-import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -15,6 +13,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.fxml.FXML;
@@ -58,6 +57,9 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   @FXML
   private BorderPane loadingPane;
+
+  @FXML
+  private BorderPane emptyPanel;
 
   @FXML
   private Label durationLabel;
@@ -134,6 +136,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     competitionStack.getChildren().add(emptylabel);
 
     emptylabel.setVisible(false);
+    emptyPanel.setVisible(false);
     topBox.setVisible(false);
     loadingPane.setVisible(true);
   }
@@ -224,6 +227,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       }
       return scoreSummary;
     }).thenAcceptLater((latestCompetitionScore) -> {
+      LOG.info("Loaded score summary: {}", latestCompetitionScore);
       if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
         List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
 
@@ -270,9 +274,16 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         }).thenAcceptLater((frontendMedia) -> {
           FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
           if (item != null) {
-            ByteArrayInputStream gameMediaItem = client.getGameMediaItem(competition.getGameId(), VPinScreen.Wheel);
-            Image image = new Image(gameMediaItem);
-            competitionWheelImage.setImage(image);
+            if (competition.getType().equalsIgnoreCase(CompetitionType.MANIA.name())) {
+              InputStream imageInput = TarcisioWheelsDB.getWheelImage(ServerFX.class, client, game.getExtTableId());
+              Image image = new Image(imageInput);
+              competitionWheelImage.setImage(image);
+            }
+            else {
+              ByteArrayInputStream gameMediaItem = client.getGameMediaItem(competition.getGameId(), VPinScreen.Wheel);
+              Image image = new Image(gameMediaItem);
+              competitionWheelImage.setImage(image);
+            }
           }
           else {
             Image wheel = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
@@ -304,6 +315,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           topBox.setVisible(true);
           loadingPane.setVisible(false);
         });
+      }
+      else {
+        emptyPanel.setVisible(true);
+        loadingPane.setVisible(false);
       }
     });
   }

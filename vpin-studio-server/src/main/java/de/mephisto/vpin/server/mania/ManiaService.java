@@ -5,8 +5,10 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.DeniedScore;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -16,6 +18,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.vps.VpsService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +83,10 @@ public class ManiaService implements InitializingBean {
 
     List<String> submittedInitials = new ArrayList<>();
     for (Score score : scoreList) {
+      if (isOnDenyList(game, score)) {
+        continue;
+      }
+
       try {
         String playerInitials = score.getPlayerInitials();
         //we only synchronize the highest score of each table
@@ -131,6 +138,21 @@ public class ManiaService implements InitializingBean {
   public boolean clearCache() {
     this.contacts = null;
     return maniaServiceCache.clear();
+  }
+
+  public boolean isOnDenyList(@NonNull Game game, @NonNull Score score) {
+    String vpsTableId = game.getExtTableId();
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      List<DeniedScore> deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTableId);
+      for (DeniedScore deniedScore : deniedScoresByTableId) {
+        if (score.isDenied(deniedScore)) {
+          LOG.info("Skipped submitting VPinMania score {} for {}, the score is on the deny list.", score, game.getGameDisplayName());
+          SLOG.info("Skipped submitting VPinMania score " + score + " for \"" + game.getGameDisplayName() + "\", the score is on the deny list.");
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public List<Score> getFriendsScoresFor(Game game) {

@@ -9,11 +9,35 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController">
     <center>
         <StackPane fx:id="competitionStack" BorderPane.alignment="CENTER">
             <children>
+            <BorderPane fx:id="emptyPanel" layoutX="10.0" layoutY="10.0">
+               <bottom>
+                  <Label text="No highscores found." textFill="WHITE" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets bottom="24.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </bottom>
+               <center>
+                  <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label textFill="#605e5e">
+                           <graphic>
+                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2d-database-off-outline" iconSize="300" />
+                           </graphic>
+                        </Label>
+                     </children>
+                  </HBox>
+               </center>
+            </BorderPane>
             <BorderPane fx:id="loadingPane">
                <center>
                   <ProgressIndicator minHeight="100.0" minWidth="100.0" BorderPane.alignment="CENTER" />

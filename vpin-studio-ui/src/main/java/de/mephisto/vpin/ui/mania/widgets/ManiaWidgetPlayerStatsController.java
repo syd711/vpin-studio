@@ -9,6 +9,7 @@ import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -269,7 +270,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       HBox hBox = new HBox(3);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      InputStream imageInput = TarcisioWheelsDB.getWheelImage(tableById.getId());
+      InputStream imageInput = TarcisioWheelsDB.getWheelImage(Studio.class, client, tableById.getId());
       Image image = new Image(imageInput);
       ImageView imageView = new ImageView(image);
       imageView.setPreserveRatio(true);

@@ -54,7 +54,7 @@ public class PauseMenuItemsFactory {
     if (pauseMenuSettings.isShowManiaScores() && Features.MANIA_ENABLED) {
       VpsTableVersion tableVersion = client.getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
       if (tableVersion != null) {
-        PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
+        PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.maniaScores, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
         pauseMenuItems.add(maniaItem);
 
         CompetitionRepresentation competition = new CompetitionRepresentation();

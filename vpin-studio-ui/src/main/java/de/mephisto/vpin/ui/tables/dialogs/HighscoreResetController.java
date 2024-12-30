@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
@@ -11,9 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -43,7 +43,7 @@ public class HighscoreResetController implements Initializable, DialogController
   private VBox scoreValueBox;
 
   @FXML
-  private TextField scoreField;
+  private Spinner<Integer> scoreSpinner;
 
   @FXML
   private Button okBtn;
@@ -64,16 +64,7 @@ public class HighscoreResetController implements Initializable, DialogController
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    String value = scoreField.getText();
-    long score = 9;
-    try {
-      score = Long.parseLong(value);
-    }
-    catch (NumberFormatException ex) {
-      //ignore
-    }
-
-    HighscoreResetProgressModel highscoreResetProgressModel = new HighscoreResetProgressModel(this.games, score);
+    HighscoreResetProgressModel highscoreResetProgressModel = new HighscoreResetProgressModel(this.games, scoreSpinner.getValue());
     Platform.runLater(() -> {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       stage.close();
@@ -104,21 +95,14 @@ public class HighscoreResetController implements Initializable, DialogController
       scoreValueBox.setVisible(this.games.stream().anyMatch(g -> !HighscoreType.NVRam.name().equals(g.getHighscoreType())));
       title.setText("Reset the highscores of " + games.size() + " tables?");
     }
-    this.scoreField.setText("9");
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     this.nvRamList = client.getNvRamsService().getResettedNVRams();
 
-    this.scoreField.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (!newValue.matches("\\d*")) {
-          scoreField.setText(newValue.replaceAll("[^\\d]", ""));
-        }
-      }
-    });
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, UIDefaults.MAX_RESET_SCORE_VALUE, 0);
+    scoreSpinner.setValueFactory(factory);
 
     scoreValueBox.managedProperty().bindBidirectional(scoreValueBox.visibleProperty());
     multiNVRamLabel.managedProperty().bindBidirectional(multiNVRamLabel.visibleProperty());

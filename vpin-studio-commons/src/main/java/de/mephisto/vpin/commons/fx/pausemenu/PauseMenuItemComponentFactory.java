@@ -28,8 +28,8 @@ public class PauseMenuItemComponentFactory {
     borderPane.setUserData(data);
     ImageView imageView = new ImageView();
     imageView.setPreserveRatio(true);
-    imageView.setFitWidth(UIDefaults.THUMBNAIL_SIZE);
-    imageView.setFitHeight(UIDefaults.THUMBNAIL_SIZE);
+    imageView.setFitWidth(PauseMenuUIDefaults.THUMBNAIL_SIZE);
+    imageView.setFitHeight(PauseMenuUIDefaults.THUMBNAIL_SIZE);
 
     imageView.setImage(image);
     StackPane stackPane = new StackPane();

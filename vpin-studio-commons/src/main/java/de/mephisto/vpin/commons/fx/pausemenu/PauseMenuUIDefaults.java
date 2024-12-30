@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-public interface UIDefaults {
+public interface PauseMenuUIDefaults {
   int SCREEN_WIDTH = 2200;
   double SELECTION_SCALE = 0.60;
   double SELECTION_SCALE_DEFAULT = -SELECTION_SCALE;

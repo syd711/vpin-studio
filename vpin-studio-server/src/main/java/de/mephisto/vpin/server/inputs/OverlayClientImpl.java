@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.client.ImageCache;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -76,7 +77,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   private ObjectMapper mapper;
 
-  private final Map<String, byte[]> imageCache = new HashMap<>();
+  private final Map<String, byte[]> imageByteCache = new HashMap<>();
+  private final ImageCache imageCache = new ImageCache(null);
 
   @Override
   public DiscordServer getDiscordServer(long serverId) {
@@ -93,7 +95,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   public InputStream getCachedUrlImage(String imageUrl) {
     try {
-      if (!imageCache.containsKey(imageUrl)) {
+      if (!imageByteCache.containsKey(imageUrl)) {
         URL url = new URL(imageUrl);
         ByteArrayOutputStream bis = new ByteArrayOutputStream();
         InputStream is = null;
@@ -108,7 +110,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
         bis.close();
 
         byte[] bytes = bis.toByteArray();
-        imageCache.put(imageUrl, bytes);
+        imageByteCache.put(imageUrl, bytes);
         LOG.info("Cached image URL " + imageUrl);
       }
     }
@@ -116,8 +118,41 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Failed to read image from URL: " + e.getMessage(), e);
     }
 
-    byte[] bytes = imageCache.get(imageUrl);
+    byte[] bytes = imageByteCache.get(imageUrl);
     return new ByteArrayInputStream(bytes);
+  }
+
+  //TODO mpf
+  @Override
+  public InputStream getPersistentCachedUrlImage(String cache, String url) {
+    try {
+      String asset = url.substring(url.lastIndexOf("/") + 1, url.length());
+      File folder = new File("./resources/cache/" + cache + "/");
+      if (!folder.exists()) {
+        folder.mkdirs();
+      }
+      File file = new File(folder, asset);
+      if (file.exists()) {
+        return new FileInputStream(file);
+      }
+
+      InputStream in = imageCache.getCachedUrlImage(url);
+      if (in != null) {
+        FileOutputStream out = new FileOutputStream(file);
+        IOUtils.copy(in, out);
+        LOG.info("Persisted for cache '" + cache + "': " + file.getAbsolutePath());
+        in.close();
+        out.close();
+      }
+
+      if (file.exists()) {
+        return new FileInputStream(file);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Caching error: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   @Override

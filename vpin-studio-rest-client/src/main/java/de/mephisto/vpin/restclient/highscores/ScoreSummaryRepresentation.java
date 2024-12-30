@@ -12,6 +12,7 @@ import org.springframework.lang.NonNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ScoreSummaryRepresentation {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreSummaryRepresentation.class);
@@ -20,6 +21,7 @@ public class ScoreSummaryRepresentation {
 
   private String raw;
 
+  private List<ScoreRepresentation> scores = new ArrayList<>();
 
   @NonNull
   public static ScoreSummaryRepresentation forGameRoom(GameRoom gameRoom, String vpsTableId, String vpsVersionId) {
@@ -62,8 +64,6 @@ public class ScoreSummaryRepresentation {
     this.raw = raw;
   }
 
-  private List<ScoreRepresentation> scores;
-
   public Date getCreatedAt() {
     return createdAt;
   }
@@ -78,5 +78,25 @@ public class ScoreSummaryRepresentation {
 
   public void setScores(List<ScoreRepresentation> scores) {
     this.scores = scores;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    ScoreSummaryRepresentation that = (ScoreSummaryRepresentation) o;
+    return Objects.equals(createdAt, that.createdAt) && Objects.equals(raw, that.raw) && Objects.equals(scores, that.scores);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(createdAt, raw, scores);
+  }
+
+  @Override
+  public String toString() {
+    if(scores != null) {
+      return "Score Summary (" + this.scores.size() + " scores)";
+    }
+    return "Score Summary (0 scores)";
   }
 }

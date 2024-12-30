@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.connectors.mania.model.DeniedScore;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
@@ -139,5 +140,16 @@ public class Score {
 
   public Score cloneEmpty() {
     return new Score(this.createdAt, this.gameId, "???", this.player, this.score, this.numericScore, this.position);
+  }
+
+  public boolean isDenied(DeniedScore deniedScore) {
+    try {
+      Long numScore = (long) this.numericScore;
+      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore))
+          && deniedScore.getInitials().equalsIgnoreCase(String.valueOf(playerInitials));
+    }
+    catch (Exception e) {
+      return false;
+    }
   }
 }

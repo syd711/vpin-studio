@@ -4,7 +4,8 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class ManiaWidgetLatestScoreItemController extends WidgetController implements Initializable {
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
@@ -60,7 +62,7 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
   public void setData(VpsTable vpsTable, TableScoreDetails score) {
     this.vpsTable = vpsTable;
     this.score = score;
-    InputStream imageInput = TarcisioWheelsDB.getWheelImage(vpsTable.getId());
+    InputStream imageInput = TarcisioWheelsDB.getWheelImage(Studio.class, client, vpsTable.getId());
     Image image = new Image(imageInput);
     wheelImageView.setImage(image);
 

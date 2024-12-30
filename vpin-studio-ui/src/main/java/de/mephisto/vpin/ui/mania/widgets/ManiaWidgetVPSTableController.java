@@ -2,7 +2,8 @@ package de.mephisto.vpin.ui.mania.widgets;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -15,6 +16,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class ManiaWidgetVPSTableController extends WidgetController implements Initializable {
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
@@ -52,7 +55,7 @@ public class ManiaWidgetVPSTableController extends WidgetController implements I
 
   public void setData(VpsTable vpsTable) {
     this.vpsTable = vpsTable;
-    InputStream imageInput = TarcisioWheelsDB.getWheelImage(vpsTable.getId());
+    InputStream imageInput = TarcisioWheelsDB.getWheelImage(Studio.class, client, vpsTable.getId());
     Image image = new Image(imageInput);
     wheelImageView.setImage(image);
 

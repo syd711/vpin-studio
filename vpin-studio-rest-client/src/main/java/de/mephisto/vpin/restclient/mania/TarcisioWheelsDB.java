@@ -1,11 +1,10 @@
-package de.mephisto.vpin.ui.mania;
+package de.mephisto.vpin.restclient.mania;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.mania.TarcisioWheels;
+import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.ui.Studio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +26,13 @@ public class TarcisioWheelsDB {
 
   private static TarcisioWheels wheels = new TarcisioWheels();
 
-  public static InputStream getWheelImage(String vpsTableId) {
+  public static InputStream getWheelImage(Class resourceClass, OverlayClient client, String vpsTableId) {
     String wheelImage = getWheelIcon(vpsTableId);
     if (wheelImage == null) {
-      return Studio.class.getResourceAsStream("avatar-blank.png");
+      return resourceClass.getResourceAsStream("avatar-blank.png");
     }
 
-    return Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + wheelImage);
+    return client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + wheelImage);
   }
 
   private static void update() {

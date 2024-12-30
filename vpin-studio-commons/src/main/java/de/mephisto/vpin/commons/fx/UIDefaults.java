@@ -16,5 +16,7 @@ public interface UIDefaults {
   int PLAYERS_PAGE_SIZE = 50;
   int DEFAULT_MAX_REFRESH_COUNT = 5;
 
+  int MAX_RESET_SCORE_VALUE = 10;
+
   String APP_TITLE = "VPin Studio App";
 }

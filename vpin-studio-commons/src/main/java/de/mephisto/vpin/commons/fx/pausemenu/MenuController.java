@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.*;
+import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.*;
 
 public class MenuController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MenuController.class);
@@ -196,12 +196,12 @@ public class MenuController implements Initializable {
 
   private void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
     final Node node = menuItemsRow.getChildren().get(oldIndex);
-    Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
-    Transition t2 = TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, duration);
-    Transition t3 = TransitionUtil.createTranslateByYTransition(node, duration, UIDefaults.SELECTION_HEIGHT_OFFSET);
+    Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
+    Transition t2 = TransitionUtil.createScaleTransition(node, PauseMenuUIDefaults.SELECTION_SCALE_DEFAULT, duration);
+    Transition t3 = TransitionUtil.createTranslateByYTransition(node, duration, PauseMenuUIDefaults.SELECTION_HEIGHT_OFFSET);
 
     //scroll whole game row
-    Transition t4 = TransitionUtil.createTranslateByXTransition(menuItemsRow, duration, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE);
+    Transition t4 = TransitionUtil.createTranslateByXTransition(menuItemsRow, duration, left ? PauseMenuUIDefaults.THUMBNAIL_SIZE : -PauseMenuUIDefaults.THUMBNAIL_SIZE);
 
     Node oldSelection = currentSelection;
     currentSelection = null;
@@ -211,9 +211,9 @@ public class MenuController implements Initializable {
     else {
       currentSelection = menuItemsRow.getChildren().get(oldIndex + 1);
     }
-    Transition t5 = TransitionUtil.createTranslateByXTransition(currentSelection, duration, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
-    Transition t6 = TransitionUtil.createScaleTransition(currentSelection, UIDefaults.SELECTION_SCALE, duration);
-    Transition t7 = TransitionUtil.createTranslateByYTransition(currentSelection, duration, -UIDefaults.SELECTION_HEIGHT_OFFSET);
+    Transition t5 = TransitionUtil.createTranslateByXTransition(currentSelection, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
+    Transition t6 = TransitionUtil.createScaleTransition(currentSelection, PauseMenuUIDefaults.SELECTION_SCALE, duration);
+    Transition t7 = TransitionUtil.createTranslateByYTransition(currentSelection, duration, -PauseMenuUIDefaults.SELECTION_HEIGHT_OFFSET);
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.onFinishedProperty().set(event -> {
@@ -371,18 +371,18 @@ public class MenuController implements Initializable {
     }
 
     Pane node = (Pane) menuItemsRow.getChildren().get(0);
-    int size = menuItemsRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE;
-    if (size < UIDefaults.SCREEN_WIDTH) {
-      menuItemsRow.setTranslateX(UIDefaults.SCREEN_WIDTH / 2 + UIDefaults.THUMBNAIL_SIZE + SCROLL_OFFSET);
+    int size = menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE;
+    if (size < PauseMenuUIDefaults.SCREEN_WIDTH) {
+      menuItemsRow.setTranslateX(PauseMenuUIDefaults.SCREEN_WIDTH / 2 + PauseMenuUIDefaults.THUMBNAIL_SIZE + SCROLL_OFFSET);
     }
     else {
       menuItemsRow.setTranslateX(size / 2);
     }
 
     BorderPane child = (BorderPane) menuItemsRow.getChildren().get(selectionIndex);
-    TransitionUtil.createTranslateByXTransition(child, SELECTION_SCALE_DURATION, -UIDefaults.SCROLL_OFFSET).play();
-    TransitionUtil.createScaleTransition(child, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
-    TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET).play();
+    TransitionUtil.createTranslateByXTransition(child, SELECTION_SCALE_DURATION, -PauseMenuUIDefaults.SCROLL_OFFSET).play();
+    TransitionUtil.createScaleTransition(child, PauseMenuUIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION).play();
+    TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, -PauseMenuUIDefaults.SELECTION_HEIGHT_OFFSET).play();
 
     updateSelection(null, child);
   }
@@ -401,7 +401,7 @@ public class MenuController implements Initializable {
       menuItemsRow.getChildren().add(PauseMenuItemComponentFactory.createMenuItemFor(pItem));
     }
 
-    while (menuItemsRow.getChildren().size() * UIDefaults.THUMBNAIL_SIZE < UIDefaults.SCREEN_WIDTH * 2) {
+    while (menuItemsRow.getChildren().size() * PauseMenuUIDefaults.THUMBNAIL_SIZE < PauseMenuUIDefaults.SCREEN_WIDTH * 2) {
       Label label = new Label();
       label.setMinWidth(THUMBNAIL_SIZE);
       menuItemsRow.getChildren().add(label);
