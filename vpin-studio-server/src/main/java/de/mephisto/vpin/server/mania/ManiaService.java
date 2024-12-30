@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
@@ -182,6 +183,7 @@ public class ManiaService implements InitializingBean {
         ManiaConfig config = getConfig();
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
         maniaServiceCache.setManiaService(this);
+        ServerFX.maniaClient = maniaClient;
 
         Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
         if (cabinet != null) {

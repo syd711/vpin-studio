@@ -1,43 +1,30 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
+import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.alx.AlxSummary;
-import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class MenuScoreViewController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(MenuScoreViewController.class);
-
-  @FXML
-  private ImageView wheelImage;
 
   @FXML
   private ImageView sectionIcon;
@@ -55,9 +42,11 @@ public class MenuScoreViewController implements Initializable {
   private Label scoreInfoLabel;
 
   @FXML
-  private VBox mainColumn;
+  private BorderPane widgetPane;
 
-  public void setGame(GameRepresentation game, GameStatus status, VpsTable tableById, Image sectionImage) {
+  private WidgetCompetitionSummaryController competitionWidgetController;
+
+  public void setData(GameRepresentation game, GameStatus status, VpsTable tableById, PauseMenuItem pauseMenuItem, Image sectionImage) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");
@@ -85,44 +74,19 @@ public class MenuScoreViewController implements Initializable {
       }
     }
 
-//    GameScoreValidation scoreValidation = PauseMenu.client.getGameService().getGameScoreValidation(game.getId());
-//    boolean valid = scoreValidation.isValidScoreConfiguration();
-//    if (!StringUtils.isEmpty(game.getRom())) {
-//      if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
-//        scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (supported)");
-//      }
-//      else {
-//        if(scoreValidation.getHighscoreFilenameStatus() != null) {
-//          scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getHighscoreFilenameStatus() + ")");
-//        }
-//        else {
-//          scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getRomStatus() + ")");
-//        }
-//      }
-//    }
+    try {
+      FXMLLoader loader = new FXMLLoader(WidgetCompetitionSummaryController.class.getResource("widget-competition-summary.fxml"));
+      Pane competitionWidgetRoot = loader.load();
+      competitionWidgetController = loader.getController();
+      competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
+      widgetPane.setCenter(competitionWidgetRoot);
 
-    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
-    if (imageStream == null) {
-      imageStream = ServerFX.class.getResourceAsStream("avatar-blank.png");
+      competitionWidgetController.setCompetition(CompetitionType.valueOf(pauseMenuItem.getCompetition().getType()), pauseMenuItem.getCompetition());
+      competitionWidgetController.setFontSize(29);
     }
-    Image image = new Image(imageStream);
-    wheelImage.setImage(image);
-
-
-
-//    for (ScoreRepresentation score : scores) {
-//      try {
-//        FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
-//        Pane row = loader.load();
-//        row.setPrefWidth(500);
-//        WidgetLatestScoreItemController controller = loader.getController();
-//        controller.setData(game, frontendMedia, score);
-//        mainColumn.getChildren().add(row);
-//      }
-//      catch (IOException e) {
-//        LOG.error("Failed to load paused scores: " + e.getMessage(), e);
-//      }
-//    }
+    catch (IOException e) {
+      LOG.error("Failed to load pause score widget: " + e.getMessage(), e);
+    }
   }
 
   @Override

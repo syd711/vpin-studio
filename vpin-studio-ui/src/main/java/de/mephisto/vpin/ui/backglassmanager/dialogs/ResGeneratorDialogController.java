@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
-import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;

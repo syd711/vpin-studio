@@ -54,6 +54,7 @@ public class PauseMenu extends Application {
   public static boolean visible = false;
 
   private static Robot robot;
+  private static boolean test = false;
 
   private static List<FrontendScreenAsset> screenAssets = new ArrayList<>();
 
@@ -165,11 +166,12 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu() {
-    togglePauseMenu(null);
+    togglePauseMenu(null, false);
   }
 
-  public static void togglePauseMenu(@Nullable GameStatus status) {
+  public static void togglePauseMenu(@Nullable GameStatus status, boolean test) {
     client.getPreferenceService().clearCache();
+    PauseMenu.test = test;
 
     if (!visible) {
       try {
@@ -301,7 +303,7 @@ public class PauseMenu extends Application {
 
   private static void togglePauseKey(long delay) {
     try {
-      if (!PRODUCTION_USE) {
+      if (!PRODUCTION_USE || test) {
         return;
       }
 

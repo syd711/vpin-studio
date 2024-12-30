@@ -265,7 +265,23 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();
         MenuScoreViewController customViewController = loader.getController();
-        customViewController.setGame(game, gameStatus, vpsTable, sectionImage);
+        customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
+//        return widgetRoot;
+        scoreView.setCenter(widgetRoot);
+        scoreView.setVisible(true);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to init pause component: " + e.getMessage(), e);
+      }
+    }
+    else if(activeSelection.getItemType().equals(PauseMenuItemTypes.maniaScores)) {
+      try {
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png"));
+        String resource = "menu-score-view.fxml";
+        FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
+        Pane widgetRoot = loader.load();
+        MenuScoreViewController customViewController = loader.getController();
+        customViewController.setData(game, gameStatus, vpsTable, activeSelection, sectionImage);
 //        return widgetRoot;
         scoreView.setCenter(widgetRoot);
         scoreView.setVisible(true);

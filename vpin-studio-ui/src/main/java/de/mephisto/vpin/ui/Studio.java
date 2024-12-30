@@ -20,7 +20,7 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
-import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -299,6 +299,7 @@ public class Studio extends Application {
         ManiaConfig config = Studio.client.getManiaService().getConfig();
         SystemSummary summary = Studio.client.getSystemService().getSystemSummary();
         Studio.maniaClient = new VPinManiaClient(config.getUrl(), summary.getSystemId());
+        ServerFX.maniaClient = Studio.maniaClient;
       }
     }
     catch (Exception e) {

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.highscores;
 
-import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.Score;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ScoreSummaryRepresentation {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreSummaryRepresentation.class);
@@ -17,6 +19,7 @@ public class ScoreSummaryRepresentation {
   private Date createdAt;
 
   private String raw;
+
 
   @NonNull
   public static ScoreSummaryRepresentation forGameRoom(GameRoom gameRoom, String vpsTableId, String vpsVersionId) {
@@ -31,7 +34,8 @@ public class ScoreSummaryRepresentation {
         s.setScore(ScoreFormatUtil.formatScore(gameRoomScore.getScore()));
         try {
           s.setNumericScore(Long.parseLong(gameRoomScore.getScore()));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
           LOG.warn("iScored score formatting failed: " + e.getMessage());
         }
 

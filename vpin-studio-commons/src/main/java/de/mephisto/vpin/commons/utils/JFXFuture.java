@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.utils;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;

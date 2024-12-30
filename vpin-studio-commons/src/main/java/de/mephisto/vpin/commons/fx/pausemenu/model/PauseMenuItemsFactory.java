@@ -1,9 +1,14 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
+import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -25,6 +30,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
+
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemsFactory.class);
 
@@ -34,13 +41,27 @@ public class PauseMenuItemsFactory {
     pauseMenuItems.add(item);
 
     if (pauseMenuSettings.isShowIscoredScores() && Features.ISCORED_ENABLED) {
-      PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png")));
-      pauseMenuItems.add(iScoredItem);
+      List<CompetitionRepresentation> competitions = client.getIScoredSubscriptions();
+      for (CompetitionRepresentation competition : competitions) {
+        if (competition.isActive() && competition.getGameId() == game.getId()) {
+          PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png")));
+          iScoredItem.setCompetition(competition);
+          pauseMenuItems.add(iScoredItem);
+        }
+      }
     }
 
     if (pauseMenuSettings.isShowManiaScores() && Features.MANIA_ENABLED) {
-      PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
-      pauseMenuItems.add(maniaItem);
+      VpsTableVersion tableVersion = client.getVpsTableVersion(game.getExtTableId(), game.getExtTableVersionId());
+      if (tableVersion != null) {
+        PauseMenuItem maniaItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "VPin Mania", "VPin Mania Scores", new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png")));
+        pauseMenuItems.add(maniaItem);
+
+        CompetitionRepresentation competition = new CompetitionRepresentation();
+        competition.setType(CompetitionType.MANIA.name());
+        competition.setGameId(game.getId());
+        maniaItem.setCompetition(competition);
+      }
     }
 
     if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {

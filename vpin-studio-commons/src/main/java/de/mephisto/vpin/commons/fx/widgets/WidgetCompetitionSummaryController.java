@@ -1,17 +1,22 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -21,13 +26,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getCompetitionScoreFont;
 
 public class WidgetCompetitionSummaryController extends WidgetController implements Initializable {
@@ -47,6 +55,9 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   @FXML
   private HBox topBox;
+
+  @FXML
+  private BorderPane loadingPane;
 
   @FXML
   private Label durationLabel;
@@ -98,6 +109,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   private Label emptylabel;
 
+  private final static String MANIA_EMPTY_TEXT = "                 No VPin Mania highscores found.\nBe the first and create a highscore on this table!";
   private final static String ISCORED_EMPTY_TEXT = "                 No iScored subscription found.\nAdd iScored subscriptions to compete with other players.";
   private final static String OFFLINE_EMPTY_TEXT = "                        No active offline competition found.\nStart an offline competition to compete with friends and family.";
   private final static String ONLINE_EMPTY_TEXT = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
@@ -123,6 +135,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     emptylabel.setVisible(false);
     topBox.setVisible(false);
+    loadingPane.setVisible(true);
   }
 
   public void setCompetition(CompetitionType competitionType, CompetitionRepresentation competition) {
@@ -136,40 +149,29 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       else if (competitionType.equals(CompetitionType.ISCORED)) {
         emptylabel.setText(ISCORED_EMPTY_TEXT);
       }
+      else if (competitionType.equals(CompetitionType.MANIA)) {
+        emptylabel.setText(MANIA_EMPTY_TEXT);
+      }
       else {
         emptylabel.setText(OFFLINE_EMPTY_TEXT);
       }
       durationLabel.setText("");
       emptylabel.setVisible(true);
-      topBox.setVisible(false);
-
+      topBox.setVisible(true);
+      loadingPane.setVisible(false);
       return;
     }
 
-    topBox.setVisible(true);
     emptylabel.setVisible(false);
 
-    GameRepresentation game = ServerFX.client.getGame(competition.getGameId());
-    FrontendMediaRepresentation frontendMedia = null;
+    GameRepresentation game = client.getGame(competition.getGameId());
     if (game != null) {
-      frontendMedia = ServerFX.client.getFrontendMedia(game.getId());
-      if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
-        durationLabel.setText("Table Subscription");
-        tableNameLabel.setText("Top Scores");
-      }
-      else if (competitionType.equals(CompetitionType.ISCORED)) {
-        durationLabel.setText("iScored Subscription");
-        tableNameLabel.setText("Top Scores");
-      }
-      else {
-        durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
-        tableNameLabel.setText(game.getGameDisplayName());
-      }
+      durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
+      tableNameLabel.setText(game.getGameDisplayName());
     }
     else {
       LOG.error("No game found for " + competition);
     }
-
 
     competitionLabel.setText(competition.getName());
 
@@ -205,81 +207,126 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       return;
     }
 
-    ScoreSummaryRepresentation latestCompetitionScore = null;
-    if (competitionType.equals(CompetitionType.ISCORED)) {
-      GameRoom gameRoom = IScored.getGameRoom(competition.getUrl());
-      if (gameRoom != null) {
-        latestCompetitionScore = ScoreSummaryRepresentation.forGameRoom(gameRoom, competition.getVpsTableId(), competition.getVpsTableVersionId());
+    JFXFuture.supplyAsync(() -> {
+      ScoreSummaryRepresentation scoreSummary = null;
+      if (competitionType.equals(CompetitionType.ISCORED)) {
+        GameRoom gameRoom = IScored.getGameRoom(competition.getUrl());
+        if (gameRoom != null) {
+          scoreSummary = ScoreSummaryRepresentation.forGameRoom(gameRoom, competition.getVpsTableId(), competition.getVpsTableVersionId());
+        }
       }
-    }
-    else {
-      latestCompetitionScore = ServerFX.client.getCompetitionScore(competition.getId());
-    }
+      else if (competitionType.equals(CompetitionType.MANIA)) {
+        List<TableScoreDetails> highscoresByTable = ServerFX.maniaClient.getHighscoreClient().getHighscoresByTable(game.getExtTableId());
+        scoreSummary = fromManiaScores(highscoresByTable);
+      }
+      else {
+        scoreSummary = client.getCompetitionScore(competition.getId());
+      }
+      return scoreSummary;
+    }).thenAcceptLater((latestCompetitionScore) -> {
+      if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
+        List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
 
-    if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
-      List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
-
-      int index = 0;
-      if (index <= scores.size()) {
+        int index = 0;
         ScoreRepresentation score1 = scores.get(index);
         name1.setText(formatScoreText(score1));
         scoreLabel1.setFont(getCompetitionScoreFont());
         scoreLabel1.setText(score1.getScore());
-      }
 
-      index++;
-      if (index < scores.size()) {
-        ScoreRepresentation score2 = scores.get(index);
-        name2.setText(formatScoreText(score2));
-        scoreLabel2.setFont(getCompetitionScoreFont());
-        scoreLabel2.setText(score2.getScore());
-      }
+        index++;
+        if (index < scores.size()) {
+          ScoreRepresentation score2 = scores.get(index);
+          name2.setText(formatScoreText(score2));
+          scoreLabel2.setFont(getCompetitionScoreFont());
+          scoreLabel2.setText(score2.getScore());
+        }
 
-      index++;
-      if (index < scores.size()) {
-        ScoreRepresentation score3 = scores.get(index);
-        name3.setText(formatScoreText(score3));
-        scoreLabel3.setFont(getCompetitionScoreFont());
-        scoreLabel3.setText(score3.getScore());
-      }
+        index++;
+        if (index < scores.size()) {
+          ScoreRepresentation score3 = scores.get(index);
+          name3.setText(formatScoreText(score3));
+          scoreLabel3.setFont(getCompetitionScoreFont());
+          scoreLabel3.setText(score3.getScore());
+        }
 
-      index++;
-      if (index < scores.size()) {
-        ScoreRepresentation score4 = scores.get(index);
-        name4.setText(formatScoreText(score4));
-        scoreLabel4.setFont(getCompetitionScoreFont());
-        scoreLabel4.setText(score4.getScore());
-      }
+        index++;
+        if (index < scores.size()) {
+          ScoreRepresentation score4 = scores.get(index);
+          name4.setText(formatScoreText(score4));
+          scoreLabel4.setFont(getCompetitionScoreFont());
+          scoreLabel4.setText(score4.getScore());
+        }
 
-      index++;
-      if (index < scores.size()) {
-        ScoreRepresentation score5 = scores.get(index);
-        name5.setText(formatScoreText(score5));
-        scoreLabel5.setFont(getCompetitionScoreFont());
-        scoreLabel5.setText(score5.getScore());
-      }
+        index++;
+        if (index < scores.size()) {
+          ScoreRepresentation score5 = scores.get(index);
+          name5.setText(formatScoreText(score5));
+          scoreLabel5.setFont(getCompetitionScoreFont());
+          scoreLabel5.setText(score5.getScore());
+        }
 
+        JFXFuture.supplyAsync(() -> {
+          return client.getFrontendMedia(game.getId());
+        }).thenAcceptLater((frontendMedia) -> {
+          FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+          if (item != null) {
+            ByteArrayInputStream gameMediaItem = client.getGameMediaItem(competition.getGameId(), VPinScreen.Wheel);
+            Image image = new Image(gameMediaItem);
+            competitionWheelImage.setImage(image);
+          }
+          else {
+            Image wheel = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+            competitionWheelImage.setImage(wheel);
+          }
 
-      FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-      if (item != null) {
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(competition.getGameId(), VPinScreen.Wheel);
-        Image image = new Image(gameMediaItem);
-        competitionWheelImage.setImage(image);
-      }
-      else {
-        Image wheel = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
-        competitionWheelImage.setImage(wheel);
-      }
-    }
+          if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+            durationLabel.setText("Table Subscription");
+            tableNameLabel.setText("Top Scores");
+          }
+          else if (competitionType.equals(CompetitionType.ISCORED)) {
+            durationLabel.setText("iScored Subscription");
+            tableNameLabel.setText("Top Scores");
+          }
+          else if (competitionType.equals(CompetitionType.MANIA)) {
+            durationLabel.setText("VPin Mania Highscores");
+            tableNameLabel.setText("Top Scores");
+          }
 
-    InputStream competitionBackground = ServerFX.client.getCompetitionBackground(competition.getGameId());
-    if (competitionBackground != null) {
-      Image image = new Image(competitionBackground);
-      BackgroundImage myBI = new BackgroundImage(image,
-          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-          BackgroundSize.DEFAULT);
-      topBox.setBackground(new Background(myBI));
-    }
+          InputStream competitionBackground = client.getCompetitionBackground(competition.getGameId());
+          if (competitionBackground != null) {
+            Image image = new Image(competitionBackground);
+            BackgroundImage myBI = new BackgroundImage(image,
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+            topBox.setBackground(new Background(myBI));
+          }
+
+          topBox.setVisible(true);
+          loadingPane.setVisible(false);
+        });
+      }
+    });
+  }
+
+  public void setFontSize(int size) {
+    String style = "-fx-font-size:" + size + "px;";
+    name1.setStyle(style);
+    name2.setStyle(style);
+    name3.setStyle(style);
+    name4.setStyle(style);
+    name5.setStyle(style);
+
+    scoreLabel1.setStyle(style);
+    scoreLabel2.setStyle(style);
+    scoreLabel3.setStyle(style);
+    scoreLabel4.setStyle(style);
+    scoreLabel5.setStyle(style);
+
+    name1.setStyle(style);
+    name2.setStyle(style);
+    name3.setStyle(style);
+    name4.setStyle(style);
+    name5.setStyle(style);
   }
 
   private String formatScoreText(ScoreRepresentation score) {
@@ -293,5 +340,33 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     }
 
     return name;
+  }
+
+
+  @NonNull
+  public static ScoreSummaryRepresentation fromManiaScores(List<TableScoreDetails> scoreDetails) {
+    ScoreSummaryRepresentation summary = new ScoreSummaryRepresentation();
+    summary.setScores(new ArrayList<>());
+    int pos = 1;
+    for (TableScoreDetails maniaScore : scoreDetails) {
+      ScoreRepresentation score = new ScoreRepresentation();
+      score.setScore(ScoreFormatUtil.formatScore(String.valueOf(maniaScore.getScore())));
+      score.setNumericScore(maniaScore.getScore());
+      score.setPosition(pos);
+      score.setCreatedAt(maniaScore.getCreationDate());
+      score.setPlayerInitials(maniaScore.getInitials());
+
+      Account accountByUuid = ServerFX.maniaClient.getAccountClient().getAccountByUuid(maniaScore.getAccountUUID());
+      if (accountByUuid != null) {
+        score.setPlayerInitials(accountByUuid.getDisplayName());
+      }
+      summary.getScores().add(score);
+
+      pos++;
+      if (pos > 5) {
+        break;
+      }
+    }
+    return summary;
   }
 }

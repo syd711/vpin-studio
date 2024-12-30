@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,6 +14,21 @@
     <center>
         <StackPane fx:id="competitionStack" BorderPane.alignment="CENTER">
             <children>
+            <BorderPane fx:id="loadingPane">
+               <center>
+                  <ProgressIndicator minHeight="100.0" minWidth="100.0" BorderPane.alignment="CENTER" />
+               </center>
+               <bottom>
+                  <Label text="Loading..." textFill="WHITE" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets bottom="24.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </bottom>
+            </BorderPane>
                 <HBox fx:id="topBox" alignment="CENTER_LEFT">
                     <children>
                         <ImageView fx:id="competitionWheelImage" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
@@ -48,7 +64,7 @@
                                         <Label fx:id="firstLabel" text="#1" textFill="WHITE" BorderPane.alignment="CENTER">
                                             <font>
                                                 <Font size="20.0" />
-                                            </font>
+                                            </font>frontendMedia
                                         </Label>
                                     </left>
                                     <right>

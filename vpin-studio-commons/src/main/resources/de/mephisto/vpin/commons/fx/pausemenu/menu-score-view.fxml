@@ -5,7 +5,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -51,41 +50,10 @@
             </VBox>
          </center>
          <bottom>
-            <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+            <BorderPane fx:id="widgetPane" styleClass="subpanel" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </BorderPane.margin>
-               <center>
-                  <HBox prefHeight="400.0" prefWidth="200.0" spacing="24.0" BorderPane.alignment="CENTER">
-                     <children>
-                        <VBox fx:id="mainColumn">
-                           <children>
-                              <Label text="Latest Scores" textFill="WHITE">
-                                 <font>
-                                    <Font size="24.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="24.0" />
-                                 </VBox.margin>
-                              </Label>
-                           </children>
-                        </VBox>
-                     </children>
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                     <padding>
-                        <Insets bottom="24.0" left="24.0" right="24.0" />
-                     </padding>
-                  </HBox>
-               </center>
-               <left>
-                  <ImageView fx:id="wheelImage" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="TOP_LEFT">
-                     <image>
-                        <Image url="@rules.png" />
-                     </image>
-                  </ImageView>
-               </left>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>

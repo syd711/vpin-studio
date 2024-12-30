@@ -33,6 +33,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
 
+- **Pause Menu**: Settings saved and new and new views
 
 ## VPin Mania Changes
 

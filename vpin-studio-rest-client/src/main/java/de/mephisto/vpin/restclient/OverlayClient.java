@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -20,6 +22,8 @@ public interface OverlayClient {
   DiscordServer getDiscordServer(long serverId);
 
   List<CompetitionRepresentation> getFinishedCompetitions(int limit);
+
+  List<CompetitionRepresentation> getIScoredSubscriptions();
 
   CompetitionRepresentation getActiveCompetition(CompetitionType type);
 
@@ -52,4 +56,6 @@ public interface OverlayClient {
   <T> T getJsonPreference(String key, Class<T> clazz);
 
   List<RankedPlayerRepresentation> getRankedPlayers();
+
+  VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId);
 }

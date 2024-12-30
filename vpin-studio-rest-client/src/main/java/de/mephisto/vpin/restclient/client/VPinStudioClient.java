@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
@@ -416,6 +418,20 @@ public class VPinStudioClient implements OverlayClient {
   @Override
   public ScoreSummaryRepresentation getCompetitionScore(long id) {
     return getCompetitionService().getCompetitionScore(id);
+  }
+
+  @Override
+  public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
+    VpsTable table = getVpsService().getTableById(tableId);
+    if (table != null && versionId != null) {
+      return table.getTableVersionById(versionId);
+    }
+    return null;
+  }
+
+  @Override
+  public List<CompetitionRepresentation> getIScoredSubscriptions() {
+    return getCompetitionService().getIScoredSubscriptions();
   }
 
   @Override

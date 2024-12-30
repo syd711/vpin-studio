@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.concurrent.Task;
