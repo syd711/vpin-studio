@@ -511,8 +511,8 @@ public class PinballXConnector extends BaseConnector {
     try {
       if (playlist.getEmulatorId() != null) {
         Emulator emulator = getEmulator(playlist.getEmulatorId());
-        File pinballXFolder = getInstallationFolder();
-        File dbfolder = new File(pinballXFolder, "/Databases/" + emulator.getName());
+        File frontendInstallationFolder = getInstallationFolder();
+        File dbfolder = new File(frontendInstallationFolder, "/Databases/" + emulator.getName());
 
         if (playlist.getId() == -1) {
           String name = FileUtils.replaceWindowsChars(playlist.getName());
@@ -541,7 +541,7 @@ public class PinballXConnector extends BaseConnector {
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to save PinballX playlist: {}", e.getMessage(), e);
+      LOG.error("Failed to save PinballX/Y playlist: {}", e.getMessage(), e);
     }
     return null;
   }
