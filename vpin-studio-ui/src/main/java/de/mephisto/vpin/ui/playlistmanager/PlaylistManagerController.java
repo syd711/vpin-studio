@@ -215,11 +215,11 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @FXML
   private void onPlaylistCreate() {
-    String description = null;
-    String value = WidgetFactory.showInputDialog(dialogStage, "New Playlist", "Enter new playlist name:", description, null, "New Playlist");
-    if (!StringUtils.isEmpty(value)) {
-      value = FileUtils.replaceWindowsChars(value);
-      try {
+    if (client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+      String description = null;
+      String value = WidgetFactory.showInputDialog(dialogStage, "New Playlist", "Enter new playlist name:", description, null, "New Playlist");
+      if (!StringUtils.isEmpty(value)) {
+        value = FileUtils.replaceWindowsChars(value);
         int parentId = -1;
         TreeItem<PlaylistRepresentation> parentItem = treeView.getSelectionModel().getSelectedItem();
         if (parentItem != null) {
@@ -229,33 +229,39 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           parentId = treeView.getRoot().getValue().getId();
         }
 
-        PlaylistRepresentation newPlayList = new PlaylistRepresentation();
-        newPlayList.setName(value);
-        newPlayList.setUseDefaults(true);
-        newPlayList.setVisible(true);
-        newPlayList.setEmulatorId(getEmulatorId());
-        newPlayList.setParentId(parentId);
-        newPlayList.setMediaName("pl_" + FileUtils.replaceWindowsChars(value));
-
-        //workaround for PinballX
-        if (!client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists()) {
-          newPlayList.setEmulatorId(client.getFrontendService().getDefaultGameEmulator().getId());
-        }
-
-        PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(newPlayList);
-        reload();
-
-        select(treeView.getRoot(), update);
+        createPlaylist(value, parentId, client.getFrontendService().getDefaultGameEmulator().getId());
       }
-      catch (Exception e) {
-        LOG.error("Playlist creation failed: {}", e.getMessage(), e);
-        WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
-      }
+    }
+    else {
+      PlaylistDialogs.openCreatePlaylistDialog(this);
     }
   }
 
-  private int getEmulatorId() {
-    return client.getFrontendService().getDefaultGameEmulator().getId();
+  public void createPlaylist(String value, int parentId, int emulatorId) {
+    try {
+      PlaylistRepresentation newPlayList = new PlaylistRepresentation();
+      newPlayList.setName(value);
+      newPlayList.setUseDefaults(true);
+      newPlayList.setVisible(true);
+      newPlayList.setEmulatorId(emulatorId);
+      newPlayList.setParentId(parentId);
+      newPlayList.setMenuColor((int) Long.parseLong("FFFFFF", 16));
+      newPlayList.setMediaName("pl_" + FileUtils.replaceWindowsChars(value));
+
+      //workaround for PinballX
+      if (!client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists()) {
+        newPlayList.setEmulatorId(client.getFrontendService().getDefaultGameEmulator().getId());
+      }
+
+      PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(newPlayList);
+      reload();
+
+      select(treeView.getRoot(), update);
+    }
+    catch (Exception e) {
+      LOG.error("Playlist creation failed: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
+    }
   }
 
   @FXML
@@ -750,5 +756,4 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
     }
   }
-
 }

@@ -138,7 +138,10 @@ public abstract class BaseConnector implements FrontendConnector {
         // get color if set
         JsonObject playlistConf = getPlaylistConf(playlist);
         if (playlistConf.has("menuColor")) {
-          playlist.setMenuColor(playlistConf.get("menuColor").getAsInt());
+          JsonElement menuColor = playlistConf.get("menuColor");
+          if (!menuColor.isJsonNull()) {
+            playlist.setMenuColor(menuColor.getAsInt());
+          }
         }
       }
     }
