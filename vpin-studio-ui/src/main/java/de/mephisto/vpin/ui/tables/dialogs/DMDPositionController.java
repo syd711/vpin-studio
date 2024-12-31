@@ -1,28 +1,20 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -31,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +45,16 @@ public class DMDPositionController implements Initializable, DialogController {
   private Label tablePositionLabel;
 
   @FXML
-  private CheckBox aspectRatioCheckbox;
+  private CheckBox snapCheckbox;
+
+  @FXML
+  private RadioButton ratioOff;
+  @FXML
+  private RadioButton ratio3;
+  @FXML
+  private RadioButton ratio4;
+  @FXML
+  private RadioButton ratio8;
 
   @FXML
   private RadioButton radioOnBackglass;
@@ -108,6 +108,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
   /** The zoom factor : <screen coordinates> x zoom = <resizer pixels> */
   private DoubleProperty zoom = new SimpleDoubleProperty(1);
+  private ToggleGroup ratioGroup;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -150,6 +151,17 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    // create a toggle group
+    ratioGroup = new ToggleGroup();
+    ratioOff.setToggleGroup(ratioGroup);
+    ratioOff.setSelected(true);
+    ratioOff.setUserData(DMDAspectRatio.ratioOff);
+    ratio3.setToggleGroup(ratioGroup);
+    ratio3.setUserData(DMDAspectRatio.ratio3x1);
+    ratio4.setToggleGroup(ratioGroup);
+    ratio4.setUserData(DMDAspectRatio.ratio4x1);
+    ratio8.setToggleGroup(ratioGroup);
+    ratio8.setUserData(DMDAspectRatio.ratio8x1);
 
     saveLocallyBtn.managedProperty().bindBidirectional(saveLocallyBtn.visibleProperty());
     saveGloballyBtn.managedProperty().bindBidirectional(saveGloballyBtn.visibleProperty());
@@ -157,7 +169,7 @@ public class DMDPositionController implements Initializable, DialogController {
     saveGloballyBtn.setVisible(false);
 
     // The lime box that is used to position the DMD
-    dragBox = new DMDPositionResizer(area, aspectRatioCheckbox.selectedProperty(), color);
+    dragBox = new DMDPositionResizer(area, ratioGroup.selectedToggleProperty(), snapCheckbox.selectedProperty(), color);
     dragBox.addToPane(imagepane);
    
     // setup linkages between spinner and our dragbox
@@ -167,7 +179,7 @@ public class DMDPositionController implements Initializable, DialogController {
     configureSpinner(heightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
 
     // add a selector in the pane to draw a rectangle.
-    new DMDPositionSelection(imagepane, area, aspectRatioCheckbox.selectedProperty(), color, 
+    new DMDPositionSelection(imagepane, area, ratioGroup.selectedToggleProperty(), color,
       // called on drag start, hide the lime dragbox 
       () -> {
         dragBox.setVisible(false);
@@ -182,14 +194,6 @@ public class DMDPositionController implements Initializable, DialogController {
         dragBox.setWidth(rect.getWidth());
         dragBox.setHeight(rect.getHeight());
       });
-
-    aspectRatioCheckbox.selectedProperty().addListener((x, o, selection) -> {
-      if (selection) {
-        DMDInfo dmdinfo = fillDmdInfo();
-        dmdinfo.adjustAspectRatio();
-        loadDmdInfo(dmdinfo);
-      }
-    });
 
     // now set the existing bounds
     Bounds bounds = fullDMDImage.getLayoutBounds();
@@ -217,6 +221,15 @@ public class DMDPositionController implements Initializable, DialogController {
         CompletableFuture
           .supplyAsync(() -> client.getDmdPositionService().moveDMDInfo(movedDmdinfo, selectedScreen))
           .thenAccept(dmd -> setDmdInfo(dmd));
+      }
+    });
+
+    ratioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+      @Override
+      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+        DMDInfo dmdinfo = fillDmdInfo();
+        dmdinfo.adjustAspectRatio();
+        loadDmdInfo(dmdinfo);
       }
     });
   }
@@ -379,9 +392,19 @@ public class DMDPositionController implements Initializable, DialogController {
     dragBox.setHeight(dmdinfo.getHeight() * zoom.get());
     dragBox.setX(dmdinfo.getX() * zoom.get());
     dragBox.setY(dmdinfo.getY() * zoom.get());
-    // aspect ratio forced in dmddevice.ini, force it there too and disable 
-    aspectRatioCheckbox.setSelected(dmdinfo.isSelectedAspectRatio());
-    aspectRatioCheckbox.setDisable(dmdinfo.isForceAspectRatio());
+    // aspect ratio forced in dmddevice.ini, force it there too and disable
+
+    DMDAspectRatio aspectRatio = dmdinfo.getAspectRatio();
+    aspectRatio = aspectRatio == null ? DMDAspectRatio.ratioOff : aspectRatio;
+
+    ratioOff.setSelected(aspectRatio.equals(DMDAspectRatio.ratioOff));
+    ratioOff.setDisable(dmdinfo.isForceAspectRatio());
+    ratio3.setSelected(aspectRatio.equals(DMDAspectRatio.ratio3x1));
+    ratio3.setDisable(dmdinfo.isForceAspectRatio());
+    ratio4.setSelected(aspectRatio.equals(DMDAspectRatio.ratio4x1));
+    ratio4.setDisable(dmdinfo.isForceAspectRatio());
+    ratio8.setSelected(aspectRatio.equals(DMDAspectRatio.ratio8x1));
+    ratio8.setDisable(dmdinfo.isForceAspectRatio());
   }
 
   private DMDInfo fillDmdInfo() {
@@ -389,7 +412,9 @@ public class DMDPositionController implements Initializable, DialogController {
     dmdinfo.setY(dragBox.getY() / zoom.get());
     dmdinfo.setWidth(dragBox.getWidth() / zoom.get());
     dmdinfo.setHeight(dragBox.getHeight() / zoom.get());
-    dmdinfo.setSelectedAspectRatio(aspectRatioCheckbox.isSelected());
+
+    Toggle selectedToggle = ratioGroup.getSelectedToggle();
+    dmdinfo.setAspectRatio((DMDAspectRatio) selectedToggle.getUserData());
     return dmdinfo;
   }
 }

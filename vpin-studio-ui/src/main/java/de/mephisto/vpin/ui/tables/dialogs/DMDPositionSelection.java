@@ -2,6 +2,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import java.util.function.Consumer;
 
+import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.scene.control.Toggle;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,9 +27,9 @@ public class DMDPositionSelection {
   private double initX, initY;
 
   /** Whether aspect ratio has to be enforced */
-  private BooleanProperty aspectRatio;
+  private ReadOnlyObjectProperty<Toggle> aspectRatio;
 
-  public DMDPositionSelection(Pane pane, ObjectProperty<Bounds> areaProperty, BooleanProperty aspectRatio, ObjectProperty<Color> color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
+  public DMDPositionSelection(Pane pane, ObjectProperty<Bounds> areaProperty, ReadOnlyObjectProperty<Toggle> aspectRatio, ObjectProperty<Color> color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
     this.areaProperty = areaProperty;
     this.aspectRatio = aspectRatio;
 
@@ -81,8 +84,10 @@ public class DMDPositionSelection {
         double x = meX > initX ? initX: meX;
         double y = meY > initY ? initY: meY;
         double width = meX > initX ? meX - initX : initX - meX;
-        double height = (aspectRatio != null && aspectRatio.getValue()) ?
-          width / 4 : meY > initY ? meY - initY : initY - meY;
+
+        DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue().getUserData();
+        double height = !ratio.equals(DMDAspectRatio.ratioOff) ?
+          width / ratio.getWidth() : meY > initY ? meY - initY : initY - meY;
 
         onDragEnd.accept(new Rectangle2D(x, y, width, height));
         me.consume();
@@ -91,9 +96,10 @@ public class DMDPositionSelection {
   }
 
   private void checkAspectRatio(boolean moveUp) {
-    if (aspectRatio != null && aspectRatio.getValue()) {
+    DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue().getUserData();
+    if (!ratio.equals(DMDAspectRatio.ratioOff)) {
       double width = selection.getWidth();
-      double height = width / 4;
+      double height = width / ratio.getWidth();
       if (moveUp) {
         selection.setY(selection.getY() + selection.getHeight() - height);
       }

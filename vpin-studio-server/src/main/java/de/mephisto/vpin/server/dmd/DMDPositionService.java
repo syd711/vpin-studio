@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.dmd;
 import de.mephisto.vpin.commons.MonitorInfo;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
+import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -83,12 +84,15 @@ public class DMDPositionService {
 
     dmdinfo.setForceAspectRatio(forceAspectRatio);
     if (forceAspectRatio) {
-      dmdinfo.setSelectedAspectRatio(true);
-    } else {
+      //TODO: dmdinfo.setSelectedAspectRatio(true);
+    }
+    else {
+      dmdinfo.setAspectRatio(DMDAspectRatio.ratioOff);
       // if existing dmd size ratio is close to 4:1, activate the checkbox
       double ratio = dmdinfo.getWidth() / dmdinfo.getHeight();
-      boolean aspectRatio = (Math.abs(ratio - 4) < 0.01);
-      dmdinfo.setSelectedAspectRatio(aspectRatio);
+      if (Math.abs(ratio - 4) < 0.01) {
+        dmdinfo.setAspectRatio(DMDAspectRatio.ratio4x1);
+      }
     }
 
     // then add screen information, must be done after x,y are set
@@ -127,14 +131,14 @@ public class DMDPositionService {
       info.setY(safeGet(conf, "top"));
       info.setWidth(safeGet(conf, "width"));
       info.setHeight(safeGet(conf, "height"));
-    } 
+    }
     return false;
   }
 
   private void fillScreenInfo(DMDInfo dmdinfo) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
     addDeviceOffsets(screenres);
-  
+
     // determine on which screen the DMD is positionned onto
     if (dmdinfo.getCenterX() < 0) {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.PlayField);
@@ -163,7 +167,7 @@ public class DMDPositionService {
     // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
     String backglassDisplay = screenres.getBackglassDisplay();
     if (backglassDisplay.startsWith("@")) {
-      int xPos = Integer.parseInt(backglassDisplay.substring(1)); 
+      int xPos = Integer.parseInt(backglassDisplay.substring(1));
       for (MonitorInfo m : monitors) {
         if (m.getScreenX() == xPos) {
           monitor = m;
@@ -187,7 +191,7 @@ public class DMDPositionService {
       screenres.setBackglassDisplayY(monitor.getScreenY());
     }
   }
-  
+
   private void fillScreenInfo(DMDInfo dmdinfo, DirectB2sScreenRes screenres, VPinScreen onScreen) {
     // All coordinates in DMDInfo are relative to display
     if (VPinScreen.PlayField.equals(onScreen)) {
@@ -202,14 +206,14 @@ public class DMDPositionService {
         dmdinfo.setX(dmdinfo.getX() - screenres.getBackgroundX());
         dmdinfo.setY(dmdinfo.getY() - screenres.getBackgroundY());
         dmdinfo.setScreenWidth(screenres.getBackgroundWidth());
-        dmdinfo.setScreenHeight(screenres.getBackgroundHeight());  
+        dmdinfo.setScreenHeight(screenres.getBackgroundHeight());
         dmdinfo.setImageCentered(screenres.isBackglassCentered());
       }
       else {
         dmdinfo.setX(dmdinfo.getX() - screenres.getBackglassMinX());
         dmdinfo.setY(dmdinfo.getY() - screenres.getBackglassMinY());
         dmdinfo.setScreenWidth(screenres.getBackglassWidth());
-        dmdinfo.setScreenHeight(screenres.getBackglassHeight());  
+        dmdinfo.setScreenHeight(screenres.getBackglassHeight());
       }
     }
     else if (VPinScreen.DMD.equals(onScreen)) {
@@ -346,7 +350,7 @@ public class DMDPositionService {
       }
     }
     else {
-      return saveDMDInfoInRegistry(game, dmdinfo, null);      
+      return saveDMDInfoInRegistry(game, dmdinfo, null);
     }
     return false;
   }
@@ -432,7 +436,7 @@ public class DMDPositionService {
     }
 
     try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(iniFile), StandardCharsets.UTF_8);
-          BufferedWriter writer = new BufferedWriter(osw)) {
+         BufferedWriter writer = new BufferedWriter(osw)) {
       writer.write('\ufeff');
       iniConfiguration.write(writer);
       return true;
@@ -451,6 +455,7 @@ public class DMDPositionService {
     SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
     return conf.containsKey("useregistry") ? conf.getBoolean("useregistry") : true;
   }
+
   private boolean keepAspectRatio(INIConfiguration iniConfiguration) {
     SubnodeConfiguration conf = iniConfiguration.getSection("virtualdmd");
     return conf.containsKey("ignorear") ? !conf.getBoolean("ignorear") : true;
@@ -459,8 +464,9 @@ public class DMDPositionService {
   private double safeGet(SubnodeConfiguration conf, String key) {
     return safeGet(conf, key, 0);
   }
+
   private double safeGet(SubnodeConfiguration conf, String key, double defValue) {
     return conf.containsKey(key) ? conf.getDouble(key) : defValue;
   }
-  
+
 }
