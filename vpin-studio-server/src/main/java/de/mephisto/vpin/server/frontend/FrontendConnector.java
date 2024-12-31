@@ -108,7 +108,7 @@ public interface FrontendConnector {
   List<Playlist> getPlaylists();
 
   @NonNull
-  List<Playlist> getPlaylistTree();
+  Playlist getPlaylistTree();
 
   boolean deletePlaylist(int playlistId);
 

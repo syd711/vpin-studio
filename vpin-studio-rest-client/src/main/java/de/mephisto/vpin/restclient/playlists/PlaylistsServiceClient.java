@@ -28,11 +28,8 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return list;
   }
 
-
-  public List<PlaylistRepresentation> getPlaylistTree() {
-    PlaylistRepresentation[] playlists = getRestClient().get(API + "playlists/tree", PlaylistRepresentation[].class);
-    ArrayList<PlaylistRepresentation> list = new ArrayList<>(Arrays.asList(playlists));
-    return list;
+  public PlaylistRepresentation getPlaylistTree() {
+    return getRestClient().get(API + "playlists/tree", PlaylistRepresentation.class);
   }
 
   public PlaylistRepresentation getPlaylist(int playlistId) {

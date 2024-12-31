@@ -19,7 +19,7 @@ public class PlaylistService {
     return frontendService.getPlaylists();
   }
 
-  public List<Playlist> getPlaylistTree() {
+  public Playlist getPlaylistTree() {
     return frontendService.getPlaylistTree();
   }
 

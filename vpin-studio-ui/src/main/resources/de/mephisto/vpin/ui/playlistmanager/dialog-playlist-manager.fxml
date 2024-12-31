@@ -97,7 +97,7 @@
                                                         <Tooltip text="Open Asset Manager for Playlist" />
                                                     </tooltip>
                                                 </Button>
-                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Separator fx:id="assetManagerSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                                                 <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onPlaylistDelete" textFill="#ff3333">
                                                     <font>
                                                         <Font size="14.0" />
@@ -149,7 +149,7 @@
                                 <Insets left="6.0" />
                             </BorderPane.margin>
                             <top>
-                                <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+                                <BorderPane fx:id="settingsBox" styleClass="subpanel" BorderPane.alignment="CENTER">
                                     <BorderPane.margin>
                                         <Insets bottom="6.0" />
                                     </BorderPane.margin>

@@ -254,8 +254,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
           if (selectedItem == null) {
             tableView.getSelectionModel().select(0);
-          }
-          else {
+          } else {
             tableView.getSelectionModel().select(selectedItem);
           }
           endReload();
@@ -431,8 +430,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(recordingScreen);
       if (recordingScreenOption != null) {
         options.add(recordingScreenOption);
-      }
-      else {
+      } else {
         RecordingScreenOptions opt = new RecordingScreenOptions();
         opt.setDisplayName(recordingScreen.getName());
         options.add(opt);
@@ -462,8 +460,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       Label label = null;
       if (value.getDateAdded() != null) {
         label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
-      }
-      else {
+      } else {
         label = new Label("-");
       }
       label.getStyleClass().add("default-text");
@@ -482,8 +479,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           if (newValue) {
             RecordingData recordingData = createRecordingData(value.getId());
             selection.add(recordingData);
-          }
-          else {
+          } else {
             selection.remove(value.getId());
           }
           refreshSelection();
@@ -529,8 +525,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (!newValue) {
           selection.clear();
-        }
-        else {
+        } else {
           selection.clear();
           ObservableList<GameRepresentationModel> items = tableView.getItems();
           selection.addAll(items.stream().map(g -> createRecordingData(g.getGameId())).collect(Collectors.toList()));
@@ -546,8 +541,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         tableNavigateBtn.setDisable(newValue == null);
         if (newValue != null) {
           playButtonController.setData(newValue.getGame());
-        }
-        else {
+        } else {
           playButtonController.setData(null);
         }
 
@@ -624,8 +618,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           if (selection.contains(value.getId())) {
             selection.get(value.getId()).removeScreen(screen);
           }
-        }
-        else {
+        } else {
           if (!selection.contains(value.getId())) {
             RecordingData recordingData = createRecordingData(value.getId());
             recordingData.clear();
@@ -683,8 +676,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     if (!this.selection.isEmpty()) {
       if (this.selection.size() == 1) {
         labelCount.setText(this.selection.size() + " table selected");
-      }
-      else {
+      } else {
         labelCount.setText(this.selection.size() + " tables selected");
       }
     }
@@ -708,14 +700,17 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @Override
   public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
+    if (!active) {
+      return;
+    }
+
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
     if (refreshedGame != null) {
       GameRepresentationModel model = getModel(refreshedGame);
       if (model != null) {
         model.setBean(refreshedGame);
         model.reload();
-      }
-      else {
+      } else {
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
         if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
@@ -764,8 +759,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
       if (newValue) {
         selection.getRecordingData().forEach(data -> data.addScreen(screen));
-      }
-      else {
+      } else {
         selection.getRecordingData().forEach(data -> data.removeScreen(screen));
       }
       refreshSelection();

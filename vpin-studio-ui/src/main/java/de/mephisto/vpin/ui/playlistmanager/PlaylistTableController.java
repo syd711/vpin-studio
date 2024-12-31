@@ -93,7 +93,10 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
 
   public void setData(Optional<PlaylistRepresentation> value) {
     if (value.isPresent()) {
-      this.playlist = Optional.of(client.getPlaylistsService().getPlaylist(value.get().getId()));
+      PlaylistRepresentation pl = value.get();
+      if (pl.getName() != null) {
+        this.playlist = Optional.of(client.getPlaylistsService().getPlaylist(pl.getId()));
+      }
       refresh();
     }
   }

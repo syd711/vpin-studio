@@ -129,13 +129,14 @@ public abstract class BaseConnector implements FrontendConnector {
     getAlxData();
 
     // load and cache playlists
+    playlists.clear();
     List<Playlist> loadedPlaylists = loadPlayLists();
     if (loadedPlaylists != null) {
       for (Playlist playlist : loadedPlaylists) {
         playlists.put(playlist.getId(), playlist);
         // get color if set
         JsonObject playlistConf = getPlaylistConf(playlist);
-        if (playlistConf != null && playlistConf.has("menuColor")) {
+        if (playlistConf.has("menuColor")) {
           playlist.setMenuColor(playlistConf.get("menuColor").getAsInt());
         }
       }
@@ -530,13 +531,17 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @NotNull
   @Override
-  public List<Playlist> getPlaylistTree() {
-    return getPlaylists();
+  public Playlist getPlaylistTree() {
+    getEmulators();
+
+    Playlist artificialRoot = new Playlist();
+    artificialRoot.setId(0);
+    artificialRoot.setChildren(getPlaylists());
+    return artificialRoot;
   }
 
   @Override
   public boolean deletePlaylist(int playlistId) {
-    //TODO implement me
     return false;
   }
 
