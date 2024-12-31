@@ -22,6 +22,9 @@
   - Added bulk operation support for highscore backups.
   - Re-implemented the highscore reset dialog which shows more information about the actual reset, e.g. if a resetted nvram is available.
   - Added a **reset value** input option for the highscore reset dialog.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/highscore-reset.png" width="550" />
+
 - **Preferences / Controller Setup**: Added error message that is displayed when "SET FSMODE=EnableTrueFullScreen" is set in the emulator launch script, as this will avoid any VPin Studio overlays from getting the focus.
 - **Tables / Overview:** Added new column "Comment". The colum is hidden by default, not sortable and placed as last table column. 
 - **Tables / Overview:** Added context menu item "Edit Comment". 
