@@ -443,8 +443,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     playlistManagerSeparator.managedProperty().bindBidirectional(playlistManagerSeparator.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    playlistManagerBtn.setVisible(frontendType.supportPlaylists() && Features.PLAYLIST_MANAGER);
-    playlistManagerSeparator.setVisible(frontendType.supportPlaylists() && Features.PLAYLIST_MANAGER);
+    playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
+    playlistManagerSeparator.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
 
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());

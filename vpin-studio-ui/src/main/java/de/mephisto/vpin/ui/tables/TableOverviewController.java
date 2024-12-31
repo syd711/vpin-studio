@@ -1718,6 +1718,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
+    playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
+
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
@@ -1743,6 +1745,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     FrontendUtil.replaceName(importBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(uploadTableBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
+
+    playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud());
 
     if (frontendType.equals(FrontendType.Standalone)) {
       importBtn.setVisible(false);
