@@ -54,6 +54,9 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   @FXML
   private ComboBox<GameEmulatorRepresentation> allEmulatorsCombo;
 
+  @FXML
+  private Separator emulatorsSeparator;
+
 
   @FXML
   private Button removeBtn;
@@ -133,6 +136,12 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("media", "media", new PlaylistTableColumnSorter(this));
+
+    emulatorsSeparator.managedProperty().bindBidirectional(emulatorsSeparator.visibleProperty());
+    allEmulatorsCombo.managedProperty().bindBidirectional(allEmulatorsCombo.visibleProperty());
+
+    allEmulatorsCombo.setVisible(client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists());
+    emulatorsSeparator.setVisible(client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists());
 
     removeBtn.setDisable(true);
 

@@ -158,24 +158,34 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       PlaylistRepresentation playlist = selectedItem.getValue();
       String oldValue = playlist.getName();
       String value = WidgetFactory.showInputDialog(dialogStage, "Rename Playlist", "Enter new playlist name:", null, null, playlist.getName());
-      value = FileUtils.replaceWindowsChars(value);
-      if (!StringUtils.isEmpty(value) && !oldValue.equalsIgnoreCase(value)) {
-        try {
-          playlist.setName(value);
-          PlaylistRepresentation update = client.getPlaylistsService().saveGame(playlist);
-          reload();
+      rename(value, oldValue, playlist);
+    }
+  }
 
-          if (update == null) {
-            WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
-          }
-          else {
-            select(treeView.getRoot(), update);
-          }
+  private void rename(String value, String oldValue, PlaylistRepresentation playlist) {
+    value = FileUtils.replaceWindowsChars(value);
+    int oldId = playlist.getId();
+    if (!StringUtils.isEmpty(value) && !oldValue.equalsIgnoreCase(value)) {
+      try {
+        playlist.setName(value);
+        PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(playlist);
+        //depending on the frontend, renaming is not possible and we re-create a new one.
+        if (update.getId() != oldId) {
+          client.getPlaylistsService().delete(oldId);
         }
-        catch (Exception e) {
-          LOG.error("Playlist creation failed: {}", e.getMessage(), e);
-          WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
+
+        reload();
+
+        if (update == null) {
+          WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
         }
+        else {
+          select(treeView.getRoot(), update);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Playlist renaming failed: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed: " + e.getMessage());
       }
     }
   }
@@ -223,6 +233,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         newPlayList.setName(value);
         newPlayList.setUseDefaults(true);
         newPlayList.setVisible(true);
+        newPlayList.setEmulatorId(getEmulatorId());
         newPlayList.setParentId(parentId);
         newPlayList.setMediaName("pl_" + FileUtils.replaceWindowsChars(value));
 
@@ -231,7 +242,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           newPlayList.setEmulatorId(client.getFrontendService().getDefaultGameEmulator().getId());
         }
 
-        PlaylistRepresentation update = client.getPlaylistsService().saveGame(newPlayList);
+        PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(newPlayList);
         reload();
 
         select(treeView.getRoot(), update);
@@ -241,6 +252,10 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
       }
     }
+  }
+
+  private int getEmulatorId() {
+    return client.getFrontendService().getDefaultGameEmulator().getId();
   }
 
   @FXML
@@ -417,8 +432,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     templateSelector.setVisible(frontendType.equals(FrontendType.Popper));
 
     settingsBox.setVisible(frontendType.supportExtendedPlaylists());
-    assetManagerSeparator.setVisible(frontendType.supportExtendedPlaylists());
-    assetManagerBtn.setVisible(frontendType.supportExtendedPlaylists());
+//    assetManagerSeparator.setVisible(frontendType.supportPlaylists());
+//    assetManagerBtn.setVisible(frontendType.supportPlaylists());
 
     colorPickerBox.setVisible(frontendType.equals(FrontendType.Popper));
 
@@ -498,7 +513,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         @Override
         public void startEdit() {
           super.startEdit();
-          directEditField.setText(getPlaylist().getName());
+          String oldValue = getPlaylist().getName();
+          directEditField.setText(oldValue);
           Platform.runLater(() -> {
             directEditField.requestFocus();
             directEditField.selectAll();
@@ -509,7 +525,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
               if (t.getCode() == KeyCode.ENTER) {
                 String name = directEditField.getText();
                 if (!StringUtils.isEmpty(name)) {
-                  getPlaylist().setName(name);
+                  rename(name, oldValue, getPlaylist());
                 }
                 commitEdit(getPlaylist());
                 savePlaylist();
@@ -713,7 +729,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     if (selectedItem != null) {
       PlaylistRepresentation value = selectedItem.getValue();
       try {
-        PlaylistRepresentation update = client.getPlaylistsService().saveGame(value);
+        PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(value);
         selectedItem.setValue(update);
         dirty = true;
 

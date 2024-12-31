@@ -53,4 +53,9 @@ public class PlaylistService {
   public Playlist save(Playlist playlist) {
     return frontendService.savePlaylist(playlist);
   }
+
+  public boolean clearCache() {
+    getPlaylistTree();
+    return true;
+  }
 }

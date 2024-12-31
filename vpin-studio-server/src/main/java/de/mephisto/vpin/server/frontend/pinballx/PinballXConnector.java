@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import com.google.gson.JsonObject;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
@@ -509,26 +510,44 @@ public class PinballXConnector extends BaseConnector {
   public Playlist savePlaylist(Playlist playlist) {
     try {
       if (playlist.getEmulatorId() != null) {
+        Emulator emulator = getEmulator(playlist.getEmulatorId());
         File pinballXFolder = getInstallationFolder();
-        for (Emulator emu : emulators.values()) {
-          File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
+        File dbfolder = new File(pinballXFolder, "/Databases/" + emulator.getName());
+
+        if (playlist.getId() == -1) {
           String name = FileUtils.replaceWindowsChars(playlist.getName());
           File playlistFile = new File(dbfolder, name + ".xml");
+
           org.apache.commons.io.FileUtils.write(playlistFile, "<menu>\n</menu>", StandardCharsets.UTF_8);
           LOG.info("Written new playlist file {}", playlistFile.getAbsolutePath());
           getEmulators();
           return getPlaylists().stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().get();
         }
+
+        Playlist existingPlaylist = getPlayList(playlist.getId());
+        File existingPlaylistFile = new File(dbfolder, existingPlaylist.getName() + ".xml");
+        File updated = new File(dbfolder, playlist.getName() + ".xml");
+        if (!existingPlaylistFile.renameTo(updated)) {
+          LOG.error("Renaming playlist {} to {} failed.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+        }
+        else {
+          LOG.info("Renamed playlist {} to {}.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+        }
+
+        savePlaylistConf(playlist, getPlaylistConf(playlist));
+
+        loadEmulators();
+        return playlist;
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to save PinballX plylist: {}", e.getMessage(), e);
+      LOG.error("Failed to save PinballX playlist: {}", e.getMessage(), e);
     }
     return null;
   }
 
-  //----------------------------------
-  // Favorites
+//----------------------------------
+// Favorites
 
   @Override
   public Set<Integer> loadFavorites() {
@@ -544,8 +563,8 @@ public class PinballXConnector extends BaseConnector {
     parser.writeFavorite(getGame(gameId), favorite);
   }
 
-  //----------------------------------
-  // Statistics
+//----------------------------------
+// Statistics
 
   @Override
   public List<TableAlxEntry> loadStats() {
@@ -569,8 +588,8 @@ public class PinballXConnector extends BaseConnector {
     return super.updateSecondsPlayedForGame(gameId, seconds);
   }
 
-  //----------------------------------
-  // UI Management
+//----------------------------------
+// UI Management
 
 
   @Override
@@ -578,7 +597,7 @@ public class PinballXConnector extends BaseConnector {
     return "PinballX.exe";
   }
 
-  //---------------- Utilities -----------------------------------------------------------------------------------------
+//---------------- Utilities -----------------------------------------------------------------------------------------
 
   private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
     if (emulator.getType().isVpxEmulator()) {

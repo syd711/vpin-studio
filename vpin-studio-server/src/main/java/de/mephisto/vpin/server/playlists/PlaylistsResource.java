@@ -53,4 +53,10 @@ public class PlaylistsResource {
   public boolean delete(@PathVariable("playlistId") int playlistId) {
     return playlistService.delete(playlistId);
   }
+
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return playlistService.clearCache();
+  }
 }
