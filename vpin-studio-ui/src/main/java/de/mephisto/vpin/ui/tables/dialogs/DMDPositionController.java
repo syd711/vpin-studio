@@ -103,10 +103,14 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
 
-  /** The converter for displaying numbers in spinners */
+  /**
+   * The converter for displaying numbers in spinners
+   */
   private final DecimalFormat df = new DecimalFormat("#.##");
 
-  /** The zoom factor : <screen coordinates> x zoom = <resizer pixels> */
+  /**
+   * The zoom factor : <screen coordinates> x zoom = <resizer pixels>
+   */
   private DoubleProperty zoom = new SimpleDoubleProperty(1);
   private ToggleGroup ratioGroup;
 
@@ -129,14 +133,14 @@ public class DMDPositionController implements Initializable, DialogController {
   private void onSaveClick(ActionEvent e, boolean locally) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     JFXFuture.runAsync(() -> {
-      DMDInfo dmdinfo = fillDmdInfo();
-      dmdinfo.setLocallySaved(locally);
-      LOG.info("Saving dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
-      client.getDmdPositionService().saveDMDInfo(dmdinfo);
-    })
-    .thenLater(() -> {
-      stage.close();
-    });
+          DMDInfo dmdinfo = fillDmdInfo();
+          dmdinfo.setLocallySaved(locally);
+          LOG.info("Saving dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
+          client.getDmdPositionService().saveDMDInfo(dmdinfo);
+        })
+        .thenLater(() -> {
+          stage.close();
+        });
   }
 
   @FXML
@@ -145,8 +149,8 @@ public class DMDPositionController implements Initializable, DialogController {
     DMDInfo movedDmdinfo = fillDmdInfo();
     LOG.info("Autoposition dmdinfo for game {}", game.getGameFileName());
     CompletableFuture
-      .supplyAsync(() -> client.getDmdPositionService().autoPositionDMDInfo(movedDmdinfo))
-      .thenAccept(dmd -> setDmdInfo(dmd));
+        .supplyAsync(() -> client.getDmdPositionService().autoPositionDMDInfo(movedDmdinfo))
+        .thenAccept(dmd -> setDmdInfo(dmd));
   }
 
   @Override
@@ -169,31 +173,32 @@ public class DMDPositionController implements Initializable, DialogController {
     saveGloballyBtn.setVisible(false);
 
     // The lime box that is used to position the DMD
+    snapCheckbox.setSelected(true);
     dragBox = new DMDPositionResizer(area, ratioGroup.selectedToggleProperty(), snapCheckbox.selectedProperty(), color);
     dragBox.addToPane(imagepane);
-   
+
     // setup linkages between spinner and our dragbox
-    configureSpinner(xSpinner, dragBox.xProperty(),dragBox.xMinProperty(), dragBox.xMaxProperty());
+    configureSpinner(xSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
     configureSpinner(ySpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
     configureSpinner(widthSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
     configureSpinner(heightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
 
     // add a selector in the pane to draw a rectangle.
     new DMDPositionSelection(imagepane, area, ratioGroup.selectedToggleProperty(), color,
-      // called on drag start, hide the lime dragbox 
-      () -> {
-        dragBox.setVisible(false);
-      }, 
-      // called once dragged, show th edragbox back and reposition/resize it
-      rect -> {
-        dragBox.setVisible(true);
-        dragBox.select();
+        // called on drag start, hide the lime dragbox
+        () -> {
+          dragBox.setVisible(false);
+        },
+        // called once dragged, show th edragbox back and reposition/resize it
+        rect -> {
+          dragBox.setVisible(true);
+          dragBox.select();
 
-        dragBox.setX(rect.getMinX());
-        dragBox.setY(rect.getMinY());
-        dragBox.setWidth(rect.getWidth());
-        dragBox.setHeight(rect.getHeight());
-      });
+          dragBox.setX(rect.getMinX());
+          dragBox.setY(rect.getMinY());
+          dragBox.setWidth(rect.getWidth());
+          dragBox.setHeight(rect.getHeight());
+        });
 
     // now set the existing bounds
     Bounds bounds = fullDMDImage.getLayoutBounds();
@@ -219,8 +224,8 @@ public class DMDPositionController implements Initializable, DialogController {
         DMDInfo movedDmdinfo = fillDmdInfo();
         LOG.info("Moving dmdinfo for game {} : {}", game.getGameFileName(), movedDmdinfo);
         CompletableFuture
-          .supplyAsync(() -> client.getDmdPositionService().moveDMDInfo(movedDmdinfo, selectedScreen))
-          .thenAccept(dmd -> setDmdInfo(dmd));
+            .supplyAsync(() -> client.getDmdPositionService().moveDMDInfo(movedDmdinfo, selectedScreen))
+            .thenAccept(dmd -> setDmdInfo(dmd));
       }
     });
 
@@ -234,36 +239,40 @@ public class DMDPositionController implements Initializable, DialogController {
     });
   }
 
-  private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property, 
-        ReadOnlyObjectProperty<Double> minProperty, ReadOnlyObjectProperty<Double> maxProperty) {
+  private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property,
+                                ReadOnlyObjectProperty<Double> minProperty, ReadOnlyObjectProperty<Double> maxProperty) {
 
-    SpinnerValueFactory.DoubleSpinnerValueFactory factory = 
-      new SpinnerValueFactory.DoubleSpinnerValueFactory(minProperty.get(), maxProperty.get());
+    SpinnerValueFactory.DoubleSpinnerValueFactory factory =
+        new SpinnerValueFactory.DoubleSpinnerValueFactory(minProperty.get(), maxProperty.get());
 
-      // install a converter that convert pixels into screen coordinates using the zoom factor
+    // install a converter that convert pixels into screen coordinates using the zoom factor
     factory.setConverter(new StringConverter<Double>() {
-			@Override public String toString(Double value) {
+      @Override
+      public String toString(Double value) {
         if (value == null) {
           return "";
         }
         Double screenValue = value / zoom.get();
         return df.format(screenValue);
-			}
-      @Override public Double fromString(String value) {
+      }
+
+      @Override
+      public Double fromString(String value) {
         if (StringUtils.isBlank(value)) {
           return null;
         }
         try {
           double screenValue = df.parse(value).doubleValue();
           return screenValue * zoom.get();
-        } catch (ParseException ex) {
-            throw new RuntimeException(ex);
+        }
+        catch (ParseException ex) {
+          throw new RuntimeException(ex);
         }
       }
     });
-    
+
     spinner.setValueFactory(factory);
-    spinner.setEditable(true);  
+    spinner.setEditable(true);
 
     factory.valueProperty().bindBidirectional(property);
     factory.minProperty().bind(minProperty);
@@ -280,13 +289,13 @@ public class DMDPositionController implements Initializable, DialogController {
 //    parentpane.setCenter(progressIndicator);
 
     CompletableFuture
-      .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
-      .thenAccept(dmd -> setDmdInfo(dmd))
-      .exceptionally(ex -> {
-        LOG.error("Error getting dmd information, set an empty one");
-        this.dmdinfo = new DMDInfo();
-        return null;
-      });
+        .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
+        .thenAccept(dmd -> setDmdInfo(dmd))
+        .exceptionally(ex -> {
+          LOG.error("Error getting dmd information, set an empty one");
+          this.dmdinfo = new DMDInfo();
+          return null;
+        });
   }
 
   private void disableButtons() {
@@ -303,10 +312,10 @@ public class DMDPositionController implements Initializable, DialogController {
     LOG.info("Received dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
     this.dmdinfo = dmdinfo;
 
-    String backgroundUrl = 
-      dmdinfo.isOnBackglass() ? client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(dmdinfo.getGameId(), true) :
-      dmdinfo.isOnDMD() ? client.getBackglassServiceClient().getDirectB2sDmdUrl(dmdinfo.getGameId()) :
-      null; 
+    String backgroundUrl =
+        dmdinfo.isOnBackglass() ? client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(dmdinfo.getGameId(), true) :
+            dmdinfo.isOnDMD() ? client.getBackglassServiceClient().getDirectB2sDmdUrl(dmdinfo.getGameId()) :
+                null;
 
     Image image = backgroundUrl != null ? new Image(backgroundUrl) : null;
     // when loaded, fill now the screen
@@ -314,8 +323,8 @@ public class DMDPositionController implements Initializable, DialogController {
 
       // resize the preview proportionnaly to the real screen size, 
       // determine if this is fitWidth or fitHeight that must be adjusted 
-      double fitWidth=1024.0;
-      double fitHeight=768.0;
+      double fitWidth = 1024.0;
+      double fitHeight = 768.0;
       if (dmdinfo.getScreenWidth() / dmdinfo.getScreenHeight() < fitWidth / fitHeight) {
         fitWidth = fitHeight * dmdinfo.getScreenWidth() / dmdinfo.getScreenHeight();
       }
@@ -338,8 +347,8 @@ public class DMDPositionController implements Initializable, DialogController {
 
       romLabel.setText(StringUtils.defaultIfEmpty(dmdinfo.getGameRom(), "--"));
       tablePositionLabel.setText((dmdinfo.isLocallySaved() ? "Locally" : "Globally") + " in " +
-        (dmdinfo.isUseRegistry() ? "registry" : "dmddevice.ini"));
-  
+          (dmdinfo.isUseRegistry() ? "registry" : "dmddevice.ini"));
+
       autoPositionBtn.setDisable(false);
 
       // no local save if no rom
@@ -383,8 +392,8 @@ public class DMDPositionController implements Initializable, DialogController {
   }
 
   private VPinScreen getSelectedScreen() {
-    return radioOnBackglass.isSelected() ? VPinScreen.BackGlass:
-      radioOnB2sDMD.isSelected() ? VPinScreen.DMD: VPinScreen.PlayField;
+    return radioOnBackglass.isSelected() ? VPinScreen.BackGlass :
+        radioOnB2sDMD.isSelected() ? VPinScreen.DMD : VPinScreen.PlayField;
   }
 
   private void loadDmdInfo(DMDInfo dmdinfo) {
