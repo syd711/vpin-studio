@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public abstract class BaseConnector implements FrontendConnector {
   @Autowired
   protected PreferencesService preferencesService;
 
-  private static final int PLAYLIST_FAVORITE_ID = -1;
+  private static final int PLAYLIST_FAVORITE_ID = -2;
   //private static final int PLAYLIST_GLOBALFAV_ID = -2;
   private static final int PLAYLIST_JUSTADDED_ID = -3;
   private static final int PLAYLIST_MOSTPLAYED_ID = -4;
@@ -129,14 +130,18 @@ public abstract class BaseConnector implements FrontendConnector {
     getAlxData();
 
     // load and cache playlists
+    playlists.clear();
     List<Playlist> loadedPlaylists = loadPlayLists();
     if (loadedPlaylists != null) {
       for (Playlist playlist : loadedPlaylists) {
         playlists.put(playlist.getId(), playlist);
         // get color if set
         JsonObject playlistConf = getPlaylistConf(playlist);
-        if (playlistConf != null && playlistConf.has("menuColor")) {
-          playlist.setMenuColor(playlistConf.get("menuColor").getAsInt());
+        if (playlistConf.has("menuColor")) {
+          JsonElement menuColor = playlistConf.get("menuColor");
+          if (!menuColor.isJsonNull()) {
+            playlist.setMenuColor(menuColor.getAsInt());
+          }
         }
       }
     }
@@ -530,13 +535,17 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @NotNull
   @Override
-  public List<Playlist> getPlaylistTree() {
-    return getPlaylists();
+  public Playlist getPlaylistTree() {
+    getEmulators();
+
+    Playlist artificialRoot = new Playlist();
+    artificialRoot.setId(0);
+    artificialRoot.setChildren(getPlaylists());
+    return artificialRoot;
   }
 
   @Override
   public boolean deletePlaylist(int playlistId) {
-    //TODO implement me
     return false;
   }
 
@@ -637,7 +646,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return new JsonObject();
   }
 
-  private JsonObject getPlaylistConf(Playlist playlist) {
+  protected JsonObject getPlaylistConf(Playlist playlist) {
     JsonObject conf = getPlaylistConf();
     JsonObject playlistConf = conf.getAsJsonObject(playlist.getName());
     if (playlistConf == null) {
@@ -646,7 +655,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return playlistConf;
   }
 
-  private void savePlaylistConf(Playlist playlist, JsonObject playlistConf) {
+  protected void savePlaylistConf(Playlist playlist, JsonObject playlistConf) {
     JsonObject o = getPlaylistConf();
     o.add(playlist.getName(), playlistConf);
     playlistConf.addProperty("menuColor", playlist.getMenuColor());//TODO just copied from other method, not sure here
@@ -654,7 +663,7 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistConfFile != null) {
       try {
         String content = o.toString();
-        Files.write(playlistConfFile.toPath(), content.getBytes(Charset.forName("UTF-8")));
+        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
       }
       catch (IOException ioe) {
         LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);

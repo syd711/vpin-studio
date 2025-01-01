@@ -941,13 +941,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  public List<Playlist> getPlaylistTree() {
+  public Playlist getPlaylistTree() {
     List<Playlist> result = new ArrayList<>();
     List<Playlist> playLists = getPlaylists();
     Playlist root = playLists.stream().filter(p -> p.getParentId() == -1).findFirst().get();
     result.add(root);
     buildPlaylistTree(root);
-    return result;
+    return root;
   }
 
   private void buildPlaylistTree(Playlist parent) {

@@ -19,7 +19,7 @@ public class PlaylistService {
     return frontendService.getPlaylists();
   }
 
-  public List<Playlist> getPlaylistTree() {
+  public Playlist getPlaylistTree() {
     return frontendService.getPlaylistTree();
   }
 
@@ -52,5 +52,10 @@ public class PlaylistService {
 
   public Playlist save(Playlist playlist) {
     return frontendService.savePlaylist(playlist);
+  }
+
+  public boolean clearCache() {
+    getPlaylistTree();
+    return true;
   }
 }

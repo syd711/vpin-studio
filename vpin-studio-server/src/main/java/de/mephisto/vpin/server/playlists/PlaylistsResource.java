@@ -20,7 +20,7 @@ public class PlaylistsResource {
   }
 
   @GetMapping("/tree")
-  public List<Playlist> getPlaylistTree() {
+  public Playlist getPlaylistTree() {
     return playlistService.getPlaylistTree();
   }
 
@@ -39,7 +39,6 @@ public class PlaylistsResource {
     return playlistService.addToPlaylist(playlistId, gameId, favMode);
   }
 
-
   @PutMapping("/favs/{playlistId}/{gameId}/{favMode}")
   public Playlist updatePlaylistGame(@PathVariable("playlistId") int playlistId, @PathVariable("gameId") int gameId, @PathVariable("favMode") int favMode) {
     return playlistService.updatePlaylistGame(playlistId, gameId, favMode);
@@ -53,5 +52,11 @@ public class PlaylistsResource {
   @DeleteMapping("{playlistId}")
   public boolean delete(@PathVariable("playlistId") int playlistId) {
     return playlistService.delete(playlistId);
+  }
+
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return playlistService.clearCache();
   }
 }

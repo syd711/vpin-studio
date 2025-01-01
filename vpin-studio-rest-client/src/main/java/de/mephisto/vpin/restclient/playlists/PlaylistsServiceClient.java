@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,11 +29,8 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return list;
   }
 
-
-  public List<PlaylistRepresentation> getPlaylistTree() {
-    PlaylistRepresentation[] playlists = getRestClient().get(API + "playlists/tree", PlaylistRepresentation[].class);
-    ArrayList<PlaylistRepresentation> list = new ArrayList<>(Arrays.asList(playlists));
-    return list;
+  public PlaylistRepresentation getPlaylistTree() {
+    return getRestClient().get(API + "playlists/tree", PlaylistRepresentation.class);
   }
 
   public PlaylistRepresentation getPlaylist(int playlistId) {
@@ -66,7 +64,13 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "playlists/" + playlist.getId() + "/" + game.getId() + "/" + favMode, new HashMap<>(), PlaylistRepresentation.class);
   }
 
-  public PlaylistRepresentation saveGame(PlaylistRepresentation playlist) throws Exception {
+
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "playlists/clearcache", Boolean.class);
+  }
+
+  public PlaylistRepresentation savePlaylist(PlaylistRepresentation playlist) throws Exception {
     try {
       return getRestClient().post(API + "playlists/save", playlist, PlaylistRepresentation.class);
     }

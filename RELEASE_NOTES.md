@@ -32,6 +32,9 @@
 - **Tables / Overview:** De-cluttering:
   - **Context Menu**: Removing less used entries.
   - **Toolbar**: When switching into asset-view mode, unnecessary actions are hidden.
+- **Backglass Manager / DMD Positioning**:
+  - Added "Snap to Center" option that will make the selection canvas sticky to the center.
+  - Added 3:1 aspect ratio for large Sega DMDs and a smaller 8:1 ratio for Data East displays.
 - **Hook Support**: The VPin Studio allows to execute customs scripts from any client. You can add these "hooks" by adding .exe or .bat files into the server installation directory **resources/hooks**. The list of files is picked up and added to the preferences split button of the Studio client and will be executed on click. See also: https://github.com/syd711/vpin-studio/wiki/Hooks
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
@@ -73,5 +76,5 @@
 
 - **Tables / PUP Packs**: The PUP pack data in the PUP pack section is now refreshed on table selection.
 - **Tables / Asset Preview Dialog**: The dialog has been re-implemented to ensure the shown media is properly scaled.
-
+- **Tables / Auto-Naming**: Fixed suggested file name suffixes for .fpt tables.
 

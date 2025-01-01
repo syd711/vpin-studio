@@ -132,7 +132,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    if (frontendType.supportExtendedPlaylists()) {
+    if (frontendType.supportPlaylists()) {
       HBox localFavsRoot = new HBox();
       localFavsRoot.setAlignment(Pos.BASELINE_LEFT);
       localFavsRoot.setSpacing(3);
@@ -369,7 +369,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
                   colorhex = colorhex.substring(1);
                 }
                 playlist.setMenuColor((int) Long.parseLong(colorhex, 16));
-                PlaylistRepresentation update = client.getPlaylistsService().saveGame(playlist);
+                PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(playlist);
+                client.getPlaylistsService().clearCache();
                 refreshPlaylist(update, true);
               }
               catch (Exception e) {
@@ -442,8 +443,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     playlistManagerSeparator.managedProperty().bindBidirectional(playlistManagerSeparator.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    playlistManagerBtn.setVisible(frontendType.equals(FrontendType.Popper) && Features.PLAYLIST_MANAGER);
-    playlistManagerSeparator.setVisible(frontendType.equals(FrontendType.Popper) && Features.PLAYLIST_MANAGER);
+    playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
+    playlistManagerSeparator.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
 
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());

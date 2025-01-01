@@ -1,8 +1,13 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import javafx.application.*;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.CheckBox;
@@ -32,11 +37,17 @@ public class DMDPositionResizerDemo2 extends Application {
     topbar.setPadding(new Insets(15));
     layout.setTop(topbar);
 
-    CheckBox aspectRatio = new CheckBox("Keep aspect ratio");
+    RadioButton aspectRatio = new RadioButton("Keep aspect ratio");
     aspectRatio.setSelected(true);
+    aspectRatio.setUserData(DMDAspectRatio.ratio4x1);
     HBox toolbar = new HBox(aspectRatio);
     toolbar.setPadding(new Insets(15));
     layout.setBottom(toolbar);
+
+    ToggleGroup tg = new ToggleGroup();
+    aspectRatio.setToggleGroup(tg);
+
+    BooleanProperty p = new SimpleBooleanProperty(false);
 
     Pane pane = new Pane();
     pane.setPrefWidth(500);
@@ -57,7 +68,7 @@ public class DMDPositionResizerDemo2 extends Application {
 
     addAreaBorder(pane, area.get());
     
-    new DMDPositionSelection(pane, area, aspectRatio.selectedProperty(),  color, 
+    new DMDPositionSelection(pane, area, tg.selectedToggleProperty(),  color,
       () -> {
         if (resizer != null) {
           resizer.removeFromPane(pane);
@@ -65,7 +76,7 @@ public class DMDPositionResizerDemo2 extends Application {
         }  
       }, 
       rect -> {
-        resizer = new DMDPositionResizer(area, aspectRatio.selectedProperty(), color);
+        resizer = new DMDPositionResizer(area, tg.selectedToggleProperty(), p, color);
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());

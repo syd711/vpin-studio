@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import com.google.gson.JsonObject;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.GameEntry;
@@ -15,6 +17,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +28,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,7 +92,7 @@ public class PinballXConnector extends BaseConnector {
     ));
 
     // recordings screens
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, 
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass,
         VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper));
 
     frontend.setPlayfieldMediaInverted(true);
@@ -425,6 +430,33 @@ public class PinballXConnector extends BaseConnector {
   //----------------------------------
   // Playlist management
 
+
+  @Override
+  public boolean deletePlaylist(int playlistId) {
+    List<Playlist> playlists = this.loadPlayLists();
+    playlists = playlists.stream().filter(p -> p.getId() == playlistId).collect(Collectors.toList());
+
+    File pinballXFolder = getInstallationFolder();
+    for (Emulator emu : emulators.values()) {
+      File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
+      for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+        String playlistname = FilenameUtils.getBaseName(f.getName());
+
+        for (Playlist playlist : playlists) {
+          if (playlist.getName().equals(playlistname)) {
+            if (!f.delete()) {
+              LOG.info("Failed to delete PinballX/Y playlist {}", f.getAbsolutePath());
+            }
+            else {
+              LOG.info("Deleted PinballX/Y playlist {}", f.getAbsolutePath());
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   @Override
   public List<Playlist> loadPlayLists() {
     File pinballXFolder = getInstallationFolder();
@@ -476,12 +508,46 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   public Playlist savePlaylist(Playlist playlist) {
-    //TODO not implemented yet
+    try {
+      if (playlist.getEmulatorId() != null) {
+        Emulator emulator = getEmulator(playlist.getEmulatorId());
+        File frontendInstallationFolder = getInstallationFolder();
+        File dbfolder = new File(frontendInstallationFolder, "/Databases/" + emulator.getName());
+
+        if (playlist.getId() == -1) {
+          String name = FileUtils.replaceWindowsChars(playlist.getName());
+          File playlistFile = new File(dbfolder, name + ".xml");
+
+          org.apache.commons.io.FileUtils.write(playlistFile, "<menu>\n</menu>", StandardCharsets.UTF_8);
+          LOG.info("Written new playlist file {}", playlistFile.getAbsolutePath());
+          getEmulators();
+          return getPlaylists().stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().get();
+        }
+
+        Playlist existingPlaylist = getPlayList(playlist.getId());
+        File existingPlaylistFile = new File(dbfolder, existingPlaylist.getName() + ".xml");
+        File updated = new File(dbfolder, playlist.getName() + ".xml");
+        if (!existingPlaylistFile.renameTo(updated)) {
+          LOG.error("Renaming playlist {} to {} failed.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+        }
+        else {
+          LOG.info("Renamed playlist {} to {}.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+        }
+
+        savePlaylistConf(playlist, getPlaylistConf(playlist));
+
+        loadEmulators();
+        return playlist;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save PinballX/Y playlist: {}", e.getMessage(), e);
+    }
     return null;
   }
 
-  //----------------------------------
-  // Favorites
+//----------------------------------
+// Favorites
 
   @Override
   public Set<Integer> loadFavorites() {
@@ -497,8 +563,8 @@ public class PinballXConnector extends BaseConnector {
     parser.writeFavorite(getGame(gameId), favorite);
   }
 
-  //----------------------------------
-  // Statistics
+//----------------------------------
+// Statistics
 
   @Override
   public List<TableAlxEntry> loadStats() {
@@ -522,16 +588,16 @@ public class PinballXConnector extends BaseConnector {
     return super.updateSecondsPlayedForGame(gameId, seconds);
   }
 
-  //----------------------------------
-  // UI Management
-  
-  
+//----------------------------------
+// UI Management
+
+
   @Override
   protected String getFrontendExe() {
     return "PinballX.exe";
   }
 
-  //---------------- Utilities -----------------------------------------------------------------------------------------
+//---------------- Utilities -----------------------------------------------------------------------------------------
 
   private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
     if (emulator.getType().isVpxEmulator()) {

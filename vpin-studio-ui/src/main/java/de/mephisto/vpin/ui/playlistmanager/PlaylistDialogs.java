@@ -24,4 +24,11 @@ public class PlaylistDialogs {
     controller.setData(stage, tableOverviewController, selectedPlaylist);
     stage.showAndWait();
   }
+
+  public static void openCreatePlaylistDialog(PlaylistManagerController playlistManagerController) {
+    Stage stage = Dialogs.createStudioDialogStage(NewPlaylistController.class, "dialog-new-playlist.fxml", "New Playlist");
+    NewPlaylistController controller = (NewPlaylistController) stage.getUserData();
+    controller.setData(playlistManagerController);
+    stage.showAndWait();
+  }
 }

@@ -34,7 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
@@ -46,24 +48,7 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 public class GameValidationService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameValidationService.class);
 
-  private static Map<Integer, VPinScreen> mediaCodeToScreen = new HashMap<>();
-
   private Frontend frontend;
-
-  static {
-    mediaCodeToScreen.put(CODE_NO_AUDIO, VPinScreen.Audio);
-    mediaCodeToScreen.put(CODE_NO_AUDIO_LAUNCH, VPinScreen.AudioLaunch);
-    mediaCodeToScreen.put(CODE_NO_APRON, VPinScreen.Menu);
-    mediaCodeToScreen.put(CODE_NO_INFO, VPinScreen.GameInfo);
-    mediaCodeToScreen.put(CODE_NO_HELP, VPinScreen.GameHelp);
-    mediaCodeToScreen.put(CODE_NO_TOPPER, VPinScreen.Topper);
-    mediaCodeToScreen.put(CODE_NO_BACKGLASS, VPinScreen.BackGlass);
-    mediaCodeToScreen.put(CODE_NO_DMD, VPinScreen.DMD);
-    mediaCodeToScreen.put(CODE_NO_PLAYFIELD, VPinScreen.PlayField);
-    mediaCodeToScreen.put(CODE_NO_LOADING, VPinScreen.Loading);
-    mediaCodeToScreen.put(CODE_NO_OTHER2, VPinScreen.Other2);
-    mediaCodeToScreen.put(CODE_NO_WHEEL_IMAGE, VPinScreen.Wheel);
-  }
 
   @Autowired
   private PreferencesService preferencesService;
