@@ -4,6 +4,15 @@ public class ConfirmationResult {
   private boolean applyClicked;
   private boolean okClicked;
   private boolean checked;
+  private boolean cancelClicked;
+
+  public boolean isCancelClicked() {
+    return cancelClicked;
+  }
+
+  public void setCancelClicked(boolean cancelClicked) {
+    this.cancelClicked = cancelClicked;
+  }
 
   public boolean isOkClicked() {
     return okClicked;
