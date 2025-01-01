@@ -178,7 +178,7 @@ public class GameService implements InitializingBean {
         killFrontend = true;
       }
     }
-    games.sort(Comparator.comparing(Game::getGameDisplayName));
+    games.sort(Comparator.comparing(o -> o.getGameDisplayName().toLowerCase()));
     long duration = System.currentTimeMillis() - start;
     long avg = 0;
     if (!games.isEmpty()) {
