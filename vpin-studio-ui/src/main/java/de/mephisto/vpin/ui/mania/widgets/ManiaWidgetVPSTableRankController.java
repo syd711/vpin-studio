@@ -52,10 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
@@ -131,6 +128,12 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   @FXML
   private ToolBar toolbar;
 
+  @FXML
+  private Tab denyListTab;
+
+  @FXML
+  private Tab highscoresTab;
+
   private Parent loadingOverlay;
   private List<TableScoreDetails> tableScores;
   private VpsTable vpsTable;
@@ -169,10 +172,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @FXML
   private void onDenyListAdd() {
-    TableScoreDetails selectedItem = tableView.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      DeniedScore deniedScore = selectedItem.toDeniedScore(ManiaPermissions.getAccount().getUuid(), vpsTable.getDisplayName());
-      boolean b = ManiaDialogs.openDenyListDialog(deniedScore);
+    List<TableScoreDetails> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      List<DeniedScore> update = new ArrayList<>();
+      for (TableScoreDetails selectedItem : selectedItems) {
+        DeniedScore deniedScore = selectedItem.toDeniedScore(ManiaPermissions.getAccount().getUuid(), vpsTable.getDisplayName());
+        update.add(deniedScore);
+      }
+
+      boolean b = ManiaDialogs.openDenyListDialog(update);
       if (b) {
         onReload();
       }
@@ -186,6 +194,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     }).thenAcceptLater(deniedScores -> {
       ObservableList<DeniedScore> denyListData = FXCollections.observableList(deniedScores);
       denyListView.setItems(denyListData);
+      denyListTab.setText("Deny List (" + denyListData.size() + ")");
     });
   }
 
@@ -481,6 +490,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
         titleLabel.setText("Ranking");
         ObservableList<TableScoreDetails> data = FXCollections.emptyObservableList();
         tableView.setItems(data);
+        highscoresTab.setText("Highscores (" + data.size() + ")");
         tableView.refresh();
       });
       return;
@@ -502,6 +512,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
           tableScores = searchResult;
           ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
           tableView.setItems(data);
+          highscoresTab.setText("Highscores (" + data.size() + ")");
           tableView.refresh();
         });
   }

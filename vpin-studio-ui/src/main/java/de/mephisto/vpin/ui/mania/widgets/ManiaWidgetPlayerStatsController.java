@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -159,22 +160,28 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
   @FXML
   private void onDenyListAdd() {
-    TableScoreModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      VpsTable vpsTable = selectedItem.getVpsTable();
+    List<TableScoreModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      List<DeniedScore> update = new ArrayList<>();
+      for (TableScoreModel selectedItem : selectedItems) {
+        VpsTable vpsTable = selectedItem.getVpsTable();
 
-      DeniedScore deniedScore = new DeniedScore();
-      deniedScore.setDeniedByAccountUuid(ManiaPermissions.getAccount().getUuid());
-      deniedScore.setDeniedDate(new Date());
-      deniedScore.setScore(selectedItem.getScoreValue());
-      deniedScore.setInitials(account.getInitials());
-      deniedScore.setVpsTableId(selectedItem.getVpsTable().getId());
-      deniedScore.setVpsVersionId(selectedItem.getVpsTableVersion().getId());
-      deniedScore.setTableName(vpsTable.getDisplayName());
+        DeniedScore deniedScore = new DeniedScore();
+        deniedScore.setDeniedByAccountUuid(ManiaPermissions.getAccount().getUuid());
+        deniedScore.setDeniedDate(new Date());
+        deniedScore.setScore(selectedItem.getScoreValue());
+        deniedScore.setInitials(account.getInitials());
+        deniedScore.setVpsTableId(selectedItem.getVpsTable().getId());
+        deniedScore.setVpsVersionId(selectedItem.getVpsTableVersion().getId());
+        deniedScore.setTableName(vpsTable.getDisplayName());
 
-      boolean b = ManiaDialogs.openDenyListDialog(deniedScore);
+        update.add(deniedScore);
+      }
+
+      boolean b = ManiaDialogs.openDenyListDialog(update);
       if (b) {
-        onReload();
+        tableView.getItems().removeAll(selectedItems);
+        tableView.refresh();
       }
     }
   }
@@ -412,7 +419,6 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
       titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
       sub1Label.setText("Recorded Scores: " + highscoresByAccount.size());
-
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
 

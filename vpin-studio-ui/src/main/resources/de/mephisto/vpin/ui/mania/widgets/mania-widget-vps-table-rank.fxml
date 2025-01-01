@@ -32,7 +32,7 @@
    <center>
       <TabPane BorderPane.alignment="CENTER">
          <tabs>
-            <Tab closable="false" text="Highscores">
+            <Tab fx:id="highscoresTab" closable="false" text="Highscores">
                <content>
                   <BorderPane>
                      <center>
@@ -115,7 +115,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-list" iconSize="18" />
                </graphic>
             </Tab>
-            <Tab closable="false" text="Deny List">
+            <Tab fx:id="denyListTab" closable="false" text="Deny List">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-remove" iconSize="18" />
                </graphic>
