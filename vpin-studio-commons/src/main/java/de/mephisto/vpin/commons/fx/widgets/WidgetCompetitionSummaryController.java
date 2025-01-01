@@ -174,6 +174,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     }
     else {
       LOG.error("No game found for " + competition);
+      topBox.setVisible(false);
+      loadingPane.setVisible(false);
+      emptyPanel.setVisible(true);
+      return;
     }
 
     competitionLabel.setText(competition.getName());

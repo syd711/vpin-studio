@@ -31,7 +31,7 @@
                      <children>
                         <Label textFill="#605e5e">
                            <graphic>
-                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2d-database-off-outline" iconSize="300" />
+                              <FontIcon iconColor="#605e5e" iconLiteral="mdi2d-database-off-outline" iconSize="250" />
                            </graphic>
                         </Label>
                      </children>
