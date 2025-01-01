@@ -349,7 +349,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     mediaNameText.setText("");
     passcodeText.setDisable(value.isEmpty());
     passcodeText.setText("");
-    templateSelector.setDisable(value.isEmpty());
+    templateSelector.setDisable(value.isEmpty() || !value.get().isSqlPlayList());
 
     errorContainer.setVisible(false);
 
@@ -442,6 +442,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 //    assetManagerBtn.setVisible(frontendType.supportPlaylists());
 
     colorPickerBox.setVisible(frontendType.equals(FrontendType.Popper));
+    templateSelector.setDisable(true);
 
     if (!frontendType.equals(FrontendType.Popper)) {
       uglyBox.setVisible(false);
@@ -584,6 +585,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         sqlText.setDisable(!newValue);
+        templateSelector.setDisable(!newValue);
         if (!newValue) {
           errorContainer.setVisible(false);
           getPlaylist().setSqlError(null);
