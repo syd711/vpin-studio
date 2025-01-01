@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,7 +226,12 @@ public class PropperRenamingController implements Initializable {
       }
 
       if (fileNameCheckBox.isSelected()) {
-        fileName.setText(builder.toString() + ".vpx");
+        String fileSuffix = "vpx";
+        String existingName = tableDetails.getGameFileName();
+        if(existingName != null) {
+          fileSuffix = FilenameUtils.getExtension(existingName);
+        }
+        fileName.setText(builder + "." + fileSuffix);
       }
     }
   }
