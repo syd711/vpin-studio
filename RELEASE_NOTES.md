@@ -28,6 +28,7 @@
 - **Preferences / Controller Setup**: Added error message that is displayed when "SET FSMODE=EnableTrueFullScreen" is set in the emulator launch script, as this will avoid any VPin Studio overlays from getting the focus.
 - **Tables / Overview:** Added new column "Comment". The colum is hidden by default, not sortable and placed as last table column. 
 - **Tables / Overview:** Added context menu item "Edit Comment". 
+- **Tables / Overview:** Added ROM alias name in square brackets to the ROMs column (if set). 
 - **Tables / Filter:** Added filter option "No comment". 
 - **Tables / Overview:** De-cluttering:
   - **Context Menu**: Removing less used entries.
@@ -76,6 +77,7 @@
 - **Installed Indicator**: The recent scores and table overview item show an additional green icon if the table with the given VPS mapping is installed on the users cabinet. Note that only the table is checked, not the version.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/score-entry.png" width="350" />
+
 
 ## Bugfixes
 
