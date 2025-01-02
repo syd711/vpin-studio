@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.mania.widgets;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.ui.Studio;
@@ -45,6 +46,10 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
 
   @FXML
   private Label changeDateLabel;
+
+  @FXML
+  private Label installedLabel;
+
   private ManiaWidgetLatestScoresController latestScoresController;
   private VpsTable vpsTable;
   private TableScoreDetails score;
@@ -57,6 +62,7 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    installedLabel.setVisible(false);
   }
 
   public void setData(VpsTable vpsTable, TableScoreDetails score) {
@@ -74,6 +80,9 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
 
     String date = simpleDateFormat.format(score.getCreationDate());
     changeDateLabel.setText("Updated: " + date);
+
+    GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(score.getVpsTableId(), null);
+    installedLabel.setVisible(gameByVpsTable != null);
   }
 
   public void setLatestScoresController(ManiaWidgetLatestScoresController latestScoresController) {

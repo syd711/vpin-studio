@@ -71,6 +71,11 @@
     - the highscore editor by clicking on the VPin Mania logo.
 - **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. Default highscores that are posted on VPin Mania can be ignored this way. For more information, visit our Discord server linked in the preferences.
 
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/deny-list.png" width="700" />
+
+- **Installed Indicator**: The recent scores and table overview item show an additional green icon if the table with the given VPS mapping is installed on the users cabinet. Note that only the table is checked, not the version.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/score-entry.png" width="350" />
 
 ## Bugfixes
 
@@ -78,3 +83,4 @@
 - **Tables / Asset Preview Dialog**: The dialog has been re-implemented to ensure the shown media is properly scaled.
 - **Tables / Auto-Naming**: Fixed suggested file name suffixes for .fpt tables.
 - **Tables / Overview**: Default sorting by display name is not case-sensitive anymore.
+- **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
