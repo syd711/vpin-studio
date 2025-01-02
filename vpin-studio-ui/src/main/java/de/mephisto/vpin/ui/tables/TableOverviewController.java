@@ -597,8 +597,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void openUploadDialog(@Nullable UploadType uploadType) {
     GameRepresentation game = getSelection();
-    GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-    TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
+    if (game != null) {
+      GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
+    }
+    else {
+      GameEmulatorRepresentation value = emulatorCombo.getValue();
+      if (value != null) {
+        TableDialogs.openTableUploadDialog(null, value.getEmulatorType(), uploadType, null);
+      }
+      else {
+        TableDialogs.openTableUploadDialog(null, null, uploadType, null);
+      }
+    }
   }
 
   public void refreshFilters() {
