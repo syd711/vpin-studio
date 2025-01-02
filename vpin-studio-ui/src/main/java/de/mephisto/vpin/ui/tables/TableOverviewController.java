@@ -1052,7 +1052,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = value.getIgnoredValidations();
       }
+      if (!StringUtils.isEmpty(value.getRomAlias())) {
+        rom = rom + " [" + value.getRomAlias() + "]";
+      }
+
       Label label = new Label(rom);
+      if (!StringUtils.isEmpty(value.getRomAlias())) {
+        label.setTooltip(new Tooltip("This rom is aliased."));
+      }
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         String color = WidgetFactory.ERROR_COLOR;
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
