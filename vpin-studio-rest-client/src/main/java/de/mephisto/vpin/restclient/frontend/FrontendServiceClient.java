@@ -104,12 +104,12 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public List<FrontendPlayerDisplay> getScreenDisplays() {
     FrontendPlayerDisplay[] displays = getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendPlayerDisplay[].class);
-    return displays != null? Arrays.asList(displays): Collections.emptyList();
+    return displays != null ? Arrays.asList(displays) : Collections.emptyList();
   }
 
   public List<GameEmulatorRepresentation> getGameEmulators() {
     GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class);
-    return emus != null? Arrays.asList(emus): Collections.emptyList();
+    return emus != null ? Arrays.asList(emus) : Collections.emptyList();
   }
 
   public List<GameEmulatorRepresentation> getVpxGameEmulators() {
@@ -135,7 +135,11 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
     List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-    filtered.add(0, createAllVpx());
+    List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+
+    if (vpxEmulators.size() > 1) {
+      filtered.add(0, createAllVpx());
+    }
     return filtered;
   }
 

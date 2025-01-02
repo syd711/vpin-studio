@@ -114,6 +114,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Label errorLabel;
 
   @FXML
+  private Label hintLabel;
+
+  @FXML
   private Pane colorPickerBox;
   @FXML
   private Pane dofCommandBox;
@@ -420,7 +423,6 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     scrollPane.setFitToWidth(true);
 
     treeView.setEditable(true);
-
     settingsBox.managedProperty().bindBidirectional(settingsBox.visibleProperty());
 
     assetManagerSeparator.managedProperty().bindBidirectional(assetManagerSeparator.visibleProperty());
@@ -436,6 +438,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     templateSelector.setVisible(frontendType.equals(FrontendType.Popper));
+    hintLabel.setVisible(frontendType.equals(FrontendType.Popper));
 
     settingsBox.setVisible(frontendType.supportExtendedPlaylists());
 //    assetManagerSeparator.setVisible(frontendType.supportPlaylists());

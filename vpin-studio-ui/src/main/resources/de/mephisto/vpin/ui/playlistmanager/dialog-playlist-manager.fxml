@@ -24,18 +24,25 @@
         <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/dialog-header-resizeable.fxml" />
     </top>
     <bottom>
-        <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-            <children>
-                <Button fx:id="closeBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
-                </Button>
-            </children>
-            <BorderPane.margin>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-            </BorderPane.margin>
-        </HBox>
+      <BorderPane BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <right>
+              <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+                  <children>
+                      <Button fx:id="closeBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
+                          <HBox.margin>
+                              <Insets />
+                          </HBox.margin>
+                      </Button>
+                  </children>
+              </HBox>
+         </right>
+         <left>
+            <Label fx:id="hintLabel" text="Note: Favourites are automatically added on front end. There is no need to add favourite playlists manually." BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
     </bottom>
     <center>
         <BorderPane BorderPane.alignment="CENTER">
