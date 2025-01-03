@@ -526,11 +526,23 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @NonNull
   @Override
-  public Playlist getPlayList(int id) {
+  public Playlist getPlaylist(int id) {
     return id == PLAYLIST_FAVORITE_ID ? getFavPlaylist() :
         id == PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist() :
             id == PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist() :
                 playlists.get(id);
+  }
+
+
+  @NonNull
+  @Override
+  public Playlist clearPlaylist(int id) {
+    Playlist playlist = getPlaylist(id);
+    List<PlaylistGame> games = playlist.getGames();
+    for (PlaylistGame game : games) {
+      deleteFromPlaylist(id, game.getId());
+    }
+    return getPlaylist(id);
   }
 
   @NotNull

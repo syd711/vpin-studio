@@ -26,6 +26,9 @@ public class PlaylistService {
   public Playlist getPlaylist(int playlistId) {
     return frontendService.getPlayList(playlistId);
   }
+  public Playlist clearPlaylist(int playlistId) {
+    return frontendService.clearPlayList(playlistId);
+  }
 
   public Playlist removeFromPlaylist(int playlistId, int gameId) {
     frontendService.deleteFromPlaylist(playlistId, gameId);

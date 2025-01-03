@@ -97,7 +97,7 @@ public class ScreenRecorderPanelController implements Initializable {
           Platform.runLater(() -> {
             root.prefWidthProperty().set(newValue.intValue() - 1040);
           });
-        }, 500);
+        }, 200);
       }
     });
 
@@ -201,7 +201,6 @@ public class ScreenRecorderPanelController implements Initializable {
 
     preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-    RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
 
     if (preview.isVisible()) {
       double w = preview.widthProperty().get();

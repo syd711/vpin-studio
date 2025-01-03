@@ -487,7 +487,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public Playlist getPlayList(int id) {
-    return getFrontendConnector().getPlayList(id);
+    return getFrontendConnector().getPlaylist(id);
+  }
+
+  @NonNull
+  public Playlist clearPlayList(int id) {
+    return getFrontendConnector().clearPlaylist(id);
   }
 
   @NonNull

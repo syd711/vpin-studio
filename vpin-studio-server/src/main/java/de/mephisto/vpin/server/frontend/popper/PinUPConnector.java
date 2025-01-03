@@ -919,7 +919,26 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  public Playlist getPlayList(int id) {
+  public Playlist clearPlaylist(int id) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE PlayListID = ?");
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Cleared playlist {}", id);
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return getPlaylist(id);
+  }
+
+  @NonNull
+  public Playlist getPlaylist(int id) {
     Playlist playlist = new Playlist();
     Connection connect = this.connect();
     try {
@@ -1128,11 +1147,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           int id = keys.getInt(1);
-          return getPlayList(id);
+          return getPlaylist(id);
         }
       }
 
-      return getPlayList(playlist.getId());
+      return getPlaylist(playlist.getId());
     }
     catch (Exception e) {
       LOG.error("Failed to update playlist: {}", e.getMessage(), e);

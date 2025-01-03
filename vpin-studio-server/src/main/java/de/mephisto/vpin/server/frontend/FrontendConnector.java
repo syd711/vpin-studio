@@ -102,7 +102,10 @@ public interface FrontendConnector {
   // Playlists management
 
   @NonNull
-  Playlist getPlayList(int id);
+  Playlist getPlaylist(int id);
+
+  @NonNull
+  Playlist clearPlaylist(int id);
 
   @NonNull
   List<Playlist> getPlaylists();

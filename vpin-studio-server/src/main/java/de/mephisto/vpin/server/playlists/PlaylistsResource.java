@@ -29,6 +29,11 @@ public class PlaylistsResource {
     return playlistService.getPlaylist(playlistId);
   }
 
+  @GetMapping("/clear/{playlistId}")
+  public Playlist clearPlaylist(@PathVariable("playlistId") int playlistId) {
+    return playlistService.clearPlaylist(playlistId);
+  }
+
   @DeleteMapping("/{playlistId}/{gameId}")
   public Playlist removeFromPlaylist(@PathVariable("playlistId") int playlistId, @PathVariable("gameId") int gameId) {
     return playlistService.removeFromPlaylist(playlistId, gameId);

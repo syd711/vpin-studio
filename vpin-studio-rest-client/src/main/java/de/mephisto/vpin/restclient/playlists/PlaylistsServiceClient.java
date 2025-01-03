@@ -37,6 +37,10 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "playlists/" + playlistId, PlaylistRepresentation.class);
   }
 
+  public PlaylistRepresentation clearPlaylist(int playlistId) {
+    return getRestClient().get(API + "playlists/clear/" + playlistId, PlaylistRepresentation.class);
+  }
+
   public PlaylistRepresentation removeFromPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
     getRestClient().delete(API + "playlists/" + playlist.getId() + "/" + game.getId(), new HashMap<>());
     return getPlaylist(playlist.getId());

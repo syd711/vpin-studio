@@ -66,6 +66,10 @@ public class GameEmulatorRepresentation {
     return emulatorType.isFpEmulator();
   }
 
+  public boolean isFxEmulator() {
+    return emulatorType.isFxEmulator();
+  }
+
   public boolean isVpxEmulator() {
     return emulatorType.isVpxEmulator();
   }

@@ -31,4 +31,11 @@ public class PlaylistDialogs {
     controller.setData(playlistManagerController);
     stage.showAndWait();
   }
+
+  public static void openPlaylistTemplateDialog(PlaylistTableController playlistTableController, PlaylistRepresentation playlist) {
+    Stage stage = Dialogs.createStudioDialogStage(PlaylistTemplatesController.class, "dialog-playlist-templates.fxml", "Playlist Templates");
+    PlaylistTemplatesController controller = (PlaylistTemplatesController) stage.getUserData();
+    controller.setData(playlistTableController, stage, playlist);
+    stage.showAndWait();
+  }
 }

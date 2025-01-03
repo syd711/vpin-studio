@@ -33,10 +33,13 @@ public enum EmulatorType {
 
   public String shortName() {
     switch (this) {
-    case VisualPinball: return "VPX";
-    case FuturePinball: return "FP";
-    default: return "";
-    }    
+      case VisualPinball:
+        return "VPX";
+      case FuturePinball:
+        return "FP";
+      default:
+        return "";
+    }
   }
 
   public static EmulatorType fromName(String emuName) {
@@ -51,10 +54,10 @@ public enum EmulatorType {
     else if (emu.startsWith("futurepinball")) {
       return FuturePinball;
     }
-    else if (emu.startsWith("pinballfx2")) {
+    else if (emu.startsWith("pinballfx2") || emu.toLowerCase().contains("fx2")) {
       return ZenFX2;
     }
-    else if (emu.startsWith("pinballfx3")) {
+    else if (emu.startsWith("pinballfx3") || emu.toLowerCase().contains("fx3")) {
       return ZenFX3;
     }
     else if (emu.startsWith("zaccaria")) {

@@ -2,10 +2,17 @@
 
 ## Changes
 
-- **Tables / Playlist Manager** Added playlist manager to create, edit and delete playlists. Note that the interaction concept differs from Popper here, as you can only remove tables from playlists there and use the table overview to add tables instead. In addition to the base functionality, the dialog lets you choose some pre-defined SQL queries. This feature comes with a bunch of other changes regarding the playlist management.
+- **Tables / Playlist Manager** Added playlist manager to create, edit and delete playlists. Note that the interaction concept differs from Popper here, as you can only remove tables from playlists there and use the table overview to add tables instead. This feature comes with a bunch of other changes regarding the playlist management.
   - The playlist section in the table overview has been re-designed to support multi-selection. So you select multiple tables from the table overview and add them to a playlist.
   - Added icons to indicate if a playlist is a curated one or a SQL playlist.
   - Added "edit" button next to the playlist selector on the table overview toolbar.
+  - Predefined SQL templates support
+  
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/sql-templates.png" width="500" />
+  - Predefined curated playlists support
+  
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-templates.png" width="600" />
+    
   - All playlist icon from the table overview and playlist sidebar section have been converted into a button which directly opens the playlist inside the management dialog.
   - Added separate icon for "Pinball M".
 
@@ -29,6 +36,7 @@
 - **Tables / Overview:** Added new column "Comment". The colum is hidden by default, not sortable and placed as last table column. 
 - **Tables / Overview:** Added context menu item "Edit Comment". 
 - **Tables / Overview:** Added ROM alias name in square brackets to the ROMs column (if set). 
+- **Tables / Overview:** Added VPS, Playlist and Comments columns for FX emulators. 
 - **Tables / Filter:** Added filter option "No comment". 
 - **Tables / Overview:** De-cluttering:
   - **Context Menu**: Removing less used entries.

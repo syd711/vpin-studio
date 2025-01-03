@@ -61,6 +61,9 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   @FXML
   private Button removeBtn;
 
+  @FXML
+  private Button addBtn;
+
   private Stage dialogStage;
   private Optional<PlaylistRepresentation> playlist;
   private Stage stage;
@@ -68,6 +71,13 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
   @Override
   protected void onDelete(Event e) {
     onRemove();
+  }
+
+  @FXML
+  private void onAdd() {
+    if (playlist.isPresent()) {
+      PlaylistDialogs.openPlaylistTemplateDialog(this, playlist.get());
+    }
   }
 
   @FXML
@@ -110,7 +120,9 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       List<PlaylistGame> games = playlist.get().getGames();
       List<GameRepresentation> collect = games.stream().map(this::toGameModel).filter(Objects::nonNull).collect(Collectors.toList());
       setItems(filterItems(collect));
+      tableView.refresh();
       labelCount.setText(collect.size() + " tables");
+      addBtn.setDisable(playlist.get().isSqlPlayList());
     });
   }
 
@@ -144,6 +156,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
     emulatorsSeparator.setVisible(client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists());
 
     removeBtn.setDisable(true);
+    addBtn.setDisable(true);
 
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
       clearSelection();
@@ -170,6 +183,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       @Override
       public void onChanged(Change<? extends GameRepresentationModel> c) {
         removeBtn.setDisable(c.getList().isEmpty() || !playlist.isPresent() || playlist.get().isSqlPlayList());
+        addBtn.setDisable(!playlist.isPresent() || playlist.get().isSqlPlayList());
       }
     });
 

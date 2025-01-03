@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import com.google.gson.JsonObject;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
@@ -17,7 +16,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +26,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -524,7 +521,7 @@ public class PinballXConnector extends BaseConnector {
           return getPlaylists().stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().get();
         }
 
-        Playlist existingPlaylist = getPlayList(playlist.getId());
+        Playlist existingPlaylist = getPlaylist(playlist.getId());
         File existingPlaylistFile = new File(dbfolder, existingPlaylist.getName() + ".xml");
         File updated = new File(dbfolder, playlist.getName() + ".xml");
         if (!existingPlaylistFile.renameTo(updated)) {
