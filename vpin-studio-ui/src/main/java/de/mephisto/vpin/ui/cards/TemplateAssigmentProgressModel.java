@@ -67,6 +67,11 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
     if (games.size() > MAX_REFRESH_COUNT) {
       EventManager.getInstance().notifyTablesChanged();
     }
+    else {
+      for (GameRepresentation game : games) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+    }
   }
 
   @Override
@@ -74,9 +79,6 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
     game.setTemplateId(templateId);
     try {
       client.getGameService().saveGame(game);
-      if (games.size() <= MAX_REFRESH_COUNT) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
     }
     catch (Exception e) {
       LOG.error("Failed to save template mapping: " + e.getMessage(), e);

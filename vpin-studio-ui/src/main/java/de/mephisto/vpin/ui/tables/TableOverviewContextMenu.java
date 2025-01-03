@@ -140,7 +140,7 @@ public class TableOverviewContextMenu {
     ctxMenu.getItems().add(vpsItem);
 
     MenuItem vpsUpdateItem = new MenuItem("Reset VPS Updates");
-    vpsUpdateItem.setOnAction(actionEvent -> tableOverviewController.onVpsReset());
+    vpsUpdateItem.setOnAction(actionEvent -> tableOverviewController.onVpsResetUpdates());
     vpsUpdateItem.setDisable(game.getVpsUpdates().isEmpty());
     vpsUpdateItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsUpdateItem);

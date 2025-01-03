@@ -469,23 +469,27 @@ public class TableDialogs {
     }
   }
 
-  public static void openAutoMatch(GameRepresentation game) {
+  public static void openAutoMatch(List<GameRepresentation> games) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        onOpenAutoMatch(game);
+        onOpenAutoMatch(games);
       }
     }
     else {
-      onOpenAutoMatch(game);
+      onOpenAutoMatch(games);
     }
   }
 
-  private static void onOpenAutoMatch(GameRepresentation game) {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
+  private static void onOpenAutoMatch(List<GameRepresentation> games) {
+    String title = "Auto-Match table and version for " + games.size() + " tables?";
+    if (games.size() == 1) {
+      title = "Auto-Match table and version for \"" + games.get(0).getGameDisplayName() + "\"?";
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         "This will overwrite the existing mapping.", "This action will overwrite the VPS table and version IDs fields.", "Auto-Match");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true, false));
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, true, false));
     }
   }
 

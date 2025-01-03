@@ -816,7 +816,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         this.tablesSidebarTableDetailsController.setGame(g);
       }
       if (titledPaneVps.isExpanded() && titledPaneVps.isVisible()) {
-        this.tablesSidebarVpsController.setGame(g);
+        this.tablesSidebarVpsController.setGames(games);
       }
       if (titledPaneAltColor.isExpanded() && titledPaneAltColor.isVisible()) {
         this.tablesSidebarAltColorController.setGame(g);

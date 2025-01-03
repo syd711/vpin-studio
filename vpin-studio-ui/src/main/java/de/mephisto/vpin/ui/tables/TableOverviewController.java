@@ -513,12 +513,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @FXML
-  public void onVpsReset() {
+  public void onVpsResetUpdates() {
     List<GameRepresentation> selectedItems = getSelections();
-    onVpsReset(selectedItems);
+    onVpsResetUpdates(selectedItems);
   }
 
-  public static void onVpsReset(List<GameRepresentation> selectedItems) {
+  public static void onVpsResetUpdates(List<GameRepresentation> selectedItems) {
     List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getVpsUpdates().isEmpty()).collect(Collectors.toList());
     ProgressDialog.createProgressDialog(new VPSResetProgressModel(collect));
   }
