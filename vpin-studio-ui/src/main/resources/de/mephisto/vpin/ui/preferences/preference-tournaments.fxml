@@ -180,6 +180,16 @@
                         </VBox>
                      </children>
                   </VBox>
+                  <VBox fx:id="notRegisteredPane">
+                     <children>
+                        <Label styleClass="default-headline" text="Cabinet not registered.">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="You need to register your cabinet on VPin Mania to use these services." textFill="WHITE" />
+                     </children>
+                  </VBox>
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

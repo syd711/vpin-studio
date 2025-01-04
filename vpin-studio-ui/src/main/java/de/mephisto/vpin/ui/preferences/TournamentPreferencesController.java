@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,6 +47,9 @@ public class TournamentPreferencesController implements Initializable, Preferenc
   @FXML
   private TextArea descriptionText;
 
+  @FXML
+  private Pane notRegisteredPane;
+
   private TournamentSettings settings;
 
   @Override
@@ -59,10 +63,13 @@ public class TournamentPreferencesController implements Initializable, Preferenc
     catch (Exception e) {
       LOG.error("Failed to load cabinet setting: {}", e.getMessage());
     }
-
+    preferencesPanel.setVisible(cabinet != null);
+    notRegisteredPane.setVisible(cabinet == null);
+    if (cabinet == null) {
+      return;
+    }
 
     settings = client.getTournamentsService().getSettings();
-    preferencesPanel.setVisible(cabinet != null);
 
 
     dashboardUrl.setText(settings.getDefaultDashboardUrl());

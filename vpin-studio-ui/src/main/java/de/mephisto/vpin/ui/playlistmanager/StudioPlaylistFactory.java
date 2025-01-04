@@ -22,11 +22,7 @@ public class StudioPlaylistFactory {
       new PlaylistTemplatesController.PlaylistTemplate(0, "Tables with an iScored subscription (visible only)"),
       new PlaylistTemplatesController.PlaylistTemplate(1, "Tables with an iScored subscription (include hidden)"),
 //      new PlaylistTemplatesController.PlaylistTemplate(2, "Tables where I have no highscore"),
-      new PlaylistTemplatesController.PlaylistTemplate(3, "Tables with PUP pack"),
-      new PlaylistTemplatesController.PlaylistTemplate(4, "Tables with SSF support"),
-      new PlaylistTemplatesController.PlaylistTemplate(5, "Tables with VR support"),
-      new PlaylistTemplatesController.PlaylistTemplate(6, "Tables with 4k resolution"),
-      new PlaylistTemplatesController.PlaylistTemplate(7, "Tables that are kids friendly")
+      new PlaylistTemplatesController.PlaylistTemplate(3, "Tables with PUP pack")
   );
 
   public static List<GameRepresentation> create(int templateId, int count, boolean shuffle) {
@@ -67,22 +63,6 @@ public class StudioPlaylistFactory {
         }
         break;
       }
-      case 4: {
-        result = getByVPSFeature("SSF");
-        break;
-      }
-      case 5: {
-        result = getByVPSFeature("VR");
-        break;
-      }
-      case 6: {
-        result = getByVPSFeature("4k");
-        break;
-      }
-      case 7: {
-        result = getByVPSFeature("Kids");
-        break;
-      }
       default: {
         LOG.error("No valid playlist template found for id {}", templateId);
       }
@@ -98,6 +78,7 @@ public class StudioPlaylistFactory {
     return result;
   }
 
+  //could be used instead of SQL
   private static List<GameRepresentation> getByVPSFeature(String feature) {
     List<GameRepresentation> result = new ArrayList<>();
     List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();

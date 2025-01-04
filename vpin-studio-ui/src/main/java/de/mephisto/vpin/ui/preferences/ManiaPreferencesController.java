@@ -1,11 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.ManiaRegistration;
@@ -22,13 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class ManiaPreferencesController implements Initializable, PreferenceChangeListener {
+public class ManiaPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaPreferencesController.class);
 
   @FXML
@@ -62,7 +57,7 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
   @FXML
   private void onAccountDelete() {
     boolean deregistered = ManiaRegistration.deregister();
-    if(deregistered) {
+    if (deregistered) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       registrationPanel.setVisible(cabinet == null);
       preferencesPanel.setVisible(cabinet != null);
@@ -105,9 +100,10 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       if (!newValue) {
         return;
       }
-      boolean register = ManiaRegistration.register();
-      if(register) {
-        registrationPanel.setVisible(true);
+      boolean registered = ManiaRegistration.register();
+      if (registered) {
+        registrationPanel.setVisible(false);
+        preferencesPanel.setVisible(true);
         Cabinet cab = maniaClient.getCabinetClient().getCabinet();
         idLabel.setText(cab.getUuid());
         try {
@@ -118,7 +114,6 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for details).");
         }
-        registrationCheckbox.setSelected(false);
       }
     });
 
@@ -135,13 +130,5 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
         }
       }
     });
-    client.getPreferenceService().addListener(this);
-  }
-
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
-      preferencesPanel.setVisible(settings.isEnabled());
-    }
   }
 }

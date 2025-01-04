@@ -478,14 +478,5 @@ public class PreferencesController extends SettingsSceneController implements In
     kofiLink.setGraphic(view6);
 
     EventManager.getInstance().addListener(this);
-    tournamentsBtn.setVisible(false);
-    try {
-      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
-        tournamentsBtn.setVisible(true);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Mania initialization failed: {}", e.getMessage(), e);
-    }
   }
 }

@@ -55,6 +55,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     SQL_TEMPLATES.put("10 Random tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] ORDER BY RANDOM() LIMIT 10");
     SQL_TEMPLATES.put("All 'VPin Workshop' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND (tags LIKE '%VPW%' OR GameDisplay LIKE '%VPW%') ORDER BY GameDisplay");
     SQL_TEMPLATES.put("All 'VR' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%VR%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("All '4k' tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%4k%' ORDER BY GameDisplay");
+    SQL_TEMPLATES.put("All kids-friendly tables", "SELECT * FROM Games WHERE visible=1 AND EMUID = [EMULATOR_ID] AND tags LIKE '%Kids%' ORDER BY GameDisplay");
   }
 
   @FXML
@@ -610,6 +612,14 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         getPlaylist().setUglyList(newValue);
+        savePlaylist();
+      }
+    });
+
+    disableSysListsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        getPlaylist().setHideSysLists(newValue);
         savePlaylist();
       }
     });
