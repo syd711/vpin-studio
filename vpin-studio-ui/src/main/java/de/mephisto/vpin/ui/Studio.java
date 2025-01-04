@@ -87,9 +87,9 @@ public class Studio extends Application {
     }
 
     LOG.info("Studio Starting...");
-    LOG.info("Locale: "  + Locale.getDefault().getDisplayName());
-    LOG.info("TimeZone: "  + TimeZone.getDefault().getDisplayName());
-    LOG.info("OS: "  + System.getProperty("os.name"));
+    LOG.info("Locale: " + Locale.getDefault().getDisplayName());
+    LOG.info("TimeZone: " + TimeZone.getDefault().getDisplayName());
+    LOG.info("OS: " + System.getProperty("os.name"));
     try {
       ss = new ServerSocket(1044);
     }
