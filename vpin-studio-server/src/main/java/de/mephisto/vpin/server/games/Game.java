@@ -188,7 +188,7 @@ public class Game {
   }
 
   public boolean isVpxGame() {
-    return this.emulator.isVpxEmulator();
+    return this.emulator != null && this.emulator.isVpxEmulator();
   }
 
   public boolean isFpGame() {
