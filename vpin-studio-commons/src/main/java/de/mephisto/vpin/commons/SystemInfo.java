@@ -79,10 +79,6 @@ public class SystemInfo {
     return f;
   }
 
-  public File resolveVpxInstallFolder() {
-    File exe = resolveVpxExe();
-    return exe != null? exe.getParentFile() : resolveFolder("Visual Pinball");
-  }
   public File resolveVpxExe() {
     File f = resolveExe("HKEY_CLASSES_ROOT\\Applications\\VPinballX.exe\\shell\\open\\command",
         "HKEY_CLASSES_ROOT\\vpx_auto_file\\shell\\edit\\command");
