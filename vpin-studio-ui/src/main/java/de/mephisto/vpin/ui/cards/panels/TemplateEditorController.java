@@ -487,9 +487,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setBean(cardTemplate);
     templateBeanBinder.setPaused(true);
 
-    titleFontLabel.setText(cardTemplate.getTitleFontName());
-    tableFontLabel.setText(cardTemplate.getTableFontName());
-    scoreFontLabel.setText(cardTemplate.getScoreFontName());
+    titleFontLabel.setText(cardTemplate.getTitleFontName() + ", " + cardTemplate.getTitleFontStyle() + ", " + cardTemplate.getTitleFontSize() + "px");
+    tableFontLabel.setText(cardTemplate.getTableFontName() + ", " + cardTemplate.getTableFontStyle() + ", " + cardTemplate.getTableFontName() + "px");
+    scoreFontLabel.setText(cardTemplate.getScoreFontName() + ", " + cardTemplate.getScoreFontStyle() + ", " + cardTemplate.getScoreFontSize() + "px");
 
     templateBeanBinder.setColorPickerValue(fontColorSelector, getCardTemplate(), "fontColor");
     templateBeanBinder.setColorPickerValue(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
