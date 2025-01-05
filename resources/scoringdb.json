@@ -32,6 +32,13 @@
     {
       "parser": "SinglePlayer",
       "fileNames": [
+        "King.Tut.txt"
+      ],
+      "scoreLine": 8
+    },
+    {
+      "parser": "SinglePlayer",
+      "fileNames": [
         "4Queens70.txt"
       ],
       "scoreLine": 3
