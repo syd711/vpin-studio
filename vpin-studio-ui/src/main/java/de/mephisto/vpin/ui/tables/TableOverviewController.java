@@ -1335,6 +1335,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       int ICON_WIDTH = 22;
       double width = 0;
       int count = 0;
+
+      //force refresh here since the color is saved through the playlists
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings);

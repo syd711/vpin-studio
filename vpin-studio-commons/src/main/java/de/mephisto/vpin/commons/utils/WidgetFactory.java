@@ -347,13 +347,21 @@ public class WidgetFactory {
     fontIcon.setIconLiteral("mdi2v-view-list");
     label.setTooltip(new Tooltip(playlist.getName()));
 
-    if (playlist.getId() == PlaylistRepresentation.FAV_ID) {
+    if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getLocalFavsColor()));
     }
-    else if (playlist.getId() == PlaylistRepresentation.GLOBAL_FAV_ID) {
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+      fontIcon.setIconLiteral("mdi2s-star");
+      fontIcon.setIconColor(Paint.valueOf(uiSettings.getJustAddedColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      fontIcon.setIconColor(Paint.valueOf(uiSettings.getMostPlayedColor()));
     }
     else if (playlist.getName().contains("Visual Pinball X")) {
       fontIcon.setIconLiteral("mdi2a-alpha-x-circle");

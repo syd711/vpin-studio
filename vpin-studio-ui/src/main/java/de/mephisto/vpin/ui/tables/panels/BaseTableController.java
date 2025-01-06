@@ -135,9 +135,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
       FrontendType frontendType = client.getFrontendService().getFrontendType();
       if (frontendType.supportPlaylists()) {
-        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-        playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell(uiSettings));
-        playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell(uiSettings));
+        playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell());
+        playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell());
         filterController.bindPlaylistField(playlistCombo);
       }
       else {
@@ -425,7 +424,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public void refreshPlaylists() {
     PlaylistRepresentation selected = this.playlistCombo.getSelectionModel().getSelectedItem();
     this.playlistCombo.setDisable(true);
-
     JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
       List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
       pl.add(0, null);
@@ -459,10 +457,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   //---------------------------------------
 
   public class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
-    private UISettings uiSettings;
-
-    public PlaylistBackgroundImageListCell(UISettings uiSettings) {
-      this.uiSettings = uiSettings;
+    public PlaylistBackgroundImageListCell() {
     }
 
     protected void updateItem(PlaylistRepresentation item, boolean empty) {
@@ -470,6 +465,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       setGraphic(null);
       setText(null);
       if (item != null) {
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
         setGraphic(playlistIcon);
 

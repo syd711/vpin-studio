@@ -44,8 +44,6 @@
             <VBox fx:id="dataRoot">
                <children>
                   <Label styleClass="preference-description" text="Tables can only be assigned to static playlists." />
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The color assignment will be stored as menu color in PinUP Popper." />
-                  <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="Local and Global Favorites can only be selected if the game has been played before." />
                </children>
                <VBox.margin>
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

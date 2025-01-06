@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class PlaylistRepresentation {
-  public final static int GLOBAL_FAV_ID = -2;
-  public final static int FAV_ID = -3;
+  public static final int PLAYLIST_FAVORITE_ID = -2;
+  public static final int PLAYLIST_GLOBALFAV_ID = -3;
+  public static final int PLAYLIST_JUSTADDED_ID = -4;
+  public static final int PLAYLIST_MOSTPLAYED_ID = -5;
 
   private int id = -1;
   private int parentId = -1;
@@ -163,6 +165,7 @@ public class PlaylistRepresentation {
   public boolean isAddFavCheckboxes() {
     return addFavCheckboxes;
   }
+
   public void setAddFavCheckboxes(boolean addFavCheckboxes) {
     this.addFavCheckboxes = addFavCheckboxes;
   }
@@ -170,6 +173,7 @@ public class PlaylistRepresentation {
   public Integer getEmulatorId() {
     return emulatorId;
   }
+
   public void setEmulatorId(Integer emulatorId) {
     this.emulatorId = emulatorId;
   }
@@ -179,9 +183,9 @@ public class PlaylistRepresentation {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     PlaylistRepresentation that = (PlaylistRepresentation) o;
-    return id == that.id && sqlPlayList == that.sqlPlayList && Objects.equals(menuColor, that.menuColor) 
-              && Objects.equals(name, that.name) && Objects.equals(playListSQL, that.playListSQL) 
-              && Objects.equals(mediaName, that.mediaName) && Objects.equals(games, that.games);
+    return id == that.id && sqlPlayList == that.sqlPlayList && Objects.equals(menuColor, that.menuColor)
+        && Objects.equals(name, that.name) && Objects.equals(playListSQL, that.playListSQL)
+        && Objects.equals(mediaName, that.mediaName) && Objects.equals(games, that.games);
   }
 
   @Override

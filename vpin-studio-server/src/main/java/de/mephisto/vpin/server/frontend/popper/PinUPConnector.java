@@ -1010,11 +1010,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
 
       Playlist favsPlaylist = new Playlist();
-      favsPlaylist.setId(PlaylistRepresentation.FAV_ID);
+      favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
       favsPlaylist.setName("Local Favorites");
 
       Playlist globalFavsPlaylist = new Playlist();
-      globalFavsPlaylist.setId(PlaylistRepresentation.GLOBAL_FAV_ID);
+      globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
       globalFavsPlaylist.setName("Global Favorites");
 
       result.add(favsPlaylist);
