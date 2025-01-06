@@ -420,7 +420,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="15">
+                                    <Label layoutX="10.0" layoutY="284.0" text="Bring Forms:" textFill="WHITE" GridPane.rowIndex="15">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -436,7 +436,7 @@
                                     <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                     <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                     <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                                    <ComboBox fx:id="formToPosition" layoutX="173.0" layoutY="117.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                                     <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="11">
                                        <font>
                                           <Font size="14.0" />

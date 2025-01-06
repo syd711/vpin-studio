@@ -789,7 +789,15 @@ public class BackglassService {
           BufferedImage preview = ImageIO.read(bais);
           if (tableData.getGrillHeight() > 0) {
             DirectB2STableSettings tableSettings = game != null ? getTableSettings(game) : null;
-            if (tableSettings != null && tableSettings.getHideGrill() == 1) {
+            boolean hideGrill = false;
+            if (tableSettings != null && tableSettings.getHideGrill() == 2) {
+              DirectB2ServerSettings serverSettings = getServerSettings();
+              hideGrill = serverSettings != null && serverSettings.isHideGrill();
+            }
+            else {
+              hideGrill = (tableSettings != null && tableSettings.getHideGrill() == 1);
+            }
+            if (hideGrill) {
               preview = preview.getSubimage(0, 0, preview.getWidth(), preview.getHeight() - tableData.getGrillHeight());
             }
           }

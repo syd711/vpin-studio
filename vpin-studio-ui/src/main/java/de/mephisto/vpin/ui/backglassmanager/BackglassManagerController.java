@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
+import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
@@ -208,7 +209,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private ComboBox<B2SVisibility> startBackground;
 
   @FXML
-  private CheckBox bringBGFromTop;
+  private ComboBox<B2SFormPosition> formToPosition;
 
   @FXML
   private Button renameBtn;
@@ -733,9 +734,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
     });
 
-    bringBGFromTop.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    formToPosition.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.FORM_POSITIONS));
+    formToPosition.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (!refreshing && tableSettings != null) {
-        save(() -> tableSettings.setFormToFront(newValue));
+        save(() -> tableSettings.setFormToPosition(newValue.getId()));
       }
     });
 
@@ -930,7 +932,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     hideB2SDMD.setDisable(true);
     hideDMD.setDisable(true);
     startBackground.setDisable(true);
-    bringBGFromTop.setDisable(true);
+    formToPosition.setDisable(true);
     skipGIFrames.setDisable(true);
     skipLampFrames.setDisable(true);
     skipSolenoidFrames.setDisable(true);
@@ -945,7 +947,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     skipSolenoidFrames.getValueFactory().valueProperty().set(0);
     skipLEDFrames.getValueFactory().valueProperty().set(0);
     lightBulbOn.selectedProperty().setValue(false);
-    bringBGFromTop.selectedProperty().setValue(false);
+    formToPosition.setDisable(true);
 
     this.refreshing = false;
 
@@ -1055,8 +1057,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
           startBackground.setDisable(false);
           startBackground.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
-          bringBGFromTop.setDisable(false);
-          bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+
+          formToPosition.setDisable(false);
+          formToPosition.setValue(TablesSidebarDirectB2SController.FORM_POSITIONS.stream().filter(v -> v.getId() == tableSettings.getFormToPosition()).findFirst().orElse(null));
         }
 
         this.refreshing = false;

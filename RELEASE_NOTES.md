@@ -34,6 +34,8 @@
     <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/highscore-reset.png" width="600" />
   
 - **Preferences / Controller Setup**: Added error message that is displayed when "SET FSMODE=EnableTrueFullScreen" is set in the emulator launch script, as this will avoid any VPin Studio overlays from getting the focus.
+- **Preferences / Backglass Server**: Add possibility to configure default visibility for grill, DMD and B2S DMD.
+- **Preferences / Backglass Server**: Add possibility to configure default Bring Forms settings.
 - **Tables / Overview:** Added new column "Comment". The colum is hidden by default, not sortable and placed as last table column. 
 - **Tables / Overview:** Added context menu item "Edit Comment". 
 - **Tables / Overview:** Added ROM alias name in square brackets to the ROMs column (if set). 
@@ -45,6 +47,7 @@
 - **Backglass Manager / DMD Positioning**:
   - Added "Snap to Center" option that will make the selection canvas sticky to the center.
   - Added 3:1 aspect ratio for large Sega DMDs and a smaller 8:1 ratio for Data East displays.
+- **Backglass Manager / Bring Forms**: revisited the 'bring BG form' to support Form to Back option. Also modified in Tables sidebar
 - **Hook Support**: The VPin Studio allows to execute customs scripts from any client. You can add these "hooks" by adding .exe or .bat files into the server installation directory **resources/hooks**. The list of files is picked up and added to the preferences split button of the Studio client and will be executed on click. See also: https://github.com/syd711/vpin-studio/wiki/Hooks
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
@@ -94,5 +97,6 @@
 - **Tables / Asset Preview Dialog**: The dialog has been re-implemented to ensure the shown media is properly scaled.
 - **Tables / Auto-Naming**: Fixed suggested file name suffixes for .fpt tables.
 - **Tables / Overview**: Default sorting by display name is not case-sensitive anymore.
+- **Backglass Manager / Grill visibility**: When grill visibility is standard, Backglass preview now takes in account the global grill visibility.
 - **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
 - **Highscore Cards Editor**: Fixed various weight and posture issues with the font selection and the preview of it.

@@ -3,9 +3,7 @@ package de.mephisto.vpin.restclient.directb2s;
 /**
  *
  */
-public class DirectB2ServerSettings {
-  public final static int STANDARD_START_MODE = 1;
-  public final static int EXE_START_MODE = 2;
+public class DirectB2ServerSettings implements DirectB2sConstants {
 
   private String backglassServerFolder;
 
@@ -13,11 +11,22 @@ public class DirectB2ServerSettings {
   private boolean showStartupError;
   private boolean disableFuzzyMatching;
 
+  private boolean hideGrill;
+  private boolean hideB2SDMD;
+  private boolean hideDMD;
+
+  /**
+   * 0 => FormToBack = 1
+   * 1 => FormToFront = 1
+   * 2 (Standard) FormToBack = 0 & FormToFront = 0 
+   */
+  private int formToPosition = FORM_TO_STANDARD;
+
   /**
    * 2 = exe
    * 1 = Standard
    */
-  private int defaultStartMode = DirectB2ServerSettings.EXE_START_MODE;
+  private int defaultStartMode = EXE_START_MODE;
 
   public int getDefaultStartMode() {
     return defaultStartMode;
@@ -58,4 +67,44 @@ public class DirectB2ServerSettings {
   public void setBackglassServerFolder(String backglassServerFolder) {
     this.backglassServerFolder = backglassServerFolder;
   }
+
+  public boolean isHideGrill() {
+    return hideGrill;
+  }
+
+  public void setHideGrill(boolean hideGrill) {
+    this.hideGrill = hideGrill;
+  }
+
+  public boolean isHideB2SDMD() {
+    return hideB2SDMD;
+  }
+
+  public void setHideB2SDMD(boolean hideB2SDMD) {
+    this.hideB2SDMD = hideB2SDMD;
+  }
+
+  public boolean isHideDMD() {
+    return hideDMD;
+  }
+
+  public void setHideDMD(boolean hideDMD) {
+    this.hideDMD = hideDMD;
+  }
+
+  public boolean isFormToFront() {
+    return getFormToPosition() == FORM_TO_FRONT;
+  }
+  public boolean isFormToBack() {
+    return getFormToPosition() == FORM_TO_BACK;
+  }
+
+  public int getFormToPosition() {
+    return formToPosition;
+  }
+
+  public void setFormToPosition(int formToPosition) {
+    this.formToPosition = formToPosition;
+  } 
+  
 }
