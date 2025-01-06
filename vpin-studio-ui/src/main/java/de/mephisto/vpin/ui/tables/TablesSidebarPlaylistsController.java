@@ -212,6 +212,10 @@ public class TablesSidebarPlaylistsController implements Initializable {
       }
 
       for (PlaylistRepresentation playlist : playlists) {
+        if (playlist.getId() < 0) {
+          continue;
+        }
+
         boolean linkedToEmu = playlist.getEmulatorId() == null || (this.games.size() == 1 && playlist.getEmulatorId() == games.get(0).getEmulatorId());
 
         HBox root = new HBox();

@@ -347,11 +347,11 @@ public class WidgetFactory {
     fontIcon.setIconLiteral("mdi2v-view-list");
     label.setTooltip(new Tooltip(playlist.getName()));
 
-    if (playlist.getId() == -1) {
+    if (playlist.getId() == PlaylistRepresentation.FAV_ID) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getLocalFavsColor()));
     }
-    else if (playlist.getId() == -2) {
+    else if (playlist.getId() == PlaylistRepresentation.GLOBAL_FAV_ID) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
     }

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class PlaylistRepresentation {
+  public final static int GLOBAL_FAV_ID = -2;
+  public final static int FAV_ID = -3;
+
   private int id = -1;
   private int parentId = -1;
   private Integer menuColor = (int) Long.parseLong("FFFFFF", 16);

@@ -1323,19 +1323,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnPlaylists, (value, model) -> {
       HBox box = new HBox();
       List<PlaylistRepresentation> matches = new ArrayList<>();
-      boolean fav = false;
-      boolean globalFav = false;
-
       List<PlaylistRepresentation> playlists = getPlaylists();
       if (playlists != null) {
         for (PlaylistRepresentation playlist : playlists) {
           if (playlist != null && playlist.containsGame(value.getId())) {
-            if (!fav && playlist.isFavGame(value.getId())) {
-              fav = true;
-            }
-            if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
-              globalFav = true;
-            }
             matches.add(playlist);
           }
         }
@@ -1343,31 +1334,24 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       int ICON_WIDTH = 22;
       double width = 0;
-      if (fav && frontendType.supportExtendedPlaylists()) {
-        Label label = WidgetFactory.createLocalFavoritePlaylistIcon(uiSettings.getLocalFavsColor());
-        box.getChildren().add(label);
-        width += ICON_WIDTH;
-      }
-
-      if (globalFav && frontendType.supportExtendedPlaylists()) {
-        Label label = WidgetFactory.createGlobalFavoritePlaylistIcon(uiSettings.getGlobalFavsColor());
-        box.getChildren().add(label);
-        width += ICON_WIDTH;
-      }
-
       int count = 0;
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings);
-          Button plButton = new Button("", playlistIcon.getGraphic());
-          plButton.getStyleClass().add("ghost-button-tiny");
-          plButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-              openPlaylistManager(match);
-            }
-          });
-          box.getChildren().add(plButton);
+          if (match.getId() >= 0) {
+            Button plButton = new Button("", playlistIcon.getGraphic());
+            plButton.getStyleClass().add("ghost-button-tiny");
+            plButton.setOnAction(new EventHandler<ActionEvent>() {
+              @Override
+              public void handle(ActionEvent event) {
+                openPlaylistManager(match);
+              }
+            });
+            box.getChildren().add(plButton);
+          }
+          else {
+            box.getChildren().add(playlistIcon);
+          }
           width += ICON_WIDTH;
           count++;
           continue;
