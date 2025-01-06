@@ -96,3 +96,4 @@
 - **Tables / Overview**: Default sorting by display name is not case-sensitive anymore.
 - **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
 - **Highscore Cards Editor**: Fixed various weight and posture issues with the font selection and the preview of it.
+- **Tables / Table Data Manager**: Fixed error during auto-applying values from VPS tables selection.

@@ -140,7 +140,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private String lastScreen = "preference-settings-cabinet.fxml";
 
   public static void markDirty(PreferenceType preferenceType) {
-    instance.dirtyPreferenceType = preferenceType;
+    if (instance != null) {
+      instance.dirtyPreferenceType = preferenceType;
+    }
   }
 
   public static void open() {
