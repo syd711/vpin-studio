@@ -356,7 +356,7 @@ public class WidgetFactory {
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-      fontIcon.setIconLiteral("mdi2s-star");
+      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getJustAddedColor()));
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {

@@ -195,7 +195,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         });
 
         Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
-        if(frontendType.supportPlaylistsCrud()) {
+        if (frontendType.supportPlaylistsCrud()) {
           Button plyButton = new Button();
           plyButton.setGraphic(playlistIcon.getGraphic());
           plyButton.getStyleClass().add("ghost-button-tiny");
@@ -281,6 +281,10 @@ public class TablesSidebarPlaylistsController implements Initializable {
       }
     }
     else if (frontendType.equals(FrontendType.PinballY)) {
+      if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+        return true;
+      }
+
       if (playlist.getId() < 0) {
         return false;
       }
