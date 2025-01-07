@@ -219,12 +219,12 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public InputStream getScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
     String url = getRestClient().getBaseUrl() + API + "directb2s/frame/" + screenres.getEmulatorId() + "/"
-        + URLEncoder.encode(URLEncoder.encode(screenres.getFileName(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        + URLEncoder.encode(URLEncoder.encode(screenres.getBackgroundFilePath(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     try {
       return new URL(url).openStream();
     }
     catch (FileNotFoundException e) {
-      LOG.info("No .res file found for " + screenres.getFileName());
+      LOG.info("No .res file found for " + screenres.getB2SFileName());
     }
     return null;
   }
@@ -234,13 +234,14 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {
-    return uploadFile(screenres.getEmulatorId(), screenres.getFileName(), "directb2s/screenRes/uploadFrame", file, String.class);
+    return uploadFile(screenres.getEmulatorId(), screenres.getB2SFileName(), 
+        "directb2s/screenRes/uploadFrame", file, String.class);
   }
 
   public boolean removeScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
     Map<String, Object> map = new HashMap<>();
     map.put("emuid", screenres.getEmulatorId());
-    map.put("filename", screenres.getFileName());
+    map.put("filename", screenres.getB2SFileName());
     return getRestClient().delete(API + "directb2s/screenRes/removeFrame", map);
   }
 

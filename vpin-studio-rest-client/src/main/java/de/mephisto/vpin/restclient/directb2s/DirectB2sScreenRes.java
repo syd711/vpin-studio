@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class DirectB2sScreenRes {
 
   private int emulatorId;
-  private String fileName;
+  private String b2sFileName;
 
   /** optional associated game */
   private int gameId = -1;
@@ -135,12 +135,12 @@ public class DirectB2sScreenRes {
     this.emulatorId = emulatorId;
   }
 
-  public String getFileName() {
-    return fileName;
+  public String getB2SFileName() {
+    return b2sFileName;
   }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
+  public void setB2SFileName(String fileName) {
+    this.b2sFileName = fileName;
   }
 
   public int getGameId() {

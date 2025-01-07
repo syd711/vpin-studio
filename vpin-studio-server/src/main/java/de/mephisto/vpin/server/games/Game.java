@@ -731,6 +731,13 @@ public class Game {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
     return new File(getGameFile().getParentFile(), baseName + ".directb2s");
   }
+  @NonNull
+  @JsonIgnore
+  public String getDirectB2SFilename() {
+    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
+    File folder = new File(getGameFileName()).getParentFile();
+    return new File(folder, baseName + ".directb2s").toString();
+  }
 
   @NonNull
   @JsonIgnore
