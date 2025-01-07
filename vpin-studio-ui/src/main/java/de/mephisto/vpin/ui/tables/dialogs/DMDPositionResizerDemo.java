@@ -1,9 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import javafx.application.*;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -35,8 +33,7 @@ public class DMDPositionResizerDemo extends Application {
   }
     
   private void createElementHandler(Pane pane, ObjectProperty<Bounds> area, int x, int y, int width, int height, ObjectProperty<Color> color) {
-    BooleanProperty p = new SimpleBooleanProperty(false);
-    DMDPositionResizer eh = new DMDPositionResizer(area, null, p, color);
+    DMDPositionResizer eh = new DMDPositionResizer(area, null, color);
     eh.setX(x);
     eh.setY(y);
     eh.setWidth(width);

@@ -2,14 +2,12 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import javafx.application.*;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.beans.value.ObservableValue;
 import javafx.stage.*;
 import javafx.scene.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
@@ -32,22 +30,28 @@ public class DMDPositionResizerDemo2 extends Application {
     BorderPane layout = new BorderPane();
     stage.setScene(new Scene(layout));
 
-    Label label = new Label("Draw a rectangle, then move and scale, it should stays within the dashed-grey area");
+    Label label = new Label("Draw a rectangle, then move and resize, it should stay within the dashed-grey area");
     HBox topbar = new HBox(label);
     topbar.setPadding(new Insets(15));
     layout.setTop(topbar);
 
-    RadioButton aspectRatio = new RadioButton("Keep aspect ratio");
-    aspectRatio.setSelected(true);
-    aspectRatio.setUserData(DMDAspectRatio.ratio4x1);
-    HBox toolbar = new HBox(aspectRatio);
+    CheckBox aspectRatio = new CheckBox("Keep aspect ratio (4:1)");
+    aspectRatio.setSelected(false);
+
+    Button snapCenter = new Button("Snap Center");
+    snapCenter.setOnAction(e -> {
+      if (resizer != null) {
+        resizer.centerHorizontally();
+      }
+    });
+
+    HBox toolbar = new HBox(aspectRatio, snapCenter);
     toolbar.setPadding(new Insets(15));
+    toolbar.setSpacing(20);
     layout.setBottom(toolbar);
 
-    ToggleGroup tg = new ToggleGroup();
-    aspectRatio.setToggleGroup(tg);
-
-    BooleanProperty p = new SimpleBooleanProperty(false);
+    ObservableValue<DMDAspectRatio> aspectRatioProperty = aspectRatio.selectedProperty().flatMap(cb ->
+        new SimpleObjectProperty<>(cb.booleanValue() ? DMDAspectRatio.ratio4x1 : DMDAspectRatio.ratioOff));
 
     Pane pane = new Pane();
     pane.setPrefWidth(500);
@@ -56,7 +60,7 @@ public class DMDPositionResizerDemo2 extends Application {
 
     stage.show();
 
-    stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+    stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
       if (resizer != null) {
         resizer.keyPressed(event);
       }
@@ -68,7 +72,7 @@ public class DMDPositionResizerDemo2 extends Application {
 
     addAreaBorder(pane, area.get());
     
-    new DMDPositionSelection(pane, area, tg.selectedToggleProperty(),  color,
+    new DMDPositionSelection(pane, area, aspectRatioProperty,  color,
       () -> {
         if (resizer != null) {
           resizer.removeFromPane(pane);
@@ -76,7 +80,7 @@ public class DMDPositionResizerDemo2 extends Application {
         }  
       }, 
       rect -> {
-        resizer = new DMDPositionResizer(area, tg.selectedToggleProperty(), p, color);
+        resizer = new DMDPositionResizer(area, aspectRatioProperty, color);
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());

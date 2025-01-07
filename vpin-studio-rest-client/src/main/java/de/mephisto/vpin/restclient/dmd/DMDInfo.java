@@ -22,9 +22,15 @@ public class DMDInfo {
   private double y;
   private double width;
   private double height;
-  
+
+  /** additional marging used to autoposition the dmd */
+  private int margin;
+
+  /** The screen where the DMD is displayed */  
   private VPinScreen onScreen;
+  /** Width of the screen hosting the dmd */
   private double screenWidth;
+  /** Height of the screen hosting the dmd */
   private double screenHeight;
   private boolean imageCentered;
 
@@ -109,6 +115,14 @@ public class DMDInfo {
 
   public void setHeight(double height) {
     this.height = height;
+  }
+  
+  public int getMargin() {
+    return margin;
+  }
+
+  public void setMargin(int margin) {
+    this.margin = margin;
   }
 
   public VPinScreen getOnScreen() {
@@ -197,16 +211,16 @@ public class DMDInfo {
   }
 
   public void adjustAspectRatio() {
-    if (aspectRatio != null && !DMDAspectRatio.ratioOff.equals(aspectRatio)) {
-      if (width / height > aspectRatio.getWidth()) {
+    if (aspectRatio != null && aspectRatio.isKeepRatio()) {
+      if (width / height > aspectRatio.getValue()) {
         // adjust width
-        x += (width - 4 * height) / 2;
-        width = aspectRatio.getWidth() * height;
+        x += (width - aspectRatio.getValue() * height) / 2;
+        width = aspectRatio.getValue() * height;
       }
       else {
         // adjust height
-        y += (height - width / aspectRatio.getHeight()) / 2;
-        height = width / aspectRatio.getWidth();
+        y += (height - width / aspectRatio.getValue()) / 2;
+        height = width / aspectRatio.getValue();
       }
     }
   }

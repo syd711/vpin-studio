@@ -287,10 +287,10 @@ public class DMDPositionService {
           // coordinates are in pixels, transform in screen coordinate
           factorX /= buffered.getWidth();
           factorY /= buffered.getHeight();
-          dmdinfo.setX(position.get(0) * factorX);
-          dmdinfo.setY(position.get(1) * factorY);
-          dmdinfo.setWidth((position.get(2) - position.get(0)) * factorX);
-          dmdinfo.setHeight((position.get(3) - position.get(1)) * factorY);
+          dmdinfo.setX(position.get(0) * factorX + dmdinfo.getMargin());
+          dmdinfo.setY(position.get(1) * factorY + dmdinfo.getMargin());
+          dmdinfo.setWidth((position.get(2) - position.get(0)) * factorX - 2 * dmdinfo.getMargin());
+          dmdinfo.setHeight((position.get(3) - position.get(1)) * factorY - 2 * dmdinfo.getMargin());
         }
       }
       catch (IOException ioe) {
@@ -298,7 +298,7 @@ public class DMDPositionService {
       }
     }
 
-    // enforce aspect ratio is selected
+    // enforce aspect ratio if selected
     dmdinfo.adjustAspectRatio();
     return dmdinfo;
   }

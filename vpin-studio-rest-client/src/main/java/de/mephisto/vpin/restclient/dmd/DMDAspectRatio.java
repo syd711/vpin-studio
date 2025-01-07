@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.dmd;
 
 public enum DMDAspectRatio {
-  ratioOff(1,1), ratio3x1(3,1), ratio4x1(4,1), ratio8x1(8,1);
+  ratioOff(0, 0), ratio3x1(3, 1), ratio4x1(4, 1), ratio8x1(8, 1);
 
   int width;
   int height;
@@ -11,11 +11,11 @@ public enum DMDAspectRatio {
     this.height = height;
   }
 
-  public int getWidth() {
-    return width;
+  public double getValue() {
+    return ((double) width) / height; 
   }
 
-  public int getHeight() {
-    return height;
+  public boolean isKeepRatio() {
+    return width > 0 && height > 0;
   }
 }

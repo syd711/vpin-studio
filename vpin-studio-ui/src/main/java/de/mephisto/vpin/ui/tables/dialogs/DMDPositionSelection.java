@@ -3,14 +3,11 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import java.util.function.Consumer;
 
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.scene.control.Toggle;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 
@@ -19,7 +16,7 @@ public class DMDPositionSelection {
   private static double minSize = 8;
 
   /** The constrained area for mouse drag */
-  private ObjectProperty<Bounds> areaProperty;
+  private ObservableValue<Bounds> areaProperty;
 
   /** The selection representing the drawn region */
   private Rectangle selection;
@@ -27,9 +24,9 @@ public class DMDPositionSelection {
   private double initX, initY;
 
   /** Whether aspect ratio has to be enforced */
-  private ReadOnlyObjectProperty<Toggle> aspectRatio;
+  private ObservableValue<DMDAspectRatio> aspectRatio;
 
-  public DMDPositionSelection(Pane pane, ObjectProperty<Bounds> areaProperty, ReadOnlyObjectProperty<Toggle> aspectRatio, ObjectProperty<Color> color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
+  public DMDPositionSelection(Pane pane, ObservableValue<Bounds> areaProperty, ObservableValue<DMDAspectRatio> aspectRatio, ObservableValue<Color> color, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
     this.areaProperty = areaProperty;
     this.aspectRatio = aspectRatio;
 
@@ -85,9 +82,9 @@ public class DMDPositionSelection {
         double y = meY > initY ? initY: meY;
         double width = meX > initX ? meX - initX : initX - meX;
 
-        DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue().getUserData();
-        double height = !ratio.equals(DMDAspectRatio.ratioOff) ?
-          width / ratio.getWidth() : meY > initY ? meY - initY : initY - meY;
+        DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue();
+        double height = ratio.isKeepRatio() ?
+          width / ratio.getValue() : meY > initY ? meY - initY : initY - meY;
 
         onDragEnd.accept(new Rectangle2D(x, y, width, height));
         me.consume();
@@ -96,10 +93,10 @@ public class DMDPositionSelection {
   }
 
   private void checkAspectRatio(boolean moveUp) {
-    DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue().getUserData();
-    if (!ratio.equals(DMDAspectRatio.ratioOff)) {
+    DMDAspectRatio ratio = (DMDAspectRatio) aspectRatio.getValue();
+    if (ratio.isKeepRatio()) {
       double width = selection.getWidth();
-      double height = width / ratio.getWidth();
+      double height = width / ratio.getValue();
       if (moveUp) {
         selection.setY(selection.getY() + selection.getHeight() - height);
       }
@@ -109,7 +106,7 @@ public class DMDPositionSelection {
 
 
   private double checkAreaX(double meX) {
-    Bounds area = areaProperty.get();
+    Bounds area = areaProperty.getValue();
     if (meX < area.getMinX()) {
       return area.getMinX();
     }
@@ -119,7 +116,7 @@ public class DMDPositionSelection {
     return meX;
   }   
   private double checkAreaY(double meY) {
-    Bounds area = areaProperty.get();
+    Bounds area = areaProperty.getValue();
     if (meY < area.getMinY()) {
       return area.getMinY();
     }

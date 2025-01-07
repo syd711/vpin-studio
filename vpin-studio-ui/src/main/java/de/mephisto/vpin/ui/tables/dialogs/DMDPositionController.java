@@ -45,9 +45,6 @@ public class DMDPositionController implements Initializable, DialogController {
   private Label tablePositionLabel;
 
   @FXML
-  private CheckBox snapCheckbox;
-
-  @FXML
   private RadioButton ratioOff;
   @FXML
   private RadioButton ratio3;
@@ -73,7 +70,13 @@ public class DMDPositionController implements Initializable, DialogController {
   private Spinner<Double> heightSpinner;
 
   @FXML
+  private Spinner<Integer> marginSpinner;
+
+  @FXML
   private Button autoPositionBtn;
+  @FXML
+  private Button centerXBtn;
+
   @FXML
   private Button saveLocallyBtn;
   @FXML
@@ -153,6 +156,11 @@ public class DMDPositionController implements Initializable, DialogController {
         .thenAccept(dmd -> setDmdInfo(dmd));
   }
 
+  @FXML
+  private void onCenterX() {
+    dragBox.centerHorizontally();
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     // create a toggle group
@@ -173,9 +181,11 @@ public class DMDPositionController implements Initializable, DialogController {
     saveLocallyBtn.setVisible(false);
     saveGloballyBtn.setVisible(false);
 
+    ObservableValue<DMDAspectRatio> ratioProperty = radioGroup.selectedToggleProperty().flatMap(t ->
+        new SimpleObjectProperty<>((DMDAspectRatio) t.getUserData()));
+
     // The lime box that is used to position the DMD
-    snapCheckbox.setSelected(true);
-    dragBox = new DMDPositionResizer(area, radioGroup.selectedToggleProperty(), snapCheckbox.selectedProperty(), color);
+    dragBox = new DMDPositionResizer(area, ratioProperty, color);
     dragBox.addToPane(imagepane);
 
     // setup linkages between spinner and our dragbox
@@ -185,7 +195,7 @@ public class DMDPositionController implements Initializable, DialogController {
     configureSpinner(heightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
 
     // add a selector in the pane to draw a rectangle.
-    new DMDPositionSelection(imagepane, area, radioGroup.selectedToggleProperty(), color,
+    new DMDPositionSelection(imagepane, area, ratioProperty, color,
         // called on drag start, hide the lime dragbox
         () -> {
           dragBox.setVisible(false);
@@ -229,7 +239,6 @@ public class DMDPositionController implements Initializable, DialogController {
             .thenAccept(dmd -> setDmdInfo(dmd));
       }
     });
-
     radioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
       @Override
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
@@ -422,6 +431,8 @@ public class DMDPositionController implements Initializable, DialogController {
     dmdinfo.setY(dragBox.getY() / zoom.get());
     dmdinfo.setWidth(dragBox.getWidth() / zoom.get());
     dmdinfo.setHeight(dragBox.getHeight() / zoom.get());
+
+    dmdinfo.setMargin(marginSpinner.getValue());
 
     Toggle selectedToggle = radioGroup.getSelectedToggle();
     if (selectedToggle == null) {
