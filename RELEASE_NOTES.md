@@ -47,6 +47,7 @@
 - **Backglass Manager / DMD Positioning**:
   - Added "Center Horizontally" button that will center the selection canvas in the frame.
   - Added +Shift in mouse gesture to resize DMD while keeping its center at same location
+  - Added ability to move dmd with arrow keys and resize it with Ctrl / Alt / Shift
   - Added 3:1 aspect ratio for large Sega DMDs and a smaller 8:1 ratio for Data East displays.
   - Added margin field to configure margins added to the calculated auto position. Useful when the DMD zone has rounded corner
 - **Backglass Manager / Bring Forms**: revisited the 'bring BG form' to support Form to Back option. Also modified in Tables sidebar

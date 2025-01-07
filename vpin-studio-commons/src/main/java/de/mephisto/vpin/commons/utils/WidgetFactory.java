@@ -538,6 +538,11 @@ public class WidgetFactory {
         t.consume();
         stage.close();
       }
+      else {
+        if (controller != null) {
+          controller.onKeyPressed(t);
+        }
+      }
     });
 
     scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {

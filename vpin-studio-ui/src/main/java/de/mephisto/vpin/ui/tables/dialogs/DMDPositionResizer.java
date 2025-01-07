@@ -338,11 +338,11 @@ public class DMDPositionResizer {
     overlay.setVisible(b);
   }
 
-
   public void select() {
     srFill.toFront();
     overlay.toFront();
     overlay.setVisible(true);
+    overlay.requestFocus();
   }
 
   @Override
@@ -395,6 +395,13 @@ public class DMDPositionResizer {
         }
       }
     }
+
+    // unselect when focus is lost
+    overlay.focusedProperty().addListener((obs, oldVal, newVal) -> {
+      if (!newVal) {
+        overlay.setVisible(false);
+      }
+    });
 
     overlay.setVisible(false);
   }

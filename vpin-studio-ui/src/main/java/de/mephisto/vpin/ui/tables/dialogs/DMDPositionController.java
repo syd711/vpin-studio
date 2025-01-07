@@ -5,7 +5,9 @@ import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -17,6 +19,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -144,6 +147,13 @@ public class DMDPositionController implements Initializable, DialogController {
         .thenLater(() -> {
           stage.close();
         });
+  }
+
+  @Override
+  public void onKeyPressed(KeyEvent ke) {
+    if (dragBox != null && dragBox.keyPressed(ke)) {
+      ke.consume();
+    }
   }
 
   @FXML
@@ -299,13 +309,21 @@ public class DMDPositionController implements Initializable, DialogController {
 //    parentpane.setCenter(progressIndicator);
 
     CompletableFuture
-        .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
+      .supplyAsync(() -> client.getDmdPositionService().getDMDInfo(game.getId()))
         .thenAccept(dmd -> setDmdInfo(dmd))
         .exceptionally(ex -> {
-          LOG.error("Error getting dmd information, set an empty one");
-          this.dmdinfo = new DMDInfo();
+          setDmdError(ex);
           return null;
         });
+    }
+
+  private void setDmdError(Throwable e) {
+    LOG.error("Error getting dmd information, set an empty one");
+    this.dmdinfo = new DMDInfo();
+    Platform.runLater(() -> {
+      WidgetFactory.showAlert(Studio.stage, "Getting DMD information failed", 
+        "Please check your screenres.txt or <tablename>.res file exists, else check the server logs");
+    });
   }
 
   private void disableButtons() {
