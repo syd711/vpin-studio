@@ -35,6 +35,8 @@ public class UISettings extends JsonSettings {
 
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
+  private String justAddedColor = "#FFFFFF";
+  private String mostPlayedColor = "#FFFFFF";
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
 
@@ -100,6 +102,22 @@ public class UISettings extends JsonSettings {
 
   public void setLocalFavsColor(String localFavsColor) {
     this.localFavsColor = localFavsColor;
+  }
+
+  public String getJustAddedColor() {
+    return justAddedColor;
+  }
+
+  public void setJustAddedColor(String justAddedColor) {
+    this.justAddedColor = justAddedColor;
+  }
+
+  public String getMostPlayedColor() {
+    return mostPlayedColor;
+  }
+
+  public void setMostPlayedColor(String mostPlayedColor) {
+    this.mostPlayedColor = mostPlayedColor;
   }
 
   public String getGlobalFavsColor() {

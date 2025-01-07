@@ -102,3 +102,4 @@
 - **Backglass Manager / Grill visibility**: When grill visibility is standard, Backglass preview now takes in account the global grill visibility.
 - **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
 - **Highscore Cards Editor**: Fixed various weight and posture issues with the font selection and the preview of it.
+- **Tables / Table Data Manager**: Fixed error during auto-applying values from VPS tables selection.

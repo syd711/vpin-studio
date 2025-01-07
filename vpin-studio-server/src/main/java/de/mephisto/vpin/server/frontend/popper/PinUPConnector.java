@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
@@ -945,7 +946,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE PlayListID = " + id + ";");
       while (rs.next()) {
-        playlist = createPlaylist(rs);
+        playlist = createPlaylist(rs, null, null);
       }
       rs.close();
       statement.close();
@@ -962,7 +963,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @NonNull
   public Playlist getPlaylistTree() {
     List<Playlist> result = new ArrayList<>();
-    List<Playlist> playLists = getPlaylists();
+    List<Playlist> playLists = getPlaylists().stream().filter(p -> p.getId() >= 0).collect(Collectors.toList());
     Playlist root = playLists.stream().filter(p -> p.getParentId() == -1).findFirst().get();
     result.add(root);
     buildPlaylistTree(root);
@@ -985,7 +986,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE PlayListParent = " + parentId);
       while (rs.next()) {
-        Playlist playlist = createPlaylist(rs);
+        Playlist playlist = createPlaylist(rs, null, null);
         result.add(playlist);
       }
       rs.close();
@@ -1007,10 +1008,23 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
+
+      Playlist favsPlaylist = new Playlist();
+      favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
+      favsPlaylist.setName("Local Favorites");
+
+      Playlist globalFavsPlaylist = new Playlist();
+      globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
+      globalFavsPlaylist.setName("Global Favorites");
+
+      result.add(favsPlaylist);
+      result.add(globalFavsPlaylist);
+
       while (rs.next()) {
-        Playlist playlist = createPlaylist(rs);
+        Playlist playlist = createPlaylist(rs, globalFavsPlaylist, favsPlaylist);
         result.add(playlist);
       }
+
       rs.close();
       statement.close();
     }
@@ -1864,7 +1878,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    */
 
   @NonNull
-  private Playlist createPlaylist(ResultSet rs) throws SQLException {
+  private Playlist createPlaylist(ResultSet rs, Playlist globalFavsPlaylist, Playlist favsPlaylist) throws SQLException {
     Playlist playlist = new Playlist();
     String sql = rs.getString("PlayListSQL");
     String name = rs.getString("PlayName");
@@ -1897,6 +1911,18 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
       playlist.setSqlError("Missing SQL query");
+    }
+
+    if (globalFavsPlaylist != null && favsPlaylist != null) {
+      List<PlaylistGame> games = playlist.getGames();
+      for (PlaylistGame game : games) {
+        if (game.isFav()) {
+          favsPlaylist.getGames().add(game);
+        }
+        if (game.isGlobalFav()) {
+          globalFavsPlaylist.getGames().add(game);
+        }
+      }
     }
 
     return playlist;

@@ -5,10 +5,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.games.Game;
@@ -47,11 +51,6 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Autowired
   protected PreferencesService preferencesService;
-
-  private static final int PLAYLIST_FAVORITE_ID = -2;
-  //private static final int PLAYLIST_GLOBALFAV_ID = -2;
-  private static final int PLAYLIST_JUSTADDED_ID = -3;
-  private static final int PLAYLIST_MOSTPLAYED_ID = -4;
 
   /**
    * the loaded and cached emulators
@@ -466,8 +465,26 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public Playlist savePlaylist(Playlist playlist) {
-    //not used by all connectors
-    return null;
+    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+      uiSettings.setMostPlayedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+      uiSettings.setLocalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      uiSettings.setGlobalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+      uiSettings.setJustAddedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+    }
+    try {
+      preferencesService.savePreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save playlist colors: {}", e.getMessage(), e);
+    }
+    return playlist;
   }
 
   protected void savePlaylistGame(int gameId, Playlist playlist) {
@@ -481,19 +498,30 @@ public abstract class BaseConnector implements FrontendConnector {
   protected void saveFavorite(int gameId, boolean favorite) {
   }
 
-  private Playlist getFavPlaylist() {
+  private Playlist getFavPlaylist(UISettings uiSettings) {
     Playlist favs = new Playlist();
-    favs.setId(PLAYLIST_FAVORITE_ID);
+    favs.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
     favs.setName("Favorites");
+    int intValue = toColorCode(uiSettings.getLocalFavsColor());
+    favs.setMenuColor(intValue);
     List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
     favs.setGames(favspg);
     return favs;
   }
 
-  private Playlist getJustAddedPlaylist() {
+  private int toColorCode(String color) {
+    if(color.startsWith("#")) {
+      color = color.substring(1);
+    }
+    return Integer.valueOf(color, 16);
+  }
+
+  private Playlist getJustAddedPlaylist(UISettings uiSettings) {
     Playlist pl = new Playlist();
-    pl.setId(PLAYLIST_JUSTADDED_ID);
+    pl.setId(PlaylistRepresentation.PLAYLIST_JUSTADDED_ID);
     pl.setName("Just Added");
+    int intValue = toColorCode(uiSettings.getJustAddedColor());
+    pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
     long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
     List<PlaylistGame> games = getGames().stream().filter(g -> {
@@ -503,10 +531,12 @@ public abstract class BaseConnector implements FrontendConnector {
     return pl;
   }
 
-  private Playlist getMostPlayedPlaylist() {
+  private Playlist getMostPlayedPlaylist(UISettings uiSettings) {
     Playlist pl = new Playlist();
-    pl.setId(PLAYLIST_MOSTPLAYED_ID);
+    pl.setId(PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID);
     pl.setName("Most Played");
+    int intValue = toColorCode(uiSettings.getMostPlayedColor());
+    pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
 
     // extract stats, sort by number of plays, take first 10 and return PLaylistGames
@@ -527,9 +557,10 @@ public abstract class BaseConnector implements FrontendConnector {
   @NonNull
   @Override
   public Playlist getPlaylist(int id) {
-    return id == PLAYLIST_FAVORITE_ID ? getFavPlaylist() :
-        id == PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist() :
-            id == PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist() :
+    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    return id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID ? getFavPlaylist(uiSettings) :
+        id == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist(uiSettings) :
+            id == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist(uiSettings) :
                 playlists.get(id);
   }
 
@@ -565,9 +596,10 @@ public abstract class BaseConnector implements FrontendConnector {
   public List<Playlist> getPlaylists() {
     List<Playlist> result = new ArrayList<>();
 
-    result.add(getFavPlaylist());
-    result.add(getJustAddedPlaylist());
-    result.add(getMostPlayedPlaylist());
+    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    result.add(getFavPlaylist(uiSettings));
+    result.add(getJustAddedPlaylist(uiSettings));
+    result.add(getMostPlayedPlaylist(uiSettings));
 
     for (Map.Entry<Integer, Playlist> playlist : playlists.entrySet()) {
       result.add(playlist.getValue());

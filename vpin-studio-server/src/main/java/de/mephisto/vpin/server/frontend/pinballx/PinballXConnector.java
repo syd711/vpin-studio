@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
@@ -459,6 +460,7 @@ public class PinballXConnector extends BaseConnector {
     File pinballXFolder = getInstallationFolder();
 
     List<Playlist> result = new ArrayList<>();
+    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     int id = 1;
     for (Emulator emu : emulators.values()) {
@@ -467,10 +469,10 @@ public class PinballXConnector extends BaseConnector {
         String playlistname = FilenameUtils.getBaseName(f.getName());
         if (!StringUtils.equalsIgnoreCase(playlistname, emu.getName())) {
 
-          Playlist p = new Playlist();
-          p.setId(id++);
-          p.setEmulatorId(emu.getId());
-          p.setName(playlistname);
+          Playlist playlist = new Playlist();
+          playlist.setId(id++);
+          playlist.setEmulatorId(emu.getId());
+          playlist.setName(playlistname);
           // don't set mediaName, studio will use the name
 
           PinballXTableParser parser = new PinballXTableParser();
@@ -481,9 +483,9 @@ public class PinballXConnector extends BaseConnector {
           List<PlaylistGame> pg = _games.stream()
               .map(g -> toPlaylistGame(findIdFromFilename(emu.getId(), g)))
               .collect(Collectors.toList());
-          p.setGames(pg);
+          playlist.setGames(pg);
 
-          result.add(p);
+          result.add(playlist);
         }
       }
     }
