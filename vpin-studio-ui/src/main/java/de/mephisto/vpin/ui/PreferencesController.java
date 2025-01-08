@@ -198,6 +198,18 @@ public class PreferencesController extends SettingsSceneController implements In
     }
   }
 
+  private void switchNode(Node preferencesNode) {
+    Node lookup = Studio.stage.getScene().lookup("#root");
+    BorderPane main = (BorderPane) lookup;
+    StackPane stack = (StackPane) main.getCenter();
+    if (preferencesNode != null) {
+      stack.getChildren().add(preferencesNode);
+    }
+    else {
+      stack.getChildren().remove(1);
+    }
+  }
+
   @FXML
   private void onVersionLInk(ActionEvent event) {
     Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);

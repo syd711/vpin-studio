@@ -107,9 +107,9 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public void installDMDPackage(@NonNull File archive, @Nullable String dmdPath, int emulatorId) {
+  public void installDMDPackage(@NonNull File archive, @Nullable String dmdPath, @NonNull File gameFile) {
     if (dmdPath != null) {
-      File tablesFolder = frontendService.getGameEmulator(emulatorId).getTablesFolder();
+      File tablesFolder = gameFile.getParentFile();
       String extension = FilenameUtils.getExtension(archive.getName()).toLowerCase();
       if (extension.equals(PackageUtil.ARCHIVE_ZIP)) {
         DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);

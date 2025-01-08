@@ -26,6 +26,12 @@ public class ScoreListFactory {
 
   public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, List<String> titles) {
     List<Score> scores = new ArrayList<>();
+    int gameId = -1;
+    String source = null;
+    if (game != null) {
+      gameId = game.getId();
+      source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
+    }
 
     try {
       LOG.debug("Parsing Highscore text: " + raw);
@@ -34,16 +40,135 @@ public class ScoreListFactory {
         return scores;
       }
 
-      for (ScoreListAdapter adapter : adapters) {
-        if (adapter.isApplicable(game)) {
-          // LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
-          return adapter.getScores(game, createdAt, lines, titles);
+      if (game != null) {
+        for (ScoreListAdapter adapter : adapters) {
+          if (adapter.isApplicable(game)) {
+//            LOG.info("Using score list adapter {}", adapter.getClass().getSimpleName());
+            return adapter.getScores(game, createdAt, lines);
+          }
         }
       }
-    } catch (Exception e) {
-      LOG.error(
-          "Failed to parse highscore: " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
+
+      int index = 1;
+      for (int i = 0; i < lines.size(); i++) {
+        String line = lines.get(i);
+        if (titles.contains(line.trim())) {
+          String scoreLine = lines.get(i + 1);
+          Score score = createTitledScore(createdAt, scoreLine, source, gameId);
+          if (score != null) {
+            scores.add(score);
+          }
+          //do not increase index, as we still search for #1
+          continue;
+        }
+
+        if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1) {
+          Score score = createScore(createdAt, line, source, gameId);
+          if (score != null) {
+            score.setPosition(scores.size() + 1);
+            scores.add(score);
+            index++;
+          }
+        }
+
+        if (scores.size() >= 3 && StringUtils.isEmpty(line)) {
+          break;
+        }
+      }
     }
-    return scores; // return an empty score
+    catch (Exception e) {
+      LOG.error("Failed to parse highscore: " + e.getMessage() + "\nRaw Data:\n==================================\n" + raw, e);
+    }
+    return filterDuplicates(scores);
+  }
+
+  private static List<Score> filterDuplicates(List<Score> scores) {
+    List<Score> scoreList = new ArrayList<>();
+    int pos = 1;
+    for (Score s : scores) {
+      Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
+      if (match.isPresent()) {
+        continue;
+      }
+      s.setPosition(pos);
+      scoreList.add(s);
+      pos++;
+    }
+    return scoreList;
+  }
+
+
+  @Nullable
+  private static Score createTitledScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
+    String initials = "???";
+    if (line.trim().length() >= 3) {
+      initials = line.trim().substring(0, 3);
+
+      String scoreString = line.substring(4).trim();
+      double scoreValue = toNumericScore(scoreString, source);
+      if (scoreValue == -1) {
+        return null;
+      }
+
+      return new Score(createdAt, gameId, initials, null, scoreString, scoreValue, 1);
+    }
+
+    double scoreValue = toNumericScore(line.trim(), source);
+    if (scoreValue == -1) {
+      return null;
+    }
+
+    return new Score(createdAt, gameId, initials, null, line.trim(), scoreValue, 1);
+  }
+
+  @Nullable
+  private static Score createScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
+    List<String> scoreLineSegments = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
+    if (scoreLineSegments.size() == 2) {
+      String score = scoreLineSegments.get(1);
+      double v = toNumericScore(score, source);
+      if (v == -1) {
+        return null;
+      }
+      return new Score(createdAt, gameId, "", null, score, v, -1);
+    }
+
+    if (scoreLineSegments.size() == 3) {
+      String score = scoreLineSegments.get(2);
+      String initials = scoreLineSegments.get(1);
+      double v = toNumericScore(score, source);
+      if (v == -1) {
+        return null;
+      }
+      return new Score(createdAt, gameId, initials, null, score, v, -1);
+    }
+
+    if (scoreLineSegments.size() > 3) {
+      StringBuilder initials = new StringBuilder();
+      for (int i = 1; i < scoreLineSegments.size() - 1; i++) {
+        initials.append(scoreLineSegments.get(i));
+        initials.append(" ");
+      }
+      String score = scoreLineSegments.get(scoreLineSegments.size() - 1);
+      String playerInitials = initials.toString().trim();
+      double v = toNumericScore(score, source);
+      if (v == -1) {
+        return null;
+      }
+      return new Score(createdAt, gameId, playerInitials, null, score, v, -1);
+    }
+
+    throw new UnsupportedOperationException("Could parse score line for game " + gameId + " '" + line + "'");
+  }
+
+  private static double toNumericScore(@NonNull String score, @Nullable String source) {
+    try {
+      String cleanScore = ScoreFormatUtil.cleanScore(score);
+      return Double.parseDouble(cleanScore);
+    }
+    catch (NumberFormatException e) {
+      LOG.warn("Failed to parse numeric highscore string '{}', ignoring segment '{}', source: {}", score, score, source);
+      return -1;
+    }
   }
 }
