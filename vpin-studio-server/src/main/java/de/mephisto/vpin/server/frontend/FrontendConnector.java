@@ -35,7 +35,7 @@ public interface FrontendConnector {
   /**
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators
    */
-  void clearCache();
+  void reloadCache();
 
   Game getGame(int id);
 

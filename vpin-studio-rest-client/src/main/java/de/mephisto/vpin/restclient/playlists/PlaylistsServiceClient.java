@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 /*********************************************************************************************************************
  * Playlists
@@ -74,13 +75,13 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "playlists/clearcache", Boolean.class);
   }
 
-  public PlaylistRepresentation savePlaylist(PlaylistRepresentation playlist) throws Exception {
+  public PlaylistRepresentation savePlaylist(PlaylistRepresentation playlist) {
     try {
       return getRestClient().post(API + "playlists/save", playlist, PlaylistRepresentation.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save playlist: " + e.getMessage(), e);
-      throw e;
+      throw new CompletionException(e);
     }
   }
 

@@ -217,6 +217,11 @@ public class Playlist {
     }
     return false;
   }
+  public List<PlaylistGame> removeGames() {
+    List<PlaylistGame> oldgames = games;
+    this.games = new ArrayList<>();
+    return oldgames;
+  }
 
   public boolean isFavGame(int id) {
     PlaylistGame game = getGame(id);

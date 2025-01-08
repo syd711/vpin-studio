@@ -113,6 +113,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
     this.refreshView(games);
   }
 
+  public void refreshView() {
+    refreshView(games);
+  }
   public void refreshView(List<GameRepresentation> games) {
     dataBox.getChildren().removeAll(dataBox.getChildren());
 
@@ -242,7 +245,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
                 if (update == null) {
                   LOG.error("Saving playlist failed, check server logs.");
                 }
-                client.getPlaylistsService().clearCache();
+                //client.getPlaylistsService().clearCache();
                 refreshPlaylist(update, true);
               }
               catch (Exception e) {
@@ -317,7 +320,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     return true;
   }
 
-  private void refreshPlaylist(PlaylistRepresentation playlist, boolean updateAll) {
+  public void refreshPlaylist(PlaylistRepresentation playlist, boolean updateAll) {
     client.getPreferenceService().clearCache(PreferenceNames.UI_SETTINGS);
     tablesSidebarController.getTableOverviewController().updatePlaylist(playlist);
 

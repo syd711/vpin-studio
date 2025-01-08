@@ -76,7 +76,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   private PupEventEmitter pupEventEmitter;
 
   @Override
-  public void clearCache() {
+  public void reloadCache() {
     //not used yet
   }
 
