@@ -3,7 +3,9 @@
 ## Bugfixes
 
 - **Tables / Uploads**: Fixed uploads of DMD packages for tables that are installed into subfolders.
-
+- **Tables / VPS Assignment:** Fixed critical error on VPS table selection where VPS values have not been applied to the table.
+- **Tables / PinVol Settings**: "Worked around" an issue when saving PinVol settings. I still haven't found the root cause, but the error handling has been improved.
+- **DOF Updater:** Switched config download URL to the new domain.
 
 ---
 

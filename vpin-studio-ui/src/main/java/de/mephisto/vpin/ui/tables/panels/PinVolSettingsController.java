@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -75,6 +76,8 @@ public class PinVolSettingsController implements Initializable {
   private PinVolTableEntry entry;
   private PinVolTableEntry systemVolume;
 
+  private boolean dirty = false;
+
   @FXML
   private void onSave() {
     save();
@@ -140,30 +143,35 @@ public class PinVolSettingsController implements Initializable {
     systemVolPrimarySpinner.setValueFactory(factory1);
     factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       systemVolume.setPrimaryVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, systemVolume.getSecondaryVolume());
     systemVolSecondarySpinner.setValueFactory(factory2);
     factory2.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       systemVolume.setSecondaryVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory3 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10, systemVolume.getSsfBassVolume());
     systemVolBassSpinner.setValueFactory(factory3);
     factory3.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       systemVolume.setSsfBassVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory4 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10, systemVolume.getSsfFrontVolume());
     systemVolFrontSpinner.setValueFactory(factory4);
     factory4.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       systemVolume.setSsfFrontVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory5 = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 10, systemVolume.getSsfRearVolume());
     systemVolRearSpinner.setValueFactory(factory5);
     factory5.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       systemVolume.setSsfRearVolume(t1);
+      dirty = true;
     }, 300));
 
     try {
@@ -203,34 +211,48 @@ public class PinVolSettingsController implements Initializable {
     tableVolPrimarySpinner.setValueFactory(factory6);
     factory6.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       entry.setPrimaryVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory7 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, entry.getSecondaryVolume());
     tableVolSecondarySpinner.setValueFactory(factory7);
     factory7.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       entry.setSecondaryVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory8 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10, entry.getSsfBassVolume());
     tableVolBassSpinner.setValueFactory(factory8);
     factory8.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       entry.setSsfBassVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory9 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10, entry.getSsfFrontVolume());
     tableVolFrontSpinner.setValueFactory(factory9);
     factory9.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       entry.setSsfFrontVolume(t1);
+      dirty = true;
     }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory10 = new SpinnerValueFactory.IntegerSpinnerValueFactory(-10, 10, entry.getSsfRearVolume());
     tableVolRearSpinner.setValueFactory(factory10);
     factory10.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
       entry.setSsfRearVolume(t1);
+      dirty = true;
     }, 300));
   }
 
   public void save() {
+    if (!dirty) {
+      return;
+    }
+
+    if (systemVolume == null) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinVol settings, no system volume set.");
+      return;
+    }
+
     PinVolUpdate update = new PinVolUpdate();
     update.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
     update.setSystemVolume(systemVolume);

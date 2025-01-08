@@ -38,11 +38,13 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class PreferencesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
-    // Add a public no-args constructor
-    public PreferencesController() {
-    }
-  
-  /** a singleton */
+  // Add a public no-args constructor
+  public PreferencesController() {
+  }
+
+  /**
+   * a singleton
+   */
   private static PreferencesController instance;
 
   @FXML
@@ -129,7 +131,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private String lastScreen = "preference-settings-cabinet.fxml";
 
   public static void markDirty(PreferenceType preferenceType) {
-    instance.dirtyPreferenceType = preferenceType;
+    if (instance != null) {
+      instance.dirtyPreferenceType = preferenceType;
+    }
   }
 
   public static void open() {
@@ -184,7 +188,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     StackPane stack = (StackPane) main.getCenter();
     if (preferencesNode != null) {
       stack.getChildren().add(preferencesNode);
-    } else {
+    }
+    else {
       stack.getChildren().remove(1);
     }
   }
