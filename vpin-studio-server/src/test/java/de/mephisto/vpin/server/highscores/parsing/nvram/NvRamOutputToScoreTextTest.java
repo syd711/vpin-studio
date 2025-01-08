@@ -27,15 +27,11 @@ public class NvRamOutputToScoreTextTest {
 
   @Test
   public void testAllFiles() throws Exception {
-    // Emulator for test
-    GameEmulator gameEmulator = getGameEmulator();
-
-    // Set the path to this GameEmulator so that nv files can be found
-    PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
+    File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
 
     ScoringDB scoringDB = ScoringDB.load();
-    File folder = gameEmulator.getNvramFolder();
-    File[] files = folder.listFiles((dir, name) -> name.endsWith(".nv"));
+    File[] files = testFolder.listFiles((dir, name) -> name.endsWith(".nv"));
     int count = 0;
     for (File entry : files) {
       if (ignoreList.contains(entry.getName())) {
@@ -64,13 +60,11 @@ public class NvRamOutputToScoreTextTest {
 
   @Test
   public void testSingle() throws Exception {
-    // Emulator for test
-    GameEmulator gameEmulator = getGameEmulator();
-
+    File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
     // Set the path to this GameEmulator so that nv files can be found
-    PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
+    PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
 
-    File entry = new File(gameEmulator.getNvramFolder(), "kiko_a10.nv");
+    File entry = new File(testFolder, "kiko_a10.nv");
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
     System.out.println(raw);
@@ -94,13 +88,5 @@ public class NvRamOutputToScoreTextTest {
 
   private File getPinemhiExe() {
     return new File("../resources/pinemhi", PINemHiService.PINEMHI_COMMAND);
-  }
-
-  private GameEmulator getGameEmulator() {
-    Emulator emulator = new Emulator(EmulatorType.VisualPinball);
-    emulator.setName("VPX");
-    emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
-    GameEmulator gameEmulator = new GameEmulator(emulator);
-    return gameEmulator;
   }
 }
