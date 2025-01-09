@@ -32,7 +32,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
   }
 
   @NonNull
-  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles) {
+  public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, @NonNull List<String> titles) {
     List<Score> scores = new ArrayList<>();
 
     // Regex for scores with or without thousands seperator
@@ -43,13 +43,15 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
     // Followed by an <eol> (so no more characters)
     Pattern scorePattern = Pattern.compile("(?:^|#\\d+ |\\d+# |\\d+\\) )([\\S ]{1,3})\\s+(\\d+([.,]\\d{3})*)$");
 
+    String source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
+
     // Process each line
     for (String line : lines) {
       Matcher matcher = scorePattern.matcher(line);
       if (matcher.find()) {
         String player = matcher.group(1);
         String score = matcher.group(2);
-        Double scoreValue = toNumericScore(score);
+        Double scoreValue = toNumericScore(score, source);
         if (scoreValue != -1) {
           scores.add(new Score(createdAt, game.getId(), player, null, score, scoreValue, 0));
         }

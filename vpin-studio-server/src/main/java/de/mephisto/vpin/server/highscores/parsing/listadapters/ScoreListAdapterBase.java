@@ -7,6 +7,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.highscores.Score;
 
@@ -14,17 +17,18 @@ public class ScoreListAdapterBase {
 
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
-  protected static double toNumericScore(String score) {
+  protected double toNumericScore(@NonNull String score, @Nullable String source) {
     try {
       String cleanScore = ScoreFormatUtil.cleanScore(score);
       return Double.parseDouble(cleanScore);
-    } catch (NumberFormatException e) {
-      LOG.info("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
+    }
+    catch (NumberFormatException e) {
+      LOG.warn("Failed to parse numeric highscore string '{}', ignoring segment '{}', source: {}", score, score, source);
       return -1;
     }
   }
 
-  protected static List<Score> filterDuplicates(List<Score> scores) {
+  protected List<Score> filterDuplicates(List<Score> scores) {
     List<Score> scoreList = new ArrayList<>();
     int pos = 1;
     for (Score s : scores) {
