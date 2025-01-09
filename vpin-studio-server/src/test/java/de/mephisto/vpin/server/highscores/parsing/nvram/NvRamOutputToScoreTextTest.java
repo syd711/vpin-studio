@@ -14,8 +14,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NvRamOutputToScoreTextTest {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextTest.class);
@@ -68,21 +67,17 @@ public class NvRamOutputToScoreTextTest {
     LOG.info(raw);
 
     assertNotNull(raw);
+    assertEquals(raw, "HIGHEST SCORES\n" +
+        "1) DAK    3.032.500\n" +
+        "2) DAK    2.665.940\n" +
+        "3) DAK    1.856.200\n" +
+        "4) DAK    1.067.570");
     List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
     LOG.info("Parsed " + parse.size() + " score entries.");
 
     for (Score score : parse) {
       LOG.info("Score: {}", score);
     }
-
-    if(parse.isEmpty()) {
-      LOG.info("Locale: " + Locale.getDefault().getDisplayName());
-      LOG.info("TimeZone: " + TimeZone.getDefault().getDisplayName());
-      LOG.info("Charset: " +  Charset.defaultCharset().displayName());
-      LOG.info("RAW:\n " +  raw);
-    }
-
-
     assertFalse(parse.isEmpty());
   }
 
