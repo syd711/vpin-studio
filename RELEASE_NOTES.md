@@ -104,3 +104,4 @@
 - **Backglass Manager / support of sub-folders**: When table is in sub-folder, the backglass and associated res or screenres files were not properly got.
 - **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
 - **Highscore Cards Editor**: Fixed various weight and posture issues with the font selection and the preview of it.
+- **VPS Mappings**: Added FX2 Support for table versions.

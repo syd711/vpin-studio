@@ -114,7 +114,7 @@ public class NvRamOutputToScoreTextTest {
     // Set the path to this GameEmulator so that nv files can be found
     PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
 
-    File entry = new File(gameEmulator.getNvramFolder(), "kiko_a10.nv");
+    File entry = new File(gameEmulator.getNvramFolder(), "hs_l4.nv");
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
     System.out.println(raw);
