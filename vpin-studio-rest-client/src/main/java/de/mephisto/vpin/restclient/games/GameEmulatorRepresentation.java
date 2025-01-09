@@ -148,10 +148,14 @@ public class GameEmulatorRepresentation {
         case FuturePinball: {
           return Arrays.asList(VpsFeatures.FP);
         }
-        case ZenFX:
-        case ZenFX2:
+        case ZenFX: {
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
+        }
+        case ZenFX2: {
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
+        }
         case ZenFX3: {
-          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX3);
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
         }
       }
     }
