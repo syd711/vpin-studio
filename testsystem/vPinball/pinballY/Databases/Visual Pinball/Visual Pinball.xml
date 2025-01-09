@@ -7,7 +7,7 @@
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2025-01-08 19:19:35</dateadded>
+    <dateadded>2025-01-08 19:34:56</dateadded>
   </game>
   <game name="Jaws">
     <description>Jaws</description>
@@ -17,7 +17,7 @@
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2025-01-08 19:19:35</dateadded>
+    <dateadded>2025-01-08 19:34:56</dateadded>
   </game>
   <game name="Twister (1996)">
     <description>Twister (1996)</description>
@@ -27,6 +27,6 @@
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2025-01-08 19:19:35</dateadded>
+    <dateadded>2025-01-08 19:34:56</dateadded>
   </game>
 </menu>
