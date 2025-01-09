@@ -13,9 +13,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -76,6 +75,14 @@ public class NvRamOutputToScoreTextTest {
     for (Score score : parse) {
       System.out.println(score);
     }
+
+    if(parse.isEmpty()) {
+      System.out.println("Locale: " + Locale.getDefault().getDisplayName());
+      System.out.println("TimeZone: " + TimeZone.getDefault().getDisplayName());
+      System.out.println("Charset: " +  Charset.defaultCharset().displayName());
+      System.out.println("RAW:\n " +  raw);
+    }
+
 
     assertFalse(parse.isEmpty());
   }
