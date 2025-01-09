@@ -67,6 +67,7 @@ public class NvRamOutputToScoreTextTest {
     LOG.info(raw);
 
     assertNotNull(raw);
+    assertEquals(Charset.defaultCharset().displayName(), "utf-8");
     assertEquals(raw, "HIGHEST SCORES\n" +
         "1) DAK    3.032.500\n" +
         "2) DAK    2.665.940\n" +
