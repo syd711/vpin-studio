@@ -9,7 +9,6 @@ import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -72,9 +71,9 @@ public class PinballYConnector extends BaseConnector {
   }
 
   @Override
-  public void clearCache() {
+  public void reloadCache() {
     this.mapTableDetails.clear();
-    super.clearCache();
+    super.reloadCache();
   }
 
   @Override
@@ -374,6 +373,36 @@ PlayfieldWindow.Minimized = 0
     List<Playlist> result = new ArrayList<>();
     parser.getAlxData(emulators.values(), null, null, result);
     return result;
+  }
+
+  @Override
+  public Playlist savePlaylist(Playlist playlist) {
+    if (playlist.getId() >= -1) {
+        // delete first the old playlist, to insert new one 
+        if (playlist.getId() >= 0) {
+        deletePlaylist(playlist.getId());
+      }
+      // pesrsist all games
+      for (PlaylistGame pg : playlist.getGames()) {
+        savePlaylistGame(pg.getId(), playlist);
+      }
+    }
+    // then add to cache
+    return super.savePlaylist(playlist);
+  }
+
+  @Override
+  public boolean deletePlaylist(int playlistId) {
+    Playlist playlist = getPlaylist(playlistId);
+    if (playlist != null) {
+      List<PlaylistGame> oldgames = playlist.removeGames();
+      for (PlaylistGame pg : oldgames) {
+        savePlaylistGame(pg.getId(), playlist);
+      }
+      return super.deletePlaylist(playlistId);
+    }
+    // already deleted
+    return false;
   }
 
   @Override

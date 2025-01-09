@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -13,6 +14,8 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -169,24 +172,19 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   private void rename(String value, String oldValue, PlaylistRepresentation playlist) {
     value = FileUtils.replaceWindowsChars(value);
-    int oldId = playlist.getId();
     if (!StringUtils.isEmpty(value) && !oldValue.equalsIgnoreCase(value)) {
       try {
         playlist.setName(value);
-        PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(playlist);
-        //depending on the frontend, renaming is not possible and we re-create a new one.
-        if (update.getId() != oldId) {
-          client.getPlaylistsService().delete(oldId);
-        }
 
-        reload();
-
-        if (update == null) {
-          WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
-        }
-        else {
-          select(treeView.getRoot(), update);
-        }
+        JFXFuture.supplyAsync(() -> client.getPlaylistsService().savePlaylist(playlist))
+          .thenAcceptLater(update -> reload(update, () -> {
+            if (update == null) {
+              WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
+            }
+            else {
+              select(treeView.getRoot(), update);
+            }
+          }));
       }
       catch (Exception e) {
         LOG.error("Playlist renaming failed: {}", e.getMessage(), e);
@@ -208,14 +206,16 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @FXML
   private void onReload() {
-    reload();
-    if (treeView.isShowRoot()) {
-      select(treeView.getRoot(), treeView.getRoot().getValue());
-    }
-    else {
-      TreeItem<PlaylistRepresentation> selection = treeView.getRoot().getChildren().get(0);
-      select(selection, selection.getValue());
-    }
+    JFXFuture.runAsync(() -> client.getPlaylistsService().clearCache())
+      .thenLater(() -> reload(null, () -> {
+        if (treeView.isShowRoot()) {
+          select(treeView.getRoot(), treeView.getRoot().getValue());
+        }
+        else {
+          TreeItem<PlaylistRepresentation> selection = treeView.getRoot().getChildren().get(0);
+          select(selection, selection.getValue());
+        }
+      }));
   }
 
   @FXML
@@ -258,14 +258,17 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         newPlayList.setEmulatorId(client.getFrontendService().getDefaultGameEmulator().getId());
       }
 
-      PlaylistRepresentation update = client.getPlaylistsService().savePlaylist(newPlayList);
-      reload();
-
-      select(treeView.getRoot(), update);
+      JFXFuture
+        .supplyAsync(() -> client.getPlaylistsService().savePlaylist(newPlayList))
+        .thenAcceptLater(update -> reload(update, () -> {
+          select(treeView.getRoot(), update);
+        }))
+        .onErrorLater(e -> {
+          LOG.error("Playlist creation failed: {}", e.getMessage(), e);
+          WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());    
+        });
     }
     catch (Exception e) {
-      LOG.error("Playlist creation failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
     }
   }
 
@@ -284,8 +287,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Playlist", "Delete Playlist \"" + value.getName() + "\"?", help2, btnText);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPlaylistsService().delete(value.getId());
-        reload();
+        JFXFuture.runAsync(() -> client.getPlaylistsService().delete(value.getId()))
+          .thenLater(() -> reload(value, () -> {}));
       }
     }
   }
@@ -405,13 +408,23 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     }
   }
 
-  private void reload() {
-    PlaylistRepresentation playListRoot = client.getPlaylistsService().getPlaylistTree();
-    TreeItem<PlaylistRepresentation> root = new TreeItem<>(playListRoot);
-    buildTreeModel(root);
-    treeView.setRoot(root);
-    treeView.setShowRoot(client.getFrontendService().getFrontendCached().getFrontendType().supportExtendedPlaylists());
-    expandAll(root);
+  private void reload(PlaylistRepresentation playlist, Runnable r) {
+    JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylistTree())
+      .thenAcceptLater(playListRoot -> {
+        TreeItem<PlaylistRepresentation> root = new TreeItem<>(playListRoot);
+        buildTreeModel(root);
+        treeView.setRoot(root);
+        treeView.setShowRoot(client.getFrontendService().getFrontendCached().getFrontendType().supportExtendedPlaylists());
+        expandAll(root);
+        // execute 
+        if (r != null) {
+          r.run();
+        }
+        // finally refresh the sidebar
+        if (playlist != null) {
+          refreshSidebar(playlist);
+        }
+      });
   }
 
   @Override
@@ -540,7 +553,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
                   rename(name, oldValue, getPlaylist());
                 }
                 commitEdit(getPlaylist());
-                savePlaylist();
+                //OLE done already in rename ?? 
+                //savePlaylist();
               }
               else if (t.getCode() == KeyCode.ESCAPE) {
                 cancelEdit();
@@ -734,7 +748,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       savePlaylist();
     });
 
-    reload();
+    reload(null, null);
   }
 
   private PlaylistRepresentation getPlaylist() {
@@ -770,5 +784,13 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         });
       }
     }
+  }
+
+  public void refreshSidebar(PlaylistRepresentation playlist)  {
+    tableOverviewController.refreshPlaylists();
+    TablesSidebarController sidebarController = tableOverviewController.getTablesController().getTablesSideBarController();
+    TablesSidebarPlaylistsController playlistsController = sidebarController.getTablesSidebarPlaylistController();
+    playlistsController.refreshView();
+    playlistsController.refreshPlaylist(playlist, false);
   }
 }

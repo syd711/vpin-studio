@@ -830,6 +830,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     });
   }
 
+  public TablesSidebarPlaylistsController getTablesSidebarPlaylistController() {
+    return tablesSidebarPlaylistsController;
+  }
   public TablesSidebarHighscoresController getTablesSidebarHighscoresController() {
     return tablesSidebarHighscoresController;
   }

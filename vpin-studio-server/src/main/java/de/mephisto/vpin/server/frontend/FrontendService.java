@@ -609,7 +609,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public void loadEmulators() {
     FrontendConnector frontendConnector = getFrontendConnector();
-    frontendConnector.clearCache();
+    frontendConnector.reloadCache();
     List<Emulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
     for (Emulator emulator : ems) {

@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
@@ -59,9 +58,13 @@ public class PinballXConnector extends BaseConnector {
     if (ps != null && ps.isGameExEnabled()) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
       super.setTableAssetAdapter(assetsAdapter);
+      // no effect if already started
+      this.assetsAdapter.startRefresh();
     }
     else {
       super.setTableAssetAdapter(null);
+      // no effect if already stopped
+      this.assetsAdapter.stopRefresh();
     }
     LOG.info("Finished initialization of " + this);
   }
@@ -122,9 +125,9 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  public void clearCache() {
+  public void reloadCache() {
     this.mapTableDetails.clear();
-    super.clearCache();
+    super.reloadCache();
   }
 
   @Override
@@ -229,7 +232,7 @@ public class PinballXConnector extends BaseConnector {
   Parameters=-light
   */
   private Emulator createEmulator(SubnodeConfiguration s, File installDir, int emuId, String emuname) {
-    boolean enabled = s.getBoolean("Enabled", false);
+    boolean enabled = s.getBoolean("Enabled", true);
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
     String executable = s.getString("Executable");
@@ -428,7 +431,6 @@ public class PinballXConnector extends BaseConnector {
   //----------------------------------
   // Playlist management
 
-
   @Override
   public boolean deletePlaylist(int playlistId) {
     List<Playlist> playlists = this.loadPlayLists();
@@ -443,16 +445,16 @@ public class PinballXConnector extends BaseConnector {
         for (Playlist playlist : playlists) {
           if (playlist.getName().equals(playlistname)) {
             if (!f.delete()) {
-              LOG.info("Failed to delete PinballX/Y playlist {}", f.getAbsolutePath());
+              LOG.info("Failed to delete PinballX playlist {}", f.getAbsolutePath());
             }
             else {
-              LOG.info("Deleted PinballX/Y playlist {}", f.getAbsolutePath());
+              LOG.info("Deleted PinballX playlist {}", f.getAbsolutePath());
             }
           }
         }
       }
     }
-    return false;
+    return super.deletePlaylist(playlistId);
   }
 
   @Override
@@ -460,7 +462,6 @@ public class PinballXConnector extends BaseConnector {
     File pinballXFolder = getInstallationFolder();
 
     List<Playlist> result = new ArrayList<>();
-    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     int id = 1;
     for (Emulator emu : emulators.values()) {
@@ -519,30 +520,28 @@ public class PinballXConnector extends BaseConnector {
 
           org.apache.commons.io.FileUtils.write(playlistFile, "<menu>\n</menu>", StandardCharsets.UTF_8);
           LOG.info("Written new playlist file {}", playlistFile.getAbsolutePath());
-          getEmulators();
-          return getPlaylists().stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().get();
-        }
-
-        Playlist existingPlaylist = getPlaylist(playlist.getId());
-        File existingPlaylistFile = new File(dbfolder, existingPlaylist.getName() + ".xml");
-        File updated = new File(dbfolder, playlist.getName() + ".xml");
-        if (!existingPlaylistFile.renameTo(updated)) {
-          LOG.error("Renaming playlist {} to {} failed.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
         }
         else {
-          LOG.info("Renamed playlist {} to {}.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+          Playlist existingPlaylist = getPlaylist(playlist.getId());
+          if (existingPlaylist != null) {
+            File existingPlaylistFile = new File(dbfolder, existingPlaylist.getName() + ".xml");
+            File updated = new File(dbfolder, playlist.getName() + ".xml");
+            if (!existingPlaylistFile.renameTo(updated)) {
+              LOG.error("Renaming playlist {} to {} failed.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+            }
+            else {
+              LOG.info("Renamed playlist {} to {}.", existingPlaylistFile.getAbsolutePath(), updated.getAbsolutePath());
+            }
+            deletePlaylistConf(existingPlaylist);
+          }
         }
-
-        savePlaylistConf(playlist, getPlaylistConf(playlist));
-
-        loadEmulators();
-        return playlist;
       }
     }
     catch (Exception e) {
       LOG.error("Failed to save PinballX/Y playlist: {}", e.getMessage(), e);
     }
-    return null;
+    // now save colors and refresh cache
+    return super.savePlaylist(playlist);
   }
 
 //----------------------------------

@@ -94,7 +94,7 @@ public class VpsService implements InitializingBean {
   }
 
   private VpsTableVersion getVpsVersion(@NonNull Game game) {
-    return getVpsVersion(game.getExtVersion(), game.getExtTableVersionId());
+    return getVpsVersion(game.getExtTableId(), game.getExtTableVersionId());
   }
 
   public VpsTableVersion getVpsVersion(@Nullable String vpsTableId, @Nullable String vpsVersionId) {

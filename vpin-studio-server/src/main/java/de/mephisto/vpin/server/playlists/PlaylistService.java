@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,10 @@ public class PlaylistService {
   }
 
   public boolean clearCache() {
-    getPlaylistTree();
+    FrontendConnector connector = frontendService.getFrontendConnector();
+    if (connector != null) {
+      connector.reloadCache();
+    }
     return true;
   }
 }

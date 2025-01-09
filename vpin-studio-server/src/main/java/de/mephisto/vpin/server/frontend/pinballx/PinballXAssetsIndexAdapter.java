@@ -12,6 +12,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,9 +20,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter {
@@ -29,6 +33,15 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsIndexAdapter.class);
 
   private PinballXIndex index;
+
+  @Value("${pinballX.mediaserver.refreshInterval:3}")
+  private int refreshInterval;
+
+  /** the refresh timer to keep the index up-to-date */
+  private Timer refreshTimer;
+
+  public PinballXAssetsIndexAdapter() {
+  }
 
   @Override
   public TableAssetConf getTableAssetConf() {
@@ -152,4 +165,29 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
     }
     return new File(folder, "pinballx.index");
   }
+
+  //-----------------------------------
+
+  public void startRefresh() {
+    if (this.refreshTimer == null && this.refreshInterval > 0) {
+      this.refreshTimer = new Timer();
+      Calendar now = Calendar.getInstance();
+      // small delay after server restart for the initial refresh, then refresh periodically
+      now.add(Calendar.MINUTE, 3);
+      refreshTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          invalidateMediaCache();
+        }
+      }, now.getTime(), refreshInterval * 24 * 60 * 60 * 1000);
+    }
+  }
+
+  public void stopRefresh() {
+    if (this.refreshTimer != null) {
+      refreshTimer.cancel();
+      this.refreshTimer = null;
+    }
+  }
+
 }

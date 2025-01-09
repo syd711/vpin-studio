@@ -85,22 +85,16 @@ public abstract class BaseConnector implements FrontendConnector {
   private TableAssetsAdapter tableAssetsAdapter;
 
 
+  /**
+   * reload all each time it is called, ie once at server startup
+   */
   @Override
-  public void clearCache() {
+  public void reloadCache() {
     this.emulators.clear();
     this.gamesByEmu.clear();
     this.mapFilenames.clear();
     this.playlists.clear();
     this.gameFavs.clear();
-  }
-
-  /**
-   * Get and reload all each time it is called, ie once at server startup
-   */
-  @Override
-  public final List<Emulator> getEmulators() {
-    // reset database
-    clearCache();
 
     // load all existing entries from database
     List<GameEntry> entries = gameEntryRepository.findAll();
@@ -147,8 +141,6 @@ public abstract class BaseConnector implements FrontendConnector {
 
     // load and cache favorites
     gameFavs = loadFavorites();
-
-    return loaded;
   }
 
   private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
@@ -219,6 +211,11 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract void commitDb(Emulator emu);
 
   //-------------------------------------------------
+
+  @Override
+  public final List<Emulator> getEmulators() {
+    return new ArrayList<>(emulators.values());
+  }
 
   @Override
   public Emulator getEmulator(int emulatorId) {
@@ -465,26 +462,49 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public Playlist savePlaylist(Playlist playlist) {
-    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
-      uiSettings.setMostPlayedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+    if (playlist.getId() < -1) {
+      UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+        uiSettings.setMostPlayedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+        uiSettings.setLocalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+        uiSettings.setGlobalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+        uiSettings.setJustAddedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      try {
+        preferencesService.savePreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to save playlist colors: {}", e.getMessage(), e);
+      }
     }
-    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
-      uiSettings.setLocalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
-    }
-    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
-      uiSettings.setGlobalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
-    }
-    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-      uiSettings.setJustAddedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
-    }
-    try {
-      preferencesService.savePreference(PreferenceNames.UI_SETTINGS, uiSettings);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to save playlist colors: {}", e.getMessage(), e);
+    else {
+      if (playlist.getId() == -1) {
+        // newly created playlist, generate a dummy id and add to memory
+        int newid = Collections.max(playlists.keySet()) + 1;
+        playlist.setId(newid);
+      }
+      // update cache
+      playlists.put(playlist.getId(), playlist);
+
+      savePlaylistConf(playlist);
     }
     return playlist;
+  }
+
+  @Override
+  public boolean deletePlaylist(int playlistId) {
+    Playlist playlist = playlists.remove(playlistId);
+    if (playlist == null) {
+      return false;
+    }
+    deletePlaylistConf(playlist);
+    return true;
   }
 
   protected void savePlaylistGame(int gameId, Playlist playlist) {
@@ -564,7 +584,6 @@ public abstract class BaseConnector implements FrontendConnector {
                 playlists.get(id);
   }
 
-
   @NonNull
   @Override
   public Playlist clearPlaylist(int id) {
@@ -579,17 +598,11 @@ public abstract class BaseConnector implements FrontendConnector {
   @NotNull
   @Override
   public Playlist getPlaylistTree() {
-    getEmulators();
-
     Playlist artificialRoot = new Playlist();
     artificialRoot.setId(0);
+    artificialRoot.setName("--");
     artificialRoot.setChildren(getPlaylists());
     return artificialRoot;
-  }
-
-  @Override
-  public boolean deletePlaylist(int playlistId) {
-    return false;
   }
 
   @Override
@@ -699,10 +712,26 @@ public abstract class BaseConnector implements FrontendConnector {
     return playlistConf;
   }
 
-  protected void savePlaylistConf(Playlist playlist, JsonObject playlistConf) {
+  protected void savePlaylistConf(Playlist playlist) {
     JsonObject o = getPlaylistConf();
+    JsonObject playlistConf = getPlaylistConf(playlist);
     o.add(playlist.getName(), playlistConf);
-    playlistConf.addProperty("menuColor", playlist.getMenuColor());//TODO just copied from other method, not sure here
+    playlistConf.addProperty("menuColor", playlist.getMenuColor());
+    File playlistConfFile = getPlaylistConfFile();
+    if (playlistConfFile != null) {
+      try {
+        String content = o.toString();
+        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
+      }
+      catch (IOException ioe) {
+        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+      }
+    }
+  }
+
+  protected void deletePlaylistConf(Playlist playlist) {
+    JsonObject o = getPlaylistConf();
+    o.remove(playlist.getName());
     File playlistConfFile = getPlaylistConfFile();
     if (playlistConfFile != null) {
       try {
