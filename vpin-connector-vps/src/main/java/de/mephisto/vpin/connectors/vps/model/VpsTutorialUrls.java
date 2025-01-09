@@ -69,7 +69,7 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof VpsTutorialUrls)) return false;
-    if (!super.equals(o)) return false;
+    //if (!super.equals(o)) return false;
 
     VpsTutorialUrls that = (VpsTutorialUrls) o;
 

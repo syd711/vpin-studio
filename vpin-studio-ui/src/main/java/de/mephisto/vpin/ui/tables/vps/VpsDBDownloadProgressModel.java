@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -51,6 +52,7 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       Studio.client.getVpsService().update();
+      EventManager.getInstance().notifyTablesChanged();
     }
     catch (Exception e) {
       LOG.error("VPS database download failed: " + e.getMessage(), e);
