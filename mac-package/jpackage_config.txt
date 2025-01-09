@@ -1,1 +1,1 @@
---name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
+--name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11)

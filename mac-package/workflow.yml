@@ -1,0 +1,201 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      # write permission is required for autolabeler
+      # otherwise, read permission is required at least
+      pull-requests: write
+    steps:
+      - name: Checkout VPin Studio
+        uses: actions/checkout@v3
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-studio-popper-client
+          path: ./vpin-studio-popper-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-mania-rest-client
+          path: ./vpin-mania-rest-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+          cache: 'maven'
+
+      - name: Run maven build for vpin mania rest client
+        working-directory: ./vpin-mania-rest-client
+        run: mvn clean install -DskipTests
+
+      - name: Run maven build for Assets API
+        working-directory: ./vpin-connector-assets
+        run: mvn clean install
+
+      - name: Run maven build for popper client
+        working-directory: ./vpin-studio-popper-client
+        run: mvn clean install
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Extract Windows Runtime
+        run: |
+          unzip -o java-runtime.zip -d ${{ github.workspace }}/java-runtime
+
+      - name: List files in the runtime folder
+        run: |
+          ls ${{ github.workspace }}/java-runtime/
+
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+
+      - name: List JDK
+        run: |
+          ls "C:\hostedtoolcache\windows\Java_Zulu_jdk\11.0.25-9\x64"
+
+      - name: Copy .dll
+        run: |
+          copy ${{ github.workspace }}/resources/jvm/jinput-dx8_64.dll "C:\hostedtoolcache\windows\Java_Zulu_jdk\11.0.25-9\x64\bin\"
+
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots clean package
+
+      - name: List files in the Output folder
+        run: |
+          ls ${{ github.workspace }}/Output/VPin-Studio/
+
+      - name: Set Release Version
+        id: set-release-version
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        run:  | 
+          $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
+          echo "::set-output name=version::${version}"
+
+      - name: Draft Release
+        uses: softprops/action-gh-release@v1
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        with:
+          body_path: RELEASE_NOTES.md
+          draft: true
+          tag_name: ${{ steps.set-release-version.outputs.version }}
+          files: |
+            ./Output/VPin-Studio/VPin-Studio-Client-Installer*.exe
+            ./Output/VPin-Studio/VPin-Studio-Full-Installer*.exe
+            ./Output/VPin-Studio/VPin-Studio-Server.zip
+            ./Output/VPin-Studio/VPin-Studio.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-linux-x64.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-macosx_aarch64.zip
+            ./Output/VPin-Studio/vpin-studio-ui-jar.zip
+        env:
+          GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
+
+  mac_app_build:
+    name: mac_app_build
+    runs-on: macos-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout VPin Studio
+        uses: actions/checkout@v3
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-studio-popper-client
+          path: ./vpin-studio-popper-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-mania-rest-client
+          path: ./vpin-mania-rest-client
+          token: ${{ secrets.ACCESS_TOKEN }}        
+
+      # Step 2: Set up Zulu OpenJDK 11
+      - name: Set up Zulu JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      # Step 3: Install Maven and dependencies
+      #Zulu 11 does not include jpackage, need to install it
+      - name: Install Dependencies
+        run: |
+          brew update
+          brew install maven 
+          brew install openjdk@11 # Ensure Zulu JDK 11 is installed on macOS
+          brew install jpackage
+
+      # Step 4: Build the Java application
+      - name: Run maven build for vpin mania rest client
+        working-directory: ./vpin-mania-rest-client
+        run: mvn clean install -DskipTests
+
+      - name: Run maven build for Assets API
+        working-directory: ./vpin-connector-assets
+        run: mvn clean install
+
+      - name: Run maven build for popper client
+        working-directory: ./vpin-studio-popper-client
+        run: mvn clean install
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+     
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots clean package
+
+     # Step 5: Package the Java application as a macOS .app bundle
+     #The jpackage config needs to be updated to properly reference the locations of the files. 
+      - name: Package as macOS App
+        run: |
+          jpackage @jpackage_config.txt
+
+      # Step 7: Zip the .app bundle for easy distribution
+      #Update for correct location
+      - name: Zip macOS .app Bundle
+        run: |
+          mkdir -p target/macApp
+          cd target/macApp
+          zip -r VpinStudioMac.zip VpinStudio.app
+
+      # Step 8: Upload the .app zip file as an artifact
+       #Update for correct location
+      - name: Upload macOS Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS-build
+          path: target/macApp/VpinStudioMac.zip
