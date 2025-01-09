@@ -1,16 +1,14 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
-
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -20,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NvRamOutputToScoreTextTest {
+  private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextTest.class);
 
 
   private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv");
@@ -42,19 +41,19 @@ public class NvRamOutputToScoreTextTest {
         continue;
       }
 
-      System.out.println("Reading '" + entry.getName() + "'");
+      LOG.info("Reading '" + entry.getName() + "'");
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
-      System.out.println(raw);
+      LOG.info(raw);
 
       assertNotNull(raw);
       List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
-      System.out.println("Parsed " + parse.size() + " score entries.");
-      System.out.println("*******************************************************************************************");
+      LOG.info("Parsed " + parse.size() + " score entries.");
+      LOG.info("*******************************************************************************************");
       count++;
     }
-    System.out.println("Tested " + count + " entries");
+    LOG.info("Tested " + count + " entries");
   }
 
   @Test
@@ -66,21 +65,21 @@ public class NvRamOutputToScoreTextTest {
     File entry = new File(testFolder, "kiko_a10.nv");
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
-    System.out.println(raw);
+    LOG.info(raw);
 
     assertNotNull(raw);
     List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
-    System.out.println("Parsed " + parse.size() + " score entries.");
+    LOG.info("Parsed " + parse.size() + " score entries.");
 
     for (Score score : parse) {
-      System.out.println(score);
+      LOG.info("Score: {}", score);
     }
 
     if(parse.isEmpty()) {
-      System.out.println("Locale: " + Locale.getDefault().getDisplayName());
-      System.out.println("TimeZone: " + TimeZone.getDefault().getDisplayName());
-      System.out.println("Charset: " +  Charset.defaultCharset().displayName());
-      System.out.println("RAW:\n " +  raw);
+      LOG.info("Locale: " + Locale.getDefault().getDisplayName());
+      LOG.info("TimeZone: " + TimeZone.getDefault().getDisplayName());
+      LOG.info("Charset: " +  Charset.defaultCharset().displayName());
+      LOG.info("RAW:\n " +  raw);
     }
 
 
