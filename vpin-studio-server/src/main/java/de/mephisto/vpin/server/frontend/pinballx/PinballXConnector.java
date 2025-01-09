@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
@@ -59,9 +58,13 @@ public class PinballXConnector extends BaseConnector {
     if (ps != null && ps.isGameExEnabled()) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
       super.setTableAssetAdapter(assetsAdapter);
+      // no effect if already started
+      this.assetsAdapter.startRefresh();
     }
     else {
       super.setTableAssetAdapter(null);
+      // no effect if already stopped
+      this.assetsAdapter.stopRefresh();
     }
     LOG.info("Finished initialization of " + this);
   }
