@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.backglassmanager;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -577,8 +578,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onOpen() {
     DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
-      File file = new File(selectedItem.getFileName());
-      SystemUtil.openFile(file);
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      File folder = new File(emulatorRepresentation.getTablesDirectory());
+      File file = new File(folder, selectedItem.getFileName());
+      if (file.exists()) {
+        SystemUtil.openFile(file);
+      }
+      else {
+        SystemUtil.openFolder(file.getParentFile());
+      }
     }
   }
 
@@ -630,7 +638,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       dmdtoolbar.getChildren().remove(useAsMediaDMDBtn);
     }
 
-    this.openBtn.setVisible(false); //TODO
+    this.openBtn.setVisible(client.getSystemService().isLocal());
 
     bindTable();
 
@@ -773,7 +781,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
 
-    // first time activation 
+    // first time activation
     if (models == null || models.isEmpty()) {
       doReload();
 
@@ -981,7 +989,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
         this.refreshing = true;
 
-        this.openBtn.setDisable(false);
+        this.openBtn.setDisable(game == null);
         this.renameBtn.setDisable(false);
         this.duplicateBtn.setDisable(false);
         this.deleteBtn.setDisable(false);

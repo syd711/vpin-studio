@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
@@ -779,7 +780,15 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     Platform.runLater(() -> {
       if (titledPaneMedia != null && tablesSidebarMediaController != null) {
         if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
-          this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
+          boolean previewDisabled = LocalUISettings.getBoolean("preview.disabled");
+          if (previewDisabled) {
+            mediaPreviewCheckbox.setDisable(true);
+            mediaPreviewCheckbox.setSelected(false);
+            this.tablesSidebarMediaController.setGame(g, false);
+          }
+          else {
+            this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
+          }
         }
         else {
           tablesSidebarMediaController.resetMedia();
