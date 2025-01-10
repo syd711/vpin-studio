@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
+import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;

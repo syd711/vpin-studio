@@ -51,6 +51,9 @@
   - Added 3:1 aspect ratio for large Sega DMDs and a smaller 8:1 ratio for Data East displays.
   - Added margin field to configure margins added to the calculated auto position. Useful when the DMD zone has rounded corner
 - **Backglass Manager / Bring Forms**: revisited the 'bring BG form' to support Form to Back option. Also modified in Tables sidebar
+- **Backglass Manager / Misc**
+  - Added "Open" button to show backglass in Explorer (only available when working on the cabinet).
+  - Added "Open VPS Table" button for backglasses that have a game and are linked via VPS.
 - **Hook Support**: The VPin Studio allows to execute customs scripts from any client. You can add these "hooks" by adding .exe or .bat files into the server installation directory **resources/hooks**. The list of files is picked up and added to the preferences split button of the Studio client and will be executed on click. See also: https://github.com/syd711/vpin-studio/wiki/Hooks
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
@@ -105,3 +108,4 @@
 - **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
 - **Highscore Cards Editor**: Fixed various weight and posture issues with the font selection and the preview of it.
 - **Tables / Table Data Manager**: Fixed error during auto-applying values from VPS tables selection.
+- **VPS Mappings**: Added missing FX2 Support for table versions.

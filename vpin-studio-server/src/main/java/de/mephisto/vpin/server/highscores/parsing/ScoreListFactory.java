@@ -1,18 +1,15 @@
 package de.mephisto.vpin.server.highscores.parsing;
 
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.SortedScoreAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ScoreListFactory {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
@@ -53,5 +50,4 @@ public class ScoreListFactory {
     }
     return scores;
   }
-
 }

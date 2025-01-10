@@ -11,9 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.nio.charset.Charset;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NvRamOutputToScoreTextTest {
@@ -45,25 +49,68 @@ public class NvRamOutputToScoreTextTest {
       LOG.info("Reading '" + entry.getName() + "'");
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
-      LOG.info(raw);
-
       assertNotNull(raw);
       List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
-      LOG.info("Parsed " + parse.size() + " score entries.");
-      LOG.info("*******************************************************************************************");
+
+      File listFile = new File(entry.getAbsolutePath().concat(".list"));
+
+      StringBuilder scoreList = new StringBuilder();
+      for (Score score : parse) {
+        scoreList.append("#" + score.getPosition() + " " + score.getPlayerInitials() + "   " + score.getFormattedScore() + System.lineSeparator());
+      }
+
+      if (listFile.exists()) {
+        // compare with test output
+        String fileContents = Files.readString(listFile.toPath(), StandardCharsets.UTF_8);
+        if (!fileContents.equals(scoreList.toString())) {
+          failedList.add(entry.getName());
+          System.out.println(fileContents);
+          System.out.println(scoreList.toString());
+
+          byte[] scBytes = scoreList.toString().getBytes();
+          byte[] fcBytes = fileContents.getBytes();
+          for (int i = 0; i < fcBytes.length; i++) {
+            if (scBytes[i] != fcBytes[i]) {
+              System.out.println(scBytes[i] + "|" + fcBytes[i]);
+            }
+          }
+        }
+      }
+      else {
+        // create for next test
+        listFile.createNewFile();
+        try (FileWriter writer = new FileWriter(listFile, StandardCharsets.UTF_8)) {
+          writer.write(scoreList.toString());
+        }
+        created++;
+      }
+
+      System.out.println("Parsed " + parse.size() + " score entries.");
+      System.out.println("*******************************************************************************************");
       count++;
     }
-    LOG.info("Tested " + count + " entries");
+
+    LOG.info("Tested " + count + " entries, " + failedList.size() + " failed, " + created + " new list files created.");
+    for (String item : failedList) {
+      System.out.println("  '" + item + "' failed.");
+    }
+
+    assertEquals(0, failedList.size());
   }
 
   @Test
-  public void testSingleTF_180() throws Exception {
+  public void test_TF_180() throws Exception {
     doTestSingle("tf_180.nv", "HIGHEST SCORES\n" +
        "1) DAK    3.032.500\n" +
        "2) DAK    2.665.940\n" +
        "3) DAK    1.856.200\n" +
        "4) DAK    1.067.570");
+  }
+
+  @Test
+  public void test_HS_14() throws Exception {
+    doTestSingle("hs_l4.nv", null);
   }
 
   protected void doTestSingle(String nv, String expected) throws Exception {
@@ -74,9 +121,6 @@ public class NvRamOutputToScoreTextTest {
 
     File entry = new File(testFolder, nv);
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
-
-    LOG.info(raw);
-
     assertNotNull(raw);
     if (expected != null) {
       assertEquals(expected, raw);

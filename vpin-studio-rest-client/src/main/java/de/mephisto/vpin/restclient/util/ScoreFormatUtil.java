@@ -32,14 +32,14 @@ public class ScoreFormatUtil {
 
 
   public static String cleanScore(String score) {
-    return score.replaceAll("\\.", "")
-        .replaceAll(",", "")
-        .replaceAll("?", "")
-        .replaceAll("\u00ff", "")
-        .replaceAll("\u00a0", "")
-        .replaceAll("\u202f", "")
-        .replaceAll("\ufffd", "")
-        .replaceAll(" ", "");
+    return score.replace("\\.", "")
+        .replace(",", "")
+        .replace("\\?", "")
+        .replace("\u00ff", "")
+        .replace("\u00a0", "")
+        .replace("\u202f", "")
+        .replace("\ufffd", "")
+        .replace(" ", "");
   }
 
 }

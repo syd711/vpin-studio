@@ -3,8 +3,9 @@ package de.mephisto.vpin.ui.backglassmanager;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
@@ -14,7 +15,9 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -242,6 +245,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button openBtn;
 
   @FXML
+  private Button vpsOpenBtn;
+
+  @FXML
   private Button dmdPositionBtn;
 
   @FXML
@@ -409,16 +415,20 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           "A " + screenName + " media asset already exists.",
           "Append new asset or overwrite existing asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
-      } else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+      }
+      else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         append = true;
-      } else {
+      }
+      else {
         return;
       }
-    } else {
+    }
+    else {
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(Studio.stage, "Copy in " + screenName + " Media ?",
           "Add the " + screenName + " image as media asset.", null, "Copy");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
-      } else {
+      }
+      else {
         return;
       }
     }
@@ -577,8 +587,25 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onOpen() {
     DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
-      File file = new File(selectedItem.getFileName());
-      SystemUtil.openFile(file);
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      File folder = new File(emulatorRepresentation.getTablesDirectory());
+      File file = new File(folder, selectedItem.getFileName());
+      if (file.exists()) {
+        SystemUtil.openFile(file);
+      }
+      else {
+        SystemUtil.openFolder(file.getParentFile());
+      }
+    }
+  }
+
+  @FXML
+  private void onVpsOpen() {
+    if (game != null) {
+      VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
+      if (tableById != null) {
+        Studio.browse(VPS.getVpsTableUrl(tableById.getId()));
+      }
     }
   }
 
@@ -630,7 +657,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       dmdtoolbar.getChildren().remove(useAsMediaDMDBtn);
     }
 
-    this.openBtn.setVisible(false); //TODO
+    this.openBtn.setVisible(client.getSystemService().isLocal());
 
     bindTable();
 
@@ -773,13 +800,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
 
-    // first time activation 
+    // first time activation
     if (models == null || models.isEmpty()) {
       doReload();
 
       if (this.tableView.getItems().isEmpty()) {
         clearSelection();
-      } else {
+      }
+      else {
         this.tableView.getSelectionModel().select(0);
       }
       refreshView(null);
@@ -881,7 +909,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     if (newValue != null) {
       fileDragEventHandler.setDisabled(false);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", newValue.getName()));
-    } else {
+    }
+    else {
       fileDragEventHandler.setDisabled(true);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
     }
@@ -894,6 +923,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     this.tableNavigateBtn.setDisable(true);
 
     this.openBtn.setDisable(true);
+    this.vpsOpenBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
@@ -981,7 +1011,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
         this.refreshing = true;
 
-        this.openBtn.setDisable(false);
+        this.openBtn.setDisable(game == null);
+        this.vpsOpenBtn.setDisable(game == null || client.getVpsService().getTableById(game.getExtTableId()) == null);
         this.renameBtn.setDisable(false);
         this.duplicateBtn.setDisable(false);
         this.deleteBtn.setDisable(false);
@@ -997,7 +1028,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           dmdPositionBtn.setDisable(false);
           resBtn.setDisable(false);
           this.uploadBtn.setDisable(false);
-        } else {
+        }
+        else {
           //VPX is not installed, but available!
           if (newValue.isVpxAvailable()) {
             gameLabel.setText("?");
@@ -1074,7 +1106,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(),
           tableData.getFilename(), true);
       thumbnail = new Image(url);
-    } else {
+    }
+    else {
       thumbnailError = "No Image data available.";
     }
     final Image _thumbnail = thumbnail;
@@ -1086,7 +1119,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         downloadBackglassBtn.setDisable(false);
         useAsMediaBackglassBtn.setDisable(game == null);
         resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
-      } else {
+      }
+      else {
         thumbnailImage.setImage(null);
         thumbnailImagePane.setCenter(null);
         resolutionLabel.setText(_thumbnailError);
@@ -1098,7 +1132,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     if (tableData.isDmdImageAvailable()) {
       String url = client.getBackglassServiceClient().getDirectB2sDmdUrl(tableData.getEmulatorId(), tableData.getFilename());
       dmdThumbnail = new Image(url);
-    } else {
+    }
+    else {
       dmdThumbnailError = "No DMD background available.";
     }
     final Image _dmdThumbnail = dmdThumbnail;
@@ -1113,7 +1148,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
-      } else {
+      }
+      else {
         dmdThumbnailImage.setImage(null);
         dmdThumbnailImagePane.setCenter(null);
         dmdResolutionLabel.setText(_dmdThumbnailError);
@@ -1130,7 +1166,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       // at calling time, the list may not have been populated so register a listener in that case
       if (models != null) {
         selectGame(gameBaseName);
-      } else {
+      }
+      else {
         ChangeListener<ObservableList<DirectB2SModel>> listener = new ChangeListener<ObservableList<DirectB2SModel>>() {
           @Override
           public void changed(ObservableValue<? extends ObservableList<DirectB2SModel>> observable,
@@ -1217,7 +1254,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         DirectB2SModel model = getModel(b2s);
         if (model != null) {
           model.setBean(b2s);
-        } else {
+        }
+        else {
           model = toModel(b2s);
           models.add(model);
         }
