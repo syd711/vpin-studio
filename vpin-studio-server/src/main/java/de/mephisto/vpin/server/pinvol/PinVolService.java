@@ -179,7 +179,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     monitoringThread.startMonitoring();
   }
 
-  public PinVolPreferences update(PinVolUpdate update) {
+  public PinVolPreferences update(@NonNull PinVolUpdate update) {
     PinVolPreferences preferences = getPinVolTablePreferences();
     PinVolTableEntry systemVolume = preferences.getSystemVolume();
     preferences.applyValues(systemVolume.getName(), update.getSystemVolume());

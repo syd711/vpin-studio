@@ -99,6 +99,42 @@ public class RarUtil {
     return written;
   }
 
+  public static void unrar(File archiveFile, File targetFolder) {
+    try {
+      RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
+      RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
+      IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+
+      for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+        if (item.isFolder()) {
+          //ignore
+        }
+        else {
+          String entryName = item.getPath().replaceAll("\\\\", "/");
+          File target = new File(targetFolder, item.getPath());
+          File parent = target.getParentFile();
+          if (!parent.isDirectory() && !parent.mkdirs()) {
+            throw new IOException("Failed to create directory " + parent);
+          }
+          RandomAccessFile rafOut = new RandomAccessFile(target, "rw");
+          RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
+          ExtractOperationResult result = item.extractSlow(fos);
+
+          LOG.info("Unrar \"" + target.getAbsolutePath() + "\": " + result.name());
+          fos.close();
+          rafOut.close();
+        }
+      }
+
+      inArchive.close();
+      randomAccessFileStream.close();
+      randomAccessFile.close();
+    }
+    catch (Exception e) {
+      LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+  }
+
   public static byte[] readFile(File file, String name) {
     byte[] bytes = null;
     try {
