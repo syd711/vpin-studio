@@ -116,7 +116,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
       try {
-        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
+        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinetCached();
         if (cabinet != null) {
           if (cabinet.getStatus() == null) {
             cabinet.setStatus(new CabinetStatus());

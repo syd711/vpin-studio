@@ -97,7 +97,7 @@ public class TournamentSynchronizer {
   public void synchronizeTournaments() {
     try {
       VPinManiaClient maniaClient = maniaService.getClient();
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
       if (cabinet != null) {
         TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
         if (tournamentSettings.isTournamentsEnabled()) {
