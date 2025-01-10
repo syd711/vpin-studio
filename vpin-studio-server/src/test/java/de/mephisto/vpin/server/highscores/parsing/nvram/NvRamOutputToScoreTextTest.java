@@ -98,7 +98,7 @@ public class NvRamOutputToScoreTextTest {
       System.out.println("  '" + item + "' failed.");
     }
 
-    assertEquals(0, failedList.size());
+    assertEquals("NVRam failed: " + failedList.get(0), 0, failedList.size());
   }
 
   /**
@@ -108,9 +108,9 @@ public class NvRamOutputToScoreTextTest {
   public void test_HS_14() throws Exception {
     doTestSingle("hs_l4.nv",
         "#1 DAD   4,811,550\r\n" + //
-        "#2 DAD   4,286,630\r\n" + //
-        "#3 DAD   4,066,230\r\n" + //
-        "#4 SSR   4,000,000");
+            "#2 DAD   4,286,630\r\n" + //
+            "#3 DAD   4,066,230\r\n" + //
+            "#4 SSR   4,000,000");
   }
 
   /**
@@ -118,17 +118,17 @@ public class NvRamOutputToScoreTextTest {
    */
   @Test
   public void test_TF_180() throws Exception {
-    doTestSingle("tf_180.nv", 
+    doTestSingle("tf_180.nv",
         "#1 DAD   101,548,900\r\n" + //
-        "#2 EDY   93,114,900\r\n" + //
-        "#3 OPT   75,000,000\r\n" + //
-        "#4 MEG   75,000,000\r\n" + //
-        "#5 DAD   69,372,610\r\n" + //
-        "#6 JAZ   55,000,000\r\n" + //
-        "#7 STR   55,000,000\r\n" + //
-        "#8 DAD   48,505,120\r\n" + //
-        "#9 PWL   40,000,000\r\n" + //
-        "#10 SND   40,000,000");
+            "#2 EDY   93,114,900\r\n" + //
+            "#3 OPT   75,000,000\r\n" + //
+            "#4 MEG   75,000,000\r\n" + //
+            "#5 DAD   69,372,610\r\n" + //
+            "#6 JAZ   55,000,000\r\n" + //
+            "#7 STR   55,000,000\r\n" + //
+            "#8 DAD   48,505,120\r\n" + //
+            "#9 PWL   40,000,000\r\n" + //
+            "#10 SND   40,000,000");
   }
 
   protected void doTestSingle(String nv, String expected) throws Exception {
