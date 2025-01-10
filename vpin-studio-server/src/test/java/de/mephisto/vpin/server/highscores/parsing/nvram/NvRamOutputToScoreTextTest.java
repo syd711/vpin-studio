@@ -98,7 +98,7 @@ public class NvRamOutputToScoreTextTest {
       System.out.println("  '" + item + "' failed.");
     }
 
-    assertEquals("NVRam failed: " + failedList.get(0), 0, failedList.size());
+    assertEquals("NVRam failed: " + failedList, 0, failedList.size());
   }
 
   /**
