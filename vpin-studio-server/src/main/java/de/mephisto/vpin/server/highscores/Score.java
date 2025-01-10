@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class Score {
   private String playerInitials = "???";
@@ -120,18 +121,26 @@ public class Score {
 
   @Override
   public String toString() {
+    return toString(Locale.getDefault());
+  }
+
+  public String toString(Locale loc) {
     String name = this.getPlayerInitials();
     if (this.player != null) {
       name = this.player.getName();
     }
-
-    return "#" + this.getPosition() + " " + name + "   " + getFormattedScore();
+    return "#" + this.getPosition() + " " + name + "   " + getFormattedScore(loc);
   }
 
   @JsonIgnore
   public String getFormattedScore() {
+    return getFormattedScore(Locale.getDefault());
+  }
+
+  @JsonIgnore
+  public String getFormattedScore(Locale loc) {
     String scoreString = this.getScore();
-    String formattedScore = ScoreFormatUtil.formatScore(scoreString);
+    String formattedScore = ScoreFormatUtil.formatScore(scoreString, loc);
     if (!formattedScore.equals("0")) {
       scoreString = formattedScore;
     }

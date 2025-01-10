@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.highscores.parsing.listadapters;
 
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListAdapter;
@@ -67,7 +66,6 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
     int i = 1;
     for (Score score : scores) {
       score.setPosition(i);
-      i++;
       i++;
     }
 

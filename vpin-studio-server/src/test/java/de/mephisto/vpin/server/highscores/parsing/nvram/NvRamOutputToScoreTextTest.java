@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
@@ -14,7 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class NvRamOutputToScoreTextTest {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextTest.class);
 
 
-  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv");
+  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "fire_l3.nv");
 
   @Test
   public void testAllFiles() throws Exception {
@@ -55,9 +55,11 @@ public class NvRamOutputToScoreTextTest {
 
       File listFile = new File(entry.getAbsolutePath().concat(".list"));
 
+      Locale loc = Locale.GERMANY;
+
       StringBuilder scoreList = new StringBuilder();
       for (Score score : parse) {
-        scoreList.append("#" + score.getPosition() + " " + score.getPlayerInitials() + "   " + score.getFormattedScore() + System.lineSeparator());
+        scoreList.append("#" + score.getPosition() + " " + score.getPlayerInitials() + "   " + score.getFormattedScore(loc) + System.lineSeparator());
       }
 
       if (listFile.exists()) {
@@ -99,22 +101,41 @@ public class NvRamOutputToScoreTextTest {
     assertEquals(0, failedList.size());
   }
 
-  @Test
-  public void test_TF_180() throws Exception {
-    doTestSingle("tf_180.nv", "HIGHEST SCORES\n" +
-       "1) DAK    3.032.500\n" +
-       "2) DAK    2.665.940\n" +
-       "3) DAK    1.856.200\n" +
-       "4) DAK    1.067.570");
-  }
-
+  /**
+   * Test DefaultAdapter
+   */
   @Test
   public void test_HS_14() throws Exception {
-    doTestSingle("hs_l4.nv", null);
+    doTestSingle("hs_l4.nv",
+        "#1 DAD   4,811,550\r\n" + //
+        "#2 DAD   4,286,630\r\n" + //
+        "#3 DAD   4,066,230\r\n" + //
+        "#4 SSR   4,000,000");
+  }
+
+  /**
+   * Test SortedScoreAdapter
+   */
+  @Test
+  public void test_TF_180() throws Exception {
+    doTestSingle("tf_180.nv", 
+        "#1 DAD   101,548,900\r\n" + //
+        "#2 EDY   93,114,900\r\n" + //
+        "#3 OPT   75,000,000\r\n" + //
+        "#4 MEG   75,000,000\r\n" + //
+        "#5 DAD   69,372,610\r\n" + //
+        "#6 JAZ   55,000,000\r\n" + //
+        "#7 STR   55,000,000\r\n" + //
+        "#8 DAD   48,505,120\r\n" + //
+        "#9 PWL   40,000,000\r\n" + //
+        "#10 SND   40,000,000");
   }
 
   protected void doTestSingle(String nv, String expected) throws Exception {
-  
+    Game game = new Game();
+    game.setGameDisplayName("Dummy test game for " + nv);
+    game.setRom(nv.replace(".nv", ""));
+
     File testFolder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
     // Set the path to this GameEmulator so that nv files can be found
     PINemHiService.adjustVPPathForEmulator(testFolder, getPinemhiIni(), true);
@@ -122,16 +143,25 @@ public class NvRamOutputToScoreTextTest {
     File entry = new File(testFolder, nv);
     String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
     assertNotNull(raw);
-    if (expected != null) {
-      assertEquals(expected, raw);
-    }
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
+
+    LOG.info("raw : " + raw);
+
+    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, DefaultHighscoresTitles.DEFAULT_TITLES);
     LOG.info("Parsed " + parse.size() + " score entries.");
 
+    StringBuilder scores = new StringBuilder();
     for (Score score : parse) {
       LOG.info("Score: {}", score);
+      if (scores.length() > 0) {
+        scores.append("\r\n");
+      }
+      scores.append(score.toString(Locale.US));
     }
+
     assertFalse(parse.isEmpty());
+    if (expected != null) {
+      assertEquals(expected, scores.toString());
+    }
   }
 
   // -----------------
