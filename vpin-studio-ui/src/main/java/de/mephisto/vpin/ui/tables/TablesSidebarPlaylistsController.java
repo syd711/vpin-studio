@@ -220,6 +220,22 @@ public class TablesSidebarPlaylistsController implements Initializable {
           tooltip = "SQL Playlist";
           icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
         }
+        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+          tooltip = "Favorite";
+          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+        }
+        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+          tooltip = "Global Favorite";
+          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+        }
+        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+          tooltip = "Just Added";
+          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+        }
+        else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+          tooltip = "Most Played";
+          icon = WidgetFactory.createIcon("mdi2d-database-search-outline");
+        }
         else {
           tooltip = "Curated Playlist";
           icon = WidgetFactory.createIcon("mdi2f-format-list-checkbox");
