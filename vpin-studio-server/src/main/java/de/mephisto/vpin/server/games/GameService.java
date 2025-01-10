@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -97,6 +98,12 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private DefaultPictureService defaultPictureService;
+
+  /** the refresh timer to keep VPS updated */
+  private Timer refreshTimer;
+
+  @Value("${vps.refreshInterval:2}")
+  private int refreshInterval;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -729,11 +736,42 @@ public class GameService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      vpsService.update(this.getKnownGames(-1));
+      startVPSRefresh();
       highscoreService.setGameService(this);
     }
     catch (Exception e) {
       LOG.error("Error initializing GameService: " + e.getMessage(), e);
     }
   }
+
+  //---------------------------------------
+
+  public void startVPSRefresh() {
+    if (this.refreshTimer == null && this.refreshInterval > 0) {
+      this.refreshTimer = new Timer();
+      Calendar now = Calendar.getInstance();
+      // small delay after server restart for the initial refresh, then refresh periodically
+      now.add(Calendar.MINUTE, 3);
+      refreshTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          try {
+            List<Game> games = getKnownGames(-1); 
+            vpsService.update(games);
+          }
+          catch (Exception e) {
+            LOG.error("Error happened during VPS update", e);
+          }
+        }
+      }, now.getTime(), refreshInterval * 24 * 60 * 60 * 1000);
+    }
+  }
+
+  public void stopVPSRefresh() {
+    if (this.refreshTimer != null) {
+      refreshTimer.cancel();
+      this.refreshTimer = null;
+    }
+  }
+
 }
