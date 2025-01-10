@@ -7,7 +7,11 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameStatusService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -36,7 +40,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener {
+public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
 
   @Autowired
@@ -53,6 +57,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Autowired
   private CardTemplatesService cardTemplatesService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   private CardSettings cardSettings;
 
@@ -242,9 +249,21 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    Game game = event.getGame();
+    generateCard(game);
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     this.highscoreService.addHighscoreChangeListener(this);
     this.preferencesService.addChangeListener(this);
+    this.frontendStatusService.addTableStatusChangeListener(this);
     this.preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
   }
 }
