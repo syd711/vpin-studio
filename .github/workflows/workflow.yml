@@ -40,6 +40,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
+          java-package: 'jdk+fx'
           java-version: '11.0.21+9'
           cache: 'maven'
 
