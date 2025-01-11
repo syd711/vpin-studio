@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '11.72.19'
           cache: 'maven'
 
       - name: Run maven build for vpin mania rest client
