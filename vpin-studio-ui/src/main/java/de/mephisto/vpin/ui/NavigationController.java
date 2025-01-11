@@ -373,12 +373,13 @@ public class NavigationController implements Initializable, StudioEventListener,
           Platform.runLater(() -> {
             boolean scaleDown = newValue.intValue() < 900;
             String style = scaleDown ? "navigation-button-small" : "navigation-button";
-            systemManagerStack.getStyleClass().clear();
+            systemManagerStack.getStyleClass().removeAll();
             systemManagerStack.getStyleClass().add(style);
             for (Pane button : buttons) {
               setLabelStyle(button, scaleDown ? "-fx-font-size: 12px" : "-fx-font-size: 14px");
               setFontIconSize(button, scaleDown ? 20 : 28);
-              button.getStyleClass().clear();
+              button.getStyleClass().remove("navigation-button-small");
+              button.getStyleClass().remove("navigation-button");
               button.getStyleClass().add(style);
             }
           });

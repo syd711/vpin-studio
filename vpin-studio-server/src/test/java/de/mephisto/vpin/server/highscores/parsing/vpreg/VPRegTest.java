@@ -23,7 +23,7 @@ public class VPRegTest {
     VPReg reg = new VPReg(vpRegFile, "JAWSHighScore", AbstractVPinServerTest.VPREG_TABLE_NAME);
     ScoreParsingSummary summary = reg.readHighscores();
     String initialRaw = summary.toRaw();
-    reg.resetHighscores();
+    reg.resetHighscores(99);
 
     ScoreParsingSummary resettedSummary = reg.readHighscores();
 //    resettedSummary.getScores().stream().forEach(s -> s.setInitials(""));

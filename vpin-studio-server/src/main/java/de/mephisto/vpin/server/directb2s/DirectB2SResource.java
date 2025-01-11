@@ -326,8 +326,7 @@ public class DirectB2SResource {
   public ResponseEntity<StreamingResponseBody> getFrame(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
     // first decoding done by the RestService but an extra one is needed
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
-
-    File screenRes = backglassService.getScreenResFile(emuId, filename);
+    File screenRes = new File(filename);
     return download(screenRes);
   }
 
@@ -345,13 +344,13 @@ public class DirectB2SResource {
 
   @PostMapping("/screenRes/uploadFrame")
   public String uploadScreenResFrame(@RequestParam(value = "file", required = false) MultipartFile file,
-                                @RequestParam("emuid") int emuId, @RequestParam("filename") String filename) {
+                                @RequestParam("emuid") int emuId, @RequestParam("filename") String b2sFilename) {
     if (file == null) {
       LOG.error("Upload request did not contain a file object.");
       return null;
     }
     try {
-      return backglassService.setScreenResFrame(emuId, filename, file.getOriginalFilename(), file.getInputStream());
+      return backglassService.setScreenResFrame(emuId, b2sFilename, file.getOriginalFilename(), file.getInputStream());
     }
     catch (IOException ioe) {
       LOG.error("Error while converting image into base64 representation", ioe);
@@ -360,9 +359,9 @@ public class DirectB2SResource {
   }
 
   @DeleteMapping("/screenRes/removeFrame")
-  public boolean removeScreenResFrame(@RequestParam("emuid") int emuId, @RequestParam("filename") String filename) throws Exception {
+  public boolean removeScreenResFrame(@RequestParam("emuid") int emuId, @RequestParam("filename") String b2sFilename) throws Exception {
     try {
-      String filedeleted = backglassService.setScreenResFrame(emuId, filename, null, null);
+      String filedeleted = backglassService.setScreenResFrame(emuId, b2sFilename, null, null);
       return filedeleted != null;
     }
     catch (IOException ioe) {

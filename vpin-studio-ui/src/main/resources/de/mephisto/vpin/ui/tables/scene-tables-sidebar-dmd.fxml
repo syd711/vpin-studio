@@ -135,7 +135,8 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="dmdPositionBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Position">
+            <Separator layoutX="246.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button fx:id="dmdPositionBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition">
                <font>
                   <Font size="14.0" />
                </font>

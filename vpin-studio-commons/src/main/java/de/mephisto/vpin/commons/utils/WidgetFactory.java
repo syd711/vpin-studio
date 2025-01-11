@@ -61,6 +61,7 @@ public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+  public static final String DEFAULT_TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
   public static final String DISABLED_COLOR = "#767272";
   public static final String LOCAL_FAVS_COLOR = "#ffcc00";
   public static final String GLOBAL_FAVS_COLOR = "#cc6600";
@@ -70,6 +71,7 @@ public class WidgetFactory {
   public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
+  public static final String OK_STYLE = "-fx-font-color: " + OK_COLOR + ";-fx-text-fill:" + OK_COLOR + ";";
   public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
 
 
@@ -345,13 +347,21 @@ public class WidgetFactory {
     fontIcon.setIconLiteral("mdi2v-view-list");
     label.setTooltip(new Tooltip(playlist.getName()));
 
-    if (playlist.getId() == -1) {
+    if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getLocalFavsColor()));
     }
-    else if (playlist.getId() == -2) {
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
       fontIcon.setIconLiteral("mdi2s-star");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+      fontIcon.setIconColor(Paint.valueOf(uiSettings.getJustAddedColor()));
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      fontIcon.setIconColor(Paint.valueOf(uiSettings.getMostPlayedColor()));
     }
     else if (playlist.getName().contains("Visual Pinball X")) {
       fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
@@ -376,6 +386,9 @@ public class WidgetFactory {
     }
     else if (playlist.getName().contains("VPW")) {
       fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+    }
+    else if (playlist.getName().endsWith(" M")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
     }
 
     label.setGraphic(fontIcon);
@@ -524,6 +537,11 @@ public class WidgetFactory {
         }
         t.consume();
         stage.close();
+      }
+      else {
+        if (controller != null) {
+          controller.onKeyPressed(t);
+        }
       }
     });
 
@@ -735,7 +753,8 @@ public class WidgetFactory {
     if (baseType.equals("image") && !audioOnly) {
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
       Image image = gameMediaItem != null ? new Image(gameMediaItem) : null;
-      new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
+      ImageViewer imageViewer = new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
+      parent.setUserData(imageViewer);
     }
     else if (baseType.equals("audio")) {
       AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(parent, mediaItem, url);

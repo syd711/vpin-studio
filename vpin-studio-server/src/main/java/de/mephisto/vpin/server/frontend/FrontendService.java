@@ -487,16 +487,30 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public Playlist getPlayList(int id) {
-    return getFrontendConnector().getPlayList(id);
+    return getFrontendConnector().getPlaylist(id);
   }
 
   @NonNull
-  public List<Playlist> getPlayLists() {
-    return getFrontendConnector().getPlayLists();
+  public Playlist clearPlayList(int id) {
+    return getFrontendConnector().clearPlaylist(id);
   }
 
-  public void setPlaylistColor(int playlistId, long color) {
-    getFrontendConnector().setPlaylistColor(playlistId, color);
+  @NonNull
+  public List<Playlist> getPlaylists() {
+    return getFrontendConnector().getPlaylists();
+  }
+
+  @NonNull
+  public Playlist getPlaylistTree() {
+    return getFrontendConnector().getPlaylistTree();
+  }
+
+  public boolean deletePlaylist(int playlistId) {
+    return getFrontendConnector().deletePlaylist(playlistId);
+  }
+
+  public Playlist savePlaylist(Playlist playlist) {
+    return getFrontendConnector().savePlaylist(playlist);
   }
 
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
@@ -595,7 +609,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public void loadEmulators() {
     FrontendConnector frontendConnector = getFrontendConnector();
-    frontendConnector.clearCache();
+    frontendConnector.reloadCache();
     List<Emulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
     for (Emulator emulator : ems) {

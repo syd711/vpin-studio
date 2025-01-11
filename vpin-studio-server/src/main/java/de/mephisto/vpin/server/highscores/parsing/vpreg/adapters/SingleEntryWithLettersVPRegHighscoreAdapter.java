@@ -9,6 +9,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnonymousVPRegHighscoreAdapter {
   private final static char[] ALPHABET = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
@@ -36,21 +37,23 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
   }
 
   @Override
-  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
-    super.resetHighscore(fs, gameFolder);
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder, long score) throws IOException {
+    super.resetHighscore(fs, gameFolder, score);
 
     for (int i = 0; i < 3; i++) {
       int index = i + 1;
       if (gameFolder.hasEntry("HSA" + index)) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("HSA" + index);
         POIFSDocument scoreDocument = new POIFSDocument(entry);
-        scoreDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
+        byte[] array = StandardCharsets.UTF_16LE.encode(String.valueOf(score)).array();
+        scoreDocument.replaceContents(new ByteArrayInputStream(array));
         fs.writeFilesystem();
       }
       else if (gameFolder.hasEntry("hsa" + i)) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("hsa" + index);
         POIFSDocument scoreDocument = new POIFSDocument(entry);
-        scoreDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
+        byte[] array = StandardCharsets.UTF_16LE.encode(String.valueOf(score)).array();
+        scoreDocument.replaceContents(new ByteArrayInputStream(array));
         fs.writeFilesystem();
       }
     }

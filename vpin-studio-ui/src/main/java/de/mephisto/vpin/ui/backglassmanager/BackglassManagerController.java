@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
@@ -13,7 +15,9 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -21,6 +25,7 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
+import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
@@ -207,7 +212,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private ComboBox<B2SVisibility> startBackground;
 
   @FXML
-  private CheckBox bringBGFromTop;
+  private ComboBox<B2SFormPosition> formToPosition;
 
   @FXML
   private Button renameBtn;
@@ -238,6 +243,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private Button openBtn;
+
+  @FXML
+  private Button vpsOpenBtn;
 
   @FXML
   private Button dmdPositionBtn;
@@ -275,6 +283,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private GameRepresentation game;
   private DirectB2ServerSettings serverSettings;
   private FileDragEventHandler fileDragEventHandler;
+
+  private boolean activeView = false;
 
   @FXML
   private void onTableMouseClicked(MouseEvent mouseEvent) {
@@ -577,8 +587,25 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onOpen() {
     DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
-      File file = new File(selectedItem.getFileName());
-      SystemUtil.openFile(file);
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      File folder = new File(emulatorRepresentation.getTablesDirectory());
+      File file = new File(folder, selectedItem.getFileName());
+      if (file.exists()) {
+        SystemUtil.openFile(file);
+      }
+      else {
+        SystemUtil.openFolder(file.getParentFile());
+      }
+    }
+  }
+
+  @FXML
+  private void onVpsOpen() {
+    if (game != null) {
+      VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
+      if (tableById != null) {
+        Studio.browse(VPS.getVpsTableUrl(tableById.getId()));
+      }
     }
   }
 
@@ -630,7 +657,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       dmdtoolbar.getChildren().remove(useAsMediaDMDBtn);
     }
 
-    this.openBtn.setVisible(false); //TODO
+    this.openBtn.setVisible(client.getSystemService().isLocal());
 
     bindTable();
 
@@ -734,9 +761,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
     });
 
-    bringBGFromTop.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    formToPosition.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.FORM_POSITIONS));
+    formToPosition.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (!refreshing && tableSettings != null) {
-        save(() -> tableSettings.setFormToFront(newValue));
+        save(() -> tableSettings.setFormToPosition(newValue.getId()));
       }
     });
 
@@ -762,10 +790,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   @Override
+  public void onViewDeactivated() {
+    activeView = false;
+  }
+
+  @Override
   public void onViewActivated(NavigationOptions options) {
+    activeView = true;
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
-    // first time activation 
+
+    // first time activation
     if (models == null || models.isEmpty()) {
       doReload();
 
@@ -888,6 +923,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     this.tableNavigateBtn.setDisable(true);
 
     this.openBtn.setDisable(true);
+    this.vpsOpenBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
@@ -926,7 +962,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     hideB2SDMD.setDisable(true);
     hideDMD.setDisable(true);
     startBackground.setDisable(true);
-    bringBGFromTop.setDisable(true);
+    formToPosition.setDisable(true);
     skipGIFrames.setDisable(true);
     skipLampFrames.setDisable(true);
     skipSolenoidFrames.setDisable(true);
@@ -941,7 +977,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     skipSolenoidFrames.getValueFactory().valueProperty().set(0);
     skipLEDFrames.getValueFactory().valueProperty().set(0);
     lightBulbOn.selectedProperty().setValue(false);
-    bringBGFromTop.selectedProperty().setValue(false);
+    formToPosition.setDisable(true);
 
     this.refreshing = false;
 
@@ -975,7 +1011,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
         this.refreshing = true;
 
-        this.openBtn.setDisable(false);
+        this.openBtn.setDisable(game == null);
+        this.vpsOpenBtn.setDisable(game == null || client.getVpsService().getTableById(game.getExtTableId()) == null);
         this.renameBtn.setDisable(false);
         this.duplicateBtn.setDisable(false);
         this.deleteBtn.setDisable(false);
@@ -1052,8 +1089,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
           startBackground.setDisable(false);
           startBackground.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
-          bringBGFromTop.setDisable(false);
-          bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+
+          formToPosition.setDisable(false);
+          formToPosition.setValue(TablesSidebarDirectB2SController.FORM_POSITIONS.stream().filter(v -> v.getId() == tableSettings.getFormToPosition()).findFirst().orElse(null));
         }
 
         this.refreshing = false;
@@ -1188,6 +1226,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
+    if (!activeView) {
+      return;
+    }
+
     DirectB2SModel selection = tableView.getSelectionModel().getSelectedItem();
 
     if (id > 0) {

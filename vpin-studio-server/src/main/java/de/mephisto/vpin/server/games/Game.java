@@ -67,7 +67,7 @@ public class Game {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
-  private String notes;
+  private String comment;
   private String launcher;
   private Long numberPlayed;
 
@@ -179,16 +179,16 @@ public class Game {
     this.dateUpdated = dateUpdated;
   }
 
-  public String getNotes() {
-    return notes;
+  public String getComment() {
+    return comment;
   }
 
-  public void setNotes(String notes) {
-    this.notes = notes;
+  public void setComment(String comment) {
+    this.comment = comment;
   }
 
   public boolean isVpxGame() {
-    return this.emulator.isVpxEmulator();
+    return this.emulator != null && this.emulator.isVpxEmulator();
   }
 
   public boolean isFpGame() {
@@ -730,6 +730,13 @@ public class Game {
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
     return new File(getGameFile().getParentFile(), baseName + ".directb2s");
+  }
+  @NonNull
+  @JsonIgnore
+  public String getDirectB2SFilename() {
+    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
+    File folder = new File(getGameFileName()).getParentFile();
+    return new File(folder, baseName + ".directb2s").toString();
   }
 
   @NonNull

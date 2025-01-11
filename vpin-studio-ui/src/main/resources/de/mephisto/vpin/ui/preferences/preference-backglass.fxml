@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
@@ -61,6 +62,7 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="10.0" layoutY="227.0" styleClass="checkbox-description" text="and will always only look for exact matches when looking for .directb2s files)." textFill="WHITE" wrapText="true" />
+
                   <CheckBox fx:id="startModeCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Launch as .exe" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -68,6 +70,39 @@
                   </CheckBox>
                   <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="Configures the default start mode of the backglass server to &quot;in EXE&quot;." textFill="WHITE" wrapText="true" />
                   <Label layoutX="10.0" layoutY="312.0" styleClass="checkbox-description" text="This should improve performance." textFill="WHITE" wrapText="true" />
+
+                  <CheckBox fx:id="hideGrillCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Hide Grill" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Default visibility for grill, used when table grill visibility is standard." textFill="WHITE" wrapText="true" />
+
+                  <CheckBox fx:id="hideB2SDMDCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Hide B2S DMD" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Default visibility for B2S DMD, used when table B2S DMD visibility is standard." textFill="WHITE" wrapText="true" />
+
+                  <CheckBox fx:id="hideDMDCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Hide DMD" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Default visibility for DMD, used when table DMD visibility is standard." textFill="WHITE" wrapText="true" />
+
+                  <Label styleClass="default-text" text="Bring Forms" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="preference-description" text="Define default position of backglass and optional background" textFill="WHITE" wrapText="true" />
+                  <ComboBox fx:id="formToPosition" prefWidth="320.0" />
+
                </children>
             </VBox>
          </children>

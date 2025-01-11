@@ -35,7 +35,7 @@ public interface FrontendConnector {
   /**
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators
    */
-  void clearCache();
+  void reloadCache();
 
   Game getGame(int id);
 
@@ -102,12 +102,20 @@ public interface FrontendConnector {
   // Playlists management
 
   @NonNull
-  Playlist getPlayList(int id);
+  Playlist getPlaylist(int id);
 
   @NonNull
-  List<Playlist> getPlayLists();
+  Playlist clearPlaylist(int id);
 
-  void setPlaylistColor(int playlistId, long color);
+  @NonNull
+  List<Playlist> getPlaylists();
+
+  @NonNull
+  Playlist getPlaylistTree();
+
+  boolean deletePlaylist(int playlistId);
+
+  Playlist savePlaylist(Playlist playlist);
 
   void addToPlaylist(int playlistId, int gameId, int favMode);
 
@@ -163,5 +171,4 @@ public interface FrontendConnector {
   void endGameRecording(Game game);
 
   void endFrontendRecording();
-
 }

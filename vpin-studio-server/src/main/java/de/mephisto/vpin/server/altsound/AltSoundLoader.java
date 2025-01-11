@@ -91,7 +91,7 @@ public class AltSoundLoader {
       altSound.setFilesize(size);
       altSound.setFiles(audioFiles.size());
     } catch (Exception e) {
-      LOG.error("Failed to read altsound CSV " + csvFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Failed to read altsound CSV " + csvFile.getAbsolutePath() + ": " + e.getMessage());
     }
     return altSound;
   }

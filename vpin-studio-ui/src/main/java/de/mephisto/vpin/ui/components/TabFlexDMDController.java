@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,15 +24,14 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getMameDirectory());
+    File folder = client.getMameService().getMameFolder();
     openFolder(folder);
   }
 
   @FXML
   private void onFlexDMD() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File file = new File(defaultGameEmulator.getMameDirectory(), "FlexDMDUI.exe");
+    File folder = client.getMameService().getMameFolder();
+    File file = new File(folder, "FlexDMDUI.exe");
     if (!file.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
     }
@@ -53,10 +52,14 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
     return ComponentType.flexdmd;
   }
 
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    flexDMDBtn.setDisable(!client.getSystemService().isLocal());
+  }
+
+  @Override
+  protected void refreshTab(ComponentRepresentation component) {
+    openFolderButton.setDisable(!component.isInstalled());
+    flexDMDBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());
   }
 }

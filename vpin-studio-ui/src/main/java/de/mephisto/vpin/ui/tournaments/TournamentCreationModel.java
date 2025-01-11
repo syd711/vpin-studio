@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tournaments;
 
-import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import javafx.scene.control.TreeItem;
 

@@ -64,6 +64,9 @@ public class ScreenRecorderPanelController implements Initializable {
   private CheckBox inGameRecordingCheckbox;
 
   @FXML
+  private CheckBox rotationCheckbox;
+
+  @FXML
   private CheckBox audioCheckbox;
 
   @FXML
@@ -73,12 +76,14 @@ public class ScreenRecorderPanelController implements Initializable {
   private Spinner<Integer> delaySpinner;
 
   @FXML
+  private Pane rotationPanel;
+
+  @FXML
   private ComboBox<RecordingWriteMode> recordModeComboBox;
 
   private RecordingScreen recordingScreen;
 
   public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
-//    audioPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
     audioPanel.setVisible(false);
 
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
@@ -92,7 +97,7 @@ public class ScreenRecorderPanelController implements Initializable {
           Platform.runLater(() -> {
             root.prefWidthProperty().set(newValue.intValue() - 1040);
           });
-        }, 500);
+        }, 200);
       }
     });
 
@@ -143,6 +148,15 @@ public class ScreenRecorderPanelController implements Initializable {
       client.getPreferenceService().setJsonPreference(s);
     });
 
+    rotationPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
+    rotationCheckbox.setSelected(option.isRotated());
+    rotationCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+      option2.setRotated(t1);
+      client.getPreferenceService().setJsonPreference(s);
+    });
+
     audioCheckbox.setSelected(option.isRecordAudio());
     audioCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
@@ -187,7 +201,6 @@ public class ScreenRecorderPanelController implements Initializable {
 
     preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-    RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
 
     if (preview.isVisible()) {
       double w = preview.widthProperty().get();

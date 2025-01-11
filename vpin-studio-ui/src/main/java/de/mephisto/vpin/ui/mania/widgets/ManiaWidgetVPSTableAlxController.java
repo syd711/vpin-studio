@@ -7,7 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.ManiaController;
-import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import javafx.application.Platform;
@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaWidgetVPSTableAlxController extends WidgetController implements Initializable {
@@ -139,7 +140,7 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
           HBox hBox = new HBox(3);
           hBox.setAlignment(Pos.CENTER_LEFT);
 
-          InputStream imageInput = TarcisioWheelsDB.getWheelImage(tableById.getId());
+          InputStream imageInput = TarcisioWheelsDB.getWheelImage(Studio.class, client, tableById.getId());
           Image image = new Image(imageInput);
           ImageView imageView = new ImageView(image);
           imageView.setPreserveRatio(true);

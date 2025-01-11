@@ -5,10 +5,11 @@ import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,6 +23,9 @@ import java.util.List;
 public class FreezyComponent implements ComponentFacade {
 
   private final static List<String> INVALID_MAME_FILES = Arrays.asList("serum.dll", "serum.exp", "serum.lib", "serum64.dll", "serum64.exp", "serum64.lib");
+
+  @Autowired
+  private MameService mameService;
 
   @NonNull
   @Override
@@ -42,16 +46,16 @@ public class FreezyComponent implements ComponentFacade {
 
   @NonNull
   @Override
-  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
-    return gameEmulator.getMameFolder();
+  public File getTargetFolder() {
+    return mameService.getMameFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File file = new File(gameEmulator.getMameFolder(), "DmdDevice64.dll");
+  public Date getModificationDate() {
+    File file = new File(mameService.getMameFolder(), "DmdDevice64.dll");
     if (!file.exists()) {
-      file = new File(gameEmulator.getMameFolder(), "DmdDevice.dll");
+      file = new File(mameService.getMameFolder(), "DmdDevice.dll");
     }
     if (file.exists()) {
       return new Date(file.lastModified());
@@ -60,9 +64,9 @@ public class FreezyComponent implements ComponentFacade {
   }
 
   @Override
-  public void postProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+  public void postProcess(@NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
     for (String deleteFile : INVALID_MAME_FILES) {
-      FileUtils.delete(new File(gameEmulator.getMameFolder(), deleteFile));
+      FileUtils.delete(new File(mameService.getMameFolder(), deleteFile));
     }
   }
 

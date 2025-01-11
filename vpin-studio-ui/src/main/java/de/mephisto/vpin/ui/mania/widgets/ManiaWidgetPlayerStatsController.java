@@ -4,22 +4,18 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.RankedAccount;
-import de.mephisto.vpin.connectors.mania.model.TableScore;
-import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.ManiaController;
-import de.mephisto.vpin.ui.mania.ManiaDialogs;
-import de.mephisto.vpin.ui.mania.TableScoreLoadingProgressModel;
-import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.ui.mania.*;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
@@ -94,6 +90,9 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   private Button deleteBtn;
 
   @FXML
+  private Button denyBtn;
+
+  @FXML
   private Button tableStatsBtn;
 
   @FXML
@@ -160,6 +159,35 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   }
 
   @FXML
+  private void onDenyListAdd() {
+    List<TableScoreModel> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      List<DeniedScore> update = new ArrayList<>();
+      for (TableScoreModel selectedItem : selectedItems) {
+        VpsTable vpsTable = selectedItem.getVpsTable();
+
+        DeniedScore deniedScore = new DeniedScore();
+        deniedScore.setDeniedByAccountUuid(ManiaPermissions.getAccount().getUuid());
+        deniedScore.setDeniedDate(new Date());
+        deniedScore.setScore(selectedItem.getScoreValue());
+        deniedScore.setInitials(account.getInitials());
+        deniedScore.setVpsTableId(selectedItem.getVpsTable().getId());
+        deniedScore.setVpsVersionId(selectedItem.getVpsTableVersion().getId());
+        deniedScore.setTableName(vpsTable.getDisplayName());
+
+        update.add(deniedScore);
+      }
+
+      boolean b = ManiaDialogs.openDenyListDialog(update);
+      if (b) {
+        tableView.getItems().removeAll(selectedItems);
+        tableView.refresh();
+      }
+    }
+  }
+
+
+  @FXML
   private void onDelete() {
     List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
     List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
@@ -187,10 +215,10 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
             String vpsTableId = selectedItem.getVpsTable().getId();
             String vpsVersionId = selectedItem.getVpsTableVersion().getId();
             maniaClient.getHighscoreClient().deleteHighscore(accountByUuid.getId(), vpsTableId, vpsVersionId);
+            LOG.info("Deleted score " + vpsTableId + "/" + vpsVersionId + " from account " + accountByUuid.getId());
           }
         }
       }
-      WidgetFactory.showInformation(Studio.stage, "Information", "Highscore deletion successful.", null);
       onReload();
     }
   }
@@ -206,6 +234,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
   @FXML
   private void onReload() {
+    ManiaPermissions.invalidate();
     maniaClient.getHighscoreClient().clearTableHighscoresCache();
     this.refresh();
   }
@@ -233,6 +262,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("No player selected."));
+    denyBtn.managedProperty().bindBidirectional(denyBtn.visibleProperty());
     titleLabel.setText("Player Statistics");
     deleteBtn.setDisable(true);
     deleteBtn.setVisible(false);
@@ -247,7 +277,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       HBox hBox = new HBox(3);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      InputStream imageInput = TarcisioWheelsDB.getWheelImage(tableById.getId());
+      InputStream imageInput = TarcisioWheelsDB.getWheelImage(Studio.class, client, tableById.getId());
       Image image = new Image(imageInput);
       ImageView imageView = new ImageView(image);
       imageView.setPreserveRatio(true);
@@ -303,6 +333,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       public void changed(ObservableValue<? extends TableScoreModel> observable, TableScoreModel oldValue, TableScoreModel newValue) {
         tableStatsBtn.setDisable(newValue == null);
         deleteBtn.setDisable(newValue == null);
+        denyBtn.setDisable(newValue == null);
 
         if (newValue != null) {
           GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(newValue.getVpsTable(), newValue.getVpsTableVersion());
@@ -344,10 +375,17 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
         return;
       }
 
+      denyBtn.setVisible(ManiaPermissions.isAdmin() || ManiaPermissions.isEditor());
+
       List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
-      List<PlayerRepresentation> maniaAccounts = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid()) && p.getTournamentUserUuid().equals(account.getUuid())).collect(Collectors.toList());
-      boolean userAccount = !maniaAccounts.isEmpty();
-      deleteBtn.setVisible(userAccount);
+      String accountUUID = account.getUuid();
+      for (PlayerRepresentation player : players) {
+        String maniaUUID = player.getTournamentUserUuid();
+        if (!StringUtils.isEmpty(accountUUID) && accountUUID.equals(maniaUUID)) {
+          deleteBtn.setVisible(true);
+          break;
+        }
+      }
 
       tableView.getSelectionModel().clearSelection();
 
@@ -362,25 +400,17 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
         catch (Exception e) {
           LOG.error("Failed to load VPin Mania account: {}", e.getMessage(), e);
         }
-        InputStream in = ServerFX.client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(account.getUuid()));
-        if (in == null) {
-          in = ServerFX.class.getResourceAsStream("avatar-blank.png");
-        }
-        final InputStream data = in;
-        if (data != null) {
-          Platform.runLater(() -> {
-            Image i = new Image(data);
-            avatarView.setImage(i);
-            if (rankedAccount != null) {
-              rankLabel.setText("#" + rankedAccount.getRanking());
-            }
-            CommonImageUtil.setClippedImage(avatarView, (int) (avatarView.getFitHeight()));
+        Platform.runLater(() -> {
+          avatarView.setImage(ManiaAvatarCache.getAvatarImage(rankedAccount.getUuid()));
+          if (rankedAccount != null) {
+            rankLabel.setText("#" + rankedAccount.getRanking());
+          }
+          CommonImageUtil.setClippedImage(avatarView, (int) (avatarView.getFitHeight()));
 
-            subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
-            subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
-            subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
-          });
-        }
+          subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
+          subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
+          subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
+        });
       }).start();
 
       this.reloadBtn.setDisable(true);
@@ -389,7 +419,6 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
       titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
       sub1Label.setText("Recorded Scores: " + highscoresByAccount.size());
-
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
 
@@ -435,11 +464,13 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     private VpsTable vpsTable;
     private VpsTableVersion vpsTableVersion;
     private String score;
+    private long scoreValue;
     private String name = "???";
     private int position = -1;
 
     public TableScoreModel(TableScore tableScore, Account account, List<TableScoreDetails> highscoresByTable) {
       this.score = String.valueOf(tableScore.getScore());
+      this.scoreValue = tableScore.getScore();
       this.vpsTable = client.getVpsService().getTableById(tableScore.getVpsTableId());
       if (vpsTable != null) {
         this.name = vpsTable.getName().trim();
@@ -469,6 +500,10 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
     public String getScore() {
       return score;
+    }
+
+    public long getScoreValue() {
+      return scoreValue;
     }
 
     public int getPosition() {

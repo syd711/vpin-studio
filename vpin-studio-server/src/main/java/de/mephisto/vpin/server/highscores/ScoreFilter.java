@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -12,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class ScoreFilter implements InitializingBean, PreferenceChangedListener {
@@ -34,9 +32,16 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
       SLOG.info("Filtered highscore update \"" + score + "\": player initials are empty");
       return true;
     }
+
+    if (score.getNumericScore() < UIDefaults.MAX_RESET_SCORE_VALUE) {
+      LOG.info("Filtered highscore update \"" + score + "\": the score is lower than the allowed threshold of " + UIDefaults.MAX_RESET_SCORE_VALUE);
+      SLOG.info("Filtered highscore update \"" + score + "\": the score is lower than the allowed threshold of " + UIDefaults.MAX_RESET_SCORE_VALUE);
+      return true;
+    }
+
     if (playerService.getAdminPlayer() == null && score.getPlayerInitials().equalsIgnoreCase("???")) {
-      LOG.info("Filtered highscore update \"" + score + "\": player initials are ???");
-      SLOG.info("Filtered highscore update \"" + score + "\": player initials are ???");
+      LOG.info("Filtered highscore update \"" + score + "\": player initials are ??? and there is no default player set.");
+      SLOG.info("Filtered highscore update \"" + score + "\": player initials are ??? and there is no default player set.");
       return true;
     }
 

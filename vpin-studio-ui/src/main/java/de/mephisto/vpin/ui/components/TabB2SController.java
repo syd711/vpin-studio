@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -61,6 +62,11 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
-    registerBtn.setDisable(!client.getSystemService().isLocal());
+  }
+
+  @Override
+  protected void refreshTab(ComponentRepresentation component) {
+    openFolderButton.setDisable(!component.isInstalled());
+    registerBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());
   }
 }

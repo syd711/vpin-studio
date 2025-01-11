@@ -35,6 +35,11 @@
                         <Insets top="40.0" />
                      </StackPane.margin>
                   </BorderPane>
+                  <BorderPane fx:id="scoreView" maxHeight="730.0" maxWidth="1200.0" prefHeight="675.0" prefWidth="1200.0">
+                     <StackPane.margin>
+                        <Insets top="40.0" />
+                     </StackPane.margin>
+                  </BorderPane>
                   <MediaView fx:id="mediaView" fitHeight="675.0" fitWidth="1200.0" />
                   <ImageView fx:id="screenImageView" fitHeight="675.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true">
                      <StackPane.margin>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.playlistmanager.PlaylistTableController">
+   <center>
+      <StackPane fx:id="tableStack" style="-fx-background-color: #222222;" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+               <columns>
+                  <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="200.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
+                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
+               </columns>
+            </TableView>
+         </children>
+      </StackPane>
+   </center>
+   <top>
+      <ToolBar>
+         <items>
+            <StackPane alignment="CENTER_RIGHT">
+               <children>
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </children>
+            </StackPane>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <ComboBox fx:id="allEmulatorsCombo" prefWidth="150.0" promptText="All Emulators" />
+            <Separator fx:id="emulatorsSeparator" layoutX="214.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="addBtn" layoutX="400.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAdd" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Remove from playlist" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-plus" iconSize="18" />
+               </graphic>
+            </Button>
+            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Remove from playlist" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-minus" iconSize="18" />
+               </graphic>
+            </Button>
+         </items>
+      </ToolBar>
+   </top>
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <right>
+            <Label fx:id="labelCount" text="Label" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="3.0" />
+               </BorderPane.margin></Label>
+         </right>
+      </BorderPane>
+   </bottom>
+</BorderPane>

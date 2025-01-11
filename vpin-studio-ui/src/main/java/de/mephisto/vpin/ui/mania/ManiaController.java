@@ -129,7 +129,13 @@ public class ManiaController implements Initializable, StudioFXController, Studi
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+    if(options != null && options.getModel() != null) {
+      tabPane.getSelectionModel().select(1);
+      tableScoresTabController.onViewActivated(options);
+    }
+    else {
+      updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+    }
   }
 
   @Override

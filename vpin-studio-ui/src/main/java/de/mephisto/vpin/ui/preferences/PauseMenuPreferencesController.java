@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -14,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,18 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox pauseMenuCheckbox;
 
   @FXML
+  private Pane maniaScoresBox;
+
+  @FXML
+  private CheckBox maniaScoresCheckbox;
+
+  @FXML
+  private Pane iScoredScoresBox;
+
+  @FXML
+  private CheckBox iScoredScoresCheckbox;
+
+  @FXML
   private TextField videoAuthorsAllowList;
 
   @FXML
@@ -49,9 +63,15 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
     pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
-    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    maniaScoresBox.managedProperty().bindBidirectional(maniaScoresBox.visibleProperty());
+    maniaScoresBox.setVisible(Features.MANIA_ENABLED && pauseMenuSettings.isShowManiaScores());
+    iScoredScoresBox.managedProperty().bindBidirectional(iScoredScoresBox.visibleProperty());
+    iScoredScoresBox.setVisible(Features.ISCORED_ENABLED && pauseMenuSettings.isShowIscoredScores());
+
     screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
     if (pauseMenuSettings.getPauseMenuScreenId() == -1) {
       screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryScreen());
@@ -65,6 +85,18 @@ public class PauseMenuPreferencesController implements Initializable {
         pauseMenuSettings.setPauseMenuScreenId(newValue.getId());
         client.getPreferenceService().setJsonPreference(pauseMenuSettings);
       }
+    });
+
+    iScoredScoresCheckbox.setSelected(pauseMenuSettings.isShowIscoredScores());
+    iScoredScoresCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setShowIscoredScores(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    maniaScoresCheckbox.setSelected(pauseMenuSettings.isShowManiaScores());
+    maniaScoresCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setShowManiaScores(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
     pauseMenuCheckbox.setSelected(pauseMenuSettings.isUseOverlayKey());

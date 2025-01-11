@@ -15,6 +15,10 @@ public class ZipUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
 
   public static boolean unzip(File archiveFile, File destinationDir) {
+    return unzip(archiveFile, destinationDir, false);
+  }
+
+  public static boolean unzip(File archiveFile, File destinationDir, boolean log) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -40,6 +44,7 @@ public class ZipUtil {
             fos.write(buffer, 0, len);
           }
           fos.close();
+          LOG.info("Unpacked {}", newFile.getAbsolutePath());
         }
         zis.closeEntry();
         zipEntry = zis.getNextEntry();

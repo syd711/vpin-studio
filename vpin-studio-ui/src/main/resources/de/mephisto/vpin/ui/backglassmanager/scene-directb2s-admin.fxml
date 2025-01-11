@@ -177,6 +177,17 @@
                </graphic>
             </Button>
             <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onVpsOpen" styleClass="link-component" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Open table information on VPS." />
+               </tooltip>
+            </Button>
             <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
@@ -420,7 +431,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="15">
+                                    <Label layoutX="10.0" layoutY="284.0" text="Bring Forms:" textFill="WHITE" GridPane.rowIndex="15">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -436,7 +447,7 @@
                                     <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                     <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                     <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                                    <ComboBox fx:id="formToPosition" layoutX="173.0" layoutY="117.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                                     <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="11">
                                        <font>
                                           <Font size="14.0" />

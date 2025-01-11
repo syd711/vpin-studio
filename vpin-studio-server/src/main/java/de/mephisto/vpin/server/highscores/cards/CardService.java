@@ -7,7 +7,11 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameStatusService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -30,11 +34,13 @@ import org.springframework.stereotype.Service;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener {
+public class CardService implements InitializingBean, HighscoreChangeListener, PreferenceChangedListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CardService.class);
 
   @Autowired
@@ -52,7 +58,12 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @Autowired
   private CardTemplatesService cardTemplatesService;
 
+  @Autowired
+  private FrontendStatusService frontendStatusService;
+
   private CardSettings cardSettings;
+
+  private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
 
   public File generateTableCardFile(Game game) {
     generateCard(game);
@@ -110,8 +121,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    */
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
-      long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-      ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);
+      ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
       Platform.runLater(() -> {
         Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
         doGenerateCard(game, summary, generateSampleCard, template);
@@ -127,6 +137,29 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       LOG.error("Failed to generate image: " + e.getMessage(), e);
       return false;
     }
+  }
+
+  @NonNull
+  private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generateSampleCard) {
+    long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+    ScoreSummary summary = null;
+    if (template.isRenderFriends()) {
+      //add simply caching until a real card is generated, should be sufficient while editing
+      if (generateSampleCard) {
+        if (!scoreCache.containsKey(game.getId())) {
+          scoreCache.put(game.getId(), highscoreService.getMergedScoreSummary(serverId, game));
+        }
+
+        return scoreCache.get(game.getId());
+      }
+
+      scoreCache.clear();
+      summary = highscoreService.getMergedScoreSummary(serverId, game);
+    }
+    else {
+      summary = highscoreService.getScoreSummary(serverId, game);
+    }
+    return summary;
   }
 
   private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
@@ -216,9 +249,21 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    Game game = event.getGame();
+    generateCard(game);
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     this.highscoreService.addHighscoreChangeListener(this);
     this.preferencesService.addChangeListener(this);
+    this.frontendStatusService.addTableStatusChangeListener(this);
     this.preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
   }
 }

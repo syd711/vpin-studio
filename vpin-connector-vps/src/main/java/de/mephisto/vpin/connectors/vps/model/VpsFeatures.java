@@ -3,6 +3,7 @@ public interface VpsFeatures {
   String VPX = "VPX";
   String FP = "FP";
   String FX = "FX";
+  String FX2 = "FX2";
   String FX3 = "FX3";
 
   String INCL_PUP = "incl. PuP";

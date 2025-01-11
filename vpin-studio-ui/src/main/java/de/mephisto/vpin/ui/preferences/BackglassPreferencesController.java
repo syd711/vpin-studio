@@ -3,9 +3,13 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
+import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +33,18 @@ public class BackglassPreferencesController implements Initializable {
   private CheckBox startModeCheckbox;
 
   @FXML
+  private CheckBox hideGrillCheckbox;
+
+  @FXML
+  private CheckBox hideB2SDMDCheckbox;
+
+  @FXML
+  private CheckBox hideDMDCheckbox;
+
+  @FXML
+  private ComboBox<B2SFormPosition> formToPosition;
+
+  @FXML
   private Label backglassServerFolder;
 
   @FXML
@@ -50,6 +66,10 @@ public class BackglassPreferencesController implements Initializable {
       backglassMissingCheckbox.setDisable(!serverInstalled);
       fuzzyMatchingCheckbox.setDisable(!serverInstalled);
       startModeCheckbox.setDisable(!serverInstalled);
+      hideGrillCheckbox.setDisable(!serverInstalled);
+      hideB2SDMDCheckbox.setDisable(!serverInstalled);
+      hideDMDCheckbox.setDisable(!serverInstalled);
+      formToPosition.setDisable(!serverInstalled);
 
       if (serverInstalled) {
 
@@ -82,6 +102,29 @@ public class BackglassPreferencesController implements Initializable {
           backglassServerSettings.setDefaultStartMode(mode);
           saveSettings();
         });
+
+        hideGrillCheckbox.setSelected(backglassServerSettings.isHideGrill());
+        hideGrillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setHideGrill(newValue);
+          saveSettings();
+        });
+        hideB2SDMDCheckbox.setSelected(backglassServerSettings.isHideB2SDMD());
+        hideB2SDMDCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setHideB2SDMD(newValue);
+          saveSettings();
+        });
+        hideDMDCheckbox.setSelected(backglassServerSettings.isHideDMD());
+        hideDMDCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setHideDMD(newValue);
+          saveSettings();
+        });
+
+        formToPosition.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.FORM_POSITIONS));
+        formToPosition.setValue(TablesSidebarDirectB2SController.FORM_POSITIONS.stream().filter(v -> v.getId() == backglassServerSettings.getFormToPosition()).findFirst().orElse(null));
+        formToPosition.valueProperty().addListener((observable, oldValue, newValue) -> {
+          backglassServerSettings.setFormToPosition(newValue.getId());
+          saveSettings();
+        });    
 
         saveEnabled = true;
       }

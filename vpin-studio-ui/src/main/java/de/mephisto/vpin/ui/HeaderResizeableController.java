@@ -1,28 +1,39 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.ui.mania.ManiaRegistration;
+import de.mephisto.vpin.ui.preferences.ManiaPreferencesController;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class HeaderResizeableController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(HeaderResizeableController.class);
   private final Debouncer debouncer = new Debouncer();
 
   @FXML
@@ -32,18 +43,58 @@ public class HeaderResizeableController implements Initializable {
   private Button minimizeBtn;
 
   @FXML
+  private Button friendsBtn;
+
+  @FXML
   private Label titleLabel;
 
   @FXML
   private BorderPane header;
 
   private static MouseEvent event;
+  private static Button FRIENDS_BTN;
 
   @FXML
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
       FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
       helper.switchWindowedMode(e);
+    }
+  }
+
+  @FXML
+  private void onFriends() {
+    //TODO move this into a util and cache it!
+    Cabinet cabinet = null;
+    try {
+      cabinet = maniaClient.getCabinetClient().getCabinet();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load cabinet setting: {}", e.getMessage());
+    }
+
+    if (cabinet == null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services to connect your cabinet with friends.", null, "Register Cabinet");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        boolean register = ManiaRegistration.register();
+        if (register) {
+          toggleFriendsView();
+        }
+      }
+      return;
+    }
+    toggleFriendsView();
+  }
+
+  public static void toggleFriendsView() {
+    boolean open = FriendsController.toggle();
+    if (open) {
+      if (!FRIENDS_BTN.getStyleClass().contains("friends-button-selected")) {
+        FRIENDS_BTN.getStyleClass().add("friends-button-selected");
+      }
+    }
+    else {
+      FRIENDS_BTN.getStyleClass().remove("friends-button-selected");
     }
   }
 
@@ -92,6 +143,12 @@ public class HeaderResizeableController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
+
+    FRIENDS_BTN = friendsBtn;
+
+    friendsBtn.managedProperty().bindBidirectional(friendsBtn.visibleProperty());
+    friendsBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;

@@ -17,7 +17,7 @@ public class ImageCache extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private final Map<String, byte[]> imageCache = new HashMap<>();
 
-  ImageCache(VPinStudioClient client) {
+  public ImageCache(VPinStudioClient client) {
     super(client);
   }
 

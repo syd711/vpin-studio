@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarVpsController">
     <center>
       <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -254,6 +254,15 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" />
                            </VBox.margin>
                         </VBox>
+                        <VBox fx:id="multiSelectionPane">
+                           <children>
+                              <Label styleClass="default-headline" text="Multiple tables are selected." />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="Only supported actions are enabled for bulk operations." />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </VBox.margin>
+                        </VBox>
                      </children>
                   </VBox>
                </content>
@@ -290,7 +299,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Download the latest VPS database." />
+                  <Tooltip text="Download the latest VPS database. The database is automatically refresh on server start." />
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" />
@@ -305,7 +314,7 @@
                   <Tooltip text="Resets the assigned VPS table mapping." />
                </tooltip>
             </Button>
-            <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset Updates" textFill="WHITE">
+            <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset Updates" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

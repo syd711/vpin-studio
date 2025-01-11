@@ -13,7 +13,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

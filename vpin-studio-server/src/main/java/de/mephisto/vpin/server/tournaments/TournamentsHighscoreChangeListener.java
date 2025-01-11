@@ -69,6 +69,10 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
         Score newScore = event.getNewScore();
         Game game = event.getGame();
 
+        if (maniaService.isOnDenyList(game, newScore)) {
+          return;
+        }
+
         String tournamentPlayerUuid = getTournamentUserId(newScore);
         TableScore newTableScore = createTableScore(game, newScore);
         Account accountByUuid = null;

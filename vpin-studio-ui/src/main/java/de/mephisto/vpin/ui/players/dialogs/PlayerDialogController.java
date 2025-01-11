@@ -4,10 +4,12 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -65,6 +67,9 @@ public class PlayerDialogController implements Initializable, DialogController {
   private CheckBox tournamentPlayerCheckbox;
 
   @FXML
+  private CheckBox visibilityCheckbox;
+
+  @FXML
   private Label initialsOverlayLabel;
 
   @FXML
@@ -109,7 +114,8 @@ public class PlayerDialogController implements Initializable, DialogController {
 
       boolean maniaAccount = this.tournamentPlayerCheckbox.isSelected();
       String maniaName = this.maniaNameField.getText();
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, this.avatarFile, this.avatarStack));
+      AccountVisibility visibility = visibilityCheckbox.isSelected() ? AccountVisibility.searchable : AccountVisibility.hidden;
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, visibility, this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
         if (o instanceof PlayerRepresentation) {
@@ -221,6 +227,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
         this.tournamentPlayerCheckbox.setSelected(accountByUuid != null);
         if(accountByUuid != null) {
+          this.visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(accountByUuid.getVisibility()));
           this.maniaNameField.setText(accountByUuid.getDisplayName());
         }
       }
@@ -244,13 +251,16 @@ public class PlayerDialogController implements Initializable, DialogController {
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
     if (Features.MANIA_ENABLED) {
-      cabinet = maniaClient.getCabinetClient().getCabinet();
+      cabinet = maniaClient.getCabinetClient().getCabinetCached();
+      tournamentGroup.setVisible(cabinet != null);
     }
 
     this.player = new PlayerRepresentation();
     nameField.setText(player.getName());
+    maniaNameField.setPromptText(player.getName());
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       player.setName(t1);
+      maniaNameField.setPromptText(t1);
       validateInput();
     });
 
@@ -274,6 +284,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
+    this.tournamentPlayerCheckbox.setDisable(cabinet == null);
     this.tournamentPlayerCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

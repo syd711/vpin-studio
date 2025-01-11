@@ -2,9 +2,11 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,6 +18,9 @@ import java.util.List;
 
 @Service
 public class FlexDMDComponent implements ComponentFacade {
+
+  @Autowired
+  private MameService mameService;
 
   @NonNull
   @Override
@@ -36,14 +41,14 @@ public class FlexDMDComponent implements ComponentFacade {
 
   @NonNull
   @Override
-  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
-    return gameEmulator.getMameFolder();
+  public File getTargetFolder() {
+    return mameService.getMameFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File file = new File(gameEmulator.getMameFolder(), "FlexDMD.dll");
+  public Date getModificationDate() {
+    File file = new File(mameService.getMameFolder(), "FlexDMD.dll");
     if (file.exists()) {
       return new Date(file.lastModified());
     }

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.players.dialogs;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -30,16 +31,18 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   private final List<PlayerRepresentation> players;
   private final boolean maniaPlayer;
   private final String maniaName;
+  private final AccountVisibility visibility;
   private File avatarFile;
   private final Pane avatarStack;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean maniaPlayer, String maniaName, File avatarFile, Pane avatarStack) {
+  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean maniaPlayer, String maniaName, AccountVisibility visibility, File avatarFile, Pane avatarStack) {
     super("Saving Player");
     this.players = Arrays.asList(playerRepresentation);
     this.maniaPlayer = maniaPlayer;
     this.maniaName = maniaName;
+    this.visibility = visibility;
     this.avatarFile = avatarFile;
     this.avatarStack = avatarStack;
     this.playerIterator = players.iterator();
@@ -131,6 +134,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           accountName = maniaName;
         }
 
+        maniaAccount.setVisibility(visibility);
         maniaAccount.setDisplayName(accountName);
         maniaAccount.setInitials(player.getInitials());
 

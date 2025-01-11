@@ -8,10 +8,15 @@ public interface UIDefaults {
   String DISCORD_INVITE_LINK = "https://discord.gg/AMPwvAZHvy";
 
   int DEFAULT_AVATARSIZE = 68;
+  int FADER_DURATION = 250;
 
   int DB_VERSION = 64;
 
   int TOURNAMENT_BROWSER_PAGE_SIZE = 20;
   int PLAYERS_PAGE_SIZE = 50;
+  int DEFAULT_MAX_REFRESH_COUNT = 5;
+
+  int MAX_RESET_SCORE_VALUE = 10;
+
   String APP_TITLE = "VPin Studio App";
 }

@@ -20,7 +20,7 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
-import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -184,89 +184,89 @@ public class Studio extends Application {
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
-        //force pre-caching, this way, the table overview does not need to execute single GET requests
-        new Thread(() -> {
-          Studio.client.getVpsService().invalidateAll();
-          LOG.info("Pre-cached VPS tables");
-        }, "Pre-cached VPS tables Thread").start();
+            //force pre-caching, this way, the table overview does not need to execute single GET requests
+            new Thread(() -> {
+              Studio.client.getVpsService().invalidateAll();
+              LOG.info("Pre-cached VPS tables");
+            }, "Pre-cached VPS tables Thread").start();
 
-        createManiaClient();
+            createManiaClient();
 
-        // reinitialize a new EventManager each time application starts
-        EventManager.initialize();
-        LocalUISettings.initialize();
-      })
-      .thenLater(() -> {
-        Studio.stage = stage;
+            // reinitialize a new EventManager each time application starts
+            EventManager.initialize();
+            LocalUISettings.initialize();
+          })
+          .thenLater(() -> {
+            Studio.stage = stage;
 
-        List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
-        if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
-          LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
-          ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
-        }
+            List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
+            if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
+              LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
+              ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+            }
 
-        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-        client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
+            UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+            client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
-        if (screenBounds.getWidth() > screenBounds.getHeight()) {
-          LOG.info("Window Mode: Landscape");
-        }
-        else {
-          LOG.info("Window Mode: Portrait");
-        }
+            if (screenBounds.getWidth() > screenBounds.getHeight()) {
+              LOG.info("Window Mode: Landscape");
+            }
+            else {
+              LOG.info("Window Mode: Portrait");
+            }
 
-        FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
-        Parent root = null;
-        try {
-          root = loader.load();
-        }
-        catch (IOException e) {
-          LOG.error("Failed to load Studio: {}", e.getMessage(), e);
-        }
+            FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
+            Parent root = null;
+            try {
+              root = loader.load();
+            }
+            catch (IOException e) {
+              LOG.error("Failed to load Studio: {}", e.getMessage(), e);
+            }
 
-        Rectangle position = LocalUISettings.getPosition();
+            Rectangle position = LocalUISettings.getPosition();
 
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
-        double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
-        if (position.getWidth() > 800 && position.getHeight() > 600) {
-          width = position.getWidth();
-          height = position.getHeight();
-        }
-        Scene scene = new Scene(root, width, height, Paint.valueOf("#212529"));
-        stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
-        stage.setScene(scene);
-        stage.setMinWidth(1280);
-        stage.setMinHeight(700);
-        stage.setResizable(true);
-        stage.initStyle(StageStyle.UNDECORATED);
+            Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+            double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
+            double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
+            if (position.getWidth() > 800 && position.getHeight() > 600) {
+              width = position.getWidth();
+              height = position.getHeight();
+            }
+            Scene scene = new Scene(root, width, height, Paint.valueOf("#212529"));
+            stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
+            stage.setScene(scene);
+            stage.setMinWidth(1280);
+            stage.setMinHeight(700);
+            stage.setResizable(true);
+            stage.initStyle(StageStyle.UNDECORATED);
 
-        if (position.getX() != -1) {
-          stage.setX(position.getX());
-          stage.setY(position.getY());
-        }
-        else {
-          stage.setX((screenBounds.getWidth() / 2) - (width / 2));
-          stage.setY((screenBounds.getHeight() / 2) - (height / 2));
-        }
+            if (position.getX() != -1) {
+              stage.setX(position.getX());
+              stage.setY(position.getY());
+            }
+            else {
+              stage.setX((screenBounds.getWidth() / 2) - (width / 2));
+              stage.setY((screenBounds.getHeight() / 2) - (height / 2));
+            }
 
-        // ResizeHelper.addResizeListener(stage);
-        FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-        stage.setUserData(fxResizeHelper);
+            // ResizeHelper.addResizeListener(stage);
+            FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+            stage.setUserData(fxResizeHelper);
 
-        // OLE use event bubbling, from most specific node up to windows
-        //scene.addEventFilter(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
+            // OLE use event bubbling, from most specific node up to windows
+            //scene.addEventFilter(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
+            scene.addEventHandler(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
 
-        client.setErrorHandler(errorHandler);
-        stage.show();
-        splash.hide();
+            client.setErrorHandler(errorHandler);
+            stage.show();
+            splash.hide();
 
-        //launch VPSMonitor
-        VBSManager.getInstance();
-      });
+            //launch VPSMonitor
+            VBSManager.getInstance();
+          });
     }
     catch (Exception e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
@@ -299,6 +299,7 @@ public class Studio extends Application {
         ManiaConfig config = Studio.client.getManiaService().getConfig();
         SystemSummary summary = Studio.client.getSystemService().getSystemSummary();
         Studio.maniaClient = new VPinManiaClient(config.getUrl(), summary.getSystemId());
+        ServerFX.maniaClient = Studio.maniaClient;
       }
     }
     catch (Exception e) {
@@ -414,8 +415,14 @@ public class Studio extends Application {
     if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
-      if (!confirmationResult.isApplyClicked()) {
-        client.getFrontendService().restartFrontend();
+      if (confirmationResult.isCancelClicked()) {
+        return;
+      }
+
+      if (confirmationResult.isOkClicked()) {
+        new Thread(() -> {
+          client.getFrontendService().restartFrontend();
+        }).start();
       }
 
       if (confirmationResult.isChecked()) {

@@ -119,6 +119,20 @@
 
                      </children>
                   </GridPane>
+                  <HBox fx:id="fullScreenWarning" prefWidth="200.0" styleClass="error-container">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label styleClass="error-title" text="True Fullscreen Enabled" />
+                              <Label styleClass="error-message" text="One of the emulator configurations contains the entry &quot;FSMODE=EnableTrueFullScreen&quot;." />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="error-message" text="This will avoid any VPin Studio overlay from being displayed." />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                </children>
                <padding>
                   <Insets bottom="48.0" left="24.0" right="24.0" top="24.0" />

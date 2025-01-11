@@ -19,10 +19,10 @@ import java.util.List;
  * <p>
  * Popper nvidia=0
  * ffmpeg -y -rtbufsize 100M -report %wAudio% -f gdigrab -t 60 -framerate %curFPS% -probesize 10M -offset_x %1 -offset_y %2 -video_size %3x%4 -i desktop -c:v h264_nvenc -preset:v fast -pix_fmt nv12 -r %curFPS% -b:v %cbitrate%M output.mkv
- *
+ * <p>
  * /test
  * ffmpeg.exe -y -video_size 3374x1852 -offset_x 213 -offset_y 161 -rtbufsize 100M -f gdigrab -framerate 30 -t 10 -draw_mouse 0 -i desktop -c:v libx264 -r 30 -preset fast -tune zerolatency -crf 25 -pix_fmt yuv420p out85.mp4
- *
+ * <p>
  * ffmpeg.exe -y -f dshow -i audio="SPDIF-Schnittstelle (Sound Blaster X4)" -acodec aac -y -video_size 3374x1852 -offset_x 213 -offset_y 161 -rtbufsize 100M -f gdigrab -framerate 30 -draw_mouse 0 -i desktop -c:v libx264 -r 30 -preset fast -tune zerolatency -crf 25
  * -pix_fmt yuv420p -t 5 out.mp4
  */
@@ -80,6 +80,10 @@ public class ScreenRecorder {
 
       List<String> commandList = new ArrayList<>();
       commandList.add("ffmpeg.exe");
+      if (recordingScreen.getScreen().equals(VPinScreen.PlayField) && options.isRotated()) {
+        commandList.add("-display_rotation");
+        commandList.add("180");
+      }
       commandList.add("-y");
       commandList.add("-video_size");
       commandList.add(videoSize);

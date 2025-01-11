@@ -143,15 +143,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox prefWidth="180.0" spacing="6.0">
-                           <children>
                               <CheckBox fx:id="columnEmulator" mnemonicParsing="false" text="Emulator" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
                               <CheckBox fx:id="columnHighscore" mnemonicParsing="false" text="Highscore Type" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -163,6 +163,11 @@
                                  </font>
                               </CheckBox>
                               <CheckBox fx:id="columnLauncher" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Launcher" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnComment" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Comment" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

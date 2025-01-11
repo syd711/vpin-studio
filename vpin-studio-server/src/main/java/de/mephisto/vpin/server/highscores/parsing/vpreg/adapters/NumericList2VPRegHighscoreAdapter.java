@@ -34,12 +34,12 @@ public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscore
   }
 
   @Override
-  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder, long score) throws IOException {
     int index = getStartIndex();
     while (gameFolder.hasEntry(getScoreKey(index))) {
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(getScoreKey(index));
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+      byte[] array = StandardCharsets.UTF_16LE.encode(String.valueOf(score)).array();
       scoreDocument.replaceContents(new ByteArrayInputStream(array));
 
       index++;

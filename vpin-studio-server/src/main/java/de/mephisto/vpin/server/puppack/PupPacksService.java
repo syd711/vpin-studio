@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -30,6 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PupPacksService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PupPacksService.class);
 
+  private final static String PUP_PACK_TWEAKER_EXE = "PupPackScreenTweaker.exe";
+
   @Autowired
   private SystemService systemService;
 
@@ -39,7 +42,7 @@ public class PupPacksService implements InitializingBean {
   @Autowired
   private JobService jobService;
 
-  private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
+  private final Map<String, PupPack> pupPackCache = new ConcurrentHashMap<>();
 
   /**
    * Return where pinup player is installed, read it today from installation directory,
@@ -70,25 +73,40 @@ public class PupPacksService implements InitializingBean {
   }
 
   @Nullable
+  public PupPack getPupPackCached(@NonNull Game game) {
+    return getCachedPupPack(game);
+  }
+
+  @Nullable
   public PupPack getPupPack(@NonNull Game game) {
+    PupPack cachedPupPack = getCachedPupPack(game);
+    if (cachedPupPack != null) {
+      invalidate(cachedPupPack);
+    }
     return getCachedPupPack(game);
   }
 
   @Nullable
   private PupPack getCachedPupPack(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackFolders.containsKey(game.getPupPackName().toLowerCase())) {
-      return pupPackFolders.get(game.getPupPackName().toLowerCase());
+    if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackCache.containsKey(game.getPupPackName().toLowerCase())) {
+      return pupPackCache.get(game.getPupPackName().toLowerCase());
     }
-    if (!StringUtils.isEmpty(game.getRomAlias()) && pupPackFolders.containsKey(game.getRomAlias().toLowerCase())) {
-      return pupPackFolders.get(game.getRomAlias().toLowerCase());
+    if (!StringUtils.isEmpty(game.getRomAlias()) && pupPackCache.containsKey(game.getRomAlias().toLowerCase())) {
+      return pupPackCache.get(game.getRomAlias().toLowerCase());
     }
-    if (!StringUtils.isEmpty(game.getRom()) && pupPackFolders.containsKey(game.getRom().toLowerCase())) {
-      return pupPackFolders.get(game.getRom().toLowerCase());
+    if (!StringUtils.isEmpty(game.getRom()) && pupPackCache.containsKey(game.getRom().toLowerCase())) {
+      return pupPackCache.get(game.getRom().toLowerCase());
     }
-    if (!StringUtils.isEmpty(game.getTableName()) && pupPackFolders.containsKey(game.getTableName().toLowerCase())) {
-      return pupPackFolders.get(game.getTableName().toLowerCase());
+    if (!StringUtils.isEmpty(game.getTableName()) && pupPackCache.containsKey(game.getTableName().toLowerCase())) {
+      return pupPackCache.get(game.getTableName().toLowerCase());
     }
     return null;
+  }
+
+  private void invalidate(PupPack cachedPupPack) {
+    File pupPackFolder = cachedPupPack.getPupPackFolder();
+    loadPupPack(pupPackFolder);
+    LOG.info("Invalidated PUP Pack \"{}\"", pupPackFolder.getAbsolutePath());
   }
 
   private void refresh() {
@@ -97,7 +115,7 @@ public class PupPacksService implements InitializingBean {
       return;
     }
 
-    this.pupPackFolders.clear();
+    this.pupPackCache.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = getPupPackFolder();
     LOG.info("Refreshing PUP pack info from \"" + pupPackFolder.getAbsolutePath() + "\"");
@@ -113,7 +131,7 @@ public class PupPacksService implements InitializingBean {
       LOG.error("PUP pack folder " + pupPackFolder.getAbsolutePath() + " does not exist.");
     }
     long end = System.currentTimeMillis();
-    LOG.info("Finished PUP pack scan, found " + pupPackFolders.size() + " packs (" + (end - start) + "ms)");
+    LOG.info("Finished PUP pack scan, found " + pupPackCache.size() + " packs (" + (end - start) + "ms)");
   }
 
   public PupPack loadPupPack(File packFolder) {
@@ -126,7 +144,7 @@ public class PupPacksService implements InitializingBean {
     boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
     if ((orbitalPin || containsMedia)) {
 //      LOG.info("Loaded PUP Pack " + packFolder.getName() + " (orbitalPin: " + orbitalPin + ")");
-      pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
+      pupPackCache.put(packFolder.getName().toLowerCase(), pupPack);
     }
     else {
 //      LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
@@ -269,6 +287,18 @@ public class PupPacksService implements InitializingBean {
     FrontendType frontendType = frontendService.getFrontendType();
     if (!frontendType.supportPupPacks()) {
       return;
+    }
+
+    try {
+      File pupPackScreenTweakerExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
+      if (!pupPackScreenTweakerExe.exists()) {
+        File source = new File(SystemInfo.RESOURCES, PUP_PACK_TWEAKER_EXE);
+        FileUtils.copyFile(source, pupPackScreenTweakerExe);
+        LOG.info("Copied {}", pupPackScreenTweakerExe.getAbsolutePath());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to copy {}: {}", PUP_PACK_TWEAKER_EXE, e.getMessage(), e);
     }
 
     new Thread(() -> {

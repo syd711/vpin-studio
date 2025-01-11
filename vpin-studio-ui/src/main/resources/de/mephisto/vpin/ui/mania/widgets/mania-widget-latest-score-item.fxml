@@ -2,13 +2,16 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="widget-item" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetLatestScoreItemController" onMousePressed="#onScoreClick">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#onScoreClick" styleClass="widget-item" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetLatestScoreItemController">
     <center>
         <VBox fx:id="highscoreVBox" BorderPane.alignment="TOP_LEFT">
             <children>
@@ -51,10 +54,21 @@
         <Insets bottom="6.0" left="6.0" right="24.0" top="6.0" />
     </padding>
     <left>
-        <ImageView fx:id="wheelImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER_LEFT">
-            <BorderPane.margin>
-                <Insets right="24.0" />
-            </BorderPane.margin>
-        </ImageView>
+      <StackPane alignment="BOTTOM_RIGHT" BorderPane.alignment="BOTTOM_LEFT">
+         <BorderPane.margin>
+            <Insets right="24.0" />
+         </BorderPane.margin>
+         <children>
+            <Label fx:id="installedLabel" textFill="#66ff66">
+               <graphic>
+                  <FontIcon fx:id="directb2sIcon" iconColor="#66ff66" iconLiteral="bi-check-circle" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="This table is installed on your system." />
+               </tooltip>
+            </Label>
+              <ImageView fx:id="wheelImageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </StackPane>
     </left>
 </BorderPane>

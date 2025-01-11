@@ -93,6 +93,5 @@ abstract public class AssetMediaPlayer extends BorderPane {
   }
 
   public void setMediaViewSize(double fitWidth, double fitHeight) {
-
   }
 }

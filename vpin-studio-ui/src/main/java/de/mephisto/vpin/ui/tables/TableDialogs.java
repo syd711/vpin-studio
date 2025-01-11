@@ -3,8 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -12,7 +10,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -20,9 +17,11 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
@@ -33,14 +32,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -48,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -144,7 +136,6 @@ public class TableDialogs {
     controller.setData(request);
     stage.showAndWait();
   }
-
 
   public static void openNvRamUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
@@ -292,7 +283,8 @@ public class TableDialogs {
     }
     Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
-    controller.loadAllTables(game.getEmulatorId());
+    controller.loadAllTables(game != null ? game.getEmulatorId() : -1);
+    controller.setStage(stage);
     controller.setPlaylistMode();
     controller.setPlaylist(stage, overviewController, playlist, screen);
 
@@ -311,8 +303,16 @@ public class TableDialogs {
     return true;
   }
 
+  public static boolean openHighscoresResetDialog(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(HighscoreResetController.class, "dialog-highscore-reset.fxml", "Reset Highscores");
+    HighscoreResetController controller = (HighscoreResetController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+    return true;
+  }
 
-  public static boolean openNotesDialog(GameRepresentation game) {
+
+  public static boolean openCommentDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");
     TableNotesController controller = (TableNotesController) stage.getUserData();
     controller.setGame(game);
@@ -469,23 +469,27 @@ public class TableDialogs {
     }
   }
 
-  public static void openAutoMatch(GameRepresentation game) {
+  public static void openAutoMatch(List<GameRepresentation> games) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        onOpenAutoMatch(game);
+        onOpenAutoMatch(games);
       }
     }
     else {
-      onOpenAutoMatch(game);
+      onOpenAutoMatch(games);
     }
   }
 
-  private static void onOpenAutoMatch(GameRepresentation game) {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
+  private static void onOpenAutoMatch(List<GameRepresentation> games) {
+    String title = "Auto-Match table and version for " + games.size() + " tables?";
+    if (games.size() == 1) {
+      title = "Auto-Match table and version for \"" + games.get(0).getGameDisplayName() + "\"?";
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         "This will overwrite the existing mapping.", "This action will overwrite the VPS table and version IDs fields.", "Auto-Match");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true, false));
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, true, false));
     }
   }
 
@@ -668,36 +672,15 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, FrontendMediaItemRepresentation item) {
-    Parent root = null;
-    try {
-      root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
+  public static void openMediaDialog(GameRepresentation game, FrontendMediaItemRepresentation item) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaPreviewController.class, "dialog-media-preview.fxml", game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
+    MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
 
-    Stage owner = Studio.stage;
-    BorderPane mediaView = (BorderPane) root.lookup("#mediaView");
-
-    AssetMediaPlayer assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
-    final Stage stage = WidgetFactory.createStage();
-    stage.initModality(Modality.WINDOW_MODAL);
-    stage.setTitle(game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
-
-    stage.initOwner(owner);
-    Scene scene = new Scene(root);
-    stage.setScene(scene);
-    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
-      if (t.getCode() == KeyCode.ESCAPE) {
-        stage.close();
-      }
-    });
-
-    if (assetMediaPlayer instanceof VideoMediaPlayer) {
-      VideoMediaPlayer player = (VideoMediaPlayer) assetMediaPlayer;
-      player.scaleForDialog(item.getScreen());
-    }
+    double height = Studio.stage.getHeight() - 200;
+    double width = height / 9 * 16;
+    stage.setWidth(width);
+    stage.setHeight(height);
+    controller.setData(stage, game, item);
 
     stage.showAndWait();
   }

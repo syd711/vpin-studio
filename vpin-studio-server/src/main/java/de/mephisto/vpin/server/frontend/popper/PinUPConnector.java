@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
@@ -75,7 +76,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   private PupEventEmitter pupEventEmitter;
 
   @Override
-  public void clearCache() {
+  public void reloadCache() {
     //not used yet
   }
 
@@ -919,14 +920,33 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  public Playlist getPlayList(int id) {
+  public Playlist clearPlaylist(int id) {
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE PlayListID = ?");
+      preparedStatement.setInt(1, id);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Cleared playlist {}", id);
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return getPlaylist(id);
+  }
+
+  @NonNull
+  public Playlist getPlaylist(int id) {
     Playlist playlist = new Playlist();
     Connection connect = this.connect();
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1 AND PlayListID = " + id + ";");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE PlayListID = " + id + ";");
       while (rs.next()) {
-        playlist = createPlaylist(rs);
+        playlist = createPlaylist(rs, null, null);
       }
       rs.close();
       statement.close();
@@ -941,21 +961,75 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @NonNull
-  public List<Playlist> getPlayLists() {
+  public Playlist getPlaylistTree() {
+    List<Playlist> result = new ArrayList<>();
+    List<Playlist> playLists = getPlaylists().stream().filter(p -> p.getId() >= 0).collect(Collectors.toList());
+    Playlist root = playLists.stream().filter(p -> p.getParentId() == -1).findFirst().get();
+    result.add(root);
+    buildPlaylistTree(root);
+    return root;
+  }
+
+  private void buildPlaylistTree(Playlist parent) {
+    List<Playlist> children = getPlaylistChildren(parent.getId());
+    for (Playlist playList : children) {
+      parent.getChildren().add(playList);
+      buildPlaylistTree(playList);
+    }
+  }
+
+  @NonNull
+  private List<Playlist> getPlaylistChildren(long parentId) {
     Connection connect = this.connect();
     List<Playlist> result = new ArrayList<>();
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE PlayListParent = " + parentId);
       while (rs.next()) {
-        Playlist playlist = createPlaylist(rs);
+        Playlist playlist = createPlaylist(rs, null, null);
         result.add(playlist);
       }
       rs.close();
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get playlist: " + e.getMessage(), e);
+      LOG.error("Failed to get playlist: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  @NonNull
+  public List<Playlist> getPlaylists() {
+    Connection connect = this.connect();
+    List<Playlist> result = new ArrayList<>();
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Playlists;");
+
+      Playlist favsPlaylist = new Playlist();
+      favsPlaylist.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
+      favsPlaylist.setName("Local Favorites");
+
+      Playlist globalFavsPlaylist = new Playlist();
+      globalFavsPlaylist.setId(PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID);
+      globalFavsPlaylist.setName("Global Favorites");
+
+      result.add(favsPlaylist);
+      result.add(globalFavsPlaylist);
+
+      while (rs.next()) {
+        Playlist playlist = createPlaylist(rs, globalFavsPlaylist, favsPlaylist);
+        result.add(playlist);
+      }
+
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to get playlist: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -964,13 +1038,13 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
 
-  private Map<Integer, PlaylistGame> updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
+  private Map<Integer, PlaylistGame> updateSQLPlaylist(Playlist playlist, String sql, Map<Integer, PlaylistGame> playlistGameMap) {
     if (StringUtils.isEmpty(sql)) {
       return playlistGameMap;
     }
 
     //fetch the ids of tables applicable for this playlist
-    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql);
+    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(playlist, sql);
     Map<Integer, PlaylistGame> updated = new HashMap<>();
     for (Integer gameId : sqlPlaylistIds) {
       if (playlistGameMap.containsKey(gameId)) {
@@ -987,22 +1061,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       }
     }
     return updated;
-  }
-
-  public void setPlaylistColor(int playlistId, long color) {
-    Connection connect = this.connect();
-    String sql = "UPDATE PlayLists SET 'MenuColor'=" + color + " WHERE PlayListID = " + playlistId + ";";
-    try {
-      Statement stmt = Objects.requireNonNull(connect).createStatement();
-      stmt.executeUpdate(sql);
-      stmt.close();
-    }
-    catch (Exception e) {
-      LOG.error("Failed to update PlayList: " + e.getMessage(), e);
-    }
-    finally {
-      this.disconnect(connect);
-    }
   }
 
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
@@ -1060,6 +1118,91 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
+  }
+
+  @Override
+  public Playlist savePlaylist(Playlist playlist) {
+    Connection connect = this.connect();
+    try {
+      int index = 1;
+
+      PreparedStatement preparedStatement = null;
+      if (playlist.getId() < 0) {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO PlayLists (" +
+                "PlayName, Visible, DisplayOrder, Logo, PlayListParent, PlayDisplay, Notes, PlayListType, PlayListSQL, MenuColor, passcode, UglyList, HideSysLists, ThemeFolder, useDefaults, DOFStuff) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+      }
+      else {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO PlayLists (" +
+                "PlayListID, PlayName, Visible, DisplayOrder, Logo, PlayListParent, PlayDisplay, Notes, PlayListType, PlayListSQL, MenuColor, passcode, UglyList, HideSysLists, ThemeFolder, useDefaults, DOFStuff) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(index++, playlist.getId());
+      }
+
+      preparedStatement.setString(index++, playlist.getName());
+      preparedStatement.setInt(index++, playlist.isVisible() ? 1 : 0);
+      preparedStatement.setInt(index++, 0); // display order - not used yet
+      preparedStatement.setString(index++, playlist.getMediaName());
+      preparedStatement.setInt(index++, playlist.getParentId());
+      preparedStatement.setString(index++, playlist.getName()); //looks the "PlayDisplay" is always the name
+      preparedStatement.setString(index++, ""); //no field for notes
+      preparedStatement.setInt(index++, playlist.isSqlPlayList() ? 1 : 0);
+      preparedStatement.setString(index++, playlist.getPlayListSQL());
+      preparedStatement.setInt(index++, playlist.getMenuColor());
+      preparedStatement.setInt(index++, playlist.getPassCode());
+      preparedStatement.setInt(index++, playlist.isUglyList() ? 1 : 0);
+      preparedStatement.setInt(index++, playlist.isHideSysLists() ? 1 : 0);
+      preparedStatement.setString(index++, null); //theme folder not used yet
+      preparedStatement.setInt(index++, playlist.isUseDefaults() ? 1 : 0);
+      preparedStatement.setString(index++, StringUtils.isEmpty(playlist.getDofCommand()) ? null : playlist.getDofCommand());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+        if (keys.next()) {
+          int id = keys.getInt(1);
+          return getPlaylist(id);
+        }
+      }
+
+      return getPlaylist(playlist.getId());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update playlist: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return null;
+  }
+
+  public boolean deletePlaylist(int playlistId) {
+    List<Integer> ids = new ArrayList<>();
+    ids.add(playlistId);
+    Connection connect = this.connect();
+    try {
+      //maybe recursive deletion in the future?
+      for (Integer id : ids) {
+        PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayLists WHERE PlayListID = ?");
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE PlayListID = ?");
+        preparedStatement.setInt(1, id);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        LOG.info("Deleted playlist {}", playlistId);
+      }
+      return true;
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return false;
   }
 
   public void deleteFromPlaylist(int playlistId, int gameId) {
@@ -1183,6 +1326,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     e.setDirRoms(rs.getString("DirRoms"));
     e.setDescription(rs.getString("Description"));
     e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
+    e.setLaunchScript(rs.getString("LaunchScript"));
+    e.setExitScript(rs.getString("PostScript"));
     e.setVisible(rs.getInt("Visible") == 1);
 
     // specific initialization
@@ -1214,7 +1359,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  private @NonNull EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+  @NonNull
+  private EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
     EmulatorType type = EmulatorType.fromExtension(extension);
     if (type != null) {
       return type;
@@ -1323,7 +1469,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
-      LOG.info("Update of NumberPlays for '" + gameId + "' successful.");
+      LOG.info("Update of NumberPlays for '{}' successful.", gameId);
     }
     catch (Exception e) {
       LOG.error("Failed to update NumberPlays for " + gameId + " [" + sql + "]: " + e.getMessage(), e);
@@ -1569,31 +1715,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  // no more used
-  private List<Integer> getGameIdsFromPlaylists() {
-    List<Integer> result = new ArrayList<>();
-    Connection connect = connect();
-    try {
-      Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails;");
-
-      while (rs.next()) {
-        int gameId = rs.getInt("GameID");
-        result.add(gameId);
-      }
-
-      rs.close();
-      statement.close();
-    }
-    catch (SQLException e) {
-      LOG.error("Failed to read playlists: {}", e.getMessage(), e);
-    }
-    finally {
-      disconnect(connect);
-    }
-    return result;
-  }
-
   @NonNull
   private Map<Integer, PlaylistGame> getGamesFromPlaylist(int id) {
     Map<Integer, PlaylistGame> result = new LinkedHashMap<>();
@@ -1627,15 +1748,17 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return result;
   }
 
-  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
+  private List<Integer> getGameIdsFromSqlPlaylist(Playlist playlist, String sql) {
     if (StringUtils.isEmpty(sql)) {
       return Collections.emptyList();
     }
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
+    Statement statement = null;
+    ResultSet rs = null;
     try {
-      Statement statement = Objects.requireNonNull(connect).createStatement();
-      ResultSet rs = statement.executeQuery(sql);
+      statement = Objects.requireNonNull(connect).createStatement();
+      rs = statement.executeQuery(sql);
       while (rs.next()) {
         int gameId = rs.getInt("GameID");
         result.add(gameId);
@@ -1644,7 +1767,25 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (Exception e) {
-      LOG.error("Failed to read playlists: {}", e.getMessage(), e);
+      try {
+        if (rs != null) {
+          rs.close();
+        }
+      }
+      catch (SQLException ex) {
+        //ignore
+      }
+      try {
+        if (statement != null) {
+          statement.close();
+        }
+
+      }
+      catch (SQLException ex) {
+        //ignore
+      }
+      LOG.warn("Failed to read playlists: {}", e.getMessage());
+      playlist.setSqlError(e.getMessage());
     }
     finally {
       disconnect(connect);
@@ -1737,16 +1878,22 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    */
 
   @NonNull
-  private Playlist createPlaylist(ResultSet rs) throws SQLException {
+  private Playlist createPlaylist(ResultSet rs, Playlist globalFavsPlaylist, Playlist favsPlaylist) throws SQLException {
     Playlist playlist = new Playlist();
     String sql = rs.getString("PlayListSQL");
     String name = rs.getString("PlayName");
     boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
     playlist.setId(rs.getInt("PlayListID"));
+    playlist.setParentId(rs.getInt("PlayListParent"));
     playlist.setMediaName(rs.getString("Logo"));
+    playlist.setVisible(rs.getInt("Visible") == 1);
+    playlist.setPassCode(rs.getInt("passcode"));
+    playlist.setUglyList(rs.getInt("UglyList") == 1);
+    playlist.setHideSysLists(rs.getInt("HideSysLists") == 1);
+    playlist.setUseDefaults(rs.getInt("useDefaults") == 1);
+    playlist.setDofCommand(rs.getString("DOFStuff"));
     playlist.setName(name);
     playlist.setPlayListSQL(sql);
-
     playlist.setMenuColor(rs.getInt("MenuColor"));
     if (rs.wasNull()) {
       playlist.setMenuColor(null);
@@ -1755,12 +1902,28 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
     if (sqlPlaylist) {
-      playlistGameMap = updateSQLPlaylist(sql, playlistGameMap);
+      playlistGameMap = updateSQLPlaylist(playlist, sql, playlistGameMap);
     }
     playlist.setGames(new ArrayList<>(playlistGameMap.values()));
 
     // used for playlist management, moved from TablesSidebarPlaylistsController as it is pinup specific
     playlist.setAddFavCheckboxes(sqlPlaylist && sql != null && sql.contains("EMUID"));
+
+    if (playlist.isSqlPlayList() && StringUtils.isEmpty(sql)) {
+      playlist.setSqlError("Missing SQL query");
+    }
+
+    if (globalFavsPlaylist != null && favsPlaylist != null) {
+      List<PlaylistGame> games = playlist.getGames();
+      for (PlaylistGame game : games) {
+        if (game.isFav()) {
+          favsPlaylist.getGames().add(game);
+        }
+        if (game.isGlobalFav()) {
+          globalFavsPlaylist.getGames().add(game);
+        }
+      }
+    }
 
     return playlist;
   }

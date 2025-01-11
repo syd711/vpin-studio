@@ -27,7 +27,7 @@ public class MameRomAliasService implements InitializingBean {
 
   private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
 
-  private Map<Integer, Map<String, String>> aliasMappingCache = new HashMap<>();
+  private Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
 
   @Autowired
   private FrontendService frontendService;
@@ -44,7 +44,7 @@ public class MameRomAliasService implements InitializingBean {
       return null;
     }
 
-    Map<String, String> aliasToRomMapping = aliasMappingCache.get(emulator.getId());
+    Map<String, String> aliasToRomMapping = aliasNamToRom.get(emulator.getId());
     if (aliasToRomMapping != null) {
       Set<Map.Entry<String, String>> entries = aliasToRomMapping.entrySet();
       for (Map.Entry<String, String> entry : entries) {
@@ -105,10 +105,10 @@ public class MameRomAliasService implements InitializingBean {
 
         for (String mapping : mappings) {
           if (mapping.contains(",")) {
+            //the format is <Alias_Name>,<Real_ROM_Name>
             String[] split = mapping.split(",");
             String[] aliases = Arrays.copyOfRange(split, 0, split.length - 1);
             String originalRom = split[split.length - 1];
-
             for (String alias : aliases) {
               aliasToRomMapping.put(alias, originalRom);
             }
@@ -122,13 +122,13 @@ public class MameRomAliasService implements InitializingBean {
   }
 
   public void clearCache() {
-    aliasMappingCache.clear();
+    aliasNamToRom.clear();
     List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
-      aliasMappingCache.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
+      aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
     }
     LOG.info("Loaded Alias Mappings:");
-    Set<Map.Entry<Integer, Map<String, String>>> entries = aliasMappingCache.entrySet();
+    Set<Map.Entry<Integer, Map<String, String>>> entries = aliasNamToRom.entrySet();
     for (Map.Entry<Integer, Map<String, String>> entry : entries) {
       LOG.info("Alias Mappings for emulator " + entry.getKey() + ": " + entry.getValue().size());
     }

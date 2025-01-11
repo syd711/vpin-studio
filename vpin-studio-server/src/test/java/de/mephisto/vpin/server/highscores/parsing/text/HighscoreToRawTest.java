@@ -80,7 +80,7 @@ public class HighscoreToRawTest {
 
         for (ScoreTextFileAdapter adapter : adapters) {
           if (adapter.isApplicable(entry, lines)) {
-            List<String> resettedLines = adapter.resetHighscore(entry, lines);
+            List<String> resettedLines = adapter.resetHighscore(entry, lines, 0);
 
             String resetted = String.join("\r\n", resettedLines) + "\r\n";
             assertEquals(resettedTemplate, resetted, "Mismatch for " + entry.getName() + ", used adapter " + adapter.getClass().getSimpleName());

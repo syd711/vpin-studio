@@ -113,6 +113,7 @@ resources/media-cropped/
 /doftest/.vs/DirectOutputTest/
 /doftest/*.zip
 
+/vpin-studio-screenshots.zip
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

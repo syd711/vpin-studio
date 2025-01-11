@@ -3,10 +3,8 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
-import javafx.application.Platform;
 
 public class MenuItemSelectionState extends MenuState {
   private final MenuController menuController;

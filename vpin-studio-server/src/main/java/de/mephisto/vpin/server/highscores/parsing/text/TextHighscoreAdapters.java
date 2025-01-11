@@ -39,41 +39,9 @@ public class TextHighscoreAdapters implements InitializingBean {
   static {
     adapters.add(new SpongebobAdapter());
     adapters.add(new Route66Adapter());
-//    adapters.add(new SinglePlayerAdapter("JacksOpen.txt", 1));
-//    adapters.add(new SinglePlayerAdapter("thunderbirds.txt", 5));
-//    adapters.add(new TwoPlayersAdapter("Strip_JP_EM_1978.txt", 1, 3));
-//    adapters.add(new TwoPlayersAdapter("The_Fog_1979.txt", 1, 3));
-//    adapters.add(new AlteringScoreInitialsBlocksWithOffsetAdapter("BountyHunter.txt", 1, 5, 2));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("CanadaDry_76VPX.txt", 7, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("MagicCity_67VPX.txt", 6, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("WorldSeries_72VPX.txt", 6, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("MountainClimbingHS.txt", 3, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("jungleprincess_1977_v2a.txt", 0, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("LittleJoe_71VPX.txt", 6, 5));
-//    adapters.add(new SinglePlayerAdapter("aztec.txt", 1));
-//    adapters.add(new FourPlayersAdapter("GetSmart.txt", 1));
-//    adapters.add(new ThreePlayersAdapter("Jackpot.txt", 2));
-//    adapters.add(new ThreePlayersAdapter("Cabaret.txt", 2));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter("TeachersPet_65VPX.txt", 6, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(33, 0, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(31, 0, 5));
-//    adapters.add(new AlteringScoreInitialsLinesAdapter(26, 0, 3));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(27, 7, 5)); //space mission
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(25, 5, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(18, 8, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(17, 7, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(16, 6, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(15, 5, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(14, 4, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(12, 2, 5));
-//    adapters.add(new AlteringScoreInitialsBlocksAdapter(11, 3, 4));//woz
-//    adapters.add(new AlteringScoreInitialsLinesAdapter(10, 0, 5));
-//    adapters.add(new SinglePlayerAdapter());
-//    adapters.add(new TwoPlayersAdapter(8));
   }
 
-  public boolean resetHighscores(@NonNull ScoringDB scoringDB, @NonNull File file) {
+  public boolean resetHighscores(@NonNull ScoringDB scoringDB, @NonNull File file, long score) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
       LOG.info("\"" + file.getName() + "\" was marked as to be ignored for text file based and will not be resetted.");
       return false;
@@ -87,7 +55,7 @@ public class TextHighscoreAdapters implements InitializingBean {
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
           LOG.info("Resetting \"" + file.getAbsolutePath() + "\" using " + adapter.getClass().getSimpleName());
-          List<String> resetHighscoreText = adapter.resetHighscore(file, lines);
+          List<String> resetHighscoreText = adapter.resetHighscore(file, lines, score);
           if (resetHighscoreText != null) {
             FileUtils.writeLines(file, StandardCharsets.UTF_8.name(), resetHighscoreText);
             LOG.info("Resetted \"" + file.getAbsolutePath() + "\"");

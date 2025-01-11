@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +17,18 @@ public class PlaylistService {
   private FrontendService frontendService;
 
   public List<Playlist> getPlaylists() {
-    return frontendService.getPlayLists();
+    return frontendService.getPlaylists();
+  }
+
+  public Playlist getPlaylistTree() {
+    return frontendService.getPlaylistTree();
   }
 
   public Playlist getPlaylist(int playlistId) {
     return frontendService.getPlayList(playlistId);
   }
-
-  public Playlist setPlaylistColor(int playlistId, long color) {
-    frontendService.setPlaylistColor(playlistId, color);
-    return frontendService.getPlayList(playlistId);
+  public Playlist clearPlaylist(int playlistId) {
+    return frontendService.clearPlayList(playlistId);
   }
 
   public Playlist removeFromPlaylist(int playlistId, int gameId) {
@@ -45,5 +48,21 @@ public class PlaylistService {
   public Playlist updatePlaylistGame(int playlistId, int gameId, int favMode) {
     frontendService.updatePlaylistGame(playlistId, gameId, favMode);
     return frontendService.getPlayList(playlistId);
+  }
+
+  public boolean delete(int playlistId) {
+    return frontendService.deletePlaylist(playlistId);
+  }
+
+  public Playlist save(Playlist playlist) {
+    return frontendService.savePlaylist(playlist);
+  }
+
+  public boolean clearCache() {
+    FrontendConnector connector = frontendService.getFrontendConnector();
+    if (connector != null) {
+      connector.reloadCache();
+    }
+    return true;
   }
 }

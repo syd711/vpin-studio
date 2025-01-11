@@ -35,7 +35,7 @@ public class HighscoreResolver implements InitializingBean {
   @Autowired
   private TextHighscoreAdapters textHighscoreAdapters;
 
-  public boolean deleteTextScore(Game game) {
+  public boolean deleteTextScore(Game game, long score) {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = game.getAlternateHighscoreTextFile(game.getTableName());
@@ -51,7 +51,7 @@ public class HighscoreResolver implements InitializingBean {
     }
 
     if (hsFile != null && hsFile.exists()) {
-      return textHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), hsFile);
+      return textHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), hsFile, score);
     }
     return false;
   }

@@ -244,6 +244,12 @@
                         </VBox>
                      </children>
                   </VBox>
+                  <VBox fx:id="multiSelectionPane">
+                     <children>
+                        <Label styleClass="default-headline" text="Multiple tables are selected." />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-text" text="Only supported actions are enabled for bulk operations." />
+                     </children>
+                  </VBox>
                       </children>
                       <padding>
                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

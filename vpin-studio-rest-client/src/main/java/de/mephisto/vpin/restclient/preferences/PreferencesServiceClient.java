@@ -126,4 +126,10 @@ public class PreferencesServiceClient extends VPinStudioClientService {
   public void clearCache() {
     this.jsonSettingsCache.clear();
   }
+
+  public void clearCache(String name) {
+    if (jsonSettingsCache.containsKey(name)) {
+      this.jsonSettingsCache.remove(name);
+    }
+  }
 }

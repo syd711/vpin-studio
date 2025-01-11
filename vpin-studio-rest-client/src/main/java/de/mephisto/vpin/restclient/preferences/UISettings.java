@@ -35,6 +35,8 @@ public class UISettings extends JsonSettings {
 
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
+  private String justAddedColor = "#FFFFFF";
+  private String mostPlayedColor = "#FFFFFF";
 
   private String defaultUploadMode = UploadType.uploadAndImport.name();
 
@@ -82,6 +84,7 @@ public class UISettings extends JsonSettings {
   private boolean columnRom = true;
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
+  private boolean columnComment = false;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
 
@@ -101,6 +104,22 @@ public class UISettings extends JsonSettings {
     this.localFavsColor = localFavsColor;
   }
 
+  public String getJustAddedColor() {
+    return justAddedColor;
+  }
+
+  public void setJustAddedColor(String justAddedColor) {
+    this.justAddedColor = justAddedColor;
+  }
+
+  public String getMostPlayedColor() {
+    return mostPlayedColor;
+  }
+
+  public void setMostPlayedColor(String mostPlayedColor) {
+    this.mostPlayedColor = mostPlayedColor;
+  }
+
   public String getGlobalFavsColor() {
     return globalFavsColor;
   }
@@ -115,6 +134,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideFrontendLaunchQuestion(boolean hideFrontendLaunchQuestion) {
     this.hideFrontendLaunchQuestion = hideFrontendLaunchQuestion;
+  }
+
+  public boolean isColumnComment() {
+    return columnComment;
+  }
+
+  public void setColumnComment(boolean columnComment) {
+    this.columnComment = columnComment;
   }
 
   public boolean isShowPlayerScores() {

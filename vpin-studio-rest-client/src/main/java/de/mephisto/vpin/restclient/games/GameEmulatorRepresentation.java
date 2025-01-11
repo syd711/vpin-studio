@@ -25,6 +25,25 @@ public class GameEmulatorRepresentation {
   private String nvramDirectory;
   private String romDirectory;
 
+  private String launchScript;
+  private String exitScript;
+
+  public String getLaunchScript() {
+    return launchScript;
+  }
+
+  public void setLaunchScript(String launchScript) {
+    this.launchScript = launchScript;
+  }
+
+  public String getExitScript() {
+    return exitScript;
+  }
+
+  public void setExitScript(String exitScript) {
+    this.exitScript = exitScript;
+  }
+
   private List<String> altExeNames = new ArrayList<>();
 
   public List<String> getAltExeNames() {
@@ -45,6 +64,10 @@ public class GameEmulatorRepresentation {
 
   public boolean isFpEmulator() {
     return emulatorType.isFpEmulator();
+  }
+
+  public boolean isFxEmulator() {
+    return emulatorType.isFxEmulator();
   }
 
   public boolean isVpxEmulator() {
@@ -148,10 +171,14 @@ public class GameEmulatorRepresentation {
         case FuturePinball: {
           return Arrays.asList(VpsFeatures.FP);
         }
-        case ZenFX:
-        case ZenFX2:
+        case ZenFX: {
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
+        }
+        case ZenFX2: {
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
+        }
         case ZenFX3: {
-          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX3);
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
         }
       }
     }

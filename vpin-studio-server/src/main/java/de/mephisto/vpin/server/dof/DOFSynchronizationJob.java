@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.dof;
 
+import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.restclient.util.RarUtil;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -7,21 +10,33 @@ import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.util.Arrays;
 
 public class DOFSynchronizationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(DOFSynchronizationJob.class);
 
   @NonNull
   private final DOFSettings settings;
-  private HttpURLConnection connection;
+  private HttpsURLConnection connection;
 
   public DOFSynchronizationJob(@NonNull DOFSettings dofSettings) {
     this.settings = dofSettings;
@@ -30,37 +45,23 @@ public class DOFSynchronizationJob implements Job {
   @Override
   public void execute(JobDescriptor result) {
     try {
-      String downloadUrl = "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=" + settings.getApiKey();
-      LOG.info("Downloading " + "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
-      result.setStatus("Downloading " + "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
-      URL url = new URL(downloadUrl);
-      connection = (HttpURLConnection) url.openConnection();
-      connection.setReadTimeout(5000);
-      connection.setDoOutput(true);
-      BufferedInputStream in = new BufferedInputStream(url.openStream());
+      String downloadUrl = "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=" + settings.getApiKey();
+      LOG.info("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
+      result.setStatus("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
+
       File zipFile = new File(SystemService.RESOURCES, "directoutputconfig.zip");
       if (zipFile.exists()) {
         zipFile.delete();
       }
-      FileOutputStream fileOutputStream = new FileOutputStream(zipFile);
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        fileOutputStream.write(dataBuffer, 0, bytesRead);
-      }
-      in.close();
-      fileOutputStream.close();
-      connection = null;
 
-      if (new String(dataBuffer).contains("API")) {
-        zipFile.delete();
-        result.setError(new String(dataBuffer));
-        return;
-      }
+      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("cscript", "downloader.vbs", "\"" + downloadUrl + "\"", "\"" + zipFile.getAbsolutePath() + "\""), false);
+      executor.setDir(new File(SystemService.RESOURCES));
+      executor.executeCommand();
 
-      if (result.isCancelled()) {
-        return;
-      }
+      Thread.sleep(500);
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      LOG.info("DOF download finished: {}", standardOutputFromCommand);
 
       LOG.info("Downloaded file " + zipFile.getAbsolutePath());
       if (!StringUtils.isEmpty(settings.getInstallationPath())) {
@@ -71,7 +72,7 @@ public class DOFSynchronizationJob implements Job {
         }
         LOG.info("Extracting DOF config folder " + settings.getInstallationPath());
         result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
-        ZipUtil.unzip(zipFile, targetFolder);
+        RarUtil.unrar(zipFile, targetFolder);
       }
 
       if (result.isCancelled()) {

@@ -3,13 +3,13 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,12 @@ public class PropperRenamingController implements Initializable {
       screenNameField.setText(displayName.getText());
     }
     if (fileNameCheckBox.isSelected() && !fileName.getText().equals("-")) {
-      fileNameField.setText(FileUtils.replaceWindowsChars(fileName.getText()));
+      String base = fileNameField.getText();
+      if (base.contains("\\")) {
+        base = base.substring(0, base.indexOf("\\") + 1);
+      }
+      String value = fileName.getText();
+      fileNameField.setText(base + FileUtils.replaceWindowsChars(value));
     }
     if (gameNameCheckBox.isSelected() && !gameName.getText().equals("-")) {
       gameNameField.setText(FileUtils.replaceWindowsChars(gameName.getText()));
@@ -119,12 +124,16 @@ public class PropperRenamingController implements Initializable {
       refreshNames();
     });
 
-    if (tableDetails==null ||  StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\")) {
+    if (tableDetails == null || isGameNameDisabled(tableDetails)) {
       fileNameCheckBox.setSelected(false);
       fileNameCheckBox.setDisable(true);
     }
 
     refreshNames();
+  }
+
+  private static boolean isGameNameDisabled(TableDetails tableDetails) {
+    return false; //StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\");
   }
 
   @Override
@@ -145,7 +154,7 @@ public class PropperRenamingController implements Initializable {
     fileNameCheckBox.setDisable(vpsTable == null);
     fileName.setDisable(vpsTable == null);
 
-    if (tableDetails==null ||  StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\")) {
+    if (tableDetails == null || isGameNameDisabled(tableDetails)) {
       fileNameCheckBox.setSelected(false);
       fileNameCheckBox.setDisable(true);
     }
@@ -217,7 +226,12 @@ public class PropperRenamingController implements Initializable {
       }
 
       if (fileNameCheckBox.isSelected()) {
-        fileName.setText(builder.toString() + ".vpx");
+        String fileSuffix = "vpx";
+        String existingName = tableDetails.getGameFileName();
+        if(existingName != null) {
+          fileSuffix = FilenameUtils.getExtension(existingName);
+        }
+        fileName.setText(builder + "." + fileSuffix);
       }
     }
   }
