@@ -9,7 +9,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -49,7 +48,7 @@ public class TableNotesController implements Initializable, DialogController {
 
   @FXML
   private void onSaveClick(ActionEvent ev) {
-    game.setNotes(textArea.getText());
+    game.setComment(textArea.getText());
     try {
       client.getGameService().saveGame(game);
       EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -94,7 +93,7 @@ public class TableNotesController implements Initializable, DialogController {
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.textArea.setText(game.getNotes());
+    this.textArea.setText(game.getComment());
     this.titleLabel.setText("Comments for \"" + game.getGameDisplayName() + "\"");
   }
 

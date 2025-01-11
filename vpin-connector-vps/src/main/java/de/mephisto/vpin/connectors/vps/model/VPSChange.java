@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 public class VPSChange {
@@ -52,51 +53,66 @@ public class VPSChange {
         break;
       }
       case b2s: {
-        Optional<VpsBackglassFile> first = tableById.getB2sFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.b2s + ":\n" + first.get();
+        if(tableById.getB2sFiles() != null) {
+          Optional<VpsBackglassFile> first = tableById.getB2sFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.b2s + ":\n" + first.get();
+          }
         }
         break;
       }
       case pov: {
-        Optional<VpsAuthoredUrls> first = tableById.getPovFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.pov + ":\n" + first.get();
+        if (tableById.getPovFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getPovFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.pov + ":\n" + first.get();
+          }
         }
         break;
       }
       case rom: {
-        Optional<VpsAuthoredUrls> first = tableById.getRomFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.rom + ":\n" + first.get();
+        if (tableById.getRomFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getRomFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.rom + ":\n" + first.get();
+          }
         }
         break;
       }
       case sound: {
-        Optional<VpsAuthoredUrls> first = tableById.getSoundFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.sound + ":\n" + first.get();
+        if (tableById.getSoundFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getSoundFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.sound + ":\n" + first.get();
+          }
         }
         break;
       }
       case pupPack: {
-        Optional<VpsAuthoredUrls> first = tableById.getPupPackFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.pupPack + ":\n" + first.get();
+        if (tableById.getPupPackFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getPupPackFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.pupPack + ":\n" + first.get();
+          }
         }
         break;
       }
       case wheel: {
-        Optional<VpsAuthoredUrls> first = tableById.getWheelArtFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.wheel + ":\n" + first.get();
+        if (tableById.getWheelArtFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getWheelArtFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.wheel + ":\n" + first.get();
+          }
         }
         break;
       }
       case tutorial: {
-        Optional<VpsTutorialUrls> first = tableById.getTutorialFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.tutorial + ":\n" + first.get();
+        List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
+        if (tutorialFiles != null) {
+          Optional<VpsTutorialUrls> first = tutorialFiles.stream().filter(f -> f != null && f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.tutorial + ":\n" + first.get();
+          }
         }
         break;
       }
@@ -111,9 +127,11 @@ public class VPSChange {
         return null;
       }
       case topper: {
-        Optional<VpsAuthoredUrls> first = tableById.getTopperFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
-        if (first.isPresent()) {
-          return VpsDiffTypes.topper + ":\n" + first.get();
+        if (tableById.getTopperFiles() != null) {
+          Optional<VpsAuthoredUrls> first = tableById.getTopperFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
+          if (first.isPresent()) {
+            return VpsDiffTypes.topper + ":\n" + first.get();
+          }
         }
         break;
       }

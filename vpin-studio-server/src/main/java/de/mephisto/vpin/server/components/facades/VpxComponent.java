@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.components.facades;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
-import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -30,23 +30,22 @@ public class VpxComponent implements ComponentFacade {
 
   @Override
   public List<GithubRelease> loadReleases() throws IOException {
-    return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source", "linux", "sc-", "macos", "android"));
+    return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source", "linux", "sc-", "macos", "ios", "android"));
   }
 
   @NonNull
   @Override
-  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
-    return gameEmulator.getInstallationFolder();
+  public File getTargetFolder() {
+    SystemInfo si = new SystemInfo();
+    return si.resolveVpx64InstallFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File setupExe = new File(gameEmulator.getInstallationFolder(), "VPinballX64.exe");
-    if (!setupExe.exists()) {
-      setupExe = new File(gameEmulator.getInstallationFolder(), "VPinballX.exe");
-    }
-    if (setupExe.exists()) {
+  public Date getModificationDate() {
+    SystemInfo si = new SystemInfo();
+    File setupExe = si.resolveVpx64Exe();
+    if (setupExe != null && setupExe.exists()) {
       return new Date(setupExe.lastModified());
     }
     return null;

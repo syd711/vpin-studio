@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2sConstants;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -76,6 +77,18 @@ public class B2SServerSettingsParser extends DefaultHandler {
         settings.setDisableFuzzyMatching(Integer.parseInt(node.getTextContent().trim()) == 1);
         break;
       }
+      case "HideGrill": {
+        settings.setHideGrill(Integer.parseInt(node.getTextContent().trim()) == 1);
+        break;
+      }
+      case "HideB2SDMD": {
+        settings.setHideB2SDMD(Integer.parseInt(node.getTextContent().trim()) == 1);
+        break;
+      }
+      case "HideDMD": {
+        settings.setHideDMD(Integer.parseInt(node.getTextContent().trim()) == 1);
+        break;
+      }
 //      case "IsLampsStateLogOn": {
 //        settings.setLampsStateLogOn(Integer.parseInt(node.getTextContent().trim()) == 1);
 //        break;
@@ -100,10 +113,18 @@ public class B2SServerSettingsParser extends DefaultHandler {
 //        settings.setStatisticsBackglassOn(Integer.parseInt(node.getTextContent().trim()) == 1);
 //        break;
 //      }
-//      case "FormToFront": {
-//        settings.setFormToFront(Integer.parseInt(node.getTextContent().trim()) == 1);
-//        break;
-//      }
+      case "FormToFront": {
+        if (Integer.parseInt(node.getTextContent().trim()) == 1) {
+          settings.setFormToPosition(DirectB2sConstants.FORM_TO_FRONT);
+        }
+        break;
+      }
+      case "FormToBack": {
+        if (Integer.parseInt(node.getTextContent().trim()) == 1) {
+          settings.setFormToPosition(DirectB2sConstants.FORM_TO_BACK);
+        }
+        break;
+      }
       case "ShowStartupError": {
         settings.setShowStartupError(Integer.parseInt(node.getTextContent().trim()) == 1);
         break;

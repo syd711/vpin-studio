@@ -6,11 +6,13 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 /*********************************************************************************************************************
  * Playlists
@@ -25,11 +27,19 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
   public List<PlaylistRepresentation> getPlaylists() {
     PlaylistRepresentation[] playlists = getRestClient().get(API + "playlists", PlaylistRepresentation[].class);
     ArrayList<PlaylistRepresentation> list = new ArrayList<>(Arrays.asList(playlists));
-    return list;    
+    return list;
+  }
+
+  public PlaylistRepresentation getPlaylistTree() {
+    return getRestClient().get(API + "playlists/tree", PlaylistRepresentation.class);
   }
 
   public PlaylistRepresentation getPlaylist(int playlistId) {
     return getRestClient().get(API + "playlists/" + playlistId, PlaylistRepresentation.class);
+  }
+
+  public PlaylistRepresentation clearPlaylist(int playlistId) {
+    return getRestClient().get(API + "playlists/clear/" + playlistId, PlaylistRepresentation.class);
   }
 
   public PlaylistRepresentation removeFromPlaylist(PlaylistRepresentation playlist, GameRepresentation game) {
@@ -59,11 +69,23 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     return getRestClient().put(API + "playlists/" + playlist.getId() + "/" + game.getId() + "/" + favMode, new HashMap<>(), PlaylistRepresentation.class);
   }
 
-  public PlaylistRepresentation setPlaylistColor(PlaylistRepresentation playlist, String colorhex) throws Exception {
-    if (colorhex.startsWith("#")) {
-      colorhex = colorhex.substring(1);
+
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "playlists/clearcache", Boolean.class);
+  }
+
+  public PlaylistRepresentation savePlaylist(PlaylistRepresentation playlist) {
+    try {
+      return getRestClient().post(API + "playlists/save", playlist, PlaylistRepresentation.class);
     }
-    long color = Long.parseLong(colorhex, 16);
-    return getRestClient().put(API + "playlists/" + playlist.getId() + "/color/" + color, new HashMap<>(), PlaylistRepresentation.class);
+    catch (Exception e) {
+      LOG.error("Failed to save playlist: " + e.getMessage(), e);
+      throw new CompletionException(e);
+    }
+  }
+
+  public Boolean delete(int id) {
+    return getRestClient().delete(API + "playlists/" + id);
   }
 }

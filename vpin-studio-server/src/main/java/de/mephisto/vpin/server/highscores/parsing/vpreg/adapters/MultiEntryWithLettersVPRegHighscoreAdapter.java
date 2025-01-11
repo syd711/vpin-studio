@@ -7,7 +7,6 @@ import org.apache.poi.poifs.filesystem.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MultiEntryWithLettersVPRegHighscoreAdapter extends SingleEntryWithLettersVPRegHighscoreAdapter {
@@ -52,7 +51,7 @@ public class MultiEntryWithLettersVPRegHighscoreAdapter extends SingleEntryWithL
   }
 
   @Override
-  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder, long score) throws IOException {
     for (int i = 0; i < scoreCount; i++) {
       if (gameFolder.hasEntry("Highscore(" + i + ")")) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("Highscore(" + i + ")");
@@ -63,7 +62,7 @@ public class MultiEntryWithLettersVPRegHighscoreAdapter extends SingleEntryWithL
       if (gameFolder.hasEntry("HighScore(" + i + ")")) {
         DocumentNode entry = (DocumentNode) gameFolder.getEntry("HighScore(" + i + ")");
         POIFSDocument scoreDocument = new POIFSDocument(entry);
-        byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+        byte[] array = StandardCharsets.UTF_16LE.encode(String.valueOf(score)).array();
         scoreDocument.replaceContents(new ByteArrayInputStream(array));
         fs.writeFilesystem();
       }

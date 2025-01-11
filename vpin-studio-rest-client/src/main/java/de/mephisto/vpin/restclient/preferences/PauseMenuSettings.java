@@ -11,6 +11,12 @@ public class PauseMenuSettings extends JsonSettings {
   private VPinScreen videoScreen = VPinScreen.Topper;
   private PauseMenuStyle style = PauseMenuStyle.embedded;
 
+  private int testDuration = 5;
+  private int testGameId = -1;
+
+  private boolean showIscoredScores = true;
+  private boolean showManiaScores = true;
+
   private String pauseButton;
   private String startButton;
   private String leftButton;
@@ -21,6 +27,38 @@ public class PauseMenuSettings extends JsonSettings {
   private String inputFilterList;
 
   private int pauseMenuScreenId = -1;
+
+  public int getTestDuration() {
+    return testDuration;
+  }
+
+  public void setTestDuration(int testDuration) {
+    this.testDuration = testDuration;
+  }
+
+  public int getTestGameId() {
+    return testGameId;
+  }
+
+  public void setTestGameId(int testGameId) {
+    this.testGameId = testGameId;
+  }
+
+  public boolean isShowIscoredScores() {
+    return showIscoredScores;
+  }
+
+  public void setShowIscoredScores(boolean showIscoredScores) {
+    this.showIscoredScores = showIscoredScores;
+  }
+
+  public boolean isShowManiaScores() {
+    return showManiaScores;
+  }
+
+  public void setShowManiaScores(boolean showManiaScores) {
+    this.showManiaScores = showManiaScores;
+  }
 
   public int getPauseMenuScreenId() {
     return pauseMenuScreenId;

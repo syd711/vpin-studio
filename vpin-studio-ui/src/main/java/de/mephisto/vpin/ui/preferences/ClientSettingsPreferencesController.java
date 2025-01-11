@@ -133,6 +133,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnLauncher;
   @FXML
+  private CheckBox columnComment;
+  @FXML
   private CheckBox columnHighscore;
   @FXML
   private CheckBox columnEmulator;
@@ -523,6 +525,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnLauncher.setSelected(uiSettings.isColumnLauncher());
     columnLauncher.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnLauncher(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnComment.setSelected(uiSettings.isColumnComment());
+    columnComment.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnComment(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

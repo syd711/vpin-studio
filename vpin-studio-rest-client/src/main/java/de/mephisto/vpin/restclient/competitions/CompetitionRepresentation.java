@@ -303,6 +303,10 @@ public class CompetitionRepresentation {
       return true;
     }
 
+    if (getType().equals(CompetitionType.MANIA.name())) {
+      return true;
+    }
+
     long now = new Date().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();

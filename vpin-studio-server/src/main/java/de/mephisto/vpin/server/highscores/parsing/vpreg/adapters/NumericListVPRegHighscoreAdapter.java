@@ -1,13 +1,11 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
-import com.thoughtworks.xstream.core.util.Base64Encoder;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingEntry;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
@@ -48,13 +46,13 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
   }
 
   @Override
-  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder, long score) throws IOException {
     int index = getStartIndex();
     while (gameFolder.hasEntry(getScoreKey(index)) && gameFolder.hasEntry(getNameKey(index))) {
       String scoreKey = getHighScorePrefix() + index;
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(scoreKey);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
-      byte[] array = StandardCharsets.UTF_16LE.encode("0").array();
+      byte[] array = StandardCharsets.UTF_16LE.encode(String.valueOf(score)).array();
       scoreDocument.replaceContents(new ByteArrayInputStream(array));
 
       String nameKey = getNameKey(index);

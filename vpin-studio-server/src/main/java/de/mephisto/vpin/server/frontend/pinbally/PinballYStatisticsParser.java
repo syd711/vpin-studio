@@ -53,8 +53,8 @@ public class PinballYStatisticsParser {
 
   @NonNull
   private File getGameStatsFile() {
-    File pinballXFolder = connector.getInstallationFolder();
-    return new File(pinballXFolder, "/GameStats.csv");
+    File installationFolder = connector.getInstallationFolder();
+    return new File(installationFolder, "/GameStats.csv");
   }
 
   public void getAlxData(Collection<Emulator> emus, List<TableAlxEntry> stats, Set<Integer> favs, List<Playlist> playlists) {

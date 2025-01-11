@@ -240,7 +240,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>3.10.6</version>
+      <version>3.12.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -248,7 +248,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>3.10.6</version>
+      <version>3.12.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -256,7 +256,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>3.10.6</version>
+      <version>3.12.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -264,7 +264,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>3.10.6</version>
+      <version>3.12.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -280,7 +280,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>3.10.6</version>
+      <version>3.12.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -296,7 +296,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>3.10.6</version>
+      <version>3.12.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -580,6 +580,18 @@
           <name>Apache License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
+          <file>the apache software license, version 2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.boofcv</groupId>
+      <artifactId>boofcv-core</artifactId>
+      <version>1.1.7</version>
+      <licenses>
+        <license>
+          <name>The Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <file>the apache software license, version 2.0 - license-2.0.txt</file>
         </license>
       </licenses>

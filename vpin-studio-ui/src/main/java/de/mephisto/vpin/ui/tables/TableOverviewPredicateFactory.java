@@ -1,11 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
-import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.NoteType;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import org.apache.commons.lang3.StringUtils;
@@ -75,18 +71,21 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
-        NoteType noteType = filterSettings.getNoteType();
+        CommentType noteType = filterSettings.getNoteType();
         if (noteType != null) {
-          if (noteType.equals(NoteType.Any) && StringUtils.isEmpty(game.getNotes())) {
+          if (noteType.equals(CommentType.None) && !StringUtils.isEmpty(game.getComment())) {
             return false;
           }
-          if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//error"))) {
+          if (noteType.equals(CommentType.Any) && StringUtils.isEmpty(game.getComment())) {
             return false;
           }
-          if (noteType.equals(NoteType.Outdated) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//outdated"))) {
+          if (noteType.equals(CommentType.Errors) && (StringUtils.isEmpty(game.getComment()) || !game.getComment().toLowerCase().contains("//error"))) {
             return false;
           }
-          if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//todo"))) {
+          if (noteType.equals(CommentType.Outdated) && (StringUtils.isEmpty(game.getComment()) || !game.getComment().toLowerCase().contains("//outdated"))) {
+            return false;
+          }
+          if (noteType.equals(CommentType.Todos) && (StringUtils.isEmpty(game.getComment()) || !game.getComment().toLowerCase().contains("//todo"))) {
             return false;
           }
         }

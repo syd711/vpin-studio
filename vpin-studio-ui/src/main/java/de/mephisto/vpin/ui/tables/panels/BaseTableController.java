@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -8,7 +9,6 @@ import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -22,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
-
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +81,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   protected BaseFilterController<T, M> filterController;
 
   @FXML
-  private ComboBox<PlaylistRepresentation> playlistCombo;
+  protected ComboBox<PlaylistRepresentation> playlistCombo;
 
   //----------------------
   // Key Pressed
@@ -136,9 +135,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
       FrontendType frontendType = client.getFrontendService().getFrontendType();
       if (frontendType.supportPlaylists()) {
-        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-        playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell(uiSettings));
-        playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell(uiSettings));
+        playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell());
+        playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell());
         filterController.bindPlaylistField(playlistCombo);
       }
       else {
@@ -153,7 +151,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         KeyCode code = event.getCode();
         switch (code) {
           case DELETE:
-            //onDelete(event);
+            onDelete(event);
+            event.consume();
             break;
           default:
         }
@@ -246,6 +245,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   /**
    * Reload just one item in the table
+   *
    * @param The item in the table to be reloaded
    */
   public void reloadItem(T bean) {
@@ -264,7 +264,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         }
         else {
           model = toModel(bean);
-          models.add(0, model);
+          if (model != null) {
+            models.add(0, model);
+          }
         }
         // force refresh the view for elements not observed by the table
         tableView.refresh();
@@ -422,42 +424,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public void refreshPlaylists() {
     PlaylistRepresentation selected = this.playlistCombo.getSelectionModel().getSelectedItem();
     this.playlistCombo.setDisable(true);
-
     JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
-
       List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
-
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-      if (frontendType.supportExtendedPlaylists()) {
-        /*List<PlaylistGame> localFavs = new ArrayList<>();
-        List<PlaylistGame> globalFavs = new ArrayList<>();
-        for (PlaylistRepresentation playlistRepresentation : pl) {
-          List<PlaylistGame> games1 = playlistRepresentation.getGames();
-          for (PlaylistGame playlistGame : games1) {
-            if (playlistGame.isFav()) {
-              localFavs.add(playlistGame);
-            }
-            if (playlistGame.isGlobalFav()) {
-              globalFavs.add(playlistGame);
-            }
-          }
-        }*/
-        PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
-        //favsPlaylist.setGames(localFavs);
-        favsPlaylist.setId(-1);
-        favsPlaylist.setName("Local Favorites");
-
-        PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
-        //globalFavsPlaylist.setGames(globalFavs);
-        globalFavsPlaylist.setId(-2);
-        globalFavsPlaylist.setName("Global Favorites");
-
-        pl.add(0, globalFavsPlaylist);
-        pl.add(0, favsPlaylist);
-      }
       pl.add(0, null);
-
       playlistCombo.setItems(FXCollections.observableList(pl));
 
       // reselect same playlist
@@ -488,10 +457,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   //---------------------------------------
 
   public class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
-    private UISettings uiSettings;
-
-    public PlaylistBackgroundImageListCell(UISettings uiSettings) {
-      this.uiSettings = uiSettings;
+    public PlaylistBackgroundImageListCell() {
     }
 
     protected void updateItem(PlaylistRepresentation item, boolean empty) {
@@ -499,6 +465,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       setGraphic(null);
       setText(null);
       if (item != null) {
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
         setGraphic(playlistIcon);
 

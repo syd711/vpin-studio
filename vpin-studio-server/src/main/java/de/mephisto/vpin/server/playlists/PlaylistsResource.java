@@ -19,9 +19,19 @@ public class PlaylistsResource {
     return playlistService.getPlaylists();
   }
 
+  @GetMapping("/tree")
+  public Playlist getPlaylistTree() {
+    return playlistService.getPlaylistTree();
+  }
+
   @GetMapping("/{playlistId}")
   public Playlist getPlaylist(@PathVariable("playlistId") int playlistId) {
     return playlistService.getPlaylist(playlistId);
+  }
+
+  @GetMapping("/clear/{playlistId}")
+  public Playlist clearPlaylist(@PathVariable("playlistId") int playlistId) {
+    return playlistService.clearPlaylist(playlistId);
   }
 
   @DeleteMapping("/{playlistId}/{gameId}")
@@ -34,14 +44,24 @@ public class PlaylistsResource {
     return playlistService.addToPlaylist(playlistId, gameId, favMode);
   }
 
-
   @PutMapping("/favs/{playlistId}/{gameId}/{favMode}")
   public Playlist updatePlaylistGame(@PathVariable("playlistId") int playlistId, @PathVariable("gameId") int gameId, @PathVariable("favMode") int favMode) {
     return playlistService.updatePlaylistGame(playlistId, gameId, favMode);
   }
 
-  @PutMapping("/{playlistId}/color/{color}")
-  public Playlist setPlaylistColor(@PathVariable("playlistId") int playlistId, @PathVariable("color") long color) {
-    return playlistService.setPlaylistColor(playlistId, color);
+  @PostMapping("/save")
+  public Playlist saveOrUpdate(@RequestBody Playlist playlist) {
+    return playlistService.save(playlist);
+  }
+
+  @DeleteMapping("{playlistId}")
+  public boolean delete(@PathVariable("playlistId") int playlistId) {
+    return playlistService.delete(playlistId);
+  }
+
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return playlistService.clearCache();
   }
 }

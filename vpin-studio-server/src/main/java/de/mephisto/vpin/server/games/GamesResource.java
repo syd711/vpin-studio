@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -160,9 +161,11 @@ public class GamesResource {
     return gameMediaService.deleteGame(descriptor);
   }
 
-  @DeleteMapping("/reset/{gameId}")
-  public boolean reset(@PathVariable("gameId") int gameId) {
-    return gameService.resetGame(gameId);
+  @PostMapping("/reset")
+  public boolean reset(@RequestBody Map<String,Long> values)  {
+    long gameId = values.get("gameId");
+    long score = values.get("scoreValue");
+    return gameService.resetGame((int) gameId, score);
   }
 
   @PostMapping("/save")

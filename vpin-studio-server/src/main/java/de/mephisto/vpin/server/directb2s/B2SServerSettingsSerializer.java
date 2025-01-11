@@ -85,6 +85,18 @@ public class B2SServerSettingsSerializer {
         node.setTextContent(intValue(settings.isDisableFuzzyMatching()));
         break;
       }
+      case "HideGrill": {
+        node.setTextContent(settings.isHideGrill() ? "1" : "0");
+        break;
+      }
+      case "HideB2sDMD": {
+        node.setTextContent(settings.isHideB2SDMD() ? "1" : "0");
+        break;
+      }
+      case "HideDMD": {
+        node.setTextContent(settings.isHideDMD() ? "1" : "0");
+        break;
+      }
 //      case "IsLampsStateLogOn": {
 //        node.setTextContent(intValue(settings.isLampsStateLogOn()));
 //        break;
@@ -109,10 +121,14 @@ public class B2SServerSettingsSerializer {
 //        node.setTextContent(intValue(settings.isStatisticsBackglassOn()));
 //        break;
 //      }
-//      case "FormToFront": {
-//        node.setTextContent(intValue(settings.isFormToFront()));
-//        break;
-//      }
+      case "FormToFront": {
+        node.setTextContent(intValue(settings.isFormToFront()));
+        break;
+      }
+      case "FormToBack": {
+        node.setTextContent(intValue(settings.isFormToBack()));
+        break;
+      }
       case "ShowStartupError": {
         node.setTextContent(intValue(settings.isShowStartupError()));
         break;

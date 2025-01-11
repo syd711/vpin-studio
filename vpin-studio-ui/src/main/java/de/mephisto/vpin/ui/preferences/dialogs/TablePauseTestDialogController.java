@@ -1,7 +1,10 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,6 +28,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablePauseTestDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TablePauseTestDialogController.class);
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private Button cancelBtn;
@@ -37,8 +41,6 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
 
   @FXML
   private Spinner<Integer> timeSpinner;
-
-  private static GameRepresentation selection;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -53,23 +55,35 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
     List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
 
     List<GameRepresentation> filtered = gamesCached.stream().filter(g -> g.getHighscoreType() != null).collect(Collectors.toList());
     tablesCombo.setItems(FXCollections.observableList(filtered));
+    tablesCombo.getSelectionModel().select(0);
 
-    if(selection != null) {
-      tablesCombo.setValue(selection);
+    for (GameRepresentation gameRepresentation : filtered) {
+      if (gameRepresentation.getId() == pauseMenuSettings.getTestGameId()) {
+        tablesCombo.setValue(gameRepresentation);
+        break;
+      }
     }
-    else {
-      tablesCombo.getSelectionModel().select(0);
-    }
 
-    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> selection = newValue);
+    tablesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setTestGameId(newValue.getId());
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 60, 5);
-    factory.setValue(5);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 60, pauseMenuSettings.getTestDuration());
     timeSpinner.setValueFactory(factory);
+    timeSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+      @Override
+      public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+        debouncer.debounce("pauseMenuTestTime", () -> {
+          pauseMenuSettings.setTestDuration(newValue);
+        }, 500);
+      }
+    });
 
     testBtn.setDisable(filtered.isEmpty());
   }

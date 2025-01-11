@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.directb2s;
 
-public class DirectB2STableSettings {
+public class DirectB2STableSettings implements DirectB2sConstants {
   private String rom;
 
   private int hideGrill = 2;
@@ -16,7 +16,7 @@ public class DirectB2STableSettings {
   private int glowIndex = -1;
   private Boolean startAsEXE = null;
   private int startBackground = 2; // standard
-  private boolean formToFront = false;
+  private int formToPosition = FORM_TO_STANDARD;
 
   public boolean isHideB2SBackglass() {
     return hideB2SBackglass;
@@ -131,10 +131,16 @@ public class DirectB2STableSettings {
   }
 
   public boolean isFormToFront() {
-    return formToFront;
+    return getFormToPosition() == FORM_TO_FRONT;
+  }
+  public boolean isFormToBack() {
+    return getFormToPosition() == FORM_TO_BACK;
   }
 
-  public void setFormToFront(boolean formToFront) {
-    this.formToFront = formToFront;
+  public int getFormToPosition() {
+    return formToPosition;
+  }
+  public void setFormToPosition(int formToPosition) {
+    this.formToPosition = formToPosition;
   }
 }

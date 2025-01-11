@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
+import de.mephisto.vpin.ui.tables.models.B2SOption;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import javafx.beans.property.Property;
@@ -160,7 +161,7 @@ public class BackglassManagerFilterController extends BaseFilterController<Direc
     });
   }
 
-  private void setupComboBox(ComboBox<B2SVisibility> combo, ObservableList<B2SVisibility> visibilitiesModel, Property<B2SVisibility> model) {
+  private <T extends B2SOption> void setupComboBox(ComboBox<T> combo, ObservableList<T> visibilitiesModel, Property<T> model) {
     combo.setItems(visibilitiesModel);
     combo.valueProperty().bindBidirectional(model);
     combo.valueProperty().addListener((observable, oldValue, newValue) -> {

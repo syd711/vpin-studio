@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class BeanBinder {
     String value = getProperty(beanObject, property, defaultValue);
     comboBox.setValue(value);
     comboBox.valueProperty().addListener((observableValue, s, t1) -> {
-      Platform.runLater(()-> {
+      Platform.runLater(() -> {
         setProperty(property, t1);
       });
     });
@@ -79,11 +80,10 @@ public class BeanBinder {
 
   public void bindFontLabel(Label label, Object beanObject, String key) {
     String name = getProperty(beanObject, key + "FontName", "Arial");
-    int size = getIntProperty(beanObject, key + "FontSize", 72);
+    int size = 14;
     String style = getProperty(beanObject, key + "FontStyle", FontPosture.REGULAR.name());
-
+    Font font = resolveFont(name, style, size);
     String text = name + ", " + style + ", " + size + "px";
-    Font font = Font.font(name, FontPosture.findByName(style), 14);
     label.setFont(font);
     label.setText(text);
     label.setTooltip(new Tooltip(text));
@@ -92,10 +92,9 @@ public class BeanBinder {
   public void bindFontSelector(Object beanObject, String key, Label label) {
     String name = getProperty(beanObject, key + "FontName", "Arial");
     int size = getIntProperty(beanObject, key + "FontSize", 72);
-    String style = getProperty(beanObject, key + "FontStyle", FontPosture.REGULAR.name());
+    String style = getProperty(beanObject, key + "FontStyle", FontWeight.NORMAL.name());
 
-    Font font = Font.font(name, FontPosture.findByName(style), size);
-
+    Font font = resolveFont(name, style, size);
     FontSelectorDialog fs = new FontSelectorDialog(font);
     fs.setHeight(500);
     fs.setTitle("Select Font");
@@ -110,9 +109,10 @@ public class BeanBinder {
           setProperty(key + "FontSize", (int) result.getSize(), true);
           setProperty(key + "FontStyle", result.getStyle());
 
-          Font labelFont = Font.font(result.getFamily(), FontPosture.findByName(result.getStyle()), 14);
+          String updatedStyle = result.getStyle();
+          Font labelFont = resolveFont(result.getFamily(), result.getStyle(), 14);
           label.setFont(labelFont);
-          String labelText = result.getFamily() + ", " + result.getStyle() + ", " + result.getSize() + "px";
+          String labelText = result.getFamily() + ", " + updatedStyle + ", " + result.getSize() + "px";
           Platform.runLater(() -> {
             label.setText(labelText);
             label.setTooltip(new Tooltip(labelText));
@@ -121,6 +121,22 @@ public class BeanBinder {
 
       }
     });
+  }
+
+  public static Font resolveFont(String name, String style, int size) {
+    FontPosture posture = FontPosture.findByName(style);
+    Font font = Font.font(name, posture, size);
+    if (posture == null) {
+      font = Font.font(name, FontWeight.findByName(style), size);
+    }
+
+    if (style.contains(" ")) {
+      String[] split = style.split(" ");
+      FontWeight weight = FontWeight.findByName(split[0]);
+      posture = FontPosture.findByName(split[1]);
+      font = Font.font(name, weight, posture, size);
+    }
+    return font;
   }
 
   public void bindSlider(Slider slider, Object beanObject, String property) {
@@ -165,7 +181,8 @@ public class BeanBinder {
   private String getProperty(Object beanObject, String property) {
     try {
       return (String) PropertyUtils.getProperty(beanObject, property);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read string property " + property + ": " + e.getMessage());
     }
     return null;
@@ -177,7 +194,8 @@ public class BeanBinder {
       if (!StringUtils.isEmpty(value)) {
         return value;
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
     }
     return defaultValue;
@@ -186,7 +204,8 @@ public class BeanBinder {
   private boolean getBooleanProperty(Object beanObject, String property, boolean defaultValue) {
     try {
       return (Boolean) PropertyUtils.getProperty(beanObject, property);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
     }
     return defaultValue;
@@ -195,7 +214,8 @@ public class BeanBinder {
   private int getIntProperty(Object beanObject, String property) {
     try {
       return (int) PropertyUtils.getProperty(beanObject, property);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
     }
     return 0;
@@ -205,7 +225,8 @@ public class BeanBinder {
     try {
       String value = String.valueOf(PropertyUtils.getProperty(beanObject, property));
       return Integer.parseInt(value);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
     }
     return defaultValue;
@@ -221,7 +242,8 @@ public class BeanBinder {
       if (listener != null && !skipChangeEvent && !paused) {
         listener.beanPropertyChanged(bean, property, value);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set property " + property + ": " + e.getMessage());
     }
   }
@@ -235,7 +257,7 @@ public class BeanBinder {
   }
 
   public void setPaused(boolean paused) {
-    if(!paused) {
+    if (!paused) {
       debouncer.debounce("delay", () -> {
         this.paused = paused;
       }, MAX_DEBOUNCE + 100);

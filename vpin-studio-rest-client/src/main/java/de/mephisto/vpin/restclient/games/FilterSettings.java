@@ -24,7 +24,7 @@ public class FilterSettings extends JsonSettings {
   private boolean withNVOffset;
   private boolean withAlias;
   private int gameStatus = -1;
-  private NoteType noteType;
+  private CommentType noteType;
 
   public boolean isWithRes() {
     return withRes;
@@ -50,11 +50,11 @@ public class FilterSettings extends JsonSettings {
     this.withIni = withIni;
   }
 
-  public NoteType getNoteType() {
+  public CommentType getNoteType() {
     return noteType;
   }
 
-  public void setNoteType(NoteType noteType) {
+  public void setNoteType(CommentType noteType) {
     this.noteType = noteType;
   }
 

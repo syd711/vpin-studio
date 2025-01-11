@@ -109,7 +109,7 @@
             </Label>
             <Label layoutX="34.0" layoutY="416.0" styleClass="preference-description" text="They are used to lower the initial score values that are required for a new highscore entry." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="394.0" styleClass="preference-description" text="You can download all available resetted nvrams again, in case they have been updated" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="388.0" styleClass="preference-description" text="(e.g. when a higher default volume)." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="388.0" styleClass="preference-description" text="(e.g. when an existing one has been updated with a higher default volume)." textFill="WHITE" />
             <Button mnemonicParsing="false" onAction="#onNvRamReset" text="Download NVRams">
                <VBox.margin>
                   <Insets top="6.0" />

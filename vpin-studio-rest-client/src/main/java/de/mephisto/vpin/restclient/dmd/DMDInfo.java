@@ -11,7 +11,7 @@ public class DMDInfo {
   /** Aspect ratio from dmddevice.ini */ 
   private boolean forceAspectRatio;
   /** Selected aspect ratio */ 
-  private boolean selectedAspectRatio;
+  private DMDAspectRatio aspectRatio;
   /** whether save uses registry or ini */ 
   private boolean useRegistry;
 
@@ -22,9 +22,15 @@ public class DMDInfo {
   private double y;
   private double width;
   private double height;
-  
+
+  /** additional marging used to autoposition the dmd */
+  private int margin;
+
+  /** The screen where the DMD is displayed */  
   private VPinScreen onScreen;
+  /** Width of the screen hosting the dmd */
   private double screenWidth;
+  /** Height of the screen hosting the dmd */
   private double screenHeight;
   private boolean imageCentered;
 
@@ -55,12 +61,12 @@ public class DMDInfo {
     this.forceAspectRatio = forceAspectRatio;
   }
 
-  public boolean isSelectedAspectRatio() {
-    return selectedAspectRatio;
+  public DMDAspectRatio getAspectRatio() {
+    return aspectRatio;
   }
 
-  public void setSelectedAspectRatio(boolean selectedAspectRatio) {
-    this.selectedAspectRatio = selectedAspectRatio;
+  public void setAspectRatio(DMDAspectRatio aspectRatio) {
+    this.aspectRatio = aspectRatio;
   }
 
   public boolean isUseRegistry() {
@@ -109,6 +115,14 @@ public class DMDInfo {
 
   public void setHeight(double height) {
     this.height = height;
+  }
+  
+  public int getMargin() {
+    return margin;
+  }
+
+  public void setMargin(int margin) {
+    this.margin = margin;
   }
 
   public VPinScreen getOnScreen() {
@@ -197,16 +211,16 @@ public class DMDInfo {
   }
 
   public void adjustAspectRatio() {
-    if (selectedAspectRatio) {
-      if (width / height > 4) {
+    if (aspectRatio != null && aspectRatio.isKeepRatio()) {
+      if (width / height > aspectRatio.getValue()) {
         // adjust width
-        x += (width - 4 * height) / 2;
-        width = 4 * height;
+        x += (width - aspectRatio.getValue() * height) / 2;
+        width = aspectRatio.getValue() * height;
       }
       else {
         // adjust height
-        y += (height - width / 4) / 2;
-        height = width / 4;
+        y += (height - width / aspectRatio.getValue()) / 2;
+        height = width / aspectRatio.getValue();
       }
     }
   }

@@ -16,6 +16,7 @@ import java.util.List;
 public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
   private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS = {'"', '*', '<', '>', '?', '|', '/', '\\', ':'};
+  private final static Character[] INVALID_WINDOWS_SPECIFIC_CHARS_WITH_PATH = {'"', '*', '<', '>', '?', '|', '/', ':'};
 
   public static String replaceWindowsChars(String name) {
     for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
@@ -142,6 +143,15 @@ public class FileUtils {
 
   public static boolean isValidFilename(@NonNull String name) {
     for (Character c : INVALID_WINDOWS_SPECIFIC_CHARS) {
+      if (name.contains(String.valueOf(c))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public static boolean isValidFilenameWithPath(@NonNull String name) {
+    for (Character c : INVALID_WINDOWS_SPECIFIC_CHARS_WITH_PATH) {
       if (name.contains(String.valueOf(c))) {
         return false;
       }

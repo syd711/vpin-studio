@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2sConstants;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class B2STableSettingsParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(B2STableSettingsParser.class);
-  private final File xmlFile;
 
   private Map<String, DirectB2STableSettings> cacheDirectB2STableSettings = new ConcurrentHashMap<>(); 
 
   public B2STableSettingsParser(@NonNull File xmlFile) {
-    this.xmlFile = xmlFile;
-
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -135,8 +133,16 @@ public class B2STableSettingsParser extends DefaultHandler {
         settings.setStartBackground("1".equals(node.getTextContent().trim()) ? 0 : 1);
         break;
       }
+      case "FormToBack": {
+        if (Integer.parseInt(node.getTextContent().trim()) == 1) {
+          settings.setFormToPosition(DirectB2sConstants.FORM_TO_BACK);
+        }
+        break;
+      }
       case "FormToFront": {
-        settings.setFormToFront(Integer.parseInt(node.getTextContent().trim()) == 1);
+        if (Integer.parseInt(node.getTextContent().trim()) == 1) {
+          settings.setFormToPosition(DirectB2sConstants.FORM_TO_FRONT);
+        }
         break;
       }
 

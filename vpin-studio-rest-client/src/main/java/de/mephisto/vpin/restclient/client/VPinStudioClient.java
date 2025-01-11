@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
@@ -27,6 +29,7 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.hooks.HooksServiceClient;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
@@ -85,6 +88,7 @@ public class VPinStudioClient implements OverlayClient {
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
   private final HighscoreCardTemplatesServiceClient highscoreCardTemplatesServiceClient;
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
+  private final HooksServiceClient hooksServiceClient;
   private final IniServiceClient iniServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
@@ -132,6 +136,7 @@ public class VPinStudioClient implements OverlayClient {
     this.gameStatusServiceClient = new GameStatusServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
     this.highscoreCardTemplatesServiceClient = new HighscoreCardTemplatesServiceClient(this);
+    this.hooksServiceClient = new HooksServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.iniServiceClient = new IniServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
@@ -157,6 +162,10 @@ public class VPinStudioClient implements OverlayClient {
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public HooksServiceClient getHooksService() {
+    return hooksServiceClient;
   }
 
   public DMDPositionServiceClient getDmdPositionService() {
@@ -412,6 +421,20 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
+    VpsTable table = getVpsService().getTableById(tableId);
+    if (table != null && versionId != null) {
+      return table.getTableVersionById(versionId);
+    }
+    return null;
+  }
+
+  @Override
+  public List<CompetitionRepresentation> getIScoredSubscriptions() {
+    return getCompetitionService().getIScoredSubscriptions();
+  }
+
+  @Override
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
     return getCompetitionService().getCompetitionBackground(gameId);
   }
@@ -491,6 +514,9 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   public void clearCache() {
+    getManiaService().clearCache();
+    getHooksService().clearCache();
+    getNvRamsService().clearCache();
     getPinVolService().clearCache();
     getBackglassServiceClient().clearCache();
     getDiscordService().clearCache();

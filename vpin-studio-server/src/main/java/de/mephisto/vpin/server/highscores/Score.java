@@ -1,11 +1,13 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.connectors.mania.model.DeniedScore;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class Score {
   private String playerInitials = "???";
@@ -15,6 +17,7 @@ public class Score {
   private double numericScore;
   private int position;
   private Date createdAt;
+  private boolean external;
 
   public Score(Date createdAt, int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
     this.createdAt = createdAt;
@@ -26,6 +29,15 @@ public class Score {
     if (!StringUtils.isEmpty(playerInitials)) {
       this.playerInitials = playerInitials;
     }
+  }
+
+  @JsonIgnore
+  public boolean isExternal() {
+    return external;
+  }
+
+  public void setExternal(boolean external) {
+    this.external = external;
   }
 
   public Date getCreatedAt() {
@@ -109,18 +121,26 @@ public class Score {
 
   @Override
   public String toString() {
+    return toString(Locale.getDefault());
+  }
+
+  public String toString(Locale loc) {
     String name = this.getPlayerInitials();
     if (this.player != null) {
       name = this.player.getName();
     }
-
-    return "#" + this.getPosition() + " " + name + "   " + getFormattedScore();
+    return "#" + this.getPosition() + " " + name + "   " + getFormattedScore(loc);
   }
 
   @JsonIgnore
   public String getFormattedScore() {
+    return getFormattedScore(Locale.getDefault());
+  }
+
+  @JsonIgnore
+  public String getFormattedScore(Locale loc) {
     String scoreString = this.getScore();
-    String formattedScore = ScoreFormatUtil.formatScore(scoreString);
+    String formattedScore = ScoreFormatUtil.formatScore(scoreString, loc);
     if (!formattedScore.equals("0")) {
       scoreString = formattedScore;
     }
@@ -129,5 +149,16 @@ public class Score {
 
   public Score cloneEmpty() {
     return new Score(this.createdAt, this.gameId, "???", this.player, this.score, this.numericScore, this.position);
+  }
+
+  public boolean isDenied(DeniedScore deniedScore) {
+    try {
+      Long numScore = (long) this.numericScore;
+      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore))
+          && deniedScore.getInitials().equalsIgnoreCase(String.valueOf(playerInitials));
+    }
+    catch (Exception e) {
+      return false;
+    }
   }
 }

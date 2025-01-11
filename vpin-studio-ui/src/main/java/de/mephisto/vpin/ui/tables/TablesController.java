@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -309,7 +309,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     sidebarVisible = b;
     if (!sidebarVisible) {
-      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, 612);
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, 612);
       t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
@@ -321,7 +321,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       t.play();
     }
     else {
-      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, -612);
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, -612);
       t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {

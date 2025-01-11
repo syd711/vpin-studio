@@ -200,7 +200,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
       Platform.runLater(() -> {
         stage.close();
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
+        if (game != null) {
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+        }
       });
 
       if (jobDescriptor.getError() != null) {

@@ -6,7 +6,6 @@ import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
-import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -45,13 +44,13 @@ public class DOFLinxComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
+  public File getTargetFolder() {
     return dofLinxService.getInstallationFolder();
   }
 
   @Nullable
   @Override
-  public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
+  public Date getModificationDate() {
     if (dofLinxService.getInstallationFolder() != null) {
       File testExe = new File(dofLinxService.getInstallationFolder(), "DOFLinx.exe");
       if (testExe.exists()) {
@@ -79,12 +78,12 @@ public class DOFLinxComponent implements ComponentFacade {
   }
 
   @Override
-  public void preProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+  public void preProcess(@NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
     dofLinxService.killDOFLinx();
   }
 
   @Override
-  public void postProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+  public void postProcess(@NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
     if (dofLinxService.isValid()) {
       File starter1 = new File(dofLinxService.getInstallationFolder(), "Starter 32 bit");
       if (starter1.exists()) {

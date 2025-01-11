@@ -5,23 +5,32 @@ import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ScoreFormatUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreFormatUtil.class);
 
-  private static DecimalFormatSymbols symbols;
-
-  static {
-    symbols = DecimalFormatSymbols.getInstance(Locale.getDefault());
-  }
+  private static Map<Locale, DecimalFormat> formats = new HashMap<>();
 
   public static String formatScore(String score) {
+    return formatScore(score, Locale.getDefault());
+  }
+
+  public static String formatScore(String score, Locale loc) {
     try {
       score = cleanScore(score);
-      DecimalFormat decimalFormat = new DecimalFormat("#.##", symbols);
-      decimalFormat.setGroupingUsed(true);
-      decimalFormat.setGroupingSize(3);
+
+      DecimalFormat decimalFormat = formats.get(loc);
+      if (decimalFormat == null) {
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(loc);
+        decimalFormat = new DecimalFormat("#.##", symbols);
+        decimalFormat.setGroupingUsed(true);
+        decimalFormat.setGroupingSize(3);
+        formats.put(loc, decimalFormat);
+      }
+
       return decimalFormat.format(Long.parseLong(score));
     }
     catch (NumberFormatException e) {
@@ -30,15 +39,15 @@ public class ScoreFormatUtil {
     }
   }
 
-
   public static String cleanScore(String score) {
-    return score.replaceAll("\\.", "")
-        .replaceAll(",", "")
-        .replaceAll("\u00ff", "")
-        .replaceAll("\u00a0", "")
-        .replaceAll("\u202f", "")
-        .replaceAll("\ufffd", "")
-        .replaceAll(" ", "");
+    return score.replace(".", "")
+        .replace(",", "")
+        .replace("?", "")
+        .replace("\u00ff", "")
+        .replace("\u00a0", "")
+        .replace("\u202f", "")
+        .replace("\ufffd", "")
+        .replace(" ", "");
   }
 
 }

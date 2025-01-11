@@ -12,12 +12,21 @@ import org.slf4j.LoggerFactory;
 public class NVRamsServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
+  private NVRamList nvRamList;
+
   public NVRamsServiceClient(VPinStudioClient client) {
     super(client);
   }
 
 
   public NVRamList getResettedNVRams() {
-    return getRestClient().get(API + "nvrams", NVRamList.class);
+    if (nvRamList == null) {
+      nvRamList = getRestClient().get(API + "nvrams", NVRamList.class);
+    }
+    return nvRamList;
+  }
+
+  public void clearCache() {
+    this.nvRamList = null;
   }
 }

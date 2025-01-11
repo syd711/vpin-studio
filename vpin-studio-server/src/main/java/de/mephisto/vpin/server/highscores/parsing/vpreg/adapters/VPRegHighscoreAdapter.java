@@ -13,5 +13,5 @@ public interface VPRegHighscoreAdapter {
 
   ScoreParsingSummary readHighscore(DirectoryEntry gameFolder) throws IOException;
 
-  boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException;
+  boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder, long score) throws IOException;
 }

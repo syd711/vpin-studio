@@ -154,7 +154,7 @@ public class VPReg {
     return false;
   }
 
-  public boolean resetHighscores() {
+  public boolean resetHighscores(long score) {
     POIFSFileSystem fs = null;
     try {
       fs = new POIFSFileSystem(vpregFile, false);
@@ -164,7 +164,7 @@ public class VPReg {
         for (VPRegHighscoreAdapter adapter : adapters.values()) {
           if (adapter.isApplicable(gameFolder)) {
             LOG.info("Resetting highscore using " + adapter.getClass().getSimpleName());
-            return adapter.resetHighscore(fs, gameFolder);
+            return adapter.resetHighscore(fs, gameFolder, score);
           }
         }
         fs.writeFilesystem();

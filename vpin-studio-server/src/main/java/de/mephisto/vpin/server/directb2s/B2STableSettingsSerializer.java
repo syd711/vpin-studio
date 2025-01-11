@@ -28,7 +28,7 @@ public class B2STableSettingsSerializer {
   private final static Logger LOG = LoggerFactory.getLogger(B2STableSettingsSerializer.class);
   private final static List<String> tableEntries = Arrays.asList("HideGrill", "HideB2SDMD", "HideB2SBackglass", "HideDMD",
       "SolenoidsSkipFrames", "GIStringsSkipFrames", "LEDsSkipFrames",
-      "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "Animations");
+      "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "FormToBack", "Animations");
   private final File xmlFile;
 
   public B2STableSettingsSerializer(@NonNull File xmlFile) {
@@ -172,6 +172,10 @@ public class B2STableSettingsSerializer {
       }
       case "FormToFront": {
         node.setTextContent(intValue(settings.isFormToFront()));
+        break;
+      }
+      case "FormToBack": {
+        node.setTextContent(intValue(settings.isFormToBack()));
         break;
       }
     }

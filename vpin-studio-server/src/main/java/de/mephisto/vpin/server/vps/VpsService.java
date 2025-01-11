@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,16 +94,20 @@ public class VpsService implements InitializingBean {
   }
 
   private VpsTableVersion getVpsVersion(@NonNull Game game) {
-    if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+    return getVpsVersion(game.getExtTableId(), game.getExtTableVersionId());
+  }
+
+  public VpsTableVersion getVpsVersion(@Nullable String vpsTableId, @Nullable String vpsVersionId) {
+    if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsVersionId)) {
       return null;
     }
 
-    VpsTable vpsTable = vpsDatabase.getTableById(game.getExtTableId());
+    VpsTable vpsTable = vpsDatabase.getTableById(vpsTableId);
     if (vpsTable == null) {
       return null;
     }
 
-    VpsTableVersion tableVersion = vpsTable.getTableVersionById(game.getExtTableVersionId());
+    VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsVersionId);
     if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
       return null;
     }

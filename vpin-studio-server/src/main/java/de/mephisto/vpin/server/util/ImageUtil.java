@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.util;
 
 import com.jhlabs.image.GaussianFilter;
 import com.jhlabs.image.GrayscaleFilter;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import org.imgscalr.Scalr;
@@ -22,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Date;
 
 public class ImageUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ImageUtil.class);
@@ -62,6 +64,19 @@ public class ImageUtil {
     catch (IOException e) {
       LOG.error("Failed to read " + file.getAbsolutePath() + ": " + e.getMessage(), e);
       throw e;
+    }
+  }
+
+  public static void drawTimestamp(File file) throws IOException {
+    BufferedImage bufferedImage = loadImage(file);
+    if (bufferedImage != null) {
+      Graphics g = bufferedImage.getGraphics();
+      Graphics2D g2d = (Graphics2D) g.create();
+      g2d.setColor(Color.RED);
+      g2d.setFont(new Font("TimesRoman", Font.BOLD, 18));
+      g2d.drawString(DateUtil.formatDateTime(new Date()), 12, 30);
+      file.delete();
+      writeJPG(bufferedImage, file);
     }
   }
 

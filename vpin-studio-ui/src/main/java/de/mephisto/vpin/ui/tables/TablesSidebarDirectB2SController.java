@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
@@ -54,6 +55,12 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public final static List<B2SVisibility> VISIBILITIES = Arrays.asList(new B2SVisibility(0, "Visible"),
       new B2SVisibility(1, "Hidden"),
       new B2SVisibility(2, "Standard"));
+
+  public final static List<B2SFormPosition> FORM_POSITIONS = Arrays.asList(
+    new B2SFormPosition(DirectB2ServerSettings.FORM_TO_BACK, "Form To Back"),
+    new B2SFormPosition(DirectB2ServerSettings.FORM_TO_FRONT, "Form To Front"),
+    new B2SFormPosition(DirectB2ServerSettings.FORM_TO_STANDARD, "Standard")
+  );
 
   public final static List<B2SLedType> LED_TYPES = Arrays.asList(new B2SLedType(1, "Simple LEDs"),
       new B2SLedType(2, "Dream7 LEDs"));
@@ -111,6 +118,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private Button uploadBtn;
+
+  @FXML
+  private Button dmdPositionBtn;
 
   @FXML
   private Button deleteBtn;
@@ -178,7 +188,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private ComboBox<B2SVisibility> startBackground;
 
   @FXML
-  private CheckBox bringBGFromTop;
+  private ComboBox<B2SFormPosition> formToPosition;
 
   @FXML
   private Button backglassManagerBtn;
@@ -194,6 +204,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   // Add a public no-args constructor
   public TablesSidebarDirectB2SController() {
+  }
+
+  @FXML
+  private void onDMDPosition() {
+    if (game.isPresent()) {
+      TableDialogs.openDMDPositionDialog(game.get());
+    }
   }
 
   @FXML
@@ -366,8 +383,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       save();
     });
 
-    bringBGFromTop.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      tableSettings.setFormToFront(newValue);
+    formToPosition.setItems(FXCollections.observableList(FORM_POSITIONS));
+    formToPosition.valueProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setFormToPosition(newValue.getId());
       save();
     });
   }
@@ -439,6 +457,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     dmdResolutionLabel.setText("");
 
     deleteBtn.setDisable(!g.isPresent() || !directb2sAvailable);
+    dmdPositionBtn.setDisable(!g.isPresent() || !directb2sAvailable);
+    backglassManagerBtn.setDisable(!g.isPresent() || !directb2sAvailable);
 
     if (g.isPresent() && directb2sAvailable) {
       new Thread(() -> {
@@ -513,7 +533,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().orElse(null));
             usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
             startBackground.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
-            bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+            formToPosition.setValue(FORM_POSITIONS.stream().filter(v -> v.getId() == tableSettings.getFormToPosition()).findFirst().orElse(null));
 
             boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
             startAsExe.setSelected(tableLaunchAsExe);

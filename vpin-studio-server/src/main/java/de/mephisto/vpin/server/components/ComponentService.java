@@ -5,7 +5,6 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -114,10 +113,10 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean forceDownload) {
+  public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean forceDownload) {
     Component component = getComponent(type);
     ComponentFacade componentFacade = getComponentFacade(type);
-    if (componentFacade.getTargetFolder(emulator) != null) {
+    if (componentFacade.getTargetFolder() != null) {
       if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
         loadReleases(component);
 
@@ -132,7 +131,7 @@ public class ComponentService implements InitializingBean {
 
         if (githubRelease != null) {
           ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
-          File targetFolder = componentFacade.getTargetFolder(emulator);
+          File targetFolder = componentFacade.getTargetFolder();
 
           File folder = systemService.getComponentArchiveFolder(type);
           File artifactArchive = new File(folder, releaseArtifact.getName());
@@ -179,7 +178,7 @@ public class ComponentService implements InitializingBean {
   }
 
   @NonNull
-  public ReleaseArtifactActionLog install(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean simulate) {
+  public ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean simulate) {
     Component component = getComponent(type);
     List<GithubRelease> githubReleases = getCached(component);
     Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
@@ -188,12 +187,12 @@ public class ComponentService implements InitializingBean {
       GithubRelease githubRelease = first.get();
       ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
       ComponentFacade componentFacade = getComponentFacade(type);
-      File targetFolder = componentFacade.getTargetFolder(emulator);
+      File targetFolder = componentFacade.getTargetFolder();
       if (simulate) {
         return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       }
 
-      componentFacade.preProcess(emulator, releaseArtifact, install);
+      componentFacade.preProcess(releaseArtifact, install);
 
       //we have a real installation from here on
       install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
@@ -203,7 +202,7 @@ public class ComponentService implements InitializingBean {
         componentRepository.saveAndFlush(component);
 
         //execute optional post processing
-        componentFacade.postProcess(emulator, releaseArtifact, install);
+        componentFacade.postProcess(releaseArtifact, install);
       }
 
       return install;

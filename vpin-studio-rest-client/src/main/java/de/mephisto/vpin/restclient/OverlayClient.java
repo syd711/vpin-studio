@@ -1,16 +1,18 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -20,6 +22,8 @@ public interface OverlayClient {
   DiscordServer getDiscordServer(long serverId);
 
   List<CompetitionRepresentation> getFinishedCompetitions(int limit);
+
+  List<CompetitionRepresentation> getIScoredSubscriptions();
 
   CompetitionRepresentation getActiveCompetition(CompetitionType type);
 
@@ -31,9 +35,7 @@ public interface OverlayClient {
 
   InputStream getCachedUrlImage(String url);
 
-  default InputStream getPersistentCachedUrlImage(String cache, String url) {
-    return null;
-  }
+  InputStream getPersistentCachedUrlImage(String cache, String url);
 
   ScoreSummaryRepresentation getCompetitionScore(long id);
 
@@ -52,4 +54,6 @@ public interface OverlayClient {
   <T> T getJsonPreference(String key, Class<T> clazz);
 
   List<RankedPlayerRepresentation> getRankedPlayers();
+
+  VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId);
 }

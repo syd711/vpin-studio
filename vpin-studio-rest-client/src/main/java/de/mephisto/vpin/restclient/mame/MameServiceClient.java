@@ -31,6 +31,10 @@ public class MameServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "mame/options/" + name, MameOptions.class);
   }
 
+  public File getMameFolder() {
+    return getRestClient().get(API + "mame/folder", File.class);
+  }
+
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "mame/clearcache", Boolean.class);

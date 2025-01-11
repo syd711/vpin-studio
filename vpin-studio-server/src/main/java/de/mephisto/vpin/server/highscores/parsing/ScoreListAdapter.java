@@ -12,5 +12,5 @@ public interface ScoreListAdapter {
   boolean isApplicable(@NonNull Game game);
 
   @NonNull
-  List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines);
+  List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles);
 }

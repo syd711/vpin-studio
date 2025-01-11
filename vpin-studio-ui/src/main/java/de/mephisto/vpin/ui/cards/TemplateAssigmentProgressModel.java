@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
+import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TemplateAssigmentProgressModel.class);
-  public static final int MAX_REFRESH_COUNT = 3;
   private List<GameRepresentation> games;
 
   private final Iterator<GameRepresentation> gameIterator;
@@ -67,6 +67,11 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
     if (games.size() > MAX_REFRESH_COUNT) {
       EventManager.getInstance().notifyTablesChanged();
     }
+    else {
+      for (GameRepresentation game : games) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+    }
   }
 
   @Override
@@ -74,9 +79,6 @@ public class TemplateAssigmentProgressModel extends ProgressModel<GameRepresenta
     game.setTemplateId(templateId);
     try {
       client.getGameService().saveGame(game);
-      if (games.size() <= MAX_REFRESH_COUNT) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
     }
     catch (Exception e) {
       LOG.error("Failed to save template mapping: " + e.getMessage(), e);

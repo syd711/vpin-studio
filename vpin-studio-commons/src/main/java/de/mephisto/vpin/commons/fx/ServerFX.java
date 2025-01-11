@@ -3,11 +3,13 @@ package de.mephisto.vpin.commons.fx;
 import de.mephisto.vpin.commons.FrontendScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
+import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -53,6 +55,7 @@ public class ServerFX extends Application {
   private BorderPane root;
 
   public static OverlayClient client;
+  public static VPinManiaClient maniaClient;
   private OverlayController overlayController;
 
   private static ServerFX INSTANCE = null;
@@ -244,7 +247,7 @@ public class ServerFX extends Application {
       GameStatus gameStatus = new GameStatus();
       gameStatus.setGameId(gameId);
       gameStatus.setStarted(new Date());
-      PauseMenu.togglePauseMenu(gameStatus);
+      PauseMenu.togglePauseMenu(gameStatus, false);
     });
 
     try {

@@ -69,11 +69,11 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof VpsTutorialUrls)) return false;
-    if (!super.equals(o)) return false;
+    //if (!super.equals(o)) return false;
 
     VpsTutorialUrls that = (VpsTutorialUrls) o;
 
-    if (!title.equals(that.title)) return false;
+    if (title != null && !title.equals(that.title)) return false;
     return youtubeId.equals(that.youtubeId);
   }
 

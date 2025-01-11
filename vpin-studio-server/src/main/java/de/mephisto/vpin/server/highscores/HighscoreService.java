@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -64,8 +66,8 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private HighscoreResolver highscoreResolver;
 
+  private ManiaService maniaService;
   private GameService gameService;
-
   private boolean pauseHighscoreEvents;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
@@ -99,13 +101,17 @@ public class HighscoreService implements InitializingBean {
   }
 
   public boolean resetHighscore(@NonNull Game game) {
+    return resetHighscore(game, 99);
+  }
+
+  public boolean resetHighscore(@NonNull Game game, long score) {
     try {
       HighscoreType highscoreType = game.getHighscoreType();
       boolean result = false;
       if (highscoreType != null) {
         switch (highscoreType) {
           case EM: {
-            result = highscoreResolver.deleteTextScore(game);
+            result = highscoreResolver.deleteTextScore(game, score);
             break;
           }
           case NVRam: {
@@ -114,7 +120,7 @@ public class HighscoreService implements InitializingBean {
           }
           case VPReg: {
             VPReg reg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
-            result = reg.resetHighscores();
+            result = reg.resetHighscores(score);
             break;
           }
           default: {
@@ -203,7 +209,11 @@ public class HighscoreService implements InitializingBean {
     List<Highscore> byRawIsNotNull = highscoreRepository.findByRawIsNotNull();
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (Highscore highscore : byRawIsNotNull) {
-      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), gameService.getGame(highscore.getGameId()), serverId);
+      Game game = gameService.getGame(highscore.getGameId());
+      if (game == null) {
+        continue;
+      }
+      List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), game, serverId);
       result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
     }
     return result;
@@ -260,7 +270,7 @@ public class HighscoreService implements InitializingBean {
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
           Game game = frontendService.getOriginalGame(score.getGameId());
-          if (game == null) {
+          if (game == null && score.getGameId() > 0) {
             deleteScores(score.getGameId(), true);
             continue;
           }
@@ -293,6 +303,33 @@ public class HighscoreService implements InitializingBean {
   }
 
   /**
+   * Returns a list of all scores for the given game
+   *
+   * @param game the game to retrieve the highscores for
+   * @return all highscores of the given player
+   */
+  @NonNull
+  public ScoreSummary getMergedScoreSummary(long serverId, Game game) {
+    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
+    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
+    if (highscore.isPresent()) {
+      Highscore h = highscore.get();
+      if (!StringUtils.isEmpty(h.getRaw())) {
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId(), serverId);
+        summary.setRaw(h.getRaw());
+        summary.getScores().addAll(scores);
+      }
+    }
+
+    if (Features.MANIA_ENABLED) {
+      List<Score> scores = maniaService.getFriendsScoresFor(game);
+      summary.mergeExternalScores(scores);
+    }
+
+    return summary;
+  }
+
+  /**
    * Used for the dashboard widget to show the list of newly created highscores
    */
   public List<Score> getAllHighscoreVersions(@Nullable String initials) {
@@ -307,7 +344,12 @@ public class HighscoreService implements InitializingBean {
 
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     for (HighscoreVersion version : all) {
-      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), gameService.getGame(version.getGameId()), serverId);
+      Game game = gameService.getGame(version.getGameId());
+      if (game == null) {
+        continue;
+      }
+
+      List<Score> versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
       //change positions start with 1!
       if (version.getChangedPosition() > versionScores.size()) {
         LOG.error("Found invalid change position '" + version.getChangedPosition() + "' for " + version);
@@ -669,6 +711,10 @@ public class HighscoreService implements InitializingBean {
   public void afterPropertiesSet() {
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
+  }
+
+  public void setManiaService(ManiaService maniaService) {
+    this.maniaService = maniaService;
   }
 
   public void setGameService(GameService gameService) {

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
+import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -159,17 +160,6 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     else {
       mediaView.setFitWidth(prefWidth);
       mediaView.setFitHeight(prefHeight);
-    }
-  }
-
-  public void scaleForDialog(String screen) {
-    if (VPinScreen.PlayField.name().equals(screen) || VPinScreen.Loading.name().equals(screen)) {
-      //mediaView.setFitWidth(parent.getPrefWidth() - 300);
-      //mediaView.setFitHeight(parent.getPrefHeight() - 300);
-    }
-    else {
-      //mediaView.setFitWidth(parent.getPrefWidth() - 12);
-      //mediaView.setFitHeight(parent.getPrefHeight() - 50);
     }
   }
 

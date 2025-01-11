@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -97,6 +98,12 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private DefaultPictureService defaultPictureService;
+
+  /** the refresh timer to keep VPS updated */
+  private Timer refreshTimer;
+
+  @Value("${vps.refreshInterval:2}")
+  private int refreshInterval;
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -178,7 +185,7 @@ public class GameService implements InitializingBean {
         killFrontend = true;
       }
     }
-    games.sort(Comparator.comparing(Game::getGameDisplayName));
+    games.sort(Comparator.comparing(o -> o.getGameDisplayName().toLowerCase()));
     long duration = System.currentTimeMillis() - start;
     long avg = 0;
     if (!games.isEmpty()) {
@@ -200,7 +207,7 @@ public class GameService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
-  public boolean resetGame(int gameId) {
+  public boolean resetGame(int gameId, long score) {
     Game game = this.getGame(gameId);
     if (game == null) {
       return false;
@@ -208,7 +215,7 @@ public class GameService implements InitializingBean {
 
 
     if (highscoreBackupService.backup(game)) {
-      return highscoreService.resetHighscore(game);
+      return highscoreService.resetHighscore(game, score);
     }
 
     return false;
@@ -484,11 +491,11 @@ public class GameService implements InitializingBean {
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
-    game.setNotes(gameDetails.getNotes());
+    game.setComment(gameDetails.getNotes());
 
     //PUP pack assignment: we have to differ between the scanned name and the actual resolved one which could be different.
     game.setPupPackName(gameDetails.getPupPack());
-    PupPack pupPack = pupPackService.getPupPack(game);
+    PupPack pupPack = pupPackService.getPupPackCached(game);
     if (pupPack != null) {
       game.setPupPack(pupPack);
       game.setPupPackName(pupPack.getName());
@@ -587,7 +594,7 @@ public class GameService implements InitializingBean {
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
-    gameDetails.setNotes(game.getNotes());
+    gameDetails.setNotes(game.getComment());
     gameDetails.setCardsDisabled(game.isCardDisabled());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     if (game.getVpsUpdates() != null) {
@@ -729,11 +736,42 @@ public class GameService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      vpsService.update(this.getKnownGames(-1));
+      startVPSRefresh();
       highscoreService.setGameService(this);
     }
     catch (Exception e) {
       LOG.error("Error initializing GameService: " + e.getMessage(), e);
     }
   }
+
+  //---------------------------------------
+
+  public void startVPSRefresh() {
+    if (this.refreshTimer == null && this.refreshInterval > 0) {
+      this.refreshTimer = new Timer();
+      Calendar now = Calendar.getInstance();
+      // small delay after server restart for the initial refresh, then refresh periodically
+      now.add(Calendar.MINUTE, 3);
+      refreshTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          try {
+            List<Game> games = getKnownGames(-1); 
+            vpsService.update(games);
+          }
+          catch (Exception e) {
+            LOG.error("Error happened during VPS update", e);
+          }
+        }
+      }, now.getTime(), refreshInterval * 24 * 60 * 60 * 1000);
+    }
+  }
+
+  public void stopVPSRefresh() {
+    if (this.refreshTimer != null) {
+      refreshTimer.cancel();
+      this.refreshTimer = null;
+    }
+  }
+
 }

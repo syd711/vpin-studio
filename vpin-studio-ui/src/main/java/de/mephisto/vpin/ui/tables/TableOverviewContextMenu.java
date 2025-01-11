@@ -1,10 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -15,12 +18,11 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +60,12 @@ public class TableOverviewContextMenu {
     ImageView iconBackglassManager = new ImageView(image5);
     iconBackglassManager.setFitWidth(18);
     iconBackglassManager.setFitHeight(18);
+
+
+    Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
+    ImageView iconMania = new ImageView(imageMania);
+    iconMania.setFitWidth(18);
+    iconMania.setFitHeight(18);
 
 
     Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
@@ -111,6 +119,18 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
+    MenuItem notesItem = new MenuItem("Edit Comment");
+    FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+    icon.setIconSize(16);
+    KeyCombination notesItemKey = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
+    notesItem.setAccelerator(notesItemKey);
+    notesItem.setOnAction(actionEvent -> TableDialogs.openCommentDialog(game));
+    notesItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+    notesItem.setGraphic(icon);
+    ctxMenu.getItems().add(notesItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
     MenuItem vpsItem = new MenuItem("Open VPS Entry");
     KeyCombination vpsItemKey = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
     vpsItem.setAccelerator(vpsItemKey);
@@ -120,10 +140,21 @@ public class TableOverviewContextMenu {
     ctxMenu.getItems().add(vpsItem);
 
     MenuItem vpsUpdateItem = new MenuItem("Reset VPS Updates");
-    vpsUpdateItem.setOnAction(actionEvent -> tableOverviewController.onVpsReset());
+    vpsUpdateItem.setOnAction(actionEvent -> tableOverviewController.onVpsResetUpdates());
     vpsUpdateItem.setDisable(game.getVpsUpdates().isEmpty());
     vpsUpdateItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsUpdateItem);
+
+    if (Features.MANIA_ENABLED) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
+      MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
+      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaEntry.setOnAction(actionEvent -> NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(game.getExtTableId())));
+      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaEntry.setGraphic(iconMania);
+      ctxMenu.getItems().add(maniaEntry);
+    }
+
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
@@ -170,12 +201,12 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(importsItem);
     }
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
-
-    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
-    b2sItem.setGraphic(iconBackglassManager);
-    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
-    ctxMenu.getItems().add(b2sItem);
+    //Declutter
+//    ctxMenu.getItems().add(new SeparatorMenuItem());
+//    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
+//    b2sItem.setGraphic(iconBackglassManager);
+//    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
+//    ctxMenu.getItems().add(b2sItem);
 
     if (game.isVpxGame()) {
 
@@ -300,30 +331,31 @@ public class TableOverviewContextMenu {
       launchItem.setOnAction(actionEvent -> tableOverviewController.onPlay());
       ctxMenu.getItems().add(launchItem);
 
-      if (frontendType.supportArchive()) {
-        ctxMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem exportItem = new MenuItem("Backup Table");
-        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
-        ctxMenu.getItems().add(exportItem);
-
-        ctxMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-        vpbmItem.setGraphic(iconVpbm);
-        vpbmItem.setOnAction(actionEvent -> {
-          new Thread(() -> {
-            List<String> commands = Arrays.asList("vPinBackupManager.exe");
-            LOG.info("Executing vpbm: " + String.join(" ", commands));
-            File dir = new File("./resources/", "vpbm");
-            SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-            executor.setDir(dir);
-            executor.executeCommandAsync();
-          }).start();
-        });
-        ctxMenu.getItems().add(vpbmItem);
-      }
+      //decluttering
+//      if (frontendType.supportArchive()) {
+//        ctxMenu.getItems().add(new SeparatorMenuItem());
+//
+//        MenuItem exportItem = new MenuItem("Backup Table");
+//        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+//        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
+//        ctxMenu.getItems().add(exportItem);
+//
+//        ctxMenu.getItems().add(new SeparatorMenuItem());
+//
+//        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
+//        vpbmItem.setGraphic(iconVpbm);
+//        vpbmItem.setOnAction(actionEvent -> {
+//          new Thread(() -> {
+//            List<String> commands = Arrays.asList("vPinBackupManager.exe");
+//            LOG.info("Executing vpbm: " + String.join(" ", commands));
+//            File dir = new File("./resources/", "vpbm");
+//            SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+//            executor.setDir(dir);
+//            executor.executeCommandAsync();
+//          }).start();
+//        });
+//        ctxMenu.getItems().add(vpbmItem);
+//      }
     }
 
     ctxMenu.getItems().add(new SeparatorMenuItem());

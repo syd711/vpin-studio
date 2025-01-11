@@ -199,7 +199,11 @@ public class PINemHiService implements InitializingBean {
               LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
-            adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), true);
+
+            GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+            if(defaultGameEmulator != null) {
+              adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
+            }
           }
         }
       }
@@ -223,7 +227,10 @@ public class PINemHiService implements InitializingBean {
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
-    adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), true);
+    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    if(defaultGameEmulator != null) {
+      adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
+    }
   }
 
   /**
@@ -231,15 +238,15 @@ public class PINemHiService implements InitializingBean {
    * and save
    * @param emulator The GameEmulator to get the path
    */
-  public static void adjustVPPathForEmulator(GameEmulator emulator, File ini, boolean forcePath) {
-    if (emulator != null && emulator.getNvramFolder().exists()) {
+  public static void adjustVPPathForEmulator(File nvRamFolder, File ini, boolean forcePath) {
+    if (nvRamFolder.exists()) {
       try {
         INIConfiguration iniConfiguration = loadIni(ini);
         String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
         File vp = new File(vpPath);
 
         if (forcePath || !vp.exists() || !vpPath.endsWith("/")) {
-          vp = new File(emulator.getNvramFolder().getAbsolutePath());
+          vp = new File(nvRamFolder.getAbsolutePath());
           iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
           
           saveIni(ini, iniConfiguration);

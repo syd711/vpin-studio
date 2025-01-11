@@ -821,9 +821,26 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       if (game.isVpxGame() || game.isFpGame()) {
         gameFileName.setText(tableDetails.getGameFileName());
-        gameFileName.setDisable(StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\"));
+        gameFileName.setDisable(isGameFileNameDisabled());
         gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
-          if (FileUtils.isValidFilename(newValue)) {
+          if (oldValue.contains("\\") && !newValue.contains("\\")) {
+            newValue = oldValue;
+            gameFileName.setText(newValue);
+            return;
+          }
+
+          if (oldValue.contains("\\")) {
+            String oldBase = tableDetails.getGameFileName().substring(0, tableDetails.getGameFileName().indexOf("\\") + 1);
+            String newBase = newValue.substring(0, newValue.indexOf("\\") + 1);
+            if (!newBase.equals(oldBase)) {
+              String name = newValue.substring(newValue.indexOf("\\") + 1);
+              gameFileName.setText(oldBase + name);
+              return;
+            }
+          }
+
+
+          if (FileUtils.isValidFilenameWithPath(newValue)) {
             tableDetails.setGameFileName(newValue);
           }
           else {
@@ -1055,6 +1072,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     catch (Exception e) {
       LOG.error("Failed to init PinVol panel: {}", e.getMessage(), e);
     }
+  }
+
+  private boolean isGameFileNameDisabled() {
+    return false; //StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\");
   }
 
   private void setVpsTableIdValue(String value) {

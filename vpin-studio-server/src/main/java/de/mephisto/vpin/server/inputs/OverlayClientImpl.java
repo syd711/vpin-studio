@@ -2,8 +2,10 @@ package de.mephisto.vpin.server.inputs;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.client.ImageCache;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -29,7 +31,9 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -68,9 +72,13 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Autowired
   private DiscordService discordService;
 
+  @Autowired
+  private VpsService vpsService;
+
   private ObjectMapper mapper;
 
-  private final Map<String, byte[]> imageCache = new HashMap<>();
+  private final Map<String, byte[]> imageByteCache = new HashMap<>();
+  private final ImageCache imageCache = new ImageCache(null);
 
   @Override
   public DiscordServer getDiscordServer(long serverId) {
@@ -87,7 +95,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   public InputStream getCachedUrlImage(String imageUrl) {
     try {
-      if (!imageCache.containsKey(imageUrl)) {
+      if (!imageByteCache.containsKey(imageUrl)) {
         URL url = new URL(imageUrl);
         ByteArrayOutputStream bis = new ByteArrayOutputStream();
         InputStream is = null;
@@ -102,7 +110,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
         bis.close();
 
         byte[] bytes = bis.toByteArray();
-        imageCache.put(imageUrl, bytes);
+        imageByteCache.put(imageUrl, bytes);
         LOG.info("Cached image URL " + imageUrl);
       }
     }
@@ -110,14 +118,60 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Failed to read image from URL: " + e.getMessage(), e);
     }
 
-    byte[] bytes = imageCache.get(imageUrl);
+    byte[] bytes = imageByteCache.get(imageUrl);
     return new ByteArrayInputStream(bytes);
+  }
+
+  //TODO mpf
+  @Override
+  public InputStream getPersistentCachedUrlImage(String cache, String url) {
+    try {
+      String asset = url.substring(url.lastIndexOf("/") + 1, url.length());
+      File folder = new File("./resources/cache/" + cache + "/");
+      if (!folder.exists()) {
+        folder.mkdirs();
+      }
+      File file = new File(folder, asset);
+      if (file.exists()) {
+        return new FileInputStream(file);
+      }
+
+      InputStream in = imageCache.getCachedUrlImage(url);
+      if (in != null) {
+        FileOutputStream out = new FileOutputStream(file);
+        IOUtils.copy(in, out);
+        LOG.info("Persisted for cache '" + cache + "': " + file.getAbsolutePath());
+        in.close();
+        out.close();
+      }
+
+      if (file.exists()) {
+        return new FileInputStream(file);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Caching error: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   @Override
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
     try {
       List<Competition> finishedCompetitions = competitionService.getFinishedCompetitions(limit);
+      String s = mapper.writeValueAsString(finishedCompetitions);
+      return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
+    }
+    catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
+  @Override
+  public List<CompetitionRepresentation> getIScoredSubscriptions() {
+    try {
+      List<Competition> finishedCompetitions = competitionService.getIScoredSubscriptions();
       String s = mapper.writeValueAsString(finishedCompetitions);
       return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
     }
@@ -138,6 +192,11 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  @Override
+  public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
+    return vpsService.getVpsVersion(tableId, versionId);
   }
 
   @Override

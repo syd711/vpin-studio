@@ -1,14 +1,22 @@
 package de.mephisto.vpin.server.frontend;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FPService;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -16,28 +24,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
@@ -54,11 +51,6 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Autowired
   protected PreferencesService preferencesService;
-
-  private static final int PLAYLIST_FAVORITE_ID = -1;
-  //private static final int PLAYLIST_GLOBALFAV_ID = -2;
-  private static final int PLAYLIST_JUSTADDED_ID = -3;
-  private static final int PLAYLIST_MOSTPLAYED_ID = -4;
 
   /**
    * the loaded and cached emulators
@@ -93,22 +85,16 @@ public abstract class BaseConnector implements FrontendConnector {
   private TableAssetsAdapter tableAssetsAdapter;
 
 
+  /**
+   * reload all each time it is called, ie once at server startup
+   */
   @Override
-  public void clearCache() {
+  public void reloadCache() {
     this.emulators.clear();
     this.gamesByEmu.clear();
     this.mapFilenames.clear();
     this.playlists.clear();
     this.gameFavs.clear();
-  }
-
-  /**
-   * Get and reload all each time it is called, ie once at server startup
-   */
-  @Override
-  public final List<Emulator> getEmulators() {
-    // reset database
-    clearCache();
 
     // load all existing entries from database
     List<GameEntry> entries = gameEntryRepository.findAll();
@@ -137,22 +123,24 @@ public abstract class BaseConnector implements FrontendConnector {
     getAlxData();
 
     // load and cache playlists
+    playlists.clear();
     List<Playlist> loadedPlaylists = loadPlayLists();
     if (loadedPlaylists != null) {
       for (Playlist playlist : loadedPlaylists) {
         playlists.put(playlist.getId(), playlist);
         // get color if set
         JsonObject playlistConf = getPlaylistConf(playlist);
-        if (playlistConf != null && playlistConf.has("menuColor")) {
-          playlist.setMenuColor(playlistConf.get("menuColor").getAsInt());
+        if (playlistConf.has("menuColor")) {
+          JsonElement menuColor = playlistConf.get("menuColor");
+          if (!menuColor.isJsonNull()) {
+            playlist.setMenuColor(menuColor.getAsInt());
+          }
         }
       }
     }
 
     // load and cache favorites
     gameFavs = loadFavorites();
-
-    return loaded;
   }
 
   private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
@@ -223,6 +211,11 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract void commitDb(Emulator emu);
 
   //-------------------------------------------------
+
+  @Override
+  public final List<Emulator> getEmulators() {
+    return new ArrayList<>(emulators.values());
+  }
 
   @Override
   public Emulator getEmulator(int emulatorId) {
@@ -467,7 +460,55 @@ public abstract class BaseConnector implements FrontendConnector {
     return null;
   }
 
-  protected void savePlaylist(int gameId, Playlist playlist) {
+  @Override
+  public Playlist savePlaylist(Playlist playlist) {
+    if (playlist.getId() < -1) {
+      UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+        uiSettings.setMostPlayedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
+        uiSettings.setLocalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+        uiSettings.setGlobalFavsColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+        uiSettings.setJustAddedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
+      }
+      try {
+        preferencesService.savePreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to save playlist colors: {}", e.getMessage(), e);
+      }
+    }
+    else {
+      if (playlist.getId() == -1) {
+        // newly created playlist, generate a dummy id and add to memory
+        int newid = Collections.max(playlists.keySet()) + 1;
+        playlist.setId(newid);
+      }
+      // update cache
+      playlists.put(playlist.getId(), playlist);
+
+      savePlaylistConf(playlist);
+    }
+    return playlist;
+  }
+
+  @Override
+  public boolean deletePlaylist(int playlistId) {
+    Playlist playlist = playlists.remove(playlistId);
+    if (playlist == null) {
+      return false;
+    }
+    deletePlaylistConf(playlist);
+    return true;
+  }
+
+  protected void savePlaylistGame(int gameId, Playlist playlist) {
+
   }
 
   public Set<Integer> loadFavorites() {
@@ -477,19 +518,30 @@ public abstract class BaseConnector implements FrontendConnector {
   protected void saveFavorite(int gameId, boolean favorite) {
   }
 
-  private Playlist getFavPlaylist() {
+  private Playlist getFavPlaylist(UISettings uiSettings) {
     Playlist favs = new Playlist();
-    favs.setId(PLAYLIST_FAVORITE_ID);
+    favs.setId(PlaylistRepresentation.PLAYLIST_FAVORITE_ID);
     favs.setName("Favorites");
+    int intValue = toColorCode(uiSettings.getLocalFavsColor());
+    favs.setMenuColor(intValue);
     List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
     favs.setGames(favspg);
     return favs;
   }
 
-  private Playlist getJustAddedPlaylist() {
+  private int toColorCode(String color) {
+    if(color.startsWith("#")) {
+      color = color.substring(1);
+    }
+    return Integer.valueOf(color, 16);
+  }
+
+  private Playlist getJustAddedPlaylist(UISettings uiSettings) {
     Playlist pl = new Playlist();
-    pl.setId(PLAYLIST_JUSTADDED_ID);
+    pl.setId(PlaylistRepresentation.PLAYLIST_JUSTADDED_ID);
     pl.setName("Just Added");
+    int intValue = toColorCode(uiSettings.getJustAddedColor());
+    pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
     long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
     List<PlaylistGame> games = getGames().stream().filter(g -> {
@@ -499,10 +551,12 @@ public abstract class BaseConnector implements FrontendConnector {
     return pl;
   }
 
-  private Playlist getMostPlayedPlaylist() {
+  private Playlist getMostPlayedPlaylist(UISettings uiSettings) {
     Playlist pl = new Playlist();
-    pl.setId(PLAYLIST_MOSTPLAYED_ID);
+    pl.setId(PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID);
     pl.setName("Most Played");
+    int intValue = toColorCode(uiSettings.getMostPlayedColor());
+    pl.setMenuColor(intValue);
     pl.setSqlPlayList(true);
 
     // extract stats, sort by number of plays, take first 10 and return PLaylistGames
@@ -522,20 +576,43 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @NonNull
   @Override
-  public Playlist getPlayList(int id) {
-    return id == PLAYLIST_FAVORITE_ID ? getFavPlaylist() :
-        id == PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist() :
-            id == PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist() :
+  public Playlist getPlaylist(int id) {
+    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    return id == PlaylistRepresentation.PLAYLIST_FAVORITE_ID ? getFavPlaylist(uiSettings) :
+        id == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist(uiSettings) :
+            id == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist(uiSettings) :
                 playlists.get(id);
   }
 
+  @NonNull
   @Override
-  public List<Playlist> getPlayLists() {
+  public Playlist clearPlaylist(int id) {
+    Playlist playlist = getPlaylist(id);
+    List<PlaylistGame> games = playlist.getGames();
+    for (PlaylistGame game : games) {
+      deleteFromPlaylist(id, game.getId());
+    }
+    return getPlaylist(id);
+  }
+
+  @NotNull
+  @Override
+  public Playlist getPlaylistTree() {
+    Playlist artificialRoot = new Playlist();
+    artificialRoot.setId(0);
+    artificialRoot.setName("--");
+    artificialRoot.setChildren(getPlaylists());
+    return artificialRoot;
+  }
+
+  @Override
+  public List<Playlist> getPlaylists() {
     List<Playlist> result = new ArrayList<>();
 
-    result.add(getFavPlaylist());
-    result.add(getJustAddedPlaylist());
-    result.add(getMostPlayedPlaylist());
+    UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    result.add(getFavPlaylist(uiSettings));
+    result.add(getJustAddedPlaylist(uiSettings));
+    result.add(getMostPlayedPlaylist(uiSettings));
 
     for (Map.Entry<Integer, Playlist> playlist : playlists.entrySet()) {
       result.add(playlist.getValue());
@@ -569,7 +646,7 @@ public abstract class BaseConnector implements FrontendConnector {
       if (!pl.containsGame(gameId)) {
         pl.getGames().add(toPlaylistGame(gameId));
       }
-      savePlaylist(gameId, pl);
+      savePlaylistGame(gameId, pl);
     }
     else {
       gameFavs.add(gameId);
@@ -594,24 +671,13 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistId >= 0) {
       Playlist pl = playlists.get(playlistId);
       if (pl.removeGame(gameId)) {
-        savePlaylist(gameId, pl);
+        savePlaylistGame(gameId, pl);
       }
     }
     else {
       if (gameFavs.remove(gameId)) {
         saveFavorite(gameId, false);
       }
-    }
-  }
-
-  @Override
-  public void setPlaylistColor(int playlistId, long color) {
-    Playlist playlist = getPlayList(playlistId);
-    if (playlist != null) {
-      playlist.setMenuColor((int) color);
-      JsonObject playlistConf = getPlaylistConf(playlist);
-      playlistConf.addProperty("menuColor", color);
-      savePlaylistConf(playlist, playlistConf);
     }
   }
 
@@ -637,7 +703,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return new JsonObject();
   }
 
-  private JsonObject getPlaylistConf(Playlist playlist) {
+  protected JsonObject getPlaylistConf(Playlist playlist) {
     JsonObject conf = getPlaylistConf();
     JsonObject playlistConf = conf.getAsJsonObject(playlist.getName());
     if (playlistConf == null) {
@@ -646,15 +712,31 @@ public abstract class BaseConnector implements FrontendConnector {
     return playlistConf;
   }
 
-  private void savePlaylistConf(Playlist playlist, JsonObject playlistConf) {
+  protected void savePlaylistConf(Playlist playlist) {
     JsonObject o = getPlaylistConf();
+    JsonObject playlistConf = getPlaylistConf(playlist);
     o.add(playlist.getName(), playlistConf);
-
+    playlistConf.addProperty("menuColor", playlist.getMenuColor());
     File playlistConfFile = getPlaylistConfFile();
     if (playlistConfFile != null) {
       try {
         String content = o.toString();
-        Files.write(playlistConfFile.toPath(), content.getBytes(Charset.forName("UTF-8")));
+        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
+      }
+      catch (IOException ioe) {
+        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+      }
+    }
+  }
+
+  protected void deletePlaylistConf(Playlist playlist) {
+    JsonObject o = getPlaylistConf();
+    o.remove(playlist.getName());
+    File playlistConfFile = getPlaylistConfFile();
+    if (playlistConfFile != null) {
+      try {
+        String content = o.toString();
+        Files.write(playlistConfFile.toPath(), content.getBytes(StandardCharsets.UTF_8));
       }
       catch (IOException ioe) {
         LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);

@@ -1,19 +1,24 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.DeniedScore;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.vps.VpsService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +28,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ManiaService implements InitializingBean {
@@ -42,6 +49,11 @@ public class ManiaService implements InitializingBean {
 
   @Autowired
   private ManiaServiceCache maniaServiceCache;
+
+  @Autowired
+  private HighscoreService highscoreService;
+
+  private List<Cabinet> contacts;
 
   public ManiaHighscoreSyncResult synchronizeHighscores(String vpsTableId) {
     ManiaHighscoreSyncResult result = new ManiaHighscoreSyncResult();
@@ -71,6 +83,10 @@ public class ManiaService implements InitializingBean {
 
     List<String> submittedInitials = new ArrayList<>();
     for (Score score : scoreList) {
+      if (isOnDenyList(game, score)) {
+        continue;
+      }
+
       try {
         String playerInitials = score.getPlayerInitials();
         //we only synchronize the highest score of each table
@@ -120,7 +136,66 @@ public class ManiaService implements InitializingBean {
   }
 
   public boolean clearCache() {
+    this.contacts = null;
     return maniaServiceCache.clear();
+  }
+
+  public boolean isOnDenyList(@NonNull Game game, @NonNull Score score) {
+    String vpsTableId = game.getExtTableId();
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      List<DeniedScore> deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTableId);
+      for (DeniedScore deniedScore : deniedScoresByTableId) {
+        if (score.isDenied(deniedScore)) {
+          LOG.info("Skipped submitting VPinMania score {} for {}, the score is on the deny list.", score, game.getGameDisplayName());
+          SLOG.info("Skipped submitting VPinMania score " + score + " for \"" + game.getGameDisplayName() + "\", the score is on the deny list.");
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public List<Score> getFriendsScoresFor(Game game) {
+    List<Score> result = new ArrayList<>();
+    if (!Features.MANIA_ENABLED && !Features.MANIA_SOCIAL_ENABLED) {
+      return result;
+    }
+
+    String vpsTableId = game.getExtTableId();
+    String vpsVersionId = game.getExtTableVersionId();
+
+    if (StringUtils.isEmpty(vpsTableId) || StringUtils.isEmpty(vpsVersionId)) {
+      return Collections.emptyList();
+    }
+
+
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+    if (cabinet != null) {
+      List<Cabinet> contacts = getContacts();
+
+      for (Cabinet contact : contacts) {
+        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contact.getUuid());
+        for (Account account : accounts) {
+          List<TableScore> highscoresByAccount = maniaClient.getHighscoreClient().getHighscoresByAccountAndTable(account.getUuid(), vpsTableId, vpsVersionId);
+          List<Score> scores = highscoresByAccount.stream().map(h -> toScores(game, account, h)).collect(Collectors.toList());
+          result.addAll(scores);
+        }
+      }
+    }
+    return result;
+  }
+
+  private List<Cabinet> getContacts() {
+    if (this.contacts == null) {
+      contacts = maniaClient.getContactClient().getContacts();
+    }
+    return contacts;
+  }
+
+  private Score toScores(Game game, Account account, TableScore accountScore) {
+    Score score = new Score(accountScore.getCreationDate(), game.getId(), account.getInitials(), null, accountScore.getScoreText(), accountScore.getScore(), -1);
+    score.setExternal(true);
+    return score;
   }
 
   @Override
@@ -130,8 +205,9 @@ public class ManiaService implements InitializingBean {
         ManiaConfig config = getConfig();
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
         maniaServiceCache.setManiaService(this);
+        ServerFX.maniaClient = maniaClient;
 
-        Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
         if (cabinet != null) {
           LOG.info("Cabinet is registered on VPin-Mania");
         }
@@ -144,5 +220,7 @@ public class ManiaService implements InitializingBean {
         Features.MANIA_ENABLED = false;
       }
     }
+
+    highscoreService.setManiaService(this);
   }
 }

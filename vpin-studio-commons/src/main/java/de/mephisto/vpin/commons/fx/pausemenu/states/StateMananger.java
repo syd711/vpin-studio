@@ -2,7 +2,7 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
@@ -10,8 +10,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.frontend.FrontendControl;
-import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -108,7 +106,7 @@ public class StateMananger implements GameControllerInputListener {
       handle(name);
       new Thread(() -> {
         try {
-          Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION);
+          Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION);
           GameController.getInstance().addListener(StateMananger.getInstance());
         }
         catch (InterruptedException e) {
@@ -148,7 +146,7 @@ public class StateMananger implements GameControllerInputListener {
       if (item.getYouTubeUrl() != null) {
         new Thread(() -> {
           try {
-            Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION * 2);
+            Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
           }
           catch (InterruptedException e) {
             //ignore

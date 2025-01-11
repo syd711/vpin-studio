@@ -9,7 +9,7 @@ public class Emulator {
   private String dirGames;
   private String dirRoms;
 
-  /** optionnal database name, used by pinballY for instance */
+  /** optional database name, used by pinballY for instance */
   private String database;
 
   private EmulatorType type;
@@ -25,6 +25,24 @@ public class Emulator {
   private boolean visible;
   private boolean enabled = true;
 
+  private String launchScript;
+  private String exitScript;
+
+  public String getLaunchScript() {
+    return launchScript;
+  }
+
+  public void setLaunchScript(String launchScript) {
+    this.launchScript = launchScript;
+  }
+
+  public String getExitScript() {
+    return exitScript;
+  }
+
+  public void setExitScript(String exitScript) {
+    this.exitScript = exitScript;
+  }
 
   public Emulator(EmulatorType type) {
     this.type = type;
