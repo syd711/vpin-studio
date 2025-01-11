@@ -50,6 +50,8 @@
   - Added ability to move dmd with arrow keys and resize it with Ctrl / Alt / Shift
   - Added 3:1 aspect ratio for large Sega DMDs and a smaller 8:1 ratio for Data East displays.
   - Added margin field to configure margins added to the calculated auto position. Useful when the DMD zone has rounded corner
+  
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/dmd-positioner.png" width="700" />
 - **Backglass Manager / Bring Forms**: revisited the 'bring BG form' to support Form to Back option. Also modified in Tables sidebar
 - **Backglass Manager / Misc**
   - Added "Open" button to show backglass in Explorer (only available when working on the cabinet).
