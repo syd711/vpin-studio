@@ -29,7 +29,7 @@ jobs:
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
-      - name: Checkout Popper Client Repo
+      - name: Checkout VPin Mania Rest Client
         uses: actions/checkout@v3
         with:
           repository: syd711/vpin-mania-rest-client
@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11.72.19'
+          java-version: '11.0.21+9'
           cache: 'maven'
 
       - name: Run maven build for vpin mania rest client
