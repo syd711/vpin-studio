@@ -78,6 +78,8 @@ jobs:
 
       - name: List JDK
         run: |
+          ls "C:\hostedtoolcache\windows\"
+          ls "C:\hostedtoolcache\windows\Java_Zulu_jdk\"
           ls "C:\hostedtoolcache\windows\Java_Zulu_jdk\11.0.21-9\x64"
 
       - name: Copy .dll
