@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.playlists;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import org.slf4j.Logger;
@@ -81,6 +82,16 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
     }
     catch (Exception e) {
       LOG.error("Failed to save playlist: " + e.getMessage(), e);
+      throw new CompletionException(e);
+    }
+  }
+
+  public PlaylistOrder savePlaylistOrder(PlaylistOrder order) {
+    try {
+      return getRestClient().post(API + "playlists/saveOrder", order, PlaylistOrder.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save playlist order: " + e.getMessage(), e);
       throw new CompletionException(e);
     }
   }

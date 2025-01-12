@@ -113,7 +113,7 @@
                                                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                                                     </graphic>
                                                     <tooltip>
-                                                        <Tooltip text="Delete table and assets (Delete)" />
+                                                        <Tooltip text="Delete playlist" />
                                                     </tooltip>
                                                 </Button>
                                             </items>

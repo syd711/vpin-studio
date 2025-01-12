@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +53,11 @@ public class PlaylistsResource {
   @PostMapping("/save")
   public Playlist saveOrUpdate(@RequestBody Playlist playlist) {
     return playlistService.save(playlist);
+  }
+
+  @PostMapping("/saveOrder")
+  public PlaylistOrder saveOrUpdateOrder(@RequestBody PlaylistOrder playlistOrder) {
+    return playlistService.saveOrder(playlistOrder);
   }
 
   @DeleteMapping("{playlistId}")

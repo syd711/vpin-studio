@@ -117,6 +117,8 @@ public interface FrontendConnector {
 
   Playlist savePlaylist(Playlist playlist);
 
+  void savePlaylistOrder(PlaylistOrder playlistOrder);
+
   void addToPlaylist(int playlistId, int gameId, int favMode);
 
   void updatePlaylistGame(int playlistId, int gameId, int favMode);
@@ -124,8 +126,8 @@ public interface FrontendConnector {
   void deleteFromPlaylists(int gameId);
 
   void deleteFromPlaylist(int playlistId, int gameId);
-
   //----------------------------------
+
   // Statistics management
 
   @NonNull
@@ -139,21 +141,21 @@ public interface FrontendConnector {
   boolean updateNumberOfPlaysForGame(int gameId, long value);
 
   boolean updateSecondsPlayedForGame(int gameId, long seconds);
-
   //----------------------------------
+
   // Pinup control management
 
   FrontendControl getPinUPControlFor(VPinScreen screen);
-
   //TODO rename getControl
+
   FrontendControl getFunction(String function);
 
   @NonNull
   FrontendControls getControls();
 
-
   //----------------------------------
   // UI Management
+
   boolean killFrontend();
 
   boolean isFrontendRunning();
@@ -161,9 +163,9 @@ public interface FrontendConnector {
   boolean restartFrontend();
 
   boolean launchGame(Game game);
-
   //----------------------------------
   // Recording
+
   boolean startFrontendRecording();
 
   boolean startGameRecording(Game game);

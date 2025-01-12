@@ -71,6 +71,9 @@ public class PropperRenamingController implements Initializable {
       if (base.contains("\\")) {
         base = base.substring(0, base.indexOf("\\") + 1);
       }
+      else {
+        base = "";
+      }
       String value = fileName.getText();
       fileNameField.setText(base + FileUtils.replaceWindowsChars(value));
     }

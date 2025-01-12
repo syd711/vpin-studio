@@ -998,6 +998,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
+    Collections.sort(result, Comparator.comparingInt(Playlist::getDisplayOrder));
     return result;
   }
 
@@ -1034,6 +1035,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     finally {
       this.disconnect(connect);
     }
+
+    Collections.sort(result, Comparator.comparingInt(Playlist::getDisplayOrder));
     return result;
   }
 
@@ -1120,6 +1123,20 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
+
+  @Override
+  public void savePlaylistOrder(PlaylistOrder playlistOrder) {
+    Map<Integer, Integer> playlistToOrderId = playlistOrder.getPlaylistToOrderId();
+    Set<Map.Entry<Integer, Integer>> entries = playlistToOrderId.entrySet();
+    for (Map.Entry<Integer, Integer> entry : entries) {
+      int id = entry.getKey();
+      Playlist playlist = getPlaylist(id);
+      playlist.setDisplayOrder(entry.getValue());
+      savePlaylist(playlist);
+      LOG.info("Updated {} to displayOrder {}", playlist, entry.getValue());
+    }
+  }
+
   @Override
   public Playlist savePlaylist(Playlist playlist) {
     Connection connect = this.connect();
@@ -1141,7 +1158,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       preparedStatement.setString(index++, playlist.getName());
       preparedStatement.setInt(index++, playlist.isVisible() ? 1 : 0);
-      preparedStatement.setInt(index++, 0); // display order - not used yet
+      preparedStatement.setInt(index++, playlist.getDisplayOrder()); // display order - not used yet
       preparedStatement.setString(index++, playlist.getMediaName());
       preparedStatement.setInt(index++, playlist.getParentId());
       preparedStatement.setString(index++, playlist.getName()); //looks the "PlayDisplay" is always the name
@@ -1889,6 +1906,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     playlist.setVisible(rs.getInt("Visible") == 1);
     playlist.setPassCode(rs.getInt("passcode"));
     playlist.setUglyList(rs.getInt("UglyList") == 1);
+    Integer displayOrder = rs.getInt("DisplayOrder");
+    playlist.setDisplayOrder(displayOrder);
     playlist.setHideSysLists(rs.getInt("HideSysLists") == 1);
     playlist.setUseDefaults(rs.getInt("useDefaults") == 1);
     playlist.setDofCommand(rs.getString("DOFStuff"));

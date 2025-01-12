@@ -1,3 +1,14 @@
+## Release Notes 3.12.1
+
+## Changes
+
+- **Tables / Playlist Manager**: Fixed several tooltips.
+- **Tables / Table Data Manager**: Fixed broken auto-renaming where the filename was duplicated.
+- **Tables / Playlist Manager**: Added missing ordering of playlist via drag and drop (PinUP Popper only).
+- **VPin Mania / Invites**: Fixed some display issues with invites.
+
+---
+
 ## Release Notes 3.12.0
 
 ## Changes

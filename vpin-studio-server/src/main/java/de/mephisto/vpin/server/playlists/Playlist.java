@@ -22,12 +22,21 @@ public class Playlist {
   private boolean useDefaults = true;
   private boolean addFavCheckboxes;
   private String dofCommand;
+  private Integer displayOrder = 0;
   private List<PlaylistGame> games = new ArrayList<>();
   private List<Playlist> children = new ArrayList<>();
 
   private String sqlError;
   // optional emulator id when playlist is linked to an emulator, leave null if not
   private Integer emulatorId;
+
+  public Integer getDisplayOrder() {
+    return displayOrder;
+  }
+
+  public void setDisplayOrder(Integer displayOrder) {
+    this.displayOrder = displayOrder;
+  }
 
   public String getSqlError() {
     return sqlError;

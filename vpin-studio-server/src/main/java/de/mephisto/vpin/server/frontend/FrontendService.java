@@ -513,6 +513,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().savePlaylist(playlist);
   }
 
+  public void savePlaylistOrder(PlaylistOrder playlistOrder) {
+    getFrontendConnector().savePlaylistOrder(playlistOrder);
+  }
+
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
     getFrontendConnector().addToPlaylist(playlistId, gameId, favMode);
   }

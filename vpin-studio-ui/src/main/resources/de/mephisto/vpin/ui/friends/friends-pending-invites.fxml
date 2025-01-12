@@ -45,7 +45,7 @@
                               <FontIcon iconColor="#605e5e" iconLiteral="mdi2e-email-off-outline" iconSize="300" textOrigin="CENTER" />
                            </graphic>
                         </Label>
-                        <Label text="Your cabinet is not searchable." textFill="#605e5e">
+                        <Label text="Your cabinet is not searchable." textFill="#ff3333">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>

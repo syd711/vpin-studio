@@ -50,7 +50,7 @@
                               <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="seconds." textFill="WHITE" />
                            </children>
                         </HBox>
-                        <Label styleClass="preference-label" text="Pause Menu Screen:" textFill="WHITE">
+                        <Label styleClass="preference-label" text="Notifications Screen:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -82,6 +82,7 @@ resources/media-cropped/
 /resources/vpbm/vPinBackupManager.json
 
 /config/settings.properties
+/config/connection.properties
 
 /VPReg/
 /dependency-reduced-pom.xml

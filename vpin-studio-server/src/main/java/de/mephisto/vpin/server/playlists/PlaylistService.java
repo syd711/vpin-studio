@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import org.slf4j.Logger;
@@ -56,6 +57,11 @@ public class PlaylistService {
 
   public Playlist save(Playlist playlist) {
     return frontendService.savePlaylist(playlist);
+  }
+
+  public PlaylistOrder saveOrder(PlaylistOrder playlistOrder) {
+    frontendService.savePlaylistOrder(playlistOrder);
+    return playlistOrder;
   }
 
   public boolean clearCache() {

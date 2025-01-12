@@ -1,8 +1,9 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class PlaylistGame {
+public class PlaylistGame implements Serializable {
   private int id;
   private boolean fav;
   private boolean globalFav;

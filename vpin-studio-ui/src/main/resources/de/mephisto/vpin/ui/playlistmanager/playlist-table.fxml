@@ -58,10 +58,10 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Remove from playlist" />
+                  <Tooltip text="Rebuild the playlist from a template" />
                </tooltip>
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-plus" iconSize="18" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-check" iconSize="18" />
                </graphic>
             </Button>
             <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" textFill="WHITE">

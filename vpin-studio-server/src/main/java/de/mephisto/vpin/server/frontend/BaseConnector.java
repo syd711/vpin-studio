@@ -461,6 +461,11 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
+  public void savePlaylistOrder(PlaylistOrder playlistOrder) {
+    //not used
+  }
+
+  @Override
   public Playlist savePlaylist(Playlist playlist) {
     if (playlist.getId() < -1) {
       UISettings uiSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);

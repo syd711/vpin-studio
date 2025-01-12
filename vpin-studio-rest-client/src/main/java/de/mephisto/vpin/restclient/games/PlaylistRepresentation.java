@@ -3,11 +3,12 @@ package de.mephisto.vpin.restclient.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PlaylistRepresentation {
+public class PlaylistRepresentation implements Serializable {
   public static final int PLAYLIST_FAVORITE_ID = -2;
   public static final int PLAYLIST_GLOBALFAV_ID = -3;
   public static final int PLAYLIST_JUSTADDED_ID = -4;
@@ -21,6 +22,7 @@ public class PlaylistRepresentation {
   private String mediaName;
   private boolean sqlPlayList = false;
   private int passCode;
+  private int displayOrder;
   private boolean hideSysLists;
   private boolean useDefaults;
   private boolean addFavCheckboxes;
@@ -30,6 +32,14 @@ public class PlaylistRepresentation {
   private String sqlError;
   private List<PlaylistGame> games = new ArrayList<>();
   private List<PlaylistRepresentation> children = new ArrayList<>();
+
+  public int getDisplayOrder() {
+    return displayOrder;
+  }
+
+  public void setDisplayOrder(int displayOrder) {
+    this.displayOrder = displayOrder;
+  }
 
   public String getSqlError() {
     return sqlError;

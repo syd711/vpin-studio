@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -26,8 +27,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -46,6 +46,10 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlaylistManagerController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlaylistManagerController.class);
+
+  private static final DataFormat JAVA_FORMAT = new DataFormat("application/x-java-serialized-object");
+  private static final String DROP_HINT_STYLE = "-fx-border-color: #6666FF; -fx-border-width: 2 0 2 0; -fx-padding: 3 3 1 3";
+
   private final Debouncer debouncer = new Debouncer();
 
   private static final Map<String, String> SQL_TEMPLATES = new LinkedHashMap<>();
@@ -153,6 +157,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   private boolean dirty = false;
 
+  private TreeItem<PlaylistRepresentation> draggedItem;
+  private TreeCell<PlaylistRepresentation> dropZone;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -177,14 +184,14 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         playlist.setName(value);
 
         JFXFuture.supplyAsync(() -> client.getPlaylistsService().savePlaylist(playlist))
-          .thenAcceptLater(update -> reload(update, () -> {
-            if (update == null) {
-              WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
-            }
-            else {
-              select(treeView.getRoot(), update);
-            }
-          }));
+            .thenAcceptLater(update -> reload(update, () -> {
+              if (update == null) {
+                WidgetFactory.showAlert(dialogStage, "Error", "Playlist renaming failed. Please report this problem.");
+              }
+              else {
+                select(treeView.getRoot(), update);
+              }
+            }));
       }
       catch (Exception e) {
         LOG.error("Playlist renaming failed: {}", e.getMessage(), e);
@@ -206,16 +213,23 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @FXML
   private void onReload() {
+    TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
+    PlaylistRepresentation selection = selectedItem != null ? selectedItem.getValue() : null;
     JFXFuture.runAsync(() -> client.getPlaylistsService().clearCache())
-      .thenLater(() -> reload(null, () -> {
-        if (treeView.isShowRoot()) {
-          select(treeView.getRoot(), treeView.getRoot().getValue());
-        }
-        else {
-          TreeItem<PlaylistRepresentation> selection = treeView.getRoot().getChildren().get(0);
-          select(selection, selection.getValue());
-        }
-      }));
+        .thenLater(() -> reload(null, () -> {
+          if (treeView.isShowRoot()) {
+            if (selectedItem != null) {
+              select(treeView.getRoot(), selection);
+            }
+            else {
+              select(treeView.getRoot(), treeView.getRoot().getValue());
+            }
+          }
+          else {
+            TreeItem<PlaylistRepresentation> rootList = treeView.getRoot().getChildren().get(0);
+            select(rootList, selection);
+          }
+        }));
   }
 
   @FXML
@@ -259,14 +273,14 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
 
       JFXFuture
-        .supplyAsync(() -> client.getPlaylistsService().savePlaylist(newPlayList))
-        .thenAcceptLater(update -> reload(update, () -> {
-          select(treeView.getRoot(), update);
-        }))
-        .onErrorLater(e -> {
-          LOG.error("Playlist creation failed: {}", e.getMessage(), e);
-          WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());    
-        });
+          .supplyAsync(() -> client.getPlaylistsService().savePlaylist(newPlayList))
+          .thenAcceptLater(update -> reload(update, () -> {
+            select(treeView.getRoot(), update);
+          }))
+          .onErrorLater(e -> {
+            LOG.error("Playlist creation failed: {}", e.getMessage(), e);
+            WidgetFactory.showAlert(dialogStage, "Error", "Playlist creation failed: " + e.getMessage());
+          });
     }
     catch (Exception e) {
     }
@@ -288,7 +302,8 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Playlist", "Delete Playlist \"" + value.getName() + "\"?", help2, btnText);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JFXFuture.runAsync(() -> client.getPlaylistsService().delete(value.getId()))
-          .thenLater(() -> reload(value, () -> {}));
+            .thenLater(() -> reload(value, () -> {
+            }));
       }
     }
   }
@@ -307,13 +322,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       }
     });
 
-    if (selectedPlaylist == null) {
-      treeView.getSelectionModel().selectFirst();
-    }
-    else {
-      TreeItem<PlaylistRepresentation> root = treeView.getRoot();
-      select(root, selectedPlaylist);
-    }
+    reload(selectedPlaylist, null);
   }
 
   private void select(TreeItem<PlaylistRepresentation> root, PlaylistRepresentation selectedPlaylist) {
@@ -410,21 +419,29 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   private void reload(PlaylistRepresentation playlist, Runnable r) {
     JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylistTree())
-      .thenAcceptLater(playListRoot -> {
-        TreeItem<PlaylistRepresentation> root = new TreeItem<>(playListRoot);
-        buildTreeModel(root);
-        treeView.setRoot(root);
-        treeView.setShowRoot(client.getFrontendService().getFrontendCached().getFrontendType().supportExtendedPlaylists());
-        expandAll(root);
-        // execute 
-        if (r != null) {
-          r.run();
-        }
-        // finally refresh the sidebar
-        if (playlist != null) {
-          refreshSidebar(playlist);
-        }
-      });
+        .thenAcceptLater(playListRoot -> {
+          TreeItem<PlaylistRepresentation> root = new TreeItem<>(playListRoot);
+          buildTreeModel(root);
+          treeView.setRoot(root);
+          treeView.setShowRoot(client.getFrontendService().getFrontendCached().getFrontendType().supportExtendedPlaylists());
+          expandAll(root);
+
+          if (playlist != null) {
+            select(treeView.getRoot(), playlist);
+          }
+          else {
+            select(treeView.getRoot(), treeView.getRoot().getValue());
+          }
+
+          // execute
+          if (r != null) {
+            r.run();
+          }
+          // finally refresh the sidebar
+          if (playlist != null) {
+            refreshSidebar(playlist);
+          }
+        });
   }
 
   @Override
@@ -513,6 +530,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     });
     treeView.setCellFactory(t -> {
       final HBox cellNode = new HBox();
+
       cellNode.setAlignment(Pos.CENTER_LEFT);
 
       final Label label = new Label();
@@ -597,6 +615,14 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           graphics.setGraphic(playlistIcon.getGraphic());
         }
       });
+
+      if (client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+        cell.setOnDragDetected((MouseEvent event) -> dragDetected(event, cell, treeView));
+        cell.setOnDragOver((DragEvent event) -> dragOver(event, cell, treeView));
+        cell.setOnDragDropped((DragEvent event) -> drop(event, cell, treeView));
+        cell.setOnDragDone((DragEvent event) -> clearDropLocation());
+      }
+
       return cell;
     });
 
@@ -747,12 +773,102 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       getPlaylist().setMenuColor((int) Long.parseLong(colorhex, 16));
       savePlaylist();
     });
+  }
 
-    reload(null, null);
+  private void clearDropLocation() {
+    if (dropZone != null) {
+      dropZone.setStyle("");
+    }
+  }
+
+  private void drop(DragEvent event, TreeCell<PlaylistRepresentation> treeCell, TreeView<PlaylistRepresentation> treeView) {
+    Dragboard db = event.getDragboard();
+    boolean success = false;
+    if (!db.hasContent(JAVA_FORMAT)) {
+      return;
+    }
+
+    TreeItem<PlaylistRepresentation> dropTarget = treeCell.getTreeItem();
+    TreeItem<PlaylistRepresentation> droppedItemParent = draggedItem.getParent();
+
+    // remove from previous location
+    droppedItemParent.getChildren().remove(draggedItem);
+
+    // dropping on parent node makes it the last child
+    if (Objects.equals(droppedItemParent, dropTarget)) {
+      dropTarget.getChildren().add(draggedItem);
+      treeView.getSelectionModel().select(draggedItem);
+    }
+    else if (this.draggedItem.getValue().getParentId() == dropTarget.getValue().getParentId()) {
+      //drop to a sibling changes order and moves it before the drop target
+      PlaylistRepresentation targetList = dropTarget.getValue();
+      int newIndex = dropTarget.getParent().getValue().getChildren().indexOf(targetList);
+
+      dropTarget.getParent().getChildren().remove(draggedItem);
+      dropTarget.getParent().getChildren().add(newIndex, draggedItem);
+    }
+    else {
+      //drop above the parent
+      TreeItem<PlaylistRepresentation> parent = dropTarget.getParent() != null ? dropTarget.getParent() : treeView.getRoot();
+      int indexInParent = parent.getChildren().indexOf(dropTarget);
+      draggedItem.getValue().setParentId(parent.getValue().getId());
+      parent.getChildren().add(indexInParent + 1, draggedItem);
+    }
+    treeView.getSelectionModel().select(draggedItem);
+    event.setDropCompleted(success);
+
+    treeView.refresh();
+    applyPlaylistOrder(treeView.getRoot(), 1000);
+    savePlaylist();
+    savePlaylistOrder();
+    onReload();
+  }
+
+  private void dragOver(DragEvent event, TreeCell<PlaylistRepresentation> treeCell, TreeView<PlaylistRepresentation> treeView) {
+    if (!event.getDragboard().hasContent(JAVA_FORMAT)) {
+      return;
+    }
+    TreeItem thisItem = treeCell.getTreeItem();
+
+    // can't drop on itself
+    if (draggedItem == null || thisItem == null || thisItem == draggedItem) return;
+    // ignore if this is the root
+    if (draggedItem.getParent() == null) {
+      clearDropLocation();
+      return;
+    }
+
+    event.acceptTransferModes(TransferMode.MOVE);
+    if (!Objects.equals(dropZone, treeCell)) {
+      clearDropLocation();
+      this.dropZone = treeCell;
+      dropZone.setStyle(DROP_HINT_STYLE);
+    }
+  }
+
+  private void dragDetected(MouseEvent event, TreeCell<PlaylistRepresentation> treeCell, TreeView<PlaylistRepresentation> treeView) {
+    draggedItem = treeCell.getTreeItem();
+
+    // root can't be dragged
+    if (draggedItem.getParent() == null) {
+      return;
+    }
+    Dragboard db = treeCell.startDragAndDrop(TransferMode.MOVE);
+    ClipboardContent content = new ClipboardContent();
+    content.put(JAVA_FORMAT, draggedItem.getValue());
+    db.setContent(content);
+    db.setDragView(treeCell.snapshot(null, null));
+    event.consume();
   }
 
   private PlaylistRepresentation getPlaylist() {
     return treeView.getSelectionModel().getSelectedItem().getValue();
+  }
+
+  private void savePlaylistOrder() {
+    PlaylistOrder order = new PlaylistOrder();
+    collectPlaylistOrder(order, treeView.getRoot());
+    client.getPlaylistsService().savePlaylistOrder(order);
   }
 
   private void savePlaylist() {
@@ -786,7 +902,25 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     }
   }
 
-  public void refreshSidebar(PlaylistRepresentation playlist)  {
+  private void collectPlaylistOrder(PlaylistOrder order, TreeItem<PlaylistRepresentation> node) {
+    List<TreeItem<PlaylistRepresentation>> children = node.getChildren();
+    for (TreeItem<PlaylistRepresentation> child : children) {
+      order.getPlaylistToOrderId().put(child.getValue().getId(), child.getValue().getDisplayOrder());
+      collectPlaylistOrder(order, child);
+    }
+  }
+
+
+  private void applyPlaylistOrder(TreeItem<PlaylistRepresentation> node, int orderId) {
+    List<TreeItem<PlaylistRepresentation>> children = node.getChildren();
+    for (TreeItem<PlaylistRepresentation> child : children) {
+      child.getValue().setDisplayOrder(orderId);
+      orderId++;
+      applyPlaylistOrder(child, orderId);
+    }
+  }
+
+  public void refreshSidebar(PlaylistRepresentation playlist) {
     tableOverviewController.refreshPlaylists();
     TablesSidebarController sidebarController = tableOverviewController.getTablesController().getTablesSideBarController();
     TablesSidebarPlaylistsController playlistsController = sidebarController.getTablesSidebarPlaylistController();
