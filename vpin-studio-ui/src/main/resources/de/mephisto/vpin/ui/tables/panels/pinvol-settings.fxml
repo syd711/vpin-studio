@@ -38,13 +38,13 @@
                   <Spinner fx:id="systemVolPrimarySpinner" prefWidth="80.0" GridPane.columnIndex="1" />
                   <Spinner fx:id="systemVolSecondarySpinner" layoutX="110.0" layoutY="12.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Spinner fx:id="systemVolBassSpinner" layoutX="110.0" layoutY="43.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Spinner fx:id="systemVolFrontSpinner" layoutX="110.0" layoutY="73.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Spinner fx:id="systemVolRearSpinner" layoutX="110.0" layoutY="73.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label styleClass="default-text" text="Primary Volume:" />
                   <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Secondary Volume:" GridPane.rowIndex="1" />
                   <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Back Glass Gain:" GridPane.rowIndex="2" />
                   <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Rear Exciters Gain:" GridPane.rowIndex="3" />
                   <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Front Exciters Gain:" GridPane.rowIndex="4" />
-                  <Spinner fx:id="systemVolRearSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Spinner fx:id="systemVolFrontSpinner" layoutX="164.0" layoutY="180.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
                <VBox.margin>
                   <Insets />
