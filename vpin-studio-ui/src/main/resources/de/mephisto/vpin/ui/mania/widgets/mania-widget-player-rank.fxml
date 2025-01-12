@@ -106,7 +106,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync-circle" iconSize="18" text="󰑓" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Reload all table data" />
+                        <Tooltip text="Synchronize all your highscore from all tables" />
                      </tooltip>
                   </Button>
                   <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete My Scores" textFill="#ff3333">
