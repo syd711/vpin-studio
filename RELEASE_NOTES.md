@@ -5,6 +5,7 @@
 - **Tables / Playlist Manager**: Fixed several tooltips.
 - **Tables / Table Data Manager**: Fixed broken auto-renaming where the filename was duplicated.
 - **Tables / Playlist Manager**: Added missing ordering of playlist via drag and drop (PinUP Popper only).
+- **Tables / Pin Vol Settings**: Fixed mixed up front and rear exciter inputs.  
 - **VPin Mania / Invites**: Fixed some display issues with invites.
 
 ---
