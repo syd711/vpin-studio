@@ -89,7 +89,7 @@ public class FriendCabinetRowPanelController implements Initializable {
   private void onAccept() {
     maniaClient.getContactClient().acceptInvite(contact.getUuid());
     invitesController.reload();
-    FriendsController.navigateTo("friend-list");
+    FriendsController.navigateTo("friends-list");
   }
 
   public void setData(FriendsPendingInvitesController invitesController, Cabinet contact) {
