@@ -104,6 +104,6 @@ public class AltSoundUtil {
   }
 
   private static boolean isValidAltSoundFile(String name) {
-    return name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv") || name.endsWith(".ini");
+    return name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".wav") || name.endsWith(".csv") || name.endsWith(".ini");
   }
 }

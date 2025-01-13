@@ -68,7 +68,7 @@ public class MusicInstallationUtil {
 
 
         String suffix = FilenameUtils.getExtension(name);
-        if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg")) {
+        if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("wav")) {
           File target = null;
           if (StringUtils.isEmpty(relativePath)) {
             String relativeName = name.substring(name.toLowerCase().lastIndexOf("music/") + "music/".length());
@@ -135,7 +135,7 @@ public class MusicInstallationUtil {
         }
 
         String suffix = FilenameUtils.getExtension(name);
-        if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg")) {
+        if (suffix.equalsIgnoreCase("mp3") || suffix.equalsIgnoreCase("ogg") ||suffix.equalsIgnoreCase("wav")) {
           File target = null;
           if (StringUtils.isEmpty(relativePath)) {
             String relativeName = name.substring(name.toLowerCase().lastIndexOf("music/") + "music/".length());

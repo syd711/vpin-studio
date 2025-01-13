@@ -42,7 +42,7 @@ public class MusicArchiveAnalyzer {
         }
 
         String name = item.getPath().toLowerCase();
-        if (name.endsWith(".mp3") || name.endsWith(".ogg")) {
+        if (name.endsWith(".mp3") || name.endsWith(".ogg") || name.endsWith(".wav")) {
           fileFound = true;
           break;
         }
@@ -77,7 +77,7 @@ public class MusicArchiveAnalyzer {
         }
         else {
           String name = zipEntry.getName().toLowerCase();
-          if (name.endsWith(".mp3") || name.endsWith(".ogg")) {
+          if (name.endsWith(".mp3") || name.endsWith(".ogg") || name.endsWith(".wav")) {
             entryFound = true;
           }
         }

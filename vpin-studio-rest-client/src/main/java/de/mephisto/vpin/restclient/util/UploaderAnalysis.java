@@ -27,7 +27,7 @@ public class UploaderAnalysis<T> {
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1");
   private final static List<String> altColorSuffixes = Arrays.asList("vni", "czr", "pal", "pac", "pal");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
-  private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg");
+  private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg", "wav");
 
   public final static String PAL_SUFFIX = "pal";
   public final static String VNI_SUFFIX = "vni";
