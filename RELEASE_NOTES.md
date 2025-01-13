@@ -1,3 +1,14 @@
+## Release Notes 3.12.2
+
+## Changes
+
+- **VPin Studio Server**: Fixed critical possible dead-lock that would block all tables from being read. 
+- **Tables / Playlist Manager**: Improved error handling for media assets.
+- **VPin Mania / Deny Lists**: The initials are evaluated for denied score anymore, so scores are only filtered by their value. Although not relevant anymore, the initials of the denied score are still shown with a hint.  
+
+---
+
+
 ## Release Notes 3.12.1
 
 ## Changes

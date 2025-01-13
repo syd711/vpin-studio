@@ -125,7 +125,20 @@
                         <TableView fx:id="denyListView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                            <columns>
                               <TableColumn fx:id="columnDenyScore" prefWidth="250.0" style="-fx-alignment: BASELINE_RIGHT;" text="Score" />
-                              <TableColumn fx:id="columnDenyInitials" prefWidth="250.0" style="-fx-alignment: CENTER;" text="Initials" />
+                              <TableColumn fx:id="columnDenyInitials" prefWidth="250.0" style="-fx-alignment: CENTER;">
+                                 <graphic>
+                                    <Label contentDisplay="RIGHT" text="Initials" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only the score value is used to ignore a score. The initials are only shown as meta data." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </graphic></TableColumn>
                               <TableColumn fx:id="columnDenyVersion" prefWidth="350.0" style="-fx-alignment: BASELINE_CENTER;" text="Table Version" />
                               <TableColumn fx:id="columnDenyAccount" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Denied By" />
                            </columns>

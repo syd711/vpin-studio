@@ -227,7 +227,7 @@ public class GameService implements InitializingBean {
 
   @SuppressWarnings("unused")
   @Nullable
-  public synchronized Game getGame(int id) {
+  public Game getGame(int id) {
     if (id >= 0) {
       Game game = frontendService.getOriginalGame(id);
       if (game != null && game.getEmulator() != null) {

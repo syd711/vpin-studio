@@ -155,6 +155,11 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
+  public List<Score> parseScores(Date createdAt, String raw, @NonNull Game game, long serverId) {
+    return highscoreParser.parseScores(createdAt, raw, game, serverId);
+  }
+
+  @NonNull
   public List<RankedPlayer> getPlayersByRanks() {
     Map<String, RankedPlayer> playerMap = new HashMap<>();
     List<ScoreSummary> highscoresWithScore = getHighscoresWithScore();
@@ -294,7 +299,7 @@ public class HighscoreService implements InitializingBean {
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId(), serverId);
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game, serverId);
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }
@@ -315,7 +320,7 @@ public class HighscoreService implements InitializingBean {
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
       if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game.getId(), serverId);
+        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game, serverId);
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }

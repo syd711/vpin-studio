@@ -56,17 +56,27 @@ public class PlaylistMediaService {
 
   @NonNull
   public List<File> getPlaylistMediaFiles(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
-    String baseFilename = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName().toLowerCase() : playlist.getName().toLowerCase();
-    File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
-    if (mediaFolder.exists()) {
-      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename));
-      if (mediaFiles != null && mediaFiles.length > 0) {
-        Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}");
-        return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(FilenameUtils.getBaseName(f.getName().toLowerCase())).matches()).collect(Collectors.toList());
+    try {
+      if (playlist.getMediaName() != null) {
+        String baseFilename = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName().toLowerCase() : playlist.getName().toLowerCase();
+        File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
+        if (mediaFolder.exists()) {
+          File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename));
+          if (mediaFiles != null && mediaFiles.length > 0) {
+            Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}");
+            return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(FilenameUtils.getBaseName(f.getName().toLowerCase())).matches()).collect(Collectors.toList());
+          }
+        }
+        else {
+          LOG.error("Failed to resolve playlist media folder: " + mediaFolder.getAbsolutePath());
+        }
+      }
+      else {
+        LOG.warn("No media name set for playlist {}", playlist.getName());
       }
     }
-    else {
-      LOG.error("Failed to resolve playlist media folder: " + mediaFolder.getAbsolutePath());
+    catch (Exception e) {
+      LOG.error("Error resolving media files for playlist{}: {}", playlist.getName(), e.getMessage(), e);
     }
     return Collections.emptyList();
   }

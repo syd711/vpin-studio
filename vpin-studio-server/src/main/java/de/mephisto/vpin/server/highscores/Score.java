@@ -154,8 +154,9 @@ public class Score {
   public boolean isDenied(DeniedScore deniedScore) {
     try {
       Long numScore = (long) this.numericScore;
-      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore))
-          && deniedScore.getInitials().equalsIgnoreCase(String.valueOf(playerInitials));
+//      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore))
+//          && deniedScore.getInitials().equalsIgnoreCase(String.valueOf(playerInitials));
+      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore));
     }
     catch (Exception e) {
       return false;
