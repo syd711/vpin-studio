@@ -3,16 +3,15 @@ package de.mephisto.vpin.server.mania;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.DeniedScore;
-import de.mephisto.vpin.connectors.mania.model.TableScore;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -27,13 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ManiaService implements InitializingBean {
+public class ManiaService implements InitializingBean, FrontendStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
 
   @Value("${vpinmania.server.host}")
@@ -52,6 +52,9 @@ public class ManiaService implements InitializingBean {
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   private List<Cabinet> contacts;
 
@@ -198,10 +201,29 @@ public class ManiaService implements InitializingBean {
     return score;
   }
 
+  public void setOffline() {
+    if (Features.MANIA_ENABLED) {
+      try {
+        Cabinet cabinet = getClient().getCabinetClient().getCabinet();
+        if (cabinet != null) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
+          cabinet.getStatus().setActiveGame(null);
+          getClient().getCabinetClient().update(cabinet);
+        }
+        LOG.info("Switched cabinet to modus: {}", cabinet.getStatus().getStatus());
+      }
+      catch (Exception e) {
+        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
+      }
+    }
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
       try {
+        frontendStatusService.addFrontendStatusChangeListener(this);
+
         ManiaConfig config = getConfig();
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
         maniaServiceCache.setManiaService(this);
@@ -222,5 +244,25 @@ public class ManiaService implements InitializingBean {
     }
 
     highscoreService.setManiaService(this);
+  }
+
+  @Override
+  public void frontendLaunched() {
+
+  }
+
+  @Override
+  public void frontendRestarted() {
+
+  }
+
+  @Override
+  public void frontendExited() {
+    this.setOffline();
+  }
+
+  @PreDestroy
+  public void onShutdown() {
+    this.setOffline();
   }
 }

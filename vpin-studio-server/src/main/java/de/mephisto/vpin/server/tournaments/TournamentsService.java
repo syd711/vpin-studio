@@ -147,22 +147,4 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
       }
     }
   }
-
-  @PreDestroy
-  public void onShutdown() {
-    if (Features.MANIA_ENABLED) {
-      try {
-        Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
-        if (cabinet != null) {
-          cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
-          cabinet.getStatus().setActiveGame(null);
-          maniaService.getClient().getCabinetClient().update(cabinet);
-        }
-        LOG.info("Switched cabinet to modus: {}", cabinet.getStatus().getStatus());
-      }
-      catch (Exception e) {
-        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
-      }
-    }
-  }
 }

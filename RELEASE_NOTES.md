@@ -2,9 +2,11 @@
 
 ## Changes
 
-- **VPin Studio Server**: Fixed critical possible dead-lock that would block all tables from being read. 
+- **VPin Studio Server**: Fixed critical possible deadlock that would block all tables from being read. 
 - **Tables / Playlist Manager**: Improved error handling for media assets.
-- **VPin Mania / Deny Lists**: The initials are evaluated for denied score anymore, so scores are only filtered by their value. Although not relevant anymore, the initials of the denied score are still shown with a hint.  
+- **VPin Mania / Deny Lists**: The initials are evaluated for denied score anymore, so scores are only filtered by their value. Although not relevant anymore, the initials of the denied score are still shown with a hint.
+- **VPin Mania / Online Status**: Added additional check to set the online status back to "offline".
+- **Tables / Uploads**: Added "wav" as additional audio format for music packs and alt sound.
 
 ---
 
