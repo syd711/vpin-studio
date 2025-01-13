@@ -46,7 +46,11 @@ public class ScoreSummary {
   }
 
   public void mergeExternalScores(List<Score> externalScores) {
-    this.scores.addAll(externalScores);
+    for (Score externalScore : externalScores) {
+      if (!contains(externalScore)) {
+        this.scores.add(externalScore);
+      }
+    }
     Collections.sort(scores, (o1, o2) -> (int) (o2.getNumericScore() - o1.getNumericScore()));
     for (int i = 1; i <= scores.size(); i++) {
       Score score = scores.get(i - 1);
