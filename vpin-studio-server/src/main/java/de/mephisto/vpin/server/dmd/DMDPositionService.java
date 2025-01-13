@@ -16,6 +16,7 @@ import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +51,13 @@ public class DMDPositionService {
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
+    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
 
     DMDInfo dmdinfo = new DMDInfo();
     dmdinfo.setGameId(game.getId());
-    dmdinfo.setGameRom(game.getRom());
+    dmdinfo.setGameRom(rom);
 
-    boolean useExternalDmd = useExternalDmd(game.getRom());
+    boolean useExternalDmd = useExternalDmd(rom);
     boolean forceAspectRatio = false;
 
     if (useExternalDmd) {

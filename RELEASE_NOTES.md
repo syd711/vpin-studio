@@ -1,3 +1,12 @@
+## Release Notes 3.12.3
+
+## Changes
+
+- **Tables / Backglasses**:  Support Alias Mapping for DMD Positioning.
+
+---
+
+
 ## Release Notes 3.12.2
 
 ## Changes
