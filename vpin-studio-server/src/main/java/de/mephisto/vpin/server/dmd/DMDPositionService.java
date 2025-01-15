@@ -356,7 +356,7 @@ public class DMDPositionService {
 
   private boolean saveDMDInfoInRegistry(Game game, DMDInfo dmdinfo, INIConfiguration iniConfiguration) {
     // clear any values in dmddevice that could overwrite registry values
-    String rom = game.getRom();
+    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
 
     // mind that iniConfiguration can be null id externalDMD is not used
     if (iniConfiguration != null) {
@@ -369,7 +369,7 @@ public class DMDPositionService {
   }
 
   private boolean saveDMDInfoInIni(Game game, DMDInfo dmdinfo, INIConfiguration iniConfiguration) {
-    String rom = game.getRom();
+    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
     SubnodeConfiguration conf = iniConfiguration.getSection(rom);
 
     if (dmdinfo.isLocallySaved()) {
