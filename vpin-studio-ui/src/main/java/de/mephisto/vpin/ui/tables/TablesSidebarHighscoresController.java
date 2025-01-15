@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -71,6 +72,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button resetBtn;
 
   @FXML
+  private Button maniaBtn;
+
+  @FXML
   private SplitMenuButton scanHighscoreBtn;
 
   @FXML
@@ -134,6 +138,15 @@ public class TablesSidebarHighscoresController implements Initializable {
   // Add a public no-args constructor
   public TablesSidebarHighscoresController() {
   }
+
+
+  @FXML
+  private void onManiaTable() {
+    if (this.game.isPresent() && !StringUtils.isEmpty(this.game.get().getExtTableId())) {
+      NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(this.game.get().getExtTableId()));
+    }
+  }
+
 
   @FXML
   private void onEventLog() {
@@ -269,10 +282,10 @@ public class TablesSidebarHighscoresController implements Initializable {
 
     scanHighscoreBtn.setDisable(true);
     cardBtn.setDisable(true);
-    resetBtn.setDisable(games.size() == 1);
+    resetBtn.setDisable(games.size() != 1);
 
-    backupBtn.setDisable(games.size() == 1);
-    restoreBtn.setDisable(games.size() > 1);
+    backupBtn.setDisable(games.size() != 1);
+    restoreBtn.setDisable(games.size() != 1);
     restoreBtn.setText("Restore");
 
     cardsEnabledCheckbox.setDisable(true);
@@ -281,6 +294,8 @@ public class TablesSidebarHighscoresController implements Initializable {
     this.multiSelectionPane.setVisible(games.size() > 1);
     this.statusPane.setVisible(games.size() == 1);
     this.dataPane.setVisible(games.size() == 1);
+
+    maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
 
     if (g.isPresent() && this.games.size() == 1) {
       GameRepresentation game = g.get();
@@ -416,6 +431,14 @@ public class TablesSidebarHighscoresController implements Initializable {
     dataPane.managedProperty().bindBidirectional(dataPane.visibleProperty());
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
     vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
+    maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
+    maniaBtn.setVisible(Features.MANIA_ENABLED);
+
+    Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
+    ImageView iconMania = new ImageView(imageMania);
+    iconMania.setFitWidth(18);
+    iconMania.setFitHeight(18);
+    maniaBtn.setGraphic(iconMania);
 
     eventLogBtn.setDisable(true);
 
