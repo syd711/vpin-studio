@@ -59,7 +59,7 @@
                   <Label styleClass="default-headline" text="DMD Position Storage" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95" minWidth="10.0" prefWidth="60" />
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="95" />
                         <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
                      </columnConstraints>
                      <rowConstraints>
@@ -72,7 +72,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="default-text" text="ROM:" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="ROM (or alias):" GridPane.rowIndex="1" />
                         <Label fx:id="romLabel" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />

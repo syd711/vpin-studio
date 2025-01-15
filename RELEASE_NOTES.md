@@ -2,6 +2,7 @@
 
 ## Changes
 
+- **Tables / Backglasses**:  Support Alias Mapping for DMD Positioning.
 - **VPin Mania / Online Status**: Again, improved check to set the online status back to "offline"/"online".
 - **Tables / Highscores**: Added button to open the table on VPin Mania.
 - **Tables / Locale Settings:** Removed the hard-coded "English" locale from the VPin Studio client. I don't why I've set this once, but depending on the country, the dot is shown as number separator again.
