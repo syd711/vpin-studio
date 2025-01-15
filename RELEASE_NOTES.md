@@ -1,3 +1,12 @@
+## Release Notes 3.12.3
+
+## Changes
+
+- **VPin Mania / Online Status**: Again, improved check to set the online status back to "offline"/"online".
+- **Tables / Highscores**: Added button to open the table on VPin Mania.
+- 
+---
+
 ## Release Notes 3.12.2
 
 ## Changes

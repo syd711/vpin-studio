@@ -210,7 +210,24 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           cabinet.getStatus().setActiveGame(null);
           getClient().getCabinetClient().update(cabinet);
         }
-        LOG.info("Switched cabinet to modus: {}", cabinet.getStatus().getStatus());
+        LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.offline);
+      }
+      catch (Exception e) {
+        LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  public void setOnline() {
+    if (Features.MANIA_ENABLED) {
+      try {
+        Cabinet cabinet = getClient().getCabinetClient().getCabinet();
+        if (cabinet != null) {
+          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+          cabinet.getStatus().setActiveGame(null);
+          getClient().getCabinetClient().update(cabinet);
+        }
+        LOG.info("Switched cabinet to modus: {}", CabinetOnlineStatus.online);
       }
       catch (Exception e) {
         LOG.error("Error during tournament service shutdown: " + e.getMessage(), e);
@@ -248,12 +265,12 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void frontendLaunched() {
-
+    this.setOnline();
   }
 
   @Override
   public void frontendRestarted() {
-
+    this.setOnline();
   }
 
   @Override
