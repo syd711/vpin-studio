@@ -8,6 +8,7 @@
 - **Tables / Locale Settings:** Removed the hard-coded "English" locale from the VPin Studio client. I don't why I've set this once, but depending on the country, the dot is shown as number separator again.
 - **Competitions / iScored**: Added missing highscore reset for iScored subscriptions.
 
+
 ---
 
 ## Release Notes 3.12.2

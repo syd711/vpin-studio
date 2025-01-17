@@ -223,8 +223,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
       tournamentPlayerCheckbox.setSelected(false);
       tournamentPlayerCheckbox.setDisable(cabinet == null);
-      if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
-        Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+      String tournamentUserUuid = player.getTournamentUserUuid();
+      if (!StringUtils.isEmpty(tournamentUserUuid)) {
+        Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
         this.tournamentPlayerCheckbox.setSelected(accountByUuid != null);
         if(accountByUuid != null) {
           this.visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(accountByUuid.getVisibility()));
