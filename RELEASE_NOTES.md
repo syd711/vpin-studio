@@ -7,6 +7,7 @@
 - **Tables / Highscores**: Added button to open the table on VPin Mania.
 - **Tables / Locale Settings:** Removed the hard-coded "English" locale from the VPin Studio client. I don't why I've set this once, but depending on the country, the dot is shown as number separator again.
 - **Competitions / iScored**: Added missing highscore reset for iScored subscriptions.
+- **Tables / Media Recorder**: Added information how many videos have actually been recorded to the status and summary messages.
 
 ---
 

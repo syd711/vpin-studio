@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobType;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class JobDescriptor {
@@ -20,6 +22,15 @@ public class JobDescriptor {
   private boolean cancelable;
 
   private int tasksExecuted;
+  private Object userData;
+
+  public Object getUserData() {
+    return userData;
+  }
+
+  public void setUserData(Object userData) {
+    this.userData = userData;
+  }
 
   @JsonIgnore
   private Job job;
@@ -31,6 +42,7 @@ public class JobDescriptor {
   public void setErrorHint(String errorHint) {
     this.errorHint = errorHint;
   }
+
 
   public int getTasksExecuted() {
     return tasksExecuted;
