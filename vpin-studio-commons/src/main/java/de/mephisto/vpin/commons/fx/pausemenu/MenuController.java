@@ -410,12 +410,12 @@ public class MenuController implements Initializable {
 
   public void showYouTubeVideo(PauseMenuItem item) {
     if (pauseMenuSettings != null) {
-      ChromeLauncher.showYouTubeVideo(tutorialScreen, item.getYouTubeUrl(), item.getName());
+      Browser.getInstance().showYouTubeVideo(tutorialScreen, item.getYouTubeUrl(), item.getName());
     }
   }
 
   public void resetBrowser() {
-    ChromeLauncher.exitBrowser();
+    Browser.getInstance().exitBrowser();
   }
 
   public boolean isVisible() {
