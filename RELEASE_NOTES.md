@@ -9,7 +9,12 @@
 - **Competitions / iScored**: Added missing highscore reset for iScored subscriptions.
 - **Tables / Media Recorder**: Added information how many videos have actually been recorded to the status and summary messages.
 - **Pause Menu**: Fixed issue that the pause menu did not hide on table exit.
+- **Pause Menu / Tutorial Videos**: Switched from **Chrome** to **Edge**. By default, **Microsoft Edge** will now be used for the tutorial playback via YouTube. This way, users don't have to install additional software.
 - **Tables / Validations**: Switched back to a fix height for the validation error box to avoid accidental double-clicking the wrong table (avoids the table jumping when switching between valid and invalid tables).
+- **Tables / Table Data Manager**: Switched the order of **Auto-Naming** and **VPS Entry** panels on the first tab. The renaming panel belongs closer to the actual fields it changes.
+- **Tables / Launch Actions** When a table launched via Studio (through VPX.exe selection), the game status is set now. This allows the pause menu and in-game recording to work without the need to launch a game through the frontend.
+- **Tables / PUP Pack Section**: Removed the PUP pack tweaker tool again as it is writing invalid configs for PinUP Popper.
+
 
 ---
 

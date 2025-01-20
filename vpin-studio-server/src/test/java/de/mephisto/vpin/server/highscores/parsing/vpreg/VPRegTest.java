@@ -89,7 +89,7 @@ public class VPRegTest {
 
       VPReg regEntry = new VPReg(vpRegFile, entry, null);
       ScoreParsingSummary vpRegScoreSummary = regEntry.readHighscores();
-      if(vpRegScoreSummary == null) {
+      if (vpRegScoreSummary == null) {
         continue;
       }
 

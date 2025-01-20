@@ -72,7 +72,12 @@ public class AltSound2Loader {
 
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
-        File audioFile = new File(gSoundCsv.getParentFile(), record.get(4).replaceAll("\"", ""));
+        String s = record.get(4);
+        if (s == null) {
+          LOG.warn("Skipped invalid ALT Sound entry {}", record.toList());
+          continue;
+        }
+        File audioFile = new File(gSoundCsv.getParentFile(), s.replaceAll("\"", ""));
 
         AltSoundEntry entry = new AltSoundEntry();
         entry.setId(record.get(0));
@@ -102,7 +107,8 @@ public class AltSound2Loader {
 
       altSound.setFilesize(size);
       altSound.setFiles(audioFiles.size());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read g-sound CSV " + gSoundCsv.getAbsolutePath() + ": " + e.getMessage(), e);
     }
 
@@ -154,7 +160,8 @@ public class AltSound2Loader {
 
         values.add(value);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error parsing ducking profile value \"" + profileValue + "\": " + e.getMessage(), e);
     }
     return values;
@@ -170,7 +177,8 @@ public class AltSound2Loader {
     AltSound2Group group = new AltSound2Group();
     try {
       group.setName(AltSound2SampleType.valueOf(name));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       //ignore
     }
 
@@ -200,7 +208,8 @@ public class AltSound2Loader {
         AltSound2SampleType altSound2SampleType = AltSound2SampleType.valueOf(s.trim().toLowerCase());
         altSound2SampleTypes.add(altSound2SampleType);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error parsing sample types for \"" + value + "\": " + e.getMessage(), e);
     }
 

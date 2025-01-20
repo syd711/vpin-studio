@@ -705,7 +705,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       FXMLLoader loader = new FXMLLoader(PropperRenamingController.class.getResource("propper-renaming.fxml"));
       propertRenamingRoot = loader.load();
       propperRenamingController = loader.getController();
-      detailsRoot.getChildren().add(propertRenamingRoot);
+      detailsRoot.getChildren().add(1, propertRenamingRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load propper-renaming.fxml: " + e.getMessage(), e);

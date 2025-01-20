@@ -20,9 +20,9 @@ public abstract class Browser {
   protected static boolean useToTop = true;
 
   public static Browser getInstance() {
-    Browser b = new ChromeBrowser();
+    Browser b = new EdgeBrowser();
     if (b.getBrowserExe() == null || !b.getBrowserExe().exists()) {
-      b = new EdgeBrowser();
+      b = new ChromeBrowser();
     }
     if (!b.getBrowserExe().exists()) {
       LOG.error("No valid browser installation found!");

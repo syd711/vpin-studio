@@ -394,7 +394,6 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                </graphic>
             </Button>
-            <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             <SplitMenuButton fx:id="pupPackEditorBtn" mnemonicParsing="false" onAction="#onPupPackEditor" styleClass="external-component" text="PUP Pack Editor" textFill="WHITE">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onPupPackScreenTweaker" styleClass="external-component" text="PUP Pack Screen Tweaker">
