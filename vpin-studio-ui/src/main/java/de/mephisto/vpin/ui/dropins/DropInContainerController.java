@@ -5,7 +5,10 @@ import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.OSUtil;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -85,7 +88,13 @@ public class DropInContainerController implements Initializable {
 
   @FXML
   private void onInstall() {
-    DropInManager.getInstance().install(file);
+    NavigationItem activeNavigation = NavigationController.getActiveNavigation();
+    if (activeNavigation.equals(NavigationItem.Tables) && TablesController.INSTANCE.isTablesSelected()) {
+      DropInManager.getInstance().install(file);
+    }
+    else {
+      WidgetFactory.showAlert(Studio.stage, "Invalid View", "Drop-ins can only be installed when the table overview is selected.");
+    }
   }
 
   public void setData(@Nullable MenuButton dropInButton, @NonNull File file) {

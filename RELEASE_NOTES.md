@@ -14,7 +14,7 @@
 - **Tables / Table Data Manager**: Switched the order of **Auto-Naming** and **VPS Entry** panels on the first tab. The renaming panel belongs closer to the actual fields it changes.
 - **Tables / Launch Actions** When a table launched via Studio (through VPX.exe selection), the game status is set now. This allows the pause menu and in-game recording to work without the need to launch a game through the frontend.
 - **Tables / PUP Pack Section**: Removed the PUP pack tweaker tool again as it is writing invalid configs for PinUP Popper.
-
+- **Drop-In Folder**: The installation from the drop-in menu is now only allowed, when the table overview is selected. Otherwise, the table selection from the other views might lead to confusion.
 
 ---
 

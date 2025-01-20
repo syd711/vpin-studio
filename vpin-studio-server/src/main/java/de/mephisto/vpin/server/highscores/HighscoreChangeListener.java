@@ -14,7 +14,7 @@ public interface HighscoreChangeListener {
   void highscoreChanged(@NonNull HighscoreChangeEvent event);
 
   /**
-   * Fired when a highscore as changed in general.
+   * Fired when a highscore has changed in general.
    *
    * @param highscore
    */
