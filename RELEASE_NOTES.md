@@ -8,6 +8,7 @@
 - **Tables / Locale Settings:** Removed the hard-coded "English" locale from the VPin Studio client. I don't why I've set this once, but depending on the country, the dot is shown as number separator again.
 - **Competitions / iScored**: Added missing highscore reset for iScored subscriptions.
 - **Pause Menu**: Fixed issue that the pause menu did not hide on table exit.
+- **Tables / Validations**: Switched back to a fix height for the validation error box to avoid accidental double-clicking the wrong table (avoids the table jumping when switching between valid and invalid tables).
 
 ---
 

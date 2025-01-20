@@ -1558,7 +1558,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void refreshView(GameRepresentation game) {
     dismissBtn.setVisible(true);
 
-    validationError.setVisible(false);
+    setValidationVisible(false);
     validationErrorLabel.setText("");
     validationErrorText.setText("");
 
@@ -1571,7 +1571,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     if (game != null) {
       boolean errorneous = game.getValidationState() != null && game.getValidationState().getCode() > 0;
-      validationError.setVisible(errorneous && !game.getIgnoredValidations().contains(-1));
+      setValidationVisible(errorneous && !game.getIgnoredValidations().contains(-1));
       if (errorneous) {
         LocalizedValidation validationMessage = GameValidationTexts.validate(game);
         validationErrorLabel.setText(validationMessage.getLabel());
@@ -1580,7 +1580,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
     }
     else {
-      validationError.setVisible(false);
+      setValidationVisible(false);
       NavigationController.setBreadCrumb(Arrays.asList("Tables"));
     }
 
@@ -1589,11 +1589,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       if (first.isPresent()) {
         dismissBtn.setVisible(false);
 
-        validationError.setVisible(true);
+        setValidationVisible(true);
         validationErrorLabel.setText("One or more of the selected tables have issues.");
         validationErrorText.setText("");
       }
     }
+  }
+
+  public void setValidationVisible(boolean visible) {
+    validationError.setVisible(visible);
   }
 
   public void setVisible(boolean b) {
@@ -1648,7 +1652,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     scanBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
-    validationError.setVisible(c.getList().size() != 1);
+    setValidationVisible(c.getList().size() != 1);
 
     if (c.getList().isEmpty()) {
       refreshView(null);
@@ -1720,7 +1724,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
-    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
+//    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
     playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
@@ -1771,7 +1775,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     super.loadPlaylistCombo();
 
-    validationError.setVisible(false);
+    setValidationVisible(false);
 
     new TableOverviewDragDropHandler(this, tableView, loaderStack);
 
