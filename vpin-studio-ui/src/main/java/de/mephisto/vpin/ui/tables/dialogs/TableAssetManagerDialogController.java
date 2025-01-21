@@ -799,7 +799,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
-        onSearch();
+        if (isAutoSearchEnabled()) {
+          onSearch();
+        }
       }
     });
 
@@ -969,7 +971,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       this.screen = s;
       refreshTableMediaView();
-      onSearch();
+      if (isAutoSearchEnabled()) {
+        onSearch();
+      }
+      else {
+        serverAssetsList.setItems(FXCollections.emptyObservableList());
+        serverAssetsList.refresh();
+      }
       return;
     }
 
@@ -1033,7 +1041,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     refreshTableMediaView();
-    onSearch();
+    if (isAutoSearchEnabled()) {
+      onSearch();
+    }
     initDragAndDrop();
   }
 
@@ -1133,7 +1143,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
     refreshTableMediaView();
-    onSearch();
+    if (isAutoSearchEnabled()) {
+      onSearch();
+    }
   }
 
   private void initDragAndDrop() {
@@ -1184,6 +1196,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     FileDragEventHandler.install(mediaRootPane, screenWheel, false, "apng", "png", "jpg")
         .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Wheel, "apng", "png", "apng"))
         .setEmbeddedMode(isEmbeddedMode());
+  }
+
+  private boolean isAutoSearchEnabled() {
+    if (client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+      return false;
+    }
+    return true;
   }
 
   private void refreshTableView() {

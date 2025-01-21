@@ -2,6 +2,7 @@
 
 ## Changes
 
+- **Tables / Asset Manager**: **Disabled auto-search for the asset manager and PinUP Popper**. It this was causing too much traffic. You have to hit "Search" manually from now on.
 - **Tables / Backglasses**:  Support Alias Mapping for DMD Positioning.
 - **VPin Mania / Online Status**: Again, improved check to set the online status back to "offline"/"online".
 - **Tables / Highscores**: Added button to open the table on VPin Mania.
