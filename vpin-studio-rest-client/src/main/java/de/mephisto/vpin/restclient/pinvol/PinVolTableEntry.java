@@ -73,13 +73,28 @@ public class PinVolTableEntry {
     builder.append("\t");
     builder.append(getSecondaryVolume());
     builder.append("\t");
-    builder.append(getSsfBassVolume());
+    builder.append(formatGainValue(getSsfBassVolume()));
     builder.append("\t");
-    builder.append(getSsfRearVolume());
+    builder.append(formatGainValue(getSsfRearVolume()));
     builder.append("\t");
-    builder.append(getSsfFrontVolume());
+    builder.append(formatGainValue(getSsfFrontVolume()));
     builder.append("\n");
     return builder.toString();
+  }
+
+  public static int formatGainValue(int i) {
+    try {
+      if (i < -10) {
+        i = -10;
+      }
+      else if (i > 10) {
+        i = 10;
+      }
+      return i;
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 
   @Override

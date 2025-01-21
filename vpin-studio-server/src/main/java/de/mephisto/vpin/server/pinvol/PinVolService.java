@@ -18,6 +18,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -158,12 +159,25 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       entry.setName(split[0]);
       entry.setPrimaryVolume(Integer.parseInt(split[1]));
       entry.setSecondaryVolume(Integer.parseInt(split[2]));
-      entry.setSsfBassVolume(Integer.parseInt(split[3]));
-      entry.setSsfRearVolume(Integer.parseInt(split[4]));
-      entry.setSsfFrontVolume(Integer.parseInt(split[5]));
+      entry.setSsfBassVolume(parseGainValue(split[3]));
+      entry.setSsfRearVolume(parseGainValue(split[4]));
+      entry.setSsfFrontVolume(parseGainValue(split[5]));
       return entry;
     }
     return null;
+  }
+
+  private int parseGainValue(String value) {
+    try {
+      if (StringUtils.isEmpty(value)) {
+        return 0;
+      }
+      int i = Integer.parseInt(value);
+      return PinVolTableEntry.formatGainValue(i);
+    }
+    catch (NumberFormatException e) {
+      return 0;
+    }
   }
 
   private static File getPinVolTablesIniFile() {
