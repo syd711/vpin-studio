@@ -38,7 +38,6 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
 
   @Override
   public void start(Stage overlayStage) {
-    Locale.setDefault(Locale.ENGLISH);
     VPinStudioApp.client = new VPinStudioClient("localhost");
     ServerFX.client = VPinStudioApp.client;
 

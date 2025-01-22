@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -50,6 +49,9 @@ public class GamesResource {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private GameStatusService gameStatusService;
+
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
@@ -83,11 +85,17 @@ public class GamesResource {
     Game game = gameService.getGame(id);
     if (game.getEmulator().isVpxEmulator()) {
       frontendService.killFrontend();
-      return vpxService.play(game, altExe);
+      if(vpxService.play(game, altExe)) {
+        gameStatusService.setActiveStatus(id);
+        return true;
+      }
     }
     else if (game.getEmulator().isFpEmulator()) {
       frontendService.killFrontend();
-      return fpService.play(game, altExe);
+      if(fpService.play(game, altExe)) {
+        gameStatusService.setActiveStatus(id);
+        return true;
+      }
     }
     throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
   }

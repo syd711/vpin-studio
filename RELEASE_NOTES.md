@@ -1,11 +1,31 @@
+## Release Notes 3.12.4
+
+## Changes
+
+
+---
+
 ## Release Notes 3.12.3
 
 ## Changes
 
+- **Tables / Asset Manager**: **Disabled auto-search for the asset manager and PinUP Popper**. It this was causing too much traffic. You have to hit "Search" manually from now on.
 - **Tables / Backglasses**:  Support Alias Mapping for DMD Positioning.
+- **VPin Mania / Online Status**: Again, improved check to set the online status back to "offline"/"online".
+- **Tables / Highscores**: Added button to open the table on VPin Mania.
+- **Tables / Locale Settings:** Removed the hard-coded "English" locale from the VPin Studio client. I don't why I've set this once, but depending on the country, the dot is shown as number separator again.
+- **Competitions / iScored**: Added missing highscore reset for iScored subscriptions.
+- **Tables / Media Recorder**: Added information how many videos have actually been recorded to the status and summary messages.
+- **Pause Menu**: Fixed issue that the pause menu did not hide on table exit.
+- **Pause Menu / Tutorial Videos**: Switched from **Chrome** to **Edge**. By default, **Microsoft Edge** will now be used for the tutorial playback via YouTube. This way, users don't have to install additional software.
+- **Tables / Validations**: Switched back to a fix height for the validation error box to avoid accidental double-clicking the wrong table (avoids the table jumping when switching between valid and invalid tables).
+- **Tables / Table Data Manager**: Switched the order of **Auto-Naming** and **VPS Entry** panels on the first tab. The renaming panel belongs closer to the actual fields it changes.
+- **Tables / Launch Actions** When a table launched via Studio (through VPX.exe selection), the game status is set now. This allows the pause menu and in-game recording to work without the need to launch a game through the frontend.
+- **Tables / PUP Pack Section**: Removed the PUP pack tweaker tool again as it is writing invalid configs for PinUP Popper.
+- **Tables / PinVOL Settings**: Improved persistence layer to read/write only valid values. These may got broken due to the initial errorneous integration here.
+- **Drop-In Folder**: The installation from the drop-in menu is now only allowed, when the table overview is selected. Otherwise, the table selection from the other views might lead to confusion.
 
 ---
-
 
 ## Release Notes 3.12.2
 

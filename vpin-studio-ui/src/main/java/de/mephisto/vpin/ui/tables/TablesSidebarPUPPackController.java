@@ -276,12 +276,16 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
+    pupPackEditorBtn.managedProperty().bindBidirectional(pupPackEditorBtn.visibleProperty());
+
     errorBox.setVisible(false);
     dataBox.setVisible(false);
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
 
+    //TODO disabled for now
     pupPackEditorBtn.setDisable(!client.getSystemService().isLocal());
+    pupPackEditorBtn.setVisible(false);
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       optionEditBtn.setDisable(StringUtils.isEmpty(newValue));

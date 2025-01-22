@@ -244,12 +244,14 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   public void tableExited(TableStatusChangedEvent event) {
     vpxIsRunning = false;
     frontendIsRunning = true;
+    ServerFX.getInstance().exitPauseMenu();
   }
 
   @Override
   public void frontendExited() {
     vpxIsRunning = false;
     frontendIsRunning = false;
+    ServerFX.getInstance().exitPauseMenu();
   }
 
   @Override

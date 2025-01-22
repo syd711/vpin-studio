@@ -60,7 +60,17 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
   @Override
   public void competitionCreated(@NonNull Competition competition) {
-    if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+    if (competition.getType().equals(CompetitionType.ISCORED.name())) {
+      Game game = gameService.getGame(competition.getGameId());
+      if (game != null) {
+        if (competition.isHighscoreReset()) {
+          if (highscoreBackupService.backup(game)) {
+            highscoreService.resetHighscore(game);
+          }
+        }
+      }
+    }
+    else if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
       try {
         Game game = gameService.getGame(competition.getGameId());
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));
@@ -99,7 +109,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());
 
               long messageId = discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", "The subscription channel for table \"" + competition.getName() + "\" has been created.\n" +
-                "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
+                  "New highscores for this table will be posted here.\nOther player bots can subscribe to this channel.\nTheir highscores will compete with yours.");
               discordService.initCompetition(serverId, channelId, messageId, null);
 
               if (!competition.isHighscoreReset()) {
@@ -120,7 +130,8 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
             joinCompetition(competition, bot);
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error creating table subscription: " + e.getMessage(), e);
       }
     }

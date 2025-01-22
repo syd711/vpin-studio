@@ -52,6 +52,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -225,6 +226,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private MenuItem screenDeleteBtn;
+
+  @FXML
+  private HBox playlistHint;
 
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
@@ -660,6 +664,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    if (playlistHint != null) {
+      playlistHint.managedProperty().bindBidirectional(playlistHint.visibleProperty());
+      playlistHint.setVisible(false);
+    }
+
     assetSearchBox.managedProperty().bindBidirectional(assetSearchBox.visibleProperty());
     renameBtn.managedProperty().bindBidirectional(renameBtn.visibleProperty());
 
@@ -799,7 +808,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
-        onSearch();
+        if (isAutoSearchEnabled()) {
+          onSearch();
+        }
       }
     });
 
@@ -969,7 +980,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       this.screen = s;
       refreshTableMediaView();
-      onSearch();
+      if (isAutoSearchEnabled()) {
+        onSearch();
+      }
+      else {
+        serverAssetsList.setItems(FXCollections.emptyObservableList());
+        serverAssetsList.refresh();
+      }
       return;
     }
 
@@ -1010,6 +1027,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   public void setPlaylist(Stage stage, @NonNull TableOverviewController overviewController, @NonNull PlaylistRepresentation playlist, @Nullable VPinScreen screen) {
+    if (this.playlistHint != null) {
+      this.playlistHint.setVisible(client.getFrontendService().getFrontendType().equals(FrontendType.Popper));
+    }
     localStage = stage;
     this.overviewController = overviewController;
     this.playlist = playlist;
@@ -1033,11 +1053,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     refreshTableMediaView();
-    onSearch();
+    if (isAutoSearchEnabled()) {
+      onSearch();
+    }
     initDragAndDrop();
   }
 
   public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen, boolean embedded) {
+    if (this.playlistHint != null) {
+      this.playlistHint.setVisible(false);
+    }
     this.localStage = stage;
     this.embedded = embedded;
     if (!embedded) {
@@ -1133,7 +1158,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
     refreshTableMediaView();
-    onSearch();
+    if (isAutoSearchEnabled()) {
+      onSearch();
+    }
   }
 
   private void initDragAndDrop() {
@@ -1184,6 +1211,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     FileDragEventHandler.install(mediaRootPane, screenWheel, false, "apng", "png", "jpg")
         .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Wheel, "apng", "png", "apng"))
         .setEmbeddedMode(isEmbeddedMode());
+  }
+
+  private boolean isAutoSearchEnabled() {
+    if (client.getFrontendService().getFrontendType().equals(FrontendType.Popper)) {
+      return false;
+    }
+    return true;
   }
 
   private void refreshTableView() {

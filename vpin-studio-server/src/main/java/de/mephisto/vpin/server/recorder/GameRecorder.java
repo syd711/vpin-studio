@@ -78,6 +78,10 @@ public class GameRecorder {
               screenRecorders.add(screenRecorder);
               RecordingResult result = screenRecorder.record(option);
               finalizeGameRecorder(game, screen, option.getRecordMode(), recordingTempFile);
+
+              int count = (int) jobDescriptor.getUserData();
+              jobDescriptor.setUserData((count+1));
+
               return result;
             }
           };

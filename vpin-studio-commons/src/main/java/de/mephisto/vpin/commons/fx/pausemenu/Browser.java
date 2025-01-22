@@ -12,29 +12,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ChromeLauncher {
-  private final static Logger LOG = LoggerFactory.getLogger(ChromeLauncher.class);
+public abstract class Browser {
+  private final static Logger LOG = LoggerFactory.getLogger(Browser.class);
 
-  private static boolean launched = false;
-  private static boolean kioskMode = false;
-  private static boolean useToTop = true;
+  protected static boolean launched = false;
+  protected static boolean kioskMode = false;
+  protected static boolean useToTop = true;
 
-  public static void showYouTubeVideo(FrontendPlayerDisplay screenDisplay, String url, String title) {
+  public static Browser getInstance() {
+    Browser b = new EdgeBrowser();
+    if (b.getBrowserExe() == null || !b.getBrowserExe().exists()) {
+      b = new ChromeBrowser();
+    }
+    if (!b.getBrowserExe().exists()) {
+      LOG.error("No valid browser installation found!");
+    }
+    return b;
+  }
+
+  public void showYouTubeVideo(FrontendPlayerDisplay screenDisplay, String url, String title) {
     launched = true;
     try {
       int x = screenDisplay.getX();
       int y = screenDisplay.getY();
       int width = screenDisplay.getWidth();
       int height = screenDisplay.getHeight();
-      LOG.info("Showing Chrome at " + x + "/" + y + " in [" + width + "x" + height + "]");
-      File chromeExe = new File("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
-      if (!chromeExe.exists()) {
-        chromeExe = new File("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
-        if (!chromeExe.exists()) {
-          LOG.error("Chrome installation not found: " + chromeExe.getAbsolutePath());
-          return;
-        }
-      }
+      LOG.info("Showing {} at " + x + "/" + y + " in [" + width + "x" + height + "]", this.getClass().getSimpleName());
+      File chromeExe = getBrowserExe();
+      if (chromeExe == null) return;
 
       File profileFolder = new File("./resources/menu-profile");
       profileFolder.mkdirs();
@@ -45,8 +50,8 @@ public class ChromeLauncher {
       }
 
       List<String> cmds = Arrays.asList("\"" + chromeExe.getAbsolutePath() + "\"",
-        "--app=\"data:text/html,<html><head><title>vpin</title></head><body><script>" + resizing + ";window.location='" + url + "';</script></body></html>\"",
-        "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
+          "--app=\"data:text/html,<html><head><title>vpin</title></head><body><script>" + resizing + ";window.location='" + url + "';</script></body></html>\"",
+          "--window-position=" + x + "," + y, "--user-data-dir=\"" + profileFolder.getAbsolutePath() + "\"", "--autoplay-policy=no-user-gesture-required");
       if (kioskMode) {
         cmds = new ArrayList<>(cmds);
         cmds.add("--kiosk");
@@ -61,25 +66,31 @@ public class ChromeLauncher {
           try {
             Thread.sleep(ServerFX.TO_FRONT_DELAY - 500);
             NirCmd.setTopMost(title);
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             //ignore
           }
         }).start();
       }
 
       ServerFX.toFront(PauseMenu.stage, true);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to show YT video: " + e.getMessage(), e);
     }
   }
 
-  public static void exitBrowser() {
+  public abstract File getBrowserExe();
+
+  public void exitBrowser() {
     try {
       if (launched) {
-        SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/IM", "chrome.exe"), false);
+        String exeName = getBrowserExe().getName();
+        SystemCommandExecutor exit = new SystemCommandExecutor(Arrays.asList("taskkill", "/IM", exeName), false);
         exit.executeCommand();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to exit browser: " + e.getMessage());
     }
   }

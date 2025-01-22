@@ -701,6 +701,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return media.getMediaItems(screen);
   }
 
+  /**
+   * Launches the given game through the frontend.
+   * @param game
+   * @return
+   */
   public boolean launchGame(Game game) {
     if (game != null) {
       systemService.setMaintenanceMode(false);

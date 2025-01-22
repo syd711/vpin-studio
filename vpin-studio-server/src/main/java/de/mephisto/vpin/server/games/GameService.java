@@ -756,6 +756,7 @@ public class GameService implements InitializingBean {
         @Override
         public void run() {
           try {
+            Thread.currentThread().setName("VPS Update Scheduler");
             List<Game> games = getKnownGames(-1); 
             vpsService.update(games);
           }

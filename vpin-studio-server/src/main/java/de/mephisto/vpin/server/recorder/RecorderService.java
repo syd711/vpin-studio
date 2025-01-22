@@ -79,6 +79,7 @@ public class RecorderService {
 
     jobDescriptor = new JobDescriptor(JobType.RECORDER);
     jobDescriptor.setTitle("Screen Recorder (" + recordingData.size() + " games)");
+    jobDescriptor.setUserData(0);
     jobDescriptor.setJob(job);
     jobService.offer(jobDescriptor);
     LOG.info("Offered screen recorder job.");

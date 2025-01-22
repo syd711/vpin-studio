@@ -102,7 +102,6 @@ public class Studio extends Application {
     Studio.stage = stage;
     Studio.hostServices = getHostServices();
 
-    Locale.setDefault(Locale.ENGLISH);
     StudioUpdatePreProcessing.execute();
 
     Studio.errorHandler = e -> {

@@ -233,6 +233,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     }).thenAcceptLater((latestCompetitionScore) -> {
       LOG.info("Loaded score summary: {}", latestCompetitionScore);
       if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
+        emptyPanel.setVisible(false);
         List<ScoreRepresentation> scores = latestCompetitionScore.getScores();
 
         int index = 0;

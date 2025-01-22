@@ -69,6 +69,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private AlxController alxController;
   private RepositoryController repositoryController;
 
+  public static TablesController INSTANCE;
+
+  public boolean isTablesSelected() {
+    return tabPane.getSelectionModel().getSelectedIndex() == 0;
+  }
+
   @FXML
   private BorderPane root;
 
@@ -176,6 +182,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    INSTANCE = this;
+
     NavigationController.setInitialController(NavigationItem.Tables, this, root);
     EventManager.getInstance().addListener(this);
     sidePanelRoot = root.getRight();
@@ -546,6 +554,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public boolean isTabStatisticsSelected() {
     return isTabSelected(TAB_STATISTICS);
   }
+
   private boolean isTabSelected(int tab) {
     return getSelectedTab() == tab;
   }

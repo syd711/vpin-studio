@@ -22,6 +22,10 @@ public class RecordingResult {
     this.duration = duration;
   }
 
+  public boolean hasRecorded() {
+    return this.duration > 0;
+  }
+
   @Override
   public String toString() {
     return "Recording of \"" + fileName + "\", duration: " + DurationFormatUtils.formatDuration(duration, "HH 'hours', mm 'minutes', ss 'seconds'");

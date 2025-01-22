@@ -3,27 +3,17 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
-import de.mephisto.vpin.server.highscores.monitoring.HighscoreMonitoringService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Date;
 
 @Service
 public class GameStatusService implements TableStatusChangeListener, FrontendStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameStatusService.class);
-
-  @Autowired
-  private HighscoreMonitoringService highscoreMonitoringService;
 
   private final GameStatus status = new GameStatus();
 
@@ -33,6 +23,7 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
   public boolean isActive() {
     return status.isActive() || forceActive;
   }
+
   public void setForceActive(boolean active) {
     this.forceActive = active;
   }
@@ -46,13 +37,17 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
     status.setStarted(new Date());
     status.setGameId(event.getGame().getId());
     LOG.info("GameStatusService saved \"" + event.getGame().getGameDisplayName() + "\" as active game.");
-    highscoreMonitoringService.startMonitoring(event.getGame());
+  }
+
+  public void setActiveStatus(int id) {
+    status.setGameId(id);
+    status.setStarted(new Date());
+    LOG.info("GameStatusService saved game id \"" + id + "\" as active game.");
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     resetStatus();
-    highscoreMonitoringService.stopMonitoring();
   }
 
   @Override
@@ -63,13 +58,11 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
   @Override
   public void frontendExited() {
     resetStatus();
-    highscoreMonitoringService.stopMonitoring();
   }
 
   @Override
   public void frontendRestarted() {
     resetStatus();
-    highscoreMonitoringService.stopMonitoring();
   }
 
   public void init(FrontendStatusService frontendStatusService) {
@@ -81,4 +74,5 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
     status.setGameId(-1);
     SLOG.info("Resetted active game status");
   }
+
 }

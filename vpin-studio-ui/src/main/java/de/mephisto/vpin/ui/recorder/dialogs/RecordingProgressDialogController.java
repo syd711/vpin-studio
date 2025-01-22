@@ -177,7 +177,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     }
 
-    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings.");
+    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + recordingDataSummary.size() + " recordings, recorded " + jobDescriptor.getUserData() + " video(s).");
   }
 
   private void finishRecording(boolean cancelled) {
@@ -185,7 +185,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     JobPoller.getInstance().removeListener(this);
     jobDescriptor.setProgress(1);
 
-    //refetch finished job for errors status
+    //re-fetch finished job for errors status
     jobDescriptor = client.getJobsService().getJob(jobDescriptor.getUuid());
 
     Platform.runLater(() -> {
@@ -213,7 +213,15 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.", jobDescriptor.getErrorHint());
       }
       else {
-        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " game(s).");
+        String game = "game";
+        String video = "video";
+        if(recordingDataSummary.size() > 1) {
+          game = "games";
+        }
+        if(((int)jobDescriptor.getUserData()) > 1) {
+          video = "videos";
+        }
+        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " " + game + ", recorded " + jobDescriptor.getUserData() + " " + video + ".\"");
       }
 
     });
