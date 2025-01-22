@@ -225,8 +225,8 @@ public class ArchiveService implements InitializingBean {
   public void afterPropertiesSet() {
     String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
     if(!StringUtils.isEmpty(systemName) && systemName.contains("Syd")) {
-      systemService.setArchiveType(ArchiveType.VPA);
-      LOG.info("Switched archiving mode to VPA.");
+//      systemService.setArchiveType(ArchiveType.VPA);
+//      LOG.info("Switched archiving mode to VPA.");
     }
 
     //VPA

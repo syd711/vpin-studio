@@ -1,3 +1,10 @@
+## Release Notes 3.12.4
+
+## Changes
+
+
+---
+
 ## Release Notes 3.12.3
 
 ## Changes
