@@ -1,12 +1,10 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build MacOS Client"]
+    types:
+      - completed
 
 jobs:
   build:
