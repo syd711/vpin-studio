@@ -17,12 +17,16 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
 
   private String name;
 
+  // Regex for scores with or without thousands seperator
+  // Could start with #1<space>, 1#<space> or 1)<space>
+  // Starts with or is followed by 1 to 3 characters or spaces => player initials
+  // Followed by one or more spaces
+  // Followed by decimals which might include dots and comma's => score
+  // Followed by an <eol> (so no more characters)
+  static Pattern scorePattern = Pattern.compile("(?:^|#\\d+ |\\d+# |\\d+\\) )([\\S ]{1,3})\\s+(\\d+([.,\u00a0\ufffd]\\d{3})*)$");
+
   public SortedScoreAdapter(String name) {
     this.name = name;
-  }
-
-  public SortedScoreAdapter() {
-
   }
 
   @Override
@@ -33,14 +37,6 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
   @NonNull
   public List<Score> getScores(@NonNull Game game, @NonNull Date createdAt, @NonNull List<String> lines, @NonNull List<String> titles) {
     List<Score> scores = new ArrayList<>();
-
-    // Regex for scores with or without thousands seperator
-    // Could start with #1<space>, 1#<space> or 1)<space>
-    // Starts with or is followed by 1 to 3 characters or spaces => player initials
-    // Followed by one or more spaces
-    // Followed by decimals which might include dots and comma's => score
-    // Followed by an <eol> (so no more characters)
-    Pattern scorePattern = Pattern.compile("(?:^|#\\d+ |\\d+# |\\d+\\) )([\\S ]{1,3})\\s+(\\d+([.,]\\d{3})*)$");
 
     String source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
 

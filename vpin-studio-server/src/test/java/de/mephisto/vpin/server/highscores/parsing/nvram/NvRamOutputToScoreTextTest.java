@@ -72,7 +72,7 @@ public class NvRamOutputToScoreTextTest {
 
           byte[] scBytes = scoreList.toString().getBytes();
           byte[] fcBytes = fileContents.getBytes();
-          for (int i = 0; i < fcBytes.length; i++) {
+          for (int i = 0; i < fcBytes.length && i < scBytes.length; i++) {
             if (scBytes[i] != fcBytes[i]) {
               System.out.println(scBytes[i] + "|" + fcBytes[i]);
             }
@@ -144,6 +144,22 @@ public class NvRamOutputToScoreTextTest {
             "#10 SND   40,000,000");
   }
 
+  /**
+   * Test SortedScoreAdapter
+   */
+  @Test
+  public void test_SingleScore() throws Exception {
+    doTestSingle("dfndr_l4.nv",
+        "#1 ???   322,230");
+
+    doTestSingle("blakpyra.nv",
+         "#1 ???   1,867,500");
+
+    doTestSingle("catacomb.nv",
+         "#1 ???   349,290");
+  }
+
+
   protected void doTestSingle(String nv, String expected) throws Exception {
     Game game = new Game();
     game.setGameDisplayName("Dummy test game for " + nv);
@@ -171,7 +187,7 @@ public class NvRamOutputToScoreTextTest {
       scores.append(score.toString(Locale.US));
     }
 
-    assertFalse(parse.isEmpty());
+    assertFalse(parse.isEmpty(), "Parsed scores is empty");
     if (expected != null) {
       assertEquals(expected, scores.toString());
     }

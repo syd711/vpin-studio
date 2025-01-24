@@ -95,12 +95,12 @@ public class NvRamOutputToScoreTextConverter {
 
   @NonNull
   private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut) throws Exception {
-    // replace french space character, displayed ÿ with "."
-    stdOut = stdOut
+    // replace french space character, displayed ÿ with "."  => done later when parsing scores
+    /*stdOut = stdOut
       .replaceAll("\u00ff", ".")
       .replaceAll("\u00a0", ".")
       .replaceAll("\u202f", ".")
-      .replaceAll("\ufffd", ".");
+      .replaceAll("\ufffd", ".");*/
 
     //check for pre-formatting
     List<String> lines = Arrays.asList(stdOut.trim().split("\n"));

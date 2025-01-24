@@ -39,7 +39,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
       if (titles.contains(line.trim())) {
-        String scoreLine = lines.get(i + 1);
+        String scoreLine = lines.get(++i);
         Score score = createTitledScore(createdAt, scoreLine, source, gameId);
         if (score != null) {
           scores.add(score);
