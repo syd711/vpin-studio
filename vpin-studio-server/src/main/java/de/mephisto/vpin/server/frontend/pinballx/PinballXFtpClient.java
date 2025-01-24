@@ -21,6 +21,8 @@ public class PinballXFtpClient {
   protected int port;
   @Value("${pinballX.mediaserver.rootfolder}")
   protected String rootfolder;
+  @Value("${pinballX.mediaserver.usePassiveMode:true}")
+  protected boolean usePassiveMode;
 
   protected String user;
   protected String pwd;
@@ -40,7 +42,7 @@ public class PinballXFtpClient {
   public boolean testConnection() {
     FTPClient ftp = null;
     try {
-      ftp = open(true);
+      ftp = open();
       return true;
     }
     catch (Exception e) {
@@ -52,13 +54,20 @@ public class PinballXFtpClient {
     }
   }
 
-  protected FTPClient open(boolean passive) throws IOException {
+  protected FTPClient open() throws IOException {
+    return open(usePassiveMode);
+  }
+
+  private FTPClient open(boolean passiveMode) throws IOException {
     FTPClient ftp = new FTPClient();
     ftp.connect(host, port);
     ftp.setControlKeepAliveTimeout(Duration.ofMinutes(5));
     ftp.setBufferSize(1024 * 1024);
-    if (passive) {
+    if (passiveMode) {
       ftp.enterLocalPassiveMode();
+    }
+    else {
+      ftp.enterLocalActiveMode();
     }
     int reply = ftp.getReplyCode();
     if (!FTPReply.isPositiveCompletion(reply)) {
@@ -68,6 +77,11 @@ public class PinballXFtpClient {
 
     if (ftp.login(user, pwd)) {
       return ftp;
+    }
+
+    // we tried in passive mode, try again in active mode
+    if (passiveMode) {
+      return open(false);
     }
     throw new IOException("Error, user cannot log in.");
   }
