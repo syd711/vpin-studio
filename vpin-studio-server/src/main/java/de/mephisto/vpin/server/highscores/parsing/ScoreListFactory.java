@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.listadapters.DefaultAdapter;
@@ -9,7 +10,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class ScoreListFactory {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreListFactory.class);
@@ -23,7 +27,7 @@ public class ScoreListFactory {
     adapters.add(new SortedScoreAdapter("tf_180"));
   }
 
-  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, List<String> titles) {
+  public static List<Score> create(@NonNull String raw, @NonNull Date createdAt, @Nullable Game game, @NonNull ScoringDB scoringDB) {
     List<Score> scores = new ArrayList<>();
 
     try {
@@ -33,6 +37,7 @@ public class ScoreListFactory {
         return scores;
       }
 
+      List<String> titles = scoringDB.getHighscoreTitles();
       if (game != null) {
         for (ScoreListAdapter adapter : adapters) {
           if (adapter.isApplicable(game)) {

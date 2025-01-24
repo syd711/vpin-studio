@@ -39,16 +39,18 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
       if (titles.contains(line.trim())) {
-        String scoreLine = lines.get(++i);
-        Score score = createTitledScore(createdAt, scoreLine, source, gameId);
-        if (score != null) {
-          scores.add(score);
+        String scoreLine = lines.get(i + 1);
+        if (!isScoreLine(scoreLine, (i + 1))) {
+          Score score = createTitledScore(createdAt, scoreLine, source, gameId);
+          if (score != null) {
+            scores.add(score);
+          }
+          //do not increase index, as we still search for #1
+          continue;
         }
-        //do not increase index, as we still search for #1
-        continue;
       }
 
-      if (line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1) {
+      if (isScoreLine(line, index)) {
         Score score = createScore(createdAt, line, source, gameId);
         if (score != null) {
           score.setPosition(scores.size() + 1);
@@ -63,6 +65,10 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     }
 
     return filterDuplicates(scores);
+  }
+
+  private static boolean isScoreLine(String line, int index) {
+    return line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1;
   }
 
   @Nullable

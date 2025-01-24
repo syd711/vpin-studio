@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.text;
 
 
-import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
@@ -26,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HighscoreToRawTest {
 
+  private static ScoringDB scoringDB = ScoringDB.load();
+
   @Test
   public void testAllTextFiles() {
     ScoringDB scoringDB = ScoringDB.load();
@@ -47,7 +48,7 @@ public class HighscoreToRawTest {
       assertNotNull(raw);
       assertTrue(raw.contains(ScoreTextFileAdapterImpl.HIGHEST_SCORES));
 
-      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
+      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
       assertFalse(parse.isEmpty());
     }
     System.out.println("Tested " + count + " entries");

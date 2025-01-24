@@ -103,6 +103,8 @@ public class ScoringDB {
 
   private String pinemhiVersion;
 
+  private List<String> highscoreTitles = new ArrayList<>();
+
   private List<Map<String,Object>> highscoreTextParsers = new ArrayList<>();
 
   private List<Map<String,Object>> highscoreVPRegParsers = new ArrayList<>();
@@ -139,6 +141,14 @@ public class ScoringDB {
 
   public List<String> getIgnoredVPRegEntries() {
     return ignoredVPRegEntries;
+  }
+
+  public List<String> getHighscoreTitles() {
+    return highscoreTitles;
+  }
+
+  public void setHighscoreTitles(List<String> highscoreTitles) {
+    this.highscoreTitles = highscoreTitles;
   }
 
   public String getPinemhiVersion() {

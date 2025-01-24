@@ -1,19 +1,15 @@
 package de.mephisto.vpin.server.highscores.parsing;
 
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,18 +38,18 @@ public class HighscoreParsingService {
   private PlayerService playerService;
 
   @Autowired
-  private PreferencesService preferencesService;
+  private SystemService systemService;
 
   @NonNull
   public List<Score> parseScores(@NonNull Date createdAt, @NonNull String raw, @Nullable Game game, long serverId) {
-    List<Score> scores = ScoreListFactory.create(raw, createdAt, game, getTitleList());
+    List<Score> scores = ScoreListFactory.create(raw, createdAt, game, systemService.getScoringDatabase());
     for (Score score : scores) {
       Player player = playerService.getPlayerForInitials(serverId, score.getPlayerInitials());
       score.setPlayer(player);
 
-      if(score.getPlayerInitials().equals("???") && score.getNumericScore() > 0) {
+      if (score.getPlayerInitials().equals("???") && score.getNumericScore() > 0) {
         Player admin = playerService.getAdminPlayer();
-        if(admin != null) {
+        if (admin != null) {
           score.setPlayer(admin);
           score.setPlayerInitials(admin.getInitials());
         }
@@ -61,29 +57,5 @@ public class HighscoreParsingService {
     }
 
     return scores;
-  }
-
-  private List<String> getTitleList() {
-    String titles = (String) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_TITLES);
-    if (StringUtils.isEmpty(titles)) {
-      titles = "";
-    }
-
-    List<String> titleList = new ArrayList<>();
-    if (!StringUtils.isEmpty(titles)) {
-      String[] split = titles.split(",");
-      for (String title : split) {
-        if (title.length() > 0) {
-          titleList.add(title);
-        }
-      }
-    }
-
-    for (String defaultTitle : DefaultHighscoresTitles.DEFAULT_TITLES) {
-      if (!titleList.contains(defaultTitle)) {
-        titleList.add(defaultTitle);
-      }
-    }
-    return titleList;
   }
 }

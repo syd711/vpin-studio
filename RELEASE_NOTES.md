@@ -4,7 +4,7 @@
 
 - **Highscore Resets**: Switched the default from 99 to 0. These values are only used when the highscore has been reset through the "Delete Table" dialog. 
 - **VPin Studio Server**: Improved launch and exit curl calls. The curl call is replaced now with the additional parameter **emu** which contains additional information about the game emulator used, depending on the frontend you are using. This way, you can share your tables folder between different VPX emulators and the correct emulator is still detected corrected. The parameter is optional, so if the automatic update of the **curl** call fails for some reason, the old format is still valid. 
-
+- **Highscore Settings**: Removed configuration option for highscore titles.
 
 ---
 

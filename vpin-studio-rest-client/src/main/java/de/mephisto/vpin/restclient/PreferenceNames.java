@@ -6,7 +6,6 @@ public interface PreferenceNames {
 
   String SYSTEM_NAME = "systemName";
 
-  String HIGHSCORE_TITLES = "highscoreTitles";
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
   String HIGHSCORE_CARD_SETTINGS = "highscoreCardSettings";
 

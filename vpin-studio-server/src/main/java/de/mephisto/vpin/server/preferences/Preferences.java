@@ -49,9 +49,6 @@ public class Preferences {
 
   private String pinballXSettings;
 
-  @Column(length = 1024)
-  private String highscoreTitles;
-
   private String highscoreCardSettings;
 
   private String highscoreCardTemplates;
@@ -349,14 +346,6 @@ public class Preferences {
 
   public void setIdleTimeout(int idleTimeout) {
     this.idleTimeout = idleTimeout;
-  }
-
-  public String getHighscoreTitles() {
-    return highscoreTitles;
-  }
-
-  public void setHighscoreTitles(String highscoreTitles) {
-    this.highscoreTitles = highscoreTitles;
   }
 
   public String getDiscordGuildId() {

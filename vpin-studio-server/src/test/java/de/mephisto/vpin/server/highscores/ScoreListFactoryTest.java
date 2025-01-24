@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.ScoreListFactory;
 import de.mephisto.vpin.server.games.Game;
 import org.junit.Test;
@@ -11,6 +11,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class ScoreListFactoryTest {
+
+  private static ScoringDB scoringDB = ScoringDB.load();
 
   @Test
   public void testScoreListFactoryDefaultAdapter() {
@@ -58,7 +60,7 @@ public class ScoreListFactoryTest {
       "CROWNED FOR THE 1st TIME\n" +
       "16 AUG, 2022 7:16 PM\n";
 
-    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, DefaultHighscoresTitles.DEFAULT_TITLES);
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
     assertEquals(parse.size(), 5);
   }
 
@@ -95,7 +97,7 @@ public class ScoreListFactoryTest {
       "BEST COMBO CHAMPION\n" +
       "LON   5-WAY\n";
 
-    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, DefaultHighscoresTitles.DEFAULT_TITLES);
+    List<Score> parse = ScoreListFactory.create(rawScore, new Date(), game, scoringDB);
     assertEquals(parse.size(), 10);
   }
 }

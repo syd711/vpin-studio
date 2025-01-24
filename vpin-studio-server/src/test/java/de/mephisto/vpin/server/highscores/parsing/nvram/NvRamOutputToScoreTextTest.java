@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
-import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
@@ -23,8 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NvRamOutputToScoreTextTest {
   private final static Logger LOG = LoggerFactory.getLogger(NvRamOutputToScoreTextTest.class);
 
+  private static ScoringDB scoringDB = ScoringDB.load();
 
-  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "fire_l3.nv", "dh_lx2.nv");
+  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv", "fire_l3.nv");
 
   @Test
   public void testAllFiles() throws Exception {
@@ -50,7 +50,7 @@ public class NvRamOutputToScoreTextTest {
       String raw = NvRamOutputToScoreTextConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
       assertNotNull(raw);
-      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, DefaultHighscoresTitles.DEFAULT_TITLES);
+      List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), null, scoringDB);
       assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
 
       File listFile = new File(entry.getAbsolutePath().concat(".list"));
@@ -116,15 +116,15 @@ public class NvRamOutputToScoreTextTest {
   /**
    * Test DefaultAdapter
    */
-//  @Test
-//  public void test_dh_lx2() throws Exception {
-//    doTestSingle("dh_lx2.nv",
-//        "#1 2.9   2,961,835,010\r\n" +
-//            "#2 ???   1,507,170,530\r\n" +
-//            "#3 DAD   1,167,255,510\r\n" +
-//            "#4 DAD   1,050,455,400\r\n" +
-//            "#5 DAD   1,016,950,110");
-//  }
+  @Test
+  public void test_dh_lx2() throws Exception {
+    doTestSingle("dh_lx2.nv",
+        "#1 2.9   2,961,835,010\r\n" +
+            "#2 ???   1,507,170,530\r\n" +
+            "#3 DAD   1,167,255,510\r\n" +
+            "#4 DAD   1,050,455,400\r\n" +
+            "#5 DAD   1,016,950,110");
+  }
 
   /**
    * Test SortedScoreAdapter
@@ -150,7 +150,7 @@ public class NvRamOutputToScoreTextTest {
   @Test
   public void test_SingleScore() throws Exception {
     doTestSingle("dfndr_l4.nv",
-        "#1 ???   322,230");
+        "#1 ???   2,500,000");
 
     doTestSingle("blakpyra.nv",
          "#1 ???   1,867,500");
@@ -175,7 +175,7 @@ public class NvRamOutputToScoreTextTest {
 
     LOG.info("raw : " + raw);
 
-    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, DefaultHighscoresTitles.DEFAULT_TITLES);
+    List<Score> parse = ScoreListFactory.create(raw, new Date(entry.length()), game, scoringDB);
     LOG.info("Parsed " + parse.size() + " score entries.");
 
     StringBuilder scores = new StringBuilder();
