@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -46,7 +48,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GameService implements InitializingBean {
+public class GameService implements InitializingBean, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
 
   private static final double MATCHING_THRESHOLD = 0.1;
@@ -755,7 +757,6 @@ public class GameService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     try {
-      startVPSRefresh();
       highscoreService.setGameService(this);
     }
     catch (Exception e) {
@@ -763,35 +764,9 @@ public class GameService implements InitializingBean {
     }
   }
 
-  //---------------------------------------
-
-  public void startVPSRefresh() {
-    if (this.refreshTimer == null && this.refreshInterval > 0) {
-      this.refreshTimer = new Timer();
-      Calendar now = Calendar.getInstance();
-      // small delay after server restart for the initial refresh, then refresh periodically
-      now.add(Calendar.MINUTE, 3);
-      refreshTimer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          try {
-            Thread.currentThread().setName("VPS Update Scheduler");
-            List<Game> games = getKnownGames(-1);
-            vpsService.update(games);
-          }
-          catch (Exception e) {
-            LOG.error("Error happened during VPS update", e);
-          }
-        }
-      }, now.getTime(), refreshInterval * 24 * 60 * 60 * 1000);
-    }
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+    List<Game> games = getKnownGames(-1);
+    vpsService.update(games);
   }
-
-  public void stopVPSRefresh() {
-    if (this.refreshTimer != null) {
-      refreshTimer.cancel();
-      this.refreshTimer = null;
-    }
-  }
-
 }
