@@ -44,6 +44,7 @@ jobs:
       - name: Install Dependencies
         run: |
           brew update
+          brew install --cask packages
           brew install maven 
           brew install openjdk@11 # Ensure Zulu JDK 11 is installed on macOS
           brew install jpackage
@@ -62,7 +63,7 @@ jobs:
         run: mvn clean install
 
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
