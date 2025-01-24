@@ -1,0 +1,95 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  mac-app-build:
+    name: mac-app-build
+    runs-on: macos-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout VPin Studio
+        uses: actions/checkout@v3
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-studio-popper-client
+          path: ./vpin-studio-popper-client
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Checkout Popper Client Repo
+        uses: actions/checkout@v3
+        with:
+          repository: syd711/vpin-mania-rest-client
+          path: ./vpin-mania-rest-client
+          token: ${{ secrets.ACCESS_TOKEN }}        
+
+      # Step 2: Set up Zulu OpenJDK 11
+      - name: Set up Zulu JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      # Step 3: Install Maven and dependencies
+      #Zulu 11 does not include jpackage, need to install it
+      - name: Install Dependencies
+        run: |
+          brew update
+          brew install maven 
+          brew install openjdk@11 # Ensure Zulu JDK 11 is installed on macOS
+          brew install jpackage
+
+      # Step 4: Build the Java application
+      - name: Run maven build for vpin mania rest client
+        working-directory: ./vpin-mania-rest-client
+        run: mvn clean install -DskipTests
+
+      - name: Run maven build for Assets API
+        working-directory: ./vpin-connector-assets
+        run: mvn clean install
+
+      - name: Run maven build for popper client
+        working-directory: ./vpin-studio-popper-client
+        run: mvn clean install
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+     
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots clean package
+
+     # Step 5: Package the Java application as a macOS .app bundle
+     #The jpackage config needs to be updated to properly reference the locations of the files. 
+      - name: Package as macOS App
+        run: |
+          jpackage @jpackage_config.txt
+
+      # Step 7: Zip the .app bundle for easy distribution
+      #Update for correct location
+      - name: Zip macOS .app Bundle
+        run: |
+          mkdir -p target/macApp
+          cd target/macApp
+          zip -r VpinStudioMac.zip VpinStudio.app
+
+      # Step 8: Upload the .app zip file as an artifact
+       #Update for correct location
+      - name: Upload macOS Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macOS-build
+          path: target/macApp/VpinStudioMac.zip
