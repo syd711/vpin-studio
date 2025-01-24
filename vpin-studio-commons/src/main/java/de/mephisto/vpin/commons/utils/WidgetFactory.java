@@ -304,28 +304,6 @@ public class WidgetFactory {
     return "#" + hex;
   }
 
-  public static Label createLocalFavoritePlaylistIcon(String color) {
-    Label label = new Label();
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf(color));
-    fontIcon.setIconLiteral("mdi2s-star");
-    label.setTooltip(new Tooltip("Local Favorite"));
-    label.setGraphic(fontIcon);
-    return label;
-  }
-
-  public static Label createGlobalFavoritePlaylistIcon(String color) {
-    Label label = new Label();
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf(color));
-    fontIcon.setIconLiteral("mdi2s-star");
-    label.setTooltip(new Tooltip("Global Favorite"));
-    label.setGraphic(fontIcon);
-    return label;
-  }
-
   public static void createHelpIcon(Label label, String tooltip) {
     label.setText("");
     FontIcon fontIcon = new FontIcon();
