@@ -558,7 +558,7 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeleteHighscores()) {
-          highscoreService.deleteScores(game.getId(), true);
+          highscoreService.resetHighscore(game);
         }
 
         if (descriptor.isDeleteTable()) {
@@ -662,6 +662,8 @@ public class GameMediaService {
           if (byPupId != null) {
             gameDetailsRepository.delete(byPupId);
           }
+
+          highscoreService.deleteScores(game.getId(), true);
 
           Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
           byId.ifPresent(asset -> assetRepository.delete(asset));

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.listeners;
 
 public enum EventOrigin {
+  INITIAL_SCAN,
   TABLE_SCAN,
   TABLE_EXIT_EVENT,
   TABLE_LAUNCH_EVENT,

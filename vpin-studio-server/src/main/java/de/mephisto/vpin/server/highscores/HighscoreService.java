@@ -101,7 +101,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   public boolean resetHighscore(@NonNull Game game) {
-    return resetHighscore(game, 99);
+    return resetHighscore(game, 0);
   }
 
   public boolean resetHighscore(@NonNull Game game, long score) {

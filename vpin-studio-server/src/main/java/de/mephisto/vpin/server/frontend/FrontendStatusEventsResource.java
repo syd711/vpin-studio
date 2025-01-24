@@ -10,8 +10,8 @@ import java.util.Map;
 /**
  * Legacy URls:
  * "curl -X POST --data-urlencode \"info=\" http://localhost:" + HttpServer.PORT + "/service/popperLaunch";
- * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameLaunch";
- * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameExit";
+ * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\"  --data-urlencode "dirEmu=[DIREMU]" http://localhost:" + HttpServer.PORT + "/service/gameLaunch";
+ * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\"  --data-urlencode "dirEmu=[DIREMU]" http://localhost:" + HttpServer.PORT + "/service/gameExit";
  */
 @RestController
 @RequestMapping("/service")
@@ -23,13 +23,13 @@ public class FrontendStatusEventsResource {
   private FrontendStatusService frontendStatusService;
 
   @PostMapping("/gameLaunch")
-  public boolean gameLaunch(@RequestParam("table") String table) {
-    return frontendStatusService.gameLaunch(table);
+  public boolean gameLaunch(@RequestParam("table") String table, @RequestParam("emu") String emuDirOrName) {
+    return frontendStatusService.gameLaunch(table, emuDirOrName);
   }
 
   @PostMapping("/gameExit")
-  public boolean gameExit(@RequestParam("table") String table) {
-    return frontendStatusService.gameExit(table);
+  public boolean gameExit(@RequestParam("table") String table, @RequestParam("emu") String emuDirOrName) {
+    return frontendStatusService.gameExit(table, emuDirOrName);
   }
 
   //kept for legacy reasons, do not delete!

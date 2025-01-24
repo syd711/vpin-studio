@@ -151,14 +151,14 @@ public class FrontendStatusService implements InitializingBean {
     }
   }
 
-  public boolean gameLaunch(String table) {
+  public boolean gameLaunch(@NonNull String table, @Nullable String emuDirOrName) {
     if (!eventsEnabled) {
       LOG.info("Skipping gameLaunch, because the event handling is disabled");
       return true;
     }
 
     LOG.info("Received game launch event for " + table.trim());
-    Game game = gameService.getGameByTableParameter(table);
+    Game game = gameService.getGameByTableAndEmuParameter(table, emuDirOrName);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
       return false;
@@ -176,14 +176,14 @@ public class FrontendStatusService implements InitializingBean {
     return game != null;
   }
 
-  public boolean gameExit(String table) {
+  public boolean gameExit(@NonNull String table, @Nullable String emuDirOrName) {
     if (!eventsEnabled) {
       LOG.info("Skipping gameExit, because the event handling is disabled");
       return true;
     }
 
     LOG.info("Received game exit event for " + table.trim());
-    Game game = gameService.getGameByTableParameter(table);
+    Game game = gameService.getGameByTableAndEmuParameter(table, emuDirOrName);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
       return false;

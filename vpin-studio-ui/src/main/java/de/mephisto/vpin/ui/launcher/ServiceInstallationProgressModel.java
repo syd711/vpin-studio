@@ -61,7 +61,8 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
         lastScannedName = gameRepresentation.getGameDisplayName();
       }
       progressResultModel.addProcessed();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error during service installation: " + e.getMessage(), e);
     }
   }
