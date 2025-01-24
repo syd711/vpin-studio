@@ -59,7 +59,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   public void invalidateMediaCache(boolean full) {
     FTPClient ftp = null;
     try {
-      ftp = open(true);
+      ftp = open();
 
       PinballXAssetsIndexer indexer = new PinballXAssetsIndexer();
       this.index = indexer.buildIndex(ftp, rootfolder, full);
@@ -114,7 +114,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   public void writeAsset(OutputStream out, @NonNull String url) throws Exception {
     FTPClient ftp = null;
     try {
-      ftp = open(false);
+      ftp = open();
 
       String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
       decodeUrl = decodeUrl.substring(1);
