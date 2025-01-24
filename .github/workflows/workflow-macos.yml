@@ -14,6 +14,15 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # Step 3: Install Maven and dependencies
+      #Zulu 11 does not include jpackage, need to install it
+      - name: Install Dependencies
+        run: |
+          brew update
+          brew install maven 
+          brew install openjdk@17 # Ensure Zulu JDK 11 is installed on macOS
+      #brew install jpackage
+
       # Step 1: Checkout the repository
       - name: Checkout VPin Studio
         uses: actions/checkout@v3
@@ -38,16 +47,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-
-      # Step 3: Install Maven and dependencies
-      #Zulu 11 does not include jpackage, need to install it
-      - name: Install Dependencies
-        run: |
-          brew update
-          brew install --cask packages
-          brew install maven 
-          brew install openjdk@11 # Ensure Zulu JDK 11 is installed on macOS
-          brew install jpackage
 
       # Step 4: Build the Java application
       - name: Run maven build for vpin mania rest client
