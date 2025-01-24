@@ -38,8 +38,12 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     int index = 1;
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
+
+      //the if there is a highscore title, in that case...
       if (titles.contains(line.trim())) {
         String scoreLine = lines.get(i + 1);
+
+        //the next line could be a raw score without a positions
         if (!isScoreLine(scoreLine, (i + 1))) {
           Score score = createTitledScore(createdAt, scoreLine, source, gameId);
           if (score != null) {
@@ -71,6 +75,10 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     return line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1;
   }
 
+  /**
+   * Parses score that are shown right behind a possible title.
+   * These scores do not have a leading position number.
+   */
   @Nullable
   private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
     String initials = "???";
