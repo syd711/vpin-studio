@@ -20,6 +20,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.version>5.8.2</junit.version>
         <javafx.version>11</javafx.version>
+        <skipMacOSBuild>true</skipMacOSBuild>
     </properties>
 
     <repositories>
@@ -356,7 +357,7 @@
             <plugin>
                 <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>copy-installation-notes</id>
@@ -631,6 +632,7 @@
                             <goal>exec</goal>
                         </goals>
                          <configuration>
+                             <skip>${skipMacOSBuild}</skip>
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
@@ -648,6 +650,7 @@
                             <goal>exec</goal>
                         </goals>
                          <configuration>
+                             <skip>${skipMacOSBuild}</skip>
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
@@ -657,6 +660,14 @@
                             </arguments>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- This copies the JRE used to do the build from java.home - should be 32 bit Windows JRE -->
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
                     <execution>
                         <id>copy-jre</id>
                         <!-- Copy JRE to runtime dir -->
@@ -665,6 +676,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <skip>${skipMacOSBuild}</skip>
                             <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/runtime/</outputDirectory>
                             <resources>
                                 <resource>
@@ -684,6 +696,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
+                            <skip>${skipMacOSBuild}</skip>
                             <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/app</outputDirectory>
                             <resources>
                                 <resource>
@@ -695,9 +708,14 @@
                             </resources>
                         </configuration>
                     </execution>
-        
-                     <!--End-->
-		
+                </executions>
+            </plugin>
+            <!--End MacOS Stuff-->
+
+            <plugin>
+                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <executions>
                     <execution>
                         <id>zip-server-exe</id>
                         <phase>package</phase>

@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>3.12.0</version>
+    <version>3.12.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -123,7 +123,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>copy-installation-notes</id>
@@ -369,6 +369,88 @@
             </configuration>
           </execution>
           <execution>
+            <id>unzip-from-jdk-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <skip>${skipMacOSBuild}</skip>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>x</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>untar-from-jdk-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <skip>${skipMacOSBuild}</skip>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>x</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>copy-jre</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <skip>${skipMacOSBuild}</skip>
+              <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/runtime/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../Output/VPin-Studio/zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre/</directory>
+                  <includes>
+                    <include>Contents</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-Macjar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <skip>${skipMacOSBuild}</skip>
+              <outputDirectory>${basedir}/../Output/VPin-Studio.app/Contents/app</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/</directory>
+                  <includes>
+                    <include>vpin-studio-ui.jar</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
             <id>zip-server-exe</id>
             <phase>package</phase>
             <goals>
@@ -418,6 +500,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javafx.version>11</javafx.version>
     <junit.version>5.8.2</junit.version>
+    <skipMacOSBuild>true</skipMacOSBuild>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 </project>
