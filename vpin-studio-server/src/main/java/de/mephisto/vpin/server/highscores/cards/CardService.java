@@ -125,6 +125,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       Platform.runLater(() -> {
         Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
         doGenerateCard(game, summary, generateSampleCard, template);
+        LOG.info("Finished card generation for \"{}\"", game.getGameDisplayName());
       });
 
       Thread.currentThread().setName("Card Generator Thread for " + game.getGameDisplayName());

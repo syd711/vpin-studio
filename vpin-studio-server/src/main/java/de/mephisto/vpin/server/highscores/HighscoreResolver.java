@@ -222,6 +222,7 @@ public class HighscoreResolver implements InitializingBean {
     return null;
   }
 
+  @Nullable
   private String executePINemHi(@NonNull File nvRam) throws Exception {
     File commandFile = systemService.getPinemhiCommandFile();
     try {

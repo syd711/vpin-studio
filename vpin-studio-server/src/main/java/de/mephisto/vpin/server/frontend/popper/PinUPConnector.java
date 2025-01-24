@@ -49,8 +49,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
   private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemService.SERVER_PORT + "/service/popperLaunch";
-  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
-  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
+  private final static String CURL_COMMAND_TABLE_START_LEGACY = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
+  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" --data-urlencode \"emu=[DIREMU]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
+  private final static String CURL_COMMAND_TABLE_EXIT_LEGACY = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
+  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" --data-urlencode \"emu=[DIREMU]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
@@ -88,21 +90,28 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   private void initEmulatorScripts(Emulator emulator) {
     String emulatorName = emulator.getName();
+
     String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
-    if (!emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
-      emulatorStartupScript = emulatorStartupScript + "\n\n" + CURL_COMMAND_TABLE_START;
-      this.updateScript(emulatorName, "LaunchScript", emulatorStartupScript);
-    }
+    checkScript("LaunchScript", emulator, emulatorStartupScript, CURL_COMMAND_TABLE_START, CURL_COMMAND_TABLE_START_LEGACY);
+
     String emulatorExitScript = this.getEmulatorExitScript(emulatorName);
-    if (!emulatorExitScript.contains(CURL_COMMAND_TABLE_EXIT)) {
-      emulatorExitScript = emulatorExitScript + "\n\n" + CURL_COMMAND_TABLE_EXIT;
-      this.updateScript(emulatorName, "PostScript", emulatorExitScript);
-    }
+    checkScript("PostScript", emulator, emulatorExitScript, CURL_COMMAND_TABLE_EXIT, CURL_COMMAND_TABLE_EXIT_LEGACY);
 
     String startupScript = this.getStartupScript();
     if (!startupScript.contains(CURL_COMMAND_POPPER_START)) {
       startupScript = startupScript + "\n" + CURL_COMMAND_POPPER_START + "\n";
       this.updateStartupScript(startupScript);
+    }
+  }
+
+  private void checkScript(String dbFieldName, Emulator emulator, String script, String call, String legacyCall) {
+    if (script.contains(legacyCall)) {
+      script = script.replace(legacyCall, "").trim();
+    }
+
+    if (!script.contains(call)) {
+      script = script + "\n\n" + call;
+      this.updateScript(emulator.getName(), dbFieldName, script);
     }
   }
 

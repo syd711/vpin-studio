@@ -14,7 +14,7 @@ public class FrontendStatusEventsResourceTest extends AbstractVPinServerTest {
   public void testStartExit() {
     super.setupSystem();
 
-    boolean result = frontendStatusEventsResource.gameLaunch(EM_TABLE_NAME);
+    boolean result = frontendStatusEventsResource.gameLaunch(EM_TABLE_NAME, null);
 //    assertTrue(result);
 //
 //    result = frontendStatusEventsResource.gameLaunch("bubu");

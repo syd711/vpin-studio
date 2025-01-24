@@ -99,7 +99,9 @@ public class GameService implements InitializingBean {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
-  /** the refresh timer to keep VPS updated */
+  /**
+   * the refresh timer to keep VPS updated
+   */
   private Timer refreshTimer;
 
   @Value("${vps.refreshInterval:2}")
@@ -512,7 +514,8 @@ public class GameService implements InitializingBean {
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 
-    if (game.isVpxGame()) {
+    //do not parse highscore and generate highscore cards for new games, causing concurrent DB access likely through the FX thread
+    if (game.isVpxGame() && !newGame) {
       Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
       highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
     }
@@ -567,15 +570,31 @@ public class GameService implements InitializingBean {
     return list;
   }
 
-  public Game getGameByTableParameter(String table) {
+  public Game getGameByTableAndEmuParameter(@NonNull String table, @Nullable String emuDirOrName) {
     File tableFile = new File(table.trim());
-
-    // derive the emulator from the table folder
     int emuId = -1;
-    for (GameEmulator emu : frontendService.getGameEmulators()) {
-      if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
-        emuId = emu.getId();
-        break;
+
+    // derive the emulator from the name or folder
+    if (!StringUtils.isEmpty(emuDirOrName)) {
+      for (GameEmulator emu : frontendService.getGameEmulators()) {
+        if (emu.getInstallationFolder().getAbsolutePath().equals(emuDirOrName)) {
+          emuId = emu.getId();
+          break;
+        }
+        if (emu.getName() != null && emu.getName().equals(emuDirOrName)) {
+          emuId = emu.getId();
+          break;
+        }
+      }
+    }
+
+    if (emuId == -1) {
+      // derive the emulator from the table folder
+      for (GameEmulator emu : frontendService.getGameEmulators()) {
+        if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
+          emuId = emu.getId();
+          break;
+        }
       }
     }
 
@@ -757,7 +776,7 @@ public class GameService implements InitializingBean {
         public void run() {
           try {
             Thread.currentThread().setName("VPS Update Scheduler");
-            List<Game> games = getKnownGames(-1); 
+            List<Game> games = getKnownGames(-1);
             vpsService.update(games);
           }
           catch (Exception e) {

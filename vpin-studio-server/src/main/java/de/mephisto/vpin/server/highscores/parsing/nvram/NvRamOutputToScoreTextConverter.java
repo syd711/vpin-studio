@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,7 @@ public class NvRamOutputToScoreTextConverter {
     adapters.add(new SinglePlayerScoreAdapter());
   }
 
+  @Nullable
   public static String convertNvRamTextToMachineReadable(@NonNull File commandFile, @NonNull File nvRam) throws Exception {
     boolean nvOffset = false;
     File originalNVRamFile = nvRam;
@@ -78,14 +80,17 @@ public class NvRamOutputToScoreTextConverter {
 //        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed: " + standardErrorFromCommand;
         String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + pinemHiSupportedNVRamName + ") failed (details skipped).";
         SLOG.error(error);
-        throw new Exception(error);
+        LOG.error(error);
+        return null;
       }
       String stdOut = standardOutputFromCommand.toString();
       return convertOutputToRaw(nvRamFileName, stdOut);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error(e.getMessage());
       throw e;
-    } finally {
+    }
+    finally {
       if (nvOffset && originalNVRamFile.delete()) {
         FileUtils.copyFile(backedUpRamFile, originalNVRamFile);
         LOG.info("Restored original nvram " + originalNVRamFile.getAbsolutePath());
@@ -95,12 +100,12 @@ public class NvRamOutputToScoreTextConverter {
 
   @NonNull
   private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut) throws Exception {
-    // replace french space character, displayed ÿ with "."  => done later when parsing scores
+    // replace french space character, displayed ÿ with "."
     /*stdOut = stdOut
-      .replaceAll("\u00ff", ".")
-      .replaceAll("\u00a0", ".")
-      .replaceAll("\u202f", ".")
-      .replaceAll("\ufffd", ".");*/
+        .replaceAll("\u00ff", ".")
+        .replaceAll("\u00a0", ".")
+        .replaceAll("\u202f", ".")
+        .replaceAll("\ufffd", ".");*/
 
     //check for pre-formatting
     List<String> lines = Arrays.asList(stdOut.trim().split("\n"));

@@ -85,14 +85,14 @@ public class GamesResource {
     Game game = gameService.getGame(id);
     if (game.getEmulator().isVpxEmulator()) {
       frontendService.killFrontend();
-      if(vpxService.play(game, altExe)) {
+      if (vpxService.play(game, altExe)) {
         gameStatusService.setActiveStatus(id);
         return true;
       }
     }
     else if (game.getEmulator().isFpEmulator()) {
       frontendService.killFrontend();
-      if(fpService.play(game, altExe)) {
+      if (fpService.play(game, altExe)) {
         gameStatusService.setActiveStatus(id);
         return true;
       }
@@ -153,10 +153,18 @@ public class GamesResource {
     return gameService.getScoreHistory(id);
   }
 
+  /**
+   * This scan is only triggered through the initial installation.
+   * We skip the highscore scan for the initial GameDetails creation and execute the score parsing afterwards.
+   */
   @GetMapping("/scan/{id}")
   public Game scanGame(@PathVariable("id") int pupId) {
     LOG.info("Client initiated game scan for " + pupId);
-    return gameService.scanGame(pupId);
+    Game game = gameService.scanGame(pupId);
+    if (game != null) {
+      gameService.scanScore(game.getId(), EventOrigin.INITIAL_SCAN);
+    }
+    return game;
   }
 
   @GetMapping("/scanscore/{id}")
@@ -170,7 +178,7 @@ public class GamesResource {
   }
 
   @PostMapping("/reset")
-  public boolean reset(@RequestBody Map<String,Long> values)  {
+  public boolean reset(@RequestBody Map<String, Long> values) {
     long gameId = values.get("gameId");
     long score = values.get("scoreValue");
     return gameService.resetGame((int) gameId, score);

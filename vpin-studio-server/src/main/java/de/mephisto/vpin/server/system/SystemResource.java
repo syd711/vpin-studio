@@ -203,12 +203,14 @@ public class SystemResource {
         frontendService.killFrontend();
       }
       else {
-        String url = request.getRequestURL().toString();
-        boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
-        if (remote) {
-          ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-          if (serverSettings.isLaunchPopperOnExit()) {
-            frontendService.restartFrontend();
+        if (request != null) {
+          String url = request.getRequestURL().toString();
+          boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
+          if (remote) {
+            ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+            if (serverSettings.isLaunchPopperOnExit()) {
+              frontendService.restartFrontend();
+            }
           }
         }
       }
