@@ -77,15 +77,16 @@ jobs:
       - name: Package as macOS App
         working-directory: ./mac-package
         run: |
+          jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar ../vpin-studio-ui/target/vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11)
           ls .
-          jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar ../vpin-studio-ui/target/vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11) 
+          ls package
+          ls package/macos 
 
       # Step 7: Zip the .app bundle for easy distribution
       #Update for correct location
       - name: Zip macOS .app Bundle
         working-directory: ./mac-package
         run: |
-          ls .
           zip VpinStudioMac.zip VpinStudio.app
 
       # Step 8: Upload the .app zip file as an artifact
