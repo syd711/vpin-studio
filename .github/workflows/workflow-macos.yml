@@ -75,6 +75,7 @@ jobs:
      #The jpackage config needs to be updated to properly reference the locations of the files.
       #jpackage @jpackage_config.txt
       - name: Package as macOS App
+        working-directory: ./vpin-studio/mac-package
         run: |
           jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11) 
 
