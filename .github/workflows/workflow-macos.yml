@@ -69,7 +69,7 @@ jobs:
             ${{ runner.os }}-maven-
      
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DskipTests
+        run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
      # Step 5: Package the Java application as a macOS .app bundle
      #The jpackage config needs to be updated to properly reference the locations of the files. 
