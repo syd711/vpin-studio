@@ -192,8 +192,13 @@ public class DMDPositionController implements Initializable, DialogController {
     saveLocallyBtn.setVisible(false);
     saveGloballyBtn.setVisible(false);
 
-    ObservableValue<DMDAspectRatio> ratioProperty = radioGroup.selectedToggleProperty().flatMap(t ->
-        new SimpleObjectProperty<>((DMDAspectRatio) t.getUserData()));
+    SimpleObjectProperty<DMDAspectRatio> ratioProperty = new SimpleObjectProperty<>(DMDAspectRatio.ratioOff);
+    radioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+      @Override
+      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+        ratioProperty.setValue((DMDAspectRatio) newValue.getUserData());
+      }
+    });
 
     // The lime box that is used to position the DMD
     dragBox = new DMDPositionResizer(area, ratioProperty, color);

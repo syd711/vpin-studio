@@ -21,6 +21,7 @@
         <junit.version>5.8.2</junit.version>
         <javafx.version>11</javafx.version>
         <skipMacOSBuild>true</skipMacOSBuild>
+        <macOSBuild>false</macOSBuild>
     </properties>
 
     <repositories>
@@ -509,6 +510,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
                             <executable>ISCC.exe</executable>
                             <arguments>
                                 <argument>${basedir}/target/classes/inno-installer-studio-full.iss</argument>
@@ -522,6 +524,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
                             <executable>ISCC.exe</executable>
                             <arguments>
                                 <argument>${basedir}/target/classes/inno-installer-studio-client.iss</argument>
@@ -544,6 +547,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
+
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
@@ -563,6 +568,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
+
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
@@ -583,6 +590,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
+
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
@@ -607,6 +616,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
+
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
