@@ -31,7 +31,6 @@ public class GameRecorder {
   private final RecorderSettings recorderSettings;
   private final RecordingData recordingData;
   private final JobDescriptor jobDescriptor;
-  private final int totalGamesToRecord;
   private final List<RecordingScreen> recordingScreens;
 
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
@@ -39,13 +38,12 @@ public class GameRecorder {
 
   private int totalTime;
 
-  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, RecordingData recordingData, JobDescriptor jobDescriptor, int totalGamesToRecord, List<RecordingScreen> recordingScreens) {
+  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, RecordingData recordingData, JobDescriptor jobDescriptor, List<RecordingScreen> recordingScreens) {
     this.frontend = frontend;
     this.game = game;
     this.recorderSettings = recorderSettings;
     this.recordingData = recordingData;
     this.jobDescriptor = jobDescriptor;
-    this.totalGamesToRecord = totalGamesToRecord;
     this.recordingScreens = recordingScreens;
   }
 

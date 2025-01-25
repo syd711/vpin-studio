@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
+import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
@@ -22,11 +23,11 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private final NotificationService notificationService;
   private final NotificationSettings notificationSettings;
 
-  public InGameRecorderJob(NotificationService notificationService, GameService gameService, FrontendConnector frontend,
+  public InGameRecorderJob(DMDPositionService dmdPositionService, NotificationService notificationService, GameService gameService, FrontendConnector frontend,
                            FrontendStatusService frontendStatusService, RecorderSettings settings,
                            NotificationSettings notificationSettings, RecordingDataSummary recordingDataSummary,
                            List<RecordingScreen> recordingScreens) {
-    super(gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
+    super(dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
     this.notificationService = notificationService;
     this.notificationSettings = notificationSettings;
   }
@@ -54,7 +55,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 
           //create the game recorder which includes all screens
-          gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+          gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));
           gameRecorder.startRecording();
         }
         finally {

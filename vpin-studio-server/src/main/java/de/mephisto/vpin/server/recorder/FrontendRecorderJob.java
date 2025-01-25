@@ -1,9 +1,12 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.recorder.*;
+import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
@@ -12,11 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendRecorderJob.class);
 
+  final DMDPositionService dmdPositionService;
   final GameService gameService;
   final FrontendConnector frontend;
   final FrontendStatusService frontendStatusService;
@@ -26,7 +31,8 @@ public class FrontendRecorderJob implements Job {
 
   GameRecorder gameRecorder;
 
-  public FrontendRecorderJob(GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+  public FrontendRecorderJob(DMDPositionService dmdPositionService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+    this.dmdPositionService = dmdPositionService;
     this.gameService = gameService;
     this.frontend = frontend;
     this.frontendStatusService = frontendStatusService;
@@ -88,7 +94,7 @@ public class FrontendRecorderJob implements Job {
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 
           //create the game recorder which includes all screens
-          gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+          gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));
           gameRecorder.startRecording();
         }
         finally {
@@ -171,5 +177,45 @@ public class FrontendRecorderJob implements Job {
       }
     }
     return false;
+  }
+
+  /**
+   * Updates the recording screens with custom positions relevant for the given game.
+   * E.g. DMDs may have a custom position.
+   *
+   * @param game the game to customize the recording screens for
+   * @return the adapted screens
+   */
+  protected List<RecordingScreen> getRecordingScreensForGame(Game game) {
+    List<RecordingScreen> updated = new ArrayList<>();
+    for (RecordingScreen recordingScreen : recordingScreens) {
+      //TODO
+//      if (recordingScreen.getScreen().equals(VPinScreen.DMD)) {
+//        DMDInfo dmdInfo = dmdPositionService.getDMDInfo(game.getId());
+//
+//        int x = (int) (recordingScreen.getDisplay().getX() + dmdInfo.getX());
+//        int y = (int) (recordingScreen.getDisplay().getY() + dmdInfo.getY());
+//
+//        FrontendPlayerDisplay updatedDisplay = new FrontendPlayerDisplay();
+//        updatedDisplay.setHeight((int) dmdInfo.getHeight());
+//        updatedDisplay.setWidth((int) dmdInfo.getWidth());
+//        updatedDisplay.setX(x);
+//        updatedDisplay.setY(y);
+//        updatedDisplay.setName(recordingScreen.getDisplay().getName());
+//        updatedDisplay.setScreen(recordingScreen.getDisplay().getScreen());
+//        updatedDisplay.setRotation(recordingScreen.getDisplay().getRotation());
+//        updatedDisplay.setMonitor(recordingScreen.getDisplay().getMonitor());
+//        updatedDisplay.setInverted(recordingScreen.getDisplay().isInverted());
+//
+//        RecordingScreen updatedScreen = new RecordingScreen();
+//        updatedScreen.setScreen(VPinScreen.DMD);
+//        updatedScreen.setDisplay(updatedDisplay);
+//        updated.add(updatedScreen);
+//        continue;
+//      }
+
+      updated.add(recordingScreen);
+    }
+    return updated;
   }
 }

@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -62,6 +63,9 @@ public class RecorderService {
   private FPService fpService;
 
   @Autowired
+  private DMDPositionService dmdPositionService;
+
+  @Autowired
   private NotificationService notificationService;
 
   private JobDescriptor jobDescriptor;
@@ -71,10 +75,10 @@ public class RecorderService {
 
     Job job = null;
     if (settings.getRecordingMode() == null || settings.getRecordingMode().equals(RecordingMode.emulator)) {
-      job = new EmulatorRecorderJob(gameService, vpxService, fpService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+      job = new EmulatorRecorderJob(dmdPositionService, gameService, vpxService, fpService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
     }
     else {
-      job = new FrontendRecorderJob(gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+      job = new FrontendRecorderJob(dmdPositionService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
     }
 
     jobDescriptor = new JobDescriptor(JobType.RECORDER);
@@ -121,7 +125,7 @@ public class RecorderService {
 
     if (!recordingDataEntry.getScreens().isEmpty()) {
       NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      FrontendRecorderJob job = new InGameRecorderJob(notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
+      FrontendRecorderJob job = new InGameRecorderJob(dmdPositionService, notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
       jobDescriptor = new JobDescriptor(JobType.RECORDER);
       jobDescriptor.setTitle("In-Game Screen Recorder");
       jobDescriptor.setJob(job);
