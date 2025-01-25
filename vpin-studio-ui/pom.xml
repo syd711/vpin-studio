@@ -608,6 +608,29 @@
                         </configuration>
                     </execution>
 
+                    <!--**************************************** OS depending OSX ***********************************-->
+                    <execution>
+                        <id>zip-ui-jar-osx-arm</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <!-- define the command to execute -->
+                            <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+                            <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+                            <arguments>
+                                <argument>a</argument>
+                                <argument>-tzip</argument>
+                                <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
+                                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
+                                <argument>vpin-studio-ui.jar</argument>
+                                <argument>VPin-Studio-macosx_aarch64.sh</argument>
+                                <argument>resources/vpsdb.json</argument>
+                                <argument>installation.txt</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                      <!--**************************************** OS depending MacOS App Bundle ***********************************-->
                      <!--NEED TO ADD ICONS THIS IS JUST THE JRE AND JAR-->
                    	<execution>
