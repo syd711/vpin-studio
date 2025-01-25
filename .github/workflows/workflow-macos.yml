@@ -83,8 +83,6 @@ jobs:
       #Update for correct location
       - name: Zip macOS .app Bundle
         run: |
-          mkdir -p target/macApp
-          cd target/macApp
           zip -r VpinStudioMac.zip VpinStudio.app
 
       # Step 8: Upload the .app zip file as an artifact
