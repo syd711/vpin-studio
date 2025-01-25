@@ -79,18 +79,18 @@ jobs:
         run: |
           jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar ../vpin-studio-ui/target/vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11)
           echo "ls .. results"
-          ls ..
+          ls -al ..
           echo "ls . results"
-          ls .
+          ls -al .
           echo "ls package results"
-          ls package
+          ls -al package
           echo "ls package/macos results"
-          ls package/macos 
+          ls -al package/macos 
 
       # Step 7: Zip the .app bundle for easy distribution
       #Update for correct location
       - name: Zip macOS .app Bundle
-        working-directory: ./mac-package
+        working-directory: ./
         run: |
           zip VpinStudioMac.zip VpinStudio.app
 
@@ -100,4 +100,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: macOS-build
-          path: ./mac-package/VpinStudioMac.zip
+          path: ./VpinStudioMac.zip
