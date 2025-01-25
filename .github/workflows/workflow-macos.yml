@@ -83,7 +83,7 @@ jobs:
       #Update for correct location
       - name: Zip macOS .app Bundle
         run: |
-          zip -r VpinStudioMac.zip VpinStudio.app
+          zip VpinStudioMac.zip VpinStudio.app
 
       # Step 8: Upload the .app zip file as an artifact
        #Update for correct location
@@ -91,4 +91,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: macOS-build
-          path: target/macApp/VpinStudioMac.zip
+          working-directory: ./mac-package
+          path: VpinStudioMac.zip
