@@ -616,6 +616,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
+                            <skip>${macOSBuild}</skip>
+
                             <!-- define the command to execute -->
                             <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
                             <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
