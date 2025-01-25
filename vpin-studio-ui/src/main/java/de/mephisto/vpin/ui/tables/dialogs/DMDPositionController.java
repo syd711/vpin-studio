@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -340,12 +341,9 @@ public class DMDPositionController implements Initializable, DialogController {
     LOG.info("Received dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
     this.dmdinfo = dmdinfo;
 
-    String backgroundUrl =
-        dmdinfo.isOnBackglass() ? client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(dmdinfo.getGameId(), true) :
-            dmdinfo.isOnDMD() ? client.getBackglassServiceClient().getDirectB2sDmdUrl(dmdinfo.getGameId()) :
-                null;
-
-    Image image = backgroundUrl != null ? new Image(backgroundUrl) : null;
+    ByteArrayInputStream is = client.getDmdPositionService().getPicture(dmdinfo);
+    Image image = is != null ? new Image(is) : null;
+    
     // when loaded, fill now the screen
     Platform.runLater(() -> {
 
