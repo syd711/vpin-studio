@@ -7,6 +7,8 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.StringValue;
 import com.drew.metadata.Tag;
+
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -17,6 +19,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -59,6 +62,9 @@ public class AssetService {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   public Asset save(Asset asset) {
     return assetRepository.saveAndFlush(asset);
@@ -302,4 +308,16 @@ public class AssetService {
   public boolean isMediaIndexAvailable() {
     return defaultPictureService.isMediaIndexAvailable();
   }
+
+  public Asset getAvatar() {
+    Asset avatar = (Asset) preferencesService.getPreferenceValue(PreferenceNames.AVATAR);
+    byte[] image = defaultPictureService.generateAvatarImage(avatar != null? avatar.getData() : null);
+    Asset clipped = new Asset();
+    clipped.setAssetType(AssetType.AVATAR.name());
+    clipped.setUpdatedAt(new Date());
+    clipped.setMimeType("image/png");
+    clipped.setData(image);
+    return clipped;
+  }
+
 }

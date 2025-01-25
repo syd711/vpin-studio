@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -18,7 +19,9 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,9 +30,12 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class DefaultPictureService implements PreferenceChangedListener, InitializingBean {
@@ -257,5 +263,33 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   @JsonIgnore
   public File getRawDefaultPicture(Game game) {
     return new File(systemService.getRawImageExtractionFolder(), game.getId() + "_" + SystemService.DEFAULT_BACKGROUND);
+  }
+
+  public byte[] generateAvatarImage(@Nullable byte[] data) {
+    try (InputStream defaultAvatar = Asset.class.getResourceAsStream("avatar-default.png")) {
+      if (data == null) {
+        return IOUtils.toByteArray(defaultAvatar);
+      }
+      // else
+      BufferedImage frameImage = ImageIO.read(defaultAvatar);
+      Graphics g = frameImage.getGraphics();
+
+      ByteArrayInputStream avatar = new ByteArrayInputStream(data);
+      BufferedImage avatarImage = ImageIO.read(avatar);
+
+      Ellipse2D ellipse = new Ellipse2D.Float();
+      ellipse.setFrame(40, 40, 420, 420);
+      g.setClip(ellipse);
+
+      g.drawImage(avatarImage, 0, 0, frameImage.getWidth(), frameImage.getHeight(), null);
+
+      g.dispose();
+
+      return ImageUtil.toBytes(frameImage);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to generate avatar image: " + e.getMessage(), e);
+    }
+    return null;
   }
 }

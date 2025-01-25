@@ -20,6 +20,7 @@ import java.io.File;
  ********************************************************************************************************************/
 public class AssetServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+  private static final String UUID_MAIN_AVATAR = "__MAIN_AVATAR__";
 
   public AssetServiceClient(VPinStudioClient client) {
     super(client);
@@ -115,6 +116,16 @@ public class AssetServiceClient extends VPinStudioClientService {
       LOG.error("Failed to convert video: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  @Nullable
+  public ByteArrayInputStream getAvatar(boolean forceRefresh) {
+    if (!forceRefresh && client.getImageCache().containsKey(UUID_MAIN_AVATAR)) {
+      return new ByteArrayInputStream(client.getImageCache().get(UUID_MAIN_AVATAR));
+    }
+    byte[] bytes = getRestClient().readBinary(API + "assets/avatar");
+    client.getImageCache().put(UUID_MAIN_AVATAR, bytes);
+    return new ByteArrayInputStream(bytes);
   }
 
   @Nullable
