@@ -72,10 +72,11 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
      # Step 5: Package the Java application as a macOS .app bundle
-     #The jpackage config needs to be updated to properly reference the locations of the files. 
+     #The jpackage config needs to be updated to properly reference the locations of the files.
+      #jpackage @jpackage_config.txt
       - name: Package as macOS App
         run: |
-          jpackage @jpackage_config.txt
+          jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11) 
 
       # Step 7: Zip the .app bundle for easy distribution
       #Update for correct location
