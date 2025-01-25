@@ -9,6 +9,7 @@
 - **Highscore Parsing**: Fixed highscores for tables **Defender, Black Pyramid and Catacomb**.
 - **Tables / Playlists**: Renamed **Local Favorites** to **Playlist Favorites**.
 - **PinballX Frontend**: fixed zero byte download by using FTP passive mode, then try active mode if failure
+- **System Manager**: Fixed Backglass Server update detection.
 
 ---
 
