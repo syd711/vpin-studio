@@ -96,7 +96,7 @@
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="On B2S DMD" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioOnB2sDMD" mnemonicParsing="false" text="On DMD" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

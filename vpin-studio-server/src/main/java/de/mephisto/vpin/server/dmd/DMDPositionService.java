@@ -2,15 +2,22 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.commons.MonitorInfo;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
+import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.video.VideoConverterService;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
@@ -21,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.io.Files;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -36,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 
 @Service
 public class DMDPositionService {
@@ -47,6 +57,10 @@ public class DMDPositionService {
   private BackglassService backglassService;
   @Autowired
   private MameService mameService;
+  @Autowired
+  private FrontendService frontendService;
+  @Autowired
+  private VideoConverterService videoConverterService;
 
 
   public DMDInfo getDMDInfo(int gameId) {
@@ -468,4 +482,65 @@ public class DMDPositionService {
     return conf.containsKey(key) ? conf.getDouble(key) : defValue;
   }
 
+  public byte[] getPicture(int gameId, VPinScreen onScreen) {
+    if (VPinScreen.BackGlass.equals(onScreen)) {
+      return backglassService.getPreviewBackground(gameId, true);
+    }
+    else if (VPinScreen.DMD.equals(onScreen)) {
+      DirectB2S directb2s = backglassService.getDirectB2S(gameId);
+      String base64 = backglassService.getDmdBase64(directb2s.getEmulatorId(), directb2s.getFileName());
+      if (base64 != null) {
+        return DatatypeConverter.parseBase64Binary(base64);
+       }
+       else {
+        FrontendMedia frontendMedia = frontendService.getGameMedia(gameId);
+        FrontendMediaItem item = frontendMedia.getDefaultMediaItem(VPinScreen.Menu);
+        if (item != null) {
+          String baseType = MimeTypeUtil.determineBaseType(item.getMimeType());
+          if ("video".equals(baseType)) {
+            return extractFrame(item.getFile());
+          }
+          else if ("image".equals(baseType)) {
+            return extractImage(item.getFile());
+          }
+        }
+      }
+    }
+    // else all other cases
+    return null; 
+  }
+
+  /**
+   * Extracts a frame from a video file.
+   * ffmpeg -i vido.mp4 -ss 00:00:05 -vframes 1 frame_out.jpg
+   * @param file the video file
+   */
+  private byte[] extractFrame(File file) {
+    VideoConversionCommand cmd = new VideoConversionCommand("Extract Frame").setFFmpegArgs("-ss 00:00:01 -vframes 1");
+    File targetFile = null;
+    try {
+      targetFile = File.createTempFile("ef_", ".png");
+      videoConverterService.convertWithFfmpeg(cmd, file, targetFile);
+      return Files.toByteArray(targetFile);
+    }
+    catch (Exception e) {
+      LOG.error("Cannot extract frame from video", e);
+    }
+    finally {
+      if (targetFile != null) {
+        targetFile.delete();
+      }
+    }
+    return null;
+  }
+
+  private byte[] extractImage(File file) {
+    try {
+      return Files.toByteArray(file);
+    }
+    catch (IOException e) {
+      LOG.error("Cannot read image file", e);
+    }
+    return null;
+  }
 }

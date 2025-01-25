@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
-import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -70,6 +68,15 @@ public class AssetsResource {
     return assetService.getById(id);
   }
 
+  @GetMapping("/avatar")
+  public ResponseEntity<byte[]> getAvatar() {
+    Asset asset = assetService.getAvatar();
+    if (asset != null) {
+      return serializeAsset(asset);
+    }
+    throw new ResponseStatusException(NOT_FOUND, "Not avatar asset found");
+  }
+
   @GetMapping("/data/{uuid}")
   public ResponseEntity<byte[]> get(@PathVariable("uuid") String uuid) {
     Asset asset = assetService.getByUuid(uuid);
@@ -128,7 +135,7 @@ public class AssetsResource {
     }
   }
 
-  public ResponseEntity serializeAsset(Asset asset) {
+  public ResponseEntity<byte[]> serializeAsset(Asset asset) {
     return ResponseEntity.ok()
         .lastModified(asset.getUpdatedAt().getTime())
         .contentType(MediaType.parseMediaType(asset.getMimeType()))
@@ -137,7 +144,7 @@ public class AssetsResource {
         .body(asset.getData());
   }
 
-  public ResponseEntity serializeFile(File file) {
+  public ResponseEntity<byte[]> serializeFile(File file) {
     try {
       String suffix = FilenameUtils.getExtension(file.getName());
       String mimeType = "image/" + suffix;

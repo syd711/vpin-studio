@@ -33,10 +33,8 @@ public class VideoConverterService implements InitializingBean {
 
   private final List<VideoConversionCommand> commands = new ArrayList<>();
 
-
   @Autowired
   private FrontendService frontendService;
-
 
   public String convert(@NonNull VideoOperation converterParams) {
     LOG.info("Executing video conversion for " + converterParams.getName() + "/" + converterParams.getCommand());
@@ -68,7 +66,7 @@ public class VideoConverterService implements InitializingBean {
     return null;
   }
 
-  private String convert(VideoConversionCommand command, File mediaFile) throws Exception {
+  public String convert(VideoConversionCommand command, File mediaFile) throws Exception {
     if (command.getType() == VideoConversionCommand.TYPE_FILE) {
       File batFile = new File(command.getCommand());
       if (batFile.exists()) {
@@ -79,8 +77,12 @@ public class VideoConverterService implements InitializingBean {
       }
     }
     else if (command.getType() == VideoConversionCommand.TYPE_FFMEPG) {
-      String[] args = StringUtils.split(command.getCommand());
-      return convertWithFfmpeg(args, mediaFile);
+      File targetFile = FileUtils.uniqueFile(mediaFile);
+      convertWithFfmpeg(command, mediaFile, targetFile);
+      // now exchange files
+      if (mediaFile.delete()) {
+        targetFile.renameTo(mediaFile);
+      }
     }
     else if (command.getType() == VideoConversionCommand.TYPE_IMAGE) {
       return convertWithImageUtils(command.getCommand(), mediaFile);
@@ -110,10 +112,10 @@ public class VideoConverterService implements InitializingBean {
     return null;
   }
 
-  private String convertWithFfmpeg(String[] args, File mediaFile) throws Exception {
+  public void convertWithFfmpeg(VideoConversionCommand command, File mediaFile, File targetFile) throws Exception {
         // "%_curloc%\ffmpeg" -y -i %1 -vf "transpose=1" "%2"
 
-    File targetFile = FileUtils.uniqueFile(mediaFile);
+    String[] args = StringUtils.split(command.getCommand());
 
     File resources = new File(SystemInfo.RESOURCES);
     if (!resources.exists()) {
@@ -143,12 +145,6 @@ public class VideoConverterService implements InitializingBean {
     //LOG.info("Conversion failed: {}", standardErrorFromCommand);
     //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
     //LOG.info("Video conversion output: {}", standardOutputFromCommand);
-  
-    // now exchange files
-    if (mediaFile.delete()) {
-      targetFile.renameTo(mediaFile);
-    }
-    return null;
   }
 
   private String convertWithImageUtils(String command, File mediaFile) {

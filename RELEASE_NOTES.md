@@ -8,6 +8,7 @@
 - **Highscore Settings**: Removed configuration option for highscore titles, e.g. "GRAND CHAMPION". These values are now part of the internal scoring database so that the user never has to deal with this kind of stuff.
 - **Highscore Parsing**: Fixed highscores for tables **Defender, Black Pyramid and Catacomb**.
 - **Tables / Playlists**: Renamed **Local Favorites** to **Playlist Favorites**.
+- **PinballX Frontend**: fixed zero byte download by using FTP passive mode, then try active mode if failure
 
 ---
 
