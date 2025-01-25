@@ -4,6 +4,8 @@ import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import javafx.application.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -50,8 +52,14 @@ public class DMDPositionResizerDemo2 extends Application {
     toolbar.setSpacing(20);
     layout.setBottom(toolbar);
 
-    ObservableValue<DMDAspectRatio> aspectRatioProperty = aspectRatio.selectedProperty().flatMap(cb ->
-        new SimpleObjectProperty<>(cb.booleanValue() ? DMDAspectRatio.ratio4x1 : DMDAspectRatio.ratioOff));
+    SimpleObjectProperty<DMDAspectRatio> aspectRatioProperty = new SimpleObjectProperty<>(DMDAspectRatio.ratioOff);
+    aspectRatio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        aspectRatioProperty.setValue(newValue ? DMDAspectRatio.ratio4x1 : DMDAspectRatio.ratioOff);
+      }
+    });
+
 
     Pane pane = new Pane();
     pane.setPrefWidth(500);
