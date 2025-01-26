@@ -164,6 +164,8 @@ public class InstallationDialogController implements Initializable, DialogContro
       }
     });
     toggleGroup.selectToggle(radioA);
+    installationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
+    installationFolderField.setText(installationFolder.getAbsolutePath());
   }
 
   private void validateFolders() {
