@@ -2,8 +2,11 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.GameEntry;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -148,17 +151,15 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "hidedmd": {
-        // cf constants in TableDataTabScreensController
-        setKeepDisplays(detail, content, "1");
+        setKeepDisplays(detail, content, VPinScreen.DMD);
+        break;
       }
       case "hidetopper": {
-        // cf constants in TableDataTabScreensController
-        setKeepDisplays(detail, content, "0");
+        setKeepDisplays(detail, content, VPinScreen.Topper);
         break;
       }
       case "hidebackglass": {
-        // cf constants in TableDataTabScreensController
-        setKeepDisplays(detail, content, "2");
+        setKeepDisplays(detail, content, VPinScreen.BackGlass);
         break;
       }
       case "version": {
@@ -206,10 +207,11 @@ public class PinballXTableParser extends DefaultHandler {
     }
   }
 
-  private void setKeepDisplays(TableDetails detail, String content, String screen) {
+  private void setKeepDisplays(TableDetails detail, String content, VPinScreen screen) {
     boolean hide = BooleanUtils.toBoolean(content);
     if (!hide) {
-      detail.setKeepDisplays(detail.getKeepDisplays()!=null? detail.getKeepDisplays() + "," + screen: screen);
+      detail.setKeepDisplays(detail.getKeepDisplays()!=null? detail.getKeepDisplays() + "," + screen.getCode(): 
+          Integer.toString(screen.getCode()));
     }
   }
 
@@ -249,9 +251,9 @@ public class PinballXTableParser extends DefaultHandler {
           appendValue(writer, "manufacturer", detail.getManufacturer());
           appendValue(writer, "year", detail.getGameYear()!=null? detail.getGameYear().toString(): "");
           appendValue(writer, "type", detail.getGameType()!=null? detail.getGameType(): "");
-          appendKeepDisplays(writer, "hidedmd", detail.getKeepDisplays(), "1");
-          appendKeepDisplays(writer, "hidetopper", detail.getKeepDisplays(), "0");
-          appendKeepDisplays(writer, "hidebackglass", detail.getKeepDisplays(), "2");
+          appendKeepDisplays(writer, "hidedmd", detail.getKeepDisplays(), VPinScreen.DMD);
+          appendKeepDisplays(writer, "hidetopper", detail.getKeepDisplays(), VPinScreen.Topper);
+          appendKeepDisplays(writer, "hidebackglass", detail.getKeepDisplays(), VPinScreen.BackGlass);
           appendValue(writer, "enabled", detail.getStatus()!=0);
           appendValue(writer, "rating", detail.getGameRating());
           appendValue(writer, "players", detail.getNumberOfPlayers());
@@ -278,9 +280,9 @@ public class PinballXTableParser extends DefaultHandler {
     appendValue(writer, "description", detail.getGameDisplayName());
   }
 
-  protected void appendKeepDisplays(BufferedWriter writer, String tag,String keepDisplays, String screen) throws IOException {
-    // cf constants in TableDataTabScreensController
-    boolean keep = keepDisplays!=null && keepDisplays.contains(screen);
+  protected void appendKeepDisplays(BufferedWriter writer, String tag, String keepDisplays, VPinScreen screen) throws IOException {
+    String[] codes = keepDisplays!=null ? StringUtils.split(keepDisplays, ",") : new String[0];
+    boolean keep = ArrayUtils.contains(codes, Integer.toString(screen.getCode()));
     writer.append("    <" + tag + ">").append(keep? "False": "True" ).append("</" + tag + ">\n");   
   }
 
