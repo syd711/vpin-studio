@@ -8,6 +8,7 @@
 - **VPin Studio Server**: Improved launch and exit curl calls. The curl call is replaced now with the additional parameter **emu** which contains additional information about the game emulator used, depending on the frontend you are using. This way, you can share your tables folder between different VPX emulators and the correct emulator is still detected corrected. The parameter is optional, so if the automatic update of the **curl** call fails for some reason, the old format is still valid. 
 - **Highscore Settings**: Removed configuration option for highscore titles, e.g. "GRAND CHAMPION". These values are now part of the internal scoring database so that the user never has to deal with this kind of stuff.
 - **Highscore Parsing**: Fixed highscores for tables **Defender, Black Pyramid and Catacomb**.
+- **Highscore Parsing**: Fixed encoding problems when displaying highscore values with number separators. 
 - **Tables / Playlists**: Renamed **Local Favorites** to **Playlist Favorites**.
 - **Tables / PinVOL Settings**: The user interface for the PinVOL settings used the SSF DB limit value now. You can't configure this via Studio yet and have to configure it once via the PinVOL UI.
 - **PinballX Frontend**: fixed zero byte download by using FTP passive mode, then try active mode if failure
