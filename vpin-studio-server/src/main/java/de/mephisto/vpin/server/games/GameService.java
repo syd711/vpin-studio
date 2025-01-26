@@ -183,6 +183,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     boolean killFrontend = false;
     for (Game game : games) {
       boolean newGame = applyGameDetails(game, false, false);
+      if (newGame) {
+        scanScore(game.getId(), EventOrigin.INITIAL_SCAN);
+      }
+
       if (newGame && !killFrontend) {
         LOG.info("New games have been found, automatically killing frontend to release locks.");
         frontendService.killFrontend();
@@ -381,7 +385,6 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
     TableDetails tableDetails = null;
     if (gameDetails == null || forceScan) {
-
       if (gameDetails == null) {
         gameDetails = new GameDetails();
         gameDetails.setCreatedAt(new java.util.Date());
@@ -766,7 +769,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
+    mameService.setGameService(this);
     List<Game> games = getKnownGames(-1);
     vpsService.update(games);
+    mameService.clearCache();
   }
 }

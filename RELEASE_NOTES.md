@@ -11,6 +11,7 @@
 - **Tables / PinVOL Settings**: The user interface for the PinVOL settings used the SSF DB limit value now. You can't configure this via Studio yet and have to configure it once via the PinVOL UI.
 - **PinballX Frontend**: fixed zero byte download by using FTP passive mode, then try active mode if failure
 - **System Manager**: Fixed **Backglass Server** update detection.
+- **VPin Studio Server**: Postponed some caching routines to increase the startup time. So the server will be a available a few seconds earlier.
 
 ---
 
