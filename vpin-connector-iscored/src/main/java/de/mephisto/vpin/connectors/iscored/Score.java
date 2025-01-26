@@ -10,7 +10,7 @@ public class Score {
   private String game;
   private int losses;
   private String name;
-  private String score;
+  private long score;
   private int wins;
 
   public Date getDate() {
@@ -45,11 +45,11 @@ public class Score {
     this.name = name;
   }
 
-  public String getScore() {
+  public long getScore() {
     return score;
   }
 
-  public void setScore(String score) {
+  public void setScore(long score) {
     this.score = score;
   }
 

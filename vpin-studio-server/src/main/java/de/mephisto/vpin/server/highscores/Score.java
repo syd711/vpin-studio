@@ -13,18 +13,19 @@ public class Score {
   private String playerInitials = "???";
   private int gameId;
   private Player player;
-  private String score;
-  private double numericScore;
+  private long score;
+  /** Should not be used anymore, contains the raw score before parsing - consider removing */
+  private String rawScore;
   private int position;
   private Date createdAt;
   private boolean external;
 
-  public Score(Date createdAt, int gameId, String playerInitials, Player player, String score, double numericScore, int position) {
+  public Score(Date createdAt, int gameId, String playerInitials, Player player, String rawScore, long score, int position) {
     this.createdAt = createdAt;
     this.gameId = gameId;
     this.player = player;
     this.score = score;
-    this.numericScore = numericScore;
+    this.rawScore = rawScore;
     this.position = position;
     if (!StringUtils.isEmpty(playerInitials)) {
       this.playerInitials = playerInitials;
@@ -77,14 +78,6 @@ public class Score {
     this.player = player;
   }
 
-  public void setNumericScore(double numericScore) {
-    this.numericScore = numericScore;
-  }
-
-  public double getNumericScore() {
-    return numericScore;
-  }
-
   public int getPosition() {
     return position;
   }
@@ -93,8 +86,20 @@ public class Score {
     this.position = position;
   }
 
-  public String getScore() {
+  public long getScore() {
     return score;
+  }
+
+  public void setScore(long score) {
+    this.score = score;
+  }
+
+  public String getRawScore() {
+    return rawScore;
+  }
+
+  public void setRawScore(String rawScore) {
+    this.rawScore = rawScore;
   }
 
   @Override
@@ -106,16 +111,12 @@ public class Score {
     Score score = (Score) obj;
     return score.getPlayerInitials().equalsIgnoreCase(this.getPlayerInitials())
         && score.getPosition() == this.getPosition()
-        && score.getNumericScore() == this.getNumericScore();
-  }
-
-  public void setScore(String score) {
-    this.score = score;
+        && score.getScore() == this.getScore();
   }
 
   public boolean matches(Score newScore) {
     return this.playerInitials != null && this.playerInitials.equals(newScore.getPlayerInitials())
-        && this.score != null && this.numericScore == newScore.getNumericScore();
+        && this.score == newScore.getScore();
 
   }
 
@@ -139,27 +140,31 @@ public class Score {
 
   @JsonIgnore
   public String getFormattedScore(Locale loc) {
-    String scoreString = this.getScore();
-    String formattedScore = ScoreFormatUtil.formatScore(scoreString, loc);
-    if (!formattedScore.equals("0")) {
-      scoreString = formattedScore;
-    }
-    return scoreString;
+    String formattedScore = ScoreFormatUtil.formatScore(this.getScore(), loc);
+    //TODO was it really needed  
+    // Maybe because if NumberFormatException is caught in formatScore, it returns "0" but that should never happen 
+    //if (!formattedScore.equals("0")) {
+      return formattedScore;
+    //}
+    //return rawScore;
   }
 
   public Score cloneEmpty() {
-    return new Score(this.createdAt, this.gameId, "???", this.player, this.score, this.numericScore, this.position);
+    return new Score(this.createdAt, this.gameId, "???", this.player, this.rawScore, this.score, this.position);
   }
 
   public boolean isDenied(DeniedScore deniedScore) {
     try {
-      Long numScore = (long) this.numericScore;
 //      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore))
 //          && deniedScore.getInitials().equalsIgnoreCase(String.valueOf(playerInitials));
-      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore));
+      return deniedScore.getScore() == this.score;
     }
     catch (Exception e) {
       return false;
     }
+  }
+
+  public boolean isSkipped() {
+    return getPlayerInitials().equals("???") || getScore() == 0;
   }
 }

@@ -17,10 +17,10 @@ public class ScoreListAdapterBase {
 
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
-  protected double toNumericScore(@NonNull String score, @Nullable String source) {
+  protected long toNumericScore(@NonNull String score, @Nullable String source) {
     try {
       String cleanScore = ScoreFormatUtil.cleanScore(score);
-      return Double.parseDouble(cleanScore);
+      return Long.parseLong(cleanScore);
     }
     catch (NumberFormatException e) {
       LOG.warn("Failed to parse numeric highscore string '{}', ignoring segment '{}', source: {}", score, score, source);

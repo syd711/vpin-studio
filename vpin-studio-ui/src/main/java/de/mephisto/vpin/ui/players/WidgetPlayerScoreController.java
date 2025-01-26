@@ -80,7 +80,7 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     nameLabel.setText(score.getPlayer().getName());
 
     scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getScore());
+    scoreLabel.setText(score.getFormattedScore());
 
     String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);

@@ -287,7 +287,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
     columnScore.setCellValueFactory(cellData -> {
       TableScoreDetails value = cellData.getValue();
-      Label label = new Label(ScoreFormatUtil.formatScore(String.valueOf(value.getScore())));
+      Label label = new Label(ScoreFormatUtil.formatScore(value.getScore()));
       label.getStyleClass().add("default-text-color");
       label.setFont(getScoreFontSmall());
       return new SimpleObjectProperty(label);
@@ -372,7 +372,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
     columnDenyScore.setCellValueFactory(cellData -> {
       DeniedScore value = cellData.getValue();
-      Label label = new Label(ScoreFormatUtil.formatScore(String.valueOf(value.getScore())));
+      Label label = new Label(ScoreFormatUtil.formatScore(value.getScore()));
       label.getStyleClass().add("default-text-color");
       label.setFont(getScoreFontSmall());
       return new SimpleObjectProperty(label);

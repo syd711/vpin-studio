@@ -11,11 +11,11 @@ public class ScoreFormatUtilTest {
 
   @Test
   public void testLocalizedScore() {
-    String s = ScoreFormatUtil.formatScore("123456789");
+    String s = ScoreFormatUtil.formatScore(123456789);
     assertTrue(s.contains(".") || s.contains(",") || s.contains(String.valueOf((char) 160)));
 
-    assertEquals("123,456,789", ScoreFormatUtil.formatScore("123456789", Locale.US));
-    assertEquals("123.456.789", ScoreFormatUtil.formatScore("123456789", Locale.GERMANY));
-    assertEquals("123 456 789", ScoreFormatUtil.formatScore("123456789", Locale.FRANCE));
+    assertEquals("123,456,789", ScoreFormatUtil.formatScore(123456789, Locale.US));
+    assertEquals("123.456.789", ScoreFormatUtil.formatScore(123456789, Locale.GERMANY));
+    assertEquals("123 456 789", ScoreFormatUtil.formatScore(123456789, Locale.FRANCE));
   }
 }

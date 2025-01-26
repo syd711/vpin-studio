@@ -100,8 +100,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           Account account = maniaServiceCache.getAccountForInitials(playerInitials);
 
           TableScore tableScore = new TableScore();
-          tableScore.setScoreText(score.getScore());
-          tableScore.setScore((long) score.getNumericScore());
+          tableScore.setScoreText(score.getFormattedScore());
+          tableScore.setScore(score.getScore());
           tableScore.setVpsTableId(game.getExtTableId());
           tableScore.setVpsVersionId(game.getExtTableVersionId());
           tableScore.setTableName(game.getGameDisplayName());

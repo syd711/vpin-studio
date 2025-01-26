@@ -169,7 +169,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
         DeniedScore deniedScore = new DeniedScore();
         deniedScore.setDeniedByAccountUuid(ManiaPermissions.getAccount().getUuid());
         deniedScore.setDeniedDate(new Date());
-        deniedScore.setScore(selectedItem.getScoreValue());
+        deniedScore.setScore(selectedItem.getScore());
         deniedScore.setInitials(account.getInitials());
         deniedScore.setVpsTableId(selectedItem.getVpsTable().getId());
         deniedScore.setVpsVersionId(selectedItem.getVpsTableVersion().getId());
@@ -303,7 +303,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
     columnScore.setCellValueFactory(cellData -> {
       TableScoreModel value = cellData.getValue();
-      Label label = new Label(ScoreFormatUtil.formatScore(String.valueOf(value.getScore())));
+      Label label = new Label(ScoreFormatUtil.formatScore(value.getScore()));
       label.getStyleClass().add("default-text-color");
       label.setFont(getScoreFontSmall());
       return new SimpleObjectProperty(label);
@@ -463,14 +463,13 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   public static class TableScoreModel {
     private VpsTable vpsTable;
     private VpsTableVersion vpsTableVersion;
-    private String score;
-    private long scoreValue;
+    //private String formattedScore;
+    private long score;
     private String name = "???";
     private int position = -1;
 
     public TableScoreModel(TableScore tableScore, Account account, List<TableScoreDetails> highscoresByTable) {
-      this.score = String.valueOf(tableScore.getScore());
-      this.scoreValue = tableScore.getScore();
+      this.score = tableScore.getScore();
       this.vpsTable = client.getVpsService().getTableById(tableScore.getVpsTableId());
       if (vpsTable != null) {
         this.name = vpsTable.getName().trim();
@@ -498,12 +497,8 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       return vpsTableVersion;
     }
 
-    public String getScore() {
+    public long getScore() {
       return score;
-    }
-
-    public long getScoreValue() {
-      return scoreValue;
     }
 
     public int getPosition() {

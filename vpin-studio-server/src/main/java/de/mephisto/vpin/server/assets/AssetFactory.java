@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.assets;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -21,10 +20,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 
 public class AssetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(AssetFactory.class);
@@ -290,8 +286,7 @@ public class AssetFactory {
       int scoreSize = 140;
       font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
       graphics.setFont(font);
-      String score = summary.getScores().get(0).getScore();
-      score = ScoreFormatUtil.formatScore(score);
+      String score = summary.getScores().get(0).getFormattedScore();
       textWidth = graphics.getFontMetrics().stringWidth(score);
       while (textWidth > 500) {
         font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);
@@ -308,6 +303,7 @@ public class AssetFactory {
     return null;
   }
 
+  /* no more used
   private static byte[] readImageUrl(String imageUrl) {
     try {
       URL url = new URL(imageUrl);
@@ -328,5 +324,5 @@ public class AssetFactory {
       LOG.error("Failed to read url " + imageUrl + ": " + e.getMessage());
     }
     return null;
-  }
+  } */
 }

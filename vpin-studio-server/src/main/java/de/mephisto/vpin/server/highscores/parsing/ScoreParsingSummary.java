@@ -25,7 +25,7 @@ public class ScoreParsingSummary {
       builder.append(" ");
       builder.append(score.getInitials());
       builder.append("   ");
-      builder.append(ScoreFormatUtil.formatScore(String.valueOf(score.getScore())));
+      builder.append(ScoreFormatUtil.formatScore(score.getScore()));
       builder.append("\n");
     }
     return builder.toString();

@@ -18,7 +18,7 @@ public class ScoreGraphUtil {
   @Nullable
   public static Tile createGraph(ScoreListRepresentation list) {
     if (!list.getScores().isEmpty()) {
-      List<XYChart.Series> series = new ArrayList<>();
+      List<XYChart.Series<String, Long>> series = new ArrayList<>();
       ScoreSummaryRepresentation firstEntry = list.getScores().get(0);
       if(firstEntry == null) {
         return null;
@@ -26,7 +26,7 @@ public class ScoreGraphUtil {
 
       List<ScoreRepresentation> scoreList = firstEntry.getScores();
       for (int i = 0; i < scoreList.size(); i++) {
-        XYChart.Series<String, Number> scoreGraph = new XYChart.Series();
+        XYChart.Series<String, Long> scoreGraph = new XYChart.Series<>();
         scoreGraph.setName("#" + (i+1));
         series.add(scoreGraph);
       }
@@ -40,7 +40,7 @@ public class ScoreGraphUtil {
           if(i > (series.size()-1)) {
             break;
           }
-          series.get((i)).getData().add(new XYChart.Data(SimpleDateFormat.getDateTimeInstance().format(s.getCreatedAt()), s.getNumericScore()));
+          series.get(i).getData().add(new XYChart.Data<>(SimpleDateFormat.getDateTimeInstance().format(s.getCreatedAt()), s.getScore()));
         }
       }
 

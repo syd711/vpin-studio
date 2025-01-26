@@ -595,7 +595,7 @@ public class HighscoreService implements InitializingBean {
     try {
       for (int i = 0; i < newScores.size(); i++) {
         Score newScore = newScores.get(i);
-        if (newScore.getPlayerInitials().equals("???") || newScore.getNumericScore() == 0) {
+        if (newScore.isSkipped()) {
           continue;
         }
 
@@ -620,7 +620,7 @@ public class HighscoreService implements InitializingBean {
 
   public int calculateChangedPositionByScore(@NonNull List<Score> oldScores, @NonNull Score newScore) {
     for (int i = 0; i < oldScores.size(); i++) {
-      if (oldScores.get(i).getNumericScore() < newScore.getNumericScore()) {
+      if (oldScores.get(i).getScore() < newScore.getScore()) {
         LOG.info("Calculated changed score at position " + (i + 1) + ": [" + newScore + "] has beaten [" + oldScores.get(i) + "]");
         return i + 1;
       }

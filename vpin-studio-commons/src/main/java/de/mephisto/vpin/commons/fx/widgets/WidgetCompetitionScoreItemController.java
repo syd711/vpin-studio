@@ -1,7 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import javafx.fxml.FXML;
@@ -11,7 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -67,7 +65,7 @@ public class WidgetCompetitionScoreItemController extends WidgetController imple
     }
 
     scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getScore());
+    scoreLabel.setText(score.getFormattedScore());
 
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);

@@ -86,7 +86,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
       initials = line.trim().substring(0, 3);
 
       String scoreString = line.substring(4).trim();
-      double scoreValue = toNumericScore(scoreString, source);
+      long scoreValue = toNumericScore(scoreString, source);
       if (scoreValue == -1) {
         return null;
       }
@@ -94,7 +94,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
       return new Score(createdAt, gameId, initials, null, scoreString, scoreValue, 1);
     }
 
-    double scoreValue = toNumericScore(line.trim(), source);
+    long scoreValue = toNumericScore(line.trim(), source);
     if (scoreValue == -1) {
       return null;
     }
@@ -107,7 +107,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     List<String> scoreLineSegments = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     if (scoreLineSegments.size() == 2) {
       String score = scoreLineSegments.get(1);
-      double v = toNumericScore(score, source);
+      long v = toNumericScore(score, source);
       if (v == -1) {
         return null;
       }
@@ -117,7 +117,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     if (scoreLineSegments.size() == 3) {
       String score = scoreLineSegments.get(2);
       String initials = scoreLineSegments.get(1);
-      double v = toNumericScore(score, source);
+      long v = toNumericScore(score, source);
       if (v == -1) {
         return null;
       }
@@ -132,7 +132,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
       }
       String score = scoreLineSegments.get(scoreLineSegments.size() - 1);
       String playerInitials = initials.toString().trim();
-      double v = toNumericScore(score, source);
+      long v = toNumericScore(score, source);
       if (v == -1) {
         return null;
       }

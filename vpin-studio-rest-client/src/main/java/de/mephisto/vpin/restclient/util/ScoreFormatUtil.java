@@ -14,13 +14,13 @@ public class ScoreFormatUtil {
 
   private static Map<Locale, DecimalFormat> formats = new HashMap<>();
 
-  public static String formatScore(String score) {
+  public static String formatScore(long score) {
     return formatScore(score, Locale.getDefault());
   }
 
-  public static String formatScore(String score, Locale loc) {
+  public static String formatScore(long score, Locale loc) {
     try {
-      score = cleanScore(score);
+      //score = cleanScore(score);
 
       DecimalFormat decimalFormat = formats.get(loc);
       if (decimalFormat == null) {
@@ -31,7 +31,7 @@ public class ScoreFormatUtil {
         formats.put(loc, decimalFormat);
       }
 
-      return decimalFormat.format(Long.parseLong(score));
+      return decimalFormat.format(score);
     }
     catch (NumberFormatException e) {
       LOG.error("Failed to read number from '" + score + "': " + e.getMessage());

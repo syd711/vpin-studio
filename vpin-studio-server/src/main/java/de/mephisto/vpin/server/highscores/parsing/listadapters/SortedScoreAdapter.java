@@ -46,7 +46,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
       if (matcher.find()) {
         String player = matcher.group(1);
         String score = matcher.group(2);
-        Double scoreValue = toNumericScore(score, source);
+        long scoreValue = toNumericScore(score, source);
         if (scoreValue != -1) {
           scores.add(new Score(createdAt, game.getId(), player, null, score, scoreValue, 0));
         }
@@ -57,7 +57,7 @@ public class SortedScoreAdapter extends ScoreListAdapterBase implements ScoreLis
     scores = filterDuplicates(scores);
 
     // Sort scores in descending order
-    scores.sort((a, b) -> Double.compare(b.getNumericScore(), a.getNumericScore()));
+    scores.sort((a, b) -> Long.compare(b.getScore(), a.getScore()));
 
     int i = 1;
     for (Score score : scores) {
