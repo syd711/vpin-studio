@@ -44,7 +44,7 @@ jobs:
      # - name: Install Dependencies
      #   run: |
      #     brew update
-     #     brew install maven
+     #     brew install maven  
      #     brew install openjdk@17 # Ensure Zulu JDK 17 is installed on macOS
 
       # Step 4: Build the Java application
@@ -71,11 +71,29 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
-     # Step 5: Package the Java application as a macOS .app bundle
-     #The jpackage config needs to be updated to properly reference the locations of the files.
+      # Step 5: Prepare Java runtime by unzipping
+      - name: Prepare Jave Runtime
+        working-directory: .
+        run: |
+          tar -xzf zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz
+
+      # Step 6: Build Directory Structure
+      - name: Build structure for packaging
+        working-directory: .
+        run: |
+          mkdir -p ./mac-build
+          cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
+          cp -R ./mac-package/package ./mac-build
+          cp -R ./mac-pacakge/VpinStudio.icns ./mac-build
+          
+
+      
+      
+      # Step 7: Package the Java application as a macOS .app bundle
+      #The jpackage config needs to be updated to properly reference the locations of the files.
       #jpackage @jpackage_config.txt
       - name: Package as macOS App
-        working-directory: ./mac-package
+        working-directory: ./mac-build
         run: |
           echo "ls . results"
           ls -al .
@@ -85,16 +103,16 @@ jobs:
           ls -al package
           echo "ls package/macos results"
           ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar ../vpin-studio-ui/target/vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(/usr/libexec/java_home -v 11)
+          jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image $(../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre)
 
-      # Step 7: Zip the .app bundle for easy distribution
+      # Step 8: Zip the .app bundle for easy distribution
       #Update for correct location
       - name: Zip macOS .app Bundle
         working-directory: ./
         run: |
           zip VPin-Studio-MacOS.zip VPin-Studio.app
 
-      # Step 8: Upload the .app zip file as an artifact
+      # Step 9: Upload the .app zip file as an artifact
        #Update for correct location
       - name: Upload macOS Build Artifact
         uses: actions/upload-artifact@v4
