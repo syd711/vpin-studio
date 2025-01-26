@@ -770,8 +770,12 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
     mameService.setGameService(this);
-    List<Game> games = getKnownGames(-1);
-    vpsService.update(games);
-    mameService.clearCache();
+    List<Integer> unknownGames = getUnknownGames();
+    //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
+    if (unknownGames.isEmpty()) {
+      List<Game> games = getKnownGames(-1);
+      vpsService.update(games);
+      mameService.clearCache();
+    }
   }
 }

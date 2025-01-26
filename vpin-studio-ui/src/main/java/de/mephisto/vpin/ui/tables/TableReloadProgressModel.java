@@ -59,6 +59,7 @@ public class TableReloadProgressModel extends ProgressModel<Integer> {
       lastScannedName = null;
       if (gameRepresentation != null) {
         lastScannedName = gameRepresentation.getGameDisplayName();
+        client.getGameService().scanGameScore(gameRepresentation.getId());
       }
       progressResultModel.addProcessed();
     } catch (Exception e) {

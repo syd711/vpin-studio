@@ -137,7 +137,7 @@ vpin-studio-logs.zip
 /server-restart.bat
 
 /resources/cache/**
-/resources/vpin-studio.db
+/resources/vpin-studio.db.backup
 /resources/PinVol.bat
 /resources/media-cropped/
 /resources/media-raw/
