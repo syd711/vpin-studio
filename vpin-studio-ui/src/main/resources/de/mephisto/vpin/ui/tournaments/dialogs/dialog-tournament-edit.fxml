@@ -390,7 +390,7 @@
                                           <Insets />
                                        </HBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores on start">
+                                    <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores on creation">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

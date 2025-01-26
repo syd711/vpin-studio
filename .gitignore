@@ -83,6 +83,7 @@ resources/media-cropped/
 /resources/vpbm/vPinBackupManager.json
 
 /config/settings.properties
+/config/*.json
 /config/connection.properties
 
 /VPReg/

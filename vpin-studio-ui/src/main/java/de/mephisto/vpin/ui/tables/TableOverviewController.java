@@ -1016,7 +1016,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setTooltip(new Tooltip(tooltip));
       }
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(columnEmulator, "", (value, model) -> {
       GameEmulatorRepresentation gameEmulator = model.getGameEmulator();
@@ -1044,7 +1044,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setGraphic(updateIcon);
       }
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRom, (value, model) -> {
       String rom = value.getRom();
@@ -1069,7 +1069,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setStyle(getLabelCss(value));
       }
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnHSType, (value, model) -> {
       String hsType = value.getHighscoreType();
@@ -1080,7 +1080,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
@@ -1096,7 +1096,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return WidgetFactory.createUpdateIcon("New backglass updates available");
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -1117,21 +1117,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return WidgetFactory.createUpdateIcon("New POV updates available");
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnINI, (value, model) -> {
       if (value.getIniPath() != null) {
         return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getIniPath());
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRES, (value, model) -> {
       if (value.getResPath() != null) {
         return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getResPath());
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
@@ -1147,7 +1147,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return WidgetFactory.createUpdateIcon("New ALT sound updates available");
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
@@ -1163,7 +1163,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return WidgetFactory.createUpdateIcon("New ALT color updates available");
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
@@ -1179,7 +1179,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return WidgetFactory.createUpdateIcon("New PUP pack updates available");
       }
       return null;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
       ValidationState validationState = value.getValidationState();
@@ -1228,7 +1228,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       });
 
       return btn;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
       Label label = new Label("-");
@@ -1275,7 +1275,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
@@ -1287,7 +1287,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
@@ -1299,13 +1299,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnLauncher, (value, model) -> {
       Label label = new Label(model.getGame().getLauncher());
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     columnComment.setSortable(false);
     BaseLoadingColumn.configureColumn(columnComment, (value, model) -> {
@@ -1317,7 +1317,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     columnPlaylists.setSortable(false);
     BaseLoadingColumn.configureColumn(columnPlaylists, (value, model) -> {
@@ -1369,46 +1369,46 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       }
       box.setStyle("-fx-padding: 3 0 0 0;");
       return box;
-    }, true);
+    }, this, true);
 
 
     List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
     BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField, event -> {
       showAssetDetails(value, VPinScreen.PlayField);
-    }), supportedScreens.contains(VPinScreen.PlayField));
+    }), this, supportedScreens.contains(VPinScreen.PlayField));
     BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass, event -> {
       showAssetDetails(value, VPinScreen.BackGlass);
-    }), supportedScreens.contains(VPinScreen.BackGlass));
+    }), this, supportedScreens.contains(VPinScreen.BackGlass));
     BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, model, VPinScreen.Loading, event -> {
       showAssetDetails(value, VPinScreen.Loading);
-    }), supportedScreens.contains(VPinScreen.Loading));
+    }), this, supportedScreens.contains(VPinScreen.Loading));
     BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, model, VPinScreen.Wheel, event -> {
       showAssetDetails(value, VPinScreen.Wheel);
-    }), supportedScreens.contains(VPinScreen.Wheel));
+    }), this, supportedScreens.contains(VPinScreen.Wheel));
     BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD, event -> {
       showAssetDetails(value, VPinScreen.DMD);
-    }), supportedScreens.contains(VPinScreen.DMD));
+    }), this, supportedScreens.contains(VPinScreen.DMD));
     BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper, event -> {
       showAssetDetails(value, VPinScreen.Topper);
-    }), supportedScreens.contains(VPinScreen.Topper));
+    }), this, supportedScreens.contains(VPinScreen.Topper));
     BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu, event -> {
       showAssetDetails(value, VPinScreen.Menu);
-    }), supportedScreens.contains(VPinScreen.Menu));
+    }), this, supportedScreens.contains(VPinScreen.Menu));
     BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, model, VPinScreen.Audio, event -> {
       showAssetDetails(value, VPinScreen.Audio);
-    }), supportedScreens.contains(VPinScreen.Audio));
+    }), this, supportedScreens.contains(VPinScreen.Audio));
     BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, model, VPinScreen.AudioLaunch, event -> {
       showAssetDetails(value, VPinScreen.AudioLaunch);
-    }), supportedScreens.contains(VPinScreen.AudioLaunch));
+    }), this, supportedScreens.contains(VPinScreen.AudioLaunch));
     BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, model, VPinScreen.GameInfo, event -> {
       showAssetDetails(value, VPinScreen.GameInfo);
-    }), supportedScreens.contains(VPinScreen.GameInfo));
+    }), this, supportedScreens.contains(VPinScreen.GameInfo));
     BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, model, VPinScreen.GameHelp, event -> {
       showAssetDetails(value, VPinScreen.GameHelp);
-    }), supportedScreens.contains(VPinScreen.GameHelp));
+    }), this, supportedScreens.contains(VPinScreen.GameHelp));
     BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, model, VPinScreen.Other2, event -> {
       showAssetDetails(value, VPinScreen.Other2);
-    }), supportedScreens.contains(VPinScreen.Other2));
+    }), this, supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
     tableView.setRowFactory(

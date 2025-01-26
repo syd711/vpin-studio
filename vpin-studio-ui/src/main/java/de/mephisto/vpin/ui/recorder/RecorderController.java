@@ -454,7 +454,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         label.setTooltip(new Tooltip(tooltip));
       }
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
@@ -465,7 +465,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
 
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
@@ -486,18 +486,19 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         }
       });
       return columnCheckbox;
-    }, true);
+    }, this, true);
 
     screenColumns = new HashMap<>();
     Collections.reverse(recordingScreens);
     for (RecordingScreen screen : recordingScreens) {
       TableColumn<GameRepresentationModel, GameRepresentationModel> column = new TableColumn<>(screen.getName());
       column.setPrefWidth(130);
+      column.setId(screen.getScreen().name());
       if (screen.getScreen().equals(VPinScreen.DMD) || screen.getScreen().equals(VPinScreen.Topper)) {
         column.setPrefWidth(90);
       }
       column.setStyle("-fx-alignment: CENTER;");
-      BaseLoadingColumn.configureColumn(column, (value, model) -> createScreenCell(value, model, screen.getScreen()), recorderSettings.isEnabled(screen.getScreen()));
+      BaseLoadingColumn.configureColumn(column, (value, model) -> createScreenCell(value, model, screen.getScreen()),this,  recorderSettings.isEnabled(screen.getScreen()));
 
       CheckBox cb = new CheckBox();
       column.setGraphic(cb);

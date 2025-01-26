@@ -245,7 +245,7 @@
                                                       <Insets top="3.0" />
                                                    </padding>
                                                 </Label>
-                                                <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores on start" GridPane.columnIndex="1">
+                                                <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores on creation" GridPane.columnIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
