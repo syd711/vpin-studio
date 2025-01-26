@@ -266,7 +266,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   }
 
   public byte[] generateAvatarImage(@Nullable byte[] data) {
-    try (InputStream defaultAvatar = Asset.class.getResourceAsStream("avatar-default.png")) {
+    try (InputStream defaultAvatar = Asset.class.getResourceAsStream("/de/mephisto/vpin/server/resources/logo-500.png")) {
       if (data == null) {
         return IOUtils.toByteArray(defaultAvatar);
       }

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 
 public enum VPinScreen {
-  Audio(-1, "audio", GameValidationCode.CODE_NO_AUDIO),
+  Audio(4, "audio", GameValidationCode.CODE_NO_AUDIO),
   AudioLaunch(-1, "audiolaunch", GameValidationCode.CODE_NO_AUDIO_LAUNCH),
   Other2(8, "GameSelect", GameValidationCode.CODE_NO_OTHER2),
   GameInfo(9, "GameInfo", GameValidationCode.CODE_NO_INFO),
@@ -17,8 +17,8 @@ public enum VPinScreen {
   BackGlass(2, "Backglass", GameValidationCode.CODE_NO_BACKGLASS),
   Menu(5, "Menu", GameValidationCode.CODE_NO_APRON),
   DMD(1, "DMD", GameValidationCode.CODE_NO_DMD),
-  Loading(-1, "Loading", GameValidationCode.CODE_NO_LOADING),
-  Wheel(-1, "Wheel", GameValidationCode.CODE_NO_WHEEL_IMAGE),
+  Loading(7, "Loading", GameValidationCode.CODE_NO_LOADING),
+  Wheel(6, "Wheel", GameValidationCode.CODE_NO_WHEEL_IMAGE),
   PlayField(3, "PlayField", GameValidationCode.CODE_NO_PLAYFIELD);
 
   private int code;
@@ -83,8 +83,43 @@ public enum VPinScreen {
         return v;
       }
     }
-    return valueOfScreen(segment);
+    return null;
   }
+
+  public static VPinScreen valueOfCode(String code) {
+    for (VPinScreen v: values()) {
+      if (StringUtils.equalsIgnoreCase(code, "" + v.code)) {
+        return v;
+      }
+    }
+    return null;
+  }
+
+  public static VPinScreen[] keepDisplaysToScreens(String codes) {
+    if (codes == null) {
+      return new VPinScreen[0];
+    }
+    // else
+    String[] split = StringUtils.split(codes, ",");
+    VPinScreen[] screens = new VPinScreen[split.length];
+    for (int i = 0; i < split.length; i++) {
+      screens[i] = valueOfCode(split[i].trim());
+    }
+    return screens;
+  }
+
+  public static String toString(VPinScreen[] screens) {
+    StringBuilder sb = new StringBuilder();
+    for (VPinScreen screen : screens) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(screen.name());
+    }
+    return sb.toString();
+  }
+
+  //------------------------------------------
 
   public int getValidationCode() {
     return validationCode;

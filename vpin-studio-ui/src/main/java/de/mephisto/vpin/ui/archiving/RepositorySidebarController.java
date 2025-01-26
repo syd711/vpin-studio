@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
@@ -247,7 +248,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
-      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" : tableDetails.getKeepDisplays());
+      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" : 
+        VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
       gameRating.setText(tableDetails.getGameRating() == null ? "?" : String.valueOf(tableDetails.getGameRating()));
       dof.setText(StringUtils.isEmpty(tableDetails.getDof()) ? "-" : tableDetails.getDof());
       IPDBNum.setText(StringUtils.isEmpty(tableDetails.getIPDBNum()) ? "-" : tableDetails.getIPDBNum());
