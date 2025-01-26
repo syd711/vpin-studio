@@ -50,4 +50,16 @@ public class ScoreFormatUtil {
         .replace(" ", "");
   }
 
+  /**
+   * Apply minimal transformation on raw highscore text
+   * @param raw Th eraw text to be "formatted"
+    * @return The formatted text
+   */
+  public static String formatRaw(String raw) {
+    // escape french space character
+    return raw
+      .replace("\ufffd", " ")
+      .replace("\u00ff", " ")
+      .trim();
+  }
 }

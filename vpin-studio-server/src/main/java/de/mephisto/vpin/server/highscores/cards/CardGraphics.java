@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -351,7 +352,7 @@ public class CardGraphics {
 
     int remainingHeight = imageHeight - yStart - template.getMarginBottom();
     int remainingWidth = imageWidth - template.getMarginLeft() + template.getMarginRight() - wheelWidth;
-    String raw = summary.getRaw().trim();
+    String raw = ScoreFormatUtil.formatRaw(summary.getRaw());
     String[] lines = raw.split("\n");
 
     int fontSize = remainingHeight / lines.length;

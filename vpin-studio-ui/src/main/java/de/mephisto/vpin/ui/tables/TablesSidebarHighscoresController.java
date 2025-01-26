@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -378,7 +379,8 @@ public class TablesSidebarHighscoresController implements Initializable {
           rawTitleLabel.setVisible(true);
           rawScoreWrapper.setVisible(true);
           rawScoreLabel.setFont(getScoreFontText());
-          rawScoreLabel.setText(metadata.getRaw());
+          String raw = ScoreFormatUtil.formatRaw(metadata.getRaw());
+          rawScoreLabel.setText(raw);
         }
 
         ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
