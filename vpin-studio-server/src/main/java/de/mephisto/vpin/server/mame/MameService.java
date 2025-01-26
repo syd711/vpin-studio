@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * for a description about all mame options.
  */
 @Service
-public class MameService implements InitializingBean, ApplicationContextAware {
+public class MameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(MameService.class);
 
   private final static String KEY_SKIP_STARTUP_TEST = "cheat";
@@ -59,7 +59,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   @Autowired
   private FrontendService frontendService;
 
-  private ApplicationContext applicationContext;
+  private GameService gameService;
 
   public boolean clearCache() {
     long l = System.currentTimeMillis();
@@ -67,7 +67,6 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     LOG.info("Reading of " + romFolders.size() + " total mame options (" + (System.currentTimeMillis() - l) + "ms)");
 
-    GameService gameService = applicationContext.getBean(GameService.class);
     List<Game> knownGames = gameService.getKnownGames(-1);
     for (String romFolder : romFolders) {
       Optional<Game> first = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).findFirst();
@@ -334,15 +333,10 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   }
 
   @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
+  public void afterPropertiesSet() {
   }
 
-  @Override
-  public void afterPropertiesSet() {
-    new Thread(() -> {
-      Thread.currentThread().setName("MAME Initializer");
-      clearCache();
-    }).start();
+  public void setGameService(GameService gameService) {
+    this.gameService = gameService;
   }
 }

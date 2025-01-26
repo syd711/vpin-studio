@@ -233,23 +233,23 @@ public class HighscoreParserTest extends AbstractVPinServerTest {
     assertTrue(test.size() > 3);
 
     Score score = test.get(0);
-    assertEquals("75.000.000", score.getScore());
+    assertEquals(75000000, score.getScore());
     assertEquals("OPT", score.getPlayerInitials());
 
     score = test.get(1);
-    assertEquals("55.000.000", score.getScore());
+    assertEquals(55000000, score.getScore());
     assertEquals("JAZ", score.getPlayerInitials());
 
     score = test.get(2);
-    assertEquals("40.000.000", score.getScore());
+    assertEquals(40000000, score.getScore());
     assertEquals("PWL", score.getPlayerInitials());
 
     score = test.get(3);
-    assertEquals("30.000.000", score.getScore());
+    assertEquals(30000000, score.getScore());
     assertEquals("IRN", score.getPlayerInitials());
 
     score = test.get(4);
-    assertEquals("25.000.000", score.getScore());
+    assertEquals(25000000, score.getScore());
     assertEquals("BEE", score.getPlayerInitials());
 
   }

@@ -119,7 +119,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    * @param template
    * @return
    */
-  public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
+  public synchronized boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
       ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
       Platform.runLater(() -> {
