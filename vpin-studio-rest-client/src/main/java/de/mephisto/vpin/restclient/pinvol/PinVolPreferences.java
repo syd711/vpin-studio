@@ -11,6 +11,15 @@ public class PinVolPreferences {
   private int global = 0;
   private int night = 0;
   private int defaultVol = 0;
+  private int ssfDbLimit = 10;
+
+  public int getSsfDbLimit() {
+    return ssfDbLimit;
+  }
+
+  public void setSsfDbLimit(int ssfDbLimit) {
+    this.ssfDbLimit = ssfDbLimit;
+  }
 
   public int getGlobal() {
     return global;

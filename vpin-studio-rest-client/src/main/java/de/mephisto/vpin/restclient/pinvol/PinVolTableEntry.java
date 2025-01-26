@@ -66,29 +66,29 @@ public class PinVolTableEntry {
     setSecondaryVolume(tableVolume.getSecondaryVolume());
   }
 
-  public String toSettingsString() {
+  public String toSettingsString(int ssfDbLimit) {
     StringBuilder builder = new StringBuilder(getName());
     builder.append("\t");
     builder.append(getPrimaryVolume());
     builder.append("\t");
     builder.append(getSecondaryVolume());
     builder.append("\t");
-    builder.append(formatGainValue(getSsfBassVolume()));
+    builder.append(formatGainValue(getSsfBassVolume(), ssfDbLimit));
     builder.append("\t");
-    builder.append(formatGainValue(getSsfRearVolume()));
+    builder.append(formatGainValue(getSsfRearVolume(), ssfDbLimit));
     builder.append("\t");
-    builder.append(formatGainValue(getSsfFrontVolume()));
+    builder.append(formatGainValue(getSsfFrontVolume(), ssfDbLimit));
     builder.append("\n");
     return builder.toString();
   }
 
-  public static int formatGainValue(int i) {
+  public static int formatGainValue(int i, int ssfDbLimit) {
     try {
-      if (i < -10) {
-        i = -10;
+      if (i < -ssfDbLimit) {
+        i = -ssfDbLimit;
       }
-      else if (i > 10) {
-        i = 10;
+      else if (i > ssfDbLimit) {
+        i = ssfDbLimit;
       }
       return i;
     }

@@ -8,8 +8,9 @@
 - **Highscore Settings**: Removed configuration option for highscore titles, e.g. "GRAND CHAMPION". These values are now part of the internal scoring database so that the user never has to deal with this kind of stuff.
 - **Highscore Parsing**: Fixed highscores for tables **Defender, Black Pyramid and Catacomb**.
 - **Tables / Playlists**: Renamed **Local Favorites** to **Playlist Favorites**.
+- **Tables / PinVOL Settings**: The user interface for the PinVOL settings used the SSF DB limit value now. You can't configure this via Studio yet and have to configure it once via the PinVOL UI.
 - **PinballX Frontend**: fixed zero byte download by using FTP passive mode, then try active mode if failure
-- **System Manager**: Fixed Backglass Server update detection.
+- **System Manager**: Fixed **Backglass Server** update detection.
 
 ---
 
