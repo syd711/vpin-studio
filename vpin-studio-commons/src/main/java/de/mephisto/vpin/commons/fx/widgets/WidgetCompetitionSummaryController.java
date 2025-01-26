@@ -15,7 +15,6 @@ import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -240,14 +239,14 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         ScoreRepresentation score1 = scores.get(index);
         name1.setText(formatScoreText(score1));
         scoreLabel1.setFont(getCompetitionScoreFont());
-        scoreLabel1.setText(score1.getScore());
+        scoreLabel1.setText(score1.getFormattedScore());
 
         index++;
         if (index < scores.size()) {
           ScoreRepresentation score2 = scores.get(index);
           name2.setText(formatScoreText(score2));
           scoreLabel2.setFont(getCompetitionScoreFont());
-          scoreLabel2.setText(score2.getScore());
+          scoreLabel2.setText(score2.getFormattedScore());
         }
 
         index++;
@@ -255,7 +254,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           ScoreRepresentation score3 = scores.get(index);
           name3.setText(formatScoreText(score3));
           scoreLabel3.setFont(getCompetitionScoreFont());
-          scoreLabel3.setText(score3.getScore());
+          scoreLabel3.setText(score3.getFormattedScore());
         }
 
         index++;
@@ -263,7 +262,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           ScoreRepresentation score4 = scores.get(index);
           name4.setText(formatScoreText(score4));
           scoreLabel4.setFont(getCompetitionScoreFont());
-          scoreLabel4.setText(score4.getScore());
+          scoreLabel4.setText(score4.getFormattedScore());
         }
 
         index++;
@@ -271,7 +270,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
           ScoreRepresentation score5 = scores.get(index);
           name5.setText(formatScoreText(score5));
           scoreLabel5.setFont(getCompetitionScoreFont());
-          scoreLabel5.setText(score5.getScore());
+          scoreLabel5.setText(score5.getFormattedScore());
         }
 
         JFXFuture.supplyAsync(() -> {
@@ -370,8 +369,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     int pos = 1;
     for (TableScoreDetails maniaScore : scoreDetails) {
       ScoreRepresentation score = new ScoreRepresentation();
-      score.setScore(ScoreFormatUtil.formatScore(String.valueOf(maniaScore.getScore())));
-      score.setNumericScore(maniaScore.getScore());
+      score.setScore(maniaScore.getScore());
       score.setPosition(pos);
       score.setCreatedAt(maniaScore.getCreationDate());
       score.setPlayerInitials(maniaScore.getInitials());

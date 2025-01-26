@@ -81,7 +81,7 @@ public class DiscordSubscriptionMessageFactory {
 
   private String getBeatenMessage(long serverId, Score oldScore, Score newScore) {
     String oldName = resolvePlayerName(serverId, oldScore);
-    if (oldScore.getPlayerInitials().equals("???") || oldScore.getNumericScore() == 0) {
+    if (oldScore.isSkipped()) {
       return "";
     }
 

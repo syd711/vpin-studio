@@ -9,9 +9,9 @@ import java.util.Date;
 public class ScoreRepresentation {
   private String playerInitials;
   private PlayerRepresentation player;
-  private String score;
+  private String rawScore;
   private int position;
-  private double numericScore;
+  private long score;
   private int gameId;
   private Date createdAt;
 
@@ -39,14 +39,6 @@ public class ScoreRepresentation {
     this.player = player;
   }
 
-  public double getNumericScore() {
-    return numericScore;
-  }
-
-  public void setNumericScore(double numericScore) {
-    this.numericScore = numericScore;
-  }
-
   public String getPlayerInitials() {
     return playerInitials;
   }
@@ -63,22 +55,31 @@ public class ScoreRepresentation {
     this.position = position;
   }
 
-  public String getScore() {
+  public long getScore() {
     return score;
   }
 
-  public void setScore(String score) {
+  public void setScore(long score) {
     this.score = score;
+  }
+
+  public String getRawScore() {
+    return rawScore;
+  }
+
+  public void setRawScore(String rawScore) {
+    this.rawScore = rawScore;
   }
 
   @JsonIgnore
   public String getFormattedScore() {
-    String scoreString = this.getScore();
-    String formattedScore = ScoreFormatUtil.formatScore(scoreString);
-    if (!formattedScore.equals("0")) {
-      scoreString = formattedScore;
-    }
-    return scoreString;
+    String formattedScore = ScoreFormatUtil.formatScore(this.getScore());
+    //TODO was it really needed  
+    // Maybe because if NumberFormatException is caught in formatScore, it returns "0" but that should never happen 
+    //if (!formattedScore.equals("0")) {
+      return formattedScore;
+    //}
+    //return rawScore;
   }
 
   @Override

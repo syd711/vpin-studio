@@ -205,7 +205,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
             ScoreRepresentation currentScore = scores.get(0);
             Platform.runLater(() -> {
               turnoverTile.setTitle("#1 Place");
-              turnoverTile.setValue(currentScore.getNumericScore());
+              turnoverTile.setValue(currentScore.getScore());
 
               if (currentScore.getPlayer() != null) {
                 turnoverTile.setText(currentScore.getPlayer().getName());

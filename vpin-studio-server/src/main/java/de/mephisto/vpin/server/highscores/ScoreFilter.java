@@ -33,7 +33,7 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
       return true;
     }
 
-    if (score.getNumericScore() < UIDefaults.MAX_RESET_SCORE_VALUE) {
+    if (score.getScore() < UIDefaults.MAX_RESET_SCORE_VALUE) {
       LOG.info("Filtered highscore update \"" + score + "\": the score is lower than the allowed threshold of " + UIDefaults.MAX_RESET_SCORE_VALUE);
       SLOG.info("Filtered highscore update \"" + score + "\": the score is lower than the allowed threshold of " + UIDefaults.MAX_RESET_SCORE_VALUE);
       return true;

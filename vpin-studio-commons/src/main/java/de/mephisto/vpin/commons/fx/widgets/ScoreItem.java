@@ -66,7 +66,7 @@ public class ScoreItem extends BorderPane {
 
     HBox scoreRow = new HBox();
     scoreRow.setAlignment(Pos.BOTTOM_RIGHT);
-    Label scoreLabel = new Label(score.getScore());
+    Label scoreLabel = new Label(score.getFormattedScore());
     scoreRow.getChildren().add(scoreLabel);
   }
 }

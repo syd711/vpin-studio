@@ -182,8 +182,8 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     tableScore.setVpsTableId(game.getExtTableId());
     tableScore.setVpsVersionId(game.getExtTableVersionId());
     tableScore.setScoreType(game.getHighscoreType() != null ? HighscoreType.valueOf(game.getHighscoreType().name()) : null);
-    tableScore.setScore(Double.valueOf(newScore.getNumericScore()).longValue());
-    tableScore.setScoreText(newScore.getScore());
+    tableScore.setScore(newScore.getScore());
+    tableScore.setScoreText(newScore.getFormattedScore());
     tableScore.setScoreSource(game.getRom() != null ? game.getRom() : game.getTableName());
     tableScore.setCreationDate(newScore.getCreatedAt());
     tableScore.setTableName(game.getGameDisplayName());

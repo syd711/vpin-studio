@@ -154,7 +154,7 @@ public class PlayerService {
 
   public void validateInitials(Score newScore) {
     String defaultInitials = getAdminPlayerInitials();
-    if (String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null && newScore.getNumericScore() > 0) {
+    if (String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null && newScore.getScore() > 0) {
       newScore.setPlayerInitials(defaultInitials);
     }
   }

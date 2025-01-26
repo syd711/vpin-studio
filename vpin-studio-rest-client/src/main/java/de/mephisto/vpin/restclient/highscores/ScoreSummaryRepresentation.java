@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.Score;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -33,13 +32,7 @@ public class ScoreSummaryRepresentation {
       for (Score gameRoomScore : gameRoomScores) {
         ScoreRepresentation s = new ScoreRepresentation();
         s.setCreatedAt(gameRoomScore.getDate());
-        s.setScore(ScoreFormatUtil.formatScore(gameRoomScore.getScore()));
-        try {
-          s.setNumericScore(Long.parseLong(gameRoomScore.getScore()));
-        }
-        catch (NumberFormatException e) {
-          LOG.warn("iScored score formatting failed: " + e.getMessage());
-        }
+        s.setScore(gameRoomScore.getScore());
 
         PlayerRepresentation playerRepresentation = new PlayerRepresentation();
         playerRepresentation.setName(gameRoomScore.getName());
@@ -48,7 +41,7 @@ public class ScoreSummaryRepresentation {
       }
     }
 
-    summary.getScores().sort((o1, o2) -> Double.compare(o2.getNumericScore(), o1.getNumericScore()));
+    summary.getScores().sort((o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
     for (int i = 1; i < summary.getScores().size(); i++) {
       summary.getScores().get(i - 1).setPosition(i);
     }

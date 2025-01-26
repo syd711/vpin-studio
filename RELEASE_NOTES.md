@@ -4,6 +4,7 @@
 
 - **Installation**: The highscore scan is now executed after a the initial table scan. This should avoid "database locked" errors which caused broken installations. 
 - **Highscore Resets**: Switched the default from 99 to 0. These values are only used when the highscore has been reset through the "Delete Table" dialog. 
+- **Highscore Displays**: use client default thousands separator eveywhere when displaying scores, dashboard and player badges were not rendered properly 
 - **VPin Studio Server**: Improved launch and exit curl calls. The curl call is replaced now with the additional parameter **emu** which contains additional information about the game emulator used, depending on the frontend you are using. This way, you can share your tables folder between different VPX emulators and the correct emulator is still detected corrected. The parameter is optional, so if the automatic update of the **curl** call fails for some reason, the old format is still valid. 
 - **Highscore Settings**: Removed configuration option for highscore titles, e.g. "GRAND CHAMPION". These values are now part of the internal scoring database so that the user never has to deal with this kind of stuff.
 - **Highscore Parsing**: Fixed highscores for tables **Defender, Black Pyramid and Catacomb**.

@@ -169,7 +169,7 @@ public class IScored {
             return result;
           }
 
-          long l = Long.parseLong(score.getScore());
+          long l = score.getScore();
           if (l > highscore) {
             LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
             result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);

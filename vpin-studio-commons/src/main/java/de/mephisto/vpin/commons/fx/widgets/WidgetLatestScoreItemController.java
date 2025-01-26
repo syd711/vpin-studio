@@ -81,7 +81,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     }
 
     scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getScore());
+    scoreLabel.setText(score.getFormattedScore());
 
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);

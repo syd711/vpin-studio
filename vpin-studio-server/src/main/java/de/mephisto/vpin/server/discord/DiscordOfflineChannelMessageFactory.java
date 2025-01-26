@@ -110,7 +110,7 @@ public class DiscordOfflineChannelMessageFactory {
       }
     }
 
-    if (oldScore.getPlayerInitials().equals("???") || oldScore.getNumericScore() == 0) {
+    if (oldScore.isSkipped()) {
       return "";
     }
 

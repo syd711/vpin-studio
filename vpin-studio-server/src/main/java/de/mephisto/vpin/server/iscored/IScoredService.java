@@ -104,7 +104,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
           return;
         }
 
-        IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
+        IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
         SLOG.info(result.toString());
         if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isiScoredNotification()) {
           Game game = gameService.getGame(newScore.getGameId());
