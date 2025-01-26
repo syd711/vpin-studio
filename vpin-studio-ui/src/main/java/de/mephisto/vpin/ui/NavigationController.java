@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -23,8 +22,6 @@ import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tournaments.TournamentsController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -236,28 +233,16 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   public static void refreshAvatar() {
-    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-    Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-    if (avatarEntry != null && !StringUtils.isEmpty(avatarEntry.getValue())) {
-      image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
-    }
+    Image image = new Image(client.getAssetService().getAvatar(false));
+    ImageView avatar = new ImageView(image);
+    avatar.setFitWidth(100);
+    avatar.setFitHeight(100);
 
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (systemNameEntry != null && !StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();
     }
-
-    Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(300, 300)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .text("")
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
 
     try {
       if (staticAvatarPane.isVisible()) {

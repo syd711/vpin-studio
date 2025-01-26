@@ -6,22 +6,16 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
-import eu.hansolo.tilesfx.Tile;
-import eu.hansolo.tilesfx.TileBuilder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +35,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
   @FXML
   private TextField vpinNameText;
-  private Tile avatar;
+
   public static Debouncer debouncer = new Debouncer();
   private Cabinet cabinet;
 
@@ -84,7 +78,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
             LOG.error("Failed to update cabinet name for VPin Mania: " + e.getMessage(), e);
             WidgetFactory.showAlert(stage, "Error", "Failed to update cabinet name for VPin Mania: " + e.getMessage());
           }
-        }, 500));
+        }, 500)); 
       }
     }
 
@@ -93,23 +87,13 @@ public class CabinetSettingsPreferencesController implements Initializable {
   }
 
   private void refreshAvatar() {
-    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-    Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-    if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-      image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
-    }
+    Image image = new Image(client.getAssetService().getAvatar(true));
+    ImageView avatar = new ImageView();
+    avatar.setImage(image);
+    avatar.setFitWidth(200);
+    avatar.setFitHeight(200);
 
     avatarBorderPane.setCenter(null);
-    avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(300, 300)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
     avatarBorderPane.setCenter(avatar);
-    avatar.setImage(image);
   }
 }

@@ -1,3 +1,11 @@
+## Release Notes 3.12.5
+
+## Changes
+
+- **VPin Studio client**: New pincab avatar used in client.
+
+---
+
 ## Release Notes 3.12.4
 
 ## Changes
