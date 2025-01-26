@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -53,7 +54,7 @@ public class DiscordBotCommandResponseFactory {
     }
     builder.append(line);
     builder.append("\n");
-    builder.append(scoreSummary.getRaw());
+    builder.append(ScoreFormatUtil.formatRaw(scoreSummary.getRaw()));
     builder.append("\n```");
     return builder.toString();
   }
