@@ -229,7 +229,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       Label label = new Label(value.getDisplayName());
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
       return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), model.getUpdates(), null) : null;
@@ -239,37 +239,37 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       Label label = new Label(Integer.toString(CollectionUtils.size(value.getTableFiles())));
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getB2sFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getB2sFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(pupPackColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getPupPackFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getPupPackFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(topperColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getTopperFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getTopperFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(povColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getPovFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getPovFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(romColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getRomFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getRomFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getAltSoundFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getAltSoundFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(tutorialColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getTutorialFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getTutorialFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {
       Label label = new Label(dateFormat.format(new Date(value.getUpdatedAt())));
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {

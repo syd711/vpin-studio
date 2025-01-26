@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables.panels;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -12,6 +14,7 @@ import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -90,9 +93,20 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   private String lastKeyInput = "";
 
   //----------------------
+  // UI Settings
+  private BaseTableSettings baseTableSettings;
+
+  //----------------------
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+  }
+
+  public BaseTableSettings getTableSettings() {
+    if (this.baseTableSettings == null) {
+      baseTableSettings = LocalUISettings.getTablePreference(this.getClass());
+    }
+    return baseTableSettings;
   }
 
   protected void initialize(String name, String names, BaseColumnSorter<M> columnSorter) {
@@ -104,6 +118,30 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     if (this.clearBtn != null) {
       this.clearBtn.setVisible(false);
     }
+
+    List<String> columnOrder = getTableSettings().getColumnOrder();
+    if (!columnOrder.isEmpty()) {
+      for (String columnName : columnOrder) {
+        Optional<TableColumn<M, ?>> first = tableView.getColumns().stream().filter(c -> c.getId().equals(columnName)).findFirst();
+        if (first.isPresent()) {
+          tableView.getColumns().remove(first.get());
+          tableView.getColumns().add(first.get());
+        }
+        else {
+          LOG.warn("{} has no column {}", this.getClass().getSimpleName(), columnName);
+        }
+      }
+    }
+
+    tableView.getColumns().addListener(new ListChangeListener<TableColumn<M, ?>>() {
+      @Override
+      public void onChanged(Change<? extends TableColumn<M, ?>> c) {
+        List<String> reOrderedColumns = c.getList().stream().map(column -> column.getId()).collect(Collectors.toList());
+        baseTableSettings.setColumnOrder(reOrderedColumns);
+        baseTableSettings.save();
+      }
+    });
+
     registerKeyPressed();
   }
 

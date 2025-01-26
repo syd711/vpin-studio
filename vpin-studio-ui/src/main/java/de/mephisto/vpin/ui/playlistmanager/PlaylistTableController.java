@@ -193,14 +193,14 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       label.setTooltip(new Tooltip(model.getName()));
       label.setText(model.getName());
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnEmulator, (value, model) -> {
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setText(model.getGameEmulator().getName());
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
@@ -212,7 +212,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
@@ -224,7 +224,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
       }
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithEmptyOption(uiSettings));

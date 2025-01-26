@@ -1,16 +1,36 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 
 public class BaseLoadingColumn {
+  private static final Debouncer debouncer = new Debouncer();
 
   public static <T, M extends BaseLoadingModel<T, M>> void configureColumn(
-        TableColumn<M, M> column, BaseLoadingColumnRenderer<T, M> renderer, boolean visible) {
+      TableColumn<M, M> column, BaseLoadingColumnRenderer<T, M> renderer, BaseTableController<T, M> baseTableController, boolean visible) {
     column.setVisible(visible);
+    BaseTableSettings tableSettings = baseTableController.getTableSettings();
+    double columnWidth = tableSettings.getColumnWidth(column.getId());
+    if (columnWidth > 0) {
+      column.setPrefWidth(columnWidth);
+    }
+    column.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        debouncer.debounce(column.getId(), () -> {
+          tableSettings.getColumnWith().put(column.getId(), newValue.doubleValue());
+          tableSettings.save();
+        }, 300);
+      }
+    });
+
     column.setCellValueFactory(cellData -> {
       M model = cellData.getValue();
       return model;
@@ -28,15 +48,15 @@ public class BaseLoadingColumn {
   }
 
   public static <T, M extends BaseLoadingModel<T, M>> void configureLoadingColumn(
-        TableColumn<M, M> column, Callback<TableColumn<M, M>, TableCell<M, M>> factory) {
+      TableColumn<M, M> column, Callback<TableColumn<M, M>, TableCell<M, M>> factory) {
 
     column.setCellValueFactory(cellData -> cellData.getValue());
     column.setCellFactory(factory);
   }
 
   public static <T, M extends BaseLoadingModel<T, M>> void configureLoadingColumn(
-        TableColumn<M, M> column,
-        String loading, BaseLoadingColumnRenderer<T, M> renderer) {
+      TableColumn<M, M> column,
+      String loading, BaseLoadingColumnRenderer<T, M> renderer) {
 
     //if (true) { configureColumn(column, renderer); return; }
 
