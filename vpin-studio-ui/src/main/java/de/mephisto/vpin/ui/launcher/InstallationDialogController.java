@@ -166,6 +166,8 @@ public class InstallationDialogController implements Initializable, DialogContro
     toggleGroup.selectToggle(radioA);
     installationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
     installationFolderField.setText(installationFolder.getAbsolutePath());
+
+    installBtn.setDisable(!installationFolder.exists());
   }
 
   private void validateFolders() {
@@ -228,25 +230,25 @@ public class InstallationDialogController implements Initializable, DialogContro
       }
       catch (Exception e) {
         LOG.error("Error while connecting to PinUp Popper database", e);
-        return "Cannot connect to PinUP Popper database or get database version."; 
+        return "Cannot connect to PinUP Popper database or get database version.";
       }
     }
     return "No PinUP Popper installation found in this folder.";
   }
 
   private String validatePinballXInstallation() {
-    return hasValidExe("PinballX.exe") ? null : 
-      "No PinballX installation found in this folder.";
+    return hasValidExe("PinballX.exe") ? null :
+        "No PinballX installation found in this folder.";
   }
 
   private String validatePinballYInstallation() {
-    return hasValidExe("PinballY.exe") ? null : 
-      "No PinballY installation found in this folder.";
+    return hasValidExe("PinballY.exe") ? null :
+        "No PinballY installation found in this folder.";
   }
 
   private String validateStandaloneInstallation() {
     return hasValidExe("VPinballX.exe") || hasValidExe("VPinballX64.exe") ? null :
-      "No Visual Pinball installation found in this folder.";
+        "No Visual Pinball installation found in this folder.";
   }
 
   private boolean hasValidExe(String s) {
