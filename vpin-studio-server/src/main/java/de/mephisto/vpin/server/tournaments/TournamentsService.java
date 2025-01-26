@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mania.ManiaService;
@@ -77,8 +78,11 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
         TournamentSettings settings = getSettings();
         if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
-          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
-          cabinet.getStatus().setActiveGame(event.getGame().getGameDisplayName());
+          CabinetStatus status = cabinet.getStatus();
+          Game game = event.getGame();
+
+          status.setStatus(CabinetOnlineStatus.online);
+          status.setActiveGame(game.getGameDisplayName());
         }
         maniaService.getClient().getCabinetClient().update(cabinet);
       }

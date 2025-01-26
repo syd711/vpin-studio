@@ -174,6 +174,10 @@ public class ComponentService implements InitializingBean {
     if (releaseArtifact == null) {
       releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
     }
+
+    if (releaseArtifact == null) {
+      releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().toLowerCase().contains("release")).findFirst().orElse(null);
+    }
     return releaseArtifact;
   }
 

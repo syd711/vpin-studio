@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -26,8 +27,8 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
 
   GameRecorder gameRecorder;
 
-  public EmulatorRecorderJob(GameService gameService, VPXService vpxService, FPService fpService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
-    super(gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
+  public EmulatorRecorderJob(DMDPositionService dmdPositionService, GameService gameService, VPXService vpxService, FPService fpService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+    super(dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
     this.vpxService = vpxService;
     this.fpService = fpService;
   }
@@ -99,7 +100,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 
         //create the game recorder which includes all screens
-        gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+        gameRecorder = new GameRecorder(frontend, game, recorderSettings, data, jobDescriptor, getRecordingScreensForGame(game));
         gameRecorder.startRecording();
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 90);

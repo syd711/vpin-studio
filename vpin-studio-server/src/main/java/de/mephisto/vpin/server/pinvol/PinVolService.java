@@ -112,6 +112,11 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private void loadIni() {
     preferences = new PinVolPreferences();
     try {
+      INIConfiguration pinVolSettingsConfig = getPinVolSettingsConfig();
+      if (pinVolSettingsConfig != null) {
+        preferences.setSsfDbLimit(pinVolSettingsConfig.getInt("SSFdBLimit", 10));
+      }
+
       File tablesIni = getPinVolTablesIniFile();
       if (!tablesIni.exists()) {
         LOG.info("PinVol service table settings have not been loaded, because {} was not found.", tablesIni.getAbsolutePath());
@@ -120,7 +125,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       try (FileInputStream fileInputStream = new FileInputStream(tablesIni)) {
         List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
         for (String entry : entries) {
-          PinVolTableEntry e = createEntry(entry);
+          PinVolTableEntry e = createEntry(entry, preferences.getSsfDbLimit());
           if (e != null) {
             preferences.getTableEntries().add(e);
           }
@@ -152,28 +157,29 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-  private PinVolTableEntry createEntry(String line) {
+  private PinVolTableEntry createEntry(String line, int ssfDbLimit) {
     String[] split = line.split("\\t");
     if (split.length == 6) {
       PinVolTableEntry entry = new PinVolTableEntry();
       entry.setName(split[0]);
       entry.setPrimaryVolume(Integer.parseInt(split[1]));
       entry.setSecondaryVolume(Integer.parseInt(split[2]));
-      entry.setSsfBassVolume(parseGainValue(split[3]));
-      entry.setSsfRearVolume(parseGainValue(split[4]));
-      entry.setSsfFrontVolume(parseGainValue(split[5]));
+
+      entry.setSsfBassVolume(parseGainValue(split[3], ssfDbLimit));
+      entry.setSsfRearVolume(parseGainValue(split[4], ssfDbLimit));
+      entry.setSsfFrontVolume(parseGainValue(split[5], ssfDbLimit));
       return entry;
     }
     return null;
   }
 
-  private int parseGainValue(String value) {
+  private int parseGainValue(String value, int ssfDbLimit) {
     try {
       if (StringUtils.isEmpty(value)) {
         return 0;
       }
       int i = Integer.parseInt(value);
-      return PinVolTableEntry.formatGainValue(i);
+      return PinVolTableEntry.formatGainValue(i, ssfDbLimit);
     }
     catch (NumberFormatException e) {
       return 0;
@@ -184,6 +190,10 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     return new File(SystemService.RESOURCES, "PinVolTables.ini");
   }
 
+  private static File getPinVolSettingsIniFile() {
+    return new File(SystemService.RESOURCES, "PinVolSettings.ini");
+  }
+
   private static File getPinVolVolIniFile() {
     return new File(SystemService.RESOURCES, "PinVolVol.ini");
   }
@@ -191,6 +201,11 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private void initListener() {
     FileMonitoringThread monitoringThread = new FileMonitoringThread(this, getPinVolTablesIniFile(), true);
     monitoringThread.startMonitoring();
+
+    if (getPinVolSettingsIniFile().exists()) {
+      FileMonitoringThread settingsThread = new FileMonitoringThread(this, getPinVolSettingsIniFile(), true);
+      settingsThread.startMonitoring();
+    }
   }
 
   public PinVolPreferences update(@NonNull PinVolUpdate update) {
@@ -228,7 +243,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
     List<PinVolTableEntry> tableEntries = preferences.getTableEntries();
     for (PinVolTableEntry tableEntry : tableEntries) {
-      String value = tableEntry.toSettingsString();
+      String value = tableEntry.toSettingsString(preferences.getSsfDbLimit());
       builder.append(value);
     }
 
@@ -261,9 +276,35 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
+  @Nullable
+  private INIConfiguration getPinVolSettingsConfig() {
+    try {
+      File volIni = getPinVolSettingsIniFile();
+      if (volIni.exists()) {
+        INIConfiguration iniConfiguration = new INIConfiguration();
+        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setSeparatorUsedInOutput("=");
+        iniConfiguration.setSeparatorUsedInInput("=");
+
+        try (FileReader fileReader = new FileReader(volIni)) {
+          iniConfiguration.read(fileReader);
+        }
+
+        return iniConfiguration;
+      }
+      else {
+        LOG.info("Skipped loading of {}, file not found.", volIni.getAbsolutePath());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load {}", "PinVolSettings.ini", e);
+    }
+    return null;
+  }
+
   @Override
   public void notifyFileChange(@Nullable File file) {
-    LOG.info("PinVolTable.ini changed");
+    LOG.info("PinVolSettings changed");
     loadIni();
   }
 
