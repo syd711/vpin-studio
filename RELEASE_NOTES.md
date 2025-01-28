@@ -3,6 +3,7 @@
 ## Changes
 
 - **VPin Studio client**: New pincab avatar used in client.
+- **DMD Position tool**: Support of full video for positioning from frontend when frontend menu screen is kept displayed
 
 ---
 

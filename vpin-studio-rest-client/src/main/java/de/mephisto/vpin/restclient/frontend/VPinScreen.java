@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.validation.GameValidationCode;
 
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -106,6 +107,11 @@ public enum VPinScreen {
       screens[i] = valueOfCode(split[i].trim());
     }
     return screens;
+  }
+
+  public static boolean keepDisplaysContainsScreen(String codes, VPinScreen screen) {
+    String[] codesArray = codes!=null ? StringUtils.split(codes, ",") : new String[0];
+    return ArrayUtils.contains(codesArray, Integer.toString(screen.getCode()));
   }
 
   public static String toString(VPinScreen[] screens) {
