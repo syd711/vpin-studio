@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,15 +132,18 @@ public class PupPack {
       screensPup = new ScreensPub(new File(packFolder, SCREENS_PUP));
       triggersPup = new TriggersPup(new File(packFolder, TRIGGERS_PUP));
 
-      files = new ArrayList<>(org.apache.commons.io.FileUtils.listFiles(packFolder, null, true));
-      List<File> txtFiles = files.stream().filter(f -> FilenameUtils.getExtension(f.getName()).equalsIgnoreCase("txt")).collect(Collectors.toList());
-      for (File txtFile : txtFiles) {
-        if (txtFile.length() > 0) {
-          String path = txtFile.getAbsolutePath().replaceAll("\\\\", "/");
-          path = path.substring(path.indexOf(packFolder.getName()) + packFolder.getName().length() + 1);
-          getTxtFiles().add(path);
+      File[] files = packFolder.listFiles(File::isFile);
+      if (files != null) {
+        List<File> txtFiles = Arrays.stream(files).filter(f -> FilenameUtils.getExtension(f.getName()).equalsIgnoreCase("txt")).collect(Collectors.toList());
+        for (File txtFile : txtFiles) {
+          if (txtFile.length() > 0) {
+            String path = txtFile.getAbsolutePath().replaceAll("\\\\", "/");
+            path = path.substring(path.indexOf(packFolder.getName()) + packFolder.getName().length() + 1);
+            getTxtFiles().add(path);
+          }
         }
       }
+
 
       this.getOptions().clear();
       this.getMissingResources().clear();
@@ -233,7 +237,8 @@ public class PupPack {
       catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
         return JobDescriptorFactory.error("Error executing shutdown: " + e.getMessage());
-      } finally {
+      }
+      finally {
         this.load();
       }
     }
@@ -249,8 +254,23 @@ public class PupPack {
   }
 
   public boolean containsFileWithSuffixes(String... suffixes) {
-    for (File file : files) {
-      String ending = FilenameUtils.getExtension(file.getName());
+    File[] subFolders = getPupPackFolder().listFiles(File::isDirectory);
+    if (subFolders != null) {
+      for (File subFolder : subFolders) {
+        File[] subFolderFiles = subFolder.listFiles(File::isFile);
+        if (subFolderFiles != null) {
+          if (containsFileWithSuffixes(subFolderFiles, suffixes)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean containsFileWithSuffixes(File[] subFolderFiles, String[] suffixes) {
+    for (File subFolderFile : subFolderFiles) {
+      String ending = FilenameUtils.getExtension(subFolderFile.getName());
       for (String suffix : suffixes) {
         if (suffix.equalsIgnoreCase(ending)) {
           return true;

@@ -2,6 +2,10 @@
 
 ## Changes
 
+- **Server Performance Optimizations**: It is hard to put the results here in numbers, so the results may vary depending on your machine. 
+  - PUP pack scanning: The media detection has been simplified, so the initial detection time has been reduced by half.
+  - ALT Sound package scanning:
+
 ---
 
 ## Release Notes 3.12.4
