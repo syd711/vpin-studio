@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpbm;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -191,7 +192,9 @@ public class VpbmService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    refreshConfig();
+    if (Features.BACKUP_VIEW_ENABLED) {
+      refreshConfig();
+    }
   }
 
   private void refreshConfig() {

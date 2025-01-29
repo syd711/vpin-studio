@@ -67,11 +67,9 @@ public class TableDataTabScreensController implements Initializable {
   private VBox root;
 
   private List<CheckBox> screenCheckboxes = new ArrayList<>();
-  private GameRepresentation game;
   private TableDetails tableDetails;
 
   public void setGame(GameRepresentation game, TableDetails tableDetails) {
-    this.game = game;
     this.tableDetails = tableDetails;
 
     //displays
@@ -83,59 +81,10 @@ public class TableDataTabScreensController implements Initializable {
       hideAllCheckbox.setSelected(true);
     }
     else {
-      String[] split = keepDisplays.split(",");
-      for (String screen : split) {
-        if (StringUtils.isEmpty(screen)) {
-          continue;
-        }
-
-        int id = Integer.parseInt(screen);
-        switch (id) {
-          case 0: {
-            topperCheckbox.setSelected(true);
-            break;
-          }
-          case 1: {
-            dmdCheckbox.setSelected(true);
-            break;
-          }
-          case 2: {
-            backglassCheckbox.setSelected(true);
-            break;
-          }
-          case 3: {
-            playfieldCheckbox.setSelected(true);
-            break;
-          }
-          case 4: {
-            musicCheckbox.setSelected(true);
-            break;
-          }
-          case 5: {
-            apronCheckbox.setSelected(true);
-            break;
-          }
-          case 6: {
-            wheelbarCheckbox.setSelected(true);
-            break;
-          }
-          case 7: {
-            loadingCheckbox.setSelected(true);
-            break;
-          }
-          case 8: {
-            otherCheckbox.setSelected(true);
-            break;
-          }
-          case 9: {
-            flyerCheckbox.setSelected(true);
-            break;
-          }
-          case 10: {
-            helpCheckbox.setSelected(true);
-            break;
-          }
-        }
+      List<VPinScreen> screens = Arrays.asList(VPinScreen.keepDisplaysToScreens(keepDisplays));
+      for (CheckBox checkbox : screenCheckboxes) {
+        VPinScreen screen = (VPinScreen) checkbox.getUserData();
+        checkbox.setSelected(screens.contains(screen));
       }
     }
   }
@@ -149,20 +98,16 @@ public class TableDataTabScreensController implements Initializable {
       value = "NONE";
     }
     else {
-      List<String> result = new ArrayList<>();
-      if (topperCheckbox.isSelected()) result.add("" + 0);
-      if (dmdCheckbox.isSelected()) result.add("" + 1);
-      if (backglassCheckbox.isSelected()) result.add("" + 2);
-      if (playfieldCheckbox.isSelected()) result.add("" + 3);
-      if (musicCheckbox.isSelected()) result.add("" + 4);
-      if (apronCheckbox.isSelected()) result.add("" + 5);
-      if (wheelbarCheckbox.isSelected()) result.add("" + 6);
-      if (loadingCheckbox.isSelected()) result.add("" + 7);
-      if (otherCheckbox.isSelected()) result.add("" + 8);
-      if (flyerCheckbox.isSelected()) result.add("" + 9);
-      if (helpCheckbox.isSelected()) result.add("" + 10);
-
-      value = String.join(",", result);
+      StringBuilder bld = new StringBuilder();
+      for (CheckBox checkbox : screenCheckboxes) {
+        if (checkbox.isSelected()) {
+          if (bld.length() > 0) {
+            bld.append(",");
+          }
+          bld.append(((VPinScreen) checkbox.getUserData()).getCode());
+        }
+      }
+      value = bld.toString();
     }
     if (tableDetails !=  null) {
       tableDetails.setKeepDisplays(value);
@@ -171,28 +116,28 @@ public class TableDataTabScreensController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    topperCheckbox.managedProperty().bindBidirectional(topperCheckbox.visibleProperty());
-    dmdCheckbox.managedProperty().bindBidirectional(dmdCheckbox.visibleProperty());
-    backglassCheckbox.managedProperty().bindBidirectional(backglassCheckbox.visibleProperty());
-    playfieldCheckbox.managedProperty().bindBidirectional(playfieldCheckbox.visibleProperty());
-    musicCheckbox.managedProperty().bindBidirectional(musicCheckbox.visibleProperty());
-    apronCheckbox.managedProperty().bindBidirectional(apronCheckbox.visibleProperty());
-    wheelbarCheckbox.managedProperty().bindBidirectional(wheelbarCheckbox.visibleProperty());
-    loadingCheckbox.managedProperty().bindBidirectional(loadingCheckbox.visibleProperty());
-    otherCheckbox.managedProperty().bindBidirectional(otherCheckbox.visibleProperty());
-    flyerCheckbox.managedProperty().bindBidirectional(flyerCheckbox.visibleProperty());
-    helpCheckbox.managedProperty().bindBidirectional(helpCheckbox.visibleProperty());
-
     Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
 
-    //screens
-    screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
-      apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+    screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox, 
+          apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+    //screens, in exact same order as checkboxes
+    VPinScreen[] screens = { VPinScreen.Topper, VPinScreen.DMD, VPinScreen.BackGlass, VPinScreen.PlayField, VPinScreen.Audio,   
+          VPinScreen.Menu, VPinScreen.Wheel, VPinScreen.Loading, VPinScreen.Other2, VPinScreen.GameInfo, VPinScreen.GameHelp };
 
-    //TODO too lazy to check all screens here
-    if(!supportedScreens.contains(VPinScreen.Other2)) {
-      otherCheckbox.setVisible(false);
+    for (int i = 0; i < screens.length; i++) {
+      CheckBox checkbox = screenCheckboxes.get(i);
+      checkbox.setUserData(screens[i]);
+
+      checkbox.managedProperty().bindBidirectional(checkbox.visibleProperty());
+      checkbox.setVisible(supportedScreens.contains(screens[i]));
+
+      checkbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        if (newValue) {
+          hideAllCheckbox.setSelected(false);
+          useEmuDefaultsCheckbox.setSelected(false);
+        }
+      });
     }
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -205,73 +150,6 @@ public class TableDataTabScreensController implements Initializable {
     hideAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
         screenCheckboxes.stream().forEach(check -> check.setSelected(false));
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-
-    topperCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    dmdCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    backglassCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    playfieldCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    musicCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    apronCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    wheelbarCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    loadingCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    otherCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    flyerCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
-        useEmuDefaultsCheckbox.setSelected(false);
-      }
-    });
-    helpCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        hideAllCheckbox.setSelected(false);
         useEmuDefaultsCheckbox.setSelected(false);
       }
     });

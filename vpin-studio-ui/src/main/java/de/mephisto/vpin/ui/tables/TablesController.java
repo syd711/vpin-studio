@@ -60,8 +60,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private static final int TAB_BACKGLASS = 1;
   private static final int TAB_VPS = 2;
   private static final int TAB_STATISTICS = 3;
-  private static final int TAB_REPOSITORY = 4;
-  private static final int TAB_RECORDER = 5;
+  private static final int TAB_RECORDER = 4;
+  private static final int TAB_REPOSITORY = 5;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
@@ -239,11 +239,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
-      Parent repositoryRoot = loader.load();
-      repositoryController = loader.getController();
-      repositoryController.setRootController(this);
-      tableRepositoryTab.setContent(repositoryRoot);
+      if (Features.BACKUP_VIEW_ENABLED) {
+        FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
+        Parent repositoryRoot = loader.load();
+        repositoryController = loader.getController();
+        repositoryController.setRootController(this);
+        tableRepositoryTab.setContent(repositoryRoot);
+      }
+      else {
+        tabPane.getTabs().remove(tableRepositoryTab);
+      }
     }
     catch (IOException e) {
       LOG.error("failed to load repositoy tab: " + e.getMessage(), e);

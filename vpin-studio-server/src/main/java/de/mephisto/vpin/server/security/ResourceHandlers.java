@@ -15,9 +15,9 @@ public class ResourceHandlers extends WebMvcConfigurerAdapter {
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry
-        .addResourceHandler("/ui/**")
-        .addResourceLocations(resourcesFolder);
+//    registry
+//        .addResourceHandler("/ui/**")
+//        .addResourceLocations(resourcesFolder);
 
   }
 }

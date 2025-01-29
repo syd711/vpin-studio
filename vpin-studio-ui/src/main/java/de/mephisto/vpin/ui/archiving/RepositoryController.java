@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -140,14 +141,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       vpbmBtbn.setDisable(true);
     });
 
-    new Thread(() -> {
-      List<String> commands = Arrays.asList("vPinBackupManager.exe");
-      LOG.info("Executing vpbm: " + String.join(" ", commands));
-      File dir = new File("./resources/", "vpbm");
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(dir);
-      executor.executeCommandAsync();
-    }).start();
+    VPBMPreferencesController.openVPBM();
 
 
     Platform.runLater(() -> {

@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LocalUISettings {
   private final static Logger LOG = LoggerFactory.getLogger(LocalUISettings.class);
@@ -23,12 +25,29 @@ public class LocalUISettings {
 
   private static List<LocalSettingsChangeListener> listeners;
 
+  private static Map<String, Object> jsonSettingsCache = new HashMap<>();
+
   public static void initialize() {
     File propertiesFile = new File("config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
 
     listeners = new ArrayList<>();
+  }
+
+  public static <T> T getTablePreference(Class<?> clazz) {
+    try {
+      String clazzName = clazz.getSimpleName();
+      if (!jsonSettingsCache.containsKey(clazzName)) {
+        BaseTableSettings baseTableSettings = LocalJsonSettings.load(clazz.getSimpleName(), BaseTableSettings.class);
+        jsonSettingsCache.put(clazzName, baseTableSettings);
+      }
+      return (T) jsonSettingsCache.get(clazzName);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read preferences: {}", e.getMessage(), e);
+    }
+    return null;
   }
 
   public static void addListener(LocalSettingsChangeListener listener) {

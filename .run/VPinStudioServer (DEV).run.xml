@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="de.mephisto.vpin.server.VPinStudioServer" />
     <module name="vpin-studio-server" />
-    <option name="VM_PARAMETERS" value="-Dfile.encoding=utf8 -Dspring.profiles.active=dev" />
+    <option name="VM_PARAMETERS" value="-Dfile.encoding=utf8 -Dspring.profiles.active=dev -Dserver.port=8089" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="de.mephisto.vpin.server.ini.*" />

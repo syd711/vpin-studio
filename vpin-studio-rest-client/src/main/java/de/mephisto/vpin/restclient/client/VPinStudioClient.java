@@ -47,6 +47,7 @@ import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.video.VideoConversionServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
@@ -115,7 +116,7 @@ public class VPinStudioClient implements OverlayClient {
   private final VpsServiceClient vpsServiceClient;
 
   public VPinStudioClient(String host) {
-    restClient = RestClient.createInstance(host);
+    restClient = RestClient.createInstance(host, SystemUtil.getPort());
     this.preferencesServiceClient = new PreferencesServiceClient(this);
 
     this.alxServiceClient = new AlxServiceClient(this);

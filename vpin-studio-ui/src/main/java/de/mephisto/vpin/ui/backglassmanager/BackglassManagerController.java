@@ -826,13 +826,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
       // else
       return WidgetFactory.createCheckIcon();
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(displayNameColumn, (value, model) -> {
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(fullDmdColumn, cell -> new LoadingCheckTableCell() {
       @Override

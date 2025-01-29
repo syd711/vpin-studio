@@ -337,7 +337,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       }
 
       return columnCheckbox;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnFilename, (value, model) -> {
       Label label = new Label(model.getName());
@@ -350,21 +350,21 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
         label.setGraphic(WidgetFactory.createIcon("mdi2f-file-outline"));
       }
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnTarget, (value, model) -> {
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setText(model.getTarget());
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAssetType, (value, model) -> {
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setText(model.getAssetType().toString());
       return label;
-    }, true);
+    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPreview, (value, model) -> {
       if (previewCache.containsKey(model.getName())) {
@@ -378,7 +378,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       Label label = new Label("-");
       label.getStyleClass().add("default-text");
       return label;
-    }, true);
+    }, this, true);
 
     selectAllCheckbox.setSelected(true);
     selectAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {

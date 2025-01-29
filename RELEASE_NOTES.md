@@ -1,3 +1,18 @@
+## Release Notes 3.12.5
+
+## Changes
+
+- **Visual Pinball Backup Manager (VPBM)**: Updated to the newest version 3.5.
+- **Visual Pinball Backup Manager (VPBM) / Table Backups**: Removed the backup view from the Studio client and from the server. This way the server has no .net dependency anymore. VPBM is still available, but Studio does not intermingle with it's configuration anymore.
+- **VPin Studio Client**: New pincab avatar used in client.
+- **VPin Studio Client/Server**: Added possibility to change the default port from 8098 to another one. Consult the wiki for more details.
+- **DMD Position Tool**: Support of full video for positioning from frontend when frontend menu screen is kept displayed
+- **Server Performance Optimizations**: It is hard to put the results here in numbers, so the results may vary depending on your machine. 
+  - PUP pack scanning: The media detection has been simplified, so the initial detection time has been reduced by half.
+  - ALT Sound package scanning:
+
+---
+
 ## Release Notes 3.12.4
 
 ## Changes
