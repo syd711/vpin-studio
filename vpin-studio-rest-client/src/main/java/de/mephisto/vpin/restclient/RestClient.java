@@ -38,8 +38,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
   private ObjectCache cache = new ObjectCache();
   private VPinStudioClientErrorHandler errorHandler;
 
-  public static RestClient createInstance(String host) {
-    return new RestClient(SCHEME, host, PORT);
+  public static RestClient createInstance(String host, int port) {
+    return new RestClient(SCHEME, host, port);
   }
 
   private RestClient(String scheme, String host, int port) {

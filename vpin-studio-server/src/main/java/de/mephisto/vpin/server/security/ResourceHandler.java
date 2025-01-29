@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.Charset;
 
-@ControllerAdvice
+//@ControllerAdvice
 public class ResourceHandler {
   private final static Logger LOG = LoggerFactory.getLogger(ResourceHandler.class);
 
