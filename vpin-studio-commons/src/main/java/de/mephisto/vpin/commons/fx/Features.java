@@ -18,4 +18,6 @@ public class Features {
   public static boolean SCREEN_VALIDATOR = false;
 
   public static boolean PLAYLIST_MANAGER = true;
+
+  public static boolean BACKUP_VIEW_ENABLED = false;
 }

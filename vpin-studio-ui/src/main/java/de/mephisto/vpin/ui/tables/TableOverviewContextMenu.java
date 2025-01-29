@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -332,30 +333,23 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(launchItem);
 
       //decluttering
-//      if (frontendType.supportArchive()) {
-//        ctxMenu.getItems().add(new SeparatorMenuItem());
-//
-//        MenuItem exportItem = new MenuItem("Backup Table");
-//        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-//        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
-//        ctxMenu.getItems().add(exportItem);
-//
-//        ctxMenu.getItems().add(new SeparatorMenuItem());
-//
-//        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-//        vpbmItem.setGraphic(iconVpbm);
-//        vpbmItem.setOnAction(actionEvent -> {
-//          new Thread(() -> {
-//            List<String> commands = Arrays.asList("vPinBackupManager.exe");
-//            LOG.info("Executing vpbm: " + String.join(" ", commands));
-//            File dir = new File("./resources/", "vpbm");
-//            SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-//            executor.setDir(dir);
-//            executor.executeCommandAsync();
-//          }).start();
-//        });
-//        ctxMenu.getItems().add(vpbmItem);
-//      }
+      if (frontendType.supportArchive()) {
+        ctxMenu.getItems().add(new SeparatorMenuItem());
+
+        MenuItem exportItem = new MenuItem("Backup Table");
+        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
+        ctxMenu.getItems().add(exportItem);
+
+        ctxMenu.getItems().add(new SeparatorMenuItem());
+
+        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
+        vpbmItem.setGraphic(iconVpbm);
+        vpbmItem.setOnAction(actionEvent -> {
+          VPBMPreferencesController.openVPBM();
+        });
+        ctxMenu.getItems().add(vpbmItem);
+      }
     }
 
     ctxMenu.getItems().add(new SeparatorMenuItem());

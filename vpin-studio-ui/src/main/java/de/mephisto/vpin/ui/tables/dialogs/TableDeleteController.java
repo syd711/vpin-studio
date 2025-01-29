@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
@@ -220,14 +221,16 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    if (frontend.getFrontendType().supportArchive()) {
-      for (GameRepresentation selectedGame : selectedGames) {
-        boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
-        if (hasNoArchives) {
-          this.validationContainer.setVisible(true);
-          this.validationDescription.setVisible(true);
-          return;
+    if (Features.BACKUP_VIEW_ENABLED) {
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+      if (frontend.getFrontendType().supportArchive()) {
+        for (GameRepresentation selectedGame : selectedGames) {
+          boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
+          if (hasNoArchives) {
+            this.validationContainer.setVisible(true);
+            this.validationDescription.setVisible(true);
+            return;
+          }
         }
       }
     }
