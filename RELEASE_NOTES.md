@@ -1,7 +1,9 @@
-## Release Notes 3.12.5 
+## Release Notes 3.12.5
 
 ## Changes
 
+- **VPin Studio client**: New pincab avatar used in client.
+- **DMD Position tool**: Support of full video for positioning from frontend when frontend menu screen is kept displayed
 - **Server Performance Optimizations**: It is hard to put the results here in numbers, so the results may vary depending on your machine. 
   - PUP pack scanning: The media detection has been simplified, so the initial detection time has been reduced by half.
   - ALT Sound package scanning:

@@ -281,8 +281,7 @@ public class PinballXTableParser extends DefaultHandler {
   }
 
   protected void appendKeepDisplays(BufferedWriter writer, String tag, String keepDisplays, VPinScreen screen) throws IOException {
-    String[] codes = keepDisplays!=null ? StringUtils.split(keepDisplays, ",") : new String[0];
-    boolean keep = ArrayUtils.contains(codes, Integer.toString(screen.getCode()));
+    boolean keep = VPinScreen.keepDisplaysContainsScreen(keepDisplays, screen);
     writer.append("    <" + tag + ">").append(keep? "False": "True" ).append("</" + tag + ">\n");   
   }
 

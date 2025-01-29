@@ -120,6 +120,18 @@ public class SystemServiceClient extends VPinStudioClientService {
     return null;
   }
 
+  public SystemId getSystemId() {
+    try {
+      return getRestClient().getCached(API + "system", SystemId.class);
+    } catch (Exception e) {
+      // legacy system, no system id available so build a dummy one
+      SystemId id = new SystemId();
+      id.setVersion(getVersion());
+      id.setSystemName("-need upgrade-");
+      return id;
+    }
+  }
+
   public SystemSummary getSystemSummary() {
     return getRestClient().getCached(API + "system/info", SystemSummary.class);
   }

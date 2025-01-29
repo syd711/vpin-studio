@@ -2,14 +2,11 @@ package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.ConnectionEntry.ConnectionType;
 import de.mephisto.vpin.commons.utils.network.WakeOnLan;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -41,10 +38,15 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.*;
-import java.util.*;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -515,30 +517,19 @@ public class LauncherController implements Initializable {
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Future<VPinConnection> future = executor.submit(() -> {
       VPinStudioClient client = new VPinStudioClient(host);
-      String version = client.getSystemService().getVersion();
-      if (version != null) {
+      SystemId id = client.getSystemService().getSystemId();
+      if (id != null && id.getVersion() != null) {
         VPinConnection connection = new VPinConnection();
-        PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-        PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
-
-        String name = systemName.getValue();
-        if (StringUtils.isEmpty(name)) {
-          name = UIDefaults.VPIN_NAME;
-        }
-        connection.setName(name);
-
+        connection.setName(id.getSystemName());
         connection.setHost(host);
 
         // Detect MAC Address
         String macAddress = detectMacAddressViaArp(host);
         connection.setMacAddress(macAddress);
 
-        if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-          connection.setAvatar(new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue())));
-        } else {
-          Image image = new Image(Studio.class.getResourceAsStream("avatar-default.png"));
-          connection.setAvatar(image);
-        }
+        Image image = new Image(client.getAssetService().getAvatar(false));
+        connection.setAvatar(image);
+
         return connection;
       }
       return null;

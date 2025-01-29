@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
@@ -10,6 +11,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
+import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
@@ -21,6 +23,7 @@ import de.mephisto.vpin.restclient.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +147,21 @@ public class SystemResource {
         LOG.error("Erorr closing streams: " + e.getMessage(), e);
       }
     }
+  }
+
+  @GetMapping("")
+  public SystemId system() {
+    SystemId id = new SystemId();
+    id.setSystemId(SystemUtil.getUniqueSystemId());
+
+    String name = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
+    if (StringUtils.isEmpty(name)) {
+      name = UIDefaults.VPIN_NAME;
+    }
+    id.setSystemName(name);
+
+    id.setVersion(systemService.getVersion());
+    return id;
   }
 
   @GetMapping("/info")

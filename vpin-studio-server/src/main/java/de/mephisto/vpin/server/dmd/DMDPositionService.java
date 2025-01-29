@@ -3,11 +3,13 @@ package de.mephisto.vpin.server.dmd;
 import de.mephisto.vpin.commons.MonitorInfo;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
@@ -488,20 +490,30 @@ public class DMDPositionService {
     }
     else if (VPinScreen.DMD.equals(onScreen)) {
       DirectB2S directb2s = backglassService.getDirectB2S(gameId);
+      DirectB2STableSettings tableSettings = backglassService.getTableSettings(gameId);
       String base64 = backglassService.getDmdBase64(directb2s.getEmulatorId(), directb2s.getFileName());
-      if (base64 != null) {
+
+      // use B2S DMD image if present and not hidden
+      if (base64 != null && !(tableSettings != null && tableSettings.isHideB2SDMD())) {
         return DatatypeConverter.parseBase64Binary(base64);
-       }
-       else {
-        FrontendMedia frontendMedia = frontendService.getGameMedia(gameId);
-        FrontendMediaItem item = frontendMedia.getDefaultMediaItem(VPinScreen.Menu);
-        if (item != null) {
-          String baseType = MimeTypeUtil.determineBaseType(item.getMimeType());
-          if ("video".equals(baseType)) {
-            return extractFrame(item.getFile());
-          }
-          else if ("image".equals(baseType)) {
-            return extractImage(item.getFile());
+      }
+      else {
+        TableDetails tableDetails = frontendService.getTableDetails(gameId);
+        String keepDisplays = tableDetails!=null? tableDetails.getKeepDisplays(): null;
+        if (StringUtils.isNotEmpty(keepDisplays)) {
+          boolean keepFullDmd = VPinScreen.keepDisplaysContainsScreen(keepDisplays, VPinScreen.Menu);
+          if (keepFullDmd) {
+            FrontendMedia frontendMedia = frontendService.getGameMedia(gameId);
+            FrontendMediaItem item = frontendMedia.getDefaultMediaItem(VPinScreen.Menu);
+            if (item != null) {
+              String baseType = MimeTypeUtil.determineBaseType(item.getMimeType());
+              if ("video".equals(baseType)) {
+                return extractFrame(item.getFile());
+              }
+              else if ("image".equals(baseType)) {
+                return extractImage(item.getFile());
+              }
+            }
           }
         }
       }
