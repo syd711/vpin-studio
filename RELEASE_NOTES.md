@@ -2,6 +2,8 @@
 
 ## Changes
 
+- **VPBM**: Updated default install version to 3.5.
+- **Table Archives**: Updated default install version to 3.5.
 - **VPin Studio Client**: New pincab avatar used in client.
 - **VPin Studio Client/Server**: Added possibility to change the default port from 8098 to another one. Consult the wiki for more details.
 - **DMD Position Tool**: Support of full video for positioning from frontend when frontend menu screen is kept displayed
