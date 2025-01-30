@@ -72,15 +72,7 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package -DskipMacOSBuild=false -DmacOSBuild=true -DskipTests
 
-
-      - name: Set Release Version
-        id: set-release-version
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
-        run:  | 
-          $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
-          echo "::set-output name=version::${version}"
-
-          
+         
       # Step 5: Prepare Java runtime by unzipping
       - name: Prepare Jave Runtime
         working-directory: .
@@ -113,7 +105,7 @@ jobs:
           ls -al package
           echo "ls package/macos results"
           ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version $version --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
+          jpackage --name VPin-Studio --input . --app-version ${{ github.event.release.tag_name }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
           #check to see if the jpackage worked.
           echo "ls -al ../VPin-Studio.app"
           ls -al ../VPin-Studio.app
