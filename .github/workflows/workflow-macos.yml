@@ -104,7 +104,9 @@ jobs:
           echo "ls package/macos results"
           ls -al package/macos
           jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
-
+          #check to see if the jpackage worked.
+          ls -al ../VPin-Studio.app
+          
       # Step 8: Zip the .app bundle for easy distribution
       #Update for correct location
       - name: Zip macOS .app Bundle
