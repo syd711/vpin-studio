@@ -40,14 +40,6 @@ jobs:
           java-version: '17'
           architecture: 'aarch64'
 
-      # Step 3: Install Maven and dependencies
-      #Zulu 11 does not include jpackage, need to install it
-     # - name: Install Dependencies
-     #   run: |
-     #     brew update
-     #     brew install maven  
-     #     brew install openjdk@17 # Ensure Zulu JDK 17 is installed on macOS
-
       # Step 4: Build the Java application
       - name: Run maven build for vpin mania rest client
         working-directory: ./vpin-mania-rest-client
@@ -60,6 +52,10 @@ jobs:
       - name: Run maven build for popper client
         working-directory: ./vpin-studio-popper-client
         run: mvn clean install -DskipTests
+
+      - name: Extract Maven project version
+        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        id: project
 
       - name: Cache local Maven repository
         uses: actions/cache@v3
@@ -105,7 +101,7 @@ jobs:
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version 3.12.4 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
