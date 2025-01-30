@@ -11,7 +11,7 @@ on:
 jobs:
   mac-app-build:
     name: mac-app-build
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       # Step 1: Checkout the repository
@@ -103,7 +103,7 @@ jobs:
           ls -al package
           echo "ls package/macos results"
           ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version 3.11.2 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
+          jpackage --name VPin-Studio --input . --app-version $GITHUB_REF --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
           #check to see if the jpackage worked.
           echo "ls -al ../VPin-Studio.app"
           ls -al ../VPin-Studio.app
