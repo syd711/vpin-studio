@@ -88,7 +88,15 @@ jobs:
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
           
+       - name: Set Release Version
+        id: set-release-version
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        run:  | 
+          $version = mvn "--batch-mode" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate "-Dexpression=project.version" "-q" "-DforceStdout"
+          echo "::set-output name=version::${version}"
 
+    
+          
       
       
       # Step 7: Package the Java application as a macOS .app bundle
@@ -97,7 +105,9 @@ jobs:
       - name: Package as macOS App
         working-directory: ./mac-build
         run: |
-          echo "Version = ${{ github.ref_name }}"
+          echo "Github Run Number = ${{ github.run_number }}"
+          echo "Version - ${{ steps.set-release-version.outputs.version }}"
+          
           #echo "ls . results"
           #ls -al .
           #echo "ls .. results"
