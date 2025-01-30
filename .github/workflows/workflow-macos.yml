@@ -107,13 +107,14 @@ jobs:
           #check to see if the jpackage worked.
           echo "ls -al ../VPin-Studio.app"
           ls -al ../VPin-Studio.app
+          echo "ls -al ../VPin-Studio.app/Contents"
+          ls -al ../VPin-Studio.app/Contents
           
       # Step 8: Zip the .app bundle for easy distribution
       #Update for correct location
       - name: Zip macOS .app Bundle
         working-directory: ./
         run: |
-          #Zip isn't working, let's make sure the file is where we think it is. 
           echo "ls ."
           ls -al .  
           zip VPin-Studio-MacOS.zip VPin-Studio.app
