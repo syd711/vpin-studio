@@ -38,6 +38,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          architecture: 'aarch64'
 
       # Step 3: Install Maven and dependencies
       #Zulu 11 does not include jpackage, need to install it
