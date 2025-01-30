@@ -97,20 +97,21 @@ jobs:
       - name: Package as macOS App
         working-directory: ./mac-build
         run: |
-          echo "ls . results"
-          ls -al .
-          echo "ls .. results"
-          ls -al ..          
-          echo "ls package results"
-          ls -al package
-          echo "ls package/macos results"
-          ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ github.event.release.tag_name }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
+          echo "Version = ${{ github.ref_name }}"
+          #echo "ls . results"
+          #ls -al .
+          #echo "ls .. results"
+          #ls -al ..          
+          #echo "ls package results"
+          #ls -al package
+          #echo "ls package/macos results"
+          #ls -al package/macos
+          jpackage --name VPin-Studio --input . --app-version 3.12.4 --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Launcher --resource-dir package/macos --type app-image  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre
           #check to see if the jpackage worked.
-          echo "ls -al ../VPin-Studio.app"
-          ls -al ../VPin-Studio.app
-          echo "ls -al ../VPin-Studio.app/Contents"
-          ls -al ../VPin-Studio.app/Contents
+          #echo "ls -al ../VPin-Studio.app"
+          #ls -al ../VPin-Studio.app
+          #echo "ls -al ../VPin-Studio.app/Contents"
+          #ls -al ../VPin-Studio.app/Contents
           
       # Step 8: Zip the .app bundle for easy distribution
       #Update for correct location
