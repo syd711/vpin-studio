@@ -1,4 +1,4 @@
-name: Build MacOS Client
+name: Build MacOS Client arm64
 
 on:
   push:
@@ -115,7 +115,7 @@ jobs:
         run: |
           echo "ls ."
           ls -al .  
-          zip -r VPin-Studio-MacOS.zip VPin-Studio.app
+          zip -r VPin-Studio-MacOS-arm64.zip VPin-Studio.app
 
       # Step 9: Upload the .app zip file as an artifact
        #Update for correct location
@@ -123,4 +123,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macOS-build
-          path: ./VPin-Studio-MacOS.zip
+          path: ./VPin-Studio-MacOS-arm64.zip

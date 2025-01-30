@@ -1,12 +1,11 @@
 name: Build
 
+# Only trigger, when the build workflow succeeded
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build macOS Client x64"]
+    types:
+      - completed
 
 jobs:
   build:
