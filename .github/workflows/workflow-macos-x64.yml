@@ -114,12 +114,12 @@ jobs:
         run: |
           echo "ls ."
           ls -al .  
-          zip -r VPin-Studio-MacOS-x64.zip VPin-Studio.app
+          zip -r VPin-Studio-Client-MacOS-x64.zip VPin-Studio.app
 
       # Step 9: Upload the .app zip file as an artifact
        #Update for correct location
       - name: Upload macOSx64 Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macOS-build
-          path: ./VPin-Studio-MacOS-x64.zip
+          name: macOS-build-x64
+          path: ./VPin-Studio-Client-MacOS-x64.zip

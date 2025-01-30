@@ -88,6 +88,20 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package
 
+      - uses: actions/checkout@v4
+          - uses: actions/download-artifact@v4
+            with:
+              name: macOS-build-x64
+              path: ./
+          - run: ls -al ./
+
+      - uses: actions/checkout@v4
+          - uses: actions/download-artifact@v4
+            with:
+              name: macOS-build-arm64
+              path: ./
+          - run: ls -al ./
+
       - name: List files in the Output folder
         run: |
           ls ${{ github.workspace }}/Output/VPin-Studio/
@@ -112,7 +126,8 @@ jobs:
             ./Output/VPin-Studio/VPin-Studio-Server.zip
             ./Output/VPin-Studio/VPin-Studio.zip
             ./Output/VPin-Studio/VPin-Studio-Client-linux-x64.zip
-            ./Output/VPin-Studio/VPin-Studio-Client-macosx_aarch64.zip
+            ./VPin-Studio-Client-MacOS-arm64.zip
+            ./VPin-Studio-Client-MacOS-x64.zip
             ./Output/VPin-Studio/vpin-studio-ui-jar.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
