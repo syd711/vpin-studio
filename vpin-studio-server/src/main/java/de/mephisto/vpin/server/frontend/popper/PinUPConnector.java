@@ -110,7 +110,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
 
     if (!script.contains(call)) {
-      script = script + "\n\n" + call;
+      script = script.trim() + "\n\n" + call;
       this.updateScript(emulator.getName(), dbFieldName, script);
     }
   }
@@ -1871,15 +1871,19 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   public void updateScript(@NonNull String emuName, @NonNull String scriptName, @NonNull String content) {
     Connection connect = this.connect();
-    String sql = "UPDATE Emulators SET '" + scriptName + "'='" + content + "' WHERE EmuName = '" + emuName + "';";
+    String sql = "UPDATE Emulators SET " + scriptName + "=";
+
     try {
-      Statement stmt = Objects.requireNonNull(connect).createStatement();
-      stmt.executeUpdate(sql);
-      stmt.close();
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement(sql + "? WHERE EmuName=?");
+      preparedStatement.setString(1, content);
+      preparedStatement.setString(2, emuName);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
       LOG.info("Update of " + scriptName + " for '" + emuName + "' successful.");
     }
     catch (Exception e) {
-      LOG.error("Failed to update script script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
+      LOG.error("Failed to update script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
