@@ -78,11 +78,11 @@
                   </Label>
                   <Label layoutX="34.0" layoutY="198.0" styleClass="preference-description" text="Several validators checking the integrity of the media files and bundles." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="You can turn off the missing file checks if you are not planning to fix PUP or ALT sound bundles." textFill="WHITE" />
-                  <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Files Missing" />
+                  <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Files Missing (expensive)" />
                   <Label styleClass="checkbox-description" text="Checks if audio files for ALT Sound packages are missing." textFill="WHITE" />
                   <VBox fx:id="pupPackValidator">
                      <children>
-                        <CheckBox fx:id="pref_60" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Files Missing" />
+                        <CheckBox fx:id="pref_60" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Files Missing (expensive)" />
                         <Label styleClass="checkbox-description" text="Checks if files for PUP packs are missing." textFill="WHITE" />
                      </children>
                   </VBox>

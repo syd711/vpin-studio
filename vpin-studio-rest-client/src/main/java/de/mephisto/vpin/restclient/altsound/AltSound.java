@@ -20,6 +20,9 @@ public class AltSound {
   private boolean missingAudioFiles;
   private List<ValidationState> validationStates;
 
+  private int emulatorId;
+  private String folder;
+
   //altsound2
   private int commandSkipCount;
   private boolean recordSoundCmds;
@@ -41,6 +44,22 @@ public class AltSound {
 
   private AltSound2Group overlay;
   private List<AltSound2DuckingProfile> overlayDuckingProfiles = new ArrayList<>();
+
+  public String getFolder() {
+    return folder;
+  }
+
+  public void setFolder(String folder) {
+    this.folder = folder;
+  }
+
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
+  }
 
   public int getCommandSkipCount() {
     return commandSkipCount;

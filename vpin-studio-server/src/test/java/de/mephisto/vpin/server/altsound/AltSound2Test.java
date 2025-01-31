@@ -14,8 +14,7 @@ public class AltSound2Test {
 
   @Test
   public void testLoadSave() {
-    AltSoundLoaderFactory loaderFactory = new AltSoundLoaderFactory(new File("../testsystem/vPinball/VisualPinball/VPinMAME/altsound/cftbl_l4"));
-    AltSound altSound = loaderFactory.load();
+    AltSound altSound = AltSoundLoaderFactory.load(new File("../testsystem/vPinball/VisualPinball/VPinMAME/altsound/cftbl_l4"), 1);
     assertNotNull(altSound);
 
     List<AltSound2DuckingProfile> profiles = altSound.getOverlayDuckingProfiles();
@@ -24,7 +23,7 @@ public class AltSound2Test {
     AltSound2Writer writer = new AltSound2Writer(new File("../testsystem/vPinball/VisualPinball/VPinMAME/altsound/cftbl_l4"));
     writer.write(altSound);
 
-    AltSound altSound2 = loaderFactory.load();
+    AltSound altSound2 =  AltSoundLoaderFactory.load(new File("../testsystem/vPinball/VisualPinball/VPinMAME/altsound/cftbl_l4"), 1);
     assertNotNull(altSound2);
     assertEquals(altSound2.getOverlayDuckingProfiles().size(), altSound.getOverlayDuckingProfiles().size());
   }

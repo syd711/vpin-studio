@@ -13,14 +13,29 @@ import java.io.FileReader;
 
 public class AltSoundLoaderFactory {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundLoaderFactory.class);
-  private final File altSoundFolder;
 
-  public AltSoundLoaderFactory(@NonNull File altSoundFolder) {
-    this.altSoundFolder = altSoundFolder;
+  public static AltSound create(@NonNull File altSoundFolder, int emulatorId) {
+    File ini = new File(altSoundFolder, "altsound.ini");
+    File gSoundCsv = new File(altSoundFolder, "g-sound.csv");
+    File altSoundCsv = new File(altSoundFolder, "altsound.csv");
+
+    AltSound altSound = new AltSound();
+    if (ini.exists() || gSoundCsv.exists() || altSoundCsv.exists()) {
+      altSound.setEmulatorId(emulatorId);
+      altSound.setName(altSoundFolder.getParentFile().getName());
+      altSound.setFolder(altSoundFolder.getAbsolutePath());
+      return altSound;
+    }
+    return null;
   }
 
   @NonNull
-  public AltSound load() {
+  public static AltSound load(@NonNull AltSound altSound) {
+    return load(new File(altSound.getFolder()), altSound.getEmulatorId());
+  }
+
+  @NonNull
+  public static AltSound load(@NonNull File altSoundFolder, int emulatorId) {
     try {
       File ini = new File(altSoundFolder, "altsound.ini");
       File gSoundCsv = new File(altSoundFolder, "g-sound.csv");
@@ -35,7 +50,8 @@ public class AltSoundLoaderFactory {
         FileReader fileReader = new FileReader(ini);
         try {
           iniConfiguration.read(fileReader);
-        } finally {
+        }
+        finally {
           fileReader.close();
         }
 
@@ -43,16 +59,24 @@ public class AltSoundLoaderFactory {
         if (formatNode != null) {
           String format = formatNode.getString("format");
           if (format.equals(AltSoundFormats.gsound) && gSoundCsv.exists()) {
-            return new AltSound2Loader(iniConfiguration, gSoundCsv).load();
+            AltSound altSound = new AltSound2Loader(iniConfiguration, gSoundCsv).load();
+            altSound.setEmulatorId(emulatorId);
+            altSound.setFolder(altSoundFolder.getAbsolutePath());
+            return altSound;
           }
           else if (altSoundCsv.exists()) {
-            return new AltSoundLoader(altSoundCsv).load();
+            AltSound altSound = new AltSoundLoader(altSoundCsv).load();
+            altSound.setEmulatorId(emulatorId);
+            altSound.setFolder(altSoundFolder.getAbsolutePath());
+            return altSound;
           }
         }
       }
-      else if(gSoundCsv.exists()) {
+      else if (gSoundCsv.exists()) {
         //init file does not exists, but g-sound.csv, which means that the table has not been started yet.
         AltSound altSound = new AltSound();
+        altSound.setEmulatorId(emulatorId);
+        altSound.setFolder(altSoundFolder.getAbsolutePath());
         altSound.setName(gSoundCsv.getParentFile().getName());
         altSound.setFormat(AltSoundFormats.gsound);
         altSound.setFilesize(-1);
@@ -61,7 +85,8 @@ public class AltSoundLoaderFactory {
       else if (altSoundCsv.exists()) {
         return new AltSoundLoader(altSoundCsv).load();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load altsound: " + e.getMessage(), e);
     }
 

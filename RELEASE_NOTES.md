@@ -2,15 +2,17 @@
 
 ## Changes
 
-- **Visual Pinball Backup Manager (VPBM)**: Updated to the newest version 3.5.
+- **MacOS Support**: The VPin Studio finally supports client installers for **x64 and arm**. Big shoutout to @gonzonia here!
+- **Visual Pinball Backup Manager (VPBM)**: Updated to the newest version 3.5 (used for fresh installations).
 - **Visual Pinball Backup Manager (VPBM) / Table Backups**: Removed the backup view from the Studio client and from the server. This way the server has no .net dependency anymore. VPBM is still available, but Studio does not intermingle with it's configuration anymore.
 - **VPin Studio Client**: New pincab avatar used in client.
 - **VPin Studio Client/Server**: Added possibility to change the default port from 8098 to another one. Consult the wiki for more details.
 - **VPin Studio Server**: Fixed update of start/exit curl calls in the emulator scripts which may have failed because of invalid SQL escaping.
 - **DMD Position Tool**: Support of full video for positioning from frontend when frontend menu screen is kept displayed
-- **Server Performance Optimizations**: It is hard to put the results here in numbers, so the results may vary depending on your machine. 
-  - PUP pack scanning: The media detection has been simplified, so the initial detection time has been reduced by half.
-  - ALT Sound package scanning:
+- **Server Performance Optimizations**: It is hard to put the results here in numbers, so the results may vary depending on your machine. So here is what happened:
+  - Some initialization processes like the lookup for resetted nvrams are executed asynchronous now, so that the server is faster available.  
+  - PUP pack scanning: The media detection has been simplified, so the initial detection time is significantly faster.
+  - ALT Sound scanning: Only if the validator is active, all ALT sound packages are precached. Otherwise they will be lazy loaded when opened in the "ALT Sound" section. 
 
 ---
 
