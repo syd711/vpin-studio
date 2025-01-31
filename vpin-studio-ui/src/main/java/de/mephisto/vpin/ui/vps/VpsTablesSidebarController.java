@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,10 +40,7 @@ public class VpsTablesSidebarController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
 
   @FXML
-  private Accordion vpsTableAccordion;
-
-  @FXML
-  private TitledPane tableDetailsPane;
+  private Pane vpsTableAccordion;
 
   @FXML
   private Hyperlink ipdbLink;
@@ -80,8 +78,6 @@ public class VpsTablesSidebarController implements Initializable {
   @FXML
   private TextArea commentsArea;
 
-  @FXML
-  private Button openBtn;
 
   private Optional<VpsTable> selection;
 
@@ -122,9 +118,6 @@ public class VpsTablesSidebarController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    vpsTableAccordion.managedProperty().bindBidirectional(vpsTableAccordion.visibleProperty());
-    vpsTableAccordion.setExpandedPane(tableDetailsPane);
-
     commentChangeListener = new CommentChangeListener();
   }
 
@@ -142,7 +135,6 @@ public class VpsTablesSidebarController implements Initializable {
 
   public void setTable(Optional<VpsTable> selection, VpsTablesPredicateFactory predicate) {
     this.init();
-    this.openBtn.setDisable(selection.isEmpty());
 
     this.commentsArea.textProperty().removeListener(commentChangeListener);
     this.commentsArea.setDisable(selection.isEmpty());
