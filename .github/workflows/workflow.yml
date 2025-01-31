@@ -259,6 +259,7 @@ jobs:
   build:
     name: Packaging
     runs-on: windows-latest
+    needs: [mac-app-build-x64, mac-app-build-arm64]
     permissions:
       # write permission is required to create a github release
       contents: write
