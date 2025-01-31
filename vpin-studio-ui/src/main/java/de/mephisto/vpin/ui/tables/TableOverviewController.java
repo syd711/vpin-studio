@@ -42,10 +42,12 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -1299,21 +1301,30 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       HBox root = new HBox(1);
       root.setAlignment(Pos.CENTER);
+      int index = 0;
       for (int i = 0; i < rating; i++) {
         Label label = new Label();
+        label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
         icon.setIconSize(20);
         label.setGraphic(icon);
+        label.setCursor(Cursor.HAND);
+        label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
         root.getChildren().add(label);
+        index++;
       }
 
       for (int i = 0; i < nonRating; i++) {
         Label label = new Label();
+        label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline");
         label.setGraphic(icon);
         icon.setIconSize(20);
         icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+        label.setCursor(Cursor.HAND);
+        label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
         root.getChildren().add(label);
+        index++;
       }
       return root;
     }, this, true);
@@ -1464,6 +1475,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return row;
         });
 
+  }
+
+  private void setGameRating(GameRepresentation value, int i) {
+    try {
+      TableDetails tableDetails = client.getFrontendService().getTableDetails(value.getId());
+      if (tableDetails != null) {
+        tableDetails.setGameRating((i + 1));
+        client.getFrontendService().saveTableDetails(tableDetails, value.getId());
+        EventManager.getInstance().notifyTableChange(value.getId(), null, null);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Rating update failed: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(stage, "Error", "Rating update failed: " + e.getMessage());
+    }
   }
 
   //------------------------------
