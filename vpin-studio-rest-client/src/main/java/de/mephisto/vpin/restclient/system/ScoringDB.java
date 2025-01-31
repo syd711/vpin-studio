@@ -69,6 +69,7 @@ public class ScoringDB {
       File tmp = new File("./resources/", SCORING_DB_NAME + ".tmp");
       if (tmp.exists() && !tmp.delete()) {
         LOG.error("Failed to delete existing tmp file " + SCORING_DB_NAME + ".tmp");
+        return;
       }
       FileOutputStream fileOutputStream = new FileOutputStream(tmp);
       byte dataBuffer[] = new byte[1024];
@@ -85,16 +86,20 @@ public class ScoringDB {
         oldSize = dbFile.length();
       }
 
-      if (dbFile.exists() && !dbFile.delete()) {
-        LOG.error("Failed to delete " + SCORING_DB_NAME);
-      }
+      if (tmp.length() > 0) {
+        if (dbFile.exists() && !dbFile.delete()) {
+          LOG.error("Failed to delete " + SCORING_DB_NAME);
+        }
 
-      if (!tmp.renameTo(dbFile)) {
-        LOG.error("Failed to rename " + SCORING_DB_NAME);
-        return;
+        if (!tmp.renameTo(dbFile)) {
+          LOG.error("Failed to rename " + SCORING_DB_NAME);
+          return;
+        }
+        LOG.info("Written " + dbFile.getAbsolutePath() + ", (" + oldSize + " vs " + dbFile.length() + " bytes)");
       }
-
-      LOG.info("Written " + dbFile.getAbsolutePath() + ", (" + oldSize + " vs " + dbFile.length() + " bytes)");
+      else {
+        tmp.delete();
+      }
     }
     catch (IOException e) {
       LOG.error(SCORING_DB_NAME + " download failed: " + e.getMessage());
@@ -105,9 +110,9 @@ public class ScoringDB {
 
   private List<String> highscoreTitles = new ArrayList<>();
 
-  private List<Map<String,Object>> highscoreTextParsers = new ArrayList<>();
+  private List<Map<String, Object>> highscoreTextParsers = new ArrayList<>();
 
-  private List<Map<String,Object>> highscoreVPRegParsers = new ArrayList<>();
+  private List<Map<String, Object>> highscoreVPRegParsers = new ArrayList<>();
 
   public List<Map<String, Object>> getHighscoreVPRegParsers() {
     return highscoreVPRegParsers;
