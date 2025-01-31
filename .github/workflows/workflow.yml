@@ -89,17 +89,16 @@ jobs:
         run: mvn --batch-mode --update-snapshots clean package
 
       - name: Download macOS x64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macOS-build-arm64
+          path: ./Output/VPin-Studio/
 
       - name: Download macOS arm64 artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macOS-build-arm64
-
-      - name: Show Download
-        run: ls -al ./
+          path: ./Output/VPin-Studio/
 
       - name: List files in the Output folder
         run: |
@@ -125,8 +124,8 @@ jobs:
             ./Output/VPin-Studio/VPin-Studio-Server.zip
             ./Output/VPin-Studio/VPin-Studio.zip
             ./Output/VPin-Studio/VPin-Studio-Client-linux-x64.zip
-            ./VPin-Studio-Client-MacOS-arm64.zip
-            ./VPin-Studio-Client-MacOS-x64.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-arm64.zip
+            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-x64.zip
             ./Output/VPin-Studio/vpin-studio-ui-jar.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
