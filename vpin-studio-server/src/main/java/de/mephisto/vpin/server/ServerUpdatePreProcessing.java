@@ -30,13 +30,19 @@ public class ServerUpdatePreProcessing {
     new Thread(() -> {
       try {
         Thread.currentThread().setName("ServerUpdatePreProcessing");
+        long start = System.currentTimeMillis();
         runJvmCheck();
         runScriptCheck();
         runDeletionChecks();
         runResourcesCheck();
         runPinVolUpdateCheck();
-        synchronizeNVRams(false);
-        LOG.info("Finished resource updates check.");
+
+        new Thread(() -> {
+          Thread.currentThread().setName("ServerUpdate Async Preprocessor");
+          synchronizeNVRams(false);
+        }).start();
+
+        LOG.info("Finished resource updates check, took " + (System.currentTimeMillis() - start) + "ms.");
       }
       catch (Exception e) {
         LOG.error("Server update failed: " + e.getMessage(), e);
