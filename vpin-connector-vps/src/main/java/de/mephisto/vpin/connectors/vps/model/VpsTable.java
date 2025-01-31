@@ -31,6 +31,10 @@ public class VpsTable implements VPSEntity {
   private int year;
   private long updatedAt;
 
+  //----------- Custom fields
+  private String comment;
+
+
   //------------------
   public VpsTableVersion getTableVersionById(String extTableVersionId) {
     if (this.tableFiles != null && extTableVersionId != null) {
@@ -57,6 +61,15 @@ public class VpsTable implements VPSEntity {
   }
 
   //------------------
+
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 
   public List<VpsTutorialUrls> getTutorialFiles() {
     return tutorialFiles;

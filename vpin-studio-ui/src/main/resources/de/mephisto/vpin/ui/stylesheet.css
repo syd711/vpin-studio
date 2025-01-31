@@ -737,7 +737,7 @@
 }
 
 .tab-pane .sub-tab .tab {
-    -fx-border-style: solid solid transparent solid;
+    -fx-border-style: solid solid solid solid;
     -fx-border-color: -fx-base-5;
 }
 

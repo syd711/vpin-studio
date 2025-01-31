@@ -18,6 +18,10 @@ public interface StudioEventListener {
 
   }
 
+  default void vpsTableChanged(@NonNull String vpsTableId) {
+
+  }
+
   default void tablesChanged() {
 
   }
