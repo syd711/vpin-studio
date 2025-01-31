@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.pinbally;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
@@ -483,7 +484,7 @@ PlayfieldWindow.Minimized = 0
     // Construct the new settings line
     StringBuilder newSettingsLine = new StringBuilder();
     newSettingsLine.append("System" + emuId + "." + runType + " = ");
-    newSettingsLine.append("[NOWAIT HIDE]curl -X POST http://localhost:8089/service/");
+    newSettingsLine.append("[NOWAIT HIDE]curl -X POST http://localhost:" + SystemUtil.getPort() + "/service/");
     newSettingsLine.append(runType == "RunBefore" ? "gameLaunch" : "gameExit");
     newSettingsLine.append(" --data-urlencode \"table=[TABLEPATH]\\[TABLEFILE]\"");
     newSettingsLine.append(" --data-urlencode \"emu=" + emulatorName + "\"");
