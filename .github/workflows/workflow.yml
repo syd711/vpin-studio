@@ -16,7 +16,7 @@ on:
 
 jobs:
   mac-app-build-x64:
-    name: macx64-app-build
+    name: mac-app-build-x64
     runs-on: macos-13
 
     steps:
