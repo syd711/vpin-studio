@@ -88,19 +88,18 @@ jobs:
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package
 
-      - uses: actions/checkout@v4
-          - uses: actions/download-artifact@v4
-            with:
-              name: macOS-build-x64
-              path: ./
-          - run: ls -al ./
+      - name: Download macOS x64 artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: macOS-build-arm64
 
-      - uses: actions/checkout@v4
-          - uses: actions/download-artifact@v4
-            with:
-              name: macOS-build-arm64
-              path: ./
-          - run: ls -al ./
+      - name: Download macOS arm64 artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: macOS-build-arm64
+
+      - name: Show Download
+        run: ls -al ./
 
       - name: List files in the Output folder
         run: |
