@@ -484,7 +484,7 @@ PlayfieldWindow.Minimized = 0
     StringBuilder newSettingsLine = new StringBuilder();
     newSettingsLine.append("System" + emuId + "." + runType + " = ");
     newSettingsLine.append("[NOWAIT HIDE]curl -X POST http://localhost:8089/service/");
-    newSettingsLine.append(runType == "RunBefore" ? "gameStart" : "gameExit");
+    newSettingsLine.append(runType == "RunBefore" ? "gameLaunch" : "gameExit");
     newSettingsLine.append(" --data-urlencode \"table=[TABLEPATH]\\[TABLEFILE]\"");
     newSettingsLine.append(" --data-urlencode \"emu=" + emulatorName + "\"");
     newSettingsLine.append(" & :: Added by VPin Studio"); /* used to detect earlier update by VPin Studio */
