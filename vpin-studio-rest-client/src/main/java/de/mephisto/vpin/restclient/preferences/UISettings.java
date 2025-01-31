@@ -70,6 +70,7 @@ public class UISettings extends JsonSettings {
   private boolean columnAltColor = true;
   private boolean columnAltSound = true;
   private boolean columnBackglass = true;
+  private boolean columnRating = true;
   private boolean columnDateAdded = false;
   private boolean columnDateModified = false;
   private boolean columnLauncher = false;
@@ -87,6 +88,14 @@ public class UISettings extends JsonSettings {
   private boolean columnComment = false;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public boolean isColumnRating() {
+    return columnRating;
+  }
+
+  public void setColumnRating(boolean columnRating) {
+    this.columnRating = columnRating;
+  }
 
   public String getDefaultUploadMode() {
     return defaultUploadMode;

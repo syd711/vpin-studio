@@ -82,7 +82,17 @@ public class Game {
   private boolean vrRoomSupport = false;
   private boolean vrRoomEnabled = false;
 
+  private int rating = 0;
+
   public Game() {
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
   }
 
   public boolean isVrRoomSupport() {

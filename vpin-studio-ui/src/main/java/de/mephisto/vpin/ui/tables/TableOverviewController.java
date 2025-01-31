@@ -108,6 +108,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnStatus;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnRating;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPUPPack;
 
   @FXML
@@ -1289,6 +1292,33 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+
+    BaseLoadingColumn.configureColumn(columnRating, (value, model) -> {
+      int rating = value.getRating();
+      int nonRating = 5 - rating;
+
+      HBox root = new HBox(1);
+      root.setAlignment(Pos.CENTER);
+      for (int i = 0; i < rating; i++) {
+        Label label = new Label();
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
+        icon.setIconSize(20);
+        label.setGraphic(icon);
+        root.getChildren().add(label);
+      }
+
+      for (int i = 0; i < nonRating; i++) {
+        Label label = new Label();
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline");
+        label.setGraphic(icon);
+        icon.setIconSize(20);
+        icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+        root.getChildren().add(label);
+      }
+      return root;
+    }, this, true);
+
+
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
@@ -1897,6 +1927,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnVPS.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportRating() && uiSettings.isColumnRating());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());

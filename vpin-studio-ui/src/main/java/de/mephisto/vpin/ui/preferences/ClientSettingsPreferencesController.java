@@ -145,6 +145,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnPlaylists;
   @FXML
+  private CheckBox columnRating;
+  @FXML
   private CheckBox columnPov;
   @FXML
   private CheckBox columnRes;
@@ -201,6 +203,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
     sectionAssets.managedProperty().bindBidirectional(sectionAssets.visibleProperty());
+    columnRating.managedProperty().bindBidirectional(columnRating.visibleProperty());
 
     dropIns.managedProperty().bindBidirectional(dropIns.visibleProperty());
 
@@ -226,6 +229,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     sectionPlaylists.setVisible(frontendType.supportPlaylists());
     columnPlaylists.setVisible(frontendType.supportPlaylists());
+    columnRating.setVisible(frontendType.supportRating());
 
     sectionAssets.setVisible(frontendType.supportMedias());
     dropIns.setVisible(Features.DROP_IN_FOLDER);
@@ -581,6 +585,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPinVol.setSelected(uiSettings.isColumnPinVol());
     columnPinVol.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPinVol(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnRating.setSelected(uiSettings.isColumnRating());
+    columnRating.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnRating(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

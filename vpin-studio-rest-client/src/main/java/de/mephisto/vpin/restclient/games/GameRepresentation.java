@@ -36,6 +36,7 @@ public class GameRepresentation {
   private boolean updateAvailable;
   private int id;
   private String comment;
+  private int rating;
   private Date modified;
   private ValidationState validationState;
   private boolean hasMissingAssets;
@@ -78,6 +79,14 @@ public class GameRepresentation {
   private String resPath;
   private String pupPackPath;
   private boolean altSoundAvailable;
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
+  }
 
   public Date getDateUpdated() {
     return dateUpdated;

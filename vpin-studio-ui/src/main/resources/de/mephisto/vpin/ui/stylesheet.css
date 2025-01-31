@@ -730,6 +730,19 @@
     -fx-text-fill:-fx-font-1;
 }
 
+.tab-pane .sub-tab {
+    -fx-tab-min-width:90px;
+    -fx-tab-min-height:30px;
+    -fx-background-color: -fx-base-6;
+}
+
+.tab-pane .sub-tab .tab {
+    -fx-border-style: solid solid transparent solid;
+    -fx-border-color: -fx-base-5;
+}
+
+
+
 
 /**
  * Table View

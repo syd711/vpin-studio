@@ -2005,6 +2005,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       game.setGameStatus(-1);
     }
 
+    game.setRating(rs.getInt("GameRating"));
+    if (rs.wasNull()) {
+      game.setRating(0);
+    }
+
     String dirGame = rs.getString("DirGames");
     File vpxFile = new File(dirGame, gameFileName);
     game.setGameFile(vpxFile);
