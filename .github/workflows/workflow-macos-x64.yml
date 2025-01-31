@@ -1,9 +1,9 @@
-name: Build macOS Client x64
+name: VPin Studio Build (2 of 3) - MacOS Client x64
 
 # Only trigger, when the build workflow succeeded
 on:
   workflow_run:
-    workflows: ["Build MacOS Client arm64"]
+    workflows: ["VPin Studio Build (1 of 3) - MacOS Client arm64"]
     types:
       - completed
 

@@ -57,8 +57,6 @@ import java.util.stream.Collectors;
 public class SystemService extends SystemInfo implements InitializingBean, ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(SystemService.class);
 
-  public final static int SERVER_PORT = RestClient.PORT;
-
   public static final String COMPETITION_BADGES = "competition-badges";
 
   public static final String RAW_MEDIA_FOLDER = "media-raw/";

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
@@ -48,11 +49,11 @@ import java.util.stream.Collectors;
 public class PinUPConnector implements FrontendConnector, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
-  private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemService.SERVER_PORT + "/service/popperLaunch";
-  private final static String CURL_COMMAND_TABLE_START_LEGACY = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
-  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" --data-urlencode \"emu=[DIREMU]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameLaunch";
-  private final static String CURL_COMMAND_TABLE_EXIT_LEGACY = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
-  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" --data-urlencode \"emu=[DIREMU]\" http://localhost:" + SystemService.SERVER_PORT + "/service/gameExit";
+  private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemUtil.getPort() + "/service/popperLaunch";
+  private final static String CURL_COMMAND_TABLE_START_LEGACY = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemUtil.getPort() + "/service/gameLaunch";
+  private final static String CURL_COMMAND_TABLE_START = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" --data-urlencode \"emu=[DIREMU]\" http://localhost:" + SystemUtil.getPort() + "/service/gameLaunch";
+  private final static String CURL_COMMAND_TABLE_EXIT_LEGACY = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + SystemUtil.getPort() + "/service/gameExit";
+  private final static String CURL_COMMAND_TABLE_EXIT = "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" --data-urlencode \"emu=[DIREMU]\" http://localhost:" + SystemUtil.getPort() + "/service/gameExit";
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";

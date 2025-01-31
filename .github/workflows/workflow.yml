@@ -1,4 +1,4 @@
-name: Build
+name: VPin Studio Build (3 of 3) - Packaging
 
 # Only trigger, when the build workflow succeeded
 on:
@@ -97,7 +97,7 @@ jobs:
       - name: Download macOS arm64 artifact
         uses: actions/download-artifact@v4
         with:
-          name: macOS-build-arm64
+          name: macOS-build-x64
           path: ./Output/VPin-Studio/
 
       - name: List files in the Output folder

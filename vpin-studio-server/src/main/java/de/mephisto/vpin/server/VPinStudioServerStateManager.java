@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server;
 
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.apache.commons.io.FileUtils;
@@ -21,15 +22,15 @@ public class VPinStudioServerStateManager {
   }
 
   public boolean isRunning() {
-    return RequestUtil.doGet("http://localhost:" + SystemService.SERVER_PORT + "/system/ping");
+    return RequestUtil.doGet("http://localhost:" + SystemUtil.getPort() + "/system/ping");
   }
 
   public boolean shutdown() {
-    return RequestUtil.doGet("http://localhost:" + SystemService.SERVER_PORT + "/system/exit");
+    return RequestUtil.doGet("http://localhost:" + SystemUtil.getPort() + "/system/exit");
   }
 
   public boolean restart() {
-    return RequestUtil.doGet("http://localhost:" + SystemService.SERVER_PORT + "/system/restart");
+    return RequestUtil.doGet("http://localhost:" + SystemUtil.getPort() + "/system/restart");
   }
 
   public void install() throws IOException {
