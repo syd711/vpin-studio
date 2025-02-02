@@ -1,3 +1,11 @@
+## Release Notes 3.12.6
+
+## Changes
+
+- **Tables / Media Preview**: Fixed "Other2" screen preview.
+
+---
+
 ## Release Notes 3.12.5
 
 ## Changes
