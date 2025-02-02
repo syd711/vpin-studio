@@ -107,7 +107,7 @@ jobs:
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre --java-options -DOSLOG_PATH=Library/Logs/Vpin-Studio
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre --java-options -DOSLOG_PATH=${{ '\${user.home}' }}/Library/Logs/Vpin-Studio
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
@@ -229,7 +229,7 @@ jobs:
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre --java-options -DOSLOG_PATH=/Library/Logs/Vpin-Studio
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre --java-options -DOSLOG_PATH=${{ '\${user.home}' }}/Library/Logs/Vpin-Studio
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
