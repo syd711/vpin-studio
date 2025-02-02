@@ -27,14 +27,14 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
-          repository: gonzonia/vpin-studio-popper-client
+          repository: syd711/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
-          repository: gonzonia/vpin-mania-rest-client
+          repository: syd711/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
@@ -149,14 +149,14 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
-          repository: gonzonia/vpin-studio-popper-client
+          repository: syd711/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
-          repository: gonzonia/vpin-mania-rest-client
+          repository: syd711/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
@@ -276,14 +276,14 @@ jobs:
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
-          repository: gonzonia/vpin-studio-popper-client
+          repository: syd711/vpin-studio-popper-client
           path: ./vpin-studio-popper-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Checkout VPin Mania Rest Client
         uses: actions/checkout@v3
         with:
-          repository: gonzonia/vpin-mania-rest-client
+          repository: syd711/vpin-mania-rest-client
           path: ./vpin-mania-rest-client
           token: ${{ secrets.ACCESS_TOKEN }}
 
@@ -380,4 +380,4 @@ jobs:
             ./Output/VPin-Studio/VPin-Studio-Client-MacOS-x64.dmg
             ./Output/VPin-Studio/vpin-studio-ui-jar.zip
         env:
-          GITHUB_REPOSITORY: https://github.com/gonzonia/vpin-studio
+          GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
