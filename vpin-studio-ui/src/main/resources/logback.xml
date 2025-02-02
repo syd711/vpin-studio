@@ -9,7 +9,7 @@
             <appender name="rollingFileMacOS" class="ch.qos.logback.core.rolling.RollingFileAppender">
                 <file>${user.home}/${LOG_PATH}/vpin-studio-ui.log</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>./vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
+                    <FileNamePattern>${user.home}/${LOG_PATH}/vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
                     <MaxHistory>3</MaxHistory>
                 </rollingPolicy>
                 <encoder>
