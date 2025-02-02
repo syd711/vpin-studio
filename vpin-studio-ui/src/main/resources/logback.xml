@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+     <!-- Try to load the log file path from the external properties file -->
+    <property name="LOG_PATH" value="${OSLOG_PATH:-.}"/>
+
     <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./vpin-studio-ui.log</file>
+
+        <file>${LOG_PATH}/vpin-studio-ui.log</file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <FileNamePattern>./vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
             <MaxHistory>3</MaxHistory>
