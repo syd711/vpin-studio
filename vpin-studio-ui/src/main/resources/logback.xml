@@ -7,9 +7,9 @@
     <if condition='property("LOG_PATH").contains("Library")'>
         <then>
             <appender name="rollingFileMacOS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${user.home}/${LOG_PATH}/vpin-studio-ui.log</file>
+                <file>${LOG_PATH}/vpin-studio-ui.log</file>
                 <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <FileNamePattern>${user.home}/${LOG_PATH}/vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
+                    <FileNamePattern>${LOG_PATH}/vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
                     <MaxHistory>3</MaxHistory>
                 </rollingPolicy>
                 <encoder>
