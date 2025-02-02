@@ -1,11 +1,19 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import javafx.scene.control.Tooltip;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.BeansException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
+  private final static Logger LOG = LoggerFactory.getLogger(TableDetails.class);
 
   private int sqlVersion;
   private int emulatorId;
@@ -61,6 +69,41 @@ public class TableDetails {
 
   // mapped values
   private String hsFilename;
+
+  public void setMappedFieldValue(String field, String value) {
+    try {
+      if (field == null) {
+        return;
+      }
+
+      switch (field) {
+        case "WEBGameID": {
+          setWebGameId(value);
+          break;
+        }
+        case "CUSTOM2": {
+          setCustom2(value);
+          break;
+        }
+        case "CUSTOM3": {
+          setCustom3(value);
+          break;
+        }
+        case "CUSTOM4": {
+          setCustom4(value);
+          break;
+        }
+        case "CUSTOM5": {
+          setCustom5(value);
+          break;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to set TableDetails value: {}", e.getMessage(), e);
+    }
+  }
+
 
   public String getSpecial() {
     return special;

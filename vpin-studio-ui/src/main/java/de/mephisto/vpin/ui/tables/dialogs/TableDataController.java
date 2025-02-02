@@ -1,11 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
@@ -14,10 +11,12 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -42,20 +41,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -64,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -93,6 +83,12 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private TextField gameVersion;
+
+  @FXML
+  private TextField patchVersion;
+
+  @FXML
+  private GridPane patchVersionPanel;
 
   @FXML
   private ComboBox<String> gameTypeCombo;
@@ -634,6 +630,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
+    patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
 
     FrontendType frontendType = null;
     try {
@@ -736,6 +733,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
+    boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
+    patchVersion.setDisable(!patchVersionEnabled);
+    patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
+
     nextButton.setVisible(overviewController != null);
     prevButton.setVisible(overviewController != null);
     openAssetMgrBtn.setVisible(overviewController != null);
@@ -794,6 +795,12 @@ public class TableDataController implements Initializable, DialogController, Aut
     gameVersion.setText(game.getVersion());
     gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
       fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
+    });
+
+    patchVersion.setText(game.getPatchVersion());
+    setPatchVersionValue(game.getPatchVersion());
+    patchVersion.textProperty().addListener((observable, oldValue, newValue) -> {
+      setPatchVersionValue(newValue);
     });
 
     //---------------------------------------------------------
@@ -1090,7 +1097,15 @@ public class TableDataController implements Initializable, DialogController, Aut
     setMappedFieldValue(serverSettings.getMappingHsFileName(), value);
   }
 
+  public void setPatchVersionValue(String value) {
+    setMappedFieldValue(serverSettings.getMappingPatchVersion(), value);
+  }
+
   private void setMappedFieldValue(String field, String value) {
+    if (field == null) {
+      return;
+    }
+
     switch (field) {
       case "WEBGameID": {
         webDbId.setText(value);

@@ -16,6 +16,7 @@ public class ServerSettings extends JsonSettings {
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+  private String mappingPatchVersion = "CUSTOM5";
   private boolean stickyKeysEnabled = true;
 
   public boolean isStickyKeysEnabled() {
@@ -88,6 +89,14 @@ public class ServerSettings extends JsonSettings {
 
   public void setMappingVpsTableId(String mappingVpsTableId) {
     this.mappingVpsTableId = mappingVpsTableId;
+  }
+
+  public String getMappingPatchVersion() {
+    return mappingPatchVersion;
+  }
+
+  public void setMappingPatchVersion(String mappingPatchVersion) {
+    this.mappingPatchVersion = mappingPatchVersion;
   }
 
   public String getMappingHsFileName() {

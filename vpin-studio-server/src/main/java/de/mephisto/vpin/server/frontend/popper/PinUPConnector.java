@@ -2023,6 +2023,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
       game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
     }
+    if (!StringUtils.isEmpty(serverSettings.getMappingPatchVersion())) {
+      game.setPatchVersion(rs.getString(serverSettings.getMappingPatchVersion()));
+    }
 
     return game;
   }
