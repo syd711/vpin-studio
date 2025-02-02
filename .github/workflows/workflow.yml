@@ -89,7 +89,7 @@ jobs:
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
-          cp ./mac-package/jpackage_log.txt ./mac-build
+          cp ./mac-package/jpackage_log.txt ./
       
 
       # Step 7: Package the Java application as a macOS .app bundle
@@ -100,10 +100,10 @@ jobs:
         run: |
           #echo "Github Run Number = ${{ github.run_number }}"
           
-          #echo "ls . results"
-          #ls -al .
-          #echo "ls .. results"
-          #ls -al ..          
+          echo "ls . results"
+          ls -al .
+          echo "ls .. results"
+          ls -al ..          
           #echo "ls package results"
           #ls -al package
           #echo "ls package/macos results"
@@ -212,6 +212,7 @@ jobs:
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
+          cp ./mac-package/jpackage_log.txt ./
       
 
       # Step 7: Package the Java application as a macOS .app bundle
@@ -222,10 +223,10 @@ jobs:
         run: |
           #echo "Github Run Number = ${{ github.run_number }}"
           
-          #echo "ls . results"
-          #ls -al .
-          #echo "ls .. results"
-          #ls -al ..          
+          echo "ls . results"
+          ls -al .
+          echo "ls .. results"
+          ls -al ..          
           #echo "ls package results"
           #ls -al package
           #echo "ls package/macos results"
