@@ -3,6 +3,7 @@
 ## Changes
 
 - **Tables / Media Preview**: Fixed "Other2" screen preview.
+- **Tables / Asset Manager** Dropping multiple files on the preview screens is now allowed (it was only 1x before).
 
 ---
 
