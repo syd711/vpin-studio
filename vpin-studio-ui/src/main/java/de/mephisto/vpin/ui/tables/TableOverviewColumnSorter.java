@@ -36,6 +36,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnVersion)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getVersion()));
       }
+      else if (column.equals(tableOverviewController.columnPatchVersion)) {
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getPatchVersion()));
+      }
       else if (column.equals(tableOverviewController.columnStatus)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getValidationState().getCode()));
       }

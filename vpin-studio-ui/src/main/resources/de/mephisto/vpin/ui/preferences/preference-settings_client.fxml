@@ -172,6 +172,11 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
+                              <CheckBox fx:id="columnPatchVersion" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Patch Version" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
                               <CheckBox fx:id="columnPinVol" mnemonicParsing="false" text="PinVol" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

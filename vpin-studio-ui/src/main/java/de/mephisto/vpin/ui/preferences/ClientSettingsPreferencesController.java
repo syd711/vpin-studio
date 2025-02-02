@@ -147,6 +147,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnRating;
   @FXML
+  private CheckBox columnPatchVersion;
+  @FXML
   private CheckBox columnPov;
   @FXML
   private CheckBox columnRes;
@@ -571,6 +573,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPlaylists.setSelected(uiSettings.isColumnPlaylists());
     columnPlaylists.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPlaylists(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnPatchVersion.setSelected(uiSettings.isColumnPatchVersion());
+    columnPatchVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnPatchVersion(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
