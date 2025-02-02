@@ -321,7 +321,7 @@ public class GameMediaService {
         frontendService.autoFill(game, tableDetails, false);
       }
 
-      tableDetails.setMappedFieldValue(serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+      TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
       frontendService.saveTableDetails(game.getId(), tableDetails);
       LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
     }
@@ -363,7 +363,7 @@ public class GameMediaService {
           tableDetails = frontendService.autoFill(game, tableDetails, false);
         }
 
-        tableDetails.setMappedFieldValue(serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+        TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
         frontendService.saveTableDetails(game.getId(), tableDetails);
 
         uploadDescriptor.setGameId(returningGameId);
@@ -420,9 +420,9 @@ public class GameMediaService {
       TableDetails tableDetailsClone = getTableDetails(returningGameId);
       tableDetailsClone.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
       tableDetailsClone.setGameFileName(fileName);
-      tableDetailsClone.setMappedFieldValue(serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
       tableDetailsClone.setGameDisplayName(original.getGameDisplayName() + " (cloned)");
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
+      TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
 
       saveTableDetails(tableDetailsClone, returningGameId, false);
       frontendService.updateTableFileUpdated(returningGameId);

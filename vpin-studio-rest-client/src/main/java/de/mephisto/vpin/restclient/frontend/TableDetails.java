@@ -70,40 +70,6 @@ public class TableDetails {
   // mapped values
   private String hsFilename;
 
-  public void setMappedFieldValue(String field, String value) {
-    try {
-      if (field == null) {
-        return;
-      }
-
-      switch (field) {
-        case "WEBGameID": {
-          setWebGameId(value);
-          break;
-        }
-        case "CUSTOM2": {
-          setCustom2(value);
-          break;
-        }
-        case "CUSTOM3": {
-          setCustom3(value);
-          break;
-        }
-        case "CUSTOM4": {
-          setCustom4(value);
-          break;
-        }
-        case "CUSTOM5": {
-          setCustom5(value);
-          break;
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to set TableDetails value: {}", e.getMessage(), e);
-    }
-  }
-
 
   public String getSpecial() {
     return special;
