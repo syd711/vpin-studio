@@ -297,7 +297,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     tg.selectToggle(radioStretchBackglass);
 
     // load screen dimensions
-    JFXFuture.supplyAsync(() -> client.getVPinScreenService().getScreenDisplay(VPinScreen.BackGlass))
+    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplay(VPinScreen.BackGlass))
         .thenAcceptLater(display -> {
           if (display != null) {
             //for (FrontendPlayerDisplay display : displays) {

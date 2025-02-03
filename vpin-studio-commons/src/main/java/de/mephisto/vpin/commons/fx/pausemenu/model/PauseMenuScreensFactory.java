@@ -25,17 +25,17 @@ public class PauseMenuScreensFactory {
 
   public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, FrontendMediaRepresentation frontendMedia) {
     List<FrontendScreenAsset> screens = new ArrayList<>();
-    FrontendPlayerDisplay display = client.getVPinScreenService().getScreenDisplay(VPinScreen.GameHelp);
+    FrontendPlayerDisplay display = client.getFrontendService().getScreenDisplay(VPinScreen.GameHelp);
     FrontendScreenAsset screenStage = createScreenStage(client, game, display, VPinScreen.GameHelp, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    display = client.getVPinScreenService().getScreenDisplay(VPinScreen.GameInfo);
+    display = client.getFrontendService().getScreenDisplay(VPinScreen.GameInfo);
     screenStage = createScreenStage(client, game, display, VPinScreen.GameInfo, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    display = client.getVPinScreenService().getScreenDisplay(VPinScreen.Other2);
+    display = client.getFrontendService().getScreenDisplay(VPinScreen.Other2);
     screenStage = createScreenStage(client, game, display, VPinScreen.Other2, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);

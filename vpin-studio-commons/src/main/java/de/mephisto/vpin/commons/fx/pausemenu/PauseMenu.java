@@ -204,7 +204,7 @@ public class PauseMenu extends Application {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
 
-        FrontendPlayerDisplay tutorialDisplay = client.getVPinScreenService().getScreenDisplay(tutorialScreen);
+        FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());

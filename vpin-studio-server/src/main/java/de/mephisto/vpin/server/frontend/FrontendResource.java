@@ -38,6 +38,9 @@ public class FrontendResource {
   private FrontendService frontendService;
 
   @Autowired
+  private VPinScreenService vpinScreenService;
+
+  @Autowired
   private GameService gameService;
 
   @Autowired
@@ -135,6 +138,20 @@ public class FrontendResource {
   public TableDetails getTableDetails(@PathVariable("gameId") int gameId) {
     return gameMediaService.getTableDetails(gameId);
   }
+
+  @GetMapping("/screen/{name}")
+  public FrontendPlayerDisplay getScreen(@PathVariable("name") String name) {
+    VPinScreen screen = VPinScreen.valueOf(name);
+    return vpinScreenService.getScreenDisplay(screen);
+  }
+
+  /**
+   * Not more used, use /screen/{name} instead
+  @GetMapping("/screens")
+  public List<FrontendPlayerDisplay> getScreens() {
+    return vpinScreenService.getScreenDisplays();
+  }
+  */
 
   @GetMapping("/mediadir/{gameId}/{screenName}")
   public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("screenName") String screenName) {
