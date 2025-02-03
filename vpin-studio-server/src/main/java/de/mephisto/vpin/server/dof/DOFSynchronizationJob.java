@@ -63,16 +63,21 @@ public class DOFSynchronizationJob implements Job {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       LOG.info("DOF download finished: {}", standardOutputFromCommand);
 
-      LOG.info("Downloaded file " + zipFile.getAbsolutePath());
-      if (!StringUtils.isEmpty(settings.getInstallationPath())) {
-        File targetFolder = new File(settings.getInstallationPath(), "Config");
-        if (!targetFolder.exists()) {
-          result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
-          return;
+      if (zipFile.exists()) {
+        LOG.info("Downloaded file " + zipFile.getAbsolutePath());
+        if (!StringUtils.isEmpty(settings.getInstallationPath())) {
+          File targetFolder = new File(settings.getInstallationPath(), "Config");
+          if (!targetFolder.exists()) {
+            result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
+            return;
+          }
+          LOG.info("Extracting DOF config folder " + settings.getInstallationPath());
+          result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
+          RarUtil.unrar(zipFile, targetFolder);
         }
-        LOG.info("Extracting DOF config folder " + settings.getInstallationPath());
-        result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
-        RarUtil.unrar(zipFile, targetFolder);
+      }
+      else {
+        LOG.info("Failed to download DOF configuration, please check your API key !");
       }
 
       if (result.isCancelled()) {
