@@ -15,17 +15,18 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 public class MacOS {
     private final static Logger LOG = LoggerFactory.getLogger(MacOS.class);
 
-    private static final String UPDATE_CLIENT_SCRIPT_NAME = "update-client.sh";
+
+    private static final String UPDATE_CLIENT_SCRIPT_NAME =  System.getProperty("MAC_WRITE_PATH") + "update-client.sh";
     private static final String UPDATE_CLIENT_SCRIPT = String.join("\n",
             "#!/bin/sh",
             "sleep 4",
-            "echo \"Unzipping jar...\" > vpin-studio-ui.log 2>&1",
-            "unzip -o vpin-studio-ui-jar.zip -d ./_updatefolder > vpin-studio-ui.log 2>&1",
-            "rm vpin-studio-ui-jar.zip > vpin-studio-ui.log 2>&1",
-            "mv -f ./_updatefolder/vpin-studio-ui.jar ./ > vpin-studio-ui.log 2>&1",
-            "rm -rf ./_updatefolder > vpin-studio-ui.log 2>&1",         
-            "echo \"Restarting client...\" > vpin-studio-ui.log 2>&1",
-            "./VPin-Studio-macosx_aarch64.sh &");
+            "echo \"Unzipping jar...\" > " +   System.getProperty("MAC_WRITE_PATH") + "/vpin-studio-ui.log 2>&1",
+            "unzip -o vpin-studio-ui-jar.zip -d " +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder > " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
+            "rm vpin-studio-ui-jar.zip > " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
+            "mv -f " +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder/vpin-studio-ui.jar " + System.getProperty("MAC_JAR_PATH") + " >  " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
+            "rm -rf " +  System.getProperty("MAC_WRITE_PATH") + " ._updatefolder >  " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
+            "echo \"Restarting client...\" >  " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
+            "open -n " + System.getProperty("MAC_APP_PATH")) + ">" +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1" ;
 
     public static final String EXEC_CLIENT_SCRIPT_NAME = "VPin-Studio-macosx_aarch64.sh";
     public static final String EXEC_CLIENT_SCRIPT = String.join("\n",
@@ -55,7 +56,7 @@ public class MacOS {
 
     public static void launchUpdateScript() throws Exception {
         // Use ProcessBuilder to run the new script
-        ProcessBuilder processBuilder = new ProcessBuilder("./" + UPDATE_CLIENT_SCRIPT_NAME);
+        ProcessBuilder processBuilder = new ProcessBuilder( System.getProperty("MAC_WRITE_PATH") + UPDATE_CLIENT_SCRIPT_NAME);
         processBuilder.directory(getBasePath());
 
         // Start the new process
@@ -97,6 +98,14 @@ public class MacOS {
     }
 
     private static File getBasePath() {
-      return new File("./");
+        String os = System.getProperty("os.name");
+        if (os.contains("Windows")) {
+            LOG.info("Setting Base Path for Windows Download to -./");
+            return new File("./");
+        }else{
+            LOG.info("Setting Base Path for Mac Download to -" + System.getProperty("MAC_WRITE_PATH"));
+            return new File(System.getProperty("MAC_WRITE_PATH"));
+
+        }
     }
 }
