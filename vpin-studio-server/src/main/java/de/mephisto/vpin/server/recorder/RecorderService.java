@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
@@ -15,6 +14,7 @@ import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.notifications.NotificationService;
@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,14 @@ import java.util.Optional;
 public class RecorderService {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderService.class);
 
+  private final static List<VPinScreen> supportedRecodingScreens = Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, 
+  VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper);
+
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private VPinScreenService screenService;
 
   @Autowired
   private ScreenPreviewService screenPreviewService;
@@ -115,11 +122,11 @@ public class RecorderService {
 
     recordingDataEntry.setGameId(gameId);
 
-    List<VPinScreen> supportedRecordingScreens = frontendService.getFrontend().getSupportedRecordingScreens();
-    for (VPinScreen supportedRecordingScreen : supportedRecordingScreens) {
-      RecordingScreenOptions option = settings.getRecordingScreenOption(supportedRecordingScreen);
+    List<FrontendPlayerDisplay> recordingScreens = getRecordingScreens();
+    for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
+      RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen.getScreen());
       if (option.isEnabled() && option.isInGameRecording()) {
-        recordingDataEntry.addScreen(supportedRecordingScreen);
+        recordingDataEntry.addScreen(recordingScreen.getScreen());
       }
     }
 
@@ -145,29 +152,22 @@ public class RecorderService {
     return true;
   }
 
-  public List<RecordingScreen> getRecordingScreens() {
-    List<VPinScreen> supportedRecodingScreens = frontendService.getFrontend().getSupportedRecordingScreens();
-    List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendPlayerDisplays();
-
-    List<RecordingScreen> result = new ArrayList<>();
+  public List<FrontendPlayerDisplay> getRecordingScreens() {
+    List<FrontendPlayerDisplay> result = new ArrayList<>();
     for (VPinScreen screen : supportedRecodingScreens) {
-      FrontendPlayerDisplay display = VPinScreen.valueOfScreen(frontendPlayerDisplays, screen);
+      FrontendPlayerDisplay display = screenService.getScreenDisplay(screen);
       // recording screen may not be among the effective displays
       if (display != null) {
-        RecordingScreen recordingScreen = new RecordingScreen();
-        recordingScreen.setScreen(screen);
-        recordingScreen.setDisplay(display);
-
-        result.add(recordingScreen);
+        result.add(display);
       }
     }
     return result;
   }
 
   public void refreshPreview(OutputStream out, VPinScreen screen) {
-    Optional<RecordingScreen> recordingScreenOpt = getRecordingScreens().stream().filter(s -> s.getScreen().equals(screen)).findFirst();
+    Optional<FrontendPlayerDisplay> recordingScreenOpt = getRecordingScreens().stream().filter(s -> s.getScreen().equals(screen)).findFirst();
     if (recordingScreenOpt.isPresent()) {
-      RecordingScreen recordingScreen = recordingScreenOpt.get();
+      FrontendPlayerDisplay recordingScreen = recordingScreenOpt.get();
       screenPreviewService.capture(out, recordingScreen);
     }
   }

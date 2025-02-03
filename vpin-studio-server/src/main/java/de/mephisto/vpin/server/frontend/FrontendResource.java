@@ -136,17 +136,6 @@ public class FrontendResource {
     return gameMediaService.getTableDetails(gameId);
   }
 
-  @GetMapping("/screen/{name}")
-  public FrontendPlayerDisplay getScreen(@PathVariable("name") String name) {
-    VPinScreen screen = VPinScreen.valueOf(name);
-    return frontendService.getFrontendPlayerDisplays(screen);
-  }
-
-  @GetMapping("/screens")
-  public List<FrontendPlayerDisplay> getScreens() {
-    return frontendService.getFrontendPlayerDisplays();
-  }
-
   @GetMapping("/mediadir/{gameId}/{screenName}")
   public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("screenName") String screenName) {
     VPinScreen screen = VPinScreen.valueOf(screenName);

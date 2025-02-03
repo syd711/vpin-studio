@@ -98,15 +98,6 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
-  public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
-  }
-
-  public List<FrontendPlayerDisplay> getScreenDisplays() {
-    FrontendPlayerDisplay[] displays = getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendPlayerDisplay[].class);
-    return displays != null ? Arrays.asList(displays) : Collections.emptyList();
-  }
-
   public List<GameEmulatorRepresentation> getGameEmulators() {
     GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class);
     return emus != null ? Arrays.asList(emus) : Collections.emptyList();

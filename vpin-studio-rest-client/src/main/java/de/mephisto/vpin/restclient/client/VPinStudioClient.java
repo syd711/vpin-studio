@@ -25,6 +25,7 @@ import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreenServiceClient;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -98,6 +99,7 @@ public class VPinStudioClient implements OverlayClient {
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
   private final FrontendServiceClient frontendServiceClient;
+  private final VPinScreenServiceClient vpinScreenServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
   private final RecorderServiceClient recorderServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
@@ -150,6 +152,7 @@ public class VPinStudioClient implements OverlayClient {
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.patcherServiceClient = new PatcherServiceClient(this);
     this.frontendServiceClient = new FrontendServiceClient(this);
+    this.vpinScreenServiceClient = new VPinScreenServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
@@ -327,6 +330,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public FrontendServiceClient getFrontendService() {
     return frontendServiceClient;
+  }
+
+  public VPinScreenServiceClient getVPinScreenService() {
+    return vpinScreenServiceClient;
   }
 
   public PreferencesServiceClient getPreferenceService() {

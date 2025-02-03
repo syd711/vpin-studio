@@ -42,6 +42,9 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
   private FrontendService frontendService;
 
   @Autowired
+  private VPinScreenService vpinScreenService;
+
+  @Autowired
   private DiscordService discordService;
 
   @Autowired
@@ -108,7 +111,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
           Platform.runLater(() -> {
             FrontendPlayerDisplay pupPlayerDisplay = null;
             if (cardSettings.isNotificationOnPopperScreen()) {
-              pupPlayerDisplay = frontendService.getFrontendPlayerDisplays(screen);
+              pupPlayerDisplay = vpinScreenService.getScreenDisplay(screen);
             }
             ServerFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
           });

@@ -486,8 +486,14 @@ public class BackglassService {
   public DirectB2sScreenRes getScreenRes(int gameId, boolean perTableOnly) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
+      GameEmulator emulator = game.getEmulator();  
       String b2sFilename = game.getDirectB2SFilename();
-      return getScreenRes(game.getEmulator(), b2sFilename, game, perTableOnly);
+      File b2sFile = new File(emulator.getTablesDirectory(), b2sFilename);
+      DirectB2sScreenRes res = getScreenRes(b2sFile, perTableOnly);
+      res.setB2SFileName(b2sFilename);
+      res.setEmulatorId(emulator.getId());
+      res.setGameId(game.getId());
+      return res;
     }
     return null;
   }
@@ -495,24 +501,34 @@ public class BackglassService {
   public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(directb2s.getEmulatorId());
     if (emulator != null) {
-      Game game = getGameByDirectB2S(directb2s.getEmulatorId(), directb2s.getFileName());
-      return getScreenRes(emulator, directb2s.getFileName(), game, perTableOnly);
+      File b2sFile = new File(emulator.getTablesDirectory(), directb2s.getFileName());
+      DirectB2sScreenRes res = getScreenRes(b2sFile, perTableOnly);
+      if (res != null) {
+        res.setB2SFileName(directb2s.getFileName());
+        res.setEmulatorId(directb2s.getEmulatorId());
+
+        Game game = getGameByDirectB2S(directb2s.getEmulatorId(), directb2s.getFileName());
+        if (game != null) {
+          res.setGameId(game.getId());
+        }  
+        return res;
+      }
     }
     return null;
   }
 
-  private DirectB2sScreenRes getScreenRes(GameEmulator emulator, String b2sFilename, @Nullable Game game, boolean perTableOnly) {
-    File b2sFile = new File(emulator.getTablesDirectory(), b2sFilename);
+  public DirectB2sScreenRes getGlobalScreenRes() {
+    return getScreenRes((File) null, false);
+  }
 
+  private DirectB2sScreenRes getScreenRes(@Nullable File b2sFile, boolean perTableOnly) {
     List<String> lines = readScreenRes(b2sFile, false, perTableOnly);
     if (lines == null) {
       return null;
     }
     DirectB2sScreenRes res = new DirectB2sScreenRes();
-    res.setEmulatorId(emulator.getId());
-    res.setB2SFileName(b2sFilename);
     res.setScreenresFilePath(lines.remove(0));
-    res.setGlobal(StringUtils.containsIgnoreCase(res.getScreenresFilePath(), b2sFile.getName()));
+    res.setGlobal(b2sFile == null || StringUtils.containsIgnoreCase(res.getScreenresFilePath(), b2sFile.getName()));
 
     // cf https://github.com/vpinball/b2s-backglass/blob/7842b3638b62741e21ebb511e2a886fa2091a40f/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L105
     res.setPlayfieldWidth(Integer.parseInt(lines.get(0)));
@@ -550,15 +566,6 @@ public class BackglassService {
         res.setB2SWindowPunch(lines.get(17));
       }
     }
-
-    // Now add the associated game if any
-    //if (game != null) {
-    //this will ensure that a scanned table is fetched and get the rom
-    //  game = gameService.getGame(game.getId());
-    //}
-    if (game != null) {
-      res.setGameId(game.getId());
-    }
     return res;
   }
 
@@ -570,7 +577,7 @@ public class BackglassService {
    * @param perTableOnly Load only the file if it is table dedicated one, else null
    * @return the List of all lines in the file
    */
-  private List<String> readScreenRes(File b2sFile, boolean withComment, boolean perTableOnly) {
+  private List<String> readScreenRes(@Nullable File b2sFile, boolean withComment, boolean perTableOnly) {
     if (screenresTxt == null) {
       // The default filename ScreenRes.txt can be altered by setting the registry key
       // Software\B2S\B2SScreenResFileNameOverride to a different filename.
@@ -579,25 +586,30 @@ public class BackglassService {
           "ScreenRes.txt");
     }
 
-    // see https://github.com/vpinball/b2s-backglass/wiki/Screenres.txt
-    // When the B2S Server starts, it tries to find the ScreenRes files in this order  (from backglassServer documentation):
-    //  1) tablename.res next to the tablename.vpx
-    File target = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()) + ".res");
-    if (!target.exists()) {
-      //  2) Screenres.txt (or whatever set in the registry) in the same folder as tablename.vpx
-      target = new File(b2sFile.getParentFile(), screenresTxt);
-      if (perTableOnly || !target.exists()) {
-        //  3) Screenres.txt (or whatever set in the registry) as tablename/Screenres.txt
-        File tableFolder = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()));
-        target = new File(tableFolder, screenresTxt);
-        if (!perTableOnly && !target.exists()) {
-          //  4) Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
-          target = new File(getBackglassServerFolder(), screenresTxt);
+    File target = null;
+    if (b2sFile != null) {
+      // see https://github.com/vpinball/b2s-backglass/wiki/Screenres.txt
+      // When the B2S Server starts, it tries to find the ScreenRes files in this order  (from backglassServer documentation):
+      //  1) tablename.res next to the tablename.vpx
+      target = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()) + ".res");
+      if (!target.exists()) {
+        //  2) Screenres.txt (or whatever set in the registry) in the same folder as tablename.vpx
+        target = new File(b2sFile.getParentFile(), screenresTxt);
+        if (perTableOnly || !target.exists()) {
+          //  3) Screenres.txt (or whatever set in the registry) as tablename/Screenres.txt
+          File tableFolder = new File(b2sFile.getParentFile(), FilenameUtils.getBaseName(b2sFile.getName()));
+          target = new File(tableFolder, screenresTxt);
         }
       }
     }
 
-    if (!target.exists()) {
+    // load global screen res file
+    if (!perTableOnly && (target == null || !target.exists())) {
+      //  4) Screenres.txt ( or whatever you set in the registry) in the folder where the B2SBackglassServerEXE.exe is located
+      target = new File(getBackglassServerFolder(), screenresTxt);
+    }
+
+    if (target == null || !target.exists()) {
       return null;
     }
 
@@ -792,7 +804,8 @@ public class BackglassService {
 
           if (includeFrame) {
             GameEmulator emulator = game != null ? game.getEmulator() : frontendService.getGameEmulator(tableData.getEmulatorId());
-            DirectB2sScreenRes screenres = getScreenRes(emulator, tableData.getFilename(), game, true);
+            File b2sFile = new File(emulator.getTablesDirectory(), tableData.getFilename());
+            DirectB2sScreenRes screenres = getScreenRes(b2sFile, true);
             if (screenres != null && screenres.hasFrame()) {
               File frameFile = new File(screenres.getBackgroundFilePath());
               if (frameFile.exists()) {

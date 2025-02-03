@@ -1,12 +1,9 @@
 package de.mephisto.vpin.commons.utils;
 
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +14,7 @@ public class VPXKeyManager {
   public final static String RFlipKey = "RFlipKey";
   public final static String StartGameKey = "StartGameKey";
 
-  private final static File VPINBALL_INI = new File(System.getProperty("user.home"), "AppData\\Roaming\\VPinballX\\VPinballX.ini");
-
-  private static VPXKeyManager INSTANCE = null;
-  private INIConfiguration iniConfiguration;
+  private Configuration playerConfiguration;
 
   private static Map<Integer,Integer> directX2Native = new HashMap<>();
 
@@ -31,23 +25,14 @@ public class VPXKeyManager {
     directX2Native.put(54, 161); //Shift Right
   }
 
-  private VPXKeyManager() {
-
-  }
-
-  public static VPXKeyManager getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new VPXKeyManager();
-      INSTANCE.reloadKeyBinding();
-    }
-    return INSTANCE;
+  public VPXKeyManager(Configuration playerConfiguration) {
+    this.playerConfiguration = playerConfiguration;
   }
 
   public int getBinding(String name) {
     try {
-      if (iniConfiguration != null) {
-        SubnodeConfiguration player = iniConfiguration.getSection("Player");
-        int binding = player.getInt(name);
+      if (playerConfiguration != null) {
+        int binding = playerConfiguration.getInt(name);
         return getMappedValue(binding);
       }
     } catch (Exception e) {
@@ -62,24 +47,5 @@ public class VPXKeyManager {
       return directX2Native.get(value);
     }
     return value;
-  }
-
-  public void reloadKeyBinding() {
-    try {
-      if (VPINBALL_INI.exists()) {
-        iniConfiguration = new INIConfiguration();
-        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-        iniConfiguration.setSeparatorUsedInOutput("=");
-        iniConfiguration.setSeparatorUsedInInput("=");
-
-        FileReader fileReader = new FileReader(VPINBALL_INI);
-        iniConfiguration.read(fileReader);
-      }
-      else {
-        LOG.warn("Unable to find VPinbal.ini: " + VPINBALL_INI.getAbsolutePath());
-      }
-    } catch (Exception e) {
-      LOG.info("Error reading VPX key bindings: " + e.getMessage(), e);
-    }
   }
 }

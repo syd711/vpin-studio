@@ -297,27 +297,27 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     tg.selectToggle(radioStretchBackglass);
 
     // load screen dimensions
-    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplays())
-        .thenAcceptLater(displays -> {
-          if (displays != null) {
-            for (FrontendPlayerDisplay display : displays) {
-              if (VPinScreen.PlayField.equals(display.getScreen())) {
-                playfieldScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
-              }
-              else if (VPinScreen.BackGlass.equals(display.getScreen())) {
+    JFXFuture.supplyAsync(() -> client.getVPinScreenService().getScreenDisplay(VPinScreen.BackGlass))
+        .thenAcceptLater(display -> {
+          if (display != null) {
+            //for (FrontendPlayerDisplay display : displays) {
+              //if (VPinScreen.PlayField.equals(display.getScreen())) {
+              //  playfieldScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+              //}
+              //else if (VPinScreen.BackGlass.equals(display.getScreen())) {
                 this.backglassDisplay = display;
-                backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+                //backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
 
                 // resize the preview proportionnaly
                 this.previewHeight = (int) previewImage.getFitHeight();
                 double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
                 previewImage.setFitWidth(width);
                 this.previewWidth = (int) width;
-              }
-              else if (VPinScreen.DMD.equals(display.getScreen())) {
-                dmdScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
-              }
-            }
+              //}
+              //else if (VPinScreen.DMD.equals(display.getScreen())) {
+              //  dmdScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+              //}
+            //}
             refreshPreview();
           }
         });

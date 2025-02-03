@@ -62,10 +62,6 @@ public class PinballYConnector extends BaseConnector {
         GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
 
-    // recordings screens
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD,
-      VPinScreen.Topper, VPinScreen.Menu));
-
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
   }
