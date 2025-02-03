@@ -20,43 +20,55 @@ public class MacOS {
     private static final String UPDATE_CLIENT_SCRIPT = String.join("\n",
             "#!/bin/sh",
             "sleep 4",
-            "echo \"Unzipping jar...\" > " +   System.getProperty("MAC_WRITE_PATH") + "/vpin-studio-ui.log 2>&1",
-            "unzip -o vpin-studio-ui-jar.zip -d " +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder > " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
-            "rm vpin-studio-ui-jar.zip > " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
-            "mv -f " +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder/vpin-studio-ui.jar " + System.getProperty("MAC_JAR_PATH") + " >  " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
-            "rm -rf " +  System.getProperty("MAC_WRITE_PATH") + " ._updatefolder >  " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
-            "echo \"Restarting client...\" >  " +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1",
-            "open -n " + System.getProperty("MAC_APP_PATH")) + ">" +  System.getProperty("MAC_WRITE_PATH") + "vpin-studio-ui.log 2>&1" ;
+            "echo \"Unzipping jar...\" >> '" +   System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "unzip -o '" +  System.getProperty("MAC_WRITE_PATH") + "/vpin-studio-ui-jar.zip' -d '" +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder' >> '" +  System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "echo \"Removing Zip...\" >> '" +   System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "rm vpin-studio-ui-jar.zip >> '" +  System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "echo \"Closing App...\" >> '" +   System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "killall VPin-Studio >> '" +  System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "echo \"Moving Jar...\" >> '" +   System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "cp -vf '" +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder/vpin-studio-ui.jar' '" + System.getProperty("MAC_JAR_PATH") + "' >>  '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "echo \"Removing _updatefolder...\" >> '" +   System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "rm -rf '" +  System.getProperty("MAC_WRITE_PATH") + "_updatefolder' >>  '" +  System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "echo \"Restarting client...\" >>  '" +  System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
+            "open -n " + System.getProperty("MAC_APP_PATH")) + " >> '" +  System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1" ;
 
-    public static final String EXEC_CLIENT_SCRIPT_NAME = "VPin-Studio-macosx_aarch64.sh";
-    public static final String EXEC_CLIENT_SCRIPT = String.join("\n",
-            "#!/bin/sh",
-            "if [[ ! -d zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64 ]];",
-            "then",
-            "\ttar -xvf zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz",
-            "fi",
-            "",
-            "./zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre/Contents/Home/bin/java -jar vpin-studio-ui.jar");
+
+    //Removed for App version, no longer needed.
+
+//    public static final String EXEC_CLIENT_SCRIPT_NAME = "VPin-Studio-macosx_aarch64.sh";
+//    public static final String EXEC_CLIENT_SCRIPT = String.join("\n",
+//            "#!/bin/sh",
+//            "if [[ ! -d zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64 ]];",
+//            "then",
+//            "\ttar -xvf zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz",
+//            "fi",
+//            "",
+//            "./zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre/Contents/Home/bin/java -jar vpin-studio-ui.jar");
 
     public static void createUpdateScript() {
         try {
+            LOG.info("Creating update script:" + UPDATE_CLIENT_SCRIPT_NAME);
             createScript(UPDATE_CLIENT_SCRIPT_NAME, UPDATE_CLIENT_SCRIPT);
         } catch (Exception e) {
             LOG.error("Failed to create update script: {}", e.getMessage(), e);
         }
     }
 
-    public static void createExecScript() {
-        try {
-            createScript(EXEC_CLIENT_SCRIPT_NAME, EXEC_CLIENT_SCRIPT);
-        } catch (Exception e) {
-            LOG.error("Failed to create exec script: {}", e.getMessage(), e);
-        }
-    }
+//    public static void createExecScript() {
+//        try {
+//            LOG.info("CreatingExecScript...");
+//            createScript(EXEC_CLIENT_SCRIPT_NAME, EXEC_CLIENT_SCRIPT);
+//        } catch (Exception e) {
+//            LOG.error("Failed to create exec script: {}", e.getMessage(), e);
+//        }
+//    }
 
     public static void launchUpdateScript() throws Exception {
         // Use ProcessBuilder to run the new script
-        ProcessBuilder processBuilder = new ProcessBuilder( System.getProperty("MAC_WRITE_PATH") + UPDATE_CLIENT_SCRIPT_NAME);
+        LOG.info("Launching update script:" + UPDATE_CLIENT_SCRIPT_NAME);
+
+        ProcessBuilder processBuilder = new ProcessBuilder(UPDATE_CLIENT_SCRIPT_NAME);
         processBuilder.directory(getBasePath());
 
         // Start the new process
@@ -85,16 +97,24 @@ public class MacOS {
     }
 
     private static void createScript(String name, String body) throws IOException {
-        File file = FileUtils.writeBatch(name, body);
-        LOG.info("Bash file created: " + body);
+     try {
 
-        Set<PosixFilePermission> perms = new HashSet<>();
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-        Files.setPosixFilePermissions(file.toPath(), perms);
+         LOG.info("Writing script " + name);
+         File file = FileUtils.writeBatch(name, body);
 
-        LOG.info("Applied execute permissions to: " + file.getAbsolutePath());
+         LOG.info("Bash file created: " + body);
+
+         Set<PosixFilePermission> perms = new HashSet<>();
+         perms.add(PosixFilePermission.OWNER_READ);
+         perms.add(PosixFilePermission.OWNER_WRITE);
+         perms.add(PosixFilePermission.OWNER_EXECUTE);
+         Files.setPosixFilePermissions(file.toPath(), perms);
+         LOG.info("Applied execute permissions to: " + file.getAbsolutePath());
+
+         LOG.info("Applied execute permissions to: " + file.getAbsolutePath());
+     }catch (Exception e) {
+         LOG.error("Failed to create script file: {}", e.getMessage(), e);
+     }
     }
 
     private static File getBasePath() {

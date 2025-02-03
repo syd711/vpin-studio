@@ -148,8 +148,8 @@ public class Updater {
         // Create update-client script.
         MacOS.createUpdateScript();
 
-        // Create new exec script.
-        MacOS.createExecScript();
+//        // Create new exec script.
+//        MacOS.createExecScript();
 
         // Log the exit message
         LOG.info("Exiting VPin-Studio to perform update...");
@@ -157,7 +157,9 @@ public class Updater {
         MacOS.launchUpdateScript();
 
         // Exit the current application
-        System.exit(0);
+        // Changed to do this from the script.
+
+        //System.exit(0);
       } catch (Exception e) {
         LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
       }
