@@ -2,6 +2,7 @@
 
 ## Changes
 
+- **VPin Studio Server**: Added updating of launch and exit calls for VPX tables in PinballY.
 - **Tables / Media Preview**: Fixed "Other2" screen preview.
 - **Tables / Asset Manager** Dropping multiple files on the preview screens is now allowed (it was only 1x before).
 

@@ -89,6 +89,7 @@ jobs:
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
+          cp ./mac-package/jpackage_log.txt ./
       
 
       # Step 7: Package the Java application as a macOS .app bundle
@@ -99,15 +100,15 @@ jobs:
         run: |
           #echo "Github Run Number = ${{ github.run_number }}"
           
-          #echo "ls . results"
-          #ls -al .
-          #echo "ls .. results"
-          #ls -al ..          
+          echo "ls . results"
+          ls -al .
+          echo "ls .. results"
+          ls -al ..          
           #echo "ls package results"
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre --java-options -DOSLOG_PATH=Library/Logs/Vpin-Studio
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
@@ -211,6 +212,7 @@ jobs:
           cp ./vpin-studio-ui/target/vpin-studio-ui.jar ./mac-build
           cp -R ./mac-package/package ./mac-build
           cp -R ./mac-package/VpinStudio.icns ./mac-build
+          cp ./mac-package/jpackage_log.txt ./
       
 
       # Step 7: Package the Java application as a macOS .app bundle
@@ -221,15 +223,15 @@ jobs:
         run: |
           #echo "Github Run Number = ${{ github.run_number }}"
           
-          #echo "ls . results"
-          #ls -al .
-          #echo "ls .. results"
-          #ls -al ..          
+          echo "ls . results"
+          ls -al .
+          echo "ls .. results"
+          ls -al ..          
           #echo "ls package results"
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre --java-options -DOSLOG_PATH=Library/Logs/Vpin-Studio
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
@@ -237,6 +239,7 @@ jobs:
           #ls -al ../VPin-Studio.app/Contents
           #rename
           cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
+          
       # Step 8: Zip the .app bundle for easy distribution
       #Skipping this in favor of dmg distribution
       #Update for correct location
