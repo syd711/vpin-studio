@@ -86,10 +86,17 @@ public class Studio extends Application {
       LOG.info("\n" + txt + "\n");
     }
 
+    System.setProperty("MAC_JAR_PATH",this.getClass().getProtectionDomain().getCodeSource().getLocation().toString());
+    int EndofPath = System.getProperty("MAC_JAR_PATH").toLowerCase().indexOf("vpin-studio.app") + 15;
+    System.setProperty("MAC_APP_PATH",System.getProperty("MAC_JAR_PATH").substring(5,EndofPath));
+    System.setProperty("MAC_WRITE_PATH", System.getProperty("user.home") + "/Library/Application Support/VPin-Studio/");
+
+
     LOG.info("Studio Starting...");
     LOG.info("Locale: " + Locale.getDefault().getDisplayName());
     LOG.info("TimeZone: " + TimeZone.getDefault().getDisplayName());
     LOG.info("OS: " + System.getProperty("os.name"));
+
     try {
       ss = new ServerSocket(1044);
     }
