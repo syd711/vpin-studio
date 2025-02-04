@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
@@ -63,6 +64,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
+  private static final String MACOS_APP_NAME = "vpin-studio.app";
 
   public static Stage stage;
 
@@ -85,6 +87,8 @@ public class Studio extends Application {
       String txt = StreamUtils.copyToString(banner, StandardCharsets.UTF_8);
       LOG.info("\n" + txt + "\n");
     }
+
+    runOperatingSystemChecks();
 
     LOG.info("Studio Starting...");
     LOG.info("Locale: " + Locale.getDefault().getDisplayName());
@@ -126,6 +130,24 @@ public class Studio extends Application {
     }
     else {
       loadLauncher(stage);
+    }
+  }
+
+  private void runOperatingSystemChecks() {
+    if(OSUtil.isMac()) {
+      //Get location where JAR was launched from
+      System.setProperty("MAC_JAR_PATH",this.getClass().getProtectionDomain().getCodeSource().getLocation().toString());
+      int endOfPath = System.getProperty("MAC_JAR_PATH").toLowerCase().indexOf(MACOS_APP_NAME) + MACOS_APP_NAME.length();
+      String APP_Substring = System.getProperty("MAC_JAR_PATH").substring(5,endOfPath);
+
+      //Get Application Paths
+      System.setProperty("MAC_APP_PATH",APP_Substring);
+
+      //Update to where jar is actually from and for updating
+      System.setProperty("MAC_JAR_PATH",System.getProperty("MAC_APP_PATH")+ "/Contents/app");
+
+      //Set path for writing stuff
+      System.setProperty("MAC_WRITE_PATH", System.getProperty("user.home") + "/Library/Application Support/VPin-Studio/");
     }
   }
 

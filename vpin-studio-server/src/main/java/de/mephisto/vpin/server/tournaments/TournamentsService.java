@@ -76,15 +76,17 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
     if (Features.MANIA_ENABLED) {
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
-        TournamentSettings settings = getSettings();
-        if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
-          CabinetStatus status = cabinet.getStatus();
-          Game game = event.getGame();
+        if (cabinet != null) {
+          TournamentSettings settings = getSettings();
+          if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
+            CabinetStatus status = cabinet.getStatus();
+            Game game = event.getGame();
 
-          status.setStatus(CabinetOnlineStatus.online);
-          status.setActiveGame(game.getGameDisplayName());
+            status.setStatus(CabinetOnlineStatus.online);
+            status.setActiveGame(game.getGameDisplayName());
+          }
+          maniaService.getClient().getCabinetClient().update(cabinet);
         }
-        maniaService.getClient().getCabinetClient().update(cabinet);
       }
       catch (Exception e) {
         LOG.error("Error updating mania online status: {}", e.getMessage(), e);
@@ -98,12 +100,14 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
       tournamentSynchronizer.synchronizeTournaments();
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
-        TournamentSettings settings = getSettings();
-        if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
-          cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
-          cabinet.getStatus().setActiveGame(null);
+        if (cabinet != null) {
+          TournamentSettings settings = getSettings();
+          if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
+            cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
+            cabinet.getStatus().setActiveGame(null);
+          }
+          maniaService.getClient().getCabinetClient().update(cabinet);
         }
-        maniaService.getClient().getCabinetClient().update(cabinet);
       }
       catch (Exception e) {
         LOG.error("Error updating mania online status: {}", e.getMessage(), e);

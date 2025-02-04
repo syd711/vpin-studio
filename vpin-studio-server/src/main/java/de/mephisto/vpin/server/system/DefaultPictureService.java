@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -16,12 +15,11 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,7 +33,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 public class DefaultPictureService implements PreferenceChangedListener, InitializingBean {
@@ -266,14 +263,13 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   }
 
   public byte[] generateAvatarImage(@Nullable byte[] data) {
-    try (InputStream defaultAvatar = Asset.class.getResourceAsStream("/de/mephisto/vpin/server/resources/logo-500.png")) {
-      if (data == null) {
-        return IOUtils.toByteArray(defaultAvatar);
+    try {
+      BufferedImage frameImage = ResourceLoader.getResource("logo-500.png");
+      if (data == null || data.length == 0) {
+        return ImageUtil.toBytes(frameImage);
       }
-      // else
-      BufferedImage frameImage = ImageIO.read(defaultAvatar);
-      Graphics g = frameImage.getGraphics();
 
+      Graphics g = frameImage.getGraphics();
       ByteArrayInputStream avatar = new ByteArrayInputStream(data);
       BufferedImage avatarImage = ImageIO.read(avatar);
 
@@ -287,8 +283,8 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
 
       return ImageUtil.toBytes(frameImage);
     }
-    catch (IOException e) {
-      LOG.error("Failed to generate avatar image: " + e.getMessage(), e);
+    catch (Exception e) {
+      LOG.error("Failed to generate avatar image: {}", e.getMessage());
     }
     return null;
   }
