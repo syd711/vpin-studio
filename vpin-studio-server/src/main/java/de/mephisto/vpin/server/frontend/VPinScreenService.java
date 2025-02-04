@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +167,7 @@ public class VPinScreenService {
   Height = 900
   */
   private void createVpxPlayfieldDisplay(Configuration vpxConfiguration, List<FrontendPlayerDisplay> players) {
-    int monitor = Integer.parseInt(vpxConfiguration.getString("Display", "0"));
+    int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
 
     GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 
@@ -177,15 +178,15 @@ public class VPinScreenService {
 
       FrontendPlayerDisplay player = new FrontendPlayerDisplay(VPinScreen.PlayField);
       player.setMonitor(monitor);
-      player.setRotation(Integer.parseInt(vpxConfiguration.getString("Rotate", "0")));
+      player.setRotation(safeGetInteger(vpxConfiguration, "Rotate", 0));
       player.setInverted(true);
 
       int fullscreened = vpxConfiguration.getInt("FullScreen", 1);
       if (fullscreened == 0) {
-        player.setX(mX + Integer.parseInt(vpxConfiguration.getString("WindowPosX", "0")));
-        player.setY(mY + Integer.parseInt(vpxConfiguration.getString("WindowPosY", "0")));
-        player.setWidth(Integer.parseInt(vpxConfiguration.getString("Width", "0")));
-        player.setHeight(Integer.parseInt(vpxConfiguration.getString("Height", "0")));
+        player.setX(mX + safeGetInteger(vpxConfiguration, "WindowPosX", 0));
+        player.setY(mY + safeGetInteger(vpxConfiguration, "WindowPosY", 0));
+        player.setWidth(safeGetInteger(vpxConfiguration, "Width", 0));
+        player.setHeight(safeGetInteger(vpxConfiguration, "Height", 0));
       }
       else {
         player.setX(mX);
@@ -197,6 +198,11 @@ public class VPinScreenService {
 
       players.add(player);
     }
+  }
+
+  private int safeGetInteger(Configuration configuration, String key, int defaultValue) {
+    String value = configuration.getString(key, null);
+    return StringUtils.isNotBlank(value) ? Integer.parseInt(value) : defaultValue;
   }
 
   /*
