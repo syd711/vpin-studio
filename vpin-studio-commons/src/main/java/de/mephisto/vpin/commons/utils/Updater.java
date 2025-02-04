@@ -154,8 +154,8 @@ public class Updater {
         MacOS.launchUpdateScript();
 
         // Exit the current application
-        // Changed to do this from the script.
-        //System.exit(0); //TODO not required????
+        // Changed to do this from the script, so no exit call required here
+        //System.exit(0);
       }
       catch (Exception e) {
         LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);

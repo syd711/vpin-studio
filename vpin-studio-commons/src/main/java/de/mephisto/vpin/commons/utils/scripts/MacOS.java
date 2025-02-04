@@ -94,7 +94,6 @@ public class MacOS {
 
   private static void createScript(String name, String body) throws IOException {
     try {
-
       LOG.info("Writing script " + name);
       File file = FileUtils.writeBatch(name, body);
 
