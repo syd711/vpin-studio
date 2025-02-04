@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,21 +74,21 @@ public class Updater {
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
       String CheckBasePath = getBasePath().getAbsolutePath();
-      LOG.info("Setting tmp File at Base Path : " + CheckBasePath + ":" + target.getName() + ":" + DOWNLOAD_SUFFIX );
+      LOG.info("Setting tmp File at Base Path : " + CheckBasePath + ":" + target.getName() + ":" + DOWNLOAD_SUFFIX);
 
       File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);
 
       if (tmp.exists()) {
-          tmp.delete();
-        }
-        FileOutputStream fileOutputStream = new FileOutputStream(tmp);
-        byte dataBuffer[] = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-          fileOutputStream.write(dataBuffer, 0, bytesRead);
-        }
-        in.close();
-        fileOutputStream.close();
+        tmp.delete();
+      }
+      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+      byte dataBuffer[] = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+        fileOutputStream.write(dataBuffer, 0, bytesRead);
+      }
+      in.close();
+      fileOutputStream.close();
 
       if (overwrite && target.exists() && !target.delete()) {
         LOG.error("Failed to overwrite target file \"" + target.getAbsolutePath() + "\"");
@@ -98,7 +99,8 @@ public class Updater {
         LOG.error("Failed to rename download temp file to " + target.getAbsolutePath());
       }
       LOG.info("Downloaded file " + target.getAbsolutePath());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Updater Failed to execute download: " + e.getMessage(), e);
     }
   }
@@ -124,8 +126,7 @@ public class Updater {
   }
 
   public static boolean installClientUpdate() throws IOException {
-    String os = System.getProperty("os.name");
-    if (os.contains("Windows")) {
+    if (!OSUtil.isMac()) {
       String cmds = "timeout /T 4 /nobreak\ncd /d %~dp0\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
       FileUtils.writeBatch("update-client.bat", cmds);
       LOG.info("Written temporary batch: " + cmds);
@@ -137,7 +138,8 @@ public class Updater {
         try {
           Thread.sleep(2000);
           System.exit(0);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           //ignore
         }
       }).start();
@@ -147,20 +149,15 @@ public class Updater {
       try {
         // Create update-client script.
         MacOS.createUpdateScript();
-
-//        // Create new exec script.
-//        MacOS.createExecScript();
-
         // Log the exit message
         LOG.info("Exiting VPin-Studio to perform update...");
-
         MacOS.launchUpdateScript();
 
         // Exit the current application
         // Changed to do this from the script.
-
-        //System.exit(0);
-      } catch (Exception e) {
+        //System.exit(0); //TODO not required????
+      }
+      catch (Exception e) {
         LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
       }
     }
@@ -213,11 +210,11 @@ public class Updater {
   }
 
   private static File getBasePath() {
-    String os = System.getProperty("os.name");
-    if (os.contains("Windows")) {
+    if (!OSUtil.isMac()) {
       LOG.info("Setting Base Path for Windows Download to -./");
       return new File("./");
-    }else{
+    }
+    else {
       LOG.info("Setting Base Path for Mac Download to -" + System.getProperty("MAC_WRITE_PATH"));
       return new File(System.getProperty("MAC_WRITE_PATH"));
     }
