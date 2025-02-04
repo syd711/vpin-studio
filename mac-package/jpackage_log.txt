@@ -1,2 +1,2 @@
---java-options -DOSLOG_PATH=${user.home}/Library/Application\" \"Support/Vpin-Studio/Logs"
+--java-options -DOSLOG_PATH="${user.home}/Library/Application\" \"Support/Vpin-Studio/Logs"
 
