@@ -240,7 +240,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.6</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -248,7 +248,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.6</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -256,7 +256,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.6</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -264,7 +264,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.6</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -280,7 +280,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.6</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -296,7 +296,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>3.12.0</version>
+      <version>3.12.6</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -593,6 +593,19 @@
           <name>The Apache License, Version 2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <file>the apache software license, version 2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.janino</groupId>
+      <artifactId>janino</artifactId>
+      <version>3.1.8</version>
+      <licenses>
+        <license>
+          <name>BSD-3-Clause</name>
+          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
+          <distribution>repo</distribution>
+          <file>bsd-3-clause - bsd-3-clause.html</file>
         </license>
       </licenses>
     </dependency>
