@@ -70,6 +70,7 @@ public class UISettings extends JsonSettings {
   private boolean columnAltColor = true;
   private boolean columnAltSound = true;
   private boolean columnBackglass = true;
+  private boolean columnRating = true;
   private boolean columnDateAdded = false;
   private boolean columnDateModified = false;
   private boolean columnLauncher = false;
@@ -85,8 +86,17 @@ public class UISettings extends JsonSettings {
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
+  private boolean columnPatchVersion = false;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public boolean isColumnRating() {
+    return columnRating;
+  }
+
+  public void setColumnRating(boolean columnRating) {
+    this.columnRating = columnRating;
+  }
 
   public String getDefaultUploadMode() {
     return defaultUploadMode;
@@ -174,6 +184,14 @@ public class UISettings extends JsonSettings {
 
   public void setColumnRes(boolean columnRes) {
     this.columnRes = columnRes;
+  }
+
+  public boolean isColumnPatchVersion() {
+    return columnPatchVersion;
+  }
+
+  public void setColumnPatchVersion(boolean columnPatchVersion) {
+    this.columnPatchVersion = columnPatchVersion;
   }
 
   public boolean isSidebarVisible() {

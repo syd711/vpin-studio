@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.recorder;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class RecorderSettings extends JsonSettings {
     this.startDelay = startDelay;
   }
 
-  public RecordingScreenOptions getRecordingScreenOption(RecordingScreen recordingScreen) {
+  public RecordingScreenOptions getRecordingScreenOption(FrontendPlayerDisplay recordingScreen) {
     for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
       if (recordingScreenOption.getDisplayName().equalsIgnoreCase(recordingScreen.getScreen().name())) {
         return recordingScreenOption;

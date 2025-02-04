@@ -23,10 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -52,6 +49,9 @@ public class PatchUploadController extends BaseUploadController {
   private VBox uploadCloneBox;
 
   @FXML
+  private TextField patchVersionField;
+
+  @FXML
   private RadioButton patchAndReplaceRadio;
 
   @FXML
@@ -70,6 +70,7 @@ public class PatchUploadController extends BaseUploadController {
 
   @FXML
   private VBox assetsView;
+
   private Optional<UploadDescriptor> result;
 
   public PatchUploadController() {
@@ -90,6 +91,7 @@ public class PatchUploadController extends BaseUploadController {
   protected void onUploadClick(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
+    String version = patchVersionField.getText();
     Platform.runLater(() -> {
       stage.close();
     });
@@ -98,6 +100,7 @@ public class PatchUploadController extends BaseUploadController {
     if (result.isPresent()) {
       try {
         UploadDescriptor uploadDescriptor = result.get();
+        uploadDescriptor.setPatchVersion(version);
         uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
         uploadDescriptor.setAutoFill(false);

@@ -2005,6 +2005,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       game.setGameStatus(-1);
     }
 
+    game.setRating(rs.getInt("GameRating"));
+    if (rs.wasNull()) {
+      game.setRating(0);
+    }
+
     String dirGame = rs.getString("DirGames");
     File vpxFile = new File(dirGame, gameFileName);
     game.setGameFile(vpxFile);
@@ -2017,6 +2022,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
     if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
       game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
+    }
+    if (!StringUtils.isEmpty(serverSettings.getMappingPatchVersion())) {
+      game.setPatchVersion(rs.getString(serverSettings.getMappingPatchVersion()));
     }
 
     return game;
@@ -2265,7 +2273,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
     frontend.setSystemVolumeControlEnabled(isSystemVolumeControlled());
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD, VPinScreen.Topper, VPinScreen.Menu));
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));

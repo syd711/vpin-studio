@@ -1,12 +1,13 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,8 +15,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,18 +28,20 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class VpsTablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesSidebarController.class);
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private Accordion vpsTableAccordion;
+
 
   @FXML
   private TitledPane tableDetailsPane;
@@ -75,11 +80,16 @@ public class VpsTablesSidebarController implements Initializable {
   private VBox detailsBox;
 
   @FXML
+  private TextArea commentsArea;
+
+  @FXML
   private Button openBtn;
+
 
   private Optional<VpsTable> selection;
 
   private boolean initialized = false;
+  private CommentChangeListener commentChangeListener;
 
 
   @FXML
@@ -117,6 +127,8 @@ public class VpsTablesSidebarController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     vpsTableAccordion.managedProperty().bindBidirectional(vpsTableAccordion.visibleProperty());
     vpsTableAccordion.setExpandedPane(tableDetailsPane);
+
+    commentChangeListener = new CommentChangeListener();
   }
 
   public void setVisible(boolean b) {
@@ -134,6 +146,10 @@ public class VpsTablesSidebarController implements Initializable {
   public void setTable(Optional<VpsTable> selection, VpsTablesPredicateFactory predicate) {
     this.init();
     this.openBtn.setDisable(selection.isEmpty());
+
+    this.commentsArea.textProperty().removeListener(commentChangeListener);
+    this.commentsArea.setDisable(selection.isEmpty());
+    this.commentsArea.setText("");
 
     this.selection = selection;
 
@@ -153,7 +169,8 @@ public class VpsTablesSidebarController implements Initializable {
     if (selection.isPresent()) {
       VpsTable table = selection.get();
       updated.setText(DateFormat.getDateInstance().format(new Date(table.getUpdatedAt())));
-
+      this.commentsArea.setText(table.getComment());
+      this.commentsArea.textProperty().addListener(commentChangeListener);
 
       for (String feature : table.getAllFeatures()) {
         Label badge = new Label(feature);
@@ -195,6 +212,20 @@ public class VpsTablesSidebarController implements Initializable {
       TablesSidebarVpsController.addSection(dataRoot, "Tutorials", null, VpsDiffTypes.tutorial, table.getTutorialFiles(), false, authoredUrlsPredicate);
       TablesSidebarVpsController.addSection(dataRoot, "POV", null, VpsDiffTypes.pov, table.getPovFiles(), false, authoredUrlsPredicate);
       TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", null, VpsDiffTypes.wheel, table.getWheelArtFiles(), false, authoredUrlsPredicate);
+    }
+  }
+
+  class CommentChangeListener implements ChangeListener<String> {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+      debouncer.debounce("vpsComment", () -> {
+        if (selection.isPresent()) {
+          VpsTable vpsTable = selection.get();
+          vpsTable.setComment(newValue);
+          client.getVpsService().saveVpsData(vpsTable);
+          EventManager.getInstance().notifyVpsTableChange(vpsTable.getId());
+        }
+      }, 300);
     }
   }
 }

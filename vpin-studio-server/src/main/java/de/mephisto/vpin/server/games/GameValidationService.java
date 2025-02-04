@@ -5,12 +5,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -585,7 +587,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return false;
   }
 
-  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails) {
+  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
 
@@ -593,7 +595,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
-    String rom = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomName() : null, gameDetails.getRomName());
+    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
 
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
@@ -602,8 +604,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       rom = originalRom;
     }
 
-    String tableName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomAlt() : null, gameDetails.getTableName());
-    String hsName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getHsFilename() : null, gameDetails.getHsFileName());
+    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails, frontendType);
+    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings, frontendType);
 
     //the highscore file was found
     if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {

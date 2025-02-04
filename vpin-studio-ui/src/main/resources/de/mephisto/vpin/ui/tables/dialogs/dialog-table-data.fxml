@@ -45,7 +45,7 @@
                                  <content>
                                     <VBox fx:id="detailsRoot">
                                        <children>
-                                          <VBox minHeight="180.0" prefHeight="180.0">
+                                          <VBox minHeight="180.0">
                                              <children>
                                                 <BorderPane>
                                                    <left>
@@ -200,6 +200,46 @@
                                                                </children>
                                                    <VBox.margin>
                                                       <Insets top="12.0" />
+                                                   </VBox.margin>
+                                                </GridPane>
+                                                <GridPane fx:id="patchVersionPanel" hgap="3.0" vgap="3.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints prefHeight="30.0" />
+                                                    <RowConstraints />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label styleClass="default-text" text="Patch Version:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="patchVersion" GridPane.columnIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label GridPane.columnIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="300.0" text="If the table has been patched, you can add the patch info here." wrapText="true" />
+                                                         </tooltip>
+                                                         <GridPane.margin>
+                                                            <Insets left="3.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="3.0" />
                                                    </VBox.margin>
                                                 </GridPane>
                                              </children>

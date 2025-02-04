@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -42,7 +42,7 @@ public class RecorderResource {
   private PreferencesService preferencesService;
 
   @GetMapping("/screens")
-  public List<RecordingScreen> getRecordingScreens() {
+  public List<FrontendPlayerDisplay> getRecordingScreens() {
     return recorderService.getRecordingScreens();
   }
 
@@ -137,8 +137,8 @@ public class RecorderResource {
   private List<File> takeFrontendScreenshots(MonitoringSettings monitoringSettings) {
     List<File> screenshotFiles = new ArrayList<>();
     List<VPinScreen> disabledScreens = monitoringSettings.getDisabledScreens();
-    List<RecordingScreen> supportedRecordingScreens = recorderService.getRecordingScreens();
-    for (RecordingScreen recordingScreen : supportedRecordingScreens) {
+    List<FrontendPlayerDisplay> recordingScreens = recorderService.getRecordingScreens();
+    for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         VPinScreen screen = recordingScreen.getScreen();
         if (!disabledScreens.contains(screen)) {

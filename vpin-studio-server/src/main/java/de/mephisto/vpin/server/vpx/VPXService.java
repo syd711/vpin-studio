@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
+import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -10,15 +11,19 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.INIConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +33,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class VPXService {
+public class VPXService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPXService.class);
 
   @Autowired
@@ -36,6 +41,38 @@ public class VPXService {
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
+
+  /** The cached information o,in vPïnballX.ini file */
+  private INIConfiguration iniConfiguration;
+
+  private VPXKeyManager keyManager; 
+
+
+  private void loadIni() {
+    File vpxInFile = getVPXFile();
+    if (vpxInFile.exists()) {
+      try (FileReader fileReader = new FileReader(vpxInFile)) {
+        this.iniConfiguration = new INIConfiguration();
+        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setSeparatorUsedInOutput("=");
+        iniConfiguration.setSeparatorUsedInInput("=");
+        iniConfiguration.read(fileReader);
+        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath()); 
+
+        this.keyManager = new VPXKeyManager(getPlayerConfiguration());
+      } catch (Exception e) {
+        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
+      }
+    } 
+  }
+
+  public Configuration getPlayerConfiguration() {
+    return iniConfiguration != null ? iniConfiguration.getSection("Player") : null;
+  }
+
+  public VPXKeyManager getKeyManager() {
+    return keyManager;
+  }
 
   public POV getPOV(Game game) {
     try {
@@ -237,5 +274,12 @@ public class VPXService {
   public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis<?> analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
     MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
+  }
+
+  //------------------------------------------
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    loadIni();
   }
 }

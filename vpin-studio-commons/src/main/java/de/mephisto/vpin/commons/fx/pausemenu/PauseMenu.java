@@ -226,7 +226,7 @@ public class PauseMenu extends Application {
               }
 
               if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
-                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getFrontendService().getScreenDisplays(), frontendMedia));
+                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
 
                 List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
                 if (!videoTutorials.isEmpty()) {

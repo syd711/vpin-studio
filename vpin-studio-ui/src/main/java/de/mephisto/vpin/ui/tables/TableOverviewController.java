@@ -42,10 +42,12 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -93,6 +95,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnVersion;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPatchVersion;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnEmulator;
 
   @FXML
@@ -106,6 +111,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnStatus;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnRating;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPUPPack;
@@ -1046,6 +1054,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+    BaseLoadingColumn.configureColumn(columnPatchVersion, (value, model) -> {
+      Label label = new Label(value.getPatchVersion());
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
+      return label;
+    }, this, true);
+
     BaseLoadingColumn.configureColumn(columnRom, (value, model) -> {
       String rom = value.getRom();
       List<Integer> ignoredValidations = Collections.emptyList();
@@ -1289,6 +1304,42 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+
+    BaseLoadingColumn.configureColumn(columnRating, (value, model) -> {
+      int rating = value.getRating();
+      int nonRating = 5 - rating;
+
+      HBox root = new HBox(1);
+      root.setAlignment(Pos.CENTER);
+      int index = 0;
+      for (int i = 0; i < rating; i++) {
+        Label label = new Label();
+        label.setUserData(index);
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
+        icon.setIconSize(20);
+        label.setGraphic(icon);
+        label.setCursor(Cursor.HAND);
+        label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
+        root.getChildren().add(label);
+        index++;
+      }
+
+      for (int i = 0; i < nonRating; i++) {
+        Label label = new Label();
+        label.setUserData(index);
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline");
+        label.setGraphic(icon);
+        icon.setIconSize(20);
+        icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+        label.setCursor(Cursor.HAND);
+        label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
+        root.getChildren().add(label);
+        index++;
+      }
+      return root;
+    }, this, true);
+
+
     BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
@@ -1434,6 +1485,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return row;
         });
 
+  }
+
+  private void setGameRating(GameRepresentation value, int i) {
+    try {
+      TableDetails tableDetails = client.getFrontendService().getTableDetails(value.getId());
+      if (tableDetails != null) {
+        tableDetails.setGameRating((i + 1));
+        client.getFrontendService().saveTableDetails(tableDetails, value.getId());
+        EventManager.getInstance().notifyTableChange(value.getId(), null, null);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Rating update failed: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(stage, "Error", "Rating update failed: " + e.getMessage());
+    }
   }
 
   //------------------------------
@@ -1895,8 +1961,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
     columnVPS.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportRating() && uiSettings.isColumnRating());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());

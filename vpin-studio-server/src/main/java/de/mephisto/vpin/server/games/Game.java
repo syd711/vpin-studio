@@ -37,6 +37,7 @@ public class Game {
   private String hsFileName;
   private String scannedHsFileName;
   private boolean cardDisabled;
+  private String patchVersion;
 
   private int gameStatus;
 
@@ -82,7 +83,25 @@ public class Game {
   private boolean vrRoomSupport = false;
   private boolean vrRoomEnabled = false;
 
+  private int rating = 0;
+
   public Game() {
+  }
+
+  public String getPatchVersion() {
+    return patchVersion;
+  }
+
+  public void setPatchVersion(String patchVersion) {
+    this.patchVersion = patchVersion;
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
   }
 
   public boolean isVrRoomSupport() {

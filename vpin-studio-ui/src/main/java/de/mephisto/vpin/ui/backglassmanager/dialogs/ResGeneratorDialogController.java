@@ -65,28 +65,13 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private Label screenResLabel;
 
   @FXML
-  private Label playfieldDimensionLabel;
+  private Label backglassScreenLabel;
 
   @FXML
   private Label backglassDimensionLabel;
 
   @FXML
-  private Label dmdDimensionLabel;
-
-  @FXML
-  private Label dmdPositionLabel;
-
-  @FXML
-  private Label playfieldScreenLabel;
-
-  @FXML
-  private Label backglassScreenLabel;
-
-  @FXML
   private Label backglassPositionLabel;
-
-  @FXML
-  private Label dmdScreenLabel;
 
   @FXML
   private Button clearBtn;
@@ -297,27 +282,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     tg.selectToggle(radioStretchBackglass);
 
     // load screen dimensions
-    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplays())
-        .thenAcceptLater(displays -> {
-          if (displays != null) {
-            for (FrontendPlayerDisplay display : displays) {
-              if (VPinScreen.PlayField.equals(display.getScreen())) {
-                playfieldScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
-              }
-              else if (VPinScreen.BackGlass.equals(display.getScreen())) {
-                this.backglassDisplay = display;
-                backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplay(VPinScreen.BackGlass))
+        .thenAcceptLater(display -> {
+          if (display != null) {
+            this.backglassDisplay = display;
+            backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
 
-                // resize the preview proportionnaly
-                this.previewHeight = (int) previewImage.getFitHeight();
-                double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
-                previewImage.setFitWidth(width);
-                this.previewWidth = (int) width;
-              }
-              else if (VPinScreen.DMD.equals(display.getScreen())) {
-                dmdScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
-              }
-            }
+            // resize the preview proportionnaly
+            this.previewHeight = (int) previewImage.getFitHeight();
+            double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
+            previewImage.setFitWidth(width);
+            this.previewWidth = (int) width;
             refreshPreview();
           }
         });
@@ -369,11 +344,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
     if (screenres != null) {
       screenResLabel.setText(screenres.getScreenresFilePath());
-      playfieldDimensionLabel.setText(formatDimension(screenres.getPlayfieldWidth(), screenres.getPlayfieldHeight()));
       backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
       backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
-      dmdPositionLabel.setText(formatLocation(screenres.getBackglassX() + screenres.getDmdX(), screenres.getBackglassY() + screenres.getDmdY()));
-      dmdDimensionLabel.setText(formatDimension(screenres.getDmdWidth(), screenres.getDmdHeight()));
 
       if (res.isBackglassCentered()) {
         radioCenterBackglass.setSelected(true);
@@ -400,9 +372,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     }
     else {
       screenResLabel.setText("No screen res file found, please run B2S_ScreenResIdentifier.exe");
-      playfieldDimensionLabel.setText("--");
       backglassDimensionLabel.setText("--");
-      dmdDimensionLabel.setText("--");
     }
   }
 

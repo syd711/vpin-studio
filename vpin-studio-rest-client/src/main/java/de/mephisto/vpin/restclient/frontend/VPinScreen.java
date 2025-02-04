@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient.frontend;
 
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -69,26 +67,22 @@ public enum VPinScreen {
     return null;
   }
 
-  public static FrontendPlayerDisplay valueOfScreen(List<FrontendPlayerDisplay> displays, VPinScreen screen) {
-    for (FrontendPlayerDisplay display : displays) {
-      if (display.getScreen() != null && display.getScreen().equals(screen)) {
-        return display;
-      }
-    }
-    return null;
-  }
-
   public static VPinScreen valueOfSegment(String segment) {
-    for (VPinScreen v: values()) {
+    for (VPinScreen v : values()) {
       if (StringUtils.equalsIgnoreCase(segment, v.segment)) {
         return v;
       }
     }
+
+    if (segment.equalsIgnoreCase("Other2")) {
+      return VPinScreen.Other2;
+    }
+
     return null;
   }
 
   public static VPinScreen valueOfCode(String code) {
-    for (VPinScreen v: values()) {
+    for (VPinScreen v : values()) {
       if (StringUtils.equalsIgnoreCase(code, "" + v.code)) {
         return v;
       }
@@ -110,7 +104,7 @@ public enum VPinScreen {
   }
 
   public static boolean keepDisplaysContainsScreen(String codes, VPinScreen screen) {
-    String[] codesArray = codes!=null ? StringUtils.split(codes, ",") : new String[0];
+    String[] codesArray = codes != null ? StringUtils.split(codes, ",") : new String[0];
     return ArrayUtils.contains(codesArray, Integer.toString(screen.getCode()));
   }
 

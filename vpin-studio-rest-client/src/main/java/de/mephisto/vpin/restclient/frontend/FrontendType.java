@@ -2,20 +2,20 @@ package de.mephisto.vpin.restclient.frontend;
 
 /**
  * The different frontend supported.
- * Use feature control to activate or not components in the tool 
+ * Use feature control to activate or not components in the tool
  */
 public enum FrontendType {
-  Standalone(SupportType.NONE, SupportType.NONE, false, SupportType.NONE, false, false, false, false, false, false),
-  Popper    (SupportType.FULL, SupportType.FULL, true, SupportType.FULL, true, false, true, true, true, true),
-  PinballX  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false),
-  PinballY  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false);
+  Standalone(SupportType.NONE, SupportType.NONE, false, SupportType.NONE, false, false, false, false, false, false, false),
+  Popper    (SupportType.FULL, SupportType.FULL, true, SupportType.FULL, true, false, true, true, true, true, true),
+  PinballX  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true),
+  PinballY  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true);
 
   enum SupportType {NONE, MINI, FULL}
 
-  FrontendType(SupportType supportFields, SupportType supportPlaylists, boolean supportPlaylistsCrud, 
+  FrontendType(SupportType supportFields, SupportType supportPlaylists, boolean supportPlaylistsCrud,
           SupportType supportStatuses, boolean supportMedias, boolean supportMediaCache,
           boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
-          boolean supportControls) {
+          boolean supportControls, boolean supportRating) {
     this.supportFields = supportFields;
     this.supportPlaylists = supportPlaylists;
     this.supportPlaylistsCrud = supportPlaylistsCrud;
@@ -26,6 +26,7 @@ public enum FrontendType {
     this.supportStatistics = supportStatistics;
     this.supportArchive = supportArchive;
     this.supportControls = supportControls;
+    this.supportRating = supportRating;
   }
 
   /** Whether stantard vpin metadata are supported (gametype, year, manufacturer, nbPlayers, rating author, theme, IPDB,
@@ -40,7 +41,7 @@ public enum FrontendType {
   private boolean supportPlaylistsCrud;
 
   /** Whether frontend support statuses or not
-   * MINI : just active / inactive 
+   * MINI : just active / inactive
    * FILL : MINI + additional popper status (MATURE + WIP) */
   private SupportType supportStatuses;
 
@@ -56,7 +57,9 @@ public enum FrontendType {
   private boolean supportArchive;
   /** Whether controls are supported by the frontend */
   private boolean supportControls;
-  
+  /** Whether ratings are supported by the frontend */
+  private boolean supportRating;
+
   //----------
 
   public boolean supportStandardFields() {
@@ -98,6 +101,7 @@ public enum FrontendType {
   public boolean supportControls() {
     return supportControls;
   }
+  public boolean supportRating() { return supportRating; }
   public boolean isSupportMediaCache() {
     return supportMediaCache;
   }

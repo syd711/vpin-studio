@@ -17,6 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.TextArea?>
 <VBox fx:id="repositoryAccordionVBox" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesSidebarController">
    <children>
       <Accordion fx:id="vpsTableAccordion">
@@ -140,6 +141,28 @@
                                                 </FlowPane>
                                              </children>
                                           </GridPane>
+                                          <VBox>
+                                             <children>
+                                                <Label fx:id="nameLabel1" styleClass="default-headline"
+                                                       text="Personal Comment" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0"/>
+                                                   </font>
+                                                   <VBox.margin>
+                                                      <Insets/>
+                                                   </VBox.margin>
+                                                </Label>
+                                                <TextArea fx:id="commentsArea" minHeight="150.0"
+                                                          prefHeight="150.0">
+                                                   <VBox.margin>
+                                                      <Insets right="12.0"/>
+                                                   </VBox.margin>
+                                                </TextArea>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets top="24.0"/>
+                                             </VBox.margin>
+                                          </VBox>
                                        </children>
                                     </VBox>
                                     <VBox fx:id="dataRoot" />

@@ -1,31 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./vpin-studio-ui.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>./vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <MaxHistory>3</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{dd-MM HH:mm:ss.SSS} %-5level [%thread] %logger{5} - %msg%n</pattern>
-        </encoder>
-    </appender>
+<configuration debug="false">
+
+    <!-- Try to load the log file path from the external properties file -->
+    <property name="LOG_PATH" value="${OSLOG_PATH:-.}"/>
+
+    <if condition='property("LOG_PATH").contains("Library")'>
+        <then>
+            <appender name="rollingFileMacOS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${LOG_PATH}/vpin-studio-ui.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>${LOG_PATH}/vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
+                    <MaxHistory>3</MaxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>%d{dd-MM HH:mm:ss.SSS} %-5level [%thread] %logger{5} - %msg%n</pattern>
+                </encoder>
+            </appender>
+            <root level="INFO">
+                <appender-ref ref="rollingFileMacOS"/>
+            </root>
+        </then>
+        <else>
+            <appender name="rollingFileDefault" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>./vpin-studio-ui.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <FileNamePattern>./vpin-studio-ui.%d{yyyy-MM-dd}.log</FileNamePattern>
+                    <MaxHistory>3</MaxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>%d{dd-MM HH:mm:ss.SSS} %-5level [%thread] %logger{5} - %msg%n</pattern>
+                </encoder>
+            </appender>
+            <root level="INFO">
+                <appender-ref ref="rollingFileDefault"/>
+            </root>
+        </else>
+    </if>
+
     <appender name="out" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
             <pattern>%d{dd-MM HH:mm:ss.SSS} %-5level [%thread] %logger{5} - %msg%n</pattern>
         </encoder>
-<!--        <filter class="de.mephisto.vpin.ui.logging.LogFilter" />-->
+        <!--        <filter class="de.mephisto.vpin.ui.logging.LogFilter" />-->
     </appender>
 
     <logger name="javafx.fxml" level="ERROR"/>
-    <logger name="javafx" level="ERROR" />
-    <logger name="org.jnativehook" level="ERROR" />
-    <logger name="net.java.games.input" level="ERROR" />
-    <logger name="net.dv8tion.jda.api" level="ERROR" />
+    <logger name="javafx" level="ERROR"/>
+    <logger name="org.jnativehook" level="ERROR"/>
+    <logger name="net.java.games.input" level="ERROR"/>
+    <logger name="net.dv8tion.jda.api" level="ERROR"/>
     <root level="INFO">
-        <appender-ref ref="rollingFile"/>
         <appender-ref ref="out"/>
     </root>
 </configuration>
