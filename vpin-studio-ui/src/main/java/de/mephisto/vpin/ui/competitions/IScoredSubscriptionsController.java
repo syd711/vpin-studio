@@ -25,6 +25,8 @@ import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.WaitNProgressModel;
+import de.mephisto.vpin.ui.util.WaitProgressModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -165,7 +167,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
           help, null, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        client.getCompetitionService().deleteCompetition(selection);
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription", 
+          "Deleting iScored Subscription", 
+          () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         onReload();
       }
@@ -177,10 +181,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
           help, null, "Delete iScored Subscriptions");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        for (CompetitionRepresentation selection : selections) {
-          client.getCompetitionService().deleteCompetition(selection);
-        }
-
+        ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Delete Subscriptions", selections,
+          selection -> "Deleting iScored Subscription", 
+          selection -> { client.getCompetitionService().deleteCompetition(selection); }));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         onReload();
       }

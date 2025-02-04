@@ -15,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -29,8 +30,6 @@ public class IScored {
 
   private static ObjectMapper objectMapper;
 
-  private final static String BASE_URL = "https://www.iscored.info";
-
   static {
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -39,6 +38,11 @@ public class IScored {
   }
 
   private static Map<String, GameRoom> cache = new HashMap<>();
+
+  //fixme implement proper check
+  public static boolean isIscoredGameRoomUrl(String dashboardUrl) {
+    return true; //dashboardUrl != null && dashboardUrl.toLowerCase().contains("iscored.info");
+  }
 
   public static GameRoom getGameRoom(@NonNull String url) {
     if (!cache.containsKey(url)) {
@@ -53,26 +57,18 @@ public class IScored {
 
   public static GameRoom loadGameRoom(@NonNull String url) {
     try {
+
       long start = System.currentTimeMillis();
-      if (!url.toLowerCase().startsWith(BASE_URL.toLowerCase())) {
-        throw new UnsupportedOperationException("Invalid iscored.info URL \"" + url + "\"");
+      if (!isIscoredGameRoomUrl(url)) {
+        throw new UnsupportedOperationException("Invalid gameroom URL \"" + url + "\"");
       }
 
-      String userName = null;
-      if (url.contains("&")) {
-        Map<String, String> params = splitQuery(new URL(url));
-        if (!params.containsKey("user")) {
-          throw new UnsupportedOperationException("Invalid iscored.info URL \"" + url + "\"");
-        }
+      // parse and align room URL 
+      URL roomurl = new URL(url);
+      String baseUrl = getBaseURL(roomurl);
+      Map<String, String> params = getBaseParams(roomurl);
 
-        userName = params.get("user");
-      }
-      else {
-        userName = url.substring(BASE_URL.length() + 1).trim();
-      }
-
-      String readUrl = BASE_URL + "/publicCommands.php?c=getRoomInfo&user=" + userName;
-      URL gameRoomURL = new URL(readUrl);
+      URL gameRoomURL = composeURL(baseUrl, params, "/publicCommands.php?c=getRoomInfo");
       GameRoom gameRoom = new GameRoom();
       gameRoom.setUrl(url);
 
@@ -84,16 +80,16 @@ public class IScored {
         gameRoom.setSettings(gameRoomModel.getSettings());
         gameRoom.setName(gameRoomModel.getSettings().getRoomName());
 
-        URL gamesInfoURL = new URL(BASE_URL + "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
+        URL gamesInfoURL = composeURL(baseUrl, params, "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
         if (gameRoom.getSettings().isApiReadingEnabled()) {
           LOG.info("READ API enabled, using API endpoint for game infos.");
-          gamesInfoURL = new URL(BASE_URL + "/api/" + userName);
+          gamesInfoURL = composeURL(baseUrl, params, "/api/" + params.get("user"));
         }
 
         String gamesInfo = loadJson(gamesInfoURL);
         GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
 
-        URL gameScoresURL = new URL(BASE_URL + "/publicCommands.php?c=getScores2&roomID=" + gameRoomModel.getRoomID());
+        URL gameScoresURL = composeURL(baseUrl, params, "/publicCommands.php?c=getScores2&roomID=" + gameRoomModel.getRoomID());
         String scoresInfo = loadJson(gameScoresURL);
         Score[] scores = objectMapper.readValue(scoresInfo, Score[].class);
 
@@ -112,7 +108,7 @@ public class IScored {
           gameRoom.getGames().add(game);
         }
 
-        LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
+        LOG.info("Loaded game room from URL '" + url + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
         return gameRoom;
       }
     }
@@ -123,16 +119,49 @@ public class IScored {
     return null;
   }
 
+  private static String getBaseURL(URL roomUrl) {
+    String baseUrl = roomUrl.getProtocol() + "://" + roomUrl.getAuthority();
+    if (baseUrl.endsWith("/")) {
+      baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+    }
+    return baseUrl;
+  }
+
+  private static Map<String, String> getBaseParams(URL roomUrl) {
+    Map<String, String> params = splitQuery(roomUrl);
+    if (!params.containsKey("user")) {
+      String userName = roomUrl.getPath();
+      if (userName.startsWith("/")) {
+        userName = userName.substring(1);
+      }        
+      if (userName == null || userName.isEmpty()) {
+        throw new UnsupportedOperationException("Invalid gameroom URL (no user provider) \"" + roomUrl + "\"");
+      }
+      params.put("user", userName);
+    }
+    return params;
+  }
+
+  private static URL composeURL(String baseUrl, Map<String, String> params, String path) throws MalformedURLException {
+    String newUrl = baseUrl + path;
+    for (Map.Entry<String, String> entry : params.entrySet()) {
+      newUrl += (newUrl.contains("?") ? "&" : "?") + entry.getKey();
+      if (entry.getValue() != null) {
+        newUrl += "=" + entry.getValue();
+      }
+    }
+    return new URL(newUrl);
+  }
+
   private static String loadJson(URL url) {
-    BufferedInputStream in = null;
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      in = new BufferedInputStream(conn.getInputStream());
-      IOUtils.copy(in, out);
 
-      in.close();
-
+      try (BufferedInputStream in = new BufferedInputStream(conn.getInputStream())) {
+        IOUtils.copy(in, out);
+      }
+ 
       out.flush();
       out.close();
       conn.disconnect();
@@ -149,10 +178,16 @@ public class IScored {
   public static Map<String, String> splitQuery(URL url) {
     Map<String, String> query_pairs = new LinkedHashMap<String, String>();
     String query = url.getQuery();
-    String[] pairs = query.split("&");
-    for (String pair : pairs) {
-      int idx = pair.indexOf("=");
-      query_pairs.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8), URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
+    if (query != null) {
+      String[] pairs = query.split("&");
+      for (String pair : pairs) {
+        int idx = pair.indexOf("=");
+        if (idx < 0) {
+          query_pairs.put(URLDecoder.decode(pair, StandardCharsets.UTF_8), null);
+        } else {
+          query_pairs.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8), URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
+        }
+      }
     }
     return query_pairs;
   }
@@ -186,7 +221,7 @@ public class IScored {
 
 
     LOG.info("Submitting iScored score \"" + playerName + "/" + playerInitials + " [" + highscore + "]\" to game \"" + game.getName() + "\" of game room \"" + gameRoom.getName() + "\"");
-    BufferedInputStream in = null;
+    HttpURLConnection conn = null;
     try {
       String name = playerName;
       try {
@@ -203,19 +238,23 @@ public class IScored {
       name = URLEncoder.encode(name, StandardCharsets.UTF_8);
 
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      URL url = new URL(BASE_URL + "/publicCommands.php?c=addScore&name=" + name + "&game=" + game.getId() + "&score=" + highscore + "&wins=undefined&losses=undefined&roomID=" + gameRoom.getRoomID());
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+      URL roomurl = new URL(gameRoom.getUrl());
+      String baseUrl = getBaseURL(roomurl);
+      Map<String, String> params = getBaseParams(roomurl);
+
+      URL url = composeURL(baseUrl, params, "/publicCommands.php?c=addScore&name=" + name + "&game=" + game.getId() + "&score=" + highscore + "&wins=undefined&losses=undefined&roomID=" + gameRoom.getRoomID());
+
+      conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("POST"); // PUT is another valid option
       conn.setDoOutput(true);
 
-      in = new BufferedInputStream(conn.getInputStream());
-      IOUtils.copy(in, out);
-
-      in.close();
+      try (BufferedInputStream in = new BufferedInputStream(conn.getInputStream())) {
+        IOUtils.copy(in, out);
+      }
 
       out.flush();
       out.close();
-      conn.disconnect();
 
       LOG.info("Submitted new highscore to iScored game room \"" + gameRoom.getName() + "\": name=" + name + ", game=" + game.getId() + ", score=" + highscore);
       result.setMessage("Submitted new highscore to iScored game room \"" + gameRoom.getName() + "\": name=" + name + ", game=" + game.getId() + ", score=" + highscore);
@@ -232,6 +271,11 @@ public class IScored {
     catch (IOException e) {
       LOG.error("Failed to submit iScored highscore: " + e.getMessage(), e);
       result.setMessage("Failed to submit iScored highscore: " + e.getMessage());
+    }
+    finally {
+      if (conn != null) {
+        conn.disconnect();
+      }
     }
     return result;
   }
