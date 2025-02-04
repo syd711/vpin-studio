@@ -1,2 +1,2 @@
--DOSLOG_PATH="/Users/gonzo/Library/Application\" \"Support/Vpin-Studio/Logs"
+-DOSLOG_PATH="\"/Users/gonzo/Library/Application\" \"Support/Vpin-Studio/Logs\""
 
