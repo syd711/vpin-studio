@@ -2,13 +2,11 @@ package de.mephisto.vpin.restclient.recorder;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,8 +20,8 @@ public class RecorderServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public List<RecordingScreen> getRecordingScreens() {
-    return Arrays.asList(getRestClient().get(API + "recorder/screens", RecordingScreen[].class));
+  public List<FrontendPlayerDisplay> getRecordingScreens() {
+    return Arrays.asList(getRestClient().get(API + "recorder/screens", FrontendPlayerDisplay[].class));
   }
 
   public JobDescriptor startRecording(RecordingDataSummary data) {

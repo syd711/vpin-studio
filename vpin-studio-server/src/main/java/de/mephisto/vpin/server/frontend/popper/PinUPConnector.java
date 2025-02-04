@@ -2273,7 +2273,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
     frontend.setSystemVolumeControlEnabled(isSystemVolumeControlled());
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD, VPinScreen.Topper, VPinScreen.Menu));
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));

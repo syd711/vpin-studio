@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.*;
@@ -31,14 +32,14 @@ public class GameRecorder {
   private final RecorderSettings recorderSettings;
   private final RecordingData recordingData;
   private final JobDescriptor jobDescriptor;
-  private final List<RecordingScreen> recordingScreens;
+  private final List<FrontendPlayerDisplay> recordingScreens;
 
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
   private final List<ScreenRecorder> screenRecorders = new ArrayList<>();
 
   private int totalTime;
 
-  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, RecordingData recordingData, JobDescriptor jobDescriptor, List<RecordingScreen> recordingScreens) {
+  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, RecordingData recordingData, JobDescriptor jobDescriptor, List<FrontendPlayerDisplay> recordingScreens) {
     this.frontend = frontend;
     this.game = game;
     this.recorderSettings = recorderSettings;
@@ -60,7 +61,7 @@ public class GameRecorder {
         }
 
         File recordingTempFile = createTemporaryRecordingFile(game, screen, option.getRecordMode());
-        RecordingScreen recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
+        FrontendPlayerDisplay recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
         int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
         if (totalDuration > totalTime) {
           totalTime = totalDuration;

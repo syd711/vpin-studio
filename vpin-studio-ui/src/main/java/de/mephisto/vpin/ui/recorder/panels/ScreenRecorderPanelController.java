@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingWriteMode;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
@@ -81,9 +81,9 @@ public class ScreenRecorderPanelController implements Initializable {
   @FXML
   private ComboBox<RecordingWriteMode> recordModeComboBox;
 
-  private RecordingScreen recordingScreen;
+  private FrontendPlayerDisplay recordingScreen;
 
-  public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
+  public void setData(RecorderController recorderController, FrontendPlayerDisplay recordingScreen) {
     audioPanel.setVisible(false);
 
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
@@ -197,7 +197,7 @@ public class ScreenRecorderPanelController implements Initializable {
       return;
     }
 
-    previewTitle.setText("Screen Preview (" + recordingScreen.getDisplay().getWidth() + " x " + recordingScreen.getDisplay().getHeight() + ")");
+    previewTitle.setText("Screen Preview (" + recordingScreen.getWidth() + " x " + recordingScreen.getHeight() + ")");
 
     preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);

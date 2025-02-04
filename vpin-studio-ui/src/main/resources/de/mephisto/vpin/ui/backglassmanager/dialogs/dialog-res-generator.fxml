@@ -155,9 +155,6 @@
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <BorderPane.margin>
@@ -167,24 +164,13 @@
                   <Label styleClass="default-text" text="Screenres.txt:" />
                   <Label fx:id="screenResLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" />
 
-                  <Label styleClass="default-text" text="Playfield Dimension:" GridPane.rowIndex="1" />
-                  <Label fx:id="playfieldDimensionLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label styleClass="default-text" text="Playfield Screen:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Label fx:id="playfieldScreenLabel" styleClass="default-text" text="-" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <Label styleClass="default-text" text="Backglass Screen:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <Label fx:id="backglassScreenLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                  <Label styleClass="default-text" text="Backglass Dimension:" GridPane.rowIndex="3" />
-                  <Label fx:id="backglassDimensionLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label styleClass="default-text" text="Backglass Screen:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Label fx:id="backglassScreenLabel" styleClass="default-text" text="-" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-
-                  <Label styleClass="default-text" text="DMD Dimension:" GridPane.rowIndex="5" />
-                  <Label fx:id="dmdDimensionLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <Label styleClass="default-text" text="DMD Screen:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <Label fx:id="dmdScreenLabel" styleClass="default-text" text="-" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Backglass Position:" GridPane.rowIndex="2" />
-                  <Label layoutX="10.0" layoutY="184.0" styleClass="default-text" text="DMD Position:" GridPane.rowIndex="4" />
-                  <Label fx:id="dmdPositionLabel" layoutX="153.0" layoutY="184.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label fx:id="backglassPositionLabel" layoutX="153.0" layoutY="116.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label styleClass="default-text" text="Backglass Dimension:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <Label fx:id="backglassDimensionLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label styleClass="default-text" text="Backglass Position:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label fx:id="backglassPositionLabel" styleClass="default-text" text="-" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                </children>
             </GridPane>
          </top>
