@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.WaitProgressModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -283,7 +284,9 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        client.getCompetitionService().deleteCompetition(selection);
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition", 
+          "Deleting Competition " + selection.getName(), 
+          () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
       }

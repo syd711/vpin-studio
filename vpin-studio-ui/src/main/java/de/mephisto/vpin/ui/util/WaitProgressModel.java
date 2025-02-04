@@ -8,6 +8,12 @@ public class WaitProgressModel<T> extends ProgressModel<Void> {
   private Callable<T> callable;
   private boolean done = false;
 
+  public WaitProgressModel(String title, String message, Runnable runnable) {
+    this(title, message, () -> {
+      runnable.run();
+      return null;
+    });
+  }
   public WaitProgressModel(String title, String message, Callable<T> callable) {
     super(title);
     this.message = message;
