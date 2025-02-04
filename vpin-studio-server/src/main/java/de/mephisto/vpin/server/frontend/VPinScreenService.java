@@ -147,7 +147,7 @@ public class VPinScreenService {
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
 
     Configuration vpxConfiguration = vpxService.getPlayerConfiguration();
-    if (!vpxConfiguration.isEmpty()) {
+    if (vpxConfiguration != null && !vpxConfiguration.isEmpty()) {
       createVpxPlayfieldDisplay(vpxConfiguration, displayList);
       //createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
       //createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.DMD, false);
