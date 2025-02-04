@@ -68,16 +68,21 @@ public enum VPinScreen {
   }
 
   public static VPinScreen valueOfSegment(String segment) {
-    for (VPinScreen v: values()) {
+    for (VPinScreen v : values()) {
       if (StringUtils.equalsIgnoreCase(segment, v.segment)) {
         return v;
       }
     }
+
+    if (segment.equalsIgnoreCase("Other2")) {
+      return VPinScreen.Other2;
+    }
+
     return null;
   }
 
   public static VPinScreen valueOfCode(String code) {
-    for (VPinScreen v: values()) {
+    for (VPinScreen v : values()) {
       if (StringUtils.equalsIgnoreCase(code, "" + v.code)) {
         return v;
       }
@@ -99,7 +104,7 @@ public enum VPinScreen {
   }
 
   public static boolean keepDisplaysContainsScreen(String codes, VPinScreen screen) {
-    String[] codesArray = codes!=null ? StringUtils.split(codes, ",") : new String[0];
+    String[] codesArray = codes != null ? StringUtils.split(codes, ",") : new String[0];
     return ArrayUtils.contains(codesArray, Integer.toString(screen.getCode()));
   }
 

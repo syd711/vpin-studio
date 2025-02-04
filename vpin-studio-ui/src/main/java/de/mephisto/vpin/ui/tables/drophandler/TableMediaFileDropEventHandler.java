@@ -104,8 +104,9 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         }
       }
 
-      boolean append = false;
+      boolean append = true;
       if (!medias.getMediaItems(screen).isEmpty()) {
+        append = false;
         Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
             "A media asset already exists.",
             "Append new asset or overwrite existing asset?", "Overwrite", "Append");

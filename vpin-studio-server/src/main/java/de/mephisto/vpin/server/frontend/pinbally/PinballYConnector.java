@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.pinbally;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
@@ -20,6 +21,9 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service("PinballY")
@@ -33,7 +37,7 @@ public class PinballYConnector extends BaseConnector {
 
 
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
-
+  
 
   @Override
   public void initializeConnector() {
@@ -84,6 +88,9 @@ public class PinballYConnector extends BaseConnector {
     List<Emulator> emulators = new ArrayList<>();
     mapTableDetails = new HashMap<>();
 
+    var settingsFileLines = readSettingsFileLines();
+
+    Boolean settingsFileChanged = false;
     // Add specific ones
     for (int emuId = 1; emuId < 20; emuId++) {
       String system = settings.getProperty("System" + emuId);
@@ -91,13 +98,23 @@ public class PinballYConnector extends BaseConnector {
         Emulator emulator = createEmulator(settings, pinballYFolder, emuId, system);
         if (emulator != null) {
           emulators.add(emulator);
+
+          if (!emulator.getType().isVpxEmulator())
+            continue;
+
+          // Update RunBefore en RunAfter in settings.txt for VPX emulators
+          for (var runType : new String[] { "RunBefore", "RunAfter" }) {
+            var settingValue = settings.getProperty("System" + emuId + "." + runType);
+            if (StringUtils.isAllBlank(settingValue) || settingValue.endsWith("& :: Added by VPin Studio")) {
+              settingsFileChanged |= updateSetting(settingsFileLines, emuId, system, runType);
+            }
+          }
         }
       }
     }
 
-    //check the launch and exist scripts
-    for (Emulator emulator : emulators) {
-      initVisualPinballYScripts(emulator, settings);
+    if (settingsFileChanged) {
+      writeSettingsFileLines(settingsFileLines);
     }
 
     return emulators;
@@ -458,42 +475,68 @@ PlayfieldWindow.Minimized = 0
   }
 
   //---------------- Utilities -----------------------------------------------------------------------------------------
+  
+  private Boolean updateSetting(List<String> lines, int emuId, String emulatorName, String runType) {
+    // Construct the new settings line
+    StringBuilder newSettingsLine = new StringBuilder();
+    newSettingsLine.append("System" + emuId + "." + runType + " = ");
+    newSettingsLine.append("[NOWAIT HIDE]curl -X POST http://localhost:" + SystemUtil.getPort() + "/service/");
+    newSettingsLine.append(runType == "RunBefore" ? "gameLaunch" : "gameExit");
+    newSettingsLine.append(" --data-urlencode \"table=[TABLEPATH]\\[TABLEFILE]\"");
+    newSettingsLine.append(" --data-urlencode \"emu=" + emulatorName + "\"");
+    newSettingsLine.append(" & :: Added by VPin Studio"); /* used to detect earlier update by VPin Studio */
 
-  private void initVisualPinballYScripts(Emulator emulator, Properties iniConfiguration) {
-/*
-    if (emulator.isVisualPinball()) {
-      //VPX scripts
-      SubnodeConfiguration visualPinball = iniConfiguration.getSection("VisualPinball");
-      visualPinball.setProperty("LaunchBeforeEnabled", "True");
-      visualPinball.setProperty("LaunchBeforeExecutable", "emulator-launch.bat");
-      visualPinball.setProperty("LaunchBeforeParameters", "\"[TABLEPATH]\\[TABLEFILE]\"");
-      visualPinball.setProperty("LaunchBeforeWorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
+    var updateAt = -1; // to find the "SystemX.RunBefore" / "SystemX.RunAfter" line to update
+    var insertAfter = -1; // to find the last "SystemX" line to insert after
+    
+    for (var t = 0; t < lines.size(); t++) {
 
-      visualPinball.setProperty("LaunchAfterEnabled", "True");
-      visualPinball.setProperty("LaunchAfterExecutable", "emulator-exit.bat");
-      visualPinball.setProperty("LaunchAfterParameters", "\"[TABLEPATH]\\[TABLEFILE]\"");
-      visualPinball.setProperty("LaunchAfterWorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
+      var regex = "^System" + emuId + "\\." + runType + "\\s*=.*";
+      if (lines.get(t).matches(regex)) {
+        updateAt = t;
+      }
 
-      //frontend launch script
-      SubnodeConfiguration startup = iniConfiguration.getSection("StartupProgram");
-      startup.setProperty("Enabled", " True");
-      startup.setProperty("Executable", "frontend-launch.bat");
-      startup.setProperty("WorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
+      if (lines.get(t).startsWith("System" + emuId)) {
+        insertAfter = t;
+      }
+    }
 
-      saveIni(iniConfiguration);
+    // update the existing line
+    if (updateAt != -1) {
+      // but only if it is different from the original
+      if (!lines.get(updateAt).equals(newSettingsLine.toString())) {
+        lines.set(updateAt, newSettingsLine.toString());
+        return true;
+      }
+      return false; // there was no change
+    }
+
+    // create a new line if there was no existing line
+    if (insertAfter != -1) {
+      lines.add(insertAfter + 1, newSettingsLine.toString());
+      return true;
+    }
+
+    return false; // there was no change
+  }
+
+  private List<String> readSettingsFileLines() {
+    // Read the PinballY settings.txt file, return null if something went wrong
+    try {
+      return Files.readAllLines(getPinballYSettings().toPath(), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      return null;
     }
   }
 
-  private void saveIni(INIConfiguration iniConfiguration) {
-
-    try (FileWriter fileWriter = new FileWriter(getPinballYSettings(), Charset.forName("UTF-16"))) {
-      //iniConfiguration.write(fileWriter);
+  private void writeSettingsFileLines(List<String> settingsFileLines) {
+    // Write back to the PinballY settings.txt file
+    if (settingsFileLines != null) {
+      try {
+        Files.write(getPinballYSettings().toPath(), settingsFileLines, StandardCharsets.UTF_8);
+      } catch (IOException e) {
+        LOG.error("Failed to update settings.txt with RunBefore and RunAfter commands: " + e.getMessage(), e);
+      }
     }
-    catch (Exception e) {
-      LOG.error("Failed to write PinballX.ini: " + e.getMessage(), e);
-    }
-
-  */
   }
-
 }
