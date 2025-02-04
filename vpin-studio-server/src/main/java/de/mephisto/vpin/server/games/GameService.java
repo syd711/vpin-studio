@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -23,6 +24,7 @@ import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -48,7 +50,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GameService implements InitializingBean, ApplicationListener<ApplicationReadyEvent> {
+public class GameService implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
 
   private static final double MATCHING_THRESHOLD = 0.1;
@@ -100,6 +102,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Autowired
   private DefaultPictureService defaultPictureService;
+
+  private ServerSettings serverSettings;
 
   /**
    * the refresh timer to keep VPS updated
@@ -485,6 +489,12 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     if (StringUtils.isEmpty(game.getHsFileName())) {
       game.setHsFileName(gameDetails.getHsFileName());
     }
+    else {
+      //TODO this smells. The TableDetails are only loaded in case the game has no highscore filename, because this one is mapped to a custom field
+      if (tableDetails == null) {
+        tableDetails = frontendService.getTableDetails(game.getId());
+      }
+    }
 
     // Only apply VPS data if the frontend does not provide them
     if (StringUtils.isEmpty(game.getExtTableId())) {
@@ -535,7 +545,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
     game.setValidationState(validate.get(0));
 
-    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
+    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
     game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
 
     return newGame;
@@ -733,7 +743,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     TableDetails tableDetails = frontendService.getTableDetails(id);
-    return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
+    return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
   }
 
   public Game findMatch(String term) {
@@ -759,6 +769,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     try {
       highscoreService.setGameService(this);
     }
@@ -776,6 +788,13 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       List<Game> games = getKnownGames(-1);
       vpsService.update(games);
       mameService.clearCache();
+    }
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
   }
 }

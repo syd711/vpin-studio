@@ -36,6 +36,7 @@ public class GameRepresentation {
   private boolean updateAvailable;
   private int id;
   private String comment;
+  private int rating;
   private Date modified;
   private ValidationState validationState;
   private boolean hasMissingAssets;
@@ -71,6 +72,8 @@ public class GameRepresentation {
 
   private VPSChanges vpsUpdates = new VPSChanges();
 
+  private String patchVersion;
+
   private String directB2SPath;
   private String gameFilePath;
   private String povPath;
@@ -78,6 +81,22 @@ public class GameRepresentation {
   private String resPath;
   private String pupPackPath;
   private boolean altSoundAvailable;
+
+  public String getPatchVersion() {
+    return patchVersion;
+  }
+
+  public void setPatchVersion(String patchVersion) {
+    this.patchVersion = patchVersion;
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
+  }
 
   public Date getDateUpdated() {
     return dateUpdated;

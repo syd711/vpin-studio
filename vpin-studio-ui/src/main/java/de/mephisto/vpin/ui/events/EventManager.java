@@ -149,8 +149,15 @@ public class EventManager {
     }).start();
   }
 
+  public void notifyVpsTableChange(String id) {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.vpsTableChanged(id);
+      }
+    }).start();
+  }
+
   public void removeListener(StudioEventListener listener) {
     this.listeners.remove(listener);
   }
-
 }

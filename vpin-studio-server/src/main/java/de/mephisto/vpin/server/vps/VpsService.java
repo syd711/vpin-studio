@@ -16,10 +16,13 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
+import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,6 +48,9 @@ public class VpsService implements InitializingBean {
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
+
+  @Autowired
+  private VpsEntryService vpsEntryService;
 
   /**
    * Internal VPS database
@@ -107,31 +113,34 @@ public class VpsService implements InitializingBean {
       return null;
     }
 
+    augmentTable(vpsTable);
+
     VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsVersionId);
     if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
       return null;
     }
+
     return tableVersion;
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    try {
-      // create and load from file the VPS Database
-      this.vpsDatabase = new VPS();
-      this.vpsDatabase.reload();
-    }
-    catch (Exception e) {
-      LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
+  private void augmentTable(VpsTable vpsTable) {
+    if (vpsTable != null) {
+      VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(vpsTable.getId());
+      if (vpsDbEntry != null) {
+        vpsTable.setComment(vpsDbEntry.getComment());
+      }
     }
   }
 
   public List<VpsTable> getTables() {
+    vpsDatabase.getTables().forEach(this::augmentTable);
     return vpsDatabase.getTables();
   }
 
   public VpsTable getTableById(String extTableId) {
-    return vpsDatabase.getTableById(extTableId);
+    VpsTable tableById = vpsDatabase.getTableById(extTableId);
+    augmentTable(tableById);
+    return tableById;
   }
 
   public List<VpsTable> find(String term, String rom) {
@@ -174,9 +183,9 @@ public class VpsService implements InitializingBean {
     }
   }
 
+
   //----------------------------------------------------------------
   // Installation of Assets from external sources
-
   public String checkLogin(String link) {
     try {
       VpsInstaller installer = getInstaller(link);
@@ -223,5 +232,22 @@ public class VpsService implements InitializingBean {
       return new VpsInstallerFromVPF(settings);
     }
     return null;
+  }
+
+  public VpsTable save(VpsTable vpsTable) {
+    vpsEntryService.save(vpsTable);
+    return getTableById(vpsTable.getId());
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    try {
+      // create and load from file the VPS Database
+      this.vpsDatabase = new VPS();
+      this.vpsDatabase.reload();
+    }
+    catch (Exception e) {
+      LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
+    }
   }
 }
