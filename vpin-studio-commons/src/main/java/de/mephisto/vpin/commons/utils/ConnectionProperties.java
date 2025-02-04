@@ -16,9 +16,20 @@ public class ConnectionProperties {
 
     // Constructor
     public ConnectionProperties() {
-        File propertiesFile = new File("config/connection.properties");
-        propertiesFile.getParentFile().mkdirs();
-        store = PropertiesStore.create(propertiesFile);
+        String os = System.getProperty("os.name");
+        if (os.contains("Windows")) {
+            File propertiesFile = new File("config/connection.properties");
+            propertiesFile.getParentFile().mkdirs();
+            store = PropertiesStore.create(propertiesFile);
+        }else
+        {
+            LOG.info("Setting Mac Path for Connection.Properties");
+            File propertiesFile = new File(System.getProperty("MAC_WRITE_PATH") + "config/connection.properties");
+            propertiesFile.getParentFile().mkdirs();
+            store = PropertiesStore.create(propertiesFile);
+        }
+
+
 
         // Detect and convert old format
         if (containsOldFormat()) {

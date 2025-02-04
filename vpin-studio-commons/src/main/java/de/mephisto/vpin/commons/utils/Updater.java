@@ -72,18 +72,23 @@ public class Updater {
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
+      String CheckBasePath = getBasePath().getAbsolutePath();
+      LOG.info("Setting tmp File at Base Path : " + CheckBasePath + ":" + target.getName() + ":" + DOWNLOAD_SUFFIX );
+
       File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);
+
       if (tmp.exists()) {
-        tmp.delete();
-      }
-      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
-      byte dataBuffer[] = new byte[1024];
-      int bytesRead;
-      while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-        fileOutputStream.write(dataBuffer, 0, bytesRead);
-      }
-      in.close();
-      fileOutputStream.close();
+          tmp.delete();
+        }
+        FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+        byte dataBuffer[] = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+          fileOutputStream.write(dataBuffer, 0, bytesRead);
+        }
+        in.close();
+        fileOutputStream.close();
+
       if (overwrite && target.exists() && !target.delete()) {
         LOG.error("Failed to overwrite target file \"" + target.getAbsolutePath() + "\"");
         return;
@@ -94,7 +99,7 @@ public class Updater {
       }
       LOG.info("Downloaded file " + target.getAbsolutePath());
     } catch (Exception e) {
-      LOG.error("Failed to execute download: " + e.getMessage(), e);
+      LOG.error("Updater Failed to execute download: " + e.getMessage(), e);
     }
   }
 
@@ -143,8 +148,8 @@ public class Updater {
         // Create update-client script.
         MacOS.createUpdateScript();
 
-        // Create new exec script.
-        MacOS.createExecScript();
+//        // Create new exec script.
+//        MacOS.createExecScript();
 
         // Log the exit message
         LOG.info("Exiting VPin-Studio to perform update...");
@@ -152,7 +157,9 @@ public class Updater {
         MacOS.launchUpdateScript();
 
         // Exit the current application
-        System.exit(0);
+        // Changed to do this from the script.
+
+        //System.exit(0);
       } catch (Exception e) {
         LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
       }
@@ -206,6 +213,13 @@ public class Updater {
   }
 
   private static File getBasePath() {
-    return new File("./");
+    String os = System.getProperty("os.name");
+    if (os.contains("Windows")) {
+      LOG.info("Setting Base Path for Windows Download to -./");
+      return new File("./");
+    }else{
+      LOG.info("Setting Base Path for Mac Download to -" + System.getProperty("MAC_WRITE_PATH"));
+      return new File(System.getProperty("MAC_WRITE_PATH"));
+    }
   }
 }

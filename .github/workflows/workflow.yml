@@ -108,13 +108,13 @@ jobs:
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type pkg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg  --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_x64/zulu-11.jre @../jpackage_log.txt
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
           #echo "ls -al ../VPin-Studio.app/Contents"
           #ls -al ../VPin-Studio.app/Contents
-          cp ../VPin-Studio-${{ steps.project.outputs.version }}.pkg ../VPin-Studio-Client-MacOS-x64.pkg
+          cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-x64.dmg
 
       # Step 8: Zip the .app bundle for easy distribution
       #Update for correct location
@@ -131,7 +131,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macOS-build-x64
-          path: ./VPin-Studio-Client-MacOS-x64.pkg
+          path: ./VPin-Studio-Client-MacOS-x64.dmg
 
 
   ######################################################################################################################
@@ -231,14 +231,14 @@ jobs:
           #ls -al package
           #echo "ls package/macos results"
           #ls -al package/macos
-          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type pkg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
+          jpackage --name VPin-Studio --input . --app-version ${{ steps.project.outputs.version }} --main-jar vpin-studio-ui.jar --main-class de.mephisto.vpin.ui.Studio --resource-dir package/macos --type dmg --icon VpinStudio.icns  --dest ../ --runtime-image ../zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64/zulu-11.jre @../jpackage_log.txt
           #check to see if the jpackage worked.
           #echo "ls -al ../VPin-Studio.app"
           #ls -al ../VPin-Studio.app
           #echo "ls -al ../VPin-Studio.app/Contents"
           #ls -al ../VPin-Studio.app/Contents
           #rename
-          cp ../VPin-Studio-${{ steps.project.outputs.version }}.pkg ../VPin-Studio-Client-MacOS-arm64.pkg
+          cp ../VPin-Studio-${{ steps.project.outputs.version }}.dmg ../VPin-Studio-Client-MacOS-arm64.dmg
           
       # Step 8: Zip the .app bundle for easy distribution
       #Skipping this in favor of dmg distribution
@@ -256,7 +256,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macOS-build-arm64
-          path: ./VPin-Studio-Client-MacOS-arm64.pkg
+          path: ./VPin-Studio-Client-MacOS-arm64.dmg
 
   ######################################################################################################################
   # Packaging
@@ -379,8 +379,8 @@ jobs:
             ./Output/VPin-Studio/VPin-Studio-Server.zip
             ./Output/VPin-Studio/VPin-Studio.zip
             ./Output/VPin-Studio/VPin-Studio-Client-linux-x64.zip
-            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-arm64.pkg
-            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-x64.pkg
+            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-arm64.dmg
+            ./Output/VPin-Studio/VPin-Studio-Client-MacOS-x64.dmg
             ./Output/VPin-Studio/vpin-studio-ui-jar.zip
         env:
           GITHUB_REPOSITORY: https://github.com/syd711/vpin-studio
