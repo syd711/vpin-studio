@@ -4,6 +4,8 @@ import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,7 @@ public class VPXKeyManager {
   public final static String RFlipKey = "RFlipKey";
   public final static String StartGameKey = "StartGameKey";
 
-  private Configuration playerConfiguration;
+  private @Nullable Configuration playerConfiguration;
 
   private static Map<Integer,Integer> directX2Native = new HashMap<>();
 
@@ -25,7 +27,7 @@ public class VPXKeyManager {
     directX2Native.put(54, 161); //Shift Right
   }
 
-  public VPXKeyManager(Configuration playerConfiguration) {
+  public VPXKeyManager(@Nullable Configuration playerConfiguration) {
     this.playerConfiguration = playerConfiguration;
   }
 
