@@ -21,5 +21,5 @@ public class Features {
 
   public static boolean BACKUP_VIEW_ENABLED = false;
 
-  public static boolean SCREEN_MANAGER_ENABLED = false;
+  public static boolean SCREEN_MANAGER_ENABLED = true;
 }

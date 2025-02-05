@@ -405,7 +405,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public List<MonitorInfo> getMonitorInfos() {
-    return MonitorInfoUtil.getMonitors();
+    List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
+    if (frontendType.equals(FrontendType.Popper)) {
+      Collections.sort(monitors, (o1, o2) -> o1.isPrimary() ? -1 : 1);
+    }
+    return monitors;
   }
 
   /**

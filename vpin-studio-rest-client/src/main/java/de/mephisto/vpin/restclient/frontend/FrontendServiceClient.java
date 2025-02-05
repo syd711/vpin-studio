@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +94,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
+  }
+
+  public FrontendScreenSummary getScreenSummary() {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendScreenSummary.class);
   }
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {

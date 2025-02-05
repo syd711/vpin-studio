@@ -24,7 +24,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,6 +139,18 @@ public class ComponentsController implements Initializable, StudioFXController, 
     }
   }
 
+  private void refreshView(Number t1) {
+    if (t1.intValue() == 0) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
+    }
+    else if (t1.intValue() == 1) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));
+    }
+    else {
+      throw new UnsupportedOperationException("Invalid tab id");
+    }
+  }
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -148,7 +159,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
 
-    NavigationController.setBreadCrumb(Arrays.asList("System Manager"));
+    NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));
       Parent builtInRoot = loader.load();
@@ -186,6 +197,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
       rootTabPane.getTabs().remove(screensTab);
     }
 
+    rootTabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      refreshView(t1);
+    });
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);

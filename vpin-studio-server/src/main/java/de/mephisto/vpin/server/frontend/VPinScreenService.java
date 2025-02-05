@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
+import de.mephisto.vpin.restclient.frontend.FrontendScreenSummary;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Add a uniform way to access to screen dimensions, abstracting the source of the information
-
+ * <p>
  * playfield : %appdata%/vpinballX/VpinballX.ini, can be fullscreen or windowed with specific dimensions
  * backglass: screenres.txt or %appdata%/vpinballX/VpinballX.ini whenstudio will support standalone mode
  * dmd : from freezy or registry
@@ -57,16 +58,18 @@ public class VPinScreenService {
     }
   }
 
-  private FrontendPlayerDisplay firstDefined(VPinScreen screen, 
-      List<FrontendPlayerDisplay> displays1) {
+  private FrontendPlayerDisplay firstDefined(VPinScreen screen,
+                                             List<FrontendPlayerDisplay> displays1) {
     return firstDefined(screen, displays1, null, null);
   }
-  private FrontendPlayerDisplay firstDefined(VPinScreen screen, 
-      List<FrontendPlayerDisplay> displays1, List<FrontendPlayerDisplay> displays2) {
+
+  private FrontendPlayerDisplay firstDefined(VPinScreen screen,
+                                             List<FrontendPlayerDisplay> displays1, List<FrontendPlayerDisplay> displays2) {
     return firstDefined(screen, displays1, displays2, null);
   }
-  private FrontendPlayerDisplay firstDefined(VPinScreen screen, 
-      List<FrontendPlayerDisplay> displays1, List<FrontendPlayerDisplay> displays2, List<FrontendPlayerDisplay> displays3) {
+
+  private FrontendPlayerDisplay firstDefined(VPinScreen screen,
+                                             List<FrontendPlayerDisplay> displays1, List<FrontendPlayerDisplay> displays2, List<FrontendPlayerDisplay> displays3) {
     if (displays1 != null) {
       FrontendPlayerDisplay display1 = FrontendPlayerDisplay.valueOfScreen(displays1, screen);
       return display1 != null ? display1 : firstDefined(screen, displays2, displays3, null);
@@ -93,54 +96,55 @@ public class VPinScreenService {
     return errors;
   }
 
-  private void compare(List<String> errors, VPinScreen screen, 
-      List<FrontendPlayerDisplay> displays1, String name1, 
-      List<FrontendPlayerDisplay> displays2, String name2) {
+  private void compare(List<String> errors, VPinScreen screen,
+                       List<FrontendPlayerDisplay> displays1, String name1,
+                       List<FrontendPlayerDisplay> displays2, String name2) {
     comparePositions(errors, screen, displays1, name1, displays2, name2);
     compareDimensions(errors, screen, displays1, name1, displays2, name2);
   }
 
-  private void comparePositions(List<String> errors, VPinScreen screen, 
-    List<FrontendPlayerDisplay> displays1, String name1, 
-    List<FrontendPlayerDisplay> displays2, String name2) {
-    
+  private void comparePositions(List<String> errors, VPinScreen screen,
+                                List<FrontendPlayerDisplay> displays1, String name1,
+                                List<FrontendPlayerDisplay> displays2, String name2) {
+
     FrontendPlayerDisplay display1 = FrontendPlayerDisplay.valueOfScreen(displays1, screen);
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getX() != display2.getX()) {
-        errors.add(screen.name() + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " + 
+        errors.add(screen.name() + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
             display1.getX() + " vs " + display2.getX());
       }
       if (display1.getY() != display2.getY()) {
-        errors.add(screen.name() + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " + 
+        errors.add(screen.name() + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
             display1.getY() + " vs " + display2.getY());
       }
     }
   }
 
-  private void compareDimensions(List<String> errors, VPinScreen screen, 
-    List<FrontendPlayerDisplay> displays1, String name1, 
-    List<FrontendPlayerDisplay> displays2, String name2) {
-    
+  private void compareDimensions(List<String> errors, VPinScreen screen,
+                                 List<FrontendPlayerDisplay> displays1, String name1,
+                                 List<FrontendPlayerDisplay> displays2, String name2) {
+
     FrontendPlayerDisplay display1 = FrontendPlayerDisplay.valueOfScreen(displays1, screen);
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getWidth() != display2.getWidth()) {
-        errors.add(screen.name() + " width in " + name1 + " mismatch with width defined in " + name2 + ": " + 
+        errors.add(screen.name() + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
             display1.getWidth() + " vs " + display2.getWidth());
       }
       if (display1.getHeight() != display2.getHeight()) {
-        errors.add(screen.name() + " height in " + name1 + " mismatch with height defined in " + name2 + ": " + 
+        errors.add(screen.name() + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
             display1.getHeight() + " vs " + display2.getHeight());
       }
     }
   }
 
   //------------------------------------------------------ VPINBALLX.INI ---
-    
+
   /**
    * Reads the VPinballX.ini file and creates a list of displays
    * Supported screen is Playfield but should be extended for standalone and get Backglass, B2SDMD and DMD positions
+   *
    * @return a List of FrontendPlayerDisplay
    */
   public List<FrontendPlayerDisplay> getVpxDisplays() {
@@ -159,13 +163,13 @@ public class VPinScreenService {
   }
 
   /**
-  Display = 2
-  FullScreen = 0
-  WindowPosX = -1900
-  WindowPosY = 30
-  Width = 1500
-  Height = 900
-  */
+   * Display = 2
+   * FullScreen = 0
+   * WindowPosX = -1900
+   * WindowPosY = 30
+   * Width = 1500
+   * Height = 900
+   */
   private void createVpxPlayfieldDisplay(Configuration vpxConfiguration, List<FrontendPlayerDisplay> players) {
     int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
 
@@ -239,28 +243,36 @@ public class VPinScreenService {
 
   //----------------------------------------------------------------- SCREENRES.TXT ---
 
+  public FrontendScreenSummary getScreenSummary() {
+    FrontendScreenSummary summary = new FrontendScreenSummary();
+    summary.setScreenResDisplays(getScreenResDisplays());
+    summary.setFrontendDisplays(getFrontendDisplays());
+    summary.setVpxDisplaysDisplays(getVpxDisplays());
+    return summary;
+  }
+
   private List<FrontendPlayerDisplay> getScreenResDisplays() {
     List<FrontendPlayerDisplay> displays = new ArrayList<>();
     DirectB2sScreenRes screenres = backglassService.getGlobalScreenRes();
     if (screenres != null) {
       FrontendPlayerDisplay playfield = new FrontendPlayerDisplay(VPinScreen.PlayField);
       playfield.setWidth(screenres.getPlayfieldWidth());
-      playfield.setHeight(screenres.getPlayfieldHeight());  
+      playfield.setHeight(screenres.getPlayfieldHeight());
       displays.add(playfield);
 
       FrontendPlayerDisplay backglass = new FrontendPlayerDisplay(VPinScreen.BackGlass);
       backglass.setX(screenres.getBackglassX());
-      backglass.setY(screenres.getBackglassY());  
+      backglass.setY(screenres.getBackglassY());
       backglass.setWidth(screenres.getBackglassWidth());
-      backglass.setHeight(screenres.getBackglassHeight());  
+      backglass.setHeight(screenres.getBackglassHeight());
       displays.add(backglass);
 
       if (screenres.hasDMD()) {
         FrontendPlayerDisplay fulldmd = new FrontendPlayerDisplay(VPinScreen.Menu);
         fulldmd.setX(screenres.getDmdX());
-        fulldmd.setY(screenres.getDmdY());  
+        fulldmd.setY(screenres.getDmdY());
         fulldmd.setWidth(screenres.getDmdWidth());
-        fulldmd.setHeight(screenres.getDmdHeight());  
+        fulldmd.setHeight(screenres.getDmdHeight());
         displays.add(fulldmd);
       }
     }

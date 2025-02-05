@@ -145,6 +145,11 @@ public class FrontendResource {
     return vpinScreenService.getScreenDisplay(screen);
   }
 
+  @GetMapping("/screens")
+  public FrontendScreenSummary getScreenSummary() {
+    return vpinScreenService.getScreenSummary();
+  }
+
   @GetMapping("/mediadir/{gameId}/{screenName}")
   public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("screenName") String screenName) {
     VPinScreen screen = VPinScreen.valueOf(screenName);
