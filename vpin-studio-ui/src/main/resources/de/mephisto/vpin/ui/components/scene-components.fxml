@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -129,57 +128,22 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </BorderPane>
-                  <TabPane>
-                     <tabs>
-                        <Tab closable="false" text="Updates">
-                           <content>
-                              <BorderPane>
-                                 <center>
-                                        <TabPane fx:id="tabPane" styleClass="sub-tab" tabClosingPolicy="UNAVAILABLE">
-                                            <tabs>
-                                                <Tab fx:id="overviewTab" closable="false" styleClass="sub-tab" text="Overview" />
-                                                <Tab fx:id="vpxTab" closable="false" text="Visual Pinball" />
-                                                <Tab fx:id="mameTab" closable="false" text="VPin MAME" />
-                                                <Tab fx:id="b2sTab" closable="false" text="B2S Server" />
-                                                <Tab fx:id="freezyTab" closable="false" text="Freezy" />
-                                                <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
-                  <!--                        <Tab fx:id="serumTab" closable="false" text="Serum" />-->
-                                          <Tab fx:id="doflinxTab" closable="false" text="DOFLinx" />
-                                            </tabs>
-                                        </TabPane>
-                                 </center>
-                              </BorderPane>
-                           </content>
-                           <graphic>
-                              <Label>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-update" iconSize="18" />
-                                 </graphic>
-                              </Label>
-                           </graphic>
-                        </Tab>
-                        <Tab closable="false" text="Screens">
-                           <graphic>
-                              <Label>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
-                                 </graphic>
-                              </Label>
-                           </graphic>
-                           <content>
-                              <BorderPane prefHeight="200.0" prefWidth="200.0">
-                                 <top>
-                                    <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                      <items>
-                                        <Button mnemonicParsing="false" text="Button" />
-                                      </items>
-                                    </ToolBar>
-                                 </top>
-                              </BorderPane>
-                           </content>
-                        </Tab>
-                     </tabs>
-                  </TabPane>
+                  <BorderPane>
+                     <center>
+                            <TabPane fx:id="tabPane" styleClass="sub-tab" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                                <tabs>
+                                    <Tab fx:id="overviewTab" closable="false" styleClass="sub-tab" text="Overview" />
+                                    <Tab fx:id="vpxTab" closable="false" text="Visual Pinball" />
+                                    <Tab fx:id="mameTab" closable="false" text="VPin MAME" />
+                                    <Tab fx:id="b2sTab" closable="false" text="B2S Server" />
+                                    <Tab fx:id="freezyTab" closable="false" text="Freezy" />
+                                    <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
+      <!--                        <Tab fx:id="serumTab" closable="false" text="Serum" />-->
+                              <Tab fx:id="doflinxTab" closable="false" text="DOFLinx" />
+                                </tabs>
+                            </TabPane>
+                     </center>
+                  </BorderPane>
                </children>
             </VBox>
          </center>

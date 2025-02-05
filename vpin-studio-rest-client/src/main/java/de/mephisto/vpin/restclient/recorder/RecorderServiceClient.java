@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /*********************************************************************************************************************
@@ -21,7 +22,13 @@ public class RecorderServiceClient extends VPinStudioClientService {
   }
 
   public List<FrontendPlayerDisplay> getRecordingScreens() {
-    return Arrays.asList(getRestClient().get(API + "recorder/screens", FrontendPlayerDisplay[].class));
+    try {
+      return Arrays.asList(getRestClient().get(API + "recorder/screens", FrontendPlayerDisplay[].class));
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load frontend recording screens: {}", e.getMessage(), e);
+    }
+    return Collections.emptyList();
   }
 
   public JobDescriptor startRecording(RecordingDataSummary data) {
