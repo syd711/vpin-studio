@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -10,8 +11,15 @@
    <padding>
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
-   <left>
-      <VBox prefWidth="500.0" BorderPane.alignment="CENTER">
+   <center>
+      <ScrollPane BorderPane.alignment="CENTER">
+         <content>
+            <Pane fx:id="previewCanvas" minHeight="300.0" minWidth="300.0" styleClass="media-container" />
+         </content>
+      </ScrollPane>
+   </center>
+   <top>
+      <VBox prefHeight="150.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" right="12.0" />
          </BorderPane.margin>
@@ -19,8 +27,5 @@
             <Label styleClass="default-title" text="Screens Overview" />
          </children>
       </VBox>
-   </left>
-   <center>
-      <Pane fx:id="previewCanvas" minHeight="300.0" minWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
-   </center>
+   </top>
 </BorderPane>

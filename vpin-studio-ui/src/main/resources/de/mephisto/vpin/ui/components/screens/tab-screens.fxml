@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -25,17 +23,26 @@
                  <Tooltip text="Reload Screen Settings" />
               </tooltip>
            </Button>
+            <Button fx:id="zoomInBtn" mnemonicParsing="false" onAction="#zoomIn" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify-plus" iconSize="18" />
+               </graphic>
+            </Button>
+            <Button fx:id="zoomOutBtn" mnemonicParsing="false" onAction="#zoomOut" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-magnify-minus" iconSize="18" />
+               </graphic>
+            </Button>
         </items>
       </ToolBar>
    </top>
    <center>
-      <ScrollPane BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-         </BorderPane.margin>
-         <content>
-            <VBox fx:id="screenRoot" spacing="6.0" />
-         </content>
-      </ScrollPane>
+      <VBox fx:id="screenRoot" spacing="6.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

@@ -96,8 +96,11 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
   }
 
-  public FrontendScreenSummary getScreenSummary() {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendScreenSummary.class);
+  public FrontendScreenSummary getScreenSummary(boolean forceReload) {
+    if(forceReload) {
+      getRestClient().clearCache(API + API_SEGMENT_FRONTEND + "/screens");
+    }
+    return getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/screens", FrontendScreenSummary.class);
   }
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {
