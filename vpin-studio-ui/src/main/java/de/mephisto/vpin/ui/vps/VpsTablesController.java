@@ -239,7 +239,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
-      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), model.getUpdates(), null) : null;
+      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), false, model.getUpdates(), null) : null;
     });
 
     BaseLoadingColumn.configureLoadingColumn(commentColumn, "Loading...", (value, model) -> {

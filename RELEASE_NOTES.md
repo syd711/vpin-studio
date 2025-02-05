@@ -3,6 +3,7 @@
 ## Changes
 
 - **Tables / Table Overview**: Added new column **Rating**. You can directly rate the game inside the column without opening the data manager.
+- **Tables / Table overview**: Add disabled colors on new columns (playlists, rating, ...).
 - **Tables / Patching**: 
   - Added "Patch Version" field to the data manager for those who want to track this separately. **Note that by default, the value is written into the field "Custom5" for PinUP Popper users**. You can disable this in the server settings.
   - Added "Patch Version" field to the patch upload dialog.

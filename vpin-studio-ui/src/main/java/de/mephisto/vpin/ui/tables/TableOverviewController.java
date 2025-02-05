@@ -1115,7 +1115,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), model.getGame().getVpsUpdates(), uiSettings);
+      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), uiSettings);
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
@@ -1301,6 +1301,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label = new Label("-");
       }
       label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
       return label;
     }, this, true);
 
@@ -1315,7 +1316,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (int i = 0; i < rating; i++) {
         Label label = new Label();
         label.setUserData(index);
-        FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star", getIconColor(value));
         icon.setIconSize(20);
         label.setGraphic(icon);
         label.setCursor(Cursor.HAND);
@@ -1327,7 +1328,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (int i = 0; i < nonRating; i++) {
         Label label = new Label();
         label.setUserData(index);
-        FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline");
+        FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline", getIconColor(value));
         label.setGraphic(icon);
         icon.setIconSize(20);
         icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
@@ -1349,12 +1350,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label = new Label("-");
       }
       label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
       return label;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnLauncher, (value, model) -> {
       Label label = new Label(model.getGame().getLauncher());
       label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
       return label;
     }, this, true);
 
@@ -1367,6 +1370,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setTooltip(new Tooltip(text));
       }
       label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
       return label;
     }, this, true);
 
@@ -1391,7 +1395,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
-          Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings);
+          Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings, value.isDisabled());
           if (match.getId() >= 0) {
             Button plButton = new Button("", playlistIcon.getGraphic());
             plButton.getStyleClass().add("ghost-button-tiny");
@@ -1744,7 +1748,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       editorRootStack.getChildren().remove(node);
     }
   }
-
 
   private String getIconColor(GameRepresentation value) {
     if (value.isDisabled()) {

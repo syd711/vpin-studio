@@ -219,9 +219,13 @@ public class WidgetFactory {
   }
 
   public static FontIcon createIcon(String s) {
+    return createIcon(s, null);
+  }
+
+  public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null? color : "#FFFFFF"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -318,6 +322,9 @@ public class WidgetFactory {
   }
 
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings) {
+    return createPlaylistIcon(playlist, uiSettings, false);
+  }
+  public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
@@ -367,6 +374,10 @@ public class WidgetFactory {
     }
     else if (playlist.getName().endsWith(" M")) {
       fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+    }
+
+    if (disabled) {
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
     }
 
     label.setGraphic(fontIcon);
