@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class ScreenPreviewService implements InitializingBean {
     }
   }
 
-  public void capture(@NonNull OutputStream out, @NonNull ScreenInfo display) {
+  public void capture(@NonNull OutputStream out, @NonNull MonitorInfo display) {
     try {
       Rectangle rectangle = new Rectangle((int) display.getX(), (int) display.getY(), display.getWidth(), display.getHeight());
       Robot robot = new Robot();

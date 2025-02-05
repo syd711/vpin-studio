@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -173,7 +173,7 @@ public class RecorderService {
   }
 
   public void refreshPreview(OutputStream out, int monitorId) {
-    Optional<ScreenInfo> monitor = systemService.getScreenInfos().stream().filter(s -> s.getId() == monitorId).findFirst();
+    Optional<MonitorInfo> monitor = systemService.getMonitorInfos().stream().filter(s -> s.getId() == monitorId).findFirst();
     if (monitor.isPresent()) {
       screenPreviewService.capture(out, monitor.get());
     }

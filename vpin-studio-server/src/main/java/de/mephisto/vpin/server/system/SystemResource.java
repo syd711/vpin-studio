@@ -168,7 +168,7 @@ public class SystemResource {
   public SystemSummary info() {
     SystemSummary info = new SystemSummary();
     try {
-      info.setScreenInfos(systemService.getScreenInfos());
+      info.setScreenInfos(systemService.getMonitorInfos());
       info.setArchiveType(systemService.getArchiveType());
       info.setSystemId(SystemUtil.getUniqueSystemId());
     }
@@ -221,7 +221,7 @@ public class SystemResource {
         frontendService.killFrontend();
       }
       else {
-        if (request != null) {
+        if (request != null && request.getRequestURL() != null) {
           String url = request.getRequestURL().toString();
           boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
           if (remote) {

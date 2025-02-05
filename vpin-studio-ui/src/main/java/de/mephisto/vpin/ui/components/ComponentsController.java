@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -32,6 +33,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.fx.Features.SCREEN_MANAGER_ENABLED;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -67,6 +69,12 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   private TabPane tabPane;
+
+  @FXML
+  private TabPane rootTabPane;
+
+  @FXML
+  private Tab screensTab;
 
   @FXML
   private Pane alx1;
@@ -163,6 +171,21 @@ public class ComponentsController implements Initializable, StudioFXController, 
     });
 
     updateForTabSelection(0);
+
+    if (SCREEN_MANAGER_ENABLED) {
+      try {
+        FXMLLoader loader = new FXMLLoader(ScreensController.class.getResource("tab-screens.fxml"));
+        Parent builtInRoot = loader.load();
+        screensTab.setContent(builtInRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load tab: " + e.getMessage(), e);
+      }
+    }
+    else {
+      rootTabPane.getTabs().remove(screensTab);
+    }
+
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);

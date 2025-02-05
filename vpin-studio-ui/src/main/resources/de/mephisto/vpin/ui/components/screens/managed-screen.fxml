@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="250.0" styleClass="accordion-container" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.screens.ManagedScreenController">
+   <center>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <Pane fx:id="previewCanvas" minHeight="300.0" minWidth="300.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+         </center>
+         <left>
+            <VBox prefWidth="350.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="titleLabel" styleClass="default-title" text="Screen" />
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" right="12.0" />
+               </BorderPane.margin>
+            </VBox>
+         </left>
+      </BorderPane>
+   </center>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+</BorderPane>

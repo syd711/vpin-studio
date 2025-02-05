@@ -68,3 +68,8 @@ Assuming you use IDEA:
   - https://kordamp.org/ikonli/cheat-sheet-materialdesign2.html#_s_materialdesigns
   - https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
   - https://kordamp.org/ikonli/cheat-sheet-simplelineicons.html
+
+## How to setup jinput
+
+- search for the file jinput-dx8_64.dll in the workspace
+- copy this into the bin folder of the JDK you are using

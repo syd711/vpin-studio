@@ -15,8 +15,6 @@ import java.util.Date;
 public class SystemServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private SystemSummary systemSummary;
-
   public SystemServiceClient(VPinStudioClient client) {
     super(client);
   }

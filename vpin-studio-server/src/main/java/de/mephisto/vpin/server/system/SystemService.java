@@ -1,15 +1,17 @@
 package de.mephisto.vpin.server.system;
 
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
@@ -20,13 +22,9 @@ import de.mephisto.vpin.server.util.VersionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -36,9 +34,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
-
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -401,11 +396,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-
-  public File getVPinStudioMenuExe() {
-    return new File("./VPin-Studio-Table-Manager.exe");
-  }
-
   public ArchiveType getArchiveType() {
     return archiveType;
   }
@@ -414,43 +404,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     this.archiveType = archiveType;
   }
 
-  public List<ScreenInfo> getScreenInfos() {
-    List<ScreenInfo> result = new ArrayList<>();
-    int index = 1;
-    ObservableList<Screen> screens = Screen.getScreens();
-    for (Screen screen : screens) {
-      ScreenInfo info = createScreenInfo(screen);
-      info.setId(index);
-      result.add(info);
-      index++;
-    }
-    return result;
-  }
-
-  @NotNull
-  private static ScreenInfo createScreenInfo(Screen screen) {
-    ScreenInfo info = new ScreenInfo();
-    Rectangle2D screenBounds = screen.getBounds();
-    info.setX(screenBounds.getMinX());
-    info.setY(screenBounds.getMinY());
-    info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-    info.setPrimary(screen.equals(Screen.getPrimary()));
-    info.setHeight((int) screenBounds.getHeight());
-    info.setWidth((int) screenBounds.getWidth());
-
-    if (screen.getOutputScaleX() > 1) {
-      info.setOriginalWidth((int) (info.getWidth() * screen.getOutputScaleX()));
-    }
-    else {
-      info.setOriginalWidth(info.getWidth());
-    }
-    if (screen.getOutputScaleY() > 1) {
-      info.setOriginalHeight((int) (info.getHeight() * screen.getOutputScaleY()));
-    }
-    else {
-      info.setOriginalHeight(info.getHeight());
-    }
-    return info;
+  public List<MonitorInfo> getMonitorInfos() {
+    return MonitorInfoUtil.getMonitors();
   }
 
   /**

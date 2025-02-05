@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.monitor;
 
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class MonitoringManager {
   private final static MonitoringManager INSTANCE = new MonitoringManager();
 
   private Map<FrontendPlayerDisplay, CachedImage> screenCache = new ConcurrentHashMap<>();
-  private Map<ScreenInfo, CachedImage> monitorCache = new ConcurrentHashMap<>();
+  private Map<MonitorInfo, CachedImage> monitorCache = new ConcurrentHashMap<>();
   private int cacheTimeSeconds = 2;
   private int recordingRefresh = 2;
   private int monitoringRefresh = 2;
@@ -59,13 +59,13 @@ public class MonitoringManager {
   }
 
 
-  public Image getMonitorImage(ScreenInfo screenInfo) {
-    if (!monitorCache.containsKey(screenInfo) || !monitorCache.get(screenInfo).isValid()) {
-      Image imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/previewmonitor/" + screenInfo.getId());
-      monitorCache.put(screenInfo, new CachedImage(imageCached));
+  public Image getMonitorImage(MonitorInfo monitorInfo) {
+    if (!monitorCache.containsKey(monitorInfo) || !monitorCache.get(monitorInfo).isValid()) {
+      Image imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/previewmonitor/" + monitorInfo.getId());
+      monitorCache.put(monitorInfo, new CachedImage(imageCached));
     }
 
-    return monitorCache.get(screenInfo).getImage();
+    return monitorCache.get(monitorInfo).getImage();
   }
 
   private class CachedImage {
