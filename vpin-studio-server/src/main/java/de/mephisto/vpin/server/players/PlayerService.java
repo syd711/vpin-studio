@@ -28,7 +28,14 @@ public class PlayerService {
   private AssetRepository assetRepository;
 
   public List<Player> getBuildInPlayers() {
-    List<Player> all = playerRepository.findAll();
+    List<Player> all = null;
+    try {
+      all = playerRepository.findAll();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load all players: {}", e.getMessage(), e);
+      all = new ArrayList<>();
+    }
     all.sort(Comparator.comparing(Player::getName));
 
     PlayerDomain[] domains = PlayerDomain.values();
@@ -141,7 +148,7 @@ public class PlayerService {
         Player duplicate = initials.get(player.getInitials());
 
         if ((duplicate.getDomain() == null && player.getDomain() == null) ||
-          duplicate.getDomain() != null && player.getDomain() != null) {
+            duplicate.getDomain() != null && player.getDomain() != null) {
           duplicate.setDuplicatePlayerName(player.getName());
           player.setDuplicatePlayerName(duplicate.getName());
         }
