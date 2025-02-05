@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,14 +30,14 @@ public class ScreenRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorder.class);
 
   @NonNull
-  private final RecordingScreen recordingScreen;
+  private final FrontendPlayerDisplay recordingScreen;
   @NonNull
   private final File target;
 
   private SystemCommandExecutor executor;
   private boolean cancelled = false;
 
-  public ScreenRecorder(@NonNull RecordingScreen recordingScreen, @NonNull File target) {
+  public ScreenRecorder(@NonNull FrontendPlayerDisplay recordingScreen, @NonNull File target) {
     this.recordingScreen = recordingScreen;
     this.target = target;
   }
@@ -58,19 +58,19 @@ public class ScreenRecorder {
         }
       }
 
-      int width = recordingScreen.getDisplay().getWidth();
+      int width = recordingScreen.getWidth();
       if (width % 2 == 1) {
         width--;
       }
 
-      int height = recordingScreen.getDisplay().getHeight();
+      int height = recordingScreen.getHeight();
       if (height % 2 == 1) {
         height--;
       }
 
       String videoSize = width + "x" + height;
-      String offsetX = String.valueOf(recordingScreen.getDisplay().getX());
-      String offsetY = String.valueOf(recordingScreen.getDisplay().getY());
+      String offsetX = String.valueOf(recordingScreen.getX());
+      String offsetY = String.valueOf(recordingScreen.getY());
       String duration = String.valueOf(options.getRecordingDuration());
 
       File resources = new File(SystemInfo.RESOURCES);
@@ -129,7 +129,7 @@ public class ScreenRecorder {
       commandList.add("25");
       commandList.add("-pix_fmt");
       commandList.add("yuv420p");
-      if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.getDisplay().isInverted()) {
+      if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
         commandList.add("-vf");
         commandList.add("\"transpose=2,transpose=2\"");
       }

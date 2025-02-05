@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.recorder;
 
-import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FrontendRecorderJob implements Job {
@@ -27,11 +25,11 @@ public class FrontendRecorderJob implements Job {
   final FrontendStatusService frontendStatusService;
   final RecorderSettings recorderSettings;
   final RecordingDataSummary recordingDataSummary;
-  final List<RecordingScreen> recordingScreens;
+  final List<FrontendPlayerDisplay> recordingScreens;
 
   GameRecorder gameRecorder;
 
-  public FrontendRecorderJob(DMDPositionService dmdPositionService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+  public FrontendRecorderJob(DMDPositionService dmdPositionService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
     this.dmdPositionService = dmdPositionService;
     this.gameService = gameService;
     this.frontend = frontend;
@@ -186,36 +184,7 @@ public class FrontendRecorderJob implements Job {
    * @param game the game to customize the recording screens for
    * @return the adapted screens
    */
-  protected List<RecordingScreen> getRecordingScreensForGame(Game game) {
-    List<RecordingScreen> updated = new ArrayList<>();
-    for (RecordingScreen recordingScreen : recordingScreens) {
-      //TODO
-//      if (recordingScreen.getScreen().equals(VPinScreen.DMD)) {
-//        DMDInfo dmdInfo = dmdPositionService.getDMDInfo(game.getId());
-//
-//        int x = (int) (recordingScreen.getDisplay().getX() + dmdInfo.getX());
-//        int y = (int) (recordingScreen.getDisplay().getY() + dmdInfo.getY());
-//
-//        FrontendPlayerDisplay updatedDisplay = new FrontendPlayerDisplay();
-//        updatedDisplay.setHeight((int) dmdInfo.getHeight());
-//        updatedDisplay.setWidth((int) dmdInfo.getWidth());
-//        updatedDisplay.setX(x);
-//        updatedDisplay.setY(y);
-//        updatedDisplay.setName(recordingScreen.getDisplay().getName());
-//        updatedDisplay.setScreen(recordingScreen.getDisplay().getScreen());
-//        updatedDisplay.setRotation(recordingScreen.getDisplay().getRotation());
-//        updatedDisplay.setMonitor(recordingScreen.getDisplay().getMonitor());
-//        updatedDisplay.setInverted(recordingScreen.getDisplay().isInverted());
-//
-//        RecordingScreen updatedScreen = new RecordingScreen();
-//        updatedScreen.setScreen(VPinScreen.DMD);
-//        updatedScreen.setDisplay(updatedDisplay);
-//        updated.add(updatedScreen);
-//        continue;
-//      }
-
-      updated.add(recordingScreen);
-    }
-    return updated;
+  protected List<FrontendPlayerDisplay> getRecordingScreensForGame(Game game) {
+    return recordingScreens;
   }
 }

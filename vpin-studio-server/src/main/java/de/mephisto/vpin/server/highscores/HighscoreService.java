@@ -600,7 +600,7 @@ public class HighscoreService implements InitializingBean {
         }
 
         if (i >= oldScores.size()) {
-          LOG.warn("The number of score entries of the old scores and the new scores do differ: " + oldScores.size() + " vs. " + newScores.size());
+          LOG.warn("The number of score entries of the old scores and the new scores do differ: " + oldScores.size() + " vs. " + newScores.size() + " (duplicates filtered?)");
           continue;
         }
 

@@ -35,6 +35,7 @@
                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                  <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
                                  <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="105.0" style="-fx-alignment: CENTER;" text="VPS Status" />
+                                 <TableColumn fx:id="columnPatchVersion" minWidth="80.0" prefWidth="105.0" style="-fx-alignment: BASELINE_LEFT;" text="Patch Version" />
                                  <TableColumn fx:id="columnPlaylists" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Playlists" />
                                  <TableColumn fx:id="columnRating" minWidth="51.199951171875" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="Rating" />
                                  <TableColumn fx:id="columnB2S" minWidth="51.199951171875" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Backglass" />

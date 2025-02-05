@@ -320,11 +320,15 @@ public class GameMediaService {
       if (tableDetails != null && autoFill) {
         frontendService.autoFill(game, tableDetails, false);
       }
+
+      TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+      frontendService.saveTableDetails(game.getId(), tableDetails);
       LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
     }
   }
 
   public void uploadAndImport(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
     File tablesFolder = gameEmulator.getTablesFolder();
@@ -356,8 +360,11 @@ public class GameMediaService {
 
         TableDetails tableDetails = getTableDetails(game.getId());
         if (tableDetails != null && uploadDescriptor.isAutoFill()) {
-          frontendService.autoFill(game, tableDetails, false);
+          tableDetails = frontendService.autoFill(game, tableDetails, false);
         }
+
+        TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+        frontendService.saveTableDetails(game.getId(), tableDetails);
 
         uploadDescriptor.setGameId(returningGameId);
         LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
@@ -366,6 +373,8 @@ public class GameMediaService {
   }
 
   public void uploadAndClone(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
     LOG.info("Starting cloning for {}", temporaryVPXFile.getAbsolutePath());
     GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
     TableDetails tableDetails = getTableDetails(uploadDescriptor.getGameId());
@@ -413,6 +422,7 @@ public class GameMediaService {
       tableDetailsClone.setGameFileName(fileName);
       tableDetailsClone.setGameDisplayName(original.getGameDisplayName() + " (cloned)");
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
+      TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
 
       saveTableDetails(tableDetailsClone, returningGameId, false);
       frontendService.updateTableFileUpdated(returningGameId);

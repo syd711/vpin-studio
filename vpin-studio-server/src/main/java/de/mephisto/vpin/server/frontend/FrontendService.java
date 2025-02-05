@@ -83,6 +83,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().getFrontend();
   }
 
+  public String getFrontendName() {
+    return getFrontend().getName();
+  }
+
   public File getFrontendInstallationFolder() {
     return getFrontendConnector().getInstallationFolder();
   }
@@ -578,7 +582,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @Nullable
   public FrontendPlayerDisplay getFrontendPlayerDisplays(@NonNull VPinScreen screen) {
     List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays();
-    return VPinScreen.valueOfScreen(displays, screen);
+    return FrontendPlayerDisplay.valueOfScreen(displays, screen);
   }
 
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {

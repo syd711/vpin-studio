@@ -95,6 +95,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnVersion;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPatchVersion;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnEmulator;
 
   @FXML
@@ -1051,6 +1054,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+    BaseLoadingColumn.configureColumn(columnPatchVersion, (value, model) -> {
+      Label label = new Label(value.getPatchVersion());
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(value));
+      return label;
+    }, this, true);
+
     BaseLoadingColumn.configureColumn(columnRom, (value, model) -> {
       String rom = value.getRom();
       List<Integer> ignoredValidations = Collections.emptyList();
@@ -1951,6 +1961,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
     columnVPS.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportRating() && uiSettings.isColumnRating());

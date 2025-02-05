@@ -30,11 +30,20 @@ public class UploadDescriptor {
   private String rom;
   private boolean async;
   private boolean acceptAllAudioAsMusic;
+  private String patchVersion;
 
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
 
   private List<File> tempFiles = new ArrayList<>();
+
+  public String getPatchVersion() {
+    return patchVersion;
+  }
+
+  public void setPatchVersion(String patchVersion) {
+    this.patchVersion = patchVersion;
+  }
 
   public boolean isAsync() {
     return async;

@@ -43,16 +43,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
       Optional<Competition> optionalCompetition = competitionService.getIScoredSubscriptions().stream().filter(s -> s.getGameId() == game.getId()).findFirst();
       if (optionalCompetition.isPresent()) {
         Competition iScoredSubscription = optionalCompetition.get();
-        String url = iScoredSubscription.getUrl();
-        if (iScoredService.isIscoredGameRoomUrl(url)) {
-          LOG.info("Emitting iScored game score to " + url);
-          SLOG.info("Emitting iScored game score to " + url);
-          iScoredService.submitScore(url, newScore, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
-        }
-        else {
-          LOG.warn("The URL of " + iScoredSubscription + " (" + iScoredSubscription.getUrl() + ") is not a valid iScored URL.");
-          SLOG.warn("The URL of " + iScoredSubscription + " (" + iScoredSubscription.getUrl() + ") is not a valid iScored URL.");
-        }
+        iScoredService.submitScore(iScoredSubscription, newScore);
       }
       else {
         LOG.info("No iScored update sent, because there is no iScored subscription for table \"" + game.getGameDisplayName() + "\"");

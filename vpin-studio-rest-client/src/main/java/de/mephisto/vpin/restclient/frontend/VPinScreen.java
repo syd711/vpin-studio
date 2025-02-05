@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient.frontend;
 
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,15 +63,6 @@ public enum VPinScreen {
     }
     if (PlayField.name().equalsIgnoreCase(name)) {
       return PlayField;
-    }
-    return null;
-  }
-
-  public static FrontendPlayerDisplay valueOfScreen(List<FrontendPlayerDisplay> displays, VPinScreen screen) {
-    for (FrontendPlayerDisplay display : displays) {
-      if (display.getScreen() != null && display.getScreen().equals(screen)) {
-        return display;
-      }
     }
     return null;
   }

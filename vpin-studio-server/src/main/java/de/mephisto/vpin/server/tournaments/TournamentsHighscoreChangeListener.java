@@ -114,11 +114,11 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
                     LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
                   }
                   else {
-                    TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
+                    maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
                     LOG.info("Linked " + createdTableScore + " to " + tournament);
                   }
 
-                  if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                  if (accountByUuid != null) {
                     iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
                   }
                 }
