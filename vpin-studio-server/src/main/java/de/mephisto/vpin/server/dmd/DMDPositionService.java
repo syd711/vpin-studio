@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.dmd;
 
-import de.mephisto.vpin.commons.MonitorInfo;
-import de.mephisto.vpin.commons.MonitorInfoUtil;
+import com.google.common.io.Files;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -11,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -19,8 +19,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.video.VideoConverterService;
-
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
@@ -31,23 +31,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.io.Files;
-
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Service
 public class DMDPositionService {
@@ -63,6 +52,8 @@ public class DMDPositionService {
   private FrontendService frontendService;
   @Autowired
   private VideoConverterService videoConverterService;
+  @Autowired
+  private SystemService systemService;
 
 
   public DMDInfo getDMDInfo(int gameId) {
@@ -173,9 +164,7 @@ public class DMDPositionService {
   }
 
   private void addDeviceOffsets(DirectB2sScreenRes screenres) {
-    List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
-    // sort by xPosition
-    monitors.sort((m1, m2) -> m1.getScreenX() - m2.getScreenX());
+    List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
     MonitorInfo monitor = null;
 
@@ -184,7 +173,7 @@ public class DMDPositionService {
     if (backglassDisplay.startsWith("@")) {
       int xPos = Integer.parseInt(backglassDisplay.substring(1));
       for (MonitorInfo m : monitors) {
-        if (m.getScreenX() == xPos) {
+        if (m.getX() == xPos) {
           monitor = m;
         }
       }
@@ -195,15 +184,15 @@ public class DMDPositionService {
     }
     else {
       for (MonitorInfo m : monitors) {
-        if (m.getDeviceName().endsWith(backglassDisplay)) {
+        if (m.getName().endsWith(backglassDisplay)) {
           monitor = m;
         }
       }
     }
 
     if (monitor != null) {
-      screenres.setBackglassDisplayX(monitor.getScreenX());
-      screenres.setBackglassDisplayY(monitor.getScreenY());
+      screenres.setBackglassDisplayX((int) monitor.getX());
+      screenres.setBackglassDisplayY((int) monitor.getY());
     }
   }
 
@@ -499,7 +488,7 @@ public class DMDPositionService {
       }
       else {
         TableDetails tableDetails = frontendService.getTableDetails(gameId);
-        String keepDisplays = tableDetails!=null? tableDetails.getKeepDisplays(): null;
+        String keepDisplays = tableDetails != null ? tableDetails.getKeepDisplays() : null;
         if (StringUtils.isNotEmpty(keepDisplays)) {
           boolean keepFullDmd = VPinScreen.keepDisplaysContainsScreen(keepDisplays, VPinScreen.Menu);
           if (keepFullDmd) {
@@ -519,12 +508,13 @@ public class DMDPositionService {
       }
     }
     // else all other cases
-    return null; 
+    return null;
   }
 
   /**
    * Extracts a frame from a video file.
    * ffmpeg -i vido.mp4 -ss 00:00:05 -vframes 1 frame_out.jpg
+   *
    * @param file the video file
    */
   private byte[] extractFrame(File file) {

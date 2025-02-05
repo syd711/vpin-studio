@@ -270,7 +270,6 @@ public class VPinScreenService {
   //----------------------------------------------------------------- FRONTEND ---
 
   private List<FrontendPlayerDisplay> getFrontendDisplays() {
-    List<FrontendPlayerDisplay> frontendDisplays = frontendService.getFrontendPlayerDisplays();
-    return frontendDisplays;
+    return frontendService.getFrontendPlayerDisplays();
   }
 }

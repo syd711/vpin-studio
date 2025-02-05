@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
@@ -163,7 +163,7 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
   private Spinner<Integer> ySize;
 
   @FXML
-  private ComboBox<ScreenInfo> screenInfoComboBox;
+  private ComboBox<MonitorInfo> screenInfoComboBox;
 
   @FXML
   private Button restartBtn;
@@ -285,9 +285,9 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
     screenInfoComboBox.setItems(FXCollections.observableList(systemSummary.getScreenInfos()));
     screenInfoComboBox.valueProperty().setValue(systemSummary.getScreenInfo(settings.getInt(SETTING_SCREEN)));
-    screenInfoComboBox.valueProperty().addListener(new ChangeListener<ScreenInfo>() {
+    screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override
-      public void changed(ObservableValue<? extends ScreenInfo> observableValue, ScreenInfo screenInfo, ScreenInfo t1) {
+      public void changed(ObservableValue<? extends MonitorInfo> observableValue, MonitorInfo monitorInfo, MonitorInfo t1) {
         settings.set(SETTING_SCREEN, t1.getId());
       }
     });

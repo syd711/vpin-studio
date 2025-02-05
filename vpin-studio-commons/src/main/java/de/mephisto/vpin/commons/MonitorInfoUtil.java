@@ -14,18 +14,20 @@ import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.OSUtil;
 
 /**
  * A small demo that tests the Win32 monitor API.
  * All available physical and virtual monitors are enumerated and
  * their capabilities printed to stdout
+ *
  * @author Martin Steiger
  */
-public class MonitorInfoUtil
-{
+public class MonitorInfoUtil {
   /**
    * List monitors
+   *
    * @param args (ignored)
    */
   public static void main(String[] args) {
@@ -33,31 +35,38 @@ public class MonitorInfoUtil
 
     System.out.println("Monitors: " + monitors.size());
     for (MonitorInfo monitor : monitors) {
-      System.out.println(monitor.getDeviceName() 
+      System.out.println(monitor.getName()
           + (monitor.isPrimary() ? " (Primary)" : "")
-          + " : " + monitor.getScreenX()+","+monitor.getScreenY() 
-          + " - " + monitor.getScreenWidth() + "x" + monitor.getScreenHeight());
+          + " : " + monitor.getX() + "," + monitor.getY()
+          + " - " + monitor.getWidth() + "x" + monitor.getHeight()
+          + " - " + monitor.isPortraitMode());
     }
   }
 
   public static List<MonitorInfo> getMonitors() {
     List<MonitorInfo> monitors = new ArrayList<>();
-
     if (OSUtil.isWindows()) {
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
         @Override
         public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
-          monitors.add(enumerate(hMonitor));
-            return 1;
+          MonitorInfo mon = enumerate(hMonitor);
+          mon.setId(monitors.size());
+          monitors.add(mon);
+          return 1;
         }
       }, new LPARAM(0));
     }
     else {
+      int index = 0;
       GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
       for (GraphicsDevice gd : gds) {
-        monitors.add(gdToMonitorInfo(gd));
+        monitors.add(gdToMonitorInfo(gd, index));
+        index++;
       }
     }
+
+    // sort by xPosition
+    monitors.sort((m1, m2) -> (int) (m1.getX() - m2.getX()));
     return monitors;
   }
 
@@ -68,33 +77,39 @@ public class MonitorInfoUtil
     User32.INSTANCE.GetMonitorInfo(hMonitor, info);
     RECT screen = info.rcMonitor;
     //RECT workArea = info.rcWork;
-    monitor.setScreenX(screen.left);
-    monitor.setScreenY(screen.top);
-    monitor.setScreenWidth(screen.right - screen.left);
-    monitor.setScreenHeight(screen.bottom - screen.top);
-    
+    monitor.setX(screen.left);
+    monitor.setY(screen.top);
+    monitor.setWidth(screen.right - screen.left);
+    monitor.setHeight(screen.bottom - screen.top);
+
     boolean isPrimary = (info.dwFlags & WinUser.MONITORINFOF_PRIMARY) != 0;
     monitor.setPrimary(isPrimary);
+    monitor.setPortraitMode(monitor.getWidth() < monitor.getHeight());
 
     String deviceName = new String(info.szDevice);
-    monitor.setDeviceName(deviceName.trim());
+    monitor.setName(deviceName.trim());
     return monitor;
   }
 
-  private static MonitorInfo gdToMonitorInfo(GraphicsDevice gd) {
+  private static MonitorInfo gdToMonitorInfo(GraphicsDevice gd, int index) {
     MonitorInfo monitor = new MonitorInfo();
 
     java.awt.Rectangle bounds = gd.getDefaultConfiguration().getBounds();
-    monitor.setScreenX(bounds.x);
-    monitor.setScreenY(bounds.y);
-    monitor.setScreenWidth(bounds.width);
-    monitor.setScreenHeight(bounds.height);
-    
+    monitor.setX(bounds.x);
+    monitor.setY(bounds.y);
+    monitor.setWidth(bounds.width);
+    monitor.setHeight(bounds.height);
+    monitor.setId(index);
+
     boolean isPrimary = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice() == gd;
     monitor.setPrimary(isPrimary);
+    monitor.setPortraitMode(bounds.width < bounds.height);
 
     String deviceName = gd.getIDstring();
-    monitor.setDeviceName(deviceName);
+    if (deviceName != null) {
+      deviceName = deviceName.replaceAll("\\\\", "").replaceAll("\\.", "");
+    }
+    monitor.setName(deviceName);
     return monitor;
   }
 

@@ -1,13 +1,14 @@
 package de.mephisto.vpin.ui.components.screens;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,15 +25,19 @@ public class ManagedScreenController implements Initializable {
 
   @FXML
   private Pane previewCanvas;
-  private ScreenInfo screenInfo;
+
+  @FXML
+  private Label titleLabel;
+
+  private MonitorInfo monitorInfo;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
 
   }
 
-  public void setData(ScreenInfo screenInfo) {
-    this.screenInfo = screenInfo;
+  public void setData(MonitorInfo monitorInfo) {
+    this.monitorInfo = monitorInfo;
     this.previewCanvas.setPrefWidth(Studio.stage.getWidth() - OFFSET);
 
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
@@ -49,12 +54,14 @@ public class ManagedScreenController implements Initializable {
   }
 
   private void refreshPreview() {
-    double width = screenInfo.getWidth();
-    double height = screenInfo.getHeight();
+    titleLabel.setText(monitorInfo.getName());
+
+    double width = monitorInfo.getWidth();
+    double height = monitorInfo.getHeight();
 
     if (height > width) {
-      width = screenInfo.getHeight();
-      height = screenInfo.getWidth();
+      width = monitorInfo.getHeight();
+      height = monitorInfo.getWidth();
     }
 
     double targetWidth = (previewCanvas.getWidth() - 12);

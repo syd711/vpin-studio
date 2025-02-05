@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.monitor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.monitor.panels.ScreenPanelController;
 import javafx.fxml.FXMLLoader;
@@ -25,22 +25,22 @@ public class MonitorsView implements IMonitoringView {
   private final static Logger LOG = LoggerFactory.getLogger(MonitorsView.class);
   private final FlowPane flowPane;
 
-  private Map<ScreenInfo, ScreenPanelController> controllers = new HashMap<>();
+  private Map<MonitorInfo, ScreenPanelController> controllers = new HashMap<>();
 
   public MonitorsView(Stage stage, CabMonitorController recorderController, ScrollPane scrollPane) {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
-    List<ScreenInfo> screenInfos = systemSummary.getScreenInfos();
+    List<MonitorInfo> monitorInfos = systemSummary.getScreenInfos();
     flowPane = new FlowPane();
-    for (ScreenInfo screenInfo : screenInfos) {
+    for (MonitorInfo monitorInfo : monitorInfos) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreenPanelController.class.getResource("screen-monitor-panel.fxml"));
         Parent panelRoot = loader.load();
         ScreenPanelController screenPanelController = loader.getController();
-        controllers.put(screenInfo, screenPanelController);
+        controllers.put(monitorInfo, screenPanelController);
         screenPanelController.setZoom(settings.getScaling());
-        screenPanelController.setData(stage, recorderController, screenInfo);
+        screenPanelController.setData(stage, recorderController, monitorInfo);
         flowPane.getChildren().add(panelRoot);
       }
       catch (IOException e) {

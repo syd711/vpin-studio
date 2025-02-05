@@ -15,7 +15,7 @@ public class SystemTest extends AbstractVPinServerTest {
     assertTrue(systemService.getBackupFolder().exists());
     assertNotNull(systemService.getArchiveType());
 
-    assertFalse(systemService.getScreenInfos().isEmpty());
+    assertFalse(systemService.getMonitorInfos().isEmpty());
     assertFalse(systemService.getCompetitionBadges().isEmpty());
   }
 }

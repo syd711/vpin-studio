@@ -24,29 +24,29 @@ public class SystemSummary {
     this.archiveType = archiveType;
   }
 
-  private List<ScreenInfo> screenInfos;
+  private List<MonitorInfo> monitorInfos;
 
-  public List<ScreenInfo> getScreenInfos() {
-    return screenInfos;
+  public List<MonitorInfo> getScreenInfos() {
+    return monitorInfos;
   }
 
-  public void setScreenInfos(List<ScreenInfo> screenInfos) {
-    this.screenInfos = screenInfos;
+  public void setScreenInfos(List<MonitorInfo> monitorInfos) {
+    this.monitorInfos = monitorInfos;
   }
 
-  public ScreenInfo getPrimaryScreen() {
-    for (ScreenInfo screenInfo : screenInfos) {
-      if (screenInfo.isPrimary()) {
-        return screenInfo;
+  public MonitorInfo getPrimaryScreen() {
+    for (MonitorInfo monitorInfo : monitorInfos) {
+      if (monitorInfo.isPrimary()) {
+        return monitorInfo;
       }
     }
     return null;
   }
 
-  public ScreenInfo getScreenInfo(int id) {
-    for (ScreenInfo screenInfo : screenInfos) {
-      if (screenInfo.getId() == id) {
-        return screenInfo;
+  public MonitorInfo getScreenInfo(int id) {
+    for (MonitorInfo monitorInfo : monitorInfos) {
+      if (monitorInfo.getId() == id) {
+        return monitorInfo;
       }
     }
     return null;

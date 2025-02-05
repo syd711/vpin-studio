@@ -1,30 +1,21 @@
 package de.mephisto.vpin.restclient.system;
 
-public class ScreenInfo {
+public class MonitorInfo {
   private boolean portraitMode;
   private boolean primary;
   private int width;
   private int height;
-  private int originalWidth;
-  private int originalHeight;
   private int id;
   private double x;
   private double y;
+  private String name;
 
-  public int getOriginalWidth() {
-    return originalWidth;
+  public String getName() {
+    return name;
   }
 
-  public void setOriginalWidth(int originalWidth) {
-    this.originalWidth = originalWidth;
-  }
-
-  public int getOriginalHeight() {
-    return originalHeight;
-  }
-
-  public void setOriginalHeight(int originalHeight) {
-    this.originalHeight = originalHeight;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public double getX() {
@@ -86,17 +77,17 @@ public class ScreenInfo {
   @Override
   public String toString() {
     if (primary) {
-      return "Monitor " + id + " (primary) [" + getOriginalWidth() + "x" + getOriginalHeight() + "]";
+      return "Monitor " + (id+1) + " (primary) [" + getWidth() + "x" + getHeight() + "]";
     }
-    return "Monitor " + id + " [" + getOriginalWidth() + "x" + getOriginalHeight() + "]";
+    return "Monitor " + (id+1) + " [" + getWidth() + "x" + getHeight() + "]";
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof ScreenInfo)) return false;
+    if (!(o instanceof MonitorInfo)) return false;
 
-    ScreenInfo that = (ScreenInfo) o;
+    MonitorInfo that = (MonitorInfo) o;
 
     return id == that.id;
   }
