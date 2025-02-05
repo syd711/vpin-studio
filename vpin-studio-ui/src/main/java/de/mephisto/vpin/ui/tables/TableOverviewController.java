@@ -1343,6 +1343,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings);
           if (match.getId() >= 0) {
             Button plButton = new Button("", playlistIcon.getGraphic());
+            plButton.setTooltip(new Tooltip(match.getName()));
             plButton.getStyleClass().add("ghost-button-tiny");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
