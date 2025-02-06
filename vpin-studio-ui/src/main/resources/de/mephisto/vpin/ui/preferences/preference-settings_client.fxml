@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -106,6 +107,21 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
+                  <CheckBox fx:id="uiShowWheelTooltip" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Show Playlist Wheels in Tooltip." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the tooltips will for playlists will include the wheel image if one is set for that playlist." textFill="WHITE" />
+                  <ComboBox fx:id="tooltipSizeCombo" layoutX="34.0" layoutY="804.0" prefWidth="200.0" promptText="Tooltip Wheel Size" visibleRowCount="3">
+                     <value>Small (50 px)</value>
+                     <value>Medium (100 px)</value>
+                     <value>Large (200 px)</value>
+                     <value>Tooltip Wheel Size</value>
+                  </ComboBox>
                   <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />

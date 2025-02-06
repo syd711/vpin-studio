@@ -14,9 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,4 +78,46 @@ public class PlaylistMediaServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+
+    @Nullable
+    public ByteArrayInputStream getPlayListMediaItem(int id, @Nullable VPinScreen screen, String filename) {
+        try {
+            if (screen == null) {
+                return null;
+            }
+           // LOG.info("Gettting Playlist media item: " + name + "/" + screen.name());
+
+            //Can we assume it's always a PNG?
+            String url = API + "playlistmedia/" + id + "/" + screen.name() + "/" + URLEncoder.encode(filename, Charset.defaultCharset()) + ".png";
+
+        //    LOG.info("ImageCache containsKey: " + client.getImageCache().containsKey(url));
+            if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
+                //LOG.info("Adding playlist media item: " + url);
+                byte[] bytes = getRestClient().readBinary(url);
+                if (bytes == null) {
+                    bytes = new byte[]{};
+                }
+                client.getImageCache().put(url, bytes);
+            }
+
+            if (screen.equals(VPinScreen.Wheel)) {
+               // LOG.info("Getting playlist media item: " + url);
+                byte[] imageBytes = client.getImageCache().get(url);
+                if (imageBytes == null || imageBytes.length == 0) {
+                    return null;
+                }
+                return new ByteArrayInputStream(imageBytes);
+            }
+
+            byte[] bytes = getRestClient().readBinary(url);
+            if (bytes != null) {
+                return new ByteArrayInputStream(bytes);
+            }
+        }
+        catch (Exception e) {
+            LOG.error("Error reading playlistmedia item for " + id + ": " + e.getMessage(), e);
+        }
+        return null;
+    }
 }
+
