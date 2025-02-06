@@ -61,12 +61,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1396,8 +1399,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings, value.isDisabled());
+
+          Tooltip tooltip = createPlaylistTooltip(match, playlistIcon);
           if (match.getId() >= 0) {
             Button plButton = new Button("", playlistIcon.getGraphic());
+            plButton.setTooltip(tooltip);
             plButton.getStyleClass().add("ghost-button-tiny");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
@@ -1489,6 +1495,27 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return row;
         });
 
+  }
+
+  @NotNull
+  public static Tooltip createPlaylistTooltip(PlaylistRepresentation match, Label playlistIcon) {
+    FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMediaCached(match.getId());
+    FrontendMediaItemRepresentation mediaItem = medias.getDefaultMediaItem(VPinScreen.Wheel);
+    Tooltip tooltip = new Tooltip(match.getName());
+    if (mediaItem != null) {
+      String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+      InputStream in = client.getCachedUrlImage(url);
+      if (in != null) {
+        Image scaledWheel = new Image(in, 150, 150, false, true);
+        ImageView imageView = new ImageView(scaledWheel);
+        tooltip.setGraphic(imageView);
+
+        Image icon = new Image(client.getCachedUrlImage(url), 24, 24, false, true);
+        playlistIcon.setGraphic(new ImageView(icon));
+      }
+    }
+    playlistIcon.setTooltip(tooltip);
+    return tooltip;
   }
 
   private void setGameRating(GameRepresentation value, int i) {
@@ -2073,6 +2100,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       setText(null);
       if (item != null) {
         Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
+        TableOverviewController.createPlaylistTooltip(item, playlistIcon);
         setGraphic(playlistIcon);
 
         setText(" " + item.toString());
