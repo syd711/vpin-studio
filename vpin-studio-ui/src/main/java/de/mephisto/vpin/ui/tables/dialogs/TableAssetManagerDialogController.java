@@ -548,11 +548,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
         serverAssetsList.refresh();
+
+        if (assets.isEmpty()) {
+          serverAssetsList.setPlaceholder(new Label("No matching assets found."));
+        }
         return;
       }
 
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
+      serverAssetsList.setPlaceholder(new Label("Enter a search term to find assets for this screen and table."));
       serverAssetsList.refresh();
     });
   }
@@ -814,7 +819,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No assets found for this screen and table."));
+    serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -1282,6 +1287,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       addToPlaylistBtn.setDisable(true);
 
       serverAssetsList.setItems(FXCollections.emptyObservableList());
+      serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
       serverAssetsList.refresh();
     }
 
