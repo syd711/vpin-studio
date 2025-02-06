@@ -2,6 +2,14 @@
 
 ## Changes
 
+- **Tables / Asset Manager**: Fixed search input field so that the search is triggered on enter pressed again.
+
+---
+
+## Release Notes 3.12.6
+
+## Changes
+
 - **MacOS Support**: The VPin Studio finally supports client installers for **x64 and arm**. Big shoutout to @gonzonia here!
 - **VPin Studio Server**: Added updating of launch and exit calls for VPX tables in PinballY.
 - **Tables / Media Preview**: Fixed "Other2" screen preview.

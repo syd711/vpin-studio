@@ -813,9 +813,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
-        if (isAutoSearchEnabled()) {
-          onSearch();
-        }
+        onSearch();
       }
     });
 
