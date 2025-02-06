@@ -1,4 +1,4 @@
-## Release Notes 3.12.6
+## Release Notes 3.12.7
 
 ## Changes
 
