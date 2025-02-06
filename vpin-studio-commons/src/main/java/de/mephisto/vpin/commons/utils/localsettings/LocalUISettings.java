@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.utils.localsettings;
 
 import de.mephisto.vpin.commons.utils.PropertiesStore;
+import de.mephisto.vpin.commons.utils.Updater;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.shape.Rectangle;
@@ -28,7 +29,9 @@ public class LocalUISettings {
   private static Map<String, Object> jsonSettingsCache = new HashMap<>();
 
   public static void initialize() {
-    File propertiesFile = new File("config/settings.properties");
+
+    File basePath = Updater.getBasePath();
+    File propertiesFile = new File(basePath, "config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
 
