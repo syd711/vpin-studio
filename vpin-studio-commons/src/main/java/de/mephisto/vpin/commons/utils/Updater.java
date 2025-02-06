@@ -36,7 +36,7 @@ public class Updater {
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
   public static boolean downloadUpdate(String versionSegment, String targetZip) {
-    File out = new File(getBasePath(), targetZip);
+    File out = new File(getWriteableBaseFolder(), targetZip);
     if (out.exists()) {
       out.delete();
     }
@@ -46,8 +46,8 @@ public class Updater {
   }
 
   public static int getDownloadProgress(String targetZip, long estimatedSize) {
-    File tmp = new File(getBasePath(), targetZip + DOWNLOAD_SUFFIX);
-    File zip = new File(getBasePath(), targetZip);
+    File tmp = new File(getWriteableBaseFolder(), targetZip + DOWNLOAD_SUFFIX);
+    File zip = new File(getWriteableBaseFolder(), targetZip);
     if (zip.exists()) {
       return 100;
     }
@@ -73,10 +73,10 @@ public class Updater {
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
-      String CheckBasePath = getBasePath().getAbsolutePath();
+      String CheckBasePath = getWriteableBaseFolder().getAbsolutePath();
       LOG.info("Setting tmp File at Base Path : " + CheckBasePath + ":" + target.getName() + ":" + DOWNLOAD_SUFFIX);
 
-      File tmp = new File(getBasePath(), target.getName() + DOWNLOAD_SUFFIX);
+      File tmp = new File(getWriteableBaseFolder(), target.getName() + DOWNLOAD_SUFFIX);
 
       if (tmp.exists()) {
         tmp.delete();
@@ -120,7 +120,7 @@ public class Updater {
     FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\ncd /d %~dp0\ndel VPin-Studio-Server.exe\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nwscript server.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(getBasePath());
+    executor.setDir(getWriteableBaseFolder());
     executor.executeCommandAsync();
     return true;
   }
@@ -132,7 +132,7 @@ public class Updater {
       LOG.info("Written temporary batch: " + cmds);
       List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(getBasePath());
+      executor.setDir(getWriteableBaseFolder());
       executor.executeCommandAsync();
       new Thread(() -> {
         try {
@@ -167,7 +167,7 @@ public class Updater {
   public static void restartServer() {
     List<String> commands = Arrays.asList("VPin-Studio-Server.exe");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(getBasePath());
+    executor.setDir(getWriteableBaseFolder());
     executor.executeCommandAsync();
   }
 
@@ -209,7 +209,7 @@ public class Updater {
     return false;
   }
 
-  private static File getBasePath() {
+  public static File getWriteableBaseFolder() {
     if (!OSUtil.isMac()) {
       LOG.info("Setting Base Path for Windows Download to -./");
       return new File("./");

@@ -109,16 +109,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   @Value("${vps.refreshInterval:2}")
   private int refreshInterval;
 
-  @Deprecated //do not use because of lazy scanning
+  /**
+   * Public API endpoint to fetch all games
+   *
+   * @return
+   */
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
-    List<Game> games = new ArrayList<>(frontendService.getGames());
-    LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
-    start = System.currentTimeMillis();
-
-    for (Game game : games) {
-      applyGameDetails(game, false, false);
-    }
+    List<Game> games = getKnownGames(-1);
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
   }

@@ -31,12 +31,12 @@ public class PlayerService {
     List<Player> all = null;
     try {
       all = playerRepository.findAll();
+      all.sort(Comparator.comparing(Player::getName));
     }
     catch (Exception e) {
       LOG.error("Failed to load all players: {}", e.getMessage(), e);
       all = new ArrayList<>();
     }
-    all.sort(Comparator.comparing(Player::getName));
 
     PlayerDomain[] domains = PlayerDomain.values();
     List<Player> allPlayers = new ArrayList<>();
@@ -83,9 +83,15 @@ public class PlayerService {
       return null;
     }
 
-    List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
-    if (players.size() > 1) {
-      LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
+    List<Player> players = new ArrayList<>();
+    try {
+      players = playerRepository.findByInitials(initials.toUpperCase());
+      if (players.size() > 1) {
+        LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to find players by initials: {}", e.getMessage(), e);
     }
 
     if (!players.isEmpty()) {
