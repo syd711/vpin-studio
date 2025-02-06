@@ -1346,8 +1346,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             Button plButton = new Button("", playlistIcon.getGraphic());
             Tooltip PlayListTooltip = new Tooltip(match.getName());
             if(!uiSettings.isHidePlaylistWheelTooltip()) {
+              int WheelSize = uiSettings.getPlaylistWheelTooltipSize();
+              if (WheelSize == 0) {WheelSize=50;}
               ByteArrayInputStream playlistMediaItem = client.getPlaylistMediaService().getPlayListMediaItem(match.getId(), VPinScreen.Wheel, match.getMediaName());
-              Image scaledWheel = match != null ? new Image(playlistMediaItem, uiSettings.getPlaylistWheelTooltipSize(), uiSettings.getPlaylistWheelTooltipSize(), false, true) : null;
+              Image scaledWheel = match != null ? new Image(playlistMediaItem, WheelSize, WheelSize, false, true) : null;
               ImageView WheelImageView = new ImageView(scaledWheel);
               PlayListTooltip.setGraphic(WheelImageView);
             }
