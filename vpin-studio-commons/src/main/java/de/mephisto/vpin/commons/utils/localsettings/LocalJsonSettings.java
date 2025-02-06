@@ -59,7 +59,7 @@ abstract public class LocalJsonSettings {
     String settingsFileName = configName + ".json";
     File parent = new File("./config/");
     if (!parent.exists()) {
-      parent = new File("../config/");
+      parent.mkdirs();
     }
 
     return new File(parent, settingsFileName);
