@@ -246,7 +246,8 @@ public class VPinScreenService {
   public FrontendScreenSummary getScreenSummary() {
     FrontendScreenSummary summary = new FrontendScreenSummary();
     summary.setScreenResDisplays(getScreenResDisplays());
-    summary.setFrontendDisplays(getFrontendDisplays());
+    //we do not want the cached version here
+    summary.setFrontendDisplays(frontendService.getFrontendConnector().getFrontendPlayerDisplays());
     summary.setVpxDisplaysDisplays(getVpxDisplays());
     return summary;
   }
