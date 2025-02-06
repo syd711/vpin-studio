@@ -127,13 +127,7 @@ public class ManagedScreenController implements Initializable {
     });
 
 
-    try {
-      Thread.sleep(200);
-      refreshPreview();
-    }
-    catch (InterruptedException e) {
-      //ignore
-    }
+    refreshPreview();
   }
 
   private void renderScreenCheckboxes(List<FrontendPlayerDisplay> frontendDisplays, VBox parent, List<CheckBox> result) {
