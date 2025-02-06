@@ -5,8 +5,9 @@
 - **MacOS Support**: The VPin Studio finally supports client installers for **x64 and arm**. Big shoutout to @gonzonia here!
 - **VPin Studio Server**: Added updating of launch and exit calls for VPX tables in PinballY.
 - **Tables / Media Preview**: Fixed "Other2" screen preview.
-- **Tables / Asset Manager** Dropping multiple files on the preview screens is now allowed (it was only 1x before).
-- **Tables / Asset Manager** Improved empty texts depending on the search state.
+- **Tables / Asset Manager**: Dropping multiple files on the preview screens is now allowed (it was only 1x before).
+- **Tables / Asset Manager**: Improved empty texts depending on the search state.
+- **Tables / Table Data Manager**: Fixed issue that the dialog did not open when used from remote (hopefully).
 
 ---
 
