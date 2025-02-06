@@ -221,7 +221,7 @@ public class SystemResource {
         frontendService.killFrontend();
       }
       else {
-        if (request != null) {
+        if (request != null && request.getRequestURL() != null) {
           String url = request.getRequestURL().toString();
           boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
           if (remote) {
