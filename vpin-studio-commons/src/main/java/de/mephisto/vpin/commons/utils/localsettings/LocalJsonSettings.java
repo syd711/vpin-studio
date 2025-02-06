@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.utils.localsettings;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.commons.utils.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,8 @@ abstract public class LocalJsonSettings {
 
   private static File getConfigFile(String configName) {
     String settingsFileName = configName + ".json";
-    File parent = new File("./config/");
+    File basePath = Updater.getBasePath();
+    File parent = new File(basePath, "config/");
     if (!parent.exists()) {
       parent.mkdirs();
     }

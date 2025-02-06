@@ -209,7 +209,7 @@ public class Updater {
     return false;
   }
 
-  private static File getBasePath() {
+  public static File getBasePath() {
     if (!OSUtil.isMac()) {
       LOG.info("Setting Base Path for Windows Download to -./");
       return new File("./");
