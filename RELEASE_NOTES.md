@@ -2,9 +2,11 @@
 
 ## Changes
 
+- **MacOS Support**: The VPin Studio finally supports client installers for **x64 and arm**. Big shoutout to @gonzonia here!
 - **VPin Studio Server**: Added updating of launch and exit calls for VPX tables in PinballY.
 - **Tables / Media Preview**: Fixed "Other2" screen preview.
 - **Tables / Asset Manager** Dropping multiple files on the preview screens is now allowed (it was only 1x before).
+- **Tables / Asset Manager** Improved empty texts depending on the search state.
 
 ---
 
@@ -12,7 +14,6 @@
 
 ## Changes
 
-- **MacOS Support**: The VPin Studio finally supports client installers for **x64 and arm**. Big shoutout to @gonzonia here!
 - **Visual Pinball Backup Manager (VPBM)**: Updated to the newest version 3.5 (used for fresh installations).
 - **Visual Pinball Backup Manager (VPBM) / Table Backups**: Removed the backup view from the Studio client and from the server. This way the server has no .net dependency anymore. VPBM is still available, but Studio does not intermingle with it's configuration anymore.
 - **Table Views / Persistent Columns**: You can change the width and order (drag and drop) of columns and this state is saved now.
