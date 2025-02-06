@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.vbsedit;
 
+import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
@@ -22,12 +23,12 @@ public class VBSManager {
 
   private static final VBSManager instance = new VBSManager();
   private final VbsMonitoringService monitoringService = new VbsMonitoringService();
-  private final File vpsFolder = new File("./resources/vbs/");
+
 
   private boolean embeddedEditing = false;//!System.getProperty("os.name").contains("Windows");
 
   private VBSManager() {
-    monitoringService.startMonitoring(vpsFolder);
+    monitoringService.startMonitoring(getVbsFolder());
     LOG.info("VPS Monitor started.");
   }
 
@@ -71,14 +72,19 @@ public class VBSManager {
     Studio.edit(vbsFile);
   }
 
-  private File writeVbsFile(GameRepresentation game, String content) throws IOException {
-    monitoringService.setPaused(true);
-    String name = game.getGameName() + "[" + game.getId() + "].vbs";
-    File vbsFile = new File(vpsFolder, name);
+  private static File getVbsFolder() {
+    File basePath = Updater.getWriteableBaseFolder();
+    File vpsFolder = new File(basePath, "./resources/vbs/");
     if (!vpsFolder.exists()) {
       vpsFolder.mkdirs();
     }
+    return vpsFolder;
+  }
 
+  private File writeVbsFile(GameRepresentation game, String content) throws IOException {
+    monitoringService.setPaused(true);
+    String name = game.getGameName() + "[" + game.getId() + "].vbs";
+    File vbsFile = new File(getVbsFolder(), name);
     if (vbsFile.exists()) {
       if (!vbsFile.delete()) {
         throw new IOException("Failed to delete " + vbsFile.getAbsolutePath());

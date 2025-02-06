@@ -58,7 +58,7 @@ abstract public class LocalJsonSettings {
 
   private static File getConfigFile(String configName) {
     String settingsFileName = configName + ".json";
-    File basePath = Updater.getBasePath();
+    File basePath = Updater.getWriteableBaseFolder();
     File parent = new File(basePath, "config/");
     if (!parent.exists()) {
       parent.mkdirs();
