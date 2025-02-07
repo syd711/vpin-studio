@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -29,6 +30,7 @@ import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogContr
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -559,10 +561,10 @@ public class TableDialogs {
   }
 
 
-  public static void openWebhooksDialog(WebhookSet set) {
+  public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
     Stage stage = Dialogs.createStudioDialogStage(WebhooksDialogController.class, "dialog-webhook-set.fxml", "Webhook Set");
     WebhooksDialogController controller = (WebhooksDialogController) stage.getUserData();
-    controller.setData(set);
+    controller.setData(settings, set);
     stage.showAndWait();
   }
 

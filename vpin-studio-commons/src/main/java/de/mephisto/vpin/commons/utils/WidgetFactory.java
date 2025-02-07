@@ -225,7 +225,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf(color != null? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -324,6 +324,7 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings) {
     return createPlaylistIcon(playlist, uiSettings, false);
   }
+
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
@@ -445,7 +446,7 @@ public class WidgetFactory {
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
-    return createDialogStage(fxmlLoader,owner, title, stateId, null);
+    return createDialogStage(fxmlLoader, owner, title, stateId, null);
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId, String modalStateId) {

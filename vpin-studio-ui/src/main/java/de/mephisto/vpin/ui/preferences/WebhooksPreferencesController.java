@@ -35,18 +35,21 @@ public class WebhooksPreferencesController implements Initializable {
 
   @FXML
   private Button editBtn;
+  private WebhookSettings webhookSettings;
 
   @FXML
   private void onEdit() {
     WebhookSet selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      TableDialogs.openWebhooksDialog(selectedItem);
+      TableDialogs.openWebhooksDialog(webhookSettings, selectedItem);
+      reload();
     }
   }
 
   @FXML
   private void onAdd() {
-    TableDialogs.openWebhooksDialog(null);
+    TableDialogs.openWebhooksDialog(webhookSettings, null);
+    reload();
   }
 
   @FXML
@@ -69,13 +72,15 @@ public class WebhooksPreferencesController implements Initializable {
   }
 
   private void reload() {
-    WebhookSettings webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
+    webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
     List<WebhookSet> sets = webhookSettings.getSets();
     tableView.setItems(FXCollections.observableList(sets));
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
+
     tableView.setPlaceholder(new Label("              No webhook sets found.\nAdd a webhook set to connect with other systems."));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
