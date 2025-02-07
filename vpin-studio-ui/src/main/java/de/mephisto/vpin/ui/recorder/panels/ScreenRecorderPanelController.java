@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class ScreenRecorderPanelController implements Initializable {
@@ -35,6 +37,7 @@ public class ScreenRecorderPanelController implements Initializable {
 
   private final static List<RecordingWriteMode> RECORD_MODE_LIST = Arrays.asList(RecordingWriteMode.ifMissing, RecordingWriteMode.overwrite, RecordingWriteMode.append);
   public static final int PREVIEW_WIDTH_THRESHOLD = 1600;
+
 
   @FXML
   private Pane root;
@@ -47,6 +50,9 @@ public class ScreenRecorderPanelController implements Initializable {
 
   @FXML
   private ImageView imageView;
+
+  @FXML
+  private AnchorPane previewAnchor;
 
   @FXML
   private Label screenName;
@@ -100,6 +106,9 @@ public class ScreenRecorderPanelController implements Initializable {
         }, 200);
       }
     });
+
+    imageView.fitWidthProperty().bind(previewAnchor.widthProperty());
+    imageView.fitHeightProperty().bind(previewAnchor.heightProperty());
 
     this.recordingScreen = recordingScreen;
     screenName.setText(recordingScreen.getScreen().name());
@@ -222,8 +231,12 @@ public class ScreenRecorderPanelController implements Initializable {
       preview.setPrefWidth(w);
       preview.setPrefHeight(h * 8 / 16);
 
-      imageView.setFitWidth(width);
-      imageView.setFitHeight(height);
+      //imageView.setFitWidth(width);
+      //imageView.setFitHeight(height);
+
+      previewAnchor.setMaxHeight(height);
+      previewAnchor.setMaxWidth(width);
+
 
       Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);
       imageView.setImage(image);
