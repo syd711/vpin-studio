@@ -3,6 +3,7 @@
 ## Changes
 
 - **Tables / Asset Manager**: Fixed search input field so that the search is triggered on enter pressed again.
+- **MacOS Support**: Fixed various issues for editing .vbs files and saving local UI settings.
 
 ---
 
