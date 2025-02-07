@@ -12,8 +12,6 @@ public class UISettings extends JsonSettings {
 
   private boolean hideVersions;
   private boolean hideVPSUpdates;
-  private boolean hidePlaylistWheelTooltip;
-  private int PlaylistWheelTooltipSize;
 
   private boolean vpsAltSound = true;
   private boolean vpsAltColor = true;
@@ -573,24 +571,6 @@ public class UISettings extends JsonSettings {
   public void setHideVersions(boolean hideVersions) {
     this.hideVersions = hideVersions;
   }
-
-  public boolean isHidePlaylistWheelTooltip() {
-    return hidePlaylistWheelTooltip;
-  }
-
-  public void setHidePlaylistWheelTooltip(boolean HidePlaylistWheelTooltip) {
-    this.hidePlaylistWheelTooltip = HidePlaylistWheelTooltip;
-  }
-
-  public int getPlaylistWheelTooltipSize() {
-    return PlaylistWheelTooltipSize;
-  }
-
-  public void setPlaylistWheelTooltipSize(int PlaylistWheelTooltipSize) {
-    this.PlaylistWheelTooltipSize = PlaylistWheelTooltipSize;
-  }
-
-
 
   public boolean isHideVPSUpdates() {
     return hideVPSUpdates;

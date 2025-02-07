@@ -11,8 +11,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -50,7 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StreamUtils;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -206,8 +203,6 @@ public class Studio extends Application {
       Studio.client = client;
       ServerFX.client = Studio.client;
 
-
-
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
             //force pre-caching, this way, the table overview does not need to execute single GET requests
@@ -289,28 +284,6 @@ public class Studio extends Application {
             client.setErrorHandler(errorHandler);
             stage.show();
             splash.hide();
-
-            //Only if they want it
-            if(!uiSettings.isHidePlaylistWheelTooltip()) {
-              List<PlaylistRepresentation> matches = new ArrayList<>();
-              List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
-              if (playlists != null) {
-                for (PlaylistRepresentation playlist : playlists) {
-                  //********************IS THIS A BETTER PLACE!?!?!?
-                  if (playlist != null && playlist.getMediaName() != null) {
-                    //assume nothings loaded? Will this be enough to add the Image
-                    try {
-                      //   LOG.info("LoadStudio Putting Media In place for: " + playlist.getMediaName());
-                      ByteArrayInputStream playlistMediaItem = client.getPlaylistMediaService().getPlayListMediaItem(playlist.getId(), VPinScreen.Wheel, playlist.getMediaName());
-                    } catch (Exception e) {
-                      LOG.error("LoadStudio Error putting Media in place for : " + playlist.getMediaName() + ":" + e.getMessage(), e);
-                      break;
-                    }
-                  }
-                }
-              }
-            }
-
 
             //launch VPSMonitor
             VBSManager.getInstance();

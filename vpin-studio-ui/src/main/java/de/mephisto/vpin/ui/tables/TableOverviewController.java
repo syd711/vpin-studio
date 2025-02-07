@@ -63,7 +63,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -1326,8 +1325,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       List<PlaylistRepresentation> matches = new ArrayList<>();
       List<PlaylistRepresentation> playlists = getPlaylists();
       if (playlists != null) {
-       for (PlaylistRepresentation playlist : playlists) {
-           if (playlist != null && playlist.containsGame(value.getId())) {
+        for (PlaylistRepresentation playlist : playlists) {
+          if (playlist != null && playlist.containsGame(value.getId())) {
             matches.add(playlist);
           }
         }
@@ -1344,14 +1343,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings);
           if (match.getId() >= 0) {
             Button plButton = new Button("", playlistIcon.getGraphic());
-            Tooltip PlayListTooltip = new Tooltip(match.getName());
-            if(!uiSettings.isHidePlaylistWheelTooltip()) {
-              ByteArrayInputStream playlistMediaItem = client.getPlaylistMediaService().getPlayListMediaItem(match.getId(), VPinScreen.Wheel, match.getMediaName());
-              Image scaledWheel = match != null ? new Image(playlistMediaItem, uiSettings.getPlaylistWheelTooltipSize(), uiSettings.getPlaylistWheelTooltipSize(), false, true) : null;
-              ImageView WheelImageView = new ImageView(scaledWheel);
-              PlayListTooltip.setGraphic(WheelImageView);
-            }
-            plButton.setTooltip(PlayListTooltip);
+            plButton.setTooltip(new Tooltip(match.getName()));
             plButton.getStyleClass().add("ghost-button-tiny");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
@@ -1919,7 +1911,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
     columnComment.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnComment());
     columnPlaylists.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
-
   }
 
   @Override

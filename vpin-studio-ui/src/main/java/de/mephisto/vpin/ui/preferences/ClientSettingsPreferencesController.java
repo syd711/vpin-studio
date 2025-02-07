@@ -62,11 +62,6 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox autoEditCheckbox;
 
   @FXML
-  private CheckBox uiShowWheelTooltip;
-  @FXML
-  private ComboBox tooltipSizeCombo;
-
-  @FXML
   private CheckBox dropInFolderCheckbox;
 
   @FXML
@@ -246,39 +241,6 @@ public class ClientSettingsPreferencesController implements Initializable {
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
-
-    uiShowWheelTooltip.setSelected(!uiSettings.isHidePlaylistWheelTooltip());
-    uiShowWheelTooltip.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setHidePlaylistWheelTooltip(!t1);
-      tooltipSizeCombo.setDisable(uiSettings.isHidePlaylistWheelTooltip());
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-
-    tooltipSizeCombo.setDisable(uiSettings.isHidePlaylistWheelTooltip());
-    tooltipSizeCombo.getItems().addAll(
-            "Small (50px)",
-            "Medium (100px)",
-            "Large (200px)"
-    );
-    int storedWheelSize =uiSettings.getPlaylistWheelTooltipSize();
-    if (storedWheelSize == 50){tooltipSizeCombo.setValue("Small (50px)");}
-    if (storedWheelSize == 100){tooltipSizeCombo.setValue("Medium (100px)");}
-    if (storedWheelSize == 200){tooltipSizeCombo.setValue("Large (200px)");}
-
-   // tooltipSizeCombo.selectionModelProperty().addListener((observableValue, aBoolean, t1) -> {
-
-      tooltipSizeCombo.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-      int WheelSize = 0;
-      if (newValue.toString().contains(("50"))){WheelSize = 50;}
-      if (newValue.toString().contains(("100"))){WheelSize = 100;}
-      if (newValue.toString().contains(("200"))){WheelSize = 200;}
-      uiSettings.setPlaylistWheelTooltipSize(WheelSize);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-
-
 
     boolean disabled = uiSettings.isHideVPSUpdates();
     vpsAltSound.setDisable(disabled);
