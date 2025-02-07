@@ -37,10 +37,7 @@ public class ScreenRecorderPanelController implements Initializable {
 
   private final static List<RecordingWriteMode> RECORD_MODE_LIST = Arrays.asList(RecordingWriteMode.ifMissing, RecordingWriteMode.overwrite, RecordingWriteMode.append);
   public static final int PREVIEW_WIDTH_THRESHOLD = 1600;
-  private static double ANCHOR_RIGHT = 1;
-  private static double ANCHOR_LEFT= 1;
-  private static double ANCHOR_TOP = 1;
-  private static double ANCHOR_BOTTOM = 1;
+
 
   @FXML
   private Pane root;
