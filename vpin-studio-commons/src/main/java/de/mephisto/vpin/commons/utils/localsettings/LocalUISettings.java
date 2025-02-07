@@ -29,8 +29,7 @@ public class LocalUISettings {
   private static Map<String, Object> jsonSettingsCache = new HashMap<>();
 
   public static void initialize() {
-
-    File basePath = Updater.getBasePath();
+    File basePath = Updater.getWriteableBaseFolder();
     File propertiesFile = new File(basePath, "config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
