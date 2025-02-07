@@ -1,3 +1,11 @@
+## Release Notes 3.12.8
+
+## Changes
+
+- **Pause Menu**: Force focus improvements for web browser when playing tutorial videos. 
+
+---
+
 ## Release Notes 3.12.7
 
 ## Changes
