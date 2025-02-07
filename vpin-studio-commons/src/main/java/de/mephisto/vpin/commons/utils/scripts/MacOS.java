@@ -16,23 +16,23 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 public class MacOS {
   private final static Logger LOG = LoggerFactory.getLogger(MacOS.class);
 
-
-  private static final String UPDATE_CLIENT_SCRIPT_NAME = System.getProperty("MAC_WRITE_PATH") + "update-client.sh";
+private static final String LOG_PATH = System.getProperty("MAC_WRITE_PATH") + "Logs";
+  private static final String UPDATE_CLIENT_SCRIPT_NAME =  "update-client.sh";
   private static final String UPDATE_CLIENT_SCRIPT = String.join("\n",
       "#!/bin/sh",
       "sleep 4",
-      "echo \"Unzipping jar...\" >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "unzip -o '" + System.getProperty("MAC_WRITE_PATH") + "/vpin-studio-ui-jar.zip' -d '" + System.getProperty("MAC_WRITE_PATH") + "_updatefolder' >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "echo \"Removing Zip...\" >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "rm vpin-studio-ui-jar.zip >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "echo \"Closing App...\" >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "killall VPin-Studio >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "echo \"Moving Jar...\" >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "cp -vf '" + System.getProperty("MAC_WRITE_PATH") + "_updatefolder/vpin-studio-ui.jar' '" + System.getProperty("MAC_JAR_PATH") + "' >>  '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "echo \"Removing _updatefolder...\" >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "rm -rf '" + System.getProperty("MAC_WRITE_PATH") + "_updatefolder' >>  '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "echo \"Restarting client...\" >>  '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1",
-      "open -n " + System.getProperty("MAC_APP_PATH")) + " >> '" + System.getProperty("OSLOG_PATH") + "/vpin-studio-ui.log' 2>&1";
+      "echo \"Unzipping jar...\" >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "unzip -o '" + System.getProperty("MAC_WRITE_PATH") + "/vpin-studio-ui-jar.zip' -d '" + System.getProperty("MAC_WRITE_PATH") + "_updatefolder' >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "echo \"Removing Zip...\" >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "rm vpin-studio-ui-jar.zip >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "echo \"Closing App...\" >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "killall VPin-Studio >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "echo \"Moving Jar...\" >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "cp -vf '" + System.getProperty("MAC_WRITE_PATH") + "_updatefolder/vpin-studio-ui.jar' '" + System.getProperty("MAC_JAR_PATH") + "' >>  '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "echo \"Removing _updatefolder...\" >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "rm -rf '" + System.getProperty("MAC_WRITE_PATH") + "_updatefolder' >>  '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "echo \"Restarting client...\" >>  '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1",
+      "open -n " + System.getProperty("MAC_APP_PATH")) + " >> '" + LOG_PATH+ "/vpin-studio-ui.log' 2>&1";
 
 
   //Removed for App version, no longer needed.
@@ -61,7 +61,7 @@ public class MacOS {
     // Use ProcessBuilder to run the new script
     LOG.info("Launching update script:" + UPDATE_CLIENT_SCRIPT_NAME);
 
-    ProcessBuilder processBuilder = new ProcessBuilder(UPDATE_CLIENT_SCRIPT_NAME);
+    ProcessBuilder processBuilder = new ProcessBuilder(System.getProperty("MAC_WRITE_PATH") +UPDATE_CLIENT_SCRIPT_NAME);
     String basePath = System.getProperty("MAC_WRITE_PATH");
     LOG.info("Using macOS base path: {}", basePath);
     processBuilder.directory(new File(basePath));

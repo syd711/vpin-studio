@@ -1,8 +1,18 @@
+## Release Notes 3.12.8
+
+## Changes
+
+- **Pause Menu**: Force focus improvements for web browser when playing tutorial videos. 
+
+---
+
 ## Release Notes 3.12.7
 
 ## Changes
 
+- **MacOS Support**: Fixed various issues for editing .vbs files and saving local UI settings.
 - **Tables / Asset Manager**: Fixed search input field so that the search is triggered on enter pressed again.
+- **Tables / Table Data Manager**: Improved error handling.
 
 ---
 
