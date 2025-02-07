@@ -240,7 +240,6 @@ public class ScreenRecorderPanelController implements Initializable {
       previewAnchor.setMaxHeight(height);
       previewAnchor.setMaxWidth(width);
 
-
       Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);
       imageView.setImage(image);
     }
