@@ -61,7 +61,7 @@ public class WebhookConfigPanelController implements Initializable {
 
   public void applyValues() {
     webhook.setEndpoint(endpointText.getText());
-    webhook.setParameterValue(parametersText.getText());
+    webhook.applyParameterString(parametersText.getText());
 
     List<WebhookEventType> subscriptions = new ArrayList<>();
     if (createCheckbox.isSelected()) {

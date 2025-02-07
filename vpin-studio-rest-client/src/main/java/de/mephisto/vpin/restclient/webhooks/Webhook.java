@@ -1,20 +1,13 @@
 package de.mephisto.vpin.restclient.webhooks;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 public class Webhook {
   private String endpoint;
-  private String parameterValue;
   private List<WebhookEventType> subscribe = new ArrayList<>(Arrays.asList(WebhookEventType.create, WebhookEventType.update, WebhookEventType.delete));
-  private Map<String,Object> parameters = new HashMap<>();
-
-  public String getParameterValue() {
-    return parameterValue;
-  }
-
-  public void setParameterValue(String parameterValue) {
-    this.parameterValue = parameterValue;
-  }
+  private Map<String, Object> parameters = new HashMap<>();
 
   public Map<String, Object> getParameters() {
     return parameters;
@@ -38,5 +31,20 @@ public class Webhook {
 
   public void setSubscribe(List<WebhookEventType> subscribe) {
     this.subscribe = subscribe;
+  }
+
+  public void applyParameterString(String text) {
+    parameters.clear();
+    if (!StringUtils.isEmpty(text)) {
+      String[] prms = text.split(";");
+      for (String paramString : prms) {
+        if (!StringUtils.isEmpty(paramString) && paramString.contains("=")) {
+          String[] split = paramString.split("=");
+          if (split.length == 2) {
+            parameters.put(split[0], split[1]);
+          }
+        }
+      }
+    }
   }
 }
