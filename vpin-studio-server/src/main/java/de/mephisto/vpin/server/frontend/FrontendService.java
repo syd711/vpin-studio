@@ -52,9 +52,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private VpsService vpsService;
 
   @Autowired
-  private WebhooksService webhooksService;
-
-  @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
 
   private FrontendStatusService frontendStatusService;
