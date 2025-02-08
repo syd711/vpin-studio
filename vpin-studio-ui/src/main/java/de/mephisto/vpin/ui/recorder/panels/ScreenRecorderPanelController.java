@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,9 @@ public class ScreenRecorderPanelController implements Initializable {
 
   @FXML
   private Pane preview;
+
+  @FXML
+  private AnchorPane anchorPreview;
 
   @FXML
   private Pane audioPanel;
