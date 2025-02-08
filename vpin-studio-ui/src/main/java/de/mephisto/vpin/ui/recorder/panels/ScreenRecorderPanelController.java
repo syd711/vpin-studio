@@ -89,15 +89,10 @@ public class ScreenRecorderPanelController implements Initializable {
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if(!root.isVisible()) {
+        if (!root.isVisible()) {
           return;
         }
-
-        debouncer.debounce("recorderScreenSize" + recordingScreen.getScreen().name(), () -> {
-          Platform.runLater(() -> {
-            root.prefWidthProperty().set(newValue.intValue() - 1040);
-          });
-        }, 200);
+        root.prefWidthProperty().set(newValue.intValue() - 1040);
       }
     });
 

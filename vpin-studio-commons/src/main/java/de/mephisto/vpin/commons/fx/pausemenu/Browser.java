@@ -66,6 +66,11 @@ public abstract class Browser {
           try {
             Thread.sleep(ServerFX.TO_FRONT_DELAY - 500);
             NirCmd.setTopMost(title);
+            NirCmd.setTopMost("Chrome");
+            NirCmd.setTopMost("Edge");
+            Thread.sleep(1000);
+            NirCmd.setTopMost("Chrome");
+            NirCmd.setTopMost("Edge");
           }
           catch (InterruptedException e) {
             //ignore

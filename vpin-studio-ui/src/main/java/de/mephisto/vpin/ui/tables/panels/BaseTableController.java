@@ -128,7 +128,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
           tableView.getColumns().add(first.get());
         }
         else {
-          LOG.warn("{} has no column {}", this.getClass().getSimpleName(), columnName);
+          LOG.warn("{} has no column {} for restoring the order", this.getClass().getSimpleName(), columnName);
         }
       }
     }
