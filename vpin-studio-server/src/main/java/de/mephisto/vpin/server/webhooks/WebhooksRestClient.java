@@ -10,36 +10,32 @@ import java.util.Map;
 public class WebhooksRestClient {
   private final static Logger LOG = LoggerFactory.getLogger(WebhooksRestClient.class);
 
-  public static final String PARAMETER_GAME_ID = "gameId";
 
-  public void onGameDelete(String url, int gameId) {
+  public void onDelete(String url) {
     try {
       RestClient restClient = RestClient.createInstance(url);
-      restClient.delete("webhook/games/" + gameId);
+      restClient.delete("");
     }
     catch (Exception e) {
       LOG.error("Webhook delete call failed: {}", e.getMessage(), e);
     }
   }
 
-  public void onGameUpdate(String url, Map<String, Object> parameters, int gameId) {
+  public void onUpdate(String url, Map<String, Object> parameters) {
     try {
       RestClient restClient = RestClient.createInstance(url);
-      Map<String, Object> updatedParams = new HashMap<>(parameters);
-      parameters.put(PARAMETER_GAME_ID, gameId);
-      restClient.put("webhook/games", updatedParams, Map.class);
+      restClient.put("", parameters, Map.class);
     }
     catch (Exception e) {
       LOG.error("Webhook update call failed: {}", e.getMessage(), e);
     }
   }
 
-  public void onGameCreate(String url, Map<String, Object> parameters, int gameId) {
+  public void onCreate(String url, Map<String, Object> parameters) {
     try {
       RestClient restClient = RestClient.createInstance(url);
       Map<String, Object> updatedParams = new HashMap<>(parameters);
-      parameters.put("gameId", gameId);
-      restClient.post("webhook/games", updatedParams, Map.class);
+      restClient.post("", updatedParams, Map.class);
     }
     catch (Exception e) {
       LOG.error("Webhook create call failed: {}", e.getMessage(), e);

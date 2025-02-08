@@ -66,7 +66,7 @@ public class WebhooksDialogController implements Initializable, DialogController
       webhookPanelsController.applyValues();
     }
 
-    List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> s.getUuid().equals(webhookSet.getUuid())).collect(Collectors.toList()));
+    List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> !s.getUuid().equals(webhookSet.getUuid())).collect(Collectors.toList()));
     collect.add(webhookSet);
     webhookSettings.setSets(collect);
     client.getPreferenceService().setJsonPreference(webhookSettings);

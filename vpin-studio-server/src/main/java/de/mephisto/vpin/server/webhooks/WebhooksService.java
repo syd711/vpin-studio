@@ -3,10 +3,9 @@ package de.mephisto.vpin.server.webhooks;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.NetworkUtil;
 import de.mephisto.vpin.restclient.webhooks.*;
-import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +18,33 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class WebhooksService implements InitializingBean {
+public class WebhooksService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(WebhooksService.class);
 
   @Autowired
   private PreferencesService preferencesService;
 
   private WebhooksRestClient webhooksRestClient;
+  private WebhookSettings webhookSettings;
 
-  public void notifyGameHooks(@NonNull Game game, @NonNull WebhookEventType eventType) {
-    WebhookSettings webhookSettings = preferencesService.getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
+  public void notifyGameHooks(int gameId, @NonNull WebhookEventType eventType) {
     List<WebhookSet> sets = webhookSettings.getSets();
     for (WebhookSet set : sets) {
-      handleWebhookSet(set, set.getGames(), WebhookType.game, eventType, game.getId());
+      handleWebhookSet(set, set.getGames(), WebhookType.game, eventType, gameId);
+    }
+  }
+
+  public void notifyScoreHooks(int scoreId, @NonNull WebhookEventType eventType) {
+    List<WebhookSet> sets = webhookSettings.getSets();
+    for (WebhookSet set : sets) {
+      handleWebhookSet(set, set.getScores(), WebhookType.score, eventType, scoreId);
+    }
+  }
+
+  public void notifyPlayerHooks(int playerId, @NonNull WebhookEventType eventType) {
+    List<WebhookSet> sets = webhookSettings.getSets();
+    for (WebhookSet set : sets) {
+      handleWebhookSet(set, set.getPlayers(), WebhookType.player, eventType, playerId);
     }
   }
 
@@ -41,20 +54,22 @@ public class WebhooksService implements InitializingBean {
       return;
     }
 
-    switch (webhookType) {
-
-    }
+    webhook.getParameters().put("id", entityId);
     switch (eventType) {
       case update: {
-        webhooksRestClient.onGameUpdate(webhook.getEndpoint(), webhook.getParameters(), entityId);
+        webhooksRestClient.onUpdate(webhook.getEndpoint(), webhook.getParameters());
         break;
       }
       case delete: {
-        webhooksRestClient.onGameUpdate(webhook.getEndpoint(), webhook.getParameters(), entityId);
+        String url = webhook.getEndpoint();
+        if (!url.endsWith("/")) {
+          url = url + "/" + entityId;
+        }
+        webhooksRestClient.onDelete(url);
         break;
       }
       case create: {
-        webhooksRestClient.onGameCreate(webhook.getEndpoint(), webhook.getParameters(), entityId);
+        webhooksRestClient.onCreate(webhook.getEndpoint(), webhook.getParameters());
         break;
       }
     }
@@ -62,7 +77,6 @@ public class WebhooksService implements InitializingBean {
 
   public WebhookSet save(@NonNull WebhookSet webhookSet) throws Exception {
     try {
-      WebhookSettings webhookSettings = preferencesService.getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
       List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> s.getUuid().equals(webhookSet.getUuid())).collect(Collectors.toList()));
       collect.add(webhookSet);
       webhookSettings.setSets(collect);
@@ -76,7 +90,16 @@ public class WebhooksService implements InitializingBean {
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.WEBHOOK_SETTINGS)) {
+      webhookSettings = preferencesService.getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     webhooksRestClient = new WebhooksRestClient();
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.WEBHOOK_SETTINGS, null, null);
   }
 }

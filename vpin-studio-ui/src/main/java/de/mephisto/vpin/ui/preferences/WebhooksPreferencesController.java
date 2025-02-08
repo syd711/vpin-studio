@@ -75,6 +75,7 @@ public class WebhooksPreferencesController implements Initializable {
     webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
     List<WebhookSet> sets = webhookSettings.getSets();
     tableView.setItems(FXCollections.observableList(sets));
+    tableView.refresh();
   }
 
   @Override
