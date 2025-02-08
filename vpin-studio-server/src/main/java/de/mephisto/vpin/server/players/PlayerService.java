@@ -28,7 +28,7 @@ public class PlayerService {
   @Autowired
   private AssetRepository assetRepository;
 
-  private List<PlayerLifecycleListener> lifecycleListeners = new ArrayList<>();
+  private final List<PlayerLifecycleListener> lifecycleListeners = new ArrayList<>();
 
   public List<Player> getBuildInPlayers() {
     List<Player> all = null;

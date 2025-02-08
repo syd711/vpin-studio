@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.NetworkUtil;
 import de.mephisto.vpin.restclient.webhooks.*;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleListener;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class WebhooksService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, PlayerLifecycleListener {
+public class WebhooksService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, PlayerLifecycleListener, GameLifecycleListener {
   private final static Logger LOG = LoggerFactory.getLogger(WebhooksService.class);
 
   @Autowired
@@ -58,6 +59,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   public void notifyPlayerHooks(long playerId, @NonNull WebhookEventType eventType) {
     List<WebhookSet> sets = webhookSettings.getSets();
     for (WebhookSet set : sets) {
+      LOG.info("Executing webhook set \"{}\" / {}", set, eventType.name());
       handleWebhookSet(set, set.getPlayers(), WebhookType.player, eventType, playerId);
     }
   }
@@ -140,6 +142,20 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   }
 
   //----------------------------------- Games Listener  ----------------------------------------------------------------
+  @Override
+  public void gameCreated(@NotNull Game game) {
+    notifyGameHooks(game.getId(), WebhookEventType.create);
+  }
+
+  @Override
+  public void gameUpdated(@NotNull Game game) {
+    notifyGameHooks(game.getId(), WebhookEventType.update);
+  }
+
+  @Override
+  public void gameDeleted(@NotNull Game game) {
+    notifyGameHooks(game.getId(), WebhookEventType.delete);
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {
