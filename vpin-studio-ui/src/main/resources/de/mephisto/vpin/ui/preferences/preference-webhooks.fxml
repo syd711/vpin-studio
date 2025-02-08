@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -62,12 +63,14 @@
                 <TableColumn fx:id="nameColumn" prefWidth="508.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Webhook Set Name" />
               </columns>
             </TableView>
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPin Studio Server Endpoints">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="VPin Studio Server - Public API Endpoints">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="The given REST endpoints are public API and can be used to fetch data from the VPin Studio server." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="The VPin Studio Server supports a public API endpoints to read game, highscore and player data." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="669.0" styleClass="preference-description" text="A detailled description can be found here:" textFill="WHITE" />
+            <Hyperlink text="https://github.com/syd711/vpin-studio/wiki/Webhooks" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

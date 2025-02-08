@@ -22,7 +22,7 @@ public class WebhooksResource {
   /**
    * Note that his endpoint is not used within the Studio, but for external integrations.
    */
-  @PostMapping("/save")
+  @PostMapping
   public WebhookSet save(@RequestBody WebhookSet webhookSet) throws Exception {
     return webhooksService.save(webhookSet);
   }

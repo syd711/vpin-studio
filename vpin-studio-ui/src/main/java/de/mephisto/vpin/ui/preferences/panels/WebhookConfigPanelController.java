@@ -52,6 +52,7 @@ public class WebhookConfigPanelController implements Initializable {
       case score:
         titleLabel.setText("Highscores Webhook");
         deleteCheckbox.setVisible(false);
+        createCheckbox.setVisible(false);
         break;
       case player:
         titleLabel.setText("Players Webhook");
@@ -79,5 +80,7 @@ public class WebhookConfigPanelController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     deleteCheckbox.managedProperty().bindBidirectional(deleteCheckbox.visibleProperty());
+    createCheckbox.managedProperty().bindBidirectional(createCheckbox.visibleProperty());
+    updateCheckbox.managedProperty().bindBidirectional(updateCheckbox.visibleProperty());
   }
 }
