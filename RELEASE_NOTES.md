@@ -2,7 +2,11 @@
 
 ## Changes
 
-- **Pause Menu**: Force focus improvements for web browser when playing tutorial videos. 
+- **MacOS Support**: Fixed additional path problems for the updater.
+- **Pause Menu**: Force focus improvements for web browser when playing tutorial videos.
+- **Tables / Media Recorder**: Fixed resizing issues under macOS (hopefully).
+- **Linux Support**: Fixed installation script.
+- **Linux Support**: Fixed client updates (you need to update manually once again for this, see https://github.com/syd711/vpin-studio/wiki#updates).
 
 ---
 

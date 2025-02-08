@@ -167,9 +167,7 @@ public class FileUtils {
   }
 
   public static File writeBatch(String name, String content) throws IOException {
-
     File path;
-
     if (!OSUtil.isMac()){
        path = new File("./" + name);
     }else {

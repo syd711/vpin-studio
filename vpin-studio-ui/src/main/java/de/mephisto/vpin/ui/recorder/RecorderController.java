@@ -90,9 +90,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private BorderPane root;
 
   @FXML
-  private ComboBox<?> viewModeCombo;
-
-  @FXML
   private VBox recordingOptions;
 
   @FXML
@@ -124,21 +121,18 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   private Map<VPinScreen, TableColumn<GameRepresentationModel, GameRepresentationModel>> screenColumns;
 
-  private List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
+  private final List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
 
   private List<Integer> ignoredEmulators = null;
 
   private GameEmulatorChangeListener gameEmulatorChangeListener;
 
   private TablesController tablesController;
-  private ScreenSizeChangeListener screenSizeChangeListener;
-
   private PlayButtonController playButtonController;
 
-  private Thread screenRefresher;
   private boolean active = false;
 
-  private RecordingDataSummary selection = new RecordingDataSummary();
+  private final RecordingDataSummary selection = new RecordingDataSummary();
 
   // Add a public no-args constructor
   public RecorderController() {
@@ -168,7 +162,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     JobDescriptor recording = client.getRecorderService().isRecording();
     if (recording != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Recorder Active", "Another recording is still active.", "Please wait or cancel all active recordings.", "Stop Recordings");
-      if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
+      if (result.isEmpty() || !result.get().equals(ButtonType.OK)) {
         client.getRecorderService().stopRecording(recording);
       }
     }
@@ -254,7 +248,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
           if (selectedItem == null) {
             tableView.getSelectionModel().select(0);
-          } else {
+          }
+          else {
             tableView.getSelectionModel().select(selectedItem);
           }
           endReload();
@@ -335,15 +330,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       doReload(false);
     }
 
-    Studio.stage.widthProperty().addListener(screenSizeChangeListener);
-    Studio.stage.heightProperty().addListener(screenSizeChangeListener);
-
     Platform.runLater(() -> {
       refreshScreens();
     });
 
     this.active = true;
-    screenRefresher = new Thread(() -> {
+    Thread screenRefresher = new Thread(() -> {
       try {
         LOG.info("Launched preview refresh thread.");
         while (active) {
@@ -367,9 +359,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   @Override
   public void onViewDeactivated() {
     MonitoringManager.getInstance().setRecordingRefreshIntervalSec(Integer.MAX_VALUE);
-    Studio.stage.widthProperty().removeListener(screenSizeChangeListener);
-    Studio.stage.heightProperty().removeListener(screenSizeChangeListener);
-
     this.active = false;
   }
 
@@ -430,7 +419,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(recordingScreen);
       if (recordingScreenOption != null) {
         options.add(recordingScreenOption);
-      } else {
+      }
+      else {
         RecordingScreenOptions opt = new RecordingScreenOptions();
         opt.setDisplayName(recordingScreen.getName());
         options.add(opt);
@@ -460,7 +450,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       Label label = null;
       if (value.getDateAdded() != null) {
         label = new Label(TableOverviewController.dateFormat.format(value.getDateUpdated()));
-      } else {
+      }
+      else {
         label = new Label("-");
       }
       label.getStyleClass().add("default-text");
@@ -479,7 +470,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           if (newValue) {
             RecordingData recordingData = createRecordingData(value.getId());
             selection.add(recordingData);
-          } else {
+          }
+          else {
             selection.remove(value.getId());
           }
           refreshSelection();
@@ -498,7 +490,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         column.setPrefWidth(90);
       }
       column.setStyle("-fx-alignment: CENTER;");
-      BaseLoadingColumn.configureColumn(column, (value, model) -> createScreenCell(value, model, screen.getScreen()),this,  recorderSettings.isEnabled(screen.getScreen()));
+      BaseLoadingColumn.configureColumn(column, (value, model) -> createScreenCell(value, model, screen.getScreen()), this, recorderSettings.isEnabled(screen.getScreen()));
 
       CheckBox cb = new CheckBox();
       column.setGraphic(cb);
@@ -507,8 +499,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       tableView.getColumns().add(2, column);
       screenColumns.put(screen.getScreen(), column);
     }
-
-    screenSizeChangeListener = new ScreenSizeChangeListener();
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, recorderSettings.getRefreshInterval());
     refreshInterval.setValueFactory(factory);
@@ -526,7 +516,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (!newValue) {
           selection.clear();
-        } else {
+        }
+        else {
           selection.clear();
           ObservableList<GameRepresentationModel> items = tableView.getItems();
           selection.addAll(items.stream().map(g -> createRecordingData(g.getGameId())).collect(Collectors.toList()));
@@ -542,7 +533,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         tableNavigateBtn.setDisable(newValue == null);
         if (newValue != null) {
           playButtonController.setData(newValue.getGame());
-        } else {
+        }
+        else {
           playButtonController.setData(null);
         }
 
@@ -619,7 +611,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           if (selection.contains(value.getId())) {
             selection.get(value.getId()).removeScreen(screen);
           }
-        } else {
+        }
+        else {
           if (!selection.contains(value.getId())) {
             RecordingData recordingData = createRecordingData(value.getId());
             recordingData.clear();
@@ -677,7 +670,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     if (!this.selection.isEmpty()) {
       if (this.selection.size() == 1) {
         labelCount.setText(this.selection.size() + " table selected");
-      } else {
+      }
+      else {
         labelCount.setText(this.selection.size() + " tables selected");
       }
     }
@@ -711,7 +705,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       if (model != null) {
         model.setBean(refreshedGame);
         model.reload();
-      } else {
+      }
+      else {
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
         if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
@@ -726,17 +721,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
 
   //----------------------- Model classes ------------------------------------------------------------------------------
-
-  class ScreenSizeChangeListener implements ChangeListener<Number> {
-    @Override
-    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-      debouncer.debounce("recorderScreenSize", () -> {
-        Platform.runLater(() -> {
-          refreshScreens();
-        });
-      }, 200);
-    }
-  }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
@@ -760,7 +744,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
       if (newValue) {
         selection.getRecordingData().forEach(data -> data.addScreen(screen));
-      } else {
+      }
+      else {
         selection.getRecordingData().forEach(data -> data.removeScreen(screen));
       }
       refreshSelection();
