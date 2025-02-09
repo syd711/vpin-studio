@@ -83,8 +83,11 @@ public class GameMediaResource {
 
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
+    EmulatorType emulatorType = EmulatorType.VisualPinball;
     Game game = frontendService.getOriginalGame(search.getGameId());
-    EmulatorType emulatorType = game.getEmulator().getEmulatorType();
+    if (game != null) {
+      emulatorType = game.getEmulator().getEmulatorType();
+    }
 
     List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
     search.setResult(result);

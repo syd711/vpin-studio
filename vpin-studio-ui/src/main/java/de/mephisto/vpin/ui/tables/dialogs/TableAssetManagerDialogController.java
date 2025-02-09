@@ -564,7 +564,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private TableAssetSearch searchMedia(VPinScreen screen, String term) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
-        new TableAssetSearchProgressModel("Asset Search", game.getId(), screen, term));
+        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
       return (TableAssetSearch) results.get(0);
@@ -597,7 +597,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       String baseType = mimeType.split("/")[0];
-      String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
+      String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game == null ? -1 : this.game.getId());
       LOG.info("Loading asset: " + assetUrl);
 
       try {
@@ -627,8 +627,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     TableAsset tableAsset = this.serverAssetsList.getSelectionModel().getSelectedItem();
     boolean append = false;
 
+    String name = null;
+    if (isPlaylistMode()) {
+      name = playlist.getName();
+    }
+    else {
+      name = game.getGameName();
+    }
+
     ObservableList<FrontendMediaItemRepresentation> items = assetList.getItems();
-    String targetName = game.getGameName() + "." + FilenameUtils.getExtension(tableAsset.getName());
+    String targetName = name + "." + FilenameUtils.getExtension(tableAsset.getName());
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
     if (alreadyExists) {
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(localStage, "Asset Exists",
