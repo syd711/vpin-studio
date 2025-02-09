@@ -746,7 +746,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
 
       if (game.isVpxGame() || game.isFpGame()) {
-        propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
+        if (propperRenamingController != null) {
+          propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
+        }
       }
       else {
         autoFillBtn.setVisible(false);
@@ -755,7 +757,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       if (game.isVpxGame()) {
         HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
-        tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+        if (tableDataTabScoreDataController != null) {
+          tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+        }
       }
       else {
         this.tabPane.getTabs().remove(scoreDataTab);
@@ -1061,12 +1065,19 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
 
       initVpsStatus();
-      if (frontendType.supportStatistics()) {
+      if (frontendType.supportStatistics() && tableStatisticsController != null) {
         tableStatisticsController.setGame(stage, game, tableDetails);
       }
-      tableScreensController.setGame(game, tableDetails);
+
+      if (tableScreensController != null) {
+        tableScreensController.setGame(game, tableDetails);
+      }
+
       tabPane.getSelectionModel().select(tab);
-      pinVolController.setData(stage, Arrays.asList(game), false);
+
+      if (pinVolController != null) {
+        pinVolController.setData(stage, Arrays.asList(game), false);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to initialize Table Data Manager: {}", e.getMessage(), e);
@@ -1147,7 +1158,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableById = client.getVpsService().getTableById(vpsTableId);
       if (tableById != null) {
         autoCompleteNameField.setText(tableById.getDisplayName());
-        propperRenamingController.setVpsTable(tableById);
+        if (propperRenamingController != null) {
+          propperRenamingController.setVpsTable(tableById);
+        }
       }
     }
 
