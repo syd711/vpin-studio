@@ -36,9 +36,6 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   @Autowired
   private HighscoreService highscoreService;
 
-  @Autowired
-  private PlayerService playerService;
-
   private WebhooksRestClient webhooksRestClient;
   private WebhookSettings webhookSettings;
 
@@ -93,7 +90,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
 
   public WebhookSet save(@NonNull WebhookSet webhookSet) throws Exception {
     try {
-      List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> s.getUuid().equals(webhookSet.getUuid())).collect(Collectors.toList()));
+      List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> !s.getUuid().equals(webhookSet.getUuid())).collect(Collectors.toList()));
       collect.add(webhookSet);
       webhookSettings.setSets(collect);
       preferencesService.savePreference(PreferenceNames.WEBHOOK_SETTINGS, webhookSettings);

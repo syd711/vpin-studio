@@ -37,6 +37,12 @@ public class WebhooksPreferencesController implements Initializable {
   private Button editBtn;
   private WebhookSettings webhookSettings;
 
+
+  @FXML
+  private void onReload() {
+    reload();
+  }
+
   @FXML
   private void onEdit() {
     WebhookSet selectedItem = tableView.getSelectionModel().getSelectedItem();
@@ -72,6 +78,7 @@ public class WebhooksPreferencesController implements Initializable {
   }
 
   private void reload() {
+    client.getPreferenceService().clearCache(PreferenceNames.WEBHOOK_SETTINGS);
     webhookSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.WEBHOOK_SETTINGS, WebhookSettings.class);
     List<WebhookSet> sets = webhookSettings.getSets();
     tableView.setItems(FXCollections.observableList(sets));
