@@ -33,7 +33,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class ManagedScreenController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManagedScreenController.class);
-  public static final int OFFSET = 390;
+  public static final int OFFSET =410;
   private final Debouncer debouncer = new Debouncer();
 
   private static final String COLOR_MONITOR = "#CCCCCC";
