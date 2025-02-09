@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.scripts.MacOS;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +129,7 @@ public class Updater {
     return true;
   }
 
-  public static boolean installClientUpdate() throws IOException {
+  public static boolean installClientUpdate(@Nullable String oldVersion, @Nullable String newVersion) throws IOException {
     if (OSUtil.isWindows()) {
       String cmds = "timeout /T 4 /nobreak\ncd /d %~dp0\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
       FileUtils.writeBatch("update-client.bat", cmds);
@@ -183,6 +184,9 @@ public class Updater {
       try {
         // Create update-client script.
         MacOS.createUpdateScript();
+
+        MacOS.UpdateAppVersion(oldVersion, newVersion);
+
         // Log the exit message
         LOG.info("Exiting VPin-Studio to perform update...");
         MacOS.launchUpdateScript();
