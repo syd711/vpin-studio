@@ -320,7 +320,7 @@ public class UpdateDialogController implements Initializable, DialogController {
             });
 
             Thread.sleep(2000);
-            Updater.installClientUpdate();
+            Updater.installClientUpdate(clientVersion, newVersion);
             return null;
           }
         };
