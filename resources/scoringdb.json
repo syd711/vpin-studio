@@ -18,7 +18,7 @@
     {
       "parser": "SinglePlayer",
       "fileNames": [
-        "JacksOpen.txt", "aztec.txt", "aerobatics.txt", "JokerPoker_EM_1978.txt", "LuckyHand.txt", "tramway.txt"
+        "JacksOpen.txt", "aerobatics.txt", "JokerPoker_EM_1978.txt", "LuckyHand.txt", "tramway.txt"
       ],
       "scoreLine": 1
     },
@@ -53,6 +53,14 @@
       ],
       "scoreLine1": 1,
       "scoreLine2": 3
+    },
+    {
+      "parser": "TwoPlayers",
+      "fileNames": [
+        "aztec.txt"
+      ],
+      "scoreLine1": 7,
+      "scoreLine2": 8
     },
     {
       "parser": "TwoPlayers",
