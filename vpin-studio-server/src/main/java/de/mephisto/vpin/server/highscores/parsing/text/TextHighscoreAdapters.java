@@ -119,8 +119,15 @@ public class TextHighscoreAdapters implements InitializingBean {
       for (Map<String, Object> params : highscoreTextParsers) {
         String parser = (String) params.get("parser");
         String className = "de.mephisto.vpin.server.highscores.parsing.text.adapters." + parser + "Adapter";
+        ScoreTextFileAdapter adapter = null;
+        try {
+          adapter = (ScoreTextFileAdapter) Class.forName(className).getDeclaredConstructor().newInstance();
+        }
+        catch (Exception e) {
+          LOG.warn("Invalid text file parser: {}", className);
+          continue;
+        }
 
-        ScoreTextFileAdapter adapter = (ScoreTextFileAdapter) Class.forName(className).getDeclaredConstructor().newInstance();
         BeanWrapper bean = new BeanWrapperImpl(adapter);
 
         setPropertyValue(bean, "lineCount", params);
