@@ -2,6 +2,8 @@ package de.mephisto.vpin.restclient.mania;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +23,16 @@ public class ManiaServiceClient extends VPinStudioClientService {
 
   public ManiaHighscoreSyncResult synchronizeHighscore(String vpsTableId) {
     return getRestClient().get(API + "mania/scoresync/" + vpsTableId, ManiaHighscoreSyncResult.class);
+  }
+
+  public ManiaRegistration register(@NonNull ManiaRegistration registration) {
+    try {
+      return getRestClient().post(API + "mania/register", registration, ManiaRegistration.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public boolean clearCache() {

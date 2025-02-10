@@ -37,9 +37,6 @@ public class Player {
   @Transient
   private String duplicatePlayerName;
 
-  @Column(name = "displayName", nullable = true, columnDefinition = "varchar(255)")
-  private String displayName;
-
   private String avatarUrl;
 
   private String initials;
@@ -69,14 +66,6 @@ public class Player {
 
   public void setAdministrative(boolean administrative) {
     this.administrative = administrative;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
   }
 
   public String getDuplicatePlayerName() {

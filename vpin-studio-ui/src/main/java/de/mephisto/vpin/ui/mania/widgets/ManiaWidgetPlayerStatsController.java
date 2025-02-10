@@ -142,7 +142,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       }
 
       PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-      if (defaultPlayer.getTournamentUserUuid() == null) {
+      if (defaultPlayer == null || defaultPlayer.getTournamentUserUuid() == null) {
         return;
       }
       account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());

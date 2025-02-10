@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.ManiaRegistration;
+import de.mephisto.vpin.ui.mania.ManiaRegistrationHelper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -56,7 +56,7 @@ public class ManiaPreferencesController implements Initializable {
 
   @FXML
   private void onAccountDelete() {
-    boolean deregistered = ManiaRegistration.deregister();
+    boolean deregistered = ManiaRegistrationHelper.deregister();
     if (deregistered) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       registrationPanel.setVisible(cabinet == null);
@@ -100,7 +100,7 @@ public class ManiaPreferencesController implements Initializable {
       if (!newValue) {
         return;
       }
-      boolean registered = ManiaRegistration.register();
+      boolean registered = ManiaRegistrationHelper.register();
       if (registered) {
         registrationPanel.setVisible(false);
         preferencesPanel.setVisible(true);

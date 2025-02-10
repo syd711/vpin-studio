@@ -5,7 +5,9 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.DeniedScore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.ui.mania.dialogs.AccountSearchDialogController;
+import de.mephisto.vpin.ui.mania.dialogs.ManiaRegistrationDialogController;
 import de.mephisto.vpin.ui.mania.dialogs.VPSTableSearchDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
@@ -35,6 +37,13 @@ public class ManiaDialogs {
     controller.setStage(stage);
     stage.showAndWait();
     return controller.getSelection();
+  }
+
+  public static ManiaRegistration openRegistrationDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(AccountSearchDialogController.class, "dialog-mania-registration.fxml", "VPin Mania Registration");
+    ManiaRegistrationDialogController controller = (ManiaRegistrationDialogController) stage.getUserData();
+    stage.showAndWait();
+    return controller.getManiaRegistration();
   }
 
   public static boolean openDenyListDialog(List<DeniedScore> deniedScore) {
