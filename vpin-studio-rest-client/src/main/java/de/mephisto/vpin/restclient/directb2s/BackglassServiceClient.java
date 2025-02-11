@@ -149,7 +149,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public DirectB2SAndVersions setBackglassAsDefault(int emulatorId, String fileName) {
     Map<String, Object> params = new HashMap<>();
-    params.put("setAsDefault", fileName);
+    params.put("setVersionAsDefault", fileName);
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
     try {
@@ -169,6 +169,18 @@ public class BackglassServiceClient extends VPinStudioClientService {
       return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
     }
     catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+  public DirectB2SAndVersions deleteBackglassVersion(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("deleteVersion", true);
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    try {
+      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+    } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
   }

@@ -7,7 +7,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -77,8 +76,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -253,6 +250,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
   @FXML
   private ComboBox<String> directB2SCombo;
+
+  @FXML
+  private Button directB2SDeleteBtn;
 
   @FXML
   private Button dataManagerBtn;
@@ -471,7 +471,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", directB2S.getEmulatorId(), directB2SCombo.getValue(), selection));
 
     // then refresh images and table
-    refreshView(getSelection());
+    reloadItem(directB2S);
 
     if (game != null) {
       EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -479,11 +479,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   private void deleteDMDImage() {
-    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", directB2S.getEmulatorId(), directB2S.getFileName(), null));
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", directB2S.getEmulatorId(), directB2SCombo.getValue(), null));
 
     // then refresh images and table
-    loadImages(directB2S.getFileName());
-    getModel(directB2S.getEmulatorId(), directB2S.getFileName()).reload();
+    reloadItem(directB2S);
 
     if (game != null) {
       EventManager.getInstance().notifyTableChange(game.getId(), null);
@@ -644,6 +643,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
           reloadItem(b2s);
         })
         .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
+  }
+
+  @FXML
+  private void onDirectB2SDelete() {
+    JFXFuture
+      .supplyAsync(() -> client.getBackglassServiceClient().deleteBackglassVersion(directB2S.getEmulatorId(), directB2SCombo.getValue()))
+      .thenAcceptLater((b2s) -> {
+        // reload table and selected view
+        unselectVersion();
+        reloadItem(b2s);
+      })
+      .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
   }
 
   @FXML
@@ -809,7 +820,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     directB2SCombo.valueProperty().addListener((obs, o, n) -> {
       if (refreshingCounter == 0) {
-        refreshTableData(n);
+        refreshTableData(directB2S.getEmulatorId(), n);
       }
     });
 
@@ -834,7 +845,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         });
 
     // deactivate all elemenys in the right sections
-    refreshTableData(null);
+    refreshTableData(-1, null);
     refreshGame(-1);
     refreshTableSettings(-1);
   }
@@ -986,7 +997,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     this.directB2S = newValue;
 
+    int emulatorId = -1;
     int gameId = -1;
+    boolean main = true;
     if (newValue != null) {
       List<String> versions = newValue.getVersions();
       String prevSelected = directB2SCombo.getValue();
@@ -995,22 +1008,24 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       setVersioningDisabled(versions.size() <= 1);
 
       // reselect previously added
-      if (prevSelected != null) {
+      if (prevSelected != null && versions.contains(prevSelected)) {
         directB2SCombo.getSelectionModel().select(prevSelected);
       }
       else {
         directB2SCombo.getSelectionModel().selectFirst();
       }
 
-      // determine associated game
-      gameId = client.getBackglassServiceClient().getGameId(directB2S.getEmulatorId(), directB2S.getFileName());
+      // determine associated game and emulator
+      emulatorId = newValue.getEmulatorId();
+      gameId = client.getBackglassServiceClient().getGameId(newValue.getEmulatorId(), newValue.getFileName());
+      main = newValue.getFileName().equals(directB2SCombo.getValue());
     }
     else {
       setVersioningDisabled(true);
     }
 
     // now refresh other sections
-    refreshTableData(directB2SCombo.getValue());
+    refreshTableData(emulatorId, directB2SCombo.getValue());
     refreshGame(gameId);
     refreshTableSettings(gameId);
 
@@ -1021,12 +1036,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     directB2SCombo.setDisable(b);
     directB2SSetDefaultBtn.setDisable(b);
     directB2SDisableBtn.setDisable(b);
+    directB2SDeleteBtn.setDisable(b);
     if (b) {
       directB2SCombo.setItems(null);
     }
   }
 
-  protected void refreshTableData(String directb2sFilename) {
+  protected void refreshTableData(int emulatorId, String directb2sFilename) {
     this.tableData = null;
 
     nameLabel.setText("-");
@@ -1070,13 +1086,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       thumbnailImagePane.setCenter(new ProgressIndicator());
       dmdThumbnailImagePane.setCenter(new ProgressIndicator());
 
-      JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(directB2S.getEmulatorId(), directb2sFilename))
+      JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(emulatorId, directb2sFilename))
           .thenAcceptLater((tableData) -> {
             this.refreshingCounter++;
 
             this.tableData = tableData;
 
-            loadImages(directb2sFilename);
+            loadImages(emulatorId, directb2sFilename);
 
             nameLabel.setText(tableData.getName());
             typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
@@ -1234,11 +1250,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     skipLEDFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
   }
 
-  private void loadImages(String filename) {
+  private void loadImages(int emulatorId, String fileName) {
     Image thumbnail = null;
     String thumbnailError = null;
     if (tableData != null && tableData.isBackgroundAvailable()) {
-      String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(directB2S.getEmulatorId(), filename, true);
+      String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(emulatorId, fileName, true);
       thumbnail = new Image(url);
     }
     else {
@@ -1264,7 +1280,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     Image dmdThumbnail = null;
     String dmdThumbnailError = null;
     if (tableData != null && tableData.isDmdImageAvailable()) {
-      String url = client.getBackglassServiceClient().getDirectB2sDmdUrl(directB2S.getEmulatorId(), filename);
+      String url = client.getBackglassServiceClient().getDirectB2sDmdUrl(emulatorId, fileName);
       dmdThumbnail = new Image(url);
     }
     else {

@@ -246,11 +246,14 @@ public class DirectB2SResource {
     else if (values.containsKey("duplicate")) {
       return backglassService.duplicate(emulatorId, fileName);
     }
-    else if (values.containsKey("setAsDefault")) {
+    else if (values.containsKey("setVersionAsDefault")) {
       return backglassService.setAsDefault(emulatorId, fileName);
     }
     else if (values.containsKey("disable")) {
       return backglassService.disable(emulatorId, fileName);
+    }
+    else if (values.containsKey("deleteVersion")) {
+      return backglassService.deleteVersion(emulatorId, fileName);
     }
     return null;
   }
