@@ -186,6 +186,10 @@ public class DMDInfo {
     return onScreen != null && VPinScreen.DMD.equals(onScreen);
   }
 
+  public boolean isOnMenu() {
+    return onScreen != null && VPinScreen.Menu.equals(onScreen);
+  }
+
   public void centerOnScreen() {
     setX(getScreenWidth() / 2 - getWidth() / 2);
     setY(getScreenHeight() / 2 - getHeight() / 2);

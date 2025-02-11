@@ -478,9 +478,9 @@ public class DMDPositionService {
       return backglassService.getPreviewBackground(gameId, true);
     }
     else if (VPinScreen.DMD.equals(onScreen)) {
-      DirectB2S directb2s = backglassService.getDirectB2S(gameId);
-      DirectB2STableSettings tableSettings = backglassService.getTableSettings(gameId);
-      String base64 = backglassService.getDmdBase64(directb2s.getEmulatorId(), directb2s.getFileName());
+      Game game = gameService.getGame(gameId);
+      DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
+      String base64 = backglassService.getDmdBase64(game.getEmulatorId(), game.getDirectB2SFilename());
 
       // use B2S DMD image if present and not hidden
       if (base64 != null && !(tableSettings != null && tableSettings.isHideB2SDMD())) {

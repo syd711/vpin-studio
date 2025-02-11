@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> {
+public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, DirectB2SModel> {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SModel.class);
 
   // not null when loaded
@@ -29,13 +29,13 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
   private String framePath;
 
 
-  public DirectB2SModel(DirectB2S backglass) {
+  public DirectB2SModel(DirectB2SAndVersions backglass) {
     super(backglass);
   }
 
   @Override
   public void load() {
-    setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean));
+    setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean.getEmulatorId(), bean.getFileName()));
   }
   /**
    * Simulate a load and initialize fully
@@ -47,7 +47,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
   private void setDirectB2SData(DirectB2SData b2sdata) {
     this.backglassData = b2sdata;
     if (backglassData != null) {
-      DirectB2sScreenRes screenres = client.getBackglassServiceClient().getScreenRes(b2sdata.toDirectB2S(), true);
+      DirectB2sScreenRes screenres = client.getBackglassServiceClient().getScreenRes(b2sdata.getEmulatorId(), b2sdata.getFilename(), true);
       if (screenres != null) {
         this.resPath = screenres.getScreenresFilePath();
         this.framePath = screenres.getBackgroundFilePath();
@@ -65,13 +65,17 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
     }
   }
 
-  public DirectB2S getBacklass() {
+  public DirectB2SAndVersions getBacklass() {
     return getBean();
   }
 
   @Override
-  public boolean sameBean(DirectB2S other) {
+  public boolean sameBean(DirectB2SAndVersions other) {
     return bean.getEmulatorId() == other.getEmulatorId() && StringUtils.equals(bean.getFileName(), other.getFileName());
+  }
+
+  public boolean sameBean(int emulatorId, String fileName) {
+    return bean.getEmulatorId() == emulatorId && StringUtils.equals(bean.getFileName(), fileName);
   }
 
   @Override

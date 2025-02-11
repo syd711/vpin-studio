@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
@@ -221,5 +223,39 @@ public class FileUtils {
       segment = String.format("%02d", index);
     }
     return target;
+  }
+
+  static Pattern filePattern = Pattern.compile(" \\(\\d\\d?\\)$");
+
+  public static boolean equalsUniqueFile(String file1, String file2) {
+    return StringUtils.equalsIgnoreCase(fromUniqueFile(file1), fromUniqueFile(file2));
+  }
+
+  /**
+   * subfolder/Ace Of Speed (Original 2019) (2).directb2s => subfolder/Ace Of Speed (Original 2019).directb2s
+   */
+  public static String fromUniqueFile(String filename) {
+    String basename = FilenameUtils.removeExtension(filename).trim();
+    Matcher match = filePattern.matcher(basename);
+    if (match.find()) {
+      basename = match.replaceAll("");
+    }
+    return basename + "." + FilenameUtils.getExtension(filename);
+  }
+
+  /**
+   * subfolder/Ace Of Speed (Original 2019) (2).directb2s => subfolder/Ace Of Speed (Original 2019)
+   */
+  public static String baseUniqueFile(String filename) {
+    String basename = FilenameUtils.removeExtension(filename).trim();
+    Matcher match = filePattern.matcher(basename);
+    if (match.find()) {
+      basename = match.replaceAll("");
+    }
+    return basename;
+  }
+
+  public static boolean isMainFilename(String filename) {
+    return filename.equals(fromUniqueFile(filename));
   }
 }
