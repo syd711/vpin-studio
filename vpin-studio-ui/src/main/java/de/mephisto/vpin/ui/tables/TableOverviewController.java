@@ -7,7 +7,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -1004,8 +1003,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     // set ValueCellFactory and CellFactory, and get a renderer that is responsible to render the cell
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
@@ -1099,11 +1096,24 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
+        int nbVersions = value.getNbDirectB2S();
+        FontIcon icon = null;
+        if (nbVersions > 9) {
+          icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", getIconColor(value));
+          //icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-circle-outline", 24, getIconColor(value));
+        }
+        else if (nbVersions > 1) {
+          icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", getIconColor(value));
+          //icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-circle-outline", 24, getIconColor(value));
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
+          icon = WidgetFactory.createCheckIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+        }
+        if (hasUpdate) {
+          return WidgetFactory.addUpdateIcon(icon, "New backglass updates available");
+        }
+        else {
+          return WidgetFactory.wrapIcon(icon, value.getDirectB2SPath());
         }
       }
       else if (hasUpdate) {

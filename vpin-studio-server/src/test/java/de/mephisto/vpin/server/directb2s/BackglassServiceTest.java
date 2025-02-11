@@ -35,7 +35,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     assertEquals(4, b2s.size());
 
     DirectB2SAndVersions b2s1 = b2s.get(0);
-    assertEquals("250 cc (Inder 1992)\\250 cc (Inder 1992).directb2s", b2s1.getFileName());
+    assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s1.getFileName());
     assertEquals(1, b2s1.getNbVersions());
 
     DirectB2SAndVersions b2s2 = b2s.get(1);
@@ -51,7 +51,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   public void testGetBackglass() {
     Game g = gameService.getGameByBaseFilename(1, "Twister (1996)");
     assertNotNull(g);
-    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(g.getId());
+    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(g);
     assertEquals("Twister (1996).directb2s", b2s.getFileName());
     assertEquals(2, b2s.getNbVersions());
     assertTrue(b2s.isGameAvailable());
@@ -69,25 +69,26 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
 
     gameService.getImportableTables(1);
 
-    GameEmulator emu = frontendService.getGameEmulator(1);
-    b2s = backglassService.getDirectB2SAndVersions(emu, "250 cc (Inder 1992)/250 cc (Inder 1992).directb2s");
-    assertEquals("250 cc (Inder 1992)/250 cc (Inder 1992).directb2s", b2s.getFileName());
+    b2s = backglassService.getDirectB2SAndVersions(1, "250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s");
+    assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s.getFileName());
     assertTrue(b2s.isGameAvailable());
   }
 
   @Test
   public void testOperations() throws Exception {
-    doAllTests("250 cc (Inder 1992)/250 cc (Inder 1992)", 1);
+    // check no folder
     doAllTests("Twister (1996)", 2);
+    // check folder
+    doAllTests("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992)", 1);
   }
 
   public void doAllTests(String directb2s, int nbVersions) throws Exception {
-    GameEmulator emu = frontendService.getGameEmulator(1);
-    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(emu, directb2s + ".directb2s");
+    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(1, directb2s + ".directb2s");
     assertEquals(directb2s + ".directb2s", b2s.getFileName());
     assertEquals(nbVersions, b2s.getNbVersions());
     assertTrue(b2s.isEnabled());
 
+    GameEmulator emu = frontendService.getGameEmulator(1);
     String f = b2s.getVersion(0);
     File file = new File(emu.getTablesDirectory(), f);
     assertTrue(file.exists());
@@ -109,7 +110,8 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
       String base64 = DatatypeConverter.printBase64Binary(baos.toByteArray());
       backglassService.setDmdImage(emu.getId(), newF, "fond fulldmd vert.jpg", base64);
     }
-    long newSize = Files.size(Path.of(emu.getTablesDirectory(), newF));assertNotEquals(size, newSize);
+    long newSize = Files.size(Path.of(emu.getTablesDirectory(), newF));
+    assertNotEquals(size, newSize);
 
     // set as default, flipping f and newf files 
     b2stest = backglassService.setAsDefault(emu.getId(), newF);
@@ -126,7 +128,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
       assertNotEquals(f, b2stest.getVersion(i));
     }
 
-    // our orignal filebeing now named, newF, set it as default, this should enable the backglass and rename f
+    // our orignal file being now named newF, set it as default, this should enable the backglass and rename f
     b2stest = backglassService.setAsDefault(emu.getId(), newF);
     assertTrue(b2stest.isEnabled());
     assertEquals(size, Files.size(Path.of(emu.getTablesDirectory(), f)));
@@ -146,5 +148,9 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     for (int i = 0; i < nbVersions; i++) {
       assertEquals(b2s.getVersion(i), b2stest.getVersion(i));
     }
+  
+    // also verify we did not corrup the cache
+    List<DirectB2SAndVersions> allb2s = backglassService.getBackglasses();
+    assertEquals(4, allb2s.size());
   }
 }

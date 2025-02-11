@@ -361,7 +361,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         export(in);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download background image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download background image for backglass " + tableData, ioe);
       }
     }
   }
@@ -386,7 +386,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         export(in);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download DMD image for backglass " + tableData, ioe);
       }
     }
   }
@@ -404,7 +404,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         uploadImageAsMedia(game, VPinScreen.BackGlass, "Backglass", img);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download backglass and set as backglass media image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download backglass and set as backglass media image for backglass " + tableData, ioe);
       }
     }
   }
@@ -417,7 +417,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         uploadImageAsMedia(game, VPinScreen.Menu, "DMD", img);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download DMD and set as DMD media image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download DMD and set as DMD media image for backglass " + tableData, ioe);
       }
     }
   }
@@ -1067,10 +1067,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.reloadBackglassBtn.setDisable(true);
 
     downloadBackglassBtn.setDisable(true);
-    useAsMediaBackglassBtn.setDisable(true);
     uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
-    useAsMediaDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
 
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
@@ -1131,6 +1129,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.resBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
 
+    useAsMediaBackglassBtn.setDisable(true);
+    useAsMediaDMDBtn.setDisable(true);
+
     this.openBtn.setDisable(true);
     this.vpsOpenBtn.setDisable(true);
 
@@ -1147,6 +1148,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
               gameLabel.setText(game.getGameDisplayName());
               gameFilenameLabel.setText(game.getGameFileName());
 
+              useAsMediaBackglassBtn.setDisable(false);
+              useAsMediaDMDBtn.setDisable(false);
+          
               openBtn.setDisable(false);
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
 
@@ -1265,7 +1269,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         thumbnailImage.setImage(_thumbnail);
         thumbnailImagePane.setCenter(thumbnailImage);
         downloadBackglassBtn.setDisable(false);
-        useAsMediaBackglassBtn.setDisable(tableData == null || tableData.getGameId() < 0);
         resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
       }
       else {
@@ -1292,7 +1295,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         dmdThumbnailImage.setImage(_dmdThumbnail);
         dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
         downloadDMDBtn.setDisable(false);
-        useAsMediaDMDBtn.setDisable(tableData.getGameId() < 0);
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
@@ -1414,6 +1416,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     return value.isEnabled() ? "" : WidgetFactory.DISABLED_TEXT_STYLE;
   }
 
+  @Override
   protected DirectB2SModel toModel(DirectB2SAndVersions b2s) {
     return new DirectB2SModel(b2s);
   }

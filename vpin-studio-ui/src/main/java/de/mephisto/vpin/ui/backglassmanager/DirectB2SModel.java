@@ -20,6 +20,9 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
   // not null when loaded
   private DirectB2SData backglassData;
 
+  // associated game if any
+  private int gameId;
+
   private int hideGrill;
   private boolean hideB2SDMD;
   private boolean hideBackglass;
@@ -35,6 +38,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
 
   @Override
   public void load() {
+    gameId = client.getBackglassServiceClient().getGameId(bean.getEmulatorId(), bean.getFileName());
     setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean.getEmulatorId(), bean.getFileName()));
   }
   /**
@@ -53,8 +57,8 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
         this.framePath = screenres.getBackgroundFilePath();
       }
 
-      if (backglassData.getGameId() > 0) {
-        DirectB2STableSettings tmpTableSettings = client.getBackglassServiceClient().getTableSettings(backglassData.getGameId());
+      if (gameId > 0) {
+        DirectB2STableSettings tmpTableSettings = client.getBackglassServiceClient().getTableSettings(gameId);
         if (tmpTableSettings != null) {
           this.hideGrill = tmpTableSettings.getHideGrill();
           this.hideB2SDMD = tmpTableSettings.isHideB2SDMD();
@@ -88,9 +92,8 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
   }
 
   public int getGameId() {
-    return backglassData != null ? backglassData.getGameId() : -1;
+    return gameId;
   }
-
 
   public String getFileName() {
     return bean.getFileName();
