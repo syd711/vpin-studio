@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
 
@@ -411,6 +411,7 @@ public class BackglassService {
 
   //-------------------------------------------- OPERATIONS ---
 
+  @Nullable
   private DirectB2SAndVersions doExecute(GameEmulator emulator, String fileName, BiFunction<String, String, String> fct) {
     File file = new File(emulator.getTablesDirectory(), fileName);
     String[] fileNames = file.getParentFile().list();
@@ -529,7 +530,7 @@ public class BackglassService {
       return name;
     });
     // if the DirectB2SAndVersions contains file, it means they have not been deleted
-    return b2s.getNbVersions() == 0;
+    return b2s == null || b2s.getNbVersions() == 0;
   }
 
   public DirectB2SAndVersions deleteVersion(int emulatorId, String filename) {

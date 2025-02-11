@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
 
@@ -64,7 +65,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public DirectB2SAndVersions getDirectB2S(int gameId) {
     return getRestClient().get(API + "directb2s/" + gameId + "/versions", DirectB2SAndVersions.class);
-	}
+  }
 
   public List<DirectB2SAndVersions> getBackglasses() {
     return Arrays.asList(getRestClient().get(API + "directb2s", DirectB2SAndVersions[].class));
@@ -153,7 +154,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
     params.put("fileName", fileName);
     try {
       return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
   }
@@ -165,7 +167,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
     params.put("fileName", fileName);
     try {
       return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
   }
@@ -231,10 +234,11 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   //--------------------------------
 
-  public UploadDescriptor uploadDirectB2SFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadDirectB2SFile(File file, int gameId, boolean append, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      HttpEntity<?> upload = createUpload(file, gameId, null, AssetType.DIRECTB2S, listener);
+      String uploadType = append ? UploadType.uploadAndAppend.name() : UploadType.uploadAndImport.name();
+      HttpEntity<?> upload = createUpload(file, gameId, uploadType, AssetType.DIRECTB2S, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
@@ -287,7 +291,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {
-    return uploadFile(screenres.getEmulatorId(), screenres.getB2SFileName(), 
+    return uploadFile(screenres.getEmulatorId(), screenres.getB2SFileName(),
         "directb2s/screenRes/uploadFrame", file, String.class);
   }
 
