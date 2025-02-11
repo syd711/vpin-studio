@@ -391,21 +391,18 @@ public class BackglassService {
       DirectB2SAndVersions currentDirectB2S = null;
       while (iter.hasNext()) {
         File file = iter.next();
-        DirectB2SAndVersions directB2S = new DirectB2SAndVersions();
-        directB2S.setEmulatorId(gameEmulator.getId());
-        directB2S.addFileName(tablesPath.relativize(file.toPath()).toString());
-    
-        String vpxFilename = FilenameUtils.removeExtension(directB2S.getFileName()) + gameEmulator.getGameExt();
-        directB2S.setVpxAvailable(new File(tablesPath.toFile(), vpxFilename).exists());
+        String fileName = tablesPath.relativize(file.toPath()).toString();
+        String mainName = FileUtils.fromUniqueFile(fileName);
 
         // new backglass detected
-        if (currentDirectB2S == null || !currentDirectB2S.equals(directB2S)) {
-          currentDirectB2S = directB2S;
-          result.add(directB2S);
+        if (currentDirectB2S == null || !currentDirectB2S.getFileName().equals(mainName)) {
+          currentDirectB2S = new DirectB2SAndVersions();
+          currentDirectB2S.setEmulatorId(gameEmulator.getId());
+          String gameFilename = FilenameUtils.removeExtension(mainName) + "." + gameEmulator.getGameExt();
+          currentDirectB2S.setGameAvailable(new File(tablesPath.toFile(), gameFilename).exists());
+          result.add(currentDirectB2S);
         }
-        else {
-          currentDirectB2S.merge(directB2S);
-        }
+        currentDirectB2S.addFileName(tablesPath.relativize(file.toPath()).toString());
       }
     }
     Collections.sort(result, Comparator.comparing(o -> o.getName().toLowerCase()));
@@ -446,7 +443,7 @@ public class BackglassService {
       }
     }
     String gameFilename = mainBaseName + "." + emulator.getGameExt();
-    b2s.setVpxAvailable(new File(emulator.getTablesFolder(), gameFilename).exists());
+    b2s.setGameAvailable(new File(emulator.getTablesFolder(), gameFilename).exists());
     return b2s.getNbVersions() > 0 ? b2s : null;
   }
 

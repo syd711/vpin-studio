@@ -873,9 +873,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   private void bindTable() {
 
     BaseLoadingColumn.configureColumn(statusColumn, (value, model) -> {
-      if (!model.isVpxAvailable()) {
+      if (!model.isGameAvailable()) {
         Label icon = new Label();
-        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has no matching VPX file."));
+        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has no matching game file."));
         icon.setGraphic(WidgetFactory.createExclamationIcon(getIconColor(value)));
         return icon;
       }
@@ -1145,7 +1145,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         }
         else {
           //VPX is not installed, but available!
-          if (directB2S.isVpxAvailable()) {
+          if (directB2S.isGameAvailable()) {
             gameLabel.setText("?");
             gameFilenameLabel.setText("(Available, but not installed)");
           }

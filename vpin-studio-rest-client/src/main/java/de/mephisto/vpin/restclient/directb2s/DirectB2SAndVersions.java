@@ -11,8 +11,8 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 
 public class DirectB2SAndVersions { //extends DirectB2S {
 
-    private int emulatorId;
-  private boolean vpxAvailable;
+  private int emulatorId;
+  private boolean gameAvailable;
   private String fileName;
 
   public String getName() {
@@ -27,12 +27,12 @@ public class DirectB2SAndVersions { //extends DirectB2S {
     this.fileName = fileName;
   }
 
-  public boolean isVpxAvailable() {
-    return vpxAvailable;
+  public boolean isGameAvailable() {
+    return gameAvailable;
   }
 
-  public void setVpxAvailable(boolean vpxAvailable) {
-    this.vpxAvailable = vpxAvailable;
+  public void setGameAvailable(boolean vpxAvailable) {
+    this.gameAvailable = vpxAvailable;
   }
 
   public int getEmulatorId() {

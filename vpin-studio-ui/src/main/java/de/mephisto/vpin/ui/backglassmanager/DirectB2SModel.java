@@ -96,8 +96,8 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
     return bean.getFileName();
   }
 
-  public boolean isVpxAvailable() {
-    return bean.isVpxAvailable();
+  public boolean isGameAvailable() {
+    return bean.isGameAvailable();
   }
 
   public int getHideGrill() {

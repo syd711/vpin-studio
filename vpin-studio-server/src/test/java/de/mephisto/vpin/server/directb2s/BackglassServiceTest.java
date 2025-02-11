@@ -54,7 +54,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(g.getId());
     assertEquals("Twister (1996).directb2s", b2s.getFileName());
     assertEquals(2, b2s.getNbVersions());
-    assertTrue(b2s.isVpxAvailable());
+    assertTrue(b2s.isGameAvailable());
 
     DirectB2SData data = backglassService.getDirectB2SData(g);
     assertNotNull(data);
@@ -72,7 +72,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     GameEmulator emu = frontendService.getGameEmulator(1);
     b2s = backglassService.getDirectB2SAndVersions(emu, "250 cc (Inder 1992)/250 cc (Inder 1992).directb2s");
     assertEquals("250 cc (Inder 1992)/250 cc (Inder 1992).directb2s", b2s.getFileName());
-    assertTrue(b2s.isVpxAvailable());
+    assertTrue(b2s.isGameAvailable());
   }
 
   @Test
