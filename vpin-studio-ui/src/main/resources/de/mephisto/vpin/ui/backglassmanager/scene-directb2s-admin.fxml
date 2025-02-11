@@ -399,6 +399,17 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-blank-off-outline" iconSize="18" />
                                  </graphic>
                               </Button>
+                              <Button fx:id="directB2SDeleteBtn" mnemonicParsing="false" onAction="#  " textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Delete the selected directB2S file version" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                 </graphic>
+                              </Button>
                               <Region HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>

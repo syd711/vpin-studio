@@ -640,6 +640,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   @FXML
+  private void onDirectB2SDelete() {
+    JFXFuture
+      .supplyAsync(() -> client.getBackglassServiceClient().deleteBackglassVersion(directB2S.getEmulatorId(), directB2SCombo.getValue()))
+      .thenAcceptLater((b2s) -> {
+        // reload table and selected view
+        unselectVersion();
+        reloadItem(b2s);
+      })
+      .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
+  }
+
+  @FXML
   private void onVpsOpen() {
     if (game != null) {
       VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
@@ -982,6 +994,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     int emulatorId = -1;
     int gameId = -1;
+    boolean main = true;
     if (newValue != null) {
       List<String> versions = newValue.getVersions();
       String prevSelected = directB2SCombo.getValue();
@@ -1000,6 +1013,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       // determine associated game and emulator
       emulatorId = newValue.getEmulatorId();
       gameId = client.getBackglassServiceClient().getGameId(newValue.getEmulatorId(), newValue.getFileName());
+      main = newValue.getFileName().equals(directB2SCombo.getValue());
     }
     else {
       directB2SChooserBox.setVisible(false);
