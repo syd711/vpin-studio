@@ -399,7 +399,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-blank-off-outline" iconSize="18" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="directB2SDeleteBtn" mnemonicParsing="false" onAction="#  " textFill="WHITE">
+                              <Button fx:id="directB2SDeleteBtn" mnemonicParsing="false" onAction="#onDirectB2SDelete" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
