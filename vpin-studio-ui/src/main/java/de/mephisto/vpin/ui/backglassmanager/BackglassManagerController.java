@@ -990,7 +990,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       directB2SChooserBox.setVisible(versions.size() > 1);
 
       // reselect previously added
-      if (prevSelected != null) {
+      if (prevSelected != null && versions.contains(prevSelected)) {
         directB2SCombo.getSelectionModel().select(prevSelected);
       }
       else {

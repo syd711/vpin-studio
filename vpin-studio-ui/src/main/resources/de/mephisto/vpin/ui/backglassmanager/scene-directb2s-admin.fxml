@@ -273,6 +273,9 @@
                                                       <graphic>
                                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
                                                       </graphic>
+                                                      <tooltip>
+                                                         <Tooltip prefWidth="400.0" text="Export the backglass image and save it on disk." wrapText="true" />
+                                                      </tooltip>
                                                    </Button>
                                                    <Button fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
                                                       <graphic>
