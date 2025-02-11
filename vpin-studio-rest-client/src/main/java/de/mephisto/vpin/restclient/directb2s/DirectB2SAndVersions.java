@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 
 public class DirectB2SAndVersions { //extends DirectB2S {
 
-    private int emulatorId;
+  private int emulatorId;
   private boolean vpxAvailable;
   private String fileName;
 
@@ -74,7 +74,7 @@ public class DirectB2SAndVersions { //extends DirectB2S {
   public void addFileName(String fileName) {
     String mainFileName = FileUtils.fromUniqueFile(fileName);
     _setFileName(mainFileName);
-    
+
     // make sure main file is always the first version
     boolean main = StringUtils.equalsIgnoreCase(mainFileName, fileName);
     if (main) {

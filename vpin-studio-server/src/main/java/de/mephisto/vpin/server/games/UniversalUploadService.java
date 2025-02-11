@@ -6,8 +6,9 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
@@ -122,7 +123,7 @@ public class UniversalUploadService {
         }
       }
       else if (uploadDescriptor.isFileAsset(assetType)) {
-        copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType);
+        copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, uploadDescriptor.getUploadType());
       }
     }
     catch (Exception e) {
@@ -243,8 +244,18 @@ public class UniversalUploadService {
   }
 
   private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType) throws IOException {
+    copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, UploadType.uploadAndReplace);
+  }
+
+  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, UploadType uploadType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.name().toLowerCase();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
+
+    if (UploadType.uploadAndAppend.equals(uploadType)) {
+      gameAssetFile = FileUtils.uniqueFile(gameAssetFile);
+      LOG.info("Creating unique game asset file {}", gameAssetFile.getAbsolutePath());
+    }
+
     boolean replaced = false;
     if (gameAssetFile.exists()) {
       if (!gameAssetFile.delete()) {

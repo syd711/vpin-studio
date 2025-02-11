@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -451,10 +452,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onBackglassUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directUpload(stage, AssetType.DIRECTB2S, selectedItems.get(0), null);
-      if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
-      }
+      GameRepresentation gameRepresentation = selectedItems.get(0);
+      TableDialogs.openBackglassUpload(tablesController, stage, gameRepresentation, null, null);
     }
   }
 
