@@ -1,3 +1,11 @@
+## Release Notes 3.12.9
+
+## Changes
+
+- **PinVOL Integration**: Fixed reading/writing of the **PinVolTables.ini** file, which may have caused duplicated entries.
+
+---
+
 ## Release Notes 3.12.8
 
 ## Changes

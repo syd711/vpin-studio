@@ -31,13 +31,15 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PinVolService implements InitializingBean, FileChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(PinVolService.class);
+
+  private static final String PIN_VOL_TABLES_INI = "PinVolTables.ini";
+  private static final String PIN_VOL_SETTINGS_INI = "PinVolSettings.ini";
+  private static final String PIN_VOL_VOL_INI = "PinVolVol.ini";
 
   @Autowired
   private PreferencesService preferencesService;
@@ -124,8 +126,20 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       }
       try (FileInputStream fileInputStream = new FileInputStream(tablesIni)) {
         List<String> entries = IOUtils.readLines(fileInputStream, StandardCharsets.UTF_8);
+
+        //we may have messed up older configs.
+        List<String> filtered = new ArrayList<>();
         for (String entry : entries) {
-          PinVolTableEntry e = createEntry(entry, preferences.getSsfDbLimit());
+          if (!filtered.contains(entry)) {
+            filtered.add(entry);
+          }
+          else {
+            LOG.warn("Filtered duplicate PinVolTables.ini entry: {}", entry);
+          }
+        }
+
+        for (String entry : filtered) {
+          PinVolTableEntry e = loadEntry(entry, preferences.getSsfDbLimit());
           if (e != null) {
             preferences.getTableEntries().add(e);
           }
@@ -157,7 +171,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
-  private PinVolTableEntry createEntry(String line, int ssfDbLimit) {
+  private PinVolTableEntry loadEntry(String line, int ssfDbLimit) {
     String[] split = line.split("\\t");
     if (split.length == 6) {
       PinVolTableEntry entry = new PinVolTableEntry();
@@ -187,15 +201,15 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   private static File getPinVolTablesIniFile() {
-    return new File(SystemService.RESOURCES, "PinVolTables.ini");
+    return new File(SystemService.RESOURCES, PIN_VOL_TABLES_INI);
   }
 
   private static File getPinVolSettingsIniFile() {
-    return new File(SystemService.RESOURCES, "PinVolSettings.ini");
+    return new File(SystemService.RESOURCES, PIN_VOL_SETTINGS_INI);
   }
 
   private static File getPinVolVolIniFile() {
-    return new File(SystemService.RESOURCES, "PinVolVol.ini");
+    return new File(SystemService.RESOURCES, PIN_VOL_VOL_INI);
   }
 
   private void initListener() {
@@ -210,6 +224,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   public PinVolPreferences update(@NonNull PinVolUpdate update) {
     PinVolPreferences preferences = getPinVolTablePreferences();
+    LOG.info("Loaded PinVolTables.ini with {} entries.", preferences.getTableEntries().size());
     PinVolTableEntry systemVolume = preferences.getSystemVolume();
     preferences.applyValues(systemVolume.getName(), update.getSystemVolume());
 
