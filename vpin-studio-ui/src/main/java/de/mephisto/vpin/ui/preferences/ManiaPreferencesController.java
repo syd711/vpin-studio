@@ -41,8 +41,6 @@ public class ManiaPreferencesController implements Initializable {
   @FXML
   private Label idLabel;
 
-  private TournamentSettings settings;
-
   @FXML
   private void onIdCopy() {
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
@@ -62,9 +60,11 @@ public class ManiaPreferencesController implements Initializable {
       registrationPanel.setVisible(cabinet == null);
       preferencesPanel.setVisible(cabinet != null);
 
+
+      TournamentSettings settings = client.getTournamentsService().getSettings();
       settings.setEnabled(false);
       try {
-        settings = client.getTournamentsService().saveSettings(settings);
+        client.getTournamentsService().saveSettings(settings);
       }
       catch (Exception e) {
         LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
@@ -92,7 +92,7 @@ public class ManiaPreferencesController implements Initializable {
       idLabel.setText(cabinet.getUuid());
     }
 
-    settings = client.getTournamentsService().getSettings();
+    TournamentSettings settings = client.getTournamentsService().getSettings();
     preferencesPanel.setVisible(cabinet != null);
     registrationCheckbox.setSelected(false);
 
@@ -106,14 +106,6 @@ public class ManiaPreferencesController implements Initializable {
         preferencesPanel.setVisible(true);
         Cabinet cab = maniaClient.getCabinetClient().getCabinet();
         idLabel.setText(cab.getUuid());
-        try {
-          settings = client.getTournamentsService().saveSettings(settings);
-        }
-        catch (Exception e) {
-          registrationCheckbox.setSelected(false);
-          LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for details).");
-        }
       }
     });
 
@@ -122,8 +114,9 @@ public class ManiaPreferencesController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
+          TournamentSettings settings = client.getTournamentsService().getSettings();
           settings.setSubmitAllScores(newValue);
-          settings = client.getTournamentsService().saveSettings(settings);
+          client.getTournamentsService().saveSettings(settings);
         }
         catch (Exception e) {
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);

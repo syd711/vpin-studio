@@ -416,7 +416,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
       }
       else {
-        label.setText("- invalid account -");
+        label.setText("- unknown account -");
       }
       return new SimpleObjectProperty(hBox);
     });

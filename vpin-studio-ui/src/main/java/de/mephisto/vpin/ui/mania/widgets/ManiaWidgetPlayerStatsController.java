@@ -401,15 +401,14 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
           LOG.error("Failed to load VPin Mania account: {}", e.getMessage(), e);
         }
         Platform.runLater(() -> {
-          avatarView.setImage(ManiaAvatarCache.getAvatarImage(rankedAccount.getUuid()));
           if (rankedAccount != null) {
+            avatarView.setImage(ManiaAvatarCache.getAvatarImage(rankedAccount.getUuid()));
             rankLabel.setText("#" + rankedAccount.getRanking());
+            CommonImageUtil.setClippedImage(avatarView, (int) (avatarView.getFitHeight()));
+            subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
+            subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
+            subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
           }
-          CommonImageUtil.setClippedImage(avatarView, (int) (avatarView.getFitHeight()));
-
-          subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
-          subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
-          subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
         });
       }).start();
 
