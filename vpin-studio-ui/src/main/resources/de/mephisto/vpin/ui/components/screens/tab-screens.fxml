@@ -44,7 +44,7 @@
       </ToolBar>
    </top>
    <center>
-      <ScrollPane BorderPane.alignment="CENTER">
+      <ScrollPane style="-fx-border-color: #111111;" BorderPane.alignment="CENTER">
          <content>
             <VBox fx:id="screenRoot" spacing="6.0" />
          </content>

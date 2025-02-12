@@ -358,7 +358,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         export(in);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download background image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download background image for backglass " + tableData, ioe);
       }
     }
   }
@@ -383,7 +383,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         export(in);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download DMD image for backglass " + tableData, ioe);
       }
     }
   }
@@ -401,7 +401,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         uploadImageAsMedia(game, VPinScreen.BackGlass, "Backglass", img);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download backglass and set as backglass media image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download backglass and set as backglass media image for backglass " + tableData, ioe);
       }
     }
   }
@@ -414,7 +414,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         uploadImageAsMedia(game, VPinScreen.Menu, "DMD", img);
       }
       catch (IOException ioe) {
-        LOG.error("Cannot download DMD and set as DMD media image for game " + tableData.getGameId(), ioe);
+        LOG.error("Cannot download DMD and set as DMD media image for backglass " + tableData, ioe);
       }
     }
   }
@@ -878,9 +878,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   private void bindTable() {
 
     BaseLoadingColumn.configureColumn(statusColumn, (value, model) -> {
-      if (!model.isVpxAvailable()) {
+      if (!model.isGameAvailable()) {
         Label icon = new Label();
-        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has no matching VPX file."));
+        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has no matching game file."));
         icon.setGraphic(WidgetFactory.createExclamationIcon(getIconColor(value)));
         return icon;
       }
@@ -999,7 +999,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     int emulatorId = -1;
     int gameId = -1;
-    boolean main = true;
     if (newValue != null) {
       List<String> versions = newValue.getVersions();
       String prevSelected = directB2SCombo.getValue();
@@ -1018,7 +1017,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       // determine associated game and emulator
       emulatorId = newValue.getEmulatorId();
       gameId = client.getBackglassServiceClient().getGameId(newValue.getEmulatorId(), newValue.getFileName());
-      main = newValue.getFileName().equals(directB2SCombo.getValue());
     }
     else {
       setVersioningDisabled(true);
@@ -1068,10 +1066,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.deleteBtn.setDisable(true);
 
     downloadBackglassBtn.setDisable(true);
-    useAsMediaBackglassBtn.setDisable(true);
     uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
-    useAsMediaDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
 
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
@@ -1131,6 +1127,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.resBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
 
+    useAsMediaBackglassBtn.setDisable(true);
+    useAsMediaDMDBtn.setDisable(true);
+
     this.openBtn.setDisable(true);
     this.vpsOpenBtn.setDisable(true);
 
@@ -1147,6 +1146,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
               gameLabel.setText(game.getGameDisplayName());
               gameFilenameLabel.setText(game.getGameFileName());
 
+              useAsMediaBackglassBtn.setDisable(false);
+              useAsMediaDMDBtn.setDisable(false);
+          
               openBtn.setDisable(false);
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
 
@@ -1158,7 +1160,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
             }
             else {
               //VPX is not installed, but available!
-              if (directB2S.isVpxAvailable()) {
+              if (directB2S.isGameAvailable()) {
                 gameLabel.setText("?");
                 gameFilenameLabel.setText("(Available, but not installed)");
               }
@@ -1265,7 +1267,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         thumbnailImage.setImage(_thumbnail);
         thumbnailImagePane.setCenter(thumbnailImage);
         downloadBackglassBtn.setDisable(false);
-        useAsMediaBackglassBtn.setDisable(tableData == null || tableData.getGameId() < 0);
         resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
       }
       else {
@@ -1292,7 +1293,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         dmdThumbnailImage.setImage(_dmdThumbnail);
         dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
         downloadDMDBtn.setDisable(false);
-        useAsMediaDMDBtn.setDisable(tableData.getGameId() < 0);
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
@@ -1414,6 +1414,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     return value.isEnabled() ? "" : WidgetFactory.DISABLED_TEXT_STYLE;
   }
 
+  @Override
   protected DirectB2SModel toModel(DirectB2SAndVersions b2s) {
     return new DirectB2SModel(b2s);
   }

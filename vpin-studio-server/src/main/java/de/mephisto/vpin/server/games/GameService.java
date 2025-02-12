@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -77,6 +79,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private PreferencesService preferencesService;
 
   @Autowired
+  private BackglassService backglassService;
+
+  @Autowired
   private PupPacksService pupPackService;
 
   @Autowired
@@ -105,6 +110,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   private ServerSettings serverSettings;
 
+  private final List<GameLifecycleListener> lifecycleListeners = new ArrayList<>();
+
   /**
    * the refresh timer to keep VPS updated
    */
@@ -113,16 +120,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   @Value("${vps.refreshInterval:2}")
   private int refreshInterval;
 
-  @Deprecated //do not use because of lazy scanning
+  /**
+   * Public API endpoint to fetch all games
+   *
+   * @return
+   */
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
-    List<Game> games = new ArrayList<>(frontendService.getGames());
-    LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
-    start = System.currentTimeMillis();
-
-    for (Game game : games) {
-      applyGameDetails(game, false, false);
-    }
+    List<Game> games = getKnownGames(-1);
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
   }
@@ -188,6 +193,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     for (Game game : games) {
       boolean newGame = applyGameDetails(game, false, false);
       if (newGame) {
+        notifyGameCreated(game);
         scanScore(game.getId(), EventOrigin.INITIAL_SCAN);
       }
 
@@ -262,6 +268,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
     return null;
   }
+
+
 
   /**
    * Returns a complete list of highscore versions
@@ -381,6 +389,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       game = this.getGame(game.getId());
     }
     return game;
+  }
+
+  public Game getGameByDirectB2S(int emuId, String filename) {
+    String basefileName = de.mephisto.vpin.restclient.util.FileUtils.baseUniqueFile(filename);
+    return getGameByBaseFilename(emuId, basefileName);
   }
 
   private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
@@ -525,6 +538,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
     game.setDefaultBackgroundAvailable(rawDefaultPicture.exists());
 
+    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(game);
+    game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
+
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
@@ -638,6 +654,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
+    notifyGameUpdated(game);
     return getGame(game.getId());
   }
 
@@ -768,6 +785,35 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+  }
+
+  public void addGameLifecycleListener(@NonNull GameLifecycleListener lifecycleListener) {
+    this.lifecycleListeners.add(lifecycleListener);
+  }
+
+  private void notifyGameCreated(@NonNull Game game) {
+    for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.gameCreated(game);
+    }
+  }
+
+  private void notifyGameUpdated(@NonNull Game game) {
+    for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.gameUpdated(game);
+    }
+  }
+
+  public void notifyGameDeleted(@NonNull Game game) {
+    for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.gameDeleted(game);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
@@ -788,13 +834,6 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       List<Game> games = getKnownGames(-1);
       vpsService.update(games);
       mameService.clearCache();
-    }
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
   }
 }

@@ -265,18 +265,17 @@ public class AssetService {
     return assetRepository.findAll();
   }
 
-  public boolean resetGameAssets(long gameId) {
-    Game game = gameService.getGame((int) gameId);
+  public boolean resetGameAssets(int gameId) {
+    Game game = gameService.getGame(gameId);
 
-    Optional<Asset> byId = assetRepository.findById(gameId);
+    Optional<Asset> byId = assetRepository.findById((long) gameId);
     if (byId.isPresent()) {
       assetRepository.delete(byId.get());
       LOG.info("Deleted assets for " + game.getGameDisplayName());
       return true;
     }
 
-    defaultPictureService.deleteDefaultPictures(game);
-    defaultPictureService.extractDefaultPicture(game);
+    defaultPictureService.updateGame(game);
 
     return false;
   }

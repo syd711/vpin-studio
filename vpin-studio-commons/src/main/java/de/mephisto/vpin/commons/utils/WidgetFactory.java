@@ -141,16 +141,7 @@ public class WidgetFactory {
   }
 
   public static HBox createCheckAndUpdateIcon(String tooltip) {
-    HBox root = new HBox(3);
-    root.setAlignment(Pos.CENTER);
-    Label icon1 = new Label();
-    icon1.setGraphic(createCheckIcon("#FFFFFF"));
-    Label icon2 = new Label();
-    icon2.setTooltip(new Tooltip(tooltip));
-    icon2.setGraphic(createUpdateIcon());
-
-    root.getChildren().addAll(icon2, icon1);
-    return root;
+    return addUpdateIcon(createCheckIcon("#FFFFFF"), tooltip);
   }
 
   public static FontIcon createUpdateStar() {
@@ -225,6 +216,14 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconLiteral(s);
+    return fontIcon;
+  }
+
+  public static FontIcon createIcon(String s, int size, String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(size);
     fontIcon.setIconColor(Paint.valueOf(color != null? color : "#FFFFFF"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
@@ -249,7 +248,6 @@ public class WidgetFactory {
     }
     return fontIcon;
   }
-
 
   public static Label createCheckboxIcon(@Nullable String color, @NonNull String tooltip) {
     Label label = new Label();
@@ -292,6 +290,26 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static HBox addUpdateIcon(FontIcon icon, String tooltip) {
+    HBox root = new HBox(3);
+    root.setAlignment(Pos.CENTER);
+    Label icon1 = new Label();
+    icon1.setGraphic(icon);
+    Label icon2 = new Label();
+    icon2.setTooltip(new Tooltip(tooltip));
+    icon2.setGraphic(createUpdateIcon());
+
+    root.getChildren().addAll(icon2, icon1);
+    return root;
+  }
+  public static Label wrapIcon(FontIcon icon, @NonNull String tooltip) {
+    Label label = new Label();
+    label.setTooltip(new Tooltip(tooltip));
+    label.setGraphic(icon);
+    return label;
+  }
+
+
   public static String hexColor(Integer color) {
     String hex = "FFFFFF";
     if (color != null) {
@@ -324,6 +342,7 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings) {
     return createPlaylistIcon(playlist, uiSettings, false);
   }
+
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
@@ -445,7 +464,7 @@ public class WidgetFactory {
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
-    return createDialogStage(fxmlLoader,owner, title, stateId, null);
+    return createDialogStage(fxmlLoader, owner, title, stateId, null);
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId, String modalStateId) {

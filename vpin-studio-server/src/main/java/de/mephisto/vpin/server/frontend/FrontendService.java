@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
+import de.mephisto.vpin.server.webhooks.WebhooksService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -453,15 +454,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
     return getFrontendConnector().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
   }
-
-/*  public boolean deleteGame(int emulatorId, String name) {
-    Game gameByFilename = getGameByFilename(emulatorId, name);
-    if (gameByFilename != null) {
-      return deleteGame(gameByFilename.getId());
-    }
-    LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
-    return false;
-  }*/
 
   public boolean deleteGame(int id) {
     return getFrontendConnector().deleteGame(id);

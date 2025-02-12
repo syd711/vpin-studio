@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
+import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.MONITORING_SETTINGS: {
           return preferencesService.getJsonPreference(key, MonitoringSettings.class);
+        }
+        case PreferenceNames.WEBHOOK_SETTINGS: {
+          return preferencesService.getJsonPreference(key, WebhookSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

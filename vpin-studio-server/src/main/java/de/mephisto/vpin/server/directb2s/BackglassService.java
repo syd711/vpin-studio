@@ -11,10 +11,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -26,6 +23,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
@@ -49,24 +47,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 @Service
-public class BackglassService {
+public class BackglassService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassService.class);
 
   @Autowired
   private SystemService systemService;
 
   @Autowired
-  private GameService gameService;
-
-  @Autowired
   private FrontendService frontendService;
-
-  @Autowired
-  private DefaultPictureService defaultPictureService;
 
   /**
    * The default filename ScreenRes.txt can be altered by setting the registry key
@@ -78,56 +69,52 @@ public class BackglassService {
   /**
    * Cache between filename and data
    */
+  private final Map<String, DirectB2SAndVersions> cacheDirectB2SVersion = new ConcurrentHashMap<>();
+
   private final Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
 
   private final Map<String, B2STableSettingsParser> cacheB2STableSettingsParser = new ConcurrentHashMap<>();
 
+
   public boolean clearCache() {
+    reloadDirectB2SAndVersions();
     cacheB2STableSettingsParser.clear();
     cacheDirectB2SData.clear();
     return true;
   }
 
-  private Game getGameByDirectB2S(int emuId, String filename) {
-    String basefileName = FileUtils.baseUniqueFile(filename);
-    return gameService.getGameByBaseFilename(emuId, basefileName);
-  }
-
   public DirectB2SData getDirectB2SData(int emuId, String filename) {
-    Game game = getGameByDirectB2S(emuId, filename);
     File b2sFile = getB2sFile(emuId, filename);
-    return getDirectB2SData(b2sFile, emuId, game, filename);
+    return getDirectB2SData(b2sFile, emuId, filename);
   }
 
   public DirectB2SData getDirectB2SData(Game game) {
     if (game != null && game.getDirectB2SPath() != null) {
       File directB2SFile = game.getDirectB2SFile();
-      Path relativeFilePath = game.getEmulator().getTablesFolder().toPath().relativize(directB2SFile.toPath());
-      return getDirectB2SData(directB2SFile, game.getEmulatorId(), game, relativeFilePath.toString());
+      String directB2SFileName = game.getDirectB2SFilename();
+      return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
     }
     else {
       return new DirectB2SData();
     }
   }
 
-  private DirectB2SData getDirectB2SData(File directB2SFile, int emulatorId, @Nullable Game game, String filename) {
+  private DirectB2SData getDirectB2SData(File directB2SFile, int emulatorId, String filename) {
     if (cacheDirectB2SData.containsKey(directB2SFile.getPath())) {
       return cacheDirectB2SData.get(directB2SFile.getPath());
     }
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-    DirectB2SData data = extractor.extractData(directB2SFile, emulatorId, filename, game != null ? game.getId() : -1);
-
-    boolean forceBackglassExtraction = true;
+    DirectB2SData data = extractor.extractData(directB2SFile, emulatorId, filename);
 
     // now fill images dimension
     try {
-      extractBackgroundData(data, game, extractor.getBackgroundBase64(), forceBackglassExtraction);
+      extractBackgroundData(data, extractor.getBackgroundBase64());
     }
     catch (IOException ioe) {
       LOG.error("cannot extract background dimension", ioe);
     }
     try {
-      exportDMDData(data, game, extractor.getDmdBase64(), forceBackglassExtraction);
+      exportDMDData(data, extractor.getDmdBase64());
     }
     catch (IOException ioe) {
       LOG.error("cannot extract background dimension", ioe);
@@ -137,58 +124,23 @@ public class BackglassService {
     return data;
   }
 
-  private void extractBackgroundData(DirectB2SData data, @Nullable Game game, String backgroundBase64, boolean forceBackglassExtraction) throws IOException {
-    if (!forceBackglassExtraction && game != null) {
-      File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-      if (!rawDefaultPicture.exists()) {
-        defaultPictureService.extractDefaultPicture(game);
-        rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-      }
-
-      if (rawDefaultPicture.exists()) {
-        BufferedImage image = ImageUtil.loadImage(rawDefaultPicture);
-        int backgroundWidth = (int) image.getWidth();
-        int backgroundHeight = (int) image.getHeight();
-        data.setBackgroundWidth(backgroundWidth);
-        data.setBackgroundHeight(backgroundHeight);
-      }
-      else {
-        data.setBackgroundWidth(0);
-        data.setBackgroundHeight(0);
-      }
+  private void extractBackgroundData(DirectB2SData data, String backgroundBase64) throws IOException {
+    if (backgroundBase64 != null) {
+      byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
+      BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+      int backgroundWidth = (int) image.getWidth();
+      int backgroundHeight = (int) image.getHeight();
+      data.setBackgroundWidth(backgroundWidth);
+      data.setBackgroundHeight(backgroundHeight);
     }
     else {
-      if (backgroundBase64 != null) {
-        byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
-        int backgroundWidth = (int) image.getWidth();
-        int backgroundHeight = (int) image.getHeight();
-        data.setBackgroundWidth(backgroundWidth);
-        data.setBackgroundHeight(backgroundHeight);
-      }
-      else {
-        data.setBackgroundWidth(0);
-        data.setBackgroundHeight(0);
-      }
+      data.setBackgroundWidth(0);
+      data.setBackgroundHeight(0);
     }
   }
 
-  private void exportDMDData(DirectB2SData data, @Nullable Game game, String dmdBase64, boolean forceBackglassExtraction) throws IOException {
-    if (!forceBackglassExtraction && game != null) {
-      File picture = defaultPictureService.getDMDPicture(game);
-      if (picture.exists()) {
-        BufferedImage image = ImageUtil.loadImage(picture);
-        int dmdWidth = (int) image.getWidth();
-        int dmdHeight = (int) image.getHeight();
-        data.setDmdWidth(dmdWidth);
-        data.setDmdHeight(dmdHeight);
-      }
-      else {
-        data.setDmdWidth(0);
-        data.setDmdHeight(0);
-      }
-    }
-    else if (data.isDmdImageAvailable()) {
+  private void exportDMDData(DirectB2SData data, String dmdBase64) throws IOException {
+    if (data.isDmdImageAvailable()) {
       if (dmdBase64 != null) {
         byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
         BufferedImage dmdImage = ImageIO.read(new ByteArrayInputStream(dmdData));
@@ -214,7 +166,7 @@ public class BackglassService {
     File b2sFile = getB2sFile(emuId, filename);
     if (b2sFile.exists()) {
       DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-      extractor.extractData(b2sFile, emuId, filename, -1);
+      extractor.extractData(b2sFile, emuId, filename);
       return extractor.getBackgroundBase64();
     }
     return null;
@@ -224,7 +176,7 @@ public class BackglassService {
     File b2sFile = getB2sFile(emuId, filename);
     if (b2sFile.exists()) {
       DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
-      extractor.extractData(b2sFile, emuId, filename, -1);
+      extractor.extractData(b2sFile, emuId, filename);
       return extractor.getDmdBase64();
     }
     return null;
@@ -238,15 +190,6 @@ public class BackglassService {
         updater.updateDmdImage(b2sFile, file, dmdBase64, false);
         // clean cache
         cacheDirectB2SData.remove(b2sFile.getPath());
-
-        // also clean then re-extract the default picture but only for main directB2S
-        if (FileUtils.isMainFilename(filename)) {
-          Game game = getGameByDirectB2S(emuId, filename);
-          if (game != null) {
-            defaultPictureService.deleteDefaultPictures(game);
-            defaultPictureService.extractDefaultPicture(game);
-          }
-        }
         return true;
       }
       catch (Exception e) {
@@ -376,9 +319,17 @@ public class BackglassService {
     throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath());
   }
 
-  //--------------------------
+  //-------------------------------------------- DirectB2SAndVersions ---
 
   public List<DirectB2SAndVersions> getBackglasses() {
+    ArrayList<DirectB2SAndVersions> result = new ArrayList<>(cacheDirectB2SVersion.values());
+    Collections.sort(result, Comparator.comparing(o -> o.getName().toLowerCase()));
+    return result;
+  }
+
+  private void reloadDirectB2SAndVersions() {
+    cacheDirectB2SVersion.clear();
+
     List<DirectB2SAndVersions> result = new ArrayList<>();
 
     List<GameEmulator> gameEmulators = frontendService.getBackglassGameEmulators();
@@ -391,35 +342,53 @@ public class BackglassService {
       DirectB2SAndVersions currentDirectB2S = null;
       while (iter.hasNext()) {
         File file = iter.next();
-        DirectB2SAndVersions directB2S = new DirectB2SAndVersions();
-        directB2S.setEmulatorId(gameEmulator.getId());
-        directB2S.addFileName(tablesPath.relativize(file.toPath()).toString());
-    
-        String vpxFilename = FilenameUtils.removeExtension(directB2S.getFileName()) + gameEmulator.getGameExt();
-        directB2S.setVpxAvailable(new File(tablesPath.toFile(), vpxFilename).exists());
+        String fileName = tablesPath.relativize(file.toPath()).toString();
+        String mainName = FileUtils.fromUniqueFile(fileName);
 
         // new backglass detected
-        if (currentDirectB2S == null || !currentDirectB2S.equals(directB2S)) {
-          currentDirectB2S = directB2S;
-          result.add(directB2S);
+        if (currentDirectB2S == null || !currentDirectB2S.getFileName().equals(mainName)) {
+          currentDirectB2S = new DirectB2SAndVersions();
+          currentDirectB2S.setEmulatorId(gameEmulator.getId());
+          String gameFilename = FilenameUtils.removeExtension(mainName) + "." + gameEmulator.getGameExt();
+          currentDirectB2S.setGameAvailable(new File(tablesPath.toFile(), gameFilename).exists());
+          result.add(currentDirectB2S);
+          // add in cache
+          setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
         }
-        else {
-          currentDirectB2S.merge(directB2S);
-        }
+        currentDirectB2S.addVersion(tablesPath.relativize(file.toPath()).toString());
       }
     }
-    Collections.sort(result, Comparator.comparing(o -> o.getName().toLowerCase()));
-    return result;
   }
 
-  //-------------------------------------------- OPERATIONS ---
+  public DirectB2SAndVersions getDirectB2SAndVersions(Game game) {
+    if (game != null) {
+      return getDirectB2SAndVersions(game.getEmulatorId(), game.getGameFileName());
+    }
+    return null;
+  }
+
+  public DirectB2SAndVersions getDirectB2SAndVersions(int emulatorId, String fileName) {
+    String baseName = FileUtils.baseUniqueFile(fileName);
+    return cacheDirectB2SVersion.get(emulatorId + "@" + baseName);
+  }
+
+  public DirectB2SAndVersions removeDirectB2SAndVersions(int emulatorId, String fileName) {
+    String baseName = FileUtils.baseUniqueFile(fileName);
+    return cacheDirectB2SVersion.remove(emulatorId + "@" + baseName);
+  }
+
+  public void setDirectB2SAndVersions(int emulatorId, String fileName, DirectB2SAndVersions b2s) {
+    String baseName = FileUtils.baseUniqueFile(fileName);
+    cacheDirectB2SVersion.put(emulatorId + "@" + baseName, b2s);
+  }
 
   @Nullable
-  private DirectB2SAndVersions doExecute(GameEmulator emulator, String fileName, BiFunction<String, String, String> fct) {
+  private DirectB2SAndVersions reloadDirectB2SAndVersions(GameEmulator emulator, String fileName) {
     File file = new File(emulator.getTablesDirectory(), fileName);
     String[] fileNames = file.getParentFile().list();
     if (fileNames == null) {
-      throw new RuntimeException("No file to process in folder " + file.getParentFile());
+      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
+      return null;
     }
 
     // First get the baseName without unicity marker of all directb2s to be renamed
@@ -427,7 +396,7 @@ public class BackglassService {
     String mainBaseName = FileUtils.baseUniqueFile(fileName);
     // The optional subfolder 
     String relativeFolder = new File(fileName).getParent();
-    relativeFolder = relativeFolder == null ? "" : relativeFolder + "/";
+    relativeFolder = relativeFolder == null ? "" : relativeFolder + File.separatorChar;
 
     DirectB2SAndVersions b2s = new DirectB2SAndVersions();
     b2s.setEmulatorId(emulator.getId());
@@ -439,37 +408,59 @@ public class BackglassService {
         String uniqueName = relativeFolder + FileUtils.baseUniqueFile(n);
         // version found
         if (uniqueName.equalsIgnoreCase(mainBaseName)) {
-          String processed = fct.apply(mainBaseName, relativeFolder + n);
-          if (processed != null) {
-            b2s.addFileName(processed);
-          }
+          b2s.addVersion(relativeFolder + n);
         }
       }
     }
     String gameFilename = mainBaseName + "." + emulator.getGameExt();
-    b2s.setVpxAvailable(new File(emulator.getTablesFolder(), gameFilename).exists());
-    return b2s.getNbVersions() > 0 ? b2s : null;
+    b2s.setGameAvailable(new File(emulator.getTablesFolder(), gameFilename).exists());
+
+    // update cache
+    if (b2s.getNbVersions() > 0) {
+      cacheDirectB2SVersion.put(emulator.getId() + "@" + mainBaseName, b2s);
+      return b2s;
+    }
+    else {
+      cacheDirectB2SVersion.remove(emulator.getId() + "@" + mainBaseName);
+      return null;
+    }
   }
 
+  //-------------------------------------------- OPERATIONS ---
+
   public DirectB2SAndVersions rename(int emulatorId, String fileName, String newName) {
-    GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
-    File parentFile = new File(emulator.getTablesDirectory(), fileName).getParentFile();
-    // First get the baseName without unicity marker and extension of the target file
-    String newBaseName = new File(fileName).getParent() + FileUtils.baseUniqueFile(newName);
-    return doExecute(emulator, fileName, (baseName, name) -> {
+    DirectB2SAndVersions b2s = getDirectB2SAndVersions(emulatorId, fileName);
+    if (b2s != null) {
+      GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
+      //File parentFile = new File(emulator.getTablesDirectory(), fileName).getParentFile();
+
+      // First get the baseNames without unicity marker and extension of the target file
+      String baseName = FileUtils.baseUniqueFile(fileName);
+      String relativeFolder = new File(fileName).getParent();
+      relativeFolder = relativeFolder == null ? "" : relativeFolder + File.separatorChar;
+      String newBaseName = relativeFolder + FileUtils.baseUniqueFile(newName);
+
+      // make a copy of all versions then clear
+      List<String> versions = new ArrayList<>(b2s.getVersions());
+      b2s.clearVersions();
+      for (String version : versions) {
         // rename the file
-        String newN = StringUtils.replaceIgnoreCase(name, baseName, newBaseName);
-        File b2sFile = new File(parentFile, name);
-        File b2sNewFile = new File(parentFile, newN);
+        String newVersion = StringUtils.replaceIgnoreCase(version, baseName, newBaseName);
+        File b2sFile = new File(emulator.getTablesDirectory(), version);
+        File b2sNewFile = new File(emulator.getTablesDirectory(), newVersion);
         if (b2sFile.exists() && b2sFile.renameTo(b2sNewFile)) {
-          if (cacheDirectB2SData.containsKey(b2sFile.getPath())) {
-            cacheDirectB2SData.remove(b2sFile.getPath());
-          }
+          cacheDirectB2SData.remove(b2sFile.getPath());
           LOG.info("Renamed \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
-          return newN;
+          b2s.addVersion(newVersion);
         }
-        return null;
-      });
+        else {
+          LOG.error("Cannot rename \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
+        }
+      }
+      String gameFilename = FilenameUtils.removeExtension(b2s.getFileName()) + "." + emulator.getGameExt();
+      b2s.setGameAvailable(new File(emulator.getTablesDirectory(), gameFilename).exists());
+    }
+    return b2s;
   }
 
   public DirectB2SAndVersions duplicate(int emulatorId, String fileName) throws IOException {
@@ -479,7 +470,8 @@ public class BackglassService {
       File target = FileUtils.uniqueFile(b2sFile);
       org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
       LOG.info("Copied \"" + fileName + "\" to \"" + target.getAbsolutePath() + "\"");
-      return getDirectB2SAndVersions(emulator, fileName);
+      
+      return reloadDirectB2SAndVersions(emulator, fileName);
     }
     catch (IOException e) {
       LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
@@ -505,7 +497,7 @@ public class BackglassService {
       }
       b2sFile.renameTo(mainFile);
     }
-    return getDirectB2SAndVersions(emulator, fileName);
+    return reloadDirectB2SAndVersions(emulator, fileName);
   }
 
   public DirectB2SAndVersions disable(int emulatorId, String fileName) throws IOException {
@@ -518,22 +510,27 @@ public class BackglassService {
         throw new RuntimeException("Cannot rename " + mainFile + " to " + target);
       }
     }
-    return getDirectB2SAndVersions(emulator, fileName);
+    return reloadDirectB2SAndVersions(emulator, fileName);
   }
 
   public boolean deleteBackglass(int emulatorId, String filename) {
-    GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
-    DirectB2SAndVersions b2s = doExecute(emulator, filename, (baseName, name) -> {  
-      File b2sFile = new File(emulator.getTablesDirectory(), name);
-      cacheDirectB2SData.remove(b2sFile.getPath());
-      if (b2sFile.exists() && b2sFile.delete()) {
-        LOG.info("Deleted " + b2sFile.getAbsolutePath());
-        return null;
+    DirectB2SAndVersions b2s = removeDirectB2SAndVersions(emulatorId, filename);  
+    boolean success = true;
+    if (b2s != null) {
+      GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
+      for (String version : b2s.getVersions()) {
+        File b2sFile = new File(emulator.getTablesDirectory(), version);
+        cacheDirectB2SData.remove(b2sFile.getPath());
+        if (b2sFile.exists() && b2sFile.delete()) {
+          LOG.info("Deleted " + b2sFile.getAbsolutePath());
+        }
+        else {
+          LOG.info("Cannot delete " + b2sFile.getAbsolutePath());
+          success = false;
+        }
       }
-      return name;
-    });
-    // if the DirectB2SAndVersions contains file, it means they have not been deleted
-    return b2s == null || b2s.getNbVersions() == 0;
+    }
+    return success;
   }
 
   public DirectB2SAndVersions deleteVersion(int emulatorId, String filename) {
@@ -543,25 +540,12 @@ public class BackglassService {
     if (b2sFile.exists() && b2sFile.delete()) {
       LOG.info("Deleted " + b2sFile.getAbsolutePath());
     }
-    return getDirectB2SAndVersions(emulator, filename);
-  }
-
-  public DirectB2SAndVersions getDirectB2SAndVersions(int gameId) {
-    Game game = gameService.getGame(gameId);
-    String filename = StringUtils.removeEndIgnoreCase(game.getGameFileName(), game.getEmulator().getGameExt())+ "directb2s";
-    return getDirectB2SAndVersions(game.getEmulator(), filename);
-  }
-
-  public DirectB2SAndVersions getDirectB2SAndVersions(GameEmulator gameEmulator, String fileName) {
-    return doExecute(gameEmulator, fileName, (baseName, name) -> {  
-      return name;
-    });
+    return reloadDirectB2SAndVersions(emulator, filename);
   }
   
-  //------------------------------------
+  //-------------------------------------------- SCREENRES ---
 
-  public DirectB2sScreenRes getScreenRes(int gameId, boolean perTableOnly) {
-    Game game = gameService.getGame(gameId);
+  public DirectB2sScreenRes getScreenRes(Game game, boolean perTableOnly) {
     if (game != null) {
       GameEmulator emulator = game.getEmulator();  
       String b2sFilename = game.getDirectB2SFilename();
@@ -575,7 +559,7 @@ public class BackglassService {
     return null;
   }
 
-  public DirectB2sScreenRes getScreenRes(int emulatorId, String fileName, boolean perTableOnly) {
+  public DirectB2sScreenRes getScreenRes(int emulatorId, String fileName, @Nullable Game game, boolean perTableOnly) {
     GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
     if (emulator != null) {
       File b2sFile = new File(emulator.getTablesDirectory(), fileName);
@@ -583,11 +567,7 @@ public class BackglassService {
       if (res != null) {
         res.setEmulatorId(emulatorId);
         res.setB2SFileName(fileName);
-
-        Game game = getGameByDirectB2S(emulatorId, fileName);
-        if (game != null) {
-          res.setGameId(game.getId());
-        }  
+        res.setGameId(game != null ? game.getId() : null);
         return res;
       }
     }
@@ -707,7 +687,7 @@ public class BackglassService {
     }
   }
 
-  public void saveScreenRes(DirectB2sScreenRes screenres) throws Exception {
+  public void saveScreenRes(DirectB2sScreenRes screenres, @Nullable Game game) throws Exception {
     GameEmulator emulator = frontendService.getGameEmulator(screenres.getEmulatorId());
     File b2sFile = new File(emulator.getTablesDirectory(), screenres.getB2SFileName());
 
@@ -784,10 +764,8 @@ public class BackglassService {
     }
 
     // now everything is saved, automatically turns settings in B2STableSettings
-    // case when Gaùe 
 
-    // get the Game with gameService, this  will ensure that a scanned table is fetched and get the rom
-    Game game = screenres.getGameId() != -1 ? gameService.getGame(screenres.getGameId()) : null;
+    // the Game must have been got with gameService, this  will ensure that a scanned table is fetched and get the rom
     if (game != null) {
       DirectB2STableSettings settings = getTableSettings(game);
       if (settings == null && StringUtils.isNotEmpty(game.getRom())) {
@@ -836,18 +814,18 @@ public class BackglassService {
     }
   }
 
-  public byte[] getPreviewBackground(int gameId, boolean includeFrame) {
-    //user gameService as we need the enriched game with rom
-    Game game = gameService.getGame(gameId);
+  //-------------------------------------------- PREVIEWS in BYTES[] ---
+
+  // need an enriched game with rom
+  public byte[] getPreviewBackground(Game game, boolean includeFrame) {
     DirectB2SData tableData = getDirectB2SData(game);
     return getPreviewBackground(tableData, game, includeFrame);
   }
 
-  public byte[] getPreviewBackground(int emuId, String filename, boolean includeFrame) {
-    //user gameService as we need the enriched game with rom
-    Game game = getGameByDirectB2S(emuId, filename);
+  // need an enriched game with rom
+  public byte[] getPreviewBackground(int emuId, String filename, @Nullable Game game, boolean includeFrame) {
     File b2sFile = getB2sFile(emuId, filename);
-    DirectB2SData tableData = getDirectB2SData(b2sFile, emuId, game, filename);
+    DirectB2SData tableData = getDirectB2SData(b2sFile, emuId, filename);
     return getPreviewBackground(tableData, game, includeFrame);
   }
 
@@ -914,8 +892,7 @@ public class BackglassService {
     return null;
   }
 
-  public byte[] getPreviewDmd(int gameId) {
-    Game game = gameService.getGame(gameId);
+  public byte[] getPreviewDmd(Game game) {
     DirectB2SData tableData = getDirectB2SData(game);
     return getPreviewDmd(tableData, game);
   }
@@ -929,5 +906,13 @@ public class BackglassService {
     }
     // not found or error
     return null;
+  }
+
+  //------------------------------
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    // force initialisation of table cache
+    reloadDirectB2SAndVersions();
   }
 }

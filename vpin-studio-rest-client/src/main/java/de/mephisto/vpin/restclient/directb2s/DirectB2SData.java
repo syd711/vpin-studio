@@ -6,7 +6,6 @@ import java.util.Objects;
 public class DirectB2SData {
   private String filename;
   private int emulatorId;
-  private int gameId;
 
   private String name;
   private int tableType;
@@ -52,14 +51,6 @@ public class DirectB2SData {
         return "-";
       }
     }
-  }
-
-  public int getGameId() {
-    return gameId;
-  }
-
-  public void setGameId(int gameId) {
-    this.gameId = gameId;
   }
 
   public int getEmulatorId() {
@@ -224,11 +215,17 @@ public class DirectB2SData {
     if (this == object) return true;
     if (object == null || getClass() != object.getClass()) return false;
     DirectB2SData that = (DirectB2SData) object;
-    return emulatorId == that.emulatorId && gameId == that.gameId && tableType == that.tableType && numberOfPlayers == that.numberOfPlayers && grillHeight == that.grillHeight && b2sElements == that.b2sElements && filesize == that.filesize && backgroundAvailable == that.backgroundAvailable && dmdImageAvailable == that.dmdImageAvailable && illuminations == that.illuminations && scores == that.scores && Objects.equals(filename, that.filename) && Objects.equals(name, that.name) && Objects.equals(artwork, that.artwork) && Objects.equals(author, that.author) && Objects.equals(modificationDate, that.modificationDate);
+    return emulatorId == that.emulatorId && tableType == that.tableType && numberOfPlayers == that.numberOfPlayers && grillHeight == that.grillHeight && b2sElements == that.b2sElements && filesize == that.filesize && backgroundAvailable == that.backgroundAvailable && dmdImageAvailable == that.dmdImageAvailable && illuminations == that.illuminations && scores == that.scores && Objects.equals(filename, that.filename) && Objects.equals(name, that.name) && Objects.equals(artwork, that.artwork) && Objects.equals(author, that.author) && Objects.equals(modificationDate, that.modificationDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(filename, emulatorId, gameId, name, tableType, numberOfPlayers, artwork, author, grillHeight, b2sElements, filesize, modificationDate, backgroundAvailable, dmdImageAvailable, illuminations, scores);
+    return Objects.hash(filename, emulatorId, name, tableType, numberOfPlayers, artwork, author, grillHeight, b2sElements, filesize, modificationDate, backgroundAvailable, dmdImageAvailable, illuminations, scores);
   }
+
+  @Override
+  public String toString() {
+    return filename + " [" + emulatorId + "]";
+  }
+
 }

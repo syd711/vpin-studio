@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.mephisto.vpin.restclient.util.FileUtils;
 
 public class DirectB2SAndVersions { //extends DirectB2S {
 
   private int emulatorId;
-  private boolean vpxAvailable;
+  private boolean gameAvailable;
   private String fileName;
 
   public String getName() {
@@ -23,16 +25,12 @@ public class DirectB2SAndVersions { //extends DirectB2S {
     return fileName;
   }
 
-  public void _setFileName(String fileName) {
-    this.fileName = fileName;
+  public boolean isGameAvailable() {
+    return gameAvailable;
   }
 
-  public boolean isVpxAvailable() {
-    return vpxAvailable;
-  }
-
-  public void setVpxAvailable(boolean vpxAvailable) {
-    this.vpxAvailable = vpxAvailable;
+  public void setGameAvailable(boolean vpxAvailable) {
+    this.gameAvailable = vpxAvailable;
   }
 
   public int getEmulatorId() {
@@ -65,18 +63,25 @@ public class DirectB2SAndVersions { //extends DirectB2S {
     return result;
   }
 
-  //-----------------------------------------
+  //----------------------------------------- VERSIONS MANAGEMENT ---
 
   private boolean enabled = false;
 
   private List<String> versions = new ArrayList<>();
 
-  public void addFileName(String fileName) {
-    String mainFileName = FileUtils.fromUniqueFile(fileName);
-    _setFileName(mainFileName);
+  public List<String> getVersions() {
+    return versions; //Collections.unmodifiableList(versions);
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void addVersion(String fileName) {
+    this.fileName = FileUtils.fromUniqueFile(fileName);
 
     // make sure main file is always the first version
-    boolean main = StringUtils.equalsIgnoreCase(mainFileName, fileName);
+    boolean main = StringUtils.equalsIgnoreCase(this.fileName, fileName);
     if (main) {
       this.versions.add(0, fileName);
     }
@@ -87,40 +92,19 @@ public class DirectB2SAndVersions { //extends DirectB2S {
     this.enabled |= main;
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public void clearVersions() {
+    this.fileName = null;
+    this.versions.clear();
+    this.enabled = false;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
+  @JsonIgnore
   public String getVersion(int i) {
     return i < versions.size() ? versions.get(i) : null;
   }
 
-  public List<String> getVersions() {
-    return versions;
-  }
-
+  @JsonIgnore
   public int getNbVersions() {
     return versions != null ? versions.size() : 0;
-  }
-
-  public void setVersions(List<String> versions) {
-    this.versions = versions;
-  }
-
-  /**
-   * Add all versions of directB2S into this
-   */
-  public void merge(DirectB2SAndVersions directB2S) {
-    if (directB2S.isEnabled()) {
-      this.versions.addAll(0, directB2S.versions);
-    }
-    else {
-      this.versions.addAll(directB2S.versions);
-    }
-    this.enabled |= directB2S.enabled;
   }
 }

@@ -7,7 +7,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -62,12 +61,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1004,8 +1006,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     // set ValueCellFactory and CellFactory, and get a renderer that is responsible to render the cell
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
@@ -1099,11 +1099,24 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
+        int nbVersions = value.getNbDirectB2S();
+        FontIcon icon = null;
+        if (nbVersions > 9) {
+          icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", getIconColor(value));
+          //icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-circle-outline", 24, getIconColor(value));
+        }
+        else if (nbVersions > 1) {
+          icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", getIconColor(value));
+          //icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-circle-outline", 24, getIconColor(value));
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
+          icon = WidgetFactory.createCheckIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+        }
+        if (hasUpdate) {
+          return WidgetFactory.addUpdateIcon(icon, "New backglass updates available");
+        }
+        else {
+          return WidgetFactory.wrapIcon(icon, value.getDirectB2SPath());
         }
       }
       else if (hasUpdate) {
@@ -1395,8 +1408,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           Label playlistIcon = WidgetFactory.createPlaylistIcon(match, uiSettings, value.isDisabled());
+
+          Tooltip tooltip = createPlaylistTooltip(match, playlistIcon);
           if (match.getId() >= 0) {
             Button plButton = new Button("", playlistIcon.getGraphic());
+            plButton.setTooltip(tooltip);
             plButton.getStyleClass().add("ghost-button-tiny");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
@@ -1488,6 +1504,27 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return row;
         });
 
+  }
+
+  @NotNull
+  public static Tooltip createPlaylistTooltip(PlaylistRepresentation match, Label playlistIcon) {
+    FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMediaCached(match.getId());
+    FrontendMediaItemRepresentation mediaItem = medias.getDefaultMediaItem(VPinScreen.Wheel);
+    Tooltip tooltip = new Tooltip(match.getName());
+    if (mediaItem != null) {
+      String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+      InputStream in = client.getCachedUrlImage(url);
+      if (in != null) {
+        Image scaledWheel = new Image(in, 150, 150, false, true);
+        ImageView imageView = new ImageView(scaledWheel);
+        tooltip.setGraphic(imageView);
+
+        Image icon = new Image(client.getCachedUrlImage(url), 24, 24, false, true);
+        playlistIcon.setGraphic(new ImageView(icon));
+      }
+    }
+    playlistIcon.setTooltip(tooltip);
+    return tooltip;
   }
 
   private void setGameRating(GameRepresentation value, int i) {
@@ -2072,6 +2109,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       setText(null);
       if (item != null) {
         Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
+        TableOverviewController.createPlaylistTooltip(item, playlistIcon);
         setGraphic(playlistIcon);
 
         setText(" " + item.toString());

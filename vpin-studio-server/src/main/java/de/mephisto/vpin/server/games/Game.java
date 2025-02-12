@@ -58,6 +58,8 @@ public class Game {
   private boolean altSoundAvailable;
   private AltColorTypes altColorType;
 
+  private int nbDirectB2S;
+
   private boolean defaultBackgroundAvailable;
   private boolean eventLogAvailable;
   private PupPack pupPack;
@@ -756,6 +758,14 @@ public class Game {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
     File folder = new File(getGameFileName()).getParentFile();
     return new File(folder, baseName + ".directb2s").toString();
+  }
+
+  public int getNbDirectB2S() {
+    return nbDirectB2S;
+  }
+
+  public void setNbDirectB2S(int nbDirectB2S) {
+    this.nbDirectB2S = nbDirectB2S;
   }
 
   @NonNull
