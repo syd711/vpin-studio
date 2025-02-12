@@ -322,8 +322,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   @FXML
   private void onUpload(ActionEvent e) {
     if (game != null) {
-      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, () -> {
+      TableDialogs.openDirectb2sUploads(game, null, () -> {
         // when done, force refresh
         unselectVersion();
         reloadSelection();
@@ -581,7 +580,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       DirectB2SModel selection = getSelectedModel();
       if (selection != null) {
         //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", null, "Delete");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", "This also deletes all version of this backglass.", "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
           if (client.getBackglassServiceClient().deleteBackglass(selection.getEmulatorId(), selection.getFileName())) {
             // remove from the list if successfully deleted
@@ -1023,7 +1022,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     }
 
     // now refresh other sections
-    refreshTableData(emulatorId, directB2SCombo.getValue());
+    String directb2sVersion = directB2SCombo.getValue();
+    if(directb2sVersion == null && newValue != null) {
+      directb2sVersion = newValue.getFileName();
+    }
+    refreshTableData(emulatorId, directb2sVersion);
     refreshGame(gameId);
     refreshTableSettings(gameId);
 
