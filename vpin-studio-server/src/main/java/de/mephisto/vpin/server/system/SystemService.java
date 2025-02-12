@@ -424,7 +424,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
       monitors = filtered;
     }
-    Collections.sort(monitors, (o1, o2) -> o1.isPrimary() ? -1 : 1);
     return monitors;
   }
 

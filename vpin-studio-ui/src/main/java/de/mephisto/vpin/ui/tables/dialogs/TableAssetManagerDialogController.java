@@ -548,18 +548,23 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
         serverAssetsList.refresh();
+
+        if (assets.isEmpty()) {
+          serverAssetsList.setPlaceholder(new Label("No matching assets found."));
+        }
         return;
       }
 
       serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
       serverAssetsList.setItems(FXCollections.observableList(new ArrayList<>()));
+      serverAssetsList.setPlaceholder(new Label("Enter a search term to find assets for this screen and table."));
       serverAssetsList.refresh();
     });
   }
 
   private TableAssetSearch searchMedia(VPinScreen screen, String term) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
-        new TableAssetSearchProgressModel("Asset Search", game.getId(), screen, term));
+        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
       return (TableAssetSearch) results.get(0);
@@ -592,7 +597,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       String baseType = mimeType.split("/")[0];
-      String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
+      String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game == null ? -1 : this.game.getId());
       LOG.info("Loading asset: " + assetUrl);
 
       try {
@@ -622,8 +627,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     TableAsset tableAsset = this.serverAssetsList.getSelectionModel().getSelectedItem();
     boolean append = false;
 
+    String name = null;
+    if (isPlaylistMode()) {
+      name = playlist.getName();
+    }
+    else {
+      name = game.getGameName();
+    }
+
     ObservableList<FrontendMediaItemRepresentation> items = assetList.getItems();
-    String targetName = game.getGameName() + "." + FilenameUtils.getExtension(tableAsset.getName());
+    String targetName = name + "." + FilenameUtils.getExtension(tableAsset.getName());
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
     if (alreadyExists) {
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(localStage, "Asset Exists",
@@ -808,13 +821,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     searchField.setOnKeyPressed(ke -> {
       if (ke.getCode().equals(KeyCode.ENTER)) {
-        if (isAutoSearchEnabled()) {
-          onSearch();
-        }
+        onSearch();
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No assets found for this screen and table."));
+    serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -1282,6 +1293,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       addToPlaylistBtn.setDisable(true);
 
       serverAssetsList.setItems(FXCollections.emptyObservableList());
+      serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
       serverAssetsList.refresh();
     }
 

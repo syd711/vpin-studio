@@ -49,4 +49,9 @@ public class NirCmd {
     executor.setDir(new File("./resources"));
     executor.executeCommandAsync();
   }
+
+  public static void main(String[] args) {
+    NirCmd.setTopMost("Chrome");
+    NirCmd.setTopMost("Edge");
+  }
 }

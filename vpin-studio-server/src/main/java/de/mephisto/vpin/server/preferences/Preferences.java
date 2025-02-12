@@ -73,6 +73,8 @@ public class Preferences {
 
   private String vpfSettings;
 
+  private String webhookSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -98,6 +100,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getWebhookSettings() {
+    return webhookSettings;
+  }
+
+  public void setWebhookSettings(String webhookSettings) {
+    this.webhookSettings = webhookSettings;
+  }
 
   public String getRecorderSettings() {
     return recorderSettings;

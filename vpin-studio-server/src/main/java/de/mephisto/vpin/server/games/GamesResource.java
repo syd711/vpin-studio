@@ -139,8 +139,8 @@ public class GamesResource {
   }
 
   @GetMapping("/scores/{id}")
-  public ScoreSummary getScores(@PathVariable("id") int id) {
-    return gameService.getScores(id);
+  public ScoreSummary getScores(@PathVariable("id") int gameId) {
+    return gameService.getScores(gameId);
   }
 
   @GetMapping("/highscorefiles/{id}")

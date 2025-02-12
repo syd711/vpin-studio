@@ -9,8 +9,10 @@
   - Added "Patch Version" field to the patch upload dialog.
   - Added "Patch Version" column to the table overview. Note that this column is disabled by default and must be enabled in the client settings.
 - **Tables / VPS Tables**: Added "Comment" column and comment input field. You can enter personal comments there, e.g. to mark the table for downloading or that you tried that table but did not like it. This comment is solely stored for you and not submitted to the VP-Spreadsheet database.
+- **System Manager**: This section has a second tab called **Screens** now. The view should show you all screen setups of your VPin and helps you, troubleshooting screen position issues. Note that this feature is still a bit experimental, but we hope it will be of help.
 
 
 ## Bugfixes
 
 - **Tables / Invalid Score Filter**: Fixed "Invalid Score Configuration" filter that did show valid tables before.
+- **Tables / Table Asset Manager**: Fixed various issues for the Asset Manager when opened for playlists.

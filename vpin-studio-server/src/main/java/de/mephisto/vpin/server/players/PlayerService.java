@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.highscores.Score;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,9 +28,18 @@ public class PlayerService {
   @Autowired
   private AssetRepository assetRepository;
 
+  private final List<PlayerLifecycleListener> lifecycleListeners = new ArrayList<>();
+
   public List<Player> getBuildInPlayers() {
-    List<Player> all = playerRepository.findAll();
-    all.sort(Comparator.comparing(Player::getName));
+    List<Player> all = null;
+    try {
+      all = playerRepository.findAll();
+      all.sort(Comparator.comparing(Player::getName));
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load all players: {}", e.getMessage(), e);
+      all = new ArrayList<>();
+    }
 
     PlayerDomain[] domains = PlayerDomain.values();
     List<Player> allPlayers = new ArrayList<>();
@@ -76,9 +86,15 @@ public class PlayerService {
       return null;
     }
 
-    List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
-    if (players.size() > 1) {
-      LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
+    List<Player> players = new ArrayList<>();
+    try {
+      players = playerRepository.findByInitials(initials.toUpperCase());
+      if (players.size() > 1) {
+        LOG.warn("Found duplicate player for initials '{}', using first one.", initials);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to find players by initials: {}", e.getMessage(), e);
     }
 
     if (!players.isEmpty()) {
@@ -95,7 +111,8 @@ public class PlayerService {
 
   public Player save(Player player) {
     Player model = new Player();
-    if (player.getId() > 0) {
+    boolean existingPlayer = model.getId() > 0;
+    if (existingPlayer) {
       model = playerRepository.findById(player.getId()).get();
     }
 
@@ -113,6 +130,13 @@ public class PlayerService {
 
     Player updated = playerRepository.saveAndFlush(model);
     LOG.info("Saved " + updated);
+
+    if (existingPlayer) {
+      notifyPlayerUpdated(player);
+    }
+    else {
+      notifyPlayerCreated(player);
+    }
     return updated;
   }
 
@@ -125,9 +149,11 @@ public class PlayerService {
         assetRepository.delete(avatar);
         LOG.info("Deleted asset " + avatar);
       }
+
+      playerRepository.deleteById(id);
+      LOG.info("Deleted player " + id);
+      notifyPlayerDeleted(player);
     }
-    playerRepository.deleteById(id);
-    LOG.info("Deleted player " + id);
   }
 
   private void duplicatesCheck(List<Player> players) {
@@ -141,7 +167,7 @@ public class PlayerService {
         Player duplicate = initials.get(player.getInitials());
 
         if ((duplicate.getDomain() == null && player.getDomain() == null) ||
-          duplicate.getDomain() != null && player.getDomain() != null) {
+            duplicate.getDomain() != null && player.getDomain() != null) {
           duplicate.setDuplicatePlayerName(player.getName());
           player.setDuplicatePlayerName(duplicate.getName());
         }
@@ -156,6 +182,28 @@ public class PlayerService {
     String defaultInitials = getAdminPlayerInitials();
     if (String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null && newScore.getScore() > 0) {
       newScore.setPlayerInitials(defaultInitials);
+    }
+  }
+
+  public void addPlayerLifecycleListener(@NonNull PlayerLifecycleListener lifecycleListener) {
+    this.lifecycleListeners.add(lifecycleListener);
+  }
+
+  private void notifyPlayerCreated(@NonNull Player player) {
+    for (PlayerLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.playerCreated(player);
+    }
+  }
+
+  private void notifyPlayerUpdated(@NonNull Player player) {
+    for (PlayerLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.playerUpdated(player);
+    }
+  }
+
+  private void notifyPlayerDeleted(@NonNull Player player) {
+    for (PlayerLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.playerDeleted(player);
     }
   }
 }

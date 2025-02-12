@@ -726,14 +726,15 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   public void setGame(@NonNull Stage stage, @Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
-    this.stage = stage;
-    this.game = game;
-    this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    scoringDB = client.getSystemService().getScoringDatabase();
-    tableDetails = client.getFrontendService().getTableDetails(game.getId());
+    try {
+      this.stage = stage;
+      this.game = game;
+      this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+      this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      scoringDB = client.getSystemService().getScoringDatabase();
+      tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
-    boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
+      boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
     patchVersion.setDisable(!patchVersionEnabled);
     patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
 
@@ -741,63 +742,63 @@ public class TableDataController implements Initializable, DialogController, Aut
     prevButton.setVisible(overviewController != null);
     openAssetMgrBtn.setVisible(overviewController != null);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    Frontend frontend = client.getFrontendService().getFrontendCached();
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
 
 
-    if (game.isVpxGame() || game.isFpGame()) {
-      propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
-    }
-    else {
-      autoFillBtn.setVisible(false);
-      detailsRoot.getChildren().remove(propertRenamingRoot);
-    }
-
-    if (game.isVpxGame()) {
-      HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
-      tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
-    }
-    else {
-      this.tabPane.getTabs().remove(scoreDataTab);
-    }
-
-
-    this.scene = stage.getScene();
-
-    this.titleLabel.setText(game.getGameDisplayName());
-    databaseIdLabel.setText("(ID: " + game.getId() + ")  ");
-
-    this.stage.setOnShowing(new EventHandler<WindowEvent>() {
-      @Override
-      public void handle(WindowEvent event) {
-        BorderPane root = (BorderPane) stage.getScene().getRoot();
-        root.setPrefHeight(MIN_HEIGHT);
+      if (game.isVpxGame() || game.isFpGame()) {
+        propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
       }
-    });
-
-    scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
-      if (t.getCode() == KeyCode.PAGE_UP) {
-        onPrevious(null);
+      else {
+        autoFillBtn.setVisible(false);
+        detailsRoot.getChildren().remove(propertRenamingRoot);
       }
-      if (t.getCode() == KeyCode.PAGE_DOWN) {
-        onNext(null);
+
+      if (game.isVpxGame()) {
+        HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
+        tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
       }
-    });
+      else {
+        this.tabPane.getTabs().remove(scoreDataTab);
+      }
 
 
-    TableDataController.lastTab = tab;
-    tabPane.getSelectionModel().select(tab);
+      this.scene = stage.getScene();
 
-    this.overviewController = overviewController;
-    this.initialVpxFileName = game.getGameFileName();
+      this.titleLabel.setText(game.getGameDisplayName());
+      databaseIdLabel.setText("(ID: " + game.getId() + ")  ");
 
-    this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(game.getVersion()));
-    gameVersion.setText(game.getVersion());
-    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
-      fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
-    });
+      this.stage.setOnShowing(new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+          BorderPane root = (BorderPane) stage.getScene().getRoot();
+          root.setPrefHeight(MIN_HEIGHT);
+        }
+      });
 
-    patchVersion.setText(game.getPatchVersion());
+      scene.addEventHandler(KeyEvent.KEY_PRESSED, t -> {
+        if (t.getCode() == KeyCode.PAGE_UP) {
+          onPrevious(null);
+        }
+        if (t.getCode() == KeyCode.PAGE_DOWN) {
+          onNext(null);
+        }
+      });
+
+
+      TableDataController.lastTab = tab;
+      tabPane.getSelectionModel().select(tab);
+
+      this.overviewController = overviewController;
+      this.initialVpxFileName = game.getGameFileName();
+
+      this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(game.getVersion()));
+      gameVersion.setText(game.getVersion());
+      gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
+        fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
+      });
+
+      patchVersion.setText(game.getPatchVersion());
     setPatchVersionValue(game.getPatchVersion());
     patchVersion.textProperty().addListener((observable, oldValue, newValue) -> {
       setPatchVersionValue(newValue);
@@ -806,278 +807,277 @@ public class TableDataController implements Initializable, DialogController, Aut
     //---------------------------------------------------------
     if (tableDetails != null) {
 
-      //---------------
-      // TAB Details
+        //---------------
+        // TAB Details
 
-      autoFillCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
-      autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        uiSettings.setAutoApplyVpsData(newValue);
-        client.getPreferenceService().setJsonPreference(uiSettings);
-      });
+        autoFillCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
+        autoFillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          uiSettings.setAutoApplyVpsData(newValue);
+          client.getPreferenceService().setJsonPreference(uiSettings);
+        });
 
-      gameName.setText(tableDetails.getGameName());
-      gameName.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (FileUtils.isValidFilename(newValue)) {
-          tableDetails.setGameName(newValue);
-        }
-        else {
-          gameName.setText(oldValue);
-        }
-      });
-      gameName.setDisable(frontendType.isStandalone());
-
-      if (game.isVpxGame() || game.isFpGame()) {
-        gameFileName.setText(tableDetails.getGameFileName());
-        gameFileName.setDisable(isGameFileNameDisabled());
-        gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
-          if (oldValue.contains("\\") && !newValue.contains("\\")) {
-            newValue = oldValue;
-            gameFileName.setText(newValue);
-            return;
-          }
-
-          if (oldValue.contains("\\")) {
-            String oldBase = tableDetails.getGameFileName().substring(0, tableDetails.getGameFileName().indexOf("\\") + 1);
-            String newBase = newValue.substring(0, newValue.indexOf("\\") + 1);
-            if (!newBase.equals(oldBase)) {
-              String name = newValue.substring(newValue.indexOf("\\") + 1);
-              gameFileName.setText(oldBase + name);
-              return;
-            }
-          }
-
-
-          if (FileUtils.isValidFilenameWithPath(newValue)) {
-            tableDetails.setGameFileName(newValue);
+        gameName.setText(tableDetails.getGameName());
+        gameName.textProperty().addListener((observable, oldValue, newValue) -> {
+          if (FileUtils.isValidFilename(newValue)) {
+            tableDetails.setGameName(newValue);
           }
           else {
-            gameFileName.setText(oldValue);
+            gameName.setText(oldValue);
           }
         });
-      }
-      else {
-        gameFileName.setDisable(true);
-      }
+        gameName.setDisable(frontendType.isStandalone());
 
-      gameDisplayName.setText(tableDetails.getGameDisplayName());
-      gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
-      gameDisplayName.setDisable(frontendType.isStandalone());
+        if (game.isVpxGame() || game.isFpGame()) {
+          gameFileName.setText(tableDetails.getGameFileName());
+          gameFileName.setDisable(isGameFileNameDisabled());
+          gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue.contains("\\") && !newValue.contains("\\")) {
+              newValue = oldValue;
+              gameFileName.setText(newValue);
+              return;
+            }
 
-      //---------------
-      // TAB Meta Data
+            if (oldValue.contains("\\")) {
+              String oldBase = tableDetails.getGameFileName().substring(0, tableDetails.getGameFileName().indexOf("\\") + 1);
+              String newBase = newValue.substring(0, newValue.indexOf("\\") + 1);
+              if (!newBase.equals(oldBase)) {
+                String name = newValue.substring(newValue.indexOf("\\") + 1);
+                gameFileName.setText(oldBase + name);
+                return;
+              }
+            }
 
-      List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
-      statusCombo.setItems(FXCollections.observableList(statuses));
-      if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3) {
-        TableStatus tableStatus = statuses.get(tableDetails.getStatus());
-        statusCombo.setValue(tableStatus);
-      }
-      statusCombo.valueProperty().addListener((observableValue, tableStatus, t1) -> {
-        this.tableDetails.setStatus(t1.getValue());
-      });
 
-      gameTheme.setItems(FXCollections.observableList(frontend.getFieldLookups().getGameTheme()));
-      gameTheme.setValue(tableDetails.getGameTheme());
-      gameTheme.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameTheme(newValue));
-
-      gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (!newValue.matches("\\d*")) {
-          gameYear.setText(newValue.replaceAll("[^\\d]", ""));
-        }
-
-        if (gameYear.getText().length() > 4) {
-          String s = gameYear.getText().substring(0, 4);
-          gameYear.setText(s);
-        }
-      });
-      if (tableDetails.getGameYear() != null && tableDetails.getGameYear() > 0) {
-        gameYear.setText(String.valueOf(tableDetails.getGameYear()));
-      }
-      gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (newValue.length() > 0) {
-          tableDetails.setGameYear(Integer.parseInt(newValue));
+            if (FileUtils.isValidFilenameWithPath(newValue)) {
+              tableDetails.setGameFileName(newValue);
+            }
+            else {
+              gameFileName.setText(oldValue);
+            }
+          });
         }
         else {
-          tableDetails.setGameYear(0);
+          gameFileName.setDisable(true);
         }
-      });
 
-      manufacturer.setItems(FXCollections.observableList(frontend.getFieldLookups().getManufacturer()));
-      manufacturer.setValue(tableDetails.getManufacturer());
-      manufacturer.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setManufacturer(newValue));
+        gameDisplayName.setText(tableDetails.getGameDisplayName());
+        gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
+        gameDisplayName.setDisable(frontendType.isStandalone());
 
-      gameTypeCombo.setItems(FXCollections.observableList(frontend.getFieldLookups().getGameType()));
-      gameTypeCombo.valueProperty().setValue(tableDetails.getGameType());
-      gameTypeCombo.valueProperty().addListener((observableValue, gameType, t1) -> tableDetails.setGameType(t1));
+        //---------------
+        // TAB Meta Data
 
-      SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4, 0);
-      numberOfPlayers.setValueFactory(factory);
-      if (tableDetails.getNumberOfPlayers() != null) {
-        numberOfPlayers.getValueFactory().setValue(tableDetails.getNumberOfPlayers());
-      }
-      numberOfPlayers.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setNumberOfPlayers(Integer.parseInt(String.valueOf(newValue))));
+        List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+        statusCombo.setItems(FXCollections.observableList(statuses));
+        if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3) {
+          TableStatus tableStatus = statuses.get(tableDetails.getStatus());
+          statusCombo.setValue(tableStatus);
+        }
+        statusCombo.valueProperty().addListener((observableValue, tableStatus, t1) -> {
+          this.tableDetails.setStatus(t1.getValue());
+        });
 
-      tags.setText(tableDetails.getTags());
-      tags.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTags(newValue));
+        gameTheme.setItems(FXCollections.observableList(frontend.getFieldLookups().getGameTheme()));
+        gameTheme.setValue(tableDetails.getGameTheme());
+        gameTheme.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameTheme(newValue));
 
-      category.setItems(FXCollections.observableList(frontend.getFieldLookups().getCategory()));
-      category.setValue(tableDetails.getCategory());
-      category.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCategory(newValue));
+        gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
+          if (!newValue.matches("\\d*")) {
+            gameYear.setText(newValue.replaceAll("[^\\d]", ""));
+          }
 
-      author.setText(tableDetails.getAuthor());
-      author.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAuthor(newValue));
+          if (gameYear.getText().length() > 4) {
+            String s = gameYear.getText().substring(0, 4);
+            gameYear.setText(s);
+          }
+        });
+        if (tableDetails.getGameYear() != null && tableDetails.getGameYear() > 0) {
+          gameYear.setText(String.valueOf(tableDetails.getGameYear()));
+        }
+        gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
+          if (newValue.length() > 0) {
+            tableDetails.setGameYear(Integer.parseInt(newValue));
+          }
+          else {
+            tableDetails.setGameYear(0);
+          }
+        });
 
-      SpinnerValueFactory.IntegerSpinnerValueFactory ratingFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
-      gameRating.setValueFactory(ratingFactory);
-      if (tableDetails.getGameRating() != null) {
-        gameRating.getValueFactory().setValue(tableDetails.getGameRating());
-      }
-      gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameRating(Integer.parseInt(String.valueOf(newValue))));
+        manufacturer.setItems(FXCollections.observableList(frontend.getFieldLookups().getManufacturer()));
+        manufacturer.setValue(tableDetails.getManufacturer());
+        manufacturer.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setManufacturer(newValue));
 
-      IPDBNum.setText(tableDetails.getIPDBNum());
-      idpdBtn.setVisible(tableDetails.getIPDBNum() != null && tableDetails.getIPDBNum().startsWith("http"));
-      IPDBNum.textProperty().addListener((observable, oldValue, newValue) -> {
-        tableDetails.setIPDBNum(newValue);
+        gameTypeCombo.setItems(FXCollections.observableList(frontend.getFieldLookups().getGameType()));
+        gameTypeCombo.valueProperty().setValue(tableDetails.getGameType());
+        gameTypeCombo.valueProperty().addListener((observableValue, gameType, t1) -> tableDetails.setGameType(t1));
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4, 0);
+        numberOfPlayers.setValueFactory(factory);
+        if (tableDetails.getNumberOfPlayers() != null) {
+          numberOfPlayers.getValueFactory().setValue(tableDetails.getNumberOfPlayers());
+        }
+        numberOfPlayers.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setNumberOfPlayers(Integer.parseInt(String.valueOf(newValue))));
+
+        tags.setText(tableDetails.getTags());
+        tags.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTags(newValue));
+
+        category.setItems(FXCollections.observableList(frontend.getFieldLookups().getCategory()));
+        category.setValue(tableDetails.getCategory());
+        category.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCategory(newValue));
+
+        author.setText(tableDetails.getAuthor());
+        author.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAuthor(newValue));
+
+        SpinnerValueFactory.IntegerSpinnerValueFactory ratingFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
+        gameRating.setValueFactory(ratingFactory);
+        if (tableDetails.getGameRating() != null) {
+          gameRating.getValueFactory().setValue(tableDetails.getGameRating());
+        }
+        gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameRating(Integer.parseInt(String.valueOf(newValue))));
+
+        IPDBNum.setText(tableDetails.getIPDBNum());
         idpdBtn.setVisible(tableDetails.getIPDBNum() != null && tableDetails.getIPDBNum().startsWith("http"));
-      });
+        IPDBNum.textProperty().addListener((observable, oldValue, newValue) -> {
+          tableDetails.setIPDBNum(newValue);
+          idpdBtn.setVisible(tableDetails.getIPDBNum() != null && tableDetails.getIPDBNum().startsWith("http"));
+        });
 
-      url.setText(tableDetails.getUrl());
-      url.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setUrl(newValue));
+        url.setText(tableDetails.getUrl());
+        url.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setUrl(newValue));
 
-      designedBy.setText(tableDetails.getDesignedBy());
-      designedBy.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDesignedBy(newValue));
+        designedBy.setText(tableDetails.getDesignedBy());
+        designedBy.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDesignedBy(newValue));
 
-      notes.setText(tableDetails.getNotes());
-      notes.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setNotes(newValue));
+        notes.setText(tableDetails.getNotes());
+        notes.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setNotes(newValue));
 
-      //---------------
-      // TAB Customization
+        //---------------
+        // TAB Customization
 
-      List<String> launcherList = new ArrayList<>(tableDetails.getLauncherList());
-      launcherList.add(0, null);
-      launcherCombo.setItems(FXCollections.observableList(launcherList));
-      launcherCombo.setValue(tableDetails.getAltLaunchExe());
-      launcherCombo.valueProperty().addListener((observableValue, s, t1) -> {
-        this.tableDetails.setAltLaunchExe(t1);
-      });
+        List<String> launcherList = new ArrayList<>(tableDetails.getLauncherList());
+        launcherList.add(0, null);
+        launcherCombo.setItems(FXCollections.observableList(launcherList));
+        launcherCombo.setValue(tableDetails.getAltLaunchExe());
+        launcherCombo.valueProperty().addListener((observableValue, s, t1) -> {
+          this.tableDetails.setAltLaunchExe(t1);
+        });
 
-      altRunMode.setText(tableDetails.getAltRunMode());
-      altRunMode.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAltRunMode(newValue));
+        altRunMode.setText(tableDetails.getAltRunMode());
+        altRunMode.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAltRunMode(newValue));
 
-      launchCustomVar.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom1()));
-      launchCustomVar.setValue(tableDetails.getLaunchCustomVar());
-      launchCustomVar.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setLaunchCustomVar(newValue));
+        launchCustomVar.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom1()));
+        launchCustomVar.setValue(tableDetails.getLaunchCustomVar());
+        launchCustomVar.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setLaunchCustomVar(newValue));
 
-      custom2.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom2()));
-      custom2.setValue(tableDetails.getCustom2());
-      custom2.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom2(newValue));
+        custom2.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom2()));
+        custom2.setValue(tableDetails.getCustom2());
+        custom2.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom2(newValue));
 
-      custom3.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom3()));
-      custom3.setValue(tableDetails.getCustom3());
-      custom3.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom3(newValue));
+        custom3.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom3()));
+        custom3.setValue(tableDetails.getCustom3());
+        custom3.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom3(newValue));
 
-      dof.setText(tableDetails.getDof());
-      dof.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDof(newValue));
+        dof.setText(tableDetails.getDof());
+        dof.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDof(newValue));
 
-      if (tableDetails.getVolume() != null) {
-        try {
-          volumeSlider.setValue(Integer.parseInt(tableDetails.getVolume()));
+        if (tableDetails.getVolume() != null) {
+          try {
+            volumeSlider.setValue(Integer.parseInt(tableDetails.getVolume()));
+          }
+          catch (NumberFormatException e) {
+            LOG.error("Failed to set valume: " + e.getMessage());
+          }
         }
-        catch (NumberFormatException e) {
-          LOG.error("Failed to set valume: " + e.getMessage());
+        else {
+          volumeSlider.setValue(100);
+        }
+        volumeSlider.valueProperty().addListener((observableValue, number, t1) -> tableDetails.setVolume(String.valueOf(t1.intValue())));
+
+        if (tableDetails.isPopper15()) {
+          custom4.setText(tableDetails.getCustom4());
+          custom4.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom4(newValue));
+
+          custom5.setText(tableDetails.getCustom5());
+          custom5.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom5(newValue));
+
+          webDbId.setText(tableDetails.getWebGameId());
+          webDbId.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setWebGameId(newValue));
+
+          webLink.setText(tableDetails.getWebLink2Url());
+          webLink.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setWebLink2Url(newValue));
+
+          tourneyId.setText(tableDetails.getTourneyId());
+          tourneyId.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTourneyId(newValue));
+
+          modCheckbox.setSelected(tableDetails.isMod());
+          modCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> tableDetails.setMod(t1));
+        }
+        else {
+          custom4.setDisable(true);
+          custom5.setDisable(true);
+          webDbId.setDisable(true);
+          webLink.setDisable(true);
+          tourneyId.setDisable(true);
+          modCheckbox.setDisable(true);
+        }
+
+        //---------------
+        // TAB extras
+        if (tableDetails.isPopper15()) {
+          gDetails.setText(tableDetails.getgDetails());
+          gDetails.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgDetails(newValue));
+
+          gLog.setText(tableDetails.getgLog());
+          gLog.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgLog(newValue));
+
+          gPlayLog.setText(tableDetails.getgPlayLog());
+          gPlayLog.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgPlayLog(newValue));
+
+          gNotes.setText(tableDetails.getgNotes());
+          gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
+        }
+        else {
+          extrasTab.setDisable(true);
         }
       }
       else {
-        volumeSlider.setValue(100);
-      }
-      volumeSlider.valueProperty().addListener((observableValue, number, t1) -> tableDetails.setVolume(String.valueOf(t1.intValue())));
 
-      if (tableDetails.isPopper15()) {
-        custom4.setText(tableDetails.getCustom4());
-        custom4.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom4(newValue));
+        this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
 
-        custom5.setText(tableDetails.getCustom5());
-        custom5.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom5(newValue));
+        //---------------
+        // TAB Details
 
-        webDbId.setText(tableDetails.getWebGameId());
-        webDbId.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setWebGameId(newValue));
+        autoFillCheckbox.setDisable(true);
 
-        webLink.setText(tableDetails.getWebLink2Url());
-        webLink.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setWebLink2Url(newValue));
+        gameName.setText(game.getGameName());
+        gameName.setDisable(true);
 
-        tourneyId.setText(tableDetails.getTourneyId());
-        tourneyId.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTourneyId(newValue));
+        gameFileName.setText(game.getGameFileName());
+        gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !game.isVpxGame());
 
-        modCheckbox.setSelected(tableDetails.isMod());
-        modCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> tableDetails.setMod(t1));
-      }
-      else {
-        custom4.setDisable(true);
-        custom5.setDisable(true);
-        webDbId.setDisable(true);
-        webLink.setDisable(true);
-        tourneyId.setDisable(true);
-        modCheckbox.setDisable(true);
-      }
+        gameDisplayName.setText(game.getGameDisplayName());
+        gameDisplayName.setDisable(true);
 
-      //---------------
-      // TAB extras
-      if (tableDetails.isPopper15()) {
-        gDetails.setText(tableDetails.getgDetails());
-        gDetails.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgDetails(newValue));
+        //---------------
+        // TAB Meta Data
 
-        gLog.setText(tableDetails.getgLog());
-        gLog.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgLog(newValue));
-
-        gPlayLog.setText(tableDetails.getgPlayLog());
-        gPlayLog.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgPlayLog(newValue));
-
-        gNotes.setText(tableDetails.getgNotes());
-        gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
-      }
-      else {
+        metaDataTab.setDisable(true);
+        customizationTab.setDisable(true);
         extrasTab.setDisable(true);
+        screensTab.setDisable(true);
       }
-    }
-    else {
 
-      this.fixVersionBtn.setDisable(!game.isUpdateAvailable());
-
-      //---------------
-      // TAB Details
-
-      autoFillCheckbox.setDisable(true);
-
-      gameName.setText(game.getGameName());
-      gameName.setDisable(true);
-
-      gameFileName.setText(game.getGameFileName());
-      gameFileName.setDisable(StringUtils.contains(game.getGameFileName(), "/") || StringUtils.contains(game.getGameFileName(), "\\") || !game.isVpxGame());
-
-      gameDisplayName.setText(game.getGameDisplayName());
-      gameDisplayName.setDisable(true);
-
-      //---------------
-      // TAB Meta Data
-
-      metaDataTab.setDisable(true);
-      customizationTab.setDisable(true);
-      extrasTab.setDisable(true);
-      screensTab.setDisable(true);
-    }
-
-    initVpsStatus();
-    if (frontendType.supportStatistics()) {
-      tableStatisticsController.setGame(stage, game, tableDetails);
-    }
-    tableScreensController.setGame(game, tableDetails);
-    tabPane.getSelectionModel().select(tab);
-
-    try {
+      initVpsStatus();
+      if (frontendType.supportStatistics()) {
+        tableStatisticsController.setGame(stage, game, tableDetails);
+      }
+      tableScreensController.setGame(game, tableDetails);
+      tabPane.getSelectionModel().select(tab);
       pinVolController.setData(stage, Arrays.asList(game), false);
     }
     catch (Exception e) {
-      LOG.error("Failed to init PinVol panel: {}", e.getMessage(), e);
+      LOG.error("Failed to initialize Table Data Manager: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize Table Data Manager: " + e.getMessage(), "Please report this bug via Discord or github.");
     }
   }
 

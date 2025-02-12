@@ -110,6 +110,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   private ServerSettings serverSettings;
 
+  private final List<GameLifecycleListener> lifecycleListeners = new ArrayList<>();
+
   /**
    * the refresh timer to keep VPS updated
    */
@@ -118,16 +120,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   @Value("${vps.refreshInterval:2}")
   private int refreshInterval;
 
-  @Deprecated //do not use because of lazy scanning
+  /**
+   * Public API endpoint to fetch all games
+   *
+   * @return
+   */
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
-    List<Game> games = new ArrayList<>(frontendService.getGames());
-    LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
-    start = System.currentTimeMillis();
-
-    for (Game game : games) {
-      applyGameDetails(game, false, false);
-    }
+    List<Game> games = getKnownGames(-1);
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
   }
@@ -193,6 +193,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     for (Game game : games) {
       boolean newGame = applyGameDetails(game, false, false);
       if (newGame) {
+        notifyGameCreated(game);
         scanScore(game.getId(), EventOrigin.INITIAL_SCAN);
       }
 
@@ -267,6 +268,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
     return null;
   }
+
+
 
   /**
    * Returns a complete list of highscore versions
@@ -651,6 +654,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
+    notifyGameUpdated(game);
     return getGame(game.getId());
   }
 
@@ -781,6 +785,35 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+  }
+
+  public void addGameLifecycleListener(@NonNull GameLifecycleListener lifecycleListener) {
+    this.lifecycleListeners.add(lifecycleListener);
+  }
+
+  private void notifyGameCreated(@NonNull Game game) {
+    for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.gameCreated(game);
+    }
+  }
+
+  private void notifyGameUpdated(@NonNull Game game) {
+    for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.gameUpdated(game);
+    }
+  }
+
+  public void notifyGameDeleted(@NonNull Game game) {
+    for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
+      lifecycleListener.gameDeleted(game);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
@@ -801,13 +834,6 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       List<Game> games = getKnownGames(-1);
       vpsService.update(games);
       mameService.clearCache();
-    }
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
   }
 }

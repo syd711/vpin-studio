@@ -612,6 +612,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           }
 
           Label playlistIcon = WidgetFactory.createPlaylistIcon(newItem, uiSettings);
+          TableOverviewController.createPlaylistTooltip(newItem, playlistIcon);
           graphics.setGraphic(playlistIcon.getGraphic());
         }
       });
