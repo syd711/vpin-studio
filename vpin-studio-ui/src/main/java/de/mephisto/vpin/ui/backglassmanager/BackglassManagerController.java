@@ -222,13 +222,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   private Button uploadBtn;
 
   @FXML
-  private Button deleteBtn;
+  private SplitMenuButton deleteBtn;
 
   @FXML
   private Button duplicateBtn;
-
-  @FXML
-  private Button reloadBackglassBtn;
 
   @FXML
   private Label gameLabel;
@@ -252,7 +249,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   private ComboBox<String> directB2SCombo;
 
   @FXML
-  private Button directB2SDeleteBtn;
+  private MenuItem directB2SDeleteBtn;
 
   @FXML
   private Button dataManagerBtn;
@@ -647,14 +644,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
   @FXML
   private void onDirectB2SDelete() {
-    JFXFuture
-      .supplyAsync(() -> client.getBackglassServiceClient().deleteBackglassVersion(directB2S.getEmulatorId(), directB2SCombo.getValue()))
-      .thenAcceptLater((b2s) -> {
-        // reload table and selected view
-        unselectVersion();
-        reloadItem(b2s);
-      })
-      .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete backglass version \"" + directB2SCombo.getValue() + "\"?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      JFXFuture
+          .supplyAsync(() -> client.getBackglassServiceClient().deleteBackglassVersion(directB2S.getEmulatorId(), directB2SCombo.getValue()))
+          .thenAcceptLater((b2s) -> {
+            // reload table and selected view
+            unselectVersion();
+            reloadItem(b2s);
+          })
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
+    }
   }
 
   @FXML
@@ -1066,7 +1066,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
-    this.reloadBackglassBtn.setDisable(true);
 
     downloadBackglassBtn.setDisable(true);
     useAsMediaBackglassBtn.setDisable(true);
@@ -1113,7 +1112,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
             this.renameBtn.setDisable(false);
             this.duplicateBtn.setDisable(false);
             this.deleteBtn.setDisable(false);
-            this.reloadBackglassBtn.setDisable(false);
 
             this.refreshingCounter--;
           });
