@@ -23,8 +23,6 @@ public class PlayerRepresentation {
 
   private String name;
 
-  private String displayName;
-
   private String domain;
 
   private String duplicatePlayerName;
@@ -59,14 +57,6 @@ public class PlayerRepresentation {
 
   public void setAdministrative(boolean administrative) {
     this.administrative = administrative;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
   }
 
   public boolean isBot() {

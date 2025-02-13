@@ -3,53 +3,62 @@ package de.mephisto.vpin.ui.mania;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.image.BufferedImage;
-import java.util.Date;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class ManiaRegistration {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaRegistration.class);
+public class ManiaRegistrationHelper {
+  private final static Logger LOG = LoggerFactory.getLogger(ManiaRegistrationHelper.class);
 
   public static boolean register() {
-    ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "VPin Mania Registration", "Cancel", "Register", "This registers your cabinet for the online service \"VPin Mania\".", "The account is bound to your cabinet.", "I understand, register my cabinet.");
-    if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
+    SystemId systemId = client.getSystemService().getSystemId();
+    if (StringUtils.isEmpty(systemId.getSystemId())) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to retrieve unique system id. Please report this problem.");
+      return false;
+    }
+
+    ManiaRegistration registration = ManiaDialogs.openRegistrationDialog();
+    if (registration != null) {
       try {
-        TournamentSettings settings = client.getTournamentsService().getSettings();
-        PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-        PreferenceEntryRepresentation systemName = client.getPreference(PreferenceNames.SYSTEM_NAME);
-        Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-        if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-          image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
+        ManiaRegistration register = client.getManiaService().register(registration);
+        if (!StringUtils.isEmpty(register.getResult())) {
+          throw new Exception(register.getResult());
         }
 
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-
-        Cabinet newCab = new Cabinet();
-        newCab.setCreationDate(new Date());
-        newCab.setSettings(new CabinetSettings());
-        newCab.setDisplayName(systemName.getValue() != null ? systemName.getValue() : "My VPin");
-        Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, bufferedImage, null);
-
+        Cabinet registeredCabinet = maniaClient.getCabinetClient().getCabinet();
         if (registeredCabinet != null) {
+          TournamentSettings settings = client.getTournamentsService().getSettings();
           settings.setEnabled(true);
           client.getTournamentsService().saveSettings(settings);
+
+          if (registration.getPlayerIds().isEmpty()) {
+            return true;
+          }
+          else {
+            List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
+            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", vpsTables));
+            List<Object> results = progressDialog.getResults();
+            int count = 0;
+            for (Object result : results) {
+              ManiaHighscoreSyncResult syncResult = (ManiaHighscoreSyncResult) result;
+              count += syncResult.getTableScores().size();
+            }
+            WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");
+          }
           return true;
         }
       }

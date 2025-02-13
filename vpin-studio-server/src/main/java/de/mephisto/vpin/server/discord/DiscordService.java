@@ -464,7 +464,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     DiscordPlayer player = new DiscordPlayer();
     player.setId(member.getId());
     player.setName(member.getName());
-    player.setDisplayName(member.getDisplayName());
     player.setInitials(member.getInitials());
     player.setAvatarUrl(member.getAvatarUrl());
     player.setDomain(PlayerDomain.DISCORD.name());
