@@ -5,11 +5,10 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -21,10 +20,10 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<ScrollPane hbarPolicy="NEVER" prefWidth="800.0" style="-fx-border-color: #111111; -fx-background-color: #222222;" 
-        styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
+
+<ScrollPane hbarPolicy="NEVER" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
     <content>
-        <VBox spacing="24.0">
+        <VBox spacing="24.0" styleClass="accordion-container">
             <children>
                 <HBox spacing="24.0">
                     <children>
@@ -145,8 +144,8 @@
                         </Pane>
                     </children>
                 </HBox>
-
-                <HBox spacing="48.0">
+      
+                            <HBox spacing="48.0">
                     <children>
                         <GridPane hgap="12.0" vgap="3.0">
                             <columnConstraints>
@@ -315,7 +314,7 @@
                                 <CheckBox fx:id="startAsExeServer" disable="true" layoutX="196.0" layoutY="453.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                             </children>
                         </GridPane>
-                        <VBox prefWidth="450.0">
+                        <VBox>
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                                     <children>
@@ -340,7 +339,7 @@
                         <ToolBar styleClass="floating-toolbar">
                         <items>
            
-                            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                                              <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
                                 <font>
                                     <Font size="14.0" />
                                 </font>
@@ -460,8 +459,8 @@
                                         <RowConstraints prefHeight="30.0" />
                                     </rowConstraints>
                                     <children>
-
-                                        <Label text="Name:" textFill="WHITE">
+      
+                                                    <Label text="Name:" textFill="WHITE">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -471,8 +470,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="1">
+      
+                                                    <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="1">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -482,8 +481,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Author:" textFill="WHITE" GridPane.rowIndex="2">
+      
+                                                    <Label text="Author:" textFill="WHITE" GridPane.rowIndex="2">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -493,8 +492,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="3">
+      
+                                                    <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="3">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -504,8 +503,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="4">
+      
+                                                    <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="4">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -515,8 +514,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="5">
+      
+                                                    <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="5">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -526,8 +525,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="6">
+      
+                                                    <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="6">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -537,8 +536,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="7">
+      
+                                                    <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -548,8 +547,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="8">
+      
+                                                    <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="8">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -559,8 +558,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="9">
+      
+                                                    <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="9">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -570,8 +569,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="10">
+      
+                                                    <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="10">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -581,8 +580,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                        <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="11">
+      
+                                                    <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="11">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -592,8 +591,8 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-
-                                    </children>
+      
+                                                </children>
                                     <VBox.margin>
                                         <Insets top="6.0" />
                                     </VBox.margin>
