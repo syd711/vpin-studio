@@ -2,8 +2,11 @@
 
 ## Changes
 
+- **Tables / ALT Sound**: Fixed error during loading of ALT sound bundles, caused by previous lazy-loading optimizations.
 - **PinVOL Integration**: Fixed reading/writing of the **PinVolTables.ini** file, which may have caused duplicated entries.
 - **VPin Mania**: Added automatic player restoring when you re-install VPin Studio and your cabinet was already registered.
+- **VPin Mania**: The registration has been re-implemented so that you can immediately register your players and synchronize your highscores too.  
+
 
 ---
 

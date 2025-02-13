@@ -66,9 +66,10 @@ public class AltSoundService implements InitializingBean {
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     if (isAltSoundAvailable(game)) {
-      AltSound altSound = altSoundFolder2AltSound.get(game.getAltSoundFolder().getAbsolutePath());
+      String folder = game.getAltSoundFolder().getAbsolutePath();
+      AltSound altSound = altSoundFolder2AltSound.get(folder);
       altSound = AltSoundLoaderFactory.load(altSound);
-      altSoundFolder2AltSound.put(game.getAltSoundFolder().getAbsolutePath(), altSound);
+      altSoundFolder2AltSound.put(folder, altSound);
       return altSound;
     }
     return new AltSound();
@@ -156,7 +157,12 @@ public class AltSoundService implements InitializingBean {
   private void createAltSound(@Nullable File altSoundDir, int emualtorId) {
     if (altSoundDir != null) {
       AltSound altSound = AltSoundLoaderFactory.create(altSoundDir, emualtorId);
-      altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath(), altSound);
+      if (altSound != null) {
+        altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath(), altSound);
+      }
+      else {
+        LOG.warn("Skipped caching ALT sound '{}'", altSoundDir.getName());
+      }
     }
   }
 
