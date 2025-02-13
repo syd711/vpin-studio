@@ -34,7 +34,15 @@ public class PlayerService {
     List<Player> all = null;
     try {
       all = playerRepository.findAll();
-      all.sort(Comparator.comparing(Player::getName));
+      all.sort(new Comparator<Player>() {
+        @Override
+        public int compare(Player o1, Player o2) {
+          if (o1.getName() != null && o2.getName() != null) {
+            return o1.getName().compareTo(o2.getName());
+          }
+          return 0;
+        }
+      });
     }
     catch (Exception e) {
       LOG.error("Failed to load all players: {}", e.getMessage(), e);
@@ -112,7 +120,7 @@ public class PlayerService {
   public Player save(Player player) {
     Player model = new Player();
     boolean existingPlayer = false;
-    if (player.getId() != null && player.getId() > 0) {
+    if (player.getId() != null && player.getId() != null && player.getId() > 0) {
       existingPlayer = true;
       model = playerRepository.findById(player.getId()).get();
     }
@@ -124,7 +132,6 @@ public class PlayerService {
 
     model.setDomain(player.getDomain());
     model.setName(player.getName());
-    model.setDisplayName(player.getDisplayName());
     model.setInitials(player.getInitials());
     model.setAdministrative(player.isAdministrative());
     model.setTournamentUserUuid(player.getTournamentUserUuid());

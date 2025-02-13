@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.altsound;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.slf4j.Logger;
@@ -14,16 +15,19 @@ import java.io.FileReader;
 public class AltSoundLoaderFactory {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundLoaderFactory.class);
 
+  @Nullable
   public static AltSound create(@NonNull File altSoundFolder, int emulatorId) {
     File ini = new File(altSoundFolder, "altsound.ini");
     File gSoundCsv = new File(altSoundFolder, "g-sound.csv");
     File altSoundCsv = new File(altSoundFolder, "altsound.csv");
 
     AltSound altSound = new AltSound();
+    altSound.setName(altSoundFolder.getParentFile().getName());
+    altSound.setFolder(altSoundFolder.getAbsolutePath());
+
     if (ini.exists() || gSoundCsv.exists() || altSoundCsv.exists()) {
       altSound.setEmulatorId(emulatorId);
       altSound.setName(altSoundFolder.getParentFile().getName());
-      altSound.setFolder(altSoundFolder.getAbsolutePath());
       return altSound;
     }
     return null;
@@ -31,7 +35,9 @@ public class AltSoundLoaderFactory {
 
   @NonNull
   public static AltSound load(@NonNull AltSound altSound) {
-    return load(new File(altSound.getFolder()), altSound.getEmulatorId());
+    String folder = altSound.getFolder();
+    File altSoundFolder = new File(folder);
+    return load(altSoundFolder, altSound.getEmulatorId());
   }
 
   @NonNull

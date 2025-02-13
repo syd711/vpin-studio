@@ -37,8 +37,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -302,6 +300,7 @@ public class NavigationController implements Initializable, StudioEventListener,
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
+    maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
 
     staticAvatarPane = this.avatarPane;
     refreshAvatar();

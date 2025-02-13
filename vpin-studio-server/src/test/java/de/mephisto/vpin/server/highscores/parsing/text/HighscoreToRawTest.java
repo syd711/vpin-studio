@@ -110,7 +110,7 @@ public class HighscoreToRawTest {
   @Test
   public void testSingle() {
     ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "4Queens70.txt");
+    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "aztec.txt");
     System.out.println("Reading '" + entry.getName() + "'");
     TextHighscoreAdapters ad = new TextHighscoreAdapters();
     ad.loadParsers(scoringDB);

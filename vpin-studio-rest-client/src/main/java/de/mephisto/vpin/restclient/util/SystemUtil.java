@@ -48,8 +48,10 @@ public class SystemUtil {
 
   public static String getUniqueSystemId() {
     String id = getBoardSerialNumber();
+    //TODO this is actual a bug and should not be used,
+    //Not yet a problem, but the existing system ids must be migrated
     if (StringUtils.isEmpty(id)) {
-      id = getCpuSerialNumber();
+      id = getProcessorId();
     }
 
     if (StringUtils.isEmpty(id)) {
@@ -80,7 +82,11 @@ public class SystemUtil {
     return null;
   }
 
-  private static String getCpuSerialNumber() {
+  /**
+   * This one is NOT unique!
+   * @return
+   */
+  private static String getProcessorId() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "cpu", "get", "ProcessorId"), false);
       executor.setIgnoreError(true);
