@@ -58,6 +58,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   protected TablesController tablesController;
 
+  protected BaseSideBarController<T> sideBarController;
+
   protected ObservableList<M> models = FXCollections.observableArrayList();
 
   protected FilteredList<M> filteredModels;
@@ -100,6 +102,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+  }
+
+  public void setSideBarController(BaseSideBarController<T> sideBarController) {
+    this.sideBarController = sideBarController;
   }
 
   public BaseTableSettings getTableSettings() {
@@ -297,7 +303,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
           // refresh views too if the game is selected
           T selected = getSelection();
           if (selected != null && model.sameBean(selected)) {
-            refreshView(model.getBean());
+            refreshView(model);
           }
         }
         else {
@@ -332,7 +338,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   /**
    * Refresh the sidebar view
    */
-  protected void refreshView(T bean) {
+  protected void refreshView(M model) {
   }
 
   //----------------------

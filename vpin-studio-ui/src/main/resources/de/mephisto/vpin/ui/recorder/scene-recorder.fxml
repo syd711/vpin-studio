@@ -65,73 +65,73 @@
                         </Button>
                     </children>
                 </StackPane>
-            <Separator layoutX="462.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
-            <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
-                <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Edit table data" />
-               </tooltip>
-            </Button>
-            <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Show table in table overview" />
-               </tooltip>
-            </Button>
-            <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start Recording" textFill="#ff3333">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Start recording of this screen" />
-               </tooltip>
-               <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-record" iconSize="18" />
-               </graphic>
-            </Button>
-            <Separator layoutX="478.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
-               </tooltip>
-            </Button>
-            <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="Screens" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
-               </graphic>
-            </MenuButton>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <HBox alignment="CENTER_LEFT" spacing="6.0">
-               <children>
-                  <Label styleClass="default-text" text="Preview Refresh:" />
-                  <Spinner fx:id="refreshInterval" prefWidth="70.0" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="seconds" />
-               </children>
-            </HBox>
+                <Separator layoutX="462.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                    <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+                <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
+                    <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                <font>
+                    <Font size="14.0" />
+                </font>
+                <graphic>
+                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Edit table data" />
+                </tooltip>
+                </Button>
+                <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                <font>
+                    <Font size="14.0" />
+                </font>
+                <graphic>
+                    <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Show table in table overview" />
+                </tooltip>
+                </Button>
+                <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start Recording" textFill="#ff3333">
+                <font>
+                    <Font size="14.0" />
+                </font>
+                <tooltip>
+                    <Tooltip text="Start recording of this screen" />
+                </tooltip>
+                <graphic>
+                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-record" iconSize="18" />
+                </graphic>
+                </Button>
+                <Separator layoutX="478.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                <font>
+                    <Font size="14.0" />
+                </font>
+                <graphic>
+                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+                </tooltip>
+                </Button>
+                <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="Screens" textFill="WHITE">
+                <font>
+                    <Font size="14.0" />
+                </font>
+                <graphic>
+                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
+                </graphic>
+                </MenuButton>
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                <children>
+                    <Label styleClass="default-text" text="Preview Refresh:" />
+                    <Spinner fx:id="refreshInterval" prefWidth="70.0" />
+                    <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="seconds" />
+                </children>
+                </HBox>
             </items>
         </ToolBar>
     </top>
@@ -153,7 +153,7 @@
                                             </graphic>
                                         </TableColumn>
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                              <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
+                                        <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
                                     </columns>
                                 </TableView>
                             </children>
@@ -171,23 +171,18 @@
         </BorderPane>
     </center>
     <right>
-       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+       <BorderPane BorderPane.alignment="CENTER">
             <center>
                 <ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #222222;">
                     <content>
                         <VBox fx:id="recordingOptions" styleClass="base-component">
-                            <padding>
-                         <Insets right="12.0" />
-                     </padding></VBox>
+                        <padding>
+                            <Insets right="12.0" bottom="12.0" />
+                        </padding>
+                     </VBox>
                     </content>
                 </ScrollPane>
             </center>
-            <BorderPane.margin>
-             <Insets />
-         </BorderPane.margin>
-            <padding>
-             <Insets bottom="12.0" />
-         </padding>
         </BorderPane>
    </right>
 </BorderPane>

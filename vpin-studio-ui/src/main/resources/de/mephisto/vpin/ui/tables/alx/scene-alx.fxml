@@ -19,89 +19,83 @@
    <center>
     <StackPane fx:id="loaderStack">
      <children>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="12.0" />
-         </BorderPane.margin>
-         <content>
-            <HBox spacing="12.0">
-               <children>
-                  <VBox fx:id="col1" prefWidth="430.0" styleClass="subpanel">
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
-                     </padding>
-                     <children>
-                        <Label styleClass="default-title" text="Most Played" />
-                        <Label styleClass="default-text" text="(Number of times a table has been launched)" wrapText="true">
-                           <VBox.margin>
-                              <Insets bottom="12.0" />
-                           </VBox.margin>
-                        </Label>
-                        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
-                           <content>
-                              <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
-                           </content>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </ScrollPane>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="col2" prefWidth="430.0" styleClass="subpanel">
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
-                     </padding>
-                     <children>
-                        <Label styleClass="default-title" text="Time Played" />
-                        <Label styleClass="default-text" text="(Total emulation time by table)" wrapText="true">
-                           <VBox.margin>
-                              <Insets bottom="12.0" />
-                           </VBox.margin>
-                        </Label>
-                        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
-                           <content>
-                              <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="col3" prefWidth="430.0" styleClass="subpanel">
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
-                     </padding>
-                     <children>
-                        <Label styleClass="default-title" text="Recorded Scores" />
-                        <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio)" wrapText="true">
-                           <VBox.margin>
-                              <Insets bottom="12.0" />
-                           </VBox.margin>
-                        </Label>
-                        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
-                           <content>
-                              <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="tileList" prefWidth="430.0" spacing="12.0">
-                     <padding>
-                        <Insets right="3.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </VBox>
-               </children>
-               <padding>
-                  <Insets left="12.0" top="12.0" />
-               </padding>
-            </HBox>
-         </content>
-      </ScrollPane>
-     </children>
-         <BorderPane.margin>
-            <Insets bottom="12.0" />
-         </BorderPane.margin>
+         <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+            <content>
+               <HBox spacing="12.0">
+                  <children>
+                     <VBox fx:id="col1" prefWidth="430.0" styleClass="subpanel">
+                        <padding>
+                           <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
+                        </padding>
+                        <children>
+                           <Label styleClass="default-title" text="Most Played" />
+                           <Label styleClass="default-text" text="(Number of times a table has been launched)" wrapText="true">
+                              <VBox.margin>
+                                 <Insets bottom="12.0" />
+                              </VBox.margin>
+                           </Label>
+                           <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
+                              <content>
+                                 <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
+                              </content>
+                              <VBox.margin>
+                                 <Insets />
+                              </VBox.margin>
+                           </ScrollPane>
+                        </children>
+                     </VBox>
+                     <VBox fx:id="col2" prefWidth="430.0" styleClass="subpanel">
+                        <padding>
+                           <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
+                        </padding>
+                        <children>
+                           <Label styleClass="default-title" text="Time Played" />
+                           <Label styleClass="default-text" text="(Total emulation time by table)" wrapText="true">
+                              <VBox.margin>
+                                 <Insets bottom="12.0" />
+                              </VBox.margin>
+                           </Label>
+                           <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
+                              <content>
+                                 <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
+                              </content>
+                           </ScrollPane>
+                        </children>
+                     </VBox>
+                     <VBox fx:id="col3" prefWidth="430.0" styleClass="subpanel">
+                        <padding>
+                           <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
+                        </padding>
+                        <children>
+                           <Label styleClass="default-title" text="Recorded Scores" />
+                           <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio)" wrapText="true">
+                              <VBox.margin>
+                                 <Insets bottom="12.0" />
+                              </VBox.margin>
+                           </Label>
+                           <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
+                              <content>
+                                 <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
+                              </content>
+                           </ScrollPane>
+                        </children>
+                     </VBox>
+                     <VBox fx:id="tileList" prefWidth="430.0" spacing="12.0">
+                        <padding>
+                           <Insets right="3.0" />
+                        </padding>
+                        <HBox.margin>
+                           <Insets />
+                        </HBox.margin>
+                     </VBox>
+                  </children>
+                  <padding>
+                     <Insets left="12.0" top="12.0" bottom="12.0" />
+                  </padding>
+               </HBox>
+            </content>
+         </ScrollPane>
+      </children>
     </StackPane>
    </center>
    <top>
