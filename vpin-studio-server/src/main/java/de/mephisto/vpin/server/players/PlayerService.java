@@ -111,8 +111,9 @@ public class PlayerService {
 
   public Player save(Player player) {
     Player model = new Player();
-    boolean existingPlayer = model.getId() > 0;
-    if (existingPlayer) {
+    boolean existingPlayer = false;
+    if (player.getId() != null && player.getId() > 0) {
+      existingPlayer = true;
       model = playerRepository.findById(player.getId()).get();
     }
 
