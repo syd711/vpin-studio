@@ -48,6 +48,12 @@ public class SystemUtil {
 
   public static String getUniqueSystemId() {
     String id = getBoardSerialNumber();
+    //TODO this is actual a bug and should not be used,
+    //Not yet a problem, but the existing system ids must be migrated
+    if (StringUtils.isEmpty(id)) {
+      id = getProcessorId();
+    }
+
     if (StringUtils.isEmpty(id)) {
       return NetworkUtil.getMacAddress();
     }
@@ -72,6 +78,31 @@ public class SystemUtil {
     }
     catch (Exception e) {
       LOG.warn("Failed to resolve cabinet id: " + e.getMessage());
+    }
+    return null;
+  }
+
+  /**
+   * This one is NOT unique!
+   * @return
+   */
+  private static String getProcessorId() {
+    try {
+      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "cpu", "get", "ProcessorId"), false);
+      executor.setIgnoreError(true);
+      executor.executeCommand();
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      if (standardOutputFromCommand != null) {
+        String[] split = standardOutputFromCommand.toString().trim().split("\n");
+        String serial = split[split.length - 1];
+        if (!isNotValid(serial)) {
+          return null;
+        }
+        return serial;
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to resolve cpu id: " + e.getMessage());
     }
     return null;
   }

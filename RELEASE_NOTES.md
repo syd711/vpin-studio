@@ -3,6 +3,7 @@
 ## Changes
 
 - **PinVOL Integration**: Fixed reading/writing of the **PinVolTables.ini** file, which may have caused duplicated entries.
+- **VPin Mania**: Added automatic player restoring when you re-install VPin Studio and your cabinet was already registered.
 
 ---
 
