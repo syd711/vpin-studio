@@ -21,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,6 +128,21 @@ public class HeaderResizeableController implements Initializable {
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
     helper.switchWindowedMode(event);
+    refreshWindowMaximizedState();
+  }
+
+  private void refreshWindowMaximizedState() {
+    boolean mIsMaximized = Studio.stage.getX() == 0 && Studio.stage.getY() == 0;
+    if (mIsMaximized) {
+      FontIcon icon = WidgetFactory.createIcon("mdi2w-window-restore");
+      icon.setIconSize(16);
+      maximizeBtn.setGraphic(icon);
+    }
+    else {
+      FontIcon icon = WidgetFactory.createIcon("mdi2w-window-maximize");
+      icon.setIconSize(16);
+      maximizeBtn.setGraphic(icon);
+    }
   }
 
   @FXML
@@ -170,6 +186,9 @@ public class HeaderResizeableController implements Initializable {
           HeaderResizeableController.event = event;
         }
       });
+
+
+      refreshWindowMaximizedState();
     });
 
   }

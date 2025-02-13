@@ -28,7 +28,6 @@ public class FXResizeHelper {
   private double mPresScreeX, mPresScreeY;
   private double mPresStageW, mPresStageH;
 
-  private boolean mIsMaximized = false;
   private double mWidthStore, mHeightStore, mXStore, mYStore;
   private boolean verticalOnly;
 
@@ -73,11 +72,13 @@ public class FXResizeHelper {
     ObservableList<Screen> screensForRectangle = Screen.getScreensForRectangle(e.getScreenX(), e.getScreenY(), 1, 1);
     Screen screen = screensForRectangle.get(0);
 
+    boolean mIsMaximized = STAGE.getX() == 0 && STAGE.getY() == 0;
+
     if (mIsMaximized) {
-      STAGE.setY(mYStore);
-      STAGE.setX(mXStore);
-      STAGE.setWidth(mWidthStore);
-      STAGE.setHeight(mHeightStore);
+      STAGE.setX(mXStore > 0  ? mXStore : 50);
+      STAGE.setY(mYStore > 0  ? mYStore : 50);
+      STAGE.setWidth(mWidthStore > 0  ? mWidthStore : STAGE.getWidth() - 100);
+      STAGE.setHeight(mHeightStore > 0 ? mHeightStore : STAGE.getHeight() - 100);
     }
     else {
       mXStore = STAGE.getX();
@@ -102,7 +103,6 @@ public class FXResizeHelper {
       STAGE.setWidth(screen.getVisualBounds().getWidth());
       STAGE.setHeight(screen.getVisualBounds().getHeight());
     }
-    mIsMaximized = !mIsMaximized;
   }
 
   private void createListener() {
