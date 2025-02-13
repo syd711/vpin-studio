@@ -9,6 +9,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
+import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -18,7 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpsTablesSidebarController implements Initializable {
+public class VpsTablesSidebarController extends BaseSideBarController<VpsTable> implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesSidebarController.class);
   private final Debouncer debouncer = new Debouncer();
 
@@ -131,6 +131,7 @@ public class VpsTablesSidebarController implements Initializable {
     commentChangeListener = new CommentChangeListener();
   }
 
+  @Override
   public void setVisible(boolean b) {
     this.vpsTableAccordion.setVisible(b);
   }

@@ -127,7 +127,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   private GameEmulatorChangeListener gameEmulatorChangeListener;
 
-  private TablesController tablesController;
   private PlayButtonController playButtonController;
 
   private boolean active = false;
@@ -210,7 +209,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     this.dataManagerBtn.setDisable(true);
     this.tableNavigateBtn.setDisable(true);
 
-    GameRepresentation selection = getSelection();
+    //GameRepresentation selection = getSelection();
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
     int id = value != null ? value.getId() : ALL_VPX_ID;
@@ -266,7 +265,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
 
-  private BaseFilterController getFilterController() {
+  private BaseFilterController<GameRepresentation, GameRepresentationModel> getFilterController() {
     return filterController;
   }
 
@@ -314,10 +313,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
 
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
-  }
-
-  public void setTablesController(TablesController tablesController) {
-    this.tablesController = tablesController;
   }
 
   @Override

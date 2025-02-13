@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,11 +22,13 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
   private final Iterator<File> iterator;
   private final int gameId;
   private final File file;
+  private final boolean append;
 
-  public DirectB2SUploadProgressModel(int gameId, String title, File file, Runnable finalizer) {
+  public DirectB2SUploadProgressModel(int gameId, String title, File file, boolean append, Runnable finalizer) {
     super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
+    this.append = append;
     this.iterator = Collections.singletonList(this.file).iterator();
   }
 
@@ -52,7 +55,7 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getBackglassServiceClient().uploadDirectB2SFile(next, gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getBackglassServiceClient().uploadDirectB2SFile(next, gameId, append, percent -> progressResultModel.setProgress(percent));
       if (StringUtils.isNotEmpty(result.getError())) {
         progressResultModel.addError();
 

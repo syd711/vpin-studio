@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -43,7 +44,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesSidebarController implements Initializable, PreferenceChangeListener {
+public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
 
   @FXML
@@ -181,7 +182,6 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private Optional<GameRepresentation> game = Optional.empty();
   private List<GameRepresentation> games = Collections.emptyList();
 
-  private TableOverviewController tablesController;
   private POVRepresentation pov;
 
   // Add a public no-args constructor
@@ -191,7 +191,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   @FXML
   private void onVpsBtn() {
     String url = VPS.getVpsBaseUrl();
-    GameRepresentation selection = this.tablesController.getSelection();
+    GameRepresentation selection = getTableOverviewController().getSelection();
     if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
       url = VPS.getVpsTableUrl(selection.getExtTableId());
     }
@@ -470,7 +470,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     client.getPreferenceService().addListener(this);
   }
 
-  private void loadSidePanels() {
+  public void loadSidePanels() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendType frontendType = frontend.getFrontendType();
 
@@ -599,7 +599,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       FXMLLoader loader = new FXMLLoader(TablesSidebarDirectB2SController.class.getResource("scene-tables-sidebar-directb2s.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarDirectB2SController = loader.getController();
-      tablesSidebarDirectB2SController.setSidebarController(this);
+      tablesSidebarDirectB2SController.setRootController(tablesController);
       titledPaneDirectB2s.setContent(tablesRoot);
     }
     catch (IOException e) {
@@ -752,17 +752,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     refreshSidebarSections();
   }
 
-  public void setTableOverviewController(TableOverviewController tablesController) {
-    this.tablesController = tablesController;
-    loadSidePanels();
-  }
-
-  public TablesController getTablesController() {
-    return tablesController.getTablesController();
-  }
-
   public TableOverviewController getTableOverviewController() {
-    return tablesController;
+    return tablesController.getTableOverviewController();
   }
 
   public void setGames(Optional<GameRepresentation> game, List<GameRepresentation> games) {
@@ -846,6 +837,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     return tablesSidebarHighscoresController;
   }
 
+  @Override
   public void setVisible(boolean b) {
     tableAccordion.setVisible(b);
   }
@@ -865,7 +857,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     titledPaneAltColor.setVisible(vpxMode);
     titledPaneScriptDetails.setVisible(vpxMode);
 
-    if (!tablesController.isAssetManagerMode()) {
+    if (!getTableOverviewController().isAssetManagerMode()) {
       refreshSidebarSections();
     }
   }
@@ -890,7 +882,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
     index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
 
-    getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+    tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
   }
 
   private int refreshSection(TitledPane section, boolean sectionAssets, int index) {

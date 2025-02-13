@@ -31,9 +31,9 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
                                     </graphic>
-                           <tooltip>
-                              <Tooltip text="All Tables (F2)" />
-                           </tooltip>
+                                    <tooltip>
+                                        <Tooltip text="All Tables (F2)" />
+                                    </tooltip>
                                 </Tab>
                                 <Tab fx:id="backglassManagerTab" closable="false" text="Backglasses">
                                     <content>
@@ -42,9 +42,9 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" text="" />
                                     </graphic>
-                           <tooltip>
-                              <Tooltip text="Backglasses (F3)" />
-                           </tooltip>
+                                    <tooltip>
+                                        <Tooltip text="Backglasses (F3)" />
+                                    </tooltip>
                                 </Tab>
                                 <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
                                     <content>
@@ -53,9 +53,9 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
                                     </graphic>
-                           <tooltip>
-                              <Tooltip text="Visual Pinball Spreadsheet (F4)" />
-                           </tooltip>
+                                    <tooltip>
+                                        <Tooltip text="Visual Pinball Spreadsheet (F4)" />
+                                    </tooltip>
                                 </Tab>
                                 <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
                                     <content>
@@ -64,9 +64,9 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18" text="" />
                                     </graphic>
-                           <tooltip>
-                              <Tooltip text="Table Statistics (F5)" />
-                           </tooltip>
+                                    <tooltip>
+                                        <Tooltip text="Table Statistics (F5)" />
+                                    </tooltip>
                                 </Tab>
                                 <Tab fx:id="tableRepositoryTab" text=" Table Backups">
                                     <content>
@@ -75,51 +75,51 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                                     </graphic>
-                           <tooltip>
-                              <Tooltip text="Table Backups (F6)" />
-                           </tooltip>
+                                    <tooltip>
+                                        <Tooltip text="Table Backups (F6)" />
+                                    </tooltip>
                                 </Tab>
-                        <Tab fx:id="recorderTab" text=" Media Recorder">
-                           <content>
-                              <BorderPane />
-                           </content>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2v-video-outline" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Media Recorder (F7)" />
-                           </tooltip>
-                        </Tab>
+                                <Tab fx:id="recorderTab" text=" Media Recorder">
+                                <content>
+                                    <BorderPane />
+                                </content>
+                                <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2v-video-outline" iconSize="18" />
+                                </graphic>
+                                <tooltip>
+                                    <Tooltip text="Media Recorder (F7)" />
+                                </tooltip>
+                                </Tab>
                             </tabs>
                         </TabPane>
-                  <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">
-                     <StackPane.margin>
-                        <Insets right="3.0" top="6.0" />
-                     </StackPane.margin>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Toggle Sidebar [F3]" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Open Screen Validators Settings" />
-                     </tooltip>
-                     <StackPane.margin>
-                        <Insets right="43.0" top="6.0" />
-                     </StackPane.margin>
-                  </Button>
+                        <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">
+                            <StackPane.margin>
+                                <Insets right="3.0" top="6.0" />
+                            </StackPane.margin>
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Toggle Sidebar [F3]" />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Open Screen Validators Settings" />
+                            </tooltip>
+                            <StackPane.margin>
+                                <Insets right="43.0" top="6.0" />
+                            </StackPane.margin>
+                        </Button>
                     </children>
                 </StackPane>
             </center>

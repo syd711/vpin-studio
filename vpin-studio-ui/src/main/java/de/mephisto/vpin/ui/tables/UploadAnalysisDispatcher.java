@@ -97,7 +97,7 @@ public class UploadAnalysisDispatcher {
 
     switch (assetType) {
       case DIRECTB2S: {
-        TableDialogs.directBackglassUpload(Studio.stage, game, file, finalizer);
+        TableDialogs.openBackglassUpload(null, Studio.stage, game, file, finalizer);
         return;
       }
       case RES: {

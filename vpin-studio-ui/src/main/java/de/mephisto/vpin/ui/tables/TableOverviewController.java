@@ -42,7 +42,6 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -454,10 +453,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onBackglassUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directUpload(stage, AssetType.DIRECTB2S, selectedItems.get(0), null);
-      if (b) {
-        tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
-      }
+      GameRepresentation gameRepresentation = selectedItems.get(0);
+      TableDialogs.openBackglassUpload(tablesController, stage, gameRepresentation, null, null);
     }
   }
 
@@ -1008,8 +1005,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     // set ValueCellFactory and CellFactory, and get a renderer that is responsible to render the cell
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
@@ -1103,11 +1098,24 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
+        int nbVersions = value.getNbDirectB2S();
+        FontIcon icon = null;
+        if (nbVersions > 9) {
+          icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", getIconColor(value));
+          //icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-circle-outline", 24, getIconColor(value));
+        }
+        else if (nbVersions > 1) {
+          icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", getIconColor(value));
+          //icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-circle-outline", 24, getIconColor(value));
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
+          icon = WidgetFactory.createCheckIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
+        }
+        if (hasUpdate) {
+          return WidgetFactory.addUpdateIcon(icon, "New backglass updates available");
+        }
+        else {
+          return WidgetFactory.wrapIcon(icon, value.getDirectB2SPath());
         }
       }
       else if (hasUpdate) {
@@ -1652,7 +1660,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
    *
    */
   @Override
-  public void refreshView(GameRepresentation game) {
+  public void refreshView(GameRepresentationModel model) {
+    GameRepresentation game = model != null ? model.getGame() : null;
+
     dismissBtn.setVisible(true);
 
     setValidationVisible(false);
@@ -1755,10 +1765,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       refreshView(null);
     }
     else {
-      GameRepresentation gameRepresentation = c.getList().get(0).getGame();
+      GameRepresentationModel model = c.getList().get(0);
+      GameRepresentation gameRepresentation = model.getGame();
       playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
       playButtonController.setData(gameRepresentation);
-      refreshView(gameRepresentation);
+      refreshView(model);
     }
 
     List<GameRepresentation> selection = new ArrayList<>(c.getList().stream().map(g -> g.getGame()).collect(Collectors.toList()));

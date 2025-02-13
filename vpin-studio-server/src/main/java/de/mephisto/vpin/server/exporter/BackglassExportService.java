@@ -78,9 +78,8 @@ public class BackglassExportService extends ExporterService {
             continue;
           }
 
-
-          DirectB2SData directB2SData = backglassService.getDirectB2SData(game.getId());
-          DirectB2STableSettings tableSettings = backglassService.getTableSettings(game.getId());
+          DirectB2SData directB2SData = backglassService.getDirectB2SData(game);
+          DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
           if (directB2SData != null) {
             List<String> records = new ArrayList<>();
             records.add(String.valueOf(game.getId()));

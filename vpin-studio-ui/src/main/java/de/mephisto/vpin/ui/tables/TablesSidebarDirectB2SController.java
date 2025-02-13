@@ -195,7 +195,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  private TablesSidebarController tablesSidebarController;
+  private TablesController tablesController;
 
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
@@ -215,7 +215,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private void onBackglassManager() {
-    tablesSidebarController.getTablesController().switchToBackglassManagerTab(game.orElse(null));
+    tablesController.switchToBackglassManagerTab(game.orElse(null));
   }
 
   @FXML
@@ -236,7 +236,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         if (tableData != null) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            client.getBackglassServiceClient().deleteBackglass(tableData.toDirectB2S());
+            client.getBackglassServiceClient().deleteBackglass(tableData.getEmulatorId(), tableData.getFilename());
             EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
           }
         }
@@ -567,8 +567,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     }
   }
 
-  public void setSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
+  public void setRootController(TablesController tablesController) {
+    this.tablesController = tablesController;
   }
 
   @Override

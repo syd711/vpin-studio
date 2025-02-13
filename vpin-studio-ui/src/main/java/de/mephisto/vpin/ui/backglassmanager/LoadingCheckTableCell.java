@@ -25,12 +25,12 @@ abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<Direct
     if (check == 1) {
       setText(null);
       setTooltip(new Tooltip(getTooltip(model)));
-      setGraphic(WidgetFactory.createCheckboxIcon());
+      setGraphic(WidgetFactory.createCheckboxIcon(getIconColor(model)));
     }
     else if (check == 2) {
       setText(null);
       setTooltip(new Tooltip(getTooltip(model)));
-      setGraphic(WidgetFactory.createExclamationIcon());
+      setGraphic(WidgetFactory.createExclamationIcon(getIconColor(model)));
     }
     else {
       setText("");
@@ -38,4 +38,9 @@ abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<Direct
       setGraphic(null);
     }
   }
+
+  private String getIconColor(DirectB2SModel model) {
+    return model.getBacklass().isEnabled() ? null : WidgetFactory.DISABLED_COLOR;
+  }
+
 }

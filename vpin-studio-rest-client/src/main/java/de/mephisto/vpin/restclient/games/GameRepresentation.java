@@ -82,6 +82,8 @@ public class GameRepresentation {
   private String pupPackPath;
   private boolean altSoundAvailable;
 
+  private int nbDirectB2S = -1;
+
   public String getPatchVersion() {
     return patchVersion;
   }
@@ -522,6 +524,14 @@ public class GameRepresentation {
 
   public void setGameFileName(String gameFileName) {
     this.gameFileName = gameFileName;
+  }
+
+  public int getNbDirectB2S() {
+    return nbDirectB2S;
+  }
+
+  public void setNbDirectB2S(int nbDirectB2S) {
+    this.nbDirectB2S = nbDirectB2S;
   }
 
   @Override
