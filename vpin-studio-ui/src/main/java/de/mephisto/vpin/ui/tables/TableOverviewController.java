@@ -42,7 +42,6 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -1661,7 +1660,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
    *
    */
   @Override
-  public void refreshView(GameRepresentation game) {
+  public void refreshView(GameRepresentationModel model) {
+    GameRepresentation game = model != null ? model.getGame() : null;
+
     dismissBtn.setVisible(true);
 
     setValidationVisible(false);
@@ -1764,10 +1765,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       refreshView(null);
     }
     else {
-      GameRepresentation gameRepresentation = c.getList().get(0).getGame();
+      GameRepresentationModel model = c.getList().get(0);
+      GameRepresentation gameRepresentation = model.getGame();
       playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
       playButtonController.setData(gameRepresentation);
-      refreshView(gameRepresentation);
+      refreshView(model);
     }
 
     List<GameRepresentation> selection = new ArrayList<>(c.getList().stream().map(g -> g.getGame()).collect(Collectors.toList()));

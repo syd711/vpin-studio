@@ -32,7 +32,7 @@ public class BackglassManagerDragDropHandler extends BaseDragDropHandler {
 
   @Override
   protected void processDroppedFile(File file) {
-    UploadAnalysisDispatcher.dispatch(file, controller.getGame(), () -> {
+    UploadAnalysisDispatcher.dispatch(file, controller.getGameFromSelection(), () -> {
       // when done, force refresh
       controller.reloadSelection();
     });
