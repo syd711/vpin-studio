@@ -16,7 +16,7 @@ public class GameEmulatorRepresentation {
   private EmulatorType emulatorType;
 
   private String installationDirectory;
-  private String tablesDirectory;
+  private String gamesDirectory;
   private String userDirectory;
 
   private String altSoundDirectory;
@@ -28,6 +28,15 @@ public class GameEmulatorRepresentation {
 
   private String launchScript;
   private String exitScript;
+  private String gameExt;
+
+  public String getGameExt() {
+    return gameExt;
+  }
+
+  public void setGameExt(String gameExt) {
+    this.gameExt = gameExt;
+  }
 
   public boolean isEnabled() {
     return enabled;
@@ -147,12 +156,12 @@ public class GameEmulatorRepresentation {
     this.installationDirectory = installationDirectory;
   }
 
-  public String getTablesDirectory() {
-    return tablesDirectory;
+  public String getGamesDirectory() {
+    return gamesDirectory;
   }
 
-  public void setTablesDirectory(String tablesDirectory) {
-    this.tablesDirectory = tablesDirectory;
+  public void setGamesDirectory(String gamesDirectory) {
+    this.gamesDirectory = gamesDirectory;
   }
 
   public int getId() {

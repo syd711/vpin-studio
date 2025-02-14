@@ -73,7 +73,7 @@ public class ExporterService {
     }
 
     if (emulatorIds.isEmpty()) {
-      frontendService.getGameEmulators().stream().map(GameEmulator::getId).forEach(emulatorIds::add);
+      frontendService.getValidGameEmulators().stream().map(GameEmulator::getId).forEach(emulatorIds::add);
     }
 
     return emulatorIds;

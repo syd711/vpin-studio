@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.mame.MameUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -16,101 +16,105 @@ import java.util.List;
 public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
 
-  private File installationFolder;
-  private File tablesFolder;
-  private final File mameFolder;
-  private final File userFolder;
-  private final File altSoundFolder;
-  private final File altColorFolder;
-  private final File musicFolder;
-  private final File nvramFolder;
-  private final File cfgFolder;
+  private EmulatorType type;
+  private ValidationState validationState;
+  private String name;
+  private String description;
+  private String displayName;
+  private String installationDirectory;
+  private String gamesDirectory;
+  private String mameDirectory;
+  private String mediaDirectory;
+  private String romsDirectory;
+  private int id;
+  private boolean enabled;
 
-  private File romFolder;
-
-  private final EmulatorType type;
-  private final String name;
-  private final String description;
-  private final String displayName;
-  private final String installationDirectory;
-  private final String tablesDirectory;
-  private final String altSoundDirectory;
-  private final String altColorDirectory;
-  private final String romDirectory;
-  private final String nvramDirectory;
-  private final String mameDirectory;
-  private final String userDirectory;
-  private final String mediaDirectory;
-  private final int id;
-  private final boolean visible;
   private String exeName;
   private String exeParameters;
-  private final String gameExt;
+  private String gameExt;
 
   private String launchScript;
   private String exitScript;
 
-  private boolean enabled;
+  public ValidationState getValidationState() {
+    return validationState;
+  }
 
-  public GameEmulator(@NonNull Emulator emulator) {
-    this.id = emulator.getId();
-    this.type = emulator.getType();
-    this.name = emulator.getName();
-    this.enabled = emulator.isEnabled();
-    this.description = emulator.getDescription();
-    this.displayName = emulator.getDisplayName();
-    this.exeName = emulator.getExeName();
-    this.exeParameters = emulator.getExeParameters();
-    this.visible = emulator.isVisible();
-    this.gameExt = emulator.getGamesExt();
+  public void setValidationState(ValidationState validationState) {
+    this.validationState = validationState;
+  }
 
-    this.launchScript = emulator.getLaunchScript();
-    this.exitScript = emulator.getExitScript();
+  /**
+   * optional database name, used by pinballY for instance
+   */
+  private String database;
 
-    this.installationDirectory = emulator.getEmuLaunchDir();
-    this.tablesDirectory = emulator.getDirGames();
-    this.mediaDirectory = emulator.getDirMedia();
+  public String getRomsDirectory() {
+    return romsDirectory;
+  }
 
-    if (emulator.getEmuLaunchDir() != null) {
-      this.installationFolder = new File(emulator.getEmuLaunchDir());
-    }
+  public void setRomsDirectory(String romsDirectory) {
+    this.romsDirectory = romsDirectory;
+  }
 
-    if (emulator.getDirGames() != null) {
-      this.tablesFolder = new File(emulator.getDirGames().trim());
-    }
+  public String getDatabase() {
+    return database;
+  }
 
-    this.musicFolder = new File(installationFolder, "Music");
+  public void setDatabase(String database) {
+    this.database = database;
+  }
 
-    this.mameFolder = new File(installationFolder, "VPinMAME");
-    this.mameDirectory = this.mameFolder.getAbsolutePath();
+  public void setType(EmulatorType type) {
+    this.type = type;
+  }
 
-    this.userFolder = new File(installationFolder, "User");
-    this.userDirectory = userFolder.getAbsolutePath();
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    this.nvramFolder = new File(mameFolder, "nvram");
-    this.nvramDirectory = this.nvramFolder.getAbsolutePath();
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    this.cfgFolder = new File(mameFolder, "cfg");
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
 
-    this.altSoundFolder = new File(mameFolder, "altsound");
-    this.altSoundDirectory = this.altSoundFolder.getAbsolutePath();
+  public void setInstallationDirectory(String installationDirectory) {
+    this.installationDirectory = installationDirectory;
+  }
 
-    this.altColorFolder = new File(mameFolder, "altcolor");
-    this.altColorDirectory = this.altColorFolder.getAbsolutePath();
+  public void setGamesDirectory(String gamesDirectory) {
+    this.gamesDirectory = gamesDirectory;
+  }
 
-    this.romFolder = new File(mameFolder, "roms");
-    if (!StringUtils.isEmpty(emulator.getDirRoms())) {
-      this.romFolder = new File(emulator.getDirRoms());
-    }
+  public void setMameDirectory(String mameDirectory) {
+    this.mameDirectory = mameDirectory;
+  }
 
-    if (isVpxEmulator() && StringUtils.isEmpty(emulator.getDirRoms())) {
-      File romDir = new File(MameUtil.getRomsFolder());
-      if (romDir.exists()) {
-        this.romFolder = romDir;
-      }
-    }
+  public void setMediaDirectory(String mediaDirectory) {
+    this.mediaDirectory = mediaDirectory;
+  }
 
-    this.romDirectory = this.romFolder.getAbsolutePath();
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public void setExeName(String exeName) {
+    this.exeName = exeName;
+  }
+
+  public void setExeParameters(String exeParameters) {
+    this.exeParameters = exeParameters;
+  }
+
+  public void setGameExt(String gameExt) {
+    this.gameExt = gameExt;
+  }
+
+  public EmulatorType getType() {
+    return type;
   }
 
   public boolean isEnabled() {
@@ -157,7 +161,7 @@ public class GameEmulator {
   }
 
   public String getGameFileName(@NonNull File file) {
-    return file.getAbsolutePath().substring(getTablesFolder().getAbsolutePath().length() + 1);
+    return file.getAbsolutePath().substring(getGamesFolder().getAbsolutePath().length() + 1);
   }
 
   public String getGameExt() {
@@ -168,10 +172,6 @@ public class GameEmulator {
     return displayName;
   }
 
-  public boolean isVisible() {
-    return visible;
-  }
-
   public String getMediaDirectory() {
     return mediaDirectory;
   }
@@ -180,32 +180,16 @@ public class GameEmulator {
     return mameDirectory;
   }
 
-  public String getUserDirectory() {
-    return userDirectory;
-  }
-
-  public String getNvramDirectory() {
-    return nvramDirectory;
-  }
-
-  public String getAltSoundDirectory() {
-    return altSoundDirectory;
-  }
-
-  public String getAltColorDirectory() {
-    return altColorDirectory;
-  }
-
   public String getRomDirectory() {
-    return romDirectory;
+    return romsDirectory;
   }
 
   public String getInstallationDirectory() {
     return installationDirectory;
   }
 
-  public String getTablesDirectory() {
-    return tablesDirectory;
+  public String getGamesDirectory() {
+    return gamesDirectory;
   }
 
   public String getName() {
@@ -220,11 +204,15 @@ public class GameEmulator {
     return id;
   }
 
+  public boolean isValid() {
+    return !StringUtils.isEmpty(installationDirectory) && getInstallationFolder().exists();
+  }
+
   @Nullable
   @JsonIgnore
   public File getExe() {
     if (exeName != null) {
-      return new File(installationFolder, exeName);
+      return new File(getInstallationFolder(), exeName);
     }
     return null;
   }
@@ -234,8 +222,8 @@ public class GameEmulator {
   }
 
   public List<String> getAltExeNames() {
-    if (isVpxEmulator() && installationFolder != null && installationFolder.exists()) {
-      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
+    if (isVpxEmulator() && getInstallationFolder().exists()) {
+      String[] exeFiles = getInstallationFolder().list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
       if (exeFiles == null) {
         exeFiles = new String[]{};
       }
@@ -258,74 +246,85 @@ public class GameEmulator {
         return registryFolder;
       }
     }
-    return nvramFolder;
+    return new File(getMameFolder(), "nvram");
   }
 
   @NonNull
   @JsonIgnore
   public File getCfgFolder() {
-    return cfgFolder;
+    return new File(getMameFolder(), "cfg");
   }
 
   @NonNull
   @JsonIgnore
   public File getVPRegFile() {
-    return new File(userFolder, VPREG_STG);
+    return new File(getUserFolder(), VPREG_STG);
   }
 
   @NonNull
   @JsonIgnore
   public File getMusicFolder() {
-    return musicFolder;
+    return new File(getInstallationFolder(), "Music");
   }
 
   @NonNull
   @JsonIgnore
   public File getAltSoundFolder() {
-    return altSoundFolder;
+    return new File(getMameFolder(), "altsound");
   }
 
   @NonNull
   @JsonIgnore
   public File getAltColorFolder() {
-    return altColorFolder;
+    return new File(getMameFolder(), "altcolor");
   }
 
   @NonNull
   @JsonIgnore
   public File getRomFolder() {
-    return romFolder;
+    if (isVpxEmulator() && StringUtils.isEmpty(romsDirectory)) {
+      File romDir = new File(MameUtil.getRomsFolder());
+      if (romDir.exists()) {
+        return romDir;
+      }
+    }
+
+    if (!StringUtils.isEmpty(romsDirectory)) {
+      return new File(romsDirectory);
+    }
+
+    return new File(getMameFolder(), "roms");
   }
 
   @NonNull
   @JsonIgnore
   public File getMameFolder() {
-    return mameFolder;
+    return new File(getInstallationFolder(), "VPinMAME");
   }
 
   @NonNull
   @JsonIgnore
   public File getUserFolder() {
-    return userFolder;
+    return new File(getInstallationFolder(), "User");
   }
 
   @NonNull
   @JsonIgnore
   public File getInstallationFolder() {
-    return installationFolder;
+    return new File(installationDirectory);
   }
 
   @NonNull
   @JsonIgnore
-  public File getTablesFolder() {
-    return tablesFolder;
+  public File getGamesFolder() {
+    return new File(getGamesDirectory());
   }
 
   @Nullable
   @JsonIgnore
   public File getTableBackupsFolder() {
-    if (isVpxEmulator()) {
-      return new File(tablesFolder.getParentFile(), "Tables (Backups)/");
+    if (isVpxEmulator() && !StringUtils.isEmpty(getGamesDirectory())) {
+      return new File(new File(getGamesDirectory()).getParentFile(), "Tables (Backups)/");
     }
     return null;
   }
@@ -347,6 +346,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getName() + " [" + tablesDirectory + "])";
+    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getName() + " [" + gamesDirectory + "])";
   }
 }

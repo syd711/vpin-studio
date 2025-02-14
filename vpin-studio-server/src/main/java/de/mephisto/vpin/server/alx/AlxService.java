@@ -58,7 +58,7 @@ public class AlxService {
 
   public boolean deleteNumberOfPlaysForEmulator(int emulatorId) {
     if (emulatorId == -1) {
-      List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getValidGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         deleteNumberOfPlaysForEmu(gameEmulator.getId());
       }
@@ -75,7 +75,7 @@ public class AlxService {
 
   public boolean deleteTimePlayedForEmulator(int emulatorId) {
     if (emulatorId == -1) {
-      List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getValidGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         deleteTimePlayedForEmu(gameEmulator.getId());
       }

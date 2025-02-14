@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
-import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
+import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
@@ -544,7 +544,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
 
     if (validate.isEmpty()) {
-      validate.add(GameValidationStateFactory.empty());
+      validate.add(ValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
 
@@ -562,7 +562,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     GameList list = new GameList();
-    File vpxTablesFolder = emulator.getTablesFolder();
+    File vpxTablesFolder = emulator.getGamesFolder();
 
     List<File> files = new ArrayList<>();
     if (emulator.isVpxEmulator()) {
@@ -594,7 +594,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
     // derive the emulator from the name or folder
     if (!StringUtils.isEmpty(emuDirOrName)) {
-      for (GameEmulator emu : frontendService.getGameEmulators()) {
+      for (GameEmulator emu : frontendService.getValidGameEmulators()) {
         if (emu.getInstallationFolder().getAbsolutePath().equals(emuDirOrName)) {
           emuId = emu.getId();
           break;
@@ -608,8 +608,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
     if (emuId == -1) {
       // derive the emulator from the table folder
-      for (GameEmulator emu : frontendService.getGameEmulators()) {
-        if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
+      for (GameEmulator emu : frontendService.getValidGameEmulators()) {
+        if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getGamesDirectory())) {
           emuId = emu.getId();
           break;
         }

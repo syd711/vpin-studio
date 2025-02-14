@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.models;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -97,7 +96,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the DMD bundle here
       if (dmdDir.equals(this.getName())) {
         assetType = AssetType.DMD_PACK;
-        target = emulator.getTablesDirectory() + "...";
+        target = emulator.getGamesDirectory() + "...";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -124,7 +123,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        target = emulator.getTablesDirectory() + "...";
+        target = emulator.getGamesDirectory() + "...";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -237,7 +236,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     String extension = FilenameUtils.getExtension(getName());
     for (AssetType tableAssetType : tableAssetTypes) {
       if (extension.equalsIgnoreCase(tableAssetType.name())) {
-        target = emulator.getTablesDirectory();
+        target = emulator.getGamesDirectory();
         assetType = tableAssetType;
         return true;
       }

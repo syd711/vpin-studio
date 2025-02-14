@@ -42,7 +42,6 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -209,6 +208,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button tableEditBtn;
 
   @FXML
+  private Button emulatorBtn;
+
+  @FXML
   private Separator importSeparator;
 
   @FXML
@@ -320,6 +322,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   // Add a public no-args constructor
   public TableOverviewController() {
+  }
+
+  @FXML
+  private void onEmulatorManager() {
+    GameEmulatorRepresentation emu = emulatorCombo.getSelectionModel().getSelectedItem();
+    if (emu != null) {
+      NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
+    }
   }
 
   @FXML
@@ -996,6 +1006,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
 
+    emulatorBtn.setDisable(selectedEmu == null || selectedEmu.getId() == -1);
+
     if (selectedEmu == null) {
       this.emulatorCombo.getSelectionModel().selectFirst();
     }
@@ -1004,7 +1016,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   private void bindTable() {
-    tableView.setPlaceholder(new Label("No matching tables found."));
+    tableView.setPlaceholder(new Label("No matching games found."));
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -1825,7 +1837,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
     playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
 
-
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
 
@@ -1949,6 +1960,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importBtn.setDisable(!vpxOrFpEmulator);
+    this.emulatorBtn.setDisable(newValue == null || newValue.getId() == -1);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.uploadTableBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);

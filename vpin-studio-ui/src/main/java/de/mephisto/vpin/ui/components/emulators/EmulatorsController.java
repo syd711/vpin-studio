@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components.emulators;
 
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,6 +25,10 @@ public class EmulatorsController implements Initializable {
   @FXML
   private void onReload() {
     tableController.reload();
+  }
+
+  public void setData(GameEmulatorRepresentation model) {
+    tableController.setSelection(model);
   }
 
   @Override

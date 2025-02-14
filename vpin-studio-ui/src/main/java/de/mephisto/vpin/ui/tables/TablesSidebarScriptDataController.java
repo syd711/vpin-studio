@@ -196,7 +196,7 @@ public class TablesSidebarScriptDataController implements Initializable {
       try {
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.get().getEmulatorId());
         // support of table sub folders
-        File tableFile = new File(emulatorRepresentation.getTablesDirectory(), game.get().getGameFileName());
+        File tableFile = new File(emulatorRepresentation.getGamesDirectory(), game.get().getGameFileName());
         SystemUtil.openFolder(tableFile.getParentFile());
       } catch (Exception e) {
         LOG.error("Failed to open Explorer: " + e.getMessage(), e);

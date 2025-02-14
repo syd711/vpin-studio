@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.tables.dialogs.MediaUploaderColumnSorter;
 import de.mephisto.vpin.ui.tables.models.MediaUploadArchiveItem;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
@@ -24,6 +25,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.jetbrains.annotations.NotNull;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +49,10 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
   TableColumn<EmulatorModel, EmulatorModel> columnName;
 
   @FXML
-  TableColumn<EmulatorModel, EmulatorModel> columnDescription;
+  TableColumn<EmulatorModel, EmulatorModel> columnGamesDir;
+
+  @FXML
+  TableColumn<EmulatorModel, EmulatorModel> columnExtension;
 
   private List<EmulatorModel> filteredData;
 
@@ -91,6 +96,14 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
     super.initialize("emulator", "emulators", new EmulatorsTableColumnSorter(this));
 
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
+      ValidationState validationState = value.getValidationState();
+      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
+        if (validationState != null && validationState.getCode() > 0) {
+          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
+        }
+      }
+
       CheckBox columnCheckbox = new CheckBox();
       columnCheckbox.setUserData(value);
       columnCheckbox.setSelected(model.isEnabled());
@@ -114,11 +127,19 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
       return label;
     }, this, true);
 
-    BaseLoadingColumn.configureColumn(columnDescription, (value, model) -> {
-      Label label = new Label(model.getDescription());
+    BaseLoadingColumn.configureColumn(columnGamesDir, (value, model) -> {
+      Label label = new Label(model.getGamesDirectory());
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(model));
-      label.setTooltip(new Tooltip(model.getDescription()));
+      label.setTooltip(new Tooltip(model.getGamesDirectory()));
+      return label;
+    }, this, true);
+
+    BaseLoadingColumn.configureColumn(columnExtension, (value, model) -> {
+      Label label = new Label(model.getGameExt());
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(model));
+      label.setTooltip(new Tooltip(model.getGameExt()));
       return label;
     }, this, true);
 

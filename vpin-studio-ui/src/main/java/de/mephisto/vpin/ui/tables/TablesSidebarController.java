@@ -246,7 +246,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         File file = new File(folder, g.getGameFileName());
         SystemUtil.openFile(file);
       }
@@ -317,7 +317,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         String backglassName = FilenameUtils.getBaseName(g.getGameFileName()) + ".directb2s";
         File file = new File(folder, backglassName);
         SystemUtil.openFile(file);
@@ -334,7 +334,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".ini";
         File file = new File(folder, fileName);
         SystemUtil.openFile(file);
@@ -351,7 +351,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".pov";
         File file = new File(folder, fileName);
         SystemUtil.openFile(file);
@@ -369,7 +369,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         if (dmdPackage != null) {
           GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-          File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
+          File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
           File dmdFolder = new File(tablesFolder, dmdPackage.getName());
           SystemUtil.openFolder(dmdFolder);
           return;
@@ -377,7 +377,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       }
 
       GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-      SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+      SystemUtil.openFolder(new File(emulatorRepresentation.getGamesDirectory()));
     }
     catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -391,7 +391,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         GameRepresentation game = this.game.get();
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
 
-        String vpxFilePath = "\"" + new File(emulatorRepresentation.getTablesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
+        String vpxFilePath = "\"" + new File(emulatorRepresentation.getGamesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
         String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX64.exe").getAbsolutePath();
         ProcessBuilder builder = new ProcessBuilder(vpxExePath, "-Edit", vpxFilePath);
         builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));

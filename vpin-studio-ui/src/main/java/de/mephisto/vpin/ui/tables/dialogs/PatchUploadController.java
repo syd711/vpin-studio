@@ -109,10 +109,10 @@ public class PatchUploadController extends BaseUploadController {
         GameRepresentation gameRepresentation = client.getGameService().getGame(uploadDescriptor.getGameId());
         LOG.info("Fetched Game " + gameRepresentation.getGameDisplayName());
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
-        LOG.info("Fetched Emulator " + emulatorRepresentation.getTablesDirectory());
+        LOG.info("Fetched Emulator " + emulatorRepresentation.getGamesDirectory());
 
         File gameFile = new File(gameRepresentation.getGameFilePath());
-        File emuDir = new File(emulatorRepresentation.getTablesDirectory());
+        File emuDir = new File(emulatorRepresentation.getGamesDirectory());
         if (!gameFile.getAbsoluteFile().getParentFile().equals(emuDir)) {
           uploadDescriptor.setFolderBasedImport(true);
           uploadDescriptor.setSubfolderName(FilenameUtils.getBaseName(gameRepresentation.getGameFileName()) + "_[Patched]");

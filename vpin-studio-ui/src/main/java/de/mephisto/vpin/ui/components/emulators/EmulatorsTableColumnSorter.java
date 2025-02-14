@@ -24,8 +24,11 @@ public class EmulatorsTableColumnSorter implements BaseColumnSorter<EmulatorMode
       if (column.equals(tableController.columnName)) {
         comp = Comparator.comparing(o -> o.getName());
       }
-      else if (column.equals(tableController.columnDescription)) {
-        comp = Comparator.comparing(o -> o.getDescription());
+      else if (column.equals(tableController.columnGamesDir)) {
+        comp = Comparator.comparing(o -> o.getGamesDirectory());
+      }
+      else if (column.equals(tableController.columnExtension)) {
+        comp = Comparator.comparing(o -> o.getGameExt());
       }
 
       // optionally reverse order 

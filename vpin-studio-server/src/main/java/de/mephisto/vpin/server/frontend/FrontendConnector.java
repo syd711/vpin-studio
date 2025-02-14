@@ -32,13 +32,13 @@ public interface FrontendConnector {
   //----------------------------------
   // Emulator Management
 
-  List<Emulator> getEmulators();
+  List<GameEmulator> getEmulators();
 
-  Emulator getEmulator(int emulatorId);
+  GameEmulator getEmulator(int emulatorId);
 
   boolean deleteEmulator(int emulatorId);
 
-  Emulator saveEmulator(GameEmulator emulator);
+  GameEmulator saveEmulator(GameEmulator emulator);
 
   /**
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators

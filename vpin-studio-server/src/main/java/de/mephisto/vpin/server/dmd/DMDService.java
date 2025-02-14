@@ -62,7 +62,7 @@ public class DMDService implements InitializingBean {
         tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
 
     File dmdFolder = null;
-    File[] subFolders = game.getEmulator().getTablesFolder().listFiles(File::isDirectory);
+    File[] subFolders = game.getEmulator().getGamesFolder().listFiles(File::isDirectory);
     for (File folder : subFolders) {
       if (folderNames.contains(folder.getName().toLowerCase())) {
         dmdFolder = folder;

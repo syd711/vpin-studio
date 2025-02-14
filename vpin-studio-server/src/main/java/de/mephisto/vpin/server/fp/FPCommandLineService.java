@@ -109,7 +109,7 @@ public class FPCommandLineService implements ApplicationContextAware {
 
   public boolean launch() {
     FrontendService frontendService = applicationContext.getBean(FrontendService.class);
-    List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+    List<GameEmulator> gameEmulators = frontendService.getValidGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isFpEmulator()) {
         File fpExe = gameEmulator.getExe();

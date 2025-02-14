@@ -588,7 +588,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-      File folder = new File(emulatorRepresentation.getTablesDirectory());
+      File folder = new File(emulatorRepresentation.getGamesDirectory());
       File file = new File(folder, selectedItem.getFileName());
       if (file.exists()) {
         SystemUtil.openFile(file);

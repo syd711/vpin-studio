@@ -78,7 +78,7 @@ public class MameService implements InitializingBean {
 
     l = System.currentTimeMillis();
     romValidationCache.clear();
-    List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+    List<GameEmulator> gameEmulators = frontendService.getValidGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       validateRoms(gameEmulator);
     }

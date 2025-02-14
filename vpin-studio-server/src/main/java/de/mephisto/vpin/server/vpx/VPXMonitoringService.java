@@ -54,7 +54,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       }
       Thread.currentThread().setName("VPX Monitor Thread");
 
-      List<GameEmulator> emulators = frontendService.getGameEmulators();
+      List<GameEmulator> emulators = frontendService.getValidGameEmulators();
 
       List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
       boolean playerRunning = windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));

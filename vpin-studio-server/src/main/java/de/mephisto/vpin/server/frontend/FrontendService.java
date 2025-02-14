@@ -104,41 +104,47 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return gameEmulators;
   }
 
+  public List<GameEmulator> getValidGameEmulators() {
+    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values()).stream().filter(e -> e.isValid()).collect(Collectors.toList());
+    Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
+    return gameEmulators;
+  }
+
   public List<GameEmulator> getVpxGameEmulators() {
-    return this.emulators.values().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    return this.emulators.values().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
     List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
-    return gameEmulators.stream().filter(e -> {
+    return gameEmulators.stream().filter(GameEmulator::isValid).filter(e -> {
       return e.isVpxEmulator() || e.isFpEmulator();
     }).collect(Collectors.toList());
   }
 
   public GameEmulator getDefaultGameEmulator() {
-    Collection<GameEmulator> values = emulators.values();
+    Collection<GameEmulator> emulators = this.emulators.values();
 
     // when there is only one VPX emulator, it is forcibly the default one
-    if (values.size() == 1) {
-      GameEmulator value = values.iterator().next();
+    if (emulators.size() == 1) {
+      GameEmulator value = emulators.iterator().next();
       return value.isVpxEmulator() ? value : null;
     }
 
-    for (GameEmulator value : values) {
-      if (value.getDescription() != null && value.isVpxEmulator() && value.getDescription().contains("default")) {
-        return value;
+    for (GameEmulator emulator : emulators) {
+      if (emulator.isValid() && emulator.getDescription() != null && emulator.isVpxEmulator() && emulator.getDescription().contains("default")) {
+        return emulator;
       }
     }
 
-    for (GameEmulator value : values) {
-      if (value.isVpxEmulator() && value.getNvramFolder().exists()) {
+    for (GameEmulator value : emulators) {
+      if (value.isValid() && value.isVpxEmulator() && value.getNvramFolder().exists()) {
         return value;
       }
       else {
         LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
       }
     }
-    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
+    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + this.emulators.size() + " VPX emulators found).");
     return null;
   }
 
@@ -585,22 +591,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return frontendPlayerDisplays;
   }
 
-  public boolean isValidVPXEmulator(Emulator emulator) {
+  public boolean isValidVPXEmulator(GameEmulator emulator) {
     if (!emulator.getType().isVpxEmulator()) {
       return false;
     }
 
-    if (!emulator.isVisible()) {
-      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirGames())) {
+    if (StringUtils.isEmpty(emulator.getGamesDirectory())) {
       LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
       return false;
     }
 
-    if (getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
+    if (getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getMediaDirectory())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
       return false;
     }
@@ -611,25 +612,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public void loadEmulators() {
     FrontendConnector frontendConnector = getFrontendConnector();
     frontendConnector.reloadCache();
-    List<Emulator> ems = frontendConnector.getEmulators();
+    List<GameEmulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
-    for (Emulator emulator : ems) {
+    for (GameEmulator emulator : ems) {
       try {
-        if (!emulator.isVisible()) {
-          continue;
-        }
-        if (!emulator.isEnabled()) {
-          continue;
-        }
-
         if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
           continue;
         }
 
-        GameEmulator gameEmulator = new GameEmulator(emulator);
-        emulators.put(emulator.getId(), gameEmulator);
+        emulators.put(emulator.getId(), emulator);
 
-        LOG.info("Loaded Emulator: " + gameEmulator);
+        LOG.info("Loaded Emulator: " + emulator);
       }
       catch (Exception e) {
         LOG.error("Emulator initialization failed: " + e.getMessage(), e);
