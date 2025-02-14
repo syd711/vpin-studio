@@ -68,6 +68,7 @@ public class AltSoundService implements InitializingBean {
     if (isAltSoundAvailable(game)) {
       String folder = game.getAltSoundFolder().getAbsolutePath();
       AltSound altSound = altSoundFolder2AltSound.get(folder);
+      altSound.setFolder(folder);
       altSound = AltSoundLoaderFactory.load(altSound);
       altSoundFolder2AltSound.put(folder, altSound);
       return altSound;
