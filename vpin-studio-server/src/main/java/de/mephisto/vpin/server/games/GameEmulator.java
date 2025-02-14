@@ -50,10 +50,13 @@ public class GameEmulator {
   private String launchScript;
   private String exitScript;
 
+  private boolean enabled;
+
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.type = emulator.getType();
     this.name = emulator.getName();
+    this.enabled = emulator.isEnabled();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
     this.exeName = emulator.getExeName();
@@ -108,6 +111,14 @@ public class GameEmulator {
     }
 
     this.romDirectory = this.romFolder.getAbsolutePath();
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   public String getLaunchScript() {

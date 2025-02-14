@@ -4,12 +4,14 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
 import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -32,6 +34,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.fx.Features.EMULATORS_ENABLED;
 import static de.mephisto.vpin.commons.fx.Features.SCREEN_MANAGER_ENABLED;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -74,6 +77,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   private Tab screensTab;
+
+  @FXML
+  private Tab emulatorsTab;
 
   @FXML
   private Pane alx1;
@@ -144,6 +150,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     }
     else if (t1.intValue() == 1) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Emulators"));
+    }
+    else if (t1.intValue() == 2) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));
     }
     else {
@@ -158,6 +167,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
     client.getPreferenceService().addListener(this);
 
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     try {
@@ -183,7 +194,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     updateForTabSelection(0);
 
-    if (SCREEN_MANAGER_ENABLED) {
+    if (SCREEN_MANAGER_ENABLED && frontendType.isNotStandalone()) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreensController.class.getResource("tab-screens.fxml"));
         Parent builtInRoot = loader.load();
@@ -195,6 +206,20 @@ public class ComponentsController implements Initializable, StudioFXController, 
     }
     else {
       rootTabPane.getTabs().remove(screensTab);
+    }
+
+    if (EMULATORS_ENABLED && frontendType.isNotStandalone()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(EmulatorsController.class.getResource("tab-emulators.fxml"));
+        Parent builtInRoot = loader.load();
+        emulatorsTab.setContent(builtInRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load tab: " + e.getMessage(), e);
+      }
+    }
+    else {
+      rootTabPane.getTabs().remove(emulatorsTab);
     }
 
     rootTabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsTableController">
+   <center>
+      <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
+         <center>
+            <StackPane fx:id="loaderStack">
+               <BorderPane.margin>
+                  <Insets bottom="6.0" />
+               </BorderPane.margin>
+               <children>
+                  <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                     <children>
+                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                           <columns>
+                              <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;" />
+                              <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                              <TableColumn fx:id="columnDescription" minWidth="10.4000244140625" prefWidth="300.0" sortable="false" style="-fx-alignment: CENTER;" text="Games Folder" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </StackPane>
+               </children>
+            </StackPane>
+         </center>
+         <bottom>
+            <BorderPane BorderPane.alignment="CENTER">
+               <top>
+                  <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+                     <BorderPane.margin>
+                        <Insets bottom="3.0" />
+                     </BorderPane.margin>
+                  </Label>
+               </top>
+            </BorderPane>
+         </bottom>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </BorderPane>
+   </center>
+</BorderPane>

@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
@@ -1308,6 +1309,112 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
 
     return result;
+  }
+
+  @Override
+  public boolean deleteEmulator(int emulatorId) {
+    Connection connect = this.connect();
+    try {
+      //maybe recursive deletion in the future?
+        PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Emulators WHERE EMUID = ?");
+        preparedStatement.setInt(1, emulatorId);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        LOG.info("Deleted emulator {}", emulatorId);
+      return true;
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to delete emulator: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return false;
+  }
+
+  /**
+   * 	"EMUID"	INTEGER NOT NULL,
+   * 	"EmuName"	VARCHAR(100) NOT NULL COLLATE NOCASE,
+   * 	"Description"	VARCHAR(200),
+   * 	"DirGames"	VARCHAR(250),
+   * 	"DirMedia"	VARCHAR(255),
+   * 	"EmuDisplay"	VARCHAR(200) COLLATE NOCASE,
+   * 	"Visible"	INTEGER DEFAULT (1),
+   * 	"DirRoms"	VARCHAR(250),
+   * 	"EmuLaunchDir"	VARCHAR(250),
+   * 	"HideScreens"	INTEGER,
+   * 	"GamesExt"	VARCHAR(200),
+   * 	"ImageExt"	VARCHAR(25),
+   * 	"VideoExt"	VARCHAR(25),
+   * 	"EscapeKeyCode"	INTEGER,
+   * 	"LaunchScript"	TEXT,
+   * 	"PostScript"	TEXT,
+   * 	"KeepDisplays"	VARCHAR(20),
+   * 	"ProcessName"	VARCHAR(50),
+   * 	"WinTitle"	VARCHAR(50),
+   * 	"SkipScan"	INTEGER,
+   * 	"emuVolume"	INTEGER DEFAULT (-1),
+   * 	"DirGamesShare"	VARCHAR(250),
+   * 	"DirRomsShare"	VARCHAR(250),
+   * 	"DirMediaShare"	VARCHAR(250),
+   * 	"CanPause"	INTEGER DEFAULT 0,
+   * 	"CoreFile"	VARCHAR(250),
+   * 	"HelpScript"	TEXT,
+   * 	"AutoScanStartup"	INTEGER DEFAULT 0,
+   * 	"IgnoreFileScan"	TEXT,
+   * 	"SafeLaunch"	INTEGER DEFAULT 0,
+   * 	"SafeReturn"	INTEGER DEFAULT 0,
+   * @param emulator
+   * @return
+   */
+  @Override
+  public Emulator saveEmulator(GameEmulator emulator) {
+    Connection connect = this.connect();
+    try {
+      int index = 1;
+
+      PreparedStatement preparedStatement = null;
+      if (emulator.getId() < 0) {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
+                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+      }
+      else {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
+                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(index++, emulator.getId());
+      }
+
+      preparedStatement.setString(index++, emulator.getName());
+      preparedStatement.setString(index++, emulator.getDescription());
+      preparedStatement.setString(index++, emulator.getTablesDirectory());
+      preparedStatement.setString(index++, emulator.getMediaDirectory());
+      preparedStatement.setString(index++, emulator.getName());
+      preparedStatement.setInt(index++, emulator.isEnabled() ? 1 : 0);
+      preparedStatement.setString(index++, emulator.getRomDirectory());
+      preparedStatement.setString(index++, emulator.getGameExt());
+      preparedStatement.setString(index++, emulator.getLaunchScript());
+      preparedStatement.setString(index++, emulator.getExitScript());
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+        if (keys.next()) {
+          int id = keys.getInt(1);
+          return getEmulator(id);
+        }
+      }
+
+      return getEmulator(emulator.getId());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update emulator: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return null;
   }
 
   @Override

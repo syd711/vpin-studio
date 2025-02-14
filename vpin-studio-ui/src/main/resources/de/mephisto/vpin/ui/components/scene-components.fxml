@@ -57,6 +57,15 @@
                         </Label>
                      </graphic>
                   </Tab>
+                  <Tab fx:id="emulatorsTab" closable="false" text="Emulators">
+                     <graphic>
+                        <Label>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
+                           </graphic>
+                        </Label>
+                     </graphic>
+                  </Tab>
                   <Tab fx:id="screensTab" closable="false" text="Screens">
                      <graphic>
                         <Label>

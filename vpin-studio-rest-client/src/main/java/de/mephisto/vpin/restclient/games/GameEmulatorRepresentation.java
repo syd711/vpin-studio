@@ -11,6 +11,7 @@ public class GameEmulatorRepresentation {
   private int id;
   private String name;
   private String descriptions;
+  private boolean enabled;
 
   private EmulatorType emulatorType;
 
@@ -27,6 +28,14 @@ public class GameEmulatorRepresentation {
 
   private String launchScript;
   private String exitScript;
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
   public String getLaunchScript() {
     return launchScript;

@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import de.mephisto.vpin.server.webhooks.WebhooksService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -100,7 +99,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public List<GameEmulator> getGameEmulators() {
-    return new ArrayList<>(this.emulators.values());
+    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
+    Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
+    return gameEmulators;
   }
 
   public List<GameEmulator> getVpxGameEmulators() {
@@ -699,6 +700,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   /**
    * Launches the given game through the frontend.
+   *
    * @param game
    * @return
    */

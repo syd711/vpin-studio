@@ -53,6 +53,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   @FXML
   protected Label labelCount;
 
+
   private String name;
   private String names;
 

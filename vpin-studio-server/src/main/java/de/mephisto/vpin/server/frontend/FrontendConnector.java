@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -28,9 +29,16 @@ public interface FrontendConnector {
   @NonNull
   File getInstallationFolder();
 
+  //----------------------------------
+  // Emulator Management
+
   List<Emulator> getEmulators();
 
   Emulator getEmulator(int emulatorId);
+
+  boolean deleteEmulator(int emulatorId);
+
+  Emulator saveEmulator(GameEmulator emulator);
 
   /**
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators

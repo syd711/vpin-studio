@@ -22,5 +22,6 @@ public class Features {
   public static boolean BACKUP_VIEW_ENABLED = false;
 
   public static boolean SCREEN_MANAGER_ENABLED = true;
+  public static boolean EMULATORS_ENABLED = true;
   public static boolean WEBHOOKS_ENABLED = true;
 }
