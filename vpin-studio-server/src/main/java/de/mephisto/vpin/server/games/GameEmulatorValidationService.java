@@ -16,7 +16,7 @@ public class GameEmulatorValidationService {
   public List<ValidationState> validate(@NonNull GameEmulator emulator, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
 
-    if (StringUtils.isEmpty(emulator.getGamesDirectory()) || !emulator.getInstallationFolder().exists()) {
+    if (StringUtils.isEmpty(emulator.getInstallationDirectory()) || !emulator.getInstallationFolder().exists()) {
       result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_INSTALLATION_DIRECTORY));
       if (findFirst) {
         return result;

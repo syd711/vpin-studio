@@ -365,7 +365,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   private List<GameRepresentation> getGamesCached(int emulatorId) {
     if (emulatorId == -1) {
       List<GameRepresentation> games = new ArrayList<>();
-      List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+      List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
       for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
         if (ignoredEmulatorIds.contains(gameEmulator.getId())) {
           continue;
@@ -420,7 +420,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<GameRepresentation> getVpxGamesCached() {
     List<GameRepresentation> games = new ArrayList<>();
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       if (gameEmulator.isVpxEmulator()) {
         int emulatorId = gameEmulator.getId();

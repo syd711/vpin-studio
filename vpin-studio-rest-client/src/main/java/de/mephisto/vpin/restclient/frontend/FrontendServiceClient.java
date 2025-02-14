@@ -55,7 +55,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public GameList getImportableTablesVpx() {
     GameList games = new GameList();
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       if (gameEmulator.isVpxEmulator()) {
         GameList l = getImportableTables(gameEmulator.getId());
@@ -84,7 +84,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public GameEmulatorRepresentation getGameEmulator(int id) {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = getValidatedGameEmulators();
     return gameEmulators.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
   }
 
@@ -104,21 +104,21 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = getValidatedGameEmulators();
     return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
-  public List<GameEmulatorRepresentation> getGameEmulators() {
+  public List<GameEmulatorRepresentation> getValidatedGameEmulators() {
     GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class);
     return emus != null ? Arrays.asList(emus) : Collections.emptyList();
   }
 
   public List<GameEmulatorRepresentation> getVpxGameEmulators() {
-    return getGameEmulators().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    return getValidatedGameEmulators().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
 
   public List<GameEmulatorRepresentation> getFpGameEmulators() {
-    return getGameEmulators().stream().filter(e -> e.isFpEmulator()).collect(Collectors.toList());
+    return getValidatedGameEmulators().stream().filter(e -> e.isFpEmulator()).collect(Collectors.toList());
   }
 
   public List<GameEmulatorRepresentation> getGameEmulatorsByType(@Nullable EmulatorType emutype) {

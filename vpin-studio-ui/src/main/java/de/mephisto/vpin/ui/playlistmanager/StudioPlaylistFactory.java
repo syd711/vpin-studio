@@ -81,7 +81,7 @@ public class StudioPlaylistFactory {
   //could be used instead of SQL
   private static List<GameRepresentation> getByVPSFeature(String feature) {
     List<GameRepresentation> result = new ArrayList<>();
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       List<GameRepresentation> gamesByEmulator = client.getGameService().getGamesByEmulator(gameEmulator.getId());
       for (GameRepresentation gameRepresentation : gamesByEmulator) {

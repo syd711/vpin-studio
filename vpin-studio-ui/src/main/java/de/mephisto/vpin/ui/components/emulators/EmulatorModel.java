@@ -25,7 +25,7 @@ public class EmulatorModel extends BaseLoadingModel<GameEmulatorRepresentation, 
   }
 
   public String getDescription() {
-    return getBean().getDescriptions();
+    return getBean().getDescription();
   }
 
   public boolean isEnabled() {
@@ -42,6 +42,10 @@ public class EmulatorModel extends BaseLoadingModel<GameEmulatorRepresentation, 
 
   public String getGameExt() {
     return getBean().getGameExt();
+  }
+
+  public boolean isValid() {
+    return getBean().getValidationStates().isEmpty();
   }
 
   public void save() {

@@ -9,9 +9,11 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameEmulatorValidationService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -43,6 +45,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private GameEmulatorValidationService gameEmulatorValidationService;
 
   @Autowired
   private VPXService vpxService;
@@ -98,8 +103,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return this.emulators.get(emulatorId);
   }
 
-  public List<GameEmulator> getGameEmulators() {
+  public List<GameEmulator> getValidatedGameEmulators() {
     List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
+    for (GameEmulator gameEmulator : gameEmulators) {
+      List<ValidationState> validate = gameEmulatorValidationService.validate(gameEmulator, true);
+      gameEmulator.setValidationStates(validate);
+    }
     Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
     return gameEmulators;
   }

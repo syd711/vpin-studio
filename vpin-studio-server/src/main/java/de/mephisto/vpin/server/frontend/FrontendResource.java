@@ -111,7 +111,7 @@ public class FrontendResource {
 
   @GetMapping("/emulators")
   public List<GameEmulator> getGameEmulators() {
-    return frontendService.getGameEmulators();
+    return frontendService.getValidatedGameEmulators();
   }
 
   @GetMapping("/backglassemulators")

@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,6 @@ public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
 
   private EmulatorType type;
-  private ValidationState validationState;
   private String name;
   private String description;
   private String displayName;
@@ -35,13 +35,14 @@ public class GameEmulator {
 
   private String launchScript;
   private String exitScript;
+  private List<ValidationState> validationStates = new ArrayList<>();
 
-  public ValidationState getValidationState() {
-    return validationState;
+  public List<ValidationState> getValidationStates() {
+    return validationStates;
   }
 
-  public void setValidationState(ValidationState validationState) {
-    this.validationState = validationState;
+  public void setValidationStates(List<ValidationState> validationStates) {
+    this.validationStates = validationStates;
   }
 
   /**

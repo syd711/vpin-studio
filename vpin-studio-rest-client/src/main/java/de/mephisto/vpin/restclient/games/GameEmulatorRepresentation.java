@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +11,7 @@ import java.util.List;
 public class GameEmulatorRepresentation {
   private int id;
   private String name;
-  private String descriptions;
+  private String description;
   private boolean enabled;
 
   private EmulatorType emulatorType;
@@ -29,6 +30,16 @@ public class GameEmulatorRepresentation {
   private String launchScript;
   private String exitScript;
   private String gameExt;
+
+  private List<ValidationState> validationStates = new ArrayList<>();
+
+  public List<ValidationState> getValidationStates() {
+    return validationStates;
+  }
+
+  public void setValidationStates(List<ValidationState> validationStates) {
+    this.validationStates = validationStates;
+  }
 
   public String getGameExt() {
     return gameExt;
@@ -172,12 +183,12 @@ public class GameEmulatorRepresentation {
     this.id = id;
   }
 
-  public String getDescriptions() {
-    return descriptions;
+  public String getDescription() {
+    return description;
   }
 
-  public void setDescriptions(String descriptions) {
-    this.descriptions = descriptions;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public List<String> getVpsEmulatorFeatures() {

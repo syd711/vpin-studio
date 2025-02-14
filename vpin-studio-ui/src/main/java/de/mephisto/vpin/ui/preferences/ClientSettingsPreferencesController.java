@@ -366,7 +366,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     winNetworkShareTestBtn.setDisable(!supportsNetworkShare);
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getValidatedGameEmulators();
     List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());

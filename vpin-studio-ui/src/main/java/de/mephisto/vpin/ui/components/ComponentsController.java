@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.Features.EMULATORS_ENABLED;
@@ -86,13 +87,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private Tab emulatorsTab;
 
   @FXML
-  private Pane alx1;
-
-  @FXML
   private Pane hint;
-
-  @FXML
-  private Pane center;
 
   private boolean initialized = false;
   private EmulatorsController emulatorsController;
@@ -259,7 +254,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     if(options != null && options.getModel() instanceof GameEmulatorRepresentation) {
       rootTabPane.getSelectionModel().select(TAB_EMULATORS);
-      emulatorsController.setData((GameEmulatorRepresentation) options.getModel());
+      emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
     }
   }
 
