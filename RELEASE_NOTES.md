@@ -1,3 +1,12 @@
+## Release Notes 3.12.10
+
+## Changes
+
+- **Tables / ALT Sound**: Fixed error during loading of ALT sound bundles ...again.
+- **macOS Updates**: Fixed setting of app version for future updates.
+
+---
+
 ## Release Notes 3.12.9
 
 ## Changes
