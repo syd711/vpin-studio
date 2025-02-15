@@ -595,6 +595,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     // derive the emulator from the name or folder
     if (!StringUtils.isEmpty(emuDirOrName)) {
       for (GameEmulator emu : frontendService.getValidGameEmulators()) {
+        if (!emu.isEnabled()) {
+          continue;
+        }
+
         if (emu.getInstallationFolder().getAbsolutePath().equals(emuDirOrName)) {
           emuId = emu.getId();
           break;
@@ -609,6 +613,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     if (emuId == -1) {
       // derive the emulator from the table folder
       for (GameEmulator emu : frontendService.getValidGameEmulators()) {
+        if (!emu.isEnabled()) {
+          continue;
+        }
+
         if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getGamesDirectory())) {
           emuId = emu.getId();
           break;
