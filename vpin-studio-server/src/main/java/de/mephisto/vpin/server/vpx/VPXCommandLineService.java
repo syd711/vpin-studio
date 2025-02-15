@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -112,8 +113,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
   }
 
   public boolean launch() {
-    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    EmulatorService emulatorService = applicationContext.getBean(EmulatorService.class);
+    GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
     File vpxExe = defaultGameEmulator.getExe();
     try {
       List<String> strings = Arrays.asList(vpxExe.getName());

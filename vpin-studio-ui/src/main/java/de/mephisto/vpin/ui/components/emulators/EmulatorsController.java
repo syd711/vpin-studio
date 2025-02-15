@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.components.emulators;
 
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -66,6 +66,16 @@ public class EmulatorsController implements Initializable {
   @FXML
   private Tab exitScriptTab;
 
+  @FXML
+  private Button deleteBtn;
+
+  @FXML
+  private Button createBtn;
+
+  @FXML
+  private Separator firstSeparator;
+
+
   private Optional<GameEmulatorRepresentation> emulator = Optional.empty();
 
   private EmulatorsTableController tableController;
@@ -73,6 +83,15 @@ public class EmulatorsController implements Initializable {
   private EmulatorScriptPanelController startScriptController;
   private EmulatorScriptPanelController exitScriptController;
 
+  @FXML
+  private void onDelete() {
+
+  }
+
+  @FXML
+  private void onCreate() {
+
+  }
 
   @FXML
   private void onReload() {
@@ -126,6 +145,9 @@ public class EmulatorsController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    createBtn.managedProperty().bindBidirectional(createBtn.visibleProperty());
+    deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
+    firstSeparator.managedProperty().bindBidirectional(firstSeparator.visibleProperty());
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
@@ -140,54 +162,73 @@ public class EmulatorsController implements Initializable {
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     if (frontendType.equals(FrontendType.Popper)) {
-      try {
-        FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
-        Parent builtInRoot = loader.load();
-        startScriptController = loader.getController();
-        startScriptController.setCallback(new Consumer<String>() {
-          @Override
-          public void accept(String s) {
-            if (emulator.isPresent()) {
-              emulator.get().setLaunchScript(s);
-            }
-          }
-        });
-        startScriptTab.setContent(builtInRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-      }
-      try {
-        FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
-        Parent builtInRoot = loader.load();
-        exitScriptController = loader.getController();
-        exitScriptController.setCallback(new Consumer<String>() {
-          @Override
-          public void accept(String s) {
-            if (emulator.isPresent()) {
-              emulator.get().setExitScript(s);
-            }
-          }
-        });
-        exitScriptTab.setContent(builtInRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to load emulator table: " + e.getMessage(), e);
-      }
-
-      emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-          tabPane.setPrefWidth(newValue.intValue() - 780);
-        }
-      });
-
-      emulatorRoot.heightProperty().addListener(new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-          tabPane.setPrefHeight(newValue.intValue() - 426);
-        }
-      });
+      loadPopperFrontend();
     }
+    else if (frontendType.equals(FrontendType.PinballX) || frontendType.equals(FrontendType.PinballY)) {
+
+    }
+
+    createBtn.setVisible(frontendType.supportEmulatorCreateDelete());
+    deleteBtn.setVisible(frontendType.supportEmulatorCreateDelete());
+    firstSeparator.setVisible(frontendType.supportEmulatorCreateDelete());
+
+    emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        tabPane.setPrefWidth(newValue.intValue() - 780);
+      }
+    });
+
+    emulatorRoot.heightProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        tabPane.setPrefHeight(newValue.intValue() - 426);
+      }
+    });
+
+    setSelection(Optional.empty());
+  }
+
+  private void loadPopperFrontend() {
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+      Parent builtInRoot = loader.load();
+      startScriptController = loader.getController();
+      startScriptController.setCallback(new Consumer<String>() {
+        @Override
+        public void accept(String s) {
+          if (emulator.isPresent()) {
+            emulator.get().setLaunchScript(s);
+            saveEmulator(emulator.get());
+          }
+        }
+      });
+      startScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+      Parent builtInRoot = loader.load();
+      exitScriptController = loader.getController();
+      exitScriptController.setCallback(new Consumer<String>() {
+        @Override
+        public void accept(String s) {
+          if (emulator.isPresent()) {
+            emulator.get().setExitScript(s);
+            saveEmulator(emulator.get());
+          }
+        }
+      });
+      exitScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+  }
+
+  private void saveEmulator(GameEmulatorRepresentation emulator) {
+    client.getEmulatorService().saveGameEmulator(emulator);
   }
 }

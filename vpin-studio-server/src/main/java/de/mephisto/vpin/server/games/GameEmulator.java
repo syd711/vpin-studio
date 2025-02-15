@@ -25,7 +25,7 @@ public class GameEmulator {
   private String gamesDirectory;
   private String mameDirectory;
   private String mediaDirectory;
-  private String romsDirectory;
+  private String romDirectory;
   private int id;
   private boolean enabled;
 
@@ -49,14 +49,6 @@ public class GameEmulator {
    * optional database name, used by pinballY for instance
    */
   private String database;
-
-  public String getRomsDirectory() {
-    return romsDirectory;
-  }
-
-  public void setRomsDirectory(String romsDirectory) {
-    this.romsDirectory = romsDirectory;
-  }
 
   public String getDatabase() {
     return database;
@@ -182,7 +174,11 @@ public class GameEmulator {
   }
 
   public String getRomDirectory() {
-    return romsDirectory;
+    return romDirectory;
+  }
+
+  public void setRomDirectory(String romDirectory) {
+    this.romDirectory = romDirectory;
   }
 
   public String getInstallationDirectory() {
@@ -283,15 +279,15 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getRomFolder() {
-    if (isVpxEmulator() && StringUtils.isEmpty(romsDirectory)) {
+    if (isVpxEmulator() && StringUtils.isEmpty(romDirectory)) {
       File romDir = new File(MameUtil.getRomsFolder());
       if (romDir.exists()) {
         return romDir;
       }
     }
 
-    if (!StringUtils.isEmpty(romsDirectory)) {
-      return new File(romsDirectory);
+    if (!StringUtils.isEmpty(romDirectory)) {
+      return new File(romDirectory);
     }
 
     return new File(getMameFolder(), "roms");

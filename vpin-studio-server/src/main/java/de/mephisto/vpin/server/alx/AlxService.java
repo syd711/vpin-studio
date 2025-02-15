@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.alx;
 
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -19,6 +20,9 @@ public class AlxService {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @Autowired
   private HighscoreVersionRepository highscoreVersionRepository;
@@ -58,7 +62,7 @@ public class AlxService {
 
   public boolean deleteNumberOfPlaysForEmulator(int emulatorId) {
     if (emulatorId == -1) {
-      List<GameEmulator> gameEmulators = frontendService.getValidGameEmulators();
+      List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         deleteNumberOfPlaysForEmu(gameEmulator.getId());
       }
@@ -75,7 +79,7 @@ public class AlxService {
 
   public boolean deleteTimePlayedForEmulator(int emulatorId) {
     if (emulatorId == -1) {
-      List<GameEmulator> gameEmulators = frontendService.getValidGameEmulators();
+      List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         deleteTimePlayedForEmu(gameEmulator.getId());
       }

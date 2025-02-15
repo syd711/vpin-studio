@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.components.emulators;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
@@ -80,7 +80,7 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
 
     // run later to let the splash render properly
     JFXFuture.runAsync(() -> {
-          List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
+          List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
           filteredData = gameEmulators.stream().map(e -> toModel(e)).collect(Collectors.toList());
         })
         .thenLater(() -> {

@@ -15,7 +15,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
@@ -587,7 +587,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onOpen() {
     DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       File folder = new File(emulatorRepresentation.getGamesDirectory());
       File file = new File(folder, selectedItem.getFileName());
       if (file.exists()) {
@@ -1038,7 +1038,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         }
         JFXFuture.supplyAsync(() -> {
               int emuId = game != null ? game.getEmulatorId() : newValue.getEmulatorId();
-              return client.getFrontendService().getGameEmulator(emuId);
+              return client.getEmulatorService().getGameEmulator(emuId);
             })
             .thenAcceptLater(emu -> emulatorNameLabel.setText(emu != null ? emu.getName() : "?"));
 

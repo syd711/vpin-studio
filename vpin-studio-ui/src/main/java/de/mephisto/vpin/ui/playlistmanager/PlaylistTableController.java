@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
@@ -227,7 +227,7 @@ public class PlaylistTableController extends BaseTableController<GameRepresentat
     }, this, true);
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithEmptyOption(uiSettings));
+    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithEmptyOption(uiSettings));
     this.allEmulatorsCombo.setItems(FXCollections.observableList(filtered));
     this.allEmulatorsCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
       @Override

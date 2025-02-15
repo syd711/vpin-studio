@@ -8,6 +8,7 @@ import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -47,6 +48,9 @@ public class IOService {
   private SystemService systemService;
 
   @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
@@ -58,7 +62,7 @@ public class IOService {
   public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
-      GameEmulator emulator = frontendService.getGameEmulator(installDescriptor.getEmulatorId());
+      GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");

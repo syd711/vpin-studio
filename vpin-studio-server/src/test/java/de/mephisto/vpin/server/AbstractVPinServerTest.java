@@ -120,7 +120,7 @@ abstract public class AbstractVPinServerTest {
     emulator.setType(EmulatorType.VisualPinball);
     emulator.setName("VPX");
     emulator.setInstallationDirectory("../testsystem/vPinball/VisualPinball/");
-    emulator.setRomsDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
+    emulator.setRomDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
     emulator.setMediaDirectory("../testsystem/vPinball/PinUPSystem/POPMedia");
     emulator.setGamesDirectory("../testsystem/vPinball/VisualPinball/Tables/");
     emulator.setGameExt("vpx");

@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
@@ -53,6 +54,9 @@ public class GameMediaService {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @Autowired
   private DMDService dmdService;
@@ -209,7 +213,7 @@ public class GameMediaService {
   }
 
   public void uploadAndReplace(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     if (gameEmulator == null) {
       throw new Exception("No emulator found for id " + uploadDescriptor.getEmulatorId() + " to replace table for.");
     }
@@ -329,7 +333,7 @@ public class GameMediaService {
 
   public void uploadAndImport(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
     File tablesFolder = gameEmulator.getGamesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
@@ -376,7 +380,7 @@ public class GameMediaService {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     LOG.info("Starting cloning for {}", temporaryVPXFile.getAbsolutePath());
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     TableDetails tableDetails = getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 

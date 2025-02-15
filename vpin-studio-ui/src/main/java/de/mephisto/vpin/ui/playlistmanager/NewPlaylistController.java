@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -67,7 +67,7 @@ public class NewPlaylistController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getValidatedGameEmulators());
+    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getValidatedGameEmulators());
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.saveBtn.setDisable(true);
 

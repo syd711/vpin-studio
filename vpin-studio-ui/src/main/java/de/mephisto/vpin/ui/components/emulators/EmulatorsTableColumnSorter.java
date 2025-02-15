@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.components.emulators;
 
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;

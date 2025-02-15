@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -236,7 +236,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     sectionAssets.setVisible(frontendType.supportMedias());
     dropIns.setVisible(Features.DROP_IN_FOLDER);
 
-    GameEmulatorRepresentation defaultEmu = client.getFrontendService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultEmu = client.getEmulatorService().getDefaultGameEmulator();
     networkShareTestPath = defaultEmu != null ? defaultEmu.getInstallationDirectory() : null;
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -366,8 +366,8 @@ public class ClientSettingsPreferencesController implements Initializable {
     winNetworkShareTestBtn.setDisable(!supportsNetworkShare);
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getValidatedGameEmulators();
-    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators();
+    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getEmulatorService().getBackglassGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setUserData(gameEmulator);

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.exporter;
 
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -29,6 +30,9 @@ public class ExporterService {
 
   @Autowired
   protected FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @NonNull
   protected CSVPrinter createPrinter(Map<String, String> customQuery, List<String> headers, StringBuilder builder) throws IOException {
@@ -73,7 +77,7 @@ public class ExporterService {
     }
 
     if (emulatorIds.isEmpty()) {
-      frontendService.getValidGameEmulators().stream().map(GameEmulator::getId).forEach(emulatorIds::add);
+      emulatorService.getValidGameEmulators().stream().map(GameEmulator::getId).forEach(emulatorIds::add);
     }
 
     return emulatorIds;

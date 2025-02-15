@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -269,14 +269,14 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
   public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, @Nullable AssetType filterMode) {
     this.filterMode = filterMode;
-    this.emulator = client.getFrontendService().getDefaultGameEmulator();
+    this.emulator = client.getEmulatorService().getDefaultGameEmulator();
     this.game = game;
     this.selection = file;
     this.uploaderAnalysis = analysis;
     this.stage = stage;
 
     if (game != null) {
-      this.emulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      this.emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       this.emulatorLabel.setText(this.emulator.getName());
       this.tableNameLabel.setText(this.game.getGameDisplayName());
       this.tableFileLabel.setText(this.game.getGameFilePath());

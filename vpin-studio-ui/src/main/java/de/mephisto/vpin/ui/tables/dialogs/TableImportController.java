@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -105,7 +105,7 @@ public class TableImportController implements Initializable, DialogController {
       // should always be done
       FrontendUtil.replaceNames(text2Description, frontend, frontend.getName());
 
-      List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithAllVpx(uiSettings));
+      List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings));
       this.emulatorCombo.setItems(FXCollections.observableList(filtered));
 
       this.emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
@@ -138,7 +138,7 @@ public class TableImportController implements Initializable, DialogController {
     tableBox.getChildren().add(loading);
 
     JFXFuture.supplyAsync(() -> {
-      if (client.getFrontendService().isAllVpx(emulator)) {
+      if (client.getEmulatorService().isAllVpx(emulator)) {
         return client.getFrontendService().getImportableTablesVpx(); 
       }
       else {

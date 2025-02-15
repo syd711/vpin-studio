@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;

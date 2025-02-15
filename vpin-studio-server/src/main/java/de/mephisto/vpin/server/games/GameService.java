@@ -17,6 +17,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -103,6 +104,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   @Autowired
   private DefaultPictureService defaultPictureService;
 
+  @Autowired
+  private EmulatorService emulatorService;
+
   private ServerSettings serverSettings;
 
   private final List<GameLifecycleListener> lifecycleListeners = new ArrayList<>();
@@ -150,7 +154,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public boolean reload() {
-    frontendService.loadEmulators();
+    emulatorService.loadEmulators();
     mameRomAliasService.clearCache();
     highscoreService.refreshAvailableScores();
     return true;
@@ -174,7 +178,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     long start = System.currentTimeMillis();
     List<Game> games = new ArrayList<>();
     if (emulatorId == -1) {
-      List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
+      List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         games.addAll(frontendService.getGamesByEmulator(gameEmulator.getId()));
       }
@@ -555,7 +559,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public GameList getImportableTables(int emuId) {
-    GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    GameEmulator emulator = emulatorService.getGameEmulator(emuId);
     if (emulator == null) {
       LOG.warn("No emulator found for id " + emuId);
       return new GameList();
@@ -594,7 +598,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
     // derive the emulator from the name or folder
     if (!StringUtils.isEmpty(emuDirOrName)) {
-      for (GameEmulator emu : frontendService.getValidGameEmulators()) {
+      for (GameEmulator emu : emulatorService.getValidGameEmulators()) {
         if (!emu.isEnabled()) {
           continue;
         }
@@ -612,7 +616,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
     if (emuId == -1) {
       // derive the emulator from the table folder
-      for (GameEmulator emu : frontendService.getValidGameEmulators()) {
+      for (GameEmulator emu : emulatorService.getValidGameEmulators()) {
         if (!emu.isEnabled()) {
           continue;
         }

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemCommandOutput;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -32,14 +33,15 @@ public class VpbmService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpbmService.class);
   public static String VPBM_FOLDER = RESOURCES + "vpbm";
 
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private PreferencesService preferencesService;
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   public File getArchiveFolder() {
     return new File(getArchivesFolder(), "backups/Visual Pinball X/");
@@ -76,7 +78,7 @@ public class VpbmService implements InitializingBean {
   public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
     // use the default emulator, VpbmService, does not support multiple emulator
-    GameEmulator defaultEmu = frontendService.getDefaultGameEmulator();
+    GameEmulator defaultEmu = emulatorService.getDefaultGameEmulator();
     Game game = frontendService.getGameByFilename(defaultEmu.getId(), vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);

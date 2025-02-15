@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -365,7 +366,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   private List<GameRepresentation> getGamesCached(int emulatorId) {
     if (emulatorId == -1) {
       List<GameRepresentation> games = new ArrayList<>();
-      List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
+      List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
       for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
         if (ignoredEmulatorIds.contains(gameEmulator.getId())) {
           continue;
@@ -420,7 +421,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<GameRepresentation> getVpxGamesCached() {
     List<GameRepresentation> games = new ArrayList<>();
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getValidatedGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       if (gameEmulator.isVpxEmulator()) {
         int emulatorId = gameEmulator.getId();

@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
@@ -108,7 +108,7 @@ public class PatchUploadController extends BaseUploadController {
 
         GameRepresentation gameRepresentation = client.getGameService().getGame(uploadDescriptor.getGameId());
         LOG.info("Fetched Game " + gameRepresentation.getGameDisplayName());
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(gameRepresentation.getEmulatorId());
         LOG.info("Fetched Emulator " + emulatorRepresentation.getGamesDirectory());
 
         File gameFile = new File(gameRepresentation.getGameFilePath());

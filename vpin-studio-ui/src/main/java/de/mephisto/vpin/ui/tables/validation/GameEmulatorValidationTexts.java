@@ -1,19 +1,16 @@
 package de.mephisto.vpin.ui.tables.validation;
 
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.List;
 
-import static de.mephisto.vpin.restclient.validation.GameEmulatorValidationCode.CODE_NO_INSTALLATION_DIRECTORY;
-import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
+import static de.mephisto.vpin.restclient.validation.GameEmulatorValidationCode.*;
 
 /**
  * See GameEmulatorValidator
@@ -41,8 +38,28 @@ public class GameEmulatorValidationTexts {
     int code = state.getCode();
     switch (code) {
       case CODE_NO_INSTALLATION_DIRECTORY: {
-        label = "The emulator has no or an invalid installation directory set.";
-        text = "Fix the configuration by setting a valid installation directory.";
+        label = "The emulator has no or an invalid launch folder set.";
+        text = "Fix the configuration by setting a valid launch folder.";
+        break;
+      }
+      case CODE_NO_GAMES_FOLDER: {
+        label = "The emulator has no or an invalid games folder set.";
+        text = "Fix the configuration by setting a valid games folder.";
+        break;
+      }
+      case CODE_NO_GAME_EXTENSION: {
+        label = "The emulator has no game extensions suffix set.";
+        text = "Fix the configuration by setting the extension type of the games.";
+        break;
+      }
+      case CODE_INVALID_ROMS_FOLDER: {
+        label = "The ROMs folder is invalid.";
+        text = "Fix the configuration by setting a valid ROMs folder.";
+        break;
+      }
+      case CODE_INVALID_MEDIA_FOLDER: {
+        label = "The media folder is invalid.";
+        text = "Fix the configuration by setting a valid media folder.";
         break;
       }
       default: {

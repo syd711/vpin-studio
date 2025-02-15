@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameMediaService;
@@ -109,15 +110,6 @@ public class FrontendResource {
     return frontendStatusService.getPinUPControls();
   }
 
-  @GetMapping("/emulators")
-  public List<GameEmulator> getGameEmulators() {
-    return frontendService.getValidatedGameEmulators();
-  }
-
-  @GetMapping("/backglassemulators")
-  public List<GameEmulator> getBackglassGameEmulators() {
-    return frontendStatusService.getBackglassGameEmulators();
-  }
 
   @GetMapping("/running")
   public boolean isRunning() {

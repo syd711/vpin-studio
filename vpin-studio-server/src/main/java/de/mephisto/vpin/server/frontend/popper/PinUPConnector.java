@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -1458,7 +1458,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     e.setGameExt(extension);
     e.setDisplayName(rs.getString("EmuDisplay"));
     e.setMediaDirectory(rs.getString("DirMedia"));
-    e.setRomsDirectory(rs.getString("DirRoms"));
+    e.setRomDirectory(rs.getString("DirRoms"));
     e.setDescription(rs.getString("Description"));
     e.setInstallationDirectory(rs.getString("EmuLaunchDir"));
     e.setLaunchScript(rs.getString("LaunchScript"));

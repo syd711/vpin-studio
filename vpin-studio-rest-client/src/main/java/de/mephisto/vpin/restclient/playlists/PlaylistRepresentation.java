@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient.games;
+package de.mephisto.vpin.restclient.playlists;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;

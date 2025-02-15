@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
@@ -194,7 +194,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onTablesFolderOpen() {
     if (this.game.isPresent()) {
       try {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.get().getEmulatorId());
         // support of table sub folders
         File tableFile = new File(emulatorRepresentation.getGamesDirectory(), game.get().getGameFileName());
         SystemUtil.openFolder(tableFile.getParentFile());

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -40,6 +41,9 @@ public class TextEditService {
   private FrontendService frontendService;
 
   @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
   private GameService gameService;
 
   @Autowired
@@ -61,7 +65,7 @@ public class TextEditService {
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
           Path filePath = init.toPath();
@@ -97,7 +101,7 @@ public class TextEditService {
           break;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
@@ -142,7 +146,7 @@ public class TextEditService {
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
           File backup = new File(mameFolder, "DmdDevice.ini.bak");
@@ -183,7 +187,7 @@ public class TextEditService {
           return textFile;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
           String[] lines = textFile.getContent().split("\n");
           List<String> sorted = Arrays.asList(lines);
           sorted.sort(Comparator.comparing(String::toLowerCase));

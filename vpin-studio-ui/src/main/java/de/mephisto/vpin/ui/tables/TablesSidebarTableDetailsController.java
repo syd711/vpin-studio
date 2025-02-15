@@ -265,7 +265,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       autoFillBtn.setVisible(game.isVpxGame() && frontendType.supportStandardFields());
 
       dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
-      emulatorLabel.setText(client.getFrontendService().getGameEmulator(game.getEmulatorId()).getName());
+      emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());
       gameVersion.setText(StringUtils.defaultIfEmpty(game.getVersion(), "-"));
       gameName.setText(StringUtils.defaultIfEmpty(game.getGameName(), "-"));
       gameFileName.setText(StringUtils.defaultIfEmpty(game.getGameFileName(), "-"));

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.restclient.games;
+package de.mephisto.vpin.restclient.emulators;
 
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
