@@ -125,20 +125,19 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
 
       hbox.getChildren().add(label);
 
-      CheckBox columnCheckbox = new CheckBox();
-      columnCheckbox.setUserData(value);
-      columnCheckbox.setSelected(model.isEnabled());
-      columnCheckbox.getStyleClass().add("default-text");
-      columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          model.setEnabled(newValue);
-          model.save();
-          tableView.refresh();
-        }
-      });
-
-      hbox.getChildren().add(columnCheckbox);
+//      CheckBox columnCheckbox = new CheckBox();
+//      columnCheckbox.setUserData(value);
+//      columnCheckbox.setSelected(model.isEnabled());
+//      columnCheckbox.getStyleClass().add("default-text");
+//      columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+//        @Override
+//        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//          model.setEnabled(newValue);
+//          tableView.refresh();
+//        }
+//      });
+//
+//      hbox.getChildren().add(columnCheckbox);
       return hbox;
     }, this, true);
 

@@ -128,11 +128,16 @@ public class EmulatorService {
   }
 
   public GameEmulator save(GameEmulator emulator) {
-    return frontendService.saveEmulator(emulator);
+    GameEmulator saved = frontendService.saveEmulator(emulator);
+    this.emulators.remove(saved.getId());
+    loadEmulator(saved);
+    return saved;
   }
 
   public boolean delete(int emulatorId) {
-    return frontendService.deleteEmulator(emulatorId);
+    frontendService.deleteEmulator(emulatorId);
+    this.emulators.remove(emulatorId);
+    return true;
   }
 
   public void loadEmulators() {
@@ -141,24 +146,27 @@ public class EmulatorService {
     List<GameEmulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
     for (GameEmulator emulator : ems) {
-      try {
-        if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
-          continue;
-        }
-
-        emulators.put(emulator.getId(), emulator);
-
-        LOG.info("Loaded Emulator: " + emulator);
-      }
-      catch (Exception e) {
-        LOG.error("Emulator initialization failed: " + e.getMessage(), e);
-      }
+      loadEmulator(emulator);
     }
 
     if (this.emulators.isEmpty()) {
       LOG.error("*****************************************************************************************");
       LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your frontend.");
       LOG.error("*****************************************************************************************");
+    }
+  }
+
+  private void loadEmulator(GameEmulator emulator) {
+    try {
+      if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
+        return;
+      }
+      emulators.put(emulator.getId(), emulator);
+
+      LOG.info("Loaded Emulator: " + emulator);
+    }
+    catch (Exception e) {
+      LOG.error("Emulator initialization failed: " + e.getMessage(), e);
     }
   }
 }

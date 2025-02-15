@@ -105,10 +105,11 @@ public class EmulatorsController implements Initializable {
     emu.setRomDirectory(romsFolderField.getText());
     emu.setInstallationDirectory(launchFolderField.getText());
     emu.setGameExt(fileExtensionField.getText());
+    emu.setMediaDirectory(mediaFolderField.getText());
 
     client.getEmulatorService().saveGameEmulator(emulator.get());
     Platform.runLater(() -> {
-      tableController.reload();
+      onReload();
     });
   }
 
@@ -177,7 +178,7 @@ public class EmulatorsController implements Initializable {
       launchFolderField.setText(emulator.getInstallationDirectory());
       gamesFolderField.setText(emulator.getGamesDirectory());
       fileExtensionField.setText(emulator.getGameExt());
-      mediaFolderField.setText(emulator.getMameDirectory());
+      mediaFolderField.setText(emulator.getMediaDirectory());
       romsFolderField.setText(emulator.getRomDirectory());
     }
 

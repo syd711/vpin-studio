@@ -47,8 +47,4 @@ public class EmulatorModel extends BaseLoadingModel<GameEmulatorRepresentation, 
   public boolean isValid() {
     return getBean().getValidationStates().isEmpty();
   }
-
-  public void save() {
-
-  }
 }

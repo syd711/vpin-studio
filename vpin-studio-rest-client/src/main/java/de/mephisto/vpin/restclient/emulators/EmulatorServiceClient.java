@@ -115,6 +115,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public GameEmulatorRepresentation saveGameEmulator(GameEmulatorRepresentation emulator) {
     try {
+      clearCache();
       return getRestClient().post(API + API_SEGMENT_EMULATORS + "/save", emulator, GameEmulatorRepresentation.class);
     }
     catch (Exception e) {
