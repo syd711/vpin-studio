@@ -44,4 +44,8 @@ public class EmulatorResource {
   public boolean save(@PathVariable("emulatorId") int emulatorId) throws Exception {
     return emulatorService.delete(emulatorId);
   }
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return emulatorService.clearCache();
+  }
 }

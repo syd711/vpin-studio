@@ -535,6 +535,7 @@ public class VPinStudioClient implements OverlayClient {
     getPupPackService().clearCache();
     getDmdService().clearCache();
     getFrontendService().clearCache();
+    getEmulatorService().clearCache();
   }
 
   public void clearWheelCache() {

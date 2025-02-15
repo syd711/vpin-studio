@@ -147,10 +147,6 @@ public class GameEmulator {
     return type.isFxEmulator();
   }
 
-  public EmulatorType getEmulatorType() {
-    return type;
-  }
-
   public String getGameFileName(@NonNull File file) {
     return file.getAbsolutePath().substring(getGamesFolder().getAbsolutePath().length() + 1);
   }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components.emulators;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +129,14 @@ public class EmulatorsController implements Initializable {
 
   @FXML
   private void onCreate() {
-
+    String s = WidgetFactory.showInputDialog(Studio.stage, "New Emulator", "Enter the folder save name of the new emulator.", "You can edit the additional emulator parameters afterwards.", null, "Visual Pinball");
+    if (!StringUtils.isEmpty(s)) {
+      GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
+      emu.setName(s);
+      emu.setType(EmulatorType.OTHER);
+      client.getEmulatorService().saveGameEmulator(emu);
+      onReload();
+    }
   }
 
   @FXML

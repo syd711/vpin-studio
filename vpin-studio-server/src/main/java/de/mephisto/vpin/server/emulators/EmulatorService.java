@@ -158,9 +158,9 @@ public class EmulatorService {
 
   private void loadEmulator(GameEmulator emulator) {
     try {
-      if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
-        return;
-      }
+//      if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
+//        return;
+//      }
       emulators.put(emulator.getId(), emulator);
 
       LOG.info("Loaded Emulator: " + emulator);
@@ -168,5 +168,10 @@ public class EmulatorService {
     catch (Exception e) {
       LOG.error("Emulator initialization failed: " + e.getMessage(), e);
     }
+  }
+
+  public boolean clearCache() {
+    loadEmulators();
+    return true;
   }
 }

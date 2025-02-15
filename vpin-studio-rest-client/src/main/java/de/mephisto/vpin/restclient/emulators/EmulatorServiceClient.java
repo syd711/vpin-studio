@@ -126,5 +126,6 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public void clearCache() {
     getRestClient().clearCache(API + API_SEGMENT_EMULATORS);
+    getRestClient().get(API + API_SEGMENT_EMULATORS + "/clearcache", Boolean.class);
   }
 }
