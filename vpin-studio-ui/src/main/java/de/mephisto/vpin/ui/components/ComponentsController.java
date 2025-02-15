@@ -148,12 +148,14 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private void refreshView(Number t1) {
     if (t1.intValue() == TAB_UPDATES) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
+      emulatorsController.onViewDeactivated();
     }
     else if (t1.intValue() == TAB_EMULATORS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Emulators"));
     }
     else if (t1.intValue() == TAB_SCREENS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));
+      emulatorsController.onViewDeactivated();
     }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
@@ -240,6 +242,11 @@ public class ComponentsController implements Initializable, StudioFXController, 
     catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void onViewDeactivated() {
+    emulatorsController.onViewDeactivated();
   }
 
   @Override

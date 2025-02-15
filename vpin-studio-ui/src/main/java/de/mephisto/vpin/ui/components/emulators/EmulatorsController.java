@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.components.emulators;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -21,22 +20,26 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class EmulatorsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
-  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private BorderPane emulatorRoot;
+
+  @FXML
+  private BorderPane tableRoot;
 
   @FXML
   private Label emulatorNameLabel;
 
   @FXML
   private Label emulatorIdLabel;
+
+  @FXML
+  private Button saveBtn;
 
   @FXML
   private CheckBox enabledCheckbox;
@@ -91,6 +94,25 @@ public class EmulatorsController implements Initializable {
   private boolean saveDisabled = false;
 
   @FXML
+  private void onSave() {
+    GameEmulatorRepresentation emu = emulator.get();
+    emu.setEnabled(enabledCheckbox.isSelected());
+    emu.setName(nameField.getText());
+    emu.setDescription(descriptionField.getText());
+    emu.setLaunchScript(startScriptController.getData());
+    emu.setExitScript(exitScriptController.getData());
+    emu.setGamesDirectory(gamesFolderField.getText());
+    emu.setRomDirectory(romsFolderField.getText());
+    emu.setInstallationDirectory(launchFolderField.getText());
+    emu.setGameExt(fileExtensionField.getText());
+
+    client.getEmulatorService().saveGameEmulator(emulator.get());
+    Platform.runLater(() -> {
+      tableController.reload();
+    });
+  }
+
+  @FXML
   private void onDelete() {
     if (emulator.isPresent()) {
       GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
@@ -109,6 +131,7 @@ public class EmulatorsController implements Initializable {
 
   @FXML
   private void onReload() {
+    client.getEmulatorService().clearCache();
     tableController.reload();
   }
 
@@ -161,33 +184,22 @@ public class EmulatorsController implements Initializable {
     saveDisabled = false;
   }
 
+  public void onViewDeactivated() {
+
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     createBtn.managedProperty().bindBidirectional(createBtn.visibleProperty());
     deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
     firstSeparator.managedProperty().bindBidirectional(firstSeparator.visibleProperty());
 
-    descriptionField.textProperty().addListener(new ChangeListener<String>() {
-      @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (saveDisabled) {
-          return;
-        }
-        debouncer.debounce("emuDesc", () -> {
-          GameEmulatorRepresentation emu = emulator.get();
-          emu.setDescription(newValue);
-          saveEmulator(emu);
-        }, 500);
-
-      }
-    });
-
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
       Parent builtInRoot = loader.load();
       tableController = loader.getController();
       tableController.setEmulatorController(this);
-      emulatorRoot.setLeft(builtInRoot);
+      tableRoot.setCenter(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
@@ -232,46 +244,21 @@ public class EmulatorsController implements Initializable {
       FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
       Parent builtInRoot = loader.load();
       startScriptController = loader.getController();
-      startScriptController.setCallback(new Consumer<String>() {
-        @Override
-        public void accept(String s) {
-          if (emulator.isPresent()) {
-            emulator.get().setLaunchScript(s);
-            saveEmulator(emulator.get());
-          }
-        }
-      });
       startScriptTab.setContent(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
     }
+
+
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
       Parent builtInRoot = loader.load();
       exitScriptController = loader.getController();
-      exitScriptController.setCallback(new Consumer<String>() {
-        @Override
-        public void accept(String s) {
-          if (emulator.isPresent()) {
-            emulator.get().setExitScript(s);
-            saveEmulator(emulator.get());
-          }
-        }
-      });
       exitScriptTab.setContent(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
     }
   }
-
-  private void saveEmulator(GameEmulatorRepresentation emulator) {
-    client.getEmulatorService().saveGameEmulator(emulator);
-    Platform.runLater(() -> {
-      tableController.reload();
-    });
-  }
-
-
 }
