@@ -104,7 +104,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (manifest != null) {
       GameEmulator emu = emulatorService.getGameEmulator(manifest.getEmulatorId());
       if (emu != null) {
-        manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
+        manifest.setLauncherList(new ArrayList<>(emulatorService.getAltExeNames(emu)));
       }
     }
     return manifest;
@@ -662,6 +662,14 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         }
       }
     }
+  }
+
+  public GameEmulator saveEmulator(GameEmulator emulator) {
+    return getFrontendConnector().saveEmulator(emulator);
+  }
+
+  public boolean deleteEmulator(int emulatorId) {
+    return getFrontendConnector().deleteEmulator(emulatorId);
   }
 
   @Override

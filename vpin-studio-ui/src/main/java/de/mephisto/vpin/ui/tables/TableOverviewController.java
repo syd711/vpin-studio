@@ -622,12 +622,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameRepresentation game = getSelection();
     if (game != null) {
       GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
+      TableDialogs.openTableUploadDialog(game, emu.getType(), uploadType, null);
     }
     else {
       GameEmulatorRepresentation value = emulatorCombo.getValue();
       if (value != null) {
-        TableDialogs.openTableUploadDialog(null, value.getEmulatorType(), uploadType, null);
+        TableDialogs.openTableUploadDialog(null, value.getType(), uploadType, null);
       }
       else {
         TableDialogs.openTableUploadDialog(null, null, uploadType, null);
@@ -1657,7 +1657,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void reloadItem(GameRepresentation refreshedGame) {
     // reload only if the emulator is matching
     GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
       super.reloadItem(refreshedGame);
     }
   }

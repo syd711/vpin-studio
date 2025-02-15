@@ -1,7 +1,11 @@
 package de.mephisto.vpin.ui.components.emulators;
 
-import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.ui.Studio;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -23,6 +27,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class EmulatorsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorsController.class);
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private BorderPane emulatorRoot;
@@ -83,9 +88,18 @@ public class EmulatorsController implements Initializable {
   private EmulatorScriptPanelController startScriptController;
   private EmulatorScriptPanelController exitScriptController;
 
+  private boolean saveDisabled = false;
+
   @FXML
   private void onDelete() {
-
+    if (emulator.isPresent()) {
+      GameEmulatorRepresentation gameEmulatorRepresentation = emulator.get();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.getEmulatorService().deleteGameEmulator(gameEmulatorRepresentation.getId());
+        onReload();
+      }
+    }
   }
 
   @FXML
@@ -99,7 +113,9 @@ public class EmulatorsController implements Initializable {
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
+    saveDisabled = true;
 //    tableController.setSelection(model);
+    this.emulator = model;
 
     emulatorNameLabel.setText("");
     emulatorIdLabel.setText("");
@@ -141,6 +157,8 @@ public class EmulatorsController implements Initializable {
       mediaFolderField.setText(emulator.getMameDirectory());
       romsFolderField.setText(emulator.getRomDirectory());
     }
+
+    saveDisabled = false;
   }
 
   @Override
@@ -148,6 +166,21 @@ public class EmulatorsController implements Initializable {
     createBtn.managedProperty().bindBidirectional(createBtn.visibleProperty());
     deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
     firstSeparator.managedProperty().bindBidirectional(firstSeparator.visibleProperty());
+
+    descriptionField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (saveDisabled) {
+          return;
+        }
+        debouncer.debounce("emuDesc", () -> {
+          GameEmulatorRepresentation emu = emulator.get();
+          emu.setDescription(newValue);
+          saveEmulator(emu);
+        }, 500);
+
+      }
+    });
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
@@ -175,7 +208,7 @@ public class EmulatorsController implements Initializable {
     emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        tabPane.setPrefWidth(newValue.intValue() - 780);
+        tabPane.setPrefWidth(newValue.intValue() - tableController.getTableView().getWidth() - 30);
       }
     });
 
@@ -187,6 +220,11 @@ public class EmulatorsController implements Initializable {
     });
 
     setSelection(Optional.empty());
+
+    Platform.runLater(() -> {
+      tabPane.setPrefWidth(emulatorRoot.widthProperty().intValue() - tableController.getTableView().getWidth() - 30);
+      tabPane.setPrefHeight(emulatorRoot.heightProperty().intValue() - 426);
+    });
   }
 
   private void loadPopperFrontend() {
@@ -230,5 +268,10 @@ public class EmulatorsController implements Initializable {
 
   private void saveEmulator(GameEmulatorRepresentation emulator) {
     client.getEmulatorService().saveGameEmulator(emulator);
+    Platform.runLater(() -> {
+      tableController.reload();
+    });
   }
+
+
 }

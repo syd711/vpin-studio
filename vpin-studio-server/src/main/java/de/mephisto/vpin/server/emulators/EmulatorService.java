@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,27 @@ public class EmulatorService {
 
   public GameEmulator getGameEmulator(int emulatorId) {
     return this.emulators.get(emulatorId);
+  }
+
+  public List<String> getAltExeNames(int emulatorId) {
+    GameEmulator gameEmulator = getGameEmulator(emulatorId);
+    return getAltExeNames(gameEmulator);
+  }
+
+  public List<String> getAltExeNames(GameEmulator emulator) {
+    if (emulator.isVpxEmulator() && emulator.isValid() && emulator.getInstallationFolder().exists()) {
+      File installationFolder = emulator.getInstallationFolder();
+      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
+      if (exeFiles == null) {
+        exeFiles = new String[]{};
+      }
+      return Arrays.asList(exeFiles);
+    }
+
+    if (emulator.getExe() != null) {
+      return List.of(emulator.getExe().getName());
+    }
+    return Collections.emptyList();
   }
 
   public List<GameEmulator> getValidatedGameEmulators() {
@@ -105,6 +127,14 @@ public class EmulatorService {
     this.frontendService = frontendService;
   }
 
+  public GameEmulator save(GameEmulator emulator) {
+    return frontendService.saveEmulator(emulator);
+  }
+
+  public boolean delete(int emulatorId) {
+    return frontendService.deleteEmulator(emulatorId);
+  }
+
   public void loadEmulators() {
     FrontendConnector frontendConnector = frontendService.getFrontendConnector();
     frontendConnector.reloadCache();
@@ -130,9 +160,5 @@ public class EmulatorService {
       LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your frontend.");
       LOG.error("*****************************************************************************************");
     }
-  }
-
-  public GameEmulator save(GameEmulator emulator) {
-    return null;
   }
 }

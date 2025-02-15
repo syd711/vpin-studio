@@ -58,6 +58,9 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
   TableColumn<EmulatorModel, EmulatorModel> columnName;
 
   @FXML
+  TableColumn<EmulatorModel, EmulatorModel> columnDescription;
+
+  @FXML
   TableColumn<EmulatorModel, EmulatorModel> columnGamesDir;
 
   @FXML
@@ -144,6 +147,15 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(model));
       label.setTooltip(new Tooltip(model.getName()));
+      return label;
+    }, this, true);
+
+
+    BaseLoadingColumn.configureColumn(columnDescription, (value, model) -> {
+      Label label = new Label(model.getDescription());
+      label.getStyleClass().add("default-text");
+      label.setStyle(getLabelCss(model));
+      label.setTooltip(new Tooltip(model.getDescription()));
       return label;
     }, this, true);
 

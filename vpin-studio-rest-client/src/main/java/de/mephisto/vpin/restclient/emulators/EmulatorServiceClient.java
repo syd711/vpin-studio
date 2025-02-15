@@ -3,10 +3,13 @@ package de.mephisto.vpin.restclient.emulators;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,8 +35,8 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
-  public List<GameEmulatorRepresentation> getValidatedGameEmulators() {
-    GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_EMULATORS + "/emulators", GameEmulatorRepresentation[].class);
+  public List<String> getAltExeNames(int emulatorId) {
+    String[] emus = getRestClient().getCached(API + API_SEGMENT_EMULATORS + "/altExeNames/" + emulatorId, String[].class);
     return emus != null ? Arrays.asList(emus) : Collections.emptyList();
   }
 
@@ -62,9 +65,14 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     return Collections.emptyList();
   }
 
+  public List<GameEmulatorRepresentation> getValidatedGameEmulators() {
+    GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_EMULATORS, GameEmulatorRepresentation[].class);
+    return emus != null ? Arrays.asList(emus) : Collections.emptyList();
+  }
+
 
   public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
-    return Arrays.asList(getRestClient().get(API + API_SEGMENT_EMULATORS + "/emulators", GameEmulatorRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + API_SEGMENT_EMULATORS, GameEmulatorRepresentation[].class));
   }
 
   public List<GameEmulatorRepresentation> getBackglassGameEmulators() {
@@ -90,7 +98,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
     allVpx.setId(ALL_VPX_ID);
     allVpx.setName("All VPX Tables");
-    allVpx.setEmulatorType(EmulatorType.VisualPinball);
+    allVpx.setType(EmulatorType.VisualPinball);
     return allVpx;
   }
 
@@ -99,6 +107,10 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
     filtered.add(0, null);
     return filtered;
+  }
+
+  public void deleteGameEmulator(int id) {
+    getRestClient().delete(API + API_SEGMENT_EMULATORS + "/" + id);
   }
 
   public GameEmulatorRepresentation saveGameEmulator(GameEmulatorRepresentation emulator) {

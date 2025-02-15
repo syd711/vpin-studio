@@ -1381,7 +1381,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       }
       else {
         preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
-                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?)"
+                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
         preparedStatement.setInt(index++, emulator.getId());
       }
@@ -1392,6 +1392,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, emulator.getMediaDirectory());
       preparedStatement.setString(index++, emulator.getName());
       preparedStatement.setInt(index++, emulator.isEnabled() ? 1 : 0);
+      preparedStatement.setString(index++, emulator.getInstallationDirectory());
       preparedStatement.setString(index++, emulator.getRomDirectory());
       preparedStatement.setString(index++, emulator.getGameExt());
       preparedStatement.setString(index++, emulator.getLaunchScript());
@@ -1399,6 +1400,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
+      LOG.info("Saved " + emulator);
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
           int id = keys.getInt(1);

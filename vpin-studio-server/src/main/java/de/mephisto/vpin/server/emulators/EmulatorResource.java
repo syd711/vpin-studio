@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.emulators;
 
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -20,9 +20,14 @@ public class EmulatorResource {
   @Autowired
   private FrontendStatusService frontendStatusService;
 
-  @GetMapping("/emulators")
+  @GetMapping
   public List<GameEmulator> getGameEmulators() {
     return emulatorService.getValidatedGameEmulators();
+  }
+
+  @GetMapping("/altExeNames/{emulatorId}")
+  public List<String> getAltExeNames(@PathVariable("emulatorId") int emulatorId) {
+    return emulatorService.getAltExeNames(emulatorId);
   }
 
   @GetMapping("/backglassemulators")
@@ -33,5 +38,10 @@ public class EmulatorResource {
   @PostMapping("/save")
   public GameEmulator save(@RequestBody GameEmulator emulator) throws Exception {
     return emulatorService.save(emulator);
+  }
+
+  @DeleteMapping("/{emulatorId}")
+  public boolean save(@PathVariable("emulatorId") int emulatorId) throws Exception {
+    return emulatorService.delete(emulatorId);
   }
 }

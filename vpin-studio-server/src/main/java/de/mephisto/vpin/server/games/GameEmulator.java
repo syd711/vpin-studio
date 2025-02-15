@@ -10,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class GameEmulator {
@@ -197,6 +195,10 @@ public class GameEmulator {
     return description;
   }
 
+  public String getExeName() {
+    return exeName;
+  }
+
   public int getId() {
     return id;
   }
@@ -216,22 +218,6 @@ public class GameEmulator {
 
   public String getExeParameters() {
     return exeParameters;
-  }
-
-  public List<String> getAltExeNames() {
-    if (isVpxEmulator() && getInstallationFolder().exists()) {
-      String[] exeFiles = getInstallationFolder().list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
-      if (exeFiles == null) {
-        exeFiles = new String[]{};
-      }
-      return Arrays.asList(exeFiles);
-    }
-
-    if (getExe() != null) {
-      return Arrays.asList(getExe().getName());
-    }
-
-    return Collections.emptyList();
   }
 
   @NonNull

@@ -12,7 +12,7 @@
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsTableController">
    <center>
-      <BorderPane fx:id="tableWrapper" prefWidth="750.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+      <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
          <center>
             <StackPane fx:id="loaderStack">
                <BorderPane.margin>
@@ -21,10 +21,11 @@
                <children>
                   <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                      <children>
-                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" prefWidth="850.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                            <columns>
                               <TableColumn fx:id="columnSelection" maxWidth="55.199952602386475" minWidth="40.0" prefWidth="90.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;" />
-                              <TableColumn fx:id="columnName" minWidth="100.0" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                              <TableColumn fx:id="columnName" maxWidth="-1.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                              <TableColumn fx:id="columnDescription" minWidth="100.0" prefWidth="200.0" style="-fx-alignment: BASELINE_LEFT;" text="Description" />
                               <TableColumn fx:id="columnGamesDir" minWidth="10.4000244140625" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Games Folder" />
                               <TableColumn fx:id="columnExtension" minWidth="10.4000244140625" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="Extension" />
                            </columns>

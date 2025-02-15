@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.emulators;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -9,28 +10,29 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GameEmulatorRepresentation {
-  private int id;
+  private EmulatorType type;
   private String name;
   private String description;
-  private boolean enabled;
-
-  private EmulatorType emulatorType;
-
+  private String displayName;
   private String installationDirectory;
   private String gamesDirectory;
-  private String userDirectory;
+  private String mameDirectory;
+  private String mediaDirectory;
+  private String romDirectory;
+  private int id;
+  private boolean enabled;
 
+  private String exeName;
+  private String exeParameters;
+  private String gameExt;
+
+  private String userDirectory;
   private String altSoundDirectory;
   private String altColorDirectory;
-
-  private String mameDirectory;
   private String nvramDirectory;
-  private String romDirectory;
 
   private String launchScript;
   private String exitScript;
-  private String gameExt;
-
   private List<ValidationState> validationStates = new ArrayList<>();
 
   public List<ValidationState> getValidationStates() {
@@ -73,16 +75,6 @@ public class GameEmulatorRepresentation {
     this.exitScript = exitScript;
   }
 
-  private List<String> altExeNames = new ArrayList<>();
-
-  public List<String> getAltExeNames() {
-    return altExeNames;
-  }
-
-  public void setAltExeNames(List<String> altExeNames) {
-    this.altExeNames = altExeNames;
-  }
-
   public String getRomDirectory() {
     return romDirectory;
   }
@@ -92,15 +84,15 @@ public class GameEmulatorRepresentation {
   }
 
   public boolean isFpEmulator() {
-    return emulatorType.isFpEmulator();
+    return type.isFpEmulator();
   }
 
   public boolean isFxEmulator() {
-    return emulatorType.isFxEmulator();
+    return type.isFxEmulator();
   }
 
   public boolean isVpxEmulator() {
-    return emulatorType.isVpxEmulator();
+    return type.isVpxEmulator();
   }
 
   public String getName() {
@@ -111,12 +103,20 @@ public class GameEmulatorRepresentation {
     this.name = name;
   }
 
-  public EmulatorType getEmulatorType() {
-    return emulatorType;
+  public EmulatorType getType() {
+    return type;
   }
 
-  public void setEmulatorType(EmulatorType type) {
-    this.emulatorType = type;
+  public void setType(EmulatorType type) {
+    this.type = type;
+  }
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
   }
 
   public String getMameDirectory() {
@@ -127,36 +127,28 @@ public class GameEmulatorRepresentation {
     this.mameDirectory = mameDirectory;
   }
 
-  public String getUserDirectory() {
-    return userDirectory;
+  public String getMediaDirectory() {
+    return mediaDirectory;
   }
 
-  public void setUserDirectory(String userDirectory) {
-    this.userDirectory = userDirectory;
+  public void setMediaDirectory(String mediaDirectory) {
+    this.mediaDirectory = mediaDirectory;
   }
 
-  public String getNvramDirectory() {
-    return nvramDirectory;
+  public String getExeName() {
+    return exeName;
   }
 
-  public void setNvramDirectory(String nvramDirectory) {
-    this.nvramDirectory = nvramDirectory;
+  public void setExeName(String exeName) {
+    this.exeName = exeName;
   }
 
-  public String getAltSoundDirectory() {
-    return altSoundDirectory;
+  public String getExeParameters() {
+    return exeParameters;
   }
 
-  public void setAltSoundDirectory(String altSoundDirectory) {
-    this.altSoundDirectory = altSoundDirectory;
-  }
-
-  public String getAltColorDirectory() {
-    return altColorDirectory;
-  }
-
-  public void setAltColorDirectory(String altColorDirectory) {
-    this.altColorDirectory = altColorDirectory;
+  public void setExeParameters(String exeParameters) {
+    this.exeParameters = exeParameters;
   }
 
   public String getInstallationDirectory() {
@@ -191,9 +183,41 @@ public class GameEmulatorRepresentation {
     this.description = description;
   }
 
+  public String getNvramDirectory() {
+    return nvramDirectory;
+  }
+
+  public void setNvramDirectory(String nvramDirectory) {
+    this.nvramDirectory = nvramDirectory;
+  }
+
+  public String getUserDirectory() {
+    return userDirectory;
+  }
+
+  public void setUserDirectory(String userDirectory) {
+    this.userDirectory = userDirectory;
+  }
+
+  public String getAltSoundDirectory() {
+    return altSoundDirectory;
+  }
+
+  public void setAltSoundDirectory(String altSoundDirectory) {
+    this.altSoundDirectory = altSoundDirectory;
+  }
+
+  public String getAltColorDirectory() {
+    return altColorDirectory;
+  }
+
+  public void setAltColorDirectory(String altColorDirectory) {
+    this.altColorDirectory = altColorDirectory;
+  }
+
   public List<String> getVpsEmulatorFeatures() {
-    if (this.getEmulatorType() != null) {
-      switch (this.emulatorType) {
+    if (this.getType() != null) {
+      switch (this.type) {
         case VisualPinball: {
           return Arrays.asList(VpsFeatures.VPX);
         }

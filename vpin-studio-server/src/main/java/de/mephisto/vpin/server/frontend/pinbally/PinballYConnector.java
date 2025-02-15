@@ -11,20 +11,18 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.*;
 
 @Service("PinballY")
@@ -254,7 +252,6 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
       return null;
     }
-  
     return e;
   }
 

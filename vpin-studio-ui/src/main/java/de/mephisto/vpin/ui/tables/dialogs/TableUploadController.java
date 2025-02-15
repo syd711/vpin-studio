@@ -568,7 +568,7 @@ public class TableUploadController implements Initializable, DialogController {
         backupTableOnOverwriteCheckbox.setDisable(!sameEmulator);
       }
 
-      EmulatorType emulatorType = emulatorRepresentation.getEmulatorType();
+      EmulatorType emulatorType = emulatorRepresentation.getType();
       if (this.uploaderAnalysis != null) {
         this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
       }

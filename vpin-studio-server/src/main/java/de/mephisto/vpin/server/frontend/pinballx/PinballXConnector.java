@@ -297,7 +297,6 @@ public class PinballXConnector extends BaseConnector {
 
     e.setGameExt(type.getExtension());
     e.setEnabled(enabled);
-
     return e;
   }
 

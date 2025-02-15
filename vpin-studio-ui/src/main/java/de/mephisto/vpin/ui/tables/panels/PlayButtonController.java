@@ -74,8 +74,8 @@ public class PlayButtonController implements Initializable {
       playBtn.getItems().add(new SeparatorMenuItem());
     }
 
-    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-    List<String> altExeNames = gameEmulator.getAltExeNames();
+    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
     for (String altExeName : altExeNames) {
       MenuItem item = new MenuItem(altExeName);
       item.setOnAction(new EventHandler<ActionEvent>() {

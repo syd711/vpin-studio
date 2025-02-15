@@ -519,4 +519,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public GameEmulatorRepresentation getEmulatorSelection() {
     return null;
   }
+
+  public TableView<M> getTableView() {
+    return tableView;
+  }
 }
