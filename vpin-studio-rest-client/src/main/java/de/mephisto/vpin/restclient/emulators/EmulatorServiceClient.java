@@ -81,7 +81,7 @@ public class EmulatorServiceClient extends VPinStudioClientService {
 
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
     List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> e.isEnabled()).filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
     List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
 
     if (vpxEmulators.size() > 1) {

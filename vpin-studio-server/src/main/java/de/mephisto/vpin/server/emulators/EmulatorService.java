@@ -54,7 +54,7 @@ public class EmulatorService {
   public List<GameEmulator> getValidatedGameEmulators() {
     List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
     for (GameEmulator gameEmulator : gameEmulators) {
-      List<ValidationState> validate = gameEmulatorValidationService.validate(gameEmulator, true);
+      List<ValidationState> validate = gameEmulatorValidationService.validate(frontendService.getFrontendType(), gameEmulator, true);
       gameEmulator.setValidationStates(validate);
     }
     Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.validation.GameEmulatorValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -14,7 +15,7 @@ import java.util.List;
 @Service
 public class GameEmulatorValidationService {
 
-  public List<ValidationState> validate(@NonNull GameEmulator emulator, boolean findFirst) {
+  public List<ValidationState> validate(@NonNull FrontendType frontendType, @NonNull GameEmulator emulator, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
 
     if (emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isFxEmulator()) {
@@ -26,17 +27,22 @@ public class GameEmulatorValidationService {
       }
     }
 
-    if (StringUtils.isEmpty(emulator.getGameExt())) {
-      result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_INSTALLATION_DIRECTORY));
+    if (frontendType.equals(FrontendType.Popper) && StringUtils.isEmpty(emulator.getGameExt())) {
+      result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAME_EXTENSION));
       if (findFirst) {
         return result;
       }
     }
 
     if (StringUtils.isEmpty(emulator.getGamesDirectory()) || !new File(emulator.getGamesDirectory()).exists()) {
-      result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAMES_FOLDER));
-      if (findFirst) {
-        return result;
+      if (frontendType.equals(FrontendType.PinballX) && !emulator.isVpxEmulator() & !emulator.isFpEmulator()) {
+
+      }
+      else {
+        result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAMES_FOLDER));
+        if (findFirst) {
+          return result;
+        }
       }
     }
 

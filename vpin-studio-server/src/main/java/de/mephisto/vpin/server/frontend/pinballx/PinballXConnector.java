@@ -139,7 +139,56 @@ public class PinballXConnector extends BaseConnector {
     if (iniConfiguration == null) {
       return emulator;
     }
-    //TODO missing impl.
+
+    SubnodeConfiguration emulatorNode = null;
+    if (emulator.getType().equals(EmulatorType.VisualPinball)) {
+      emulatorNode = iniConfiguration.getSection("VisualPinball");
+    }
+    else if (emulator.getType().equals(EmulatorType.FuturePinball)) {
+      emulatorNode = iniConfiguration.getSection("FuturePinball");
+    }
+    else if (emulator.getType().equals(EmulatorType.ZenFX2)) {
+      emulatorNode = iniConfiguration.getSection("PinballFX2");
+    }
+    else if (emulator.getType().equals(EmulatorType.ZenFX3)) {
+      emulatorNode = iniConfiguration.getSection("PinballFX3");
+    }
+    else if (emulator.getType().equals(EmulatorType.Zaccaria)) {
+      emulatorNode = iniConfiguration.getSection("Zaccaria");
+    }
+    else if (emulator.getType().equals(EmulatorType.PinballArcade)) {
+      emulatorNode = iniConfiguration.getSection("PinballArcade");
+    }
+
+    if (emulatorNode == null) {
+      LOG.warn("No matching PinballX emulator configuration found for {}", emulator.getType());
+      return emulator;
+    }
+
+
+    emulatorNode.setProperty("Enabled", emulator.isEnabled() ? "True" : "False");
+    emulatorNode.setProperty("Executable", emulator.getExeName());
+    emulatorNode.setProperty("Parameters", emulator.getExeParameters());
+    emulatorNode.setProperty("TablePath", emulator.getGamesDirectory());
+    emulatorNode.setProperty("WorkingPath", emulator.getInstallationFolder().getAbsolutePath());
+
+    if (emulator.getType().isVpxEmulator()) {
+      initVisualPinballXScripts(emulator, iniConfiguration);
+    }
+    else {
+      emulatorNode.setProperty("LaunchBeforeEnabled", emulator.getLaunchScript().isEnabled() ? "True" : "False");
+      emulatorNode.setProperty("LaunchBeforeExecutable", emulator.getLaunchScript().getExecuteable());
+      emulatorNode.setProperty("LaunchBeforeParameters", emulator.getLaunchScript().getExecuteable());
+      emulatorNode.setProperty("LaunchBeforeWorkingPath", emulator.getLaunchScript().getWorkingDirectory());
+
+      emulatorNode.setProperty("LaunchAfterEnabled", emulator.getExitScript().isEnabled() ? "True" : "False");
+      emulatorNode.setProperty("LaunchAfterExecutable", emulator.getExitScript().getExecuteable());
+      emulatorNode.setProperty("LaunchAfterParameters", emulator.getExitScript().getExecuteable());
+      emulatorNode.setProperty("LaunchAfterWorkingPath", emulator.getExitScript().getWorkingDirectory());
+    }
+
+    saveIni(iniConfiguration);
+
     return emulator;
   }
 
@@ -266,7 +315,6 @@ public class PinballXConnector extends BaseConnector {
     beforeScript.setExecuteable(beforeExecutable);
     beforeScript.setParameters(beforeParameters);
 
-
     boolean afterEnabled = s.getBoolean("LaunchAfterEnabled", false);
     boolean afterHideWindow = s.getBoolean("LaunchAfterHideWindow", true);
     boolean afterWaitForExit = s.getBoolean("LaunchAfterWaitForExit", true);
@@ -281,16 +329,6 @@ public class PinballXConnector extends BaseConnector {
     afterScript.setWorkingDirectory(afterWorkingPath);
     afterScript.setExecuteable(afterExecutable);
     afterScript.setParameters(afterParameters);
-
-    if (tablePath == null || !new File(tablePath).exists()) {
-      LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
-      return null;
-    }
-
-    if (workingPath == null || !new File(workingPath).exists()) {
-      LOG.warn("Skipped loading of \"" + emuname + "\" because the workingPath is invalid");
-      return null;
-    }
 
     EmulatorType type = null;
     if (s.containsKey("SystemType")) {
@@ -660,11 +698,12 @@ public class PinballXConnector extends BaseConnector {
       //frontend launch script
       SubnodeConfiguration startup = iniConfiguration.getSection("StartupProgram");
       startup.setProperty("Enabled", " True");
+
       startup.setProperty("Executable", "frontend-launch.bat");
       startup.setProperty("WorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
-
       saveIni(iniConfiguration);
     }
+
   }
 
   private void saveIni(INIConfiguration iniConfiguration) {

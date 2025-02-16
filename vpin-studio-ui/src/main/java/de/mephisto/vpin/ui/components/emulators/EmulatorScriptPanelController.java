@@ -45,7 +45,7 @@ public class EmulatorScriptPanelController implements Initializable, IEmulatorSc
     }
   }
 
-  public void setData(Optional<GameEmulatorScript> script) {
+  public void setData(Optional<GameEmulatorRepresentation> emulator, Optional<GameEmulatorScript> script) {
     this.script = script;
     this.keywordList.setDisable(script.isEmpty());
     this.scriptText.setDisable(script.isEmpty());

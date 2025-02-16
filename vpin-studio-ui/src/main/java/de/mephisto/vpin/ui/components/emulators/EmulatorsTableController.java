@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.components.emulators;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
@@ -125,20 +126,6 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
       label.setGraphic(statusIcon);
 
       hbox.getChildren().add(label);
-
-//      CheckBox columnCheckbox = new CheckBox();
-//      columnCheckbox.setUserData(value);
-//      columnCheckbox.setSelected(model.isEnabled());
-//      columnCheckbox.getStyleClass().add("default-text");
-//      columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-//        @Override
-//        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-//          model.setEnabled(newValue);
-//          tableView.refresh();
-//        }
-//      });
-//
-//      hbox.getChildren().add(columnCheckbox);
       return hbox;
     }, this, true);
 
@@ -191,6 +178,9 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
       }
     });
 
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    columnDescription.setVisible(frontendType.equals(FrontendType.Popper));
+
     reload();
 
     List<EmulatorModel> items = tableView.getItems();
@@ -212,11 +202,11 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
 
   private static String getLabelCss(EmulatorModel value) {
     String status = "";
-    if (!value.isValid()) {
-      return WidgetFactory.ERROR_STYLE;
-    }
     if (!value.isEnabled()) {
       status = WidgetFactory.DISABLED_TEXT_STYLE;
+    }
+    else if (!value.isValid()) {
+      return WidgetFactory.ERROR_STYLE;
     }
     return status;
   }

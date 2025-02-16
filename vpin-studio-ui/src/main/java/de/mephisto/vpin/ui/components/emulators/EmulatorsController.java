@@ -134,7 +134,7 @@ public class EmulatorsController implements Initializable {
       emu.setMediaDirectory(customField1.getText());
     }
     else if (frontendType.equals(FrontendType.PinballX)) {
-      emu.setExeParameters(customField2.getText());
+      emu.setExeName(customField2.getText());
       emu.setExeParameters(customField1.getText());
     }
 
@@ -249,8 +249,8 @@ public class EmulatorsController implements Initializable {
     deleteBtn.setDisable(model.isEmpty());
 
     if (startScriptController != null) {
-      startScriptController.setData(model.map(GameEmulatorRepresentation::getLaunchScript));
-      exitScriptController.setData(model.map(GameEmulatorRepresentation::getExitScript));
+      startScriptController.setData(model, model.map(GameEmulatorRepresentation::getLaunchScript));
+      exitScriptController.setData(model, model.map(GameEmulatorRepresentation::getExitScript));
     }
 
 

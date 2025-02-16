@@ -19,6 +19,19 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
+            <VBox fx:id="infoContainer" styleClass="info-container">
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+               <children>
+                  <Label styleClass="default-text" text="For VPX emulators, these values are generated on server startup." />
+                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="You need to edit the emulator-****.bat files in the &quot;resources&quot; folder of the VPin Studio Server" />
+                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="manually to add or remove statements." />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="144.7999267578125" minWidth="10.0" prefWidth="144.7999267578125" />

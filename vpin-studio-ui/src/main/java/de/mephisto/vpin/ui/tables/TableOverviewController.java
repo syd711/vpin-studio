@@ -1726,6 +1726,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
 
+    refreshEmulators(uiSettings);
     if (this.models == null) {
       this.doReload();
     }
