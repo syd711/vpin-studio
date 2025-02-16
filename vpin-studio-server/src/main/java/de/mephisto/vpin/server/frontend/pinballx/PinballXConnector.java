@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.pinballx;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -250,6 +251,37 @@ public class PinballXConnector extends BaseConnector {
     String executable = s.getString("Executable");
     String parameters = s.getString("Parameters");
 
+    boolean beforeEnabled = s.getBoolean("LaunchBeforeEnabled", false);
+    boolean beforeHideWindow = s.getBoolean("LaunchBeforeHideWindow", true);
+    boolean beforeWaitForExit = s.getBoolean("LaunchBeforeWaitForExit", true);
+    String beforeWorkingPath = s.getString("LaunchBeforeWorkingPath");
+    String beforeExecutable = s.getString("LaunchBeforeExecutable");
+    String beforeParameters = s.getString("LaunchBeforeParameters");
+
+    GameEmulatorScript beforeScript = new GameEmulatorScript();
+    beforeScript.setEnabled(beforeEnabled);
+    beforeScript.setHideWindow(beforeHideWindow);
+    beforeScript.setWaitForExit(beforeWaitForExit);
+    beforeScript.setWorkingDirectory(beforeWorkingPath);
+    beforeScript.setExecuteable(beforeExecutable);
+    beforeScript.setParameters(beforeParameters);
+
+
+    boolean afterEnabled = s.getBoolean("LaunchAfterEnabled", false);
+    boolean afterHideWindow = s.getBoolean("LaunchAfterHideWindow", true);
+    boolean afterWaitForExit = s.getBoolean("LaunchAfterWaitForExit", true);
+    String afterWorkingPath = s.getString("LaunchAfterWorkingPath");
+    String afterExecutable = s.getString("LaunchAfterExecutable");
+    String afterParameters = s.getString("LaunchAfterParameters");
+
+    GameEmulatorScript afterScript = new GameEmulatorScript();
+    afterScript.setEnabled(afterEnabled);
+    afterScript.setHideWindow(afterHideWindow);
+    afterScript.setWaitForExit(afterWaitForExit);
+    afterScript.setWorkingDirectory(afterWorkingPath);
+    afterScript.setExecuteable(afterExecutable);
+    afterScript.setParameters(afterParameters);
+
     if (tablePath == null || !new File(tablePath).exists()) {
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
       return null;
@@ -280,6 +312,8 @@ public class PinballXConnector extends BaseConnector {
     }
 
     GameEmulator e = new GameEmulator();
+    e.setLaunchScript(beforeScript);
+    e.setExitScript(afterScript);
     e.setType(type);
     e.setId(emuId);
     e.setName(emuname);

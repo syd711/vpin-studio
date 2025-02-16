@@ -95,8 +95,8 @@ public class EmulatorsController implements Initializable {
 
   private EmulatorsTableController tableController;
 
-  private EmulatorScriptPanelController startScriptController;
-  private EmulatorScriptPanelController exitScriptController;
+  private IEmulatorScriptPanel startScriptController;
+  private IEmulatorScriptPanel exitScriptController;
 
   private boolean saveDisabled = false;
 
@@ -112,13 +112,16 @@ public class EmulatorsController implements Initializable {
     emu.setEnabled(enabledCheckbox.isSelected());
     emu.setName(nameField.getText());
     emu.setDescription(descriptionField.getText());
-    emu.setLaunchScript(startScriptController.getData());
-    emu.setExitScript(exitScriptController.getData());
     emu.setGamesDirectory(gamesFolderField.getText());
     emu.setRomDirectory(romsFolderField.getText());
     emu.setInstallationDirectory(launchFolderField.getText());
     emu.setGameExt(fileExtensionField.getText());
     emu.setMediaDirectory(mediaFolderField.getText());
+
+    if (startScriptController != null) {
+      startScriptController.applyValues();
+      exitScriptController.applyValues();
+    }
 
     client.getEmulatorService().saveGameEmulator(emulator.get());
     Platform.runLater(() -> {
@@ -197,7 +200,6 @@ public class EmulatorsController implements Initializable {
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
     saveDisabled = true;
-//    tableController.setSelection(model);
     this.emulator = model;
 
     emulatorNameLabel.setText("");
@@ -224,9 +226,10 @@ public class EmulatorsController implements Initializable {
     deleteBtn.setDisable(model.isEmpty());
 
     if (startScriptController != null) {
-      startScriptController.setData(model, model.isPresent() ? model.get().getLaunchScript() : "");
-      exitScriptController.setData(model, model.isPresent() ? model.get().getExitScript() : "");
+      startScriptController.setData(model.map(GameEmulatorRepresentation::getLaunchScript));
+      exitScriptController.setData(model.map(GameEmulatorRepresentation::getExitScript));
     }
+
 
     if (model.isPresent()) {
       GameEmulatorRepresentation emulator = model.get();
@@ -273,8 +276,11 @@ public class EmulatorsController implements Initializable {
     if (frontendType.equals(FrontendType.Popper)) {
       loadPopperFrontend();
     }
-    else if (frontendType.equals(FrontendType.PinballX) || frontendType.equals(FrontendType.PinballY)) {
-
+    else if (frontendType.equals(FrontendType.PinballX)) {
+      loadPinballXFrontend();
+    }
+    else {
+      tabPane.setVisible(false);
     }
 
     createBtn.setVisible(frontendType.supportEmulatorCreateDelete());
@@ -318,6 +324,27 @@ public class EmulatorsController implements Initializable {
 
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-script.fxml"));
+      Parent builtInRoot = loader.load();
+      exitScriptController = loader.getController();
+      exitScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+  }
+
+  private void loadPinballXFrontend() {
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
+      Parent builtInRoot = loader.load();
+      startScriptController = loader.getController();
+      startScriptTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load emulator table: " + e.getMessage(), e);
+    }
+    try {
+      FXMLLoader loader = new FXMLLoader(EmulatorScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
       Parent builtInRoot = loader.load();
       exitScriptController = loader.getController();
       exitScriptTab.setContent(builtInRoot);

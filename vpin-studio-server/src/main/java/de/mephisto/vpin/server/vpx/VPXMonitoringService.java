@@ -4,6 +4,7 @@ import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;

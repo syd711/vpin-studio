@@ -11,7 +11,6 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;

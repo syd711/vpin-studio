@@ -66,7 +66,7 @@ public class InputPreferencesController implements Initializable {
       JFXFuture.supplyAsync(() -> {
         List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
         for (GameEmulatorRepresentation emulator : gameEmulators) {
-          String script = emulator.getLaunchScript();
+          String script = emulator.getLaunchScript().getScript();
           if (!StringUtils.isEmpty(script)) {
             String[] split = script.split("\n");
             for (String line : split) {

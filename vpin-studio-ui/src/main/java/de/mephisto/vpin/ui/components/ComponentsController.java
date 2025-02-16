@@ -210,7 +210,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
       rootTabPane.getTabs().remove(screensTab);
     }
 
-    if (EMULATORS_ENABLED && frontendType.isNotStandalone()) {
+    if (EMULATORS_ENABLED && frontendType.supportEmulators()) {
       try {
         FXMLLoader loader = new FXMLLoader(EmulatorsController.class.getResource("tab-emulators.fxml"));
         Parent builtInRoot = loader.load();

@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.altsound.AltSoundService;

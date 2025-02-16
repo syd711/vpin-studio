@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;

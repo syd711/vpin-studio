@@ -7,9 +7,7 @@ import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.playlists.Playlist;
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;

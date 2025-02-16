@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.server.archiving.*;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
@@ -13,9 +12,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -26,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class IOService {

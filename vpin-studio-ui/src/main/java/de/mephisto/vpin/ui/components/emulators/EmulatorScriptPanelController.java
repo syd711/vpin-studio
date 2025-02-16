@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components.emulators;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class EmulatorScriptPanelController implements Initializable {
+public class EmulatorScriptPanelController implements Initializable, IEmulatorScriptPanel {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorScriptPanelController.class);
 
   private final static List<String> KEYWORDS = Arrays.asList("[DIREMU]", "[DIRGAME]", "[DIRROM]", "[GAMEFULLNAME]", "[GAMENAME]", "[GAMEEXT]", "[STARTDIR]", "[CUSTOM1]", "[CUSTOM2]", "[CUSTOM3]", "[ALTEXE]", "[ALTMODE]", "[MEDIADIR]", "[PLAYLISTID]", "[TOURID]");
@@ -34,6 +35,7 @@ public class EmulatorScriptPanelController implements Initializable {
 
   @FXML
   private TextArea scriptText;
+  private Optional<GameEmulatorScript> script;
 
   @FXML
   private void onInsert() {
@@ -43,19 +45,21 @@ public class EmulatorScriptPanelController implements Initializable {
     }
   }
 
-  public void setData(Optional<GameEmulatorRepresentation> model, String value) {
-    this.keywordList.setDisable(model.isEmpty());
-    this.scriptText.setDisable(model.isEmpty());
-    this.insertBtn.setDisable(model.isEmpty());
+  public void setData(Optional<GameEmulatorScript> script) {
+    this.script = script;
+    this.keywordList.setDisable(script.isEmpty());
+    this.scriptText.setDisable(script.isEmpty());
+    this.insertBtn.setDisable(script.isEmpty());
 
     this.scriptText.setText("");
-    if (model.isPresent()) {
-      scriptText.setText(value);
+    if (script.isPresent()) {
+      scriptText.setText(script.get().getScript());
     }
   }
 
-  public String getData() {
-    return scriptText.getText();
+  @Override
+  public void applyValues() {
+    this.script.get().setScript(scriptText.getText());
   }
 
   @Override

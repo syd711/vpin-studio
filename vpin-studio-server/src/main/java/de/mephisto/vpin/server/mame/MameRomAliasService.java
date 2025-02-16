@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;

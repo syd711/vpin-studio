@@ -31,8 +31,9 @@ public class GameEmulatorRepresentation {
   private String altColorDirectory;
   private String nvramDirectory;
 
-  private String launchScript;
-  private String exitScript;
+  private GameEmulatorScript launchScript;
+  private GameEmulatorScript exitScript;
+
   private List<ValidationState> validationStates = new ArrayList<>();
 
   public List<ValidationState> getValidationStates() {
@@ -59,19 +60,19 @@ public class GameEmulatorRepresentation {
     this.enabled = enabled;
   }
 
-  public String getLaunchScript() {
+  public GameEmulatorScript getLaunchScript() {
     return launchScript;
   }
 
-  public void setLaunchScript(String launchScript) {
+  public void setLaunchScript(GameEmulatorScript launchScript) {
     this.launchScript = launchScript;
   }
 
-  public String getExitScript() {
+  public GameEmulatorScript getExitScript() {
     return exitScript;
   }
 
-  public void setExitScript(String exitScript) {
+  public void setExitScript(GameEmulatorScript exitScript) {
     this.exitScript = exitScript;
   }
 

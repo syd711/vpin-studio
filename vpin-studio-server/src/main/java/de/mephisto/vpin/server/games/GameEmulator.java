@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.mame.MameUtil;
@@ -31,8 +32,9 @@ public class GameEmulator {
   private String exeParameters;
   private String gameExt;
 
-  private String launchScript;
-  private String exitScript;
+  private GameEmulatorScript launchScript = new GameEmulatorScript();
+  private GameEmulatorScript exitScript = new GameEmulatorScript();
+
   private List<ValidationState> validationStates = new ArrayList<>();
 
   public List<ValidationState> getValidationStates() {
@@ -116,19 +118,19 @@ public class GameEmulator {
     this.enabled = enabled;
   }
 
-  public String getLaunchScript() {
+  public GameEmulatorScript getLaunchScript() {
     return launchScript;
   }
 
-  public void setLaunchScript(String launchScript) {
+  public void setLaunchScript(GameEmulatorScript launchScript) {
     this.launchScript = launchScript;
   }
 
-  public String getExitScript() {
+  public GameEmulatorScript getExitScript() {
     return exitScript;
   }
 
-  public void setExitScript(String exitScript) {
+  public void setExitScript(GameEmulatorScript exitScript) {
     this.exitScript = exitScript;
   }
 
