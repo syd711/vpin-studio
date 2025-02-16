@@ -1,7 +1,5 @@
 package de.mephisto.vpin.ui.components.screens;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendScreenSummary;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
@@ -13,6 +11,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -34,12 +34,14 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class ManagedScreenController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManagedScreenController.class);
   public static final int OFFSET =410;
-  private final Debouncer debouncer = new Debouncer();
 
   private static final String COLOR_MONITOR = "#CCCCCC";
   private static final String COLOR_FRONTEND_SCREEN = "#9999FF";
   private static final String COLOR_SCREENRES_SCREEN = "#33FF33";
   private static final String COLOR_VPX_SCREEN = "#66AA11";
+
+  @FXML
+  private ScrollPane scrollPane;
 
   @FXML
   private Pane previewCanvas;
@@ -48,19 +50,22 @@ public class ManagedScreenController implements Initializable {
   private BorderPane root;
 
   @FXML
-  private CheckBox vpxPlayfieldCheckbox;
-
-  @FXML
   private CheckBox showAllFrontendCheckbox;
 
   @FXML
   private CheckBox showAllScreenResCheckbox;
 
   @FXML
+  private CheckBox showAllVpxCheckbox;
+
+  @FXML
   private VBox frontendPanel;
 
   @FXML
   private VBox screenResPanel;
+
+  @FXML
+  private VBox vpxPanel;
 
   @FXML
   private FontIcon frontendScreenIcon;
@@ -71,50 +76,33 @@ public class ManagedScreenController implements Initializable {
   @FXML
   private FontIcon vpxScreenIcon;
 
+  @FXML
+  private VBox errorsVbox;  
+
   private double zoom = 1;
 
   private List<CheckBox> frontendScreensCheckboxes = new ArrayList<>();
   private List<CheckBox> screenResScreensCheckboxes = new ArrayList<>();
+  private List<CheckBox> vpxScreensCheckboxes = new ArrayList<>();
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Studio.stage.widthProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
-      refreshPreview();
+      refreshPreview(false);
     }));
     Studio.stage.heightProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
-      refreshPreview();
+      refreshPreview(false);
     }));
 
     frontendScreenIcon.setIconColor(Paint.valueOf(COLOR_FRONTEND_SCREEN));
     screenResScreenIcon.setIconColor(Paint.valueOf(COLOR_SCREENRES_SCREEN));
     vpxScreenIcon.setIconColor(Paint.valueOf(COLOR_VPX_SCREEN));
 
-    FrontendScreenSummary screenSummary = client.getFrontendService().getScreenSummary(false);
-    renderScreenCheckboxes(screenSummary.getFrontendDisplays(), frontendPanel, frontendScreensCheckboxes);
-    renderScreenCheckboxes(screenSummary.getScreenResDisplays(), screenResPanel, screenResScreensCheckboxes);
-
-    List<FrontendPlayerDisplay> vpxDisplaysDisplays = screenSummary.getVpxDisplaysDisplays();
-    if (!vpxDisplaysDisplays.isEmpty()) {
-      FrontendPlayerDisplay frontendPlayerDisplay = vpxDisplaysDisplays.get(0);
-      vpxPlayfieldCheckbox.setText(frontendPlayerDisplay.getName() + " [" + frontendPlayerDisplay.getWidth() + "x" + frontendPlayerDisplay.getHeight() + "]");
-      if (frontendPlayerDisplay.getWidth() == 0) {
-        vpxPlayfieldCheckbox.setSelected(false);
-        vpxPlayfieldCheckbox.setDisable(true);
-      }
-    }
-
-    vpxPlayfieldCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        refreshPreview();
-      }
-    });
-
     showAllFrontendCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         frontendScreensCheckboxes.stream().forEach(c -> c.setSelected(newValue));
-        refreshPreview();
+        refreshPreview(false);
       }
     });
 
@@ -122,88 +110,126 @@ public class ManagedScreenController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         screenResScreensCheckboxes.stream().forEach(c -> c.setSelected(newValue));
-        refreshPreview();
+        refreshPreview(false);
       }
     });
 
+    showAllVpxCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        vpxScreensCheckboxes.stream().forEach(c -> c.setSelected(newValue));
+        refreshPreview(false);
+      }
+    });
 
-    refreshPreview();
+    refreshPreview(true);
   }
 
-  private void renderScreenCheckboxes(List<FrontendPlayerDisplay> frontendDisplays, VBox parent, List<CheckBox> result) {
+  private void renderScreenCheckboxes(List<FrontendPlayerDisplay> frontendDisplays, VBox parent, List<CheckBox> result, CheckBox showAllCheckbox) {
+
+    // If there is only one display, hide the 'showAll' checkbox
+    parent.getChildren().get(1).setManaged(frontendDisplays.size() > 1);
+    parent.getChildren().get(1).setVisible(frontendDisplays.size() > 1);
+
+    // remove all checkboxes if any
+    while (parent.getChildren().size() > 2) {
+      parent.getChildren().remove(2);
+    }
+    result.clear();
+
     for (FrontendPlayerDisplay frontendDisplay : frontendDisplays) {
       CheckBox screenCheckbox = new CheckBox();
-      screenCheckbox.setSelected(true);
+      screenCheckbox.setSelected(showAllCheckbox.isSelected());
       screenCheckbox.setUserData(frontendDisplay);
       screenCheckbox.getStyleClass().add("default-text");
       screenCheckbox.setText(frontendDisplay.getName() + " [" + frontendDisplay.getWidth() + "x" + frontendDisplay.getHeight() + "]");
-      screenCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshPreview());
+      screenCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> refreshPreview(false));
       parent.getChildren().add(screenCheckbox);
       result.add(screenCheckbox);
     }
   }
 
   public void reload() {
-    refreshPreview();
+    refreshPreview(true);
   }
 
-  private void refreshPreview() {
+  /**
+   * Reload / redraw the preview
+   */
+  private void refreshPreview(boolean relodData) {
     this.previewCanvas.setPrefWidth((Studio.stage.getWidth() - OFFSET));
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
     List<MonitorInfo> monitorInfos = systemSummary.getScreenInfos();
-    previewCanvas.getChildren().removeAll(previewCanvas.getChildren());
+    previewCanvas.getChildren().clear();
 
-    int x = 0;
-    int canvasMaxHeight = 0;
-    int canvasTotalWidth = 0;
+    double canvasMinX = Integer.MAX_VALUE, canvasMinY = Integer.MAX_VALUE;
+    double canvasMaxX = Integer.MIN_VALUE, canvasMaxY = Integer.MIN_VALUE;
     for (MonitorInfo monitorInfo : monitorInfos) {
-      canvasTotalWidth += monitorInfo.getWidth();
+      canvasMinX = Math.min(canvasMinX, monitorInfo.getX());
+      canvasMinY = Math.min(canvasMinY, monitorInfo.getY());
+      canvasMaxX = Math.max(canvasMaxX, monitorInfo.getX() + monitorInfo.getWidth());
+      canvasMaxY = Math.max(canvasMaxY, monitorInfo.getY() + monitorInfo.getHeight());
     }
+    double canvasTotalWidth = canvasMaxX - canvasMinX;
+    double canvasTotalHeight = canvasMaxY - canvasMinY;
+    double percentage = Math.min(
+        (scrollPane.getWidth() * 100 / canvasTotalWidth) / 100,
+        (scrollPane.getHeight() * 100 / canvasTotalHeight) / 100);
 
-    double percentage = (this.previewCanvas.getPrefWidth() * 100 / canvasTotalWidth) / 100;
     for (MonitorInfo monitorInfo : monitorInfos) {
       double width = monitorInfo.getWidth() * percentage * zoom;
       double height = monitorInfo.getHeight() * percentage * zoom;
-//      if (height > width) {
-//        width = monitorInfo.getHeight() * percentage * zoom;
-//        height = monitorInfo.getWidth() * percentage * zoom;
-//      }
+      double x = (monitorInfo.getX() - canvasMinX) * percentage * zoom;
+      double y = (monitorInfo.getY() - canvasMinY) * percentage * zoom;
 
-      drawScreenCanvas(monitorInfo.toString(), x, 0, (int) width, (int) height, COLOR_MONITOR, 36);
-      if (height > canvasMaxHeight) {
-        canvasMaxHeight = (int) height;
-      }
-
-      x = (int) (x + (width));
+      drawScreenCanvas(monitorInfo.toString(), (int) x, (int) y, (int) width, (int) height, COLOR_MONITOR, 36);
     }
 
-    previewCanvas.setPrefHeight(canvasMaxHeight);
-    previewCanvas.setMinHeight(canvasMaxHeight);
+    previewCanvas.setPrefWidth(canvasTotalWidth * percentage * zoom);
+    previewCanvas.setMinWidth(canvasTotalWidth * percentage * zoom);
 
+    previewCanvas.setPrefHeight(canvasTotalHeight * percentage * zoom);
+    previewCanvas.setMinHeight(canvasTotalHeight * percentage * zoom);
 
-    FrontendScreenSummary screenSummary = client.getFrontendService().getScreenSummary(false);
-    drawScreens(screenSummary.getFrontendDisplays(), canvasTotalWidth, COLOR_FRONTEND_SCREEN, 16, frontendScreensCheckboxes);
-    drawScreens(screenSummary.getScreenResDisplays(), canvasTotalWidth, COLOR_SCREENRES_SCREEN, 16, screenResScreensCheckboxes);
+    FrontendScreenSummary screenSummary = client.getFrontendService().getScreenSummary(relodData);
 
-    if (vpxPlayfieldCheckbox.isSelected()) {
-      drawScreens(screenSummary.getVpxDisplaysDisplays(), canvasTotalWidth, COLOR_VPX_SCREEN, 16, Collections.emptyList());
+    if (relodData) {
+      renderScreenCheckboxes(screenSummary.getFrontendDisplays(), frontendPanel, frontendScreensCheckboxes, showAllFrontendCheckbox);
+      renderScreenCheckboxes(screenSummary.getScreenResDisplays(), screenResPanel, screenResScreensCheckboxes, showAllScreenResCheckbox);
+      renderScreenCheckboxes(screenSummary.getVpxDisplaysDisplays(), vpxPanel, vpxScreensCheckboxes, showAllVpxCheckbox);
     }
 
+    drawScreens(screenSummary.getFrontendDisplays(), canvasMinX, canvasMinY, percentage, COLOR_FRONTEND_SCREEN, 16, frontendScreensCheckboxes);
+    drawScreens(screenSummary.getScreenResDisplays(), canvasMinX, canvasMinY, percentage, COLOR_SCREENRES_SCREEN, 16, screenResScreensCheckboxes);
+    drawScreens(screenSummary.getVpxDisplaysDisplays(), canvasMinX, canvasMinY, percentage, COLOR_VPX_SCREEN, 16, vpxScreensCheckboxes);
+
+    if (relodData) {
+      addErrors(screenSummary.getErrors(), errorsVbox);
+    }
+  
     previewCanvas.requestLayout();
     root.requestLayout();
   }
 
-  private void drawScreens(List<FrontendPlayerDisplay> frontendDisplays, int canvasWidthTotal, String color, int textYOffset, List<CheckBox> checkboxes) {
+  private void addErrors(List<String> errors, VBox errorsVbox) {
+    errorsVbox.getChildren().clear();
+    for (String error : errors) {
+      Label l = new Label(error);
+      errorsVbox.getChildren().add(l);
+    }
+  }
+  
+  private void drawScreens(List<FrontendPlayerDisplay> frontendDisplays, double canvasMinX, double canvasMinY, double scalingPercentage, 
+      String color, int textYOffset, List<CheckBox> checkboxes) {
     for (FrontendPlayerDisplay frontendDisplay : frontendDisplays) {
       Optional<CheckBox> first = checkboxes.stream().filter(c -> c.getUserData().equals(frontendDisplay)).findFirst();
       if (first.isPresent() && !first.get().isSelected()) {
         continue;
       }
 
-      double scalingPercentage = (previewCanvas.getPrefWidth() * 100 / canvasWidthTotal) / 100;
-      int x = (int) (frontendDisplay.getX() * scalingPercentage * zoom);
-      int y = (int) (frontendDisplay.getY() * scalingPercentage * zoom);
+      int x = (int) ((frontendDisplay.getX() - canvasMinX) * scalingPercentage * zoom);
+      int y = (int) ((frontendDisplay.getY() - canvasMinY)* scalingPercentage * zoom);
       int w = (int) (frontendDisplay.getWidth() * scalingPercentage * zoom);
       int h = (int) (frontendDisplay.getHeight() * scalingPercentage * zoom);
 

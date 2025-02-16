@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class ScreensController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ScreensController.class);
 
   @FXML
-  private Pane screenRoot;
+  private BorderPane screenRoot;
 
   @FXML
   private Button zoomInBtn;
@@ -60,7 +60,7 @@ public class ScreensController implements Initializable {
       FXMLLoader loader = new FXMLLoader(ManagedScreenController.class.getResource("managed-screen.fxml"));
       Parent builtInRoot = loader.load();
       controller = loader.getController();
-      screenRoot.getChildren().add(builtInRoot);
+      screenRoot.setCenter(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load managed screen: " + e.getMessage(), e);
