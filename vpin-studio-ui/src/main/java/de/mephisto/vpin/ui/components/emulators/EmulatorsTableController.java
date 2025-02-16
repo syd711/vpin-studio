@@ -215,6 +215,11 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
     return status;
   }
 
+  public void select(GameEmulatorRepresentation gameEmulatorRepresentation) {
+    EmulatorModel model = toModel(gameEmulatorRepresentation);
+    tableView.getSelectionModel().select(model);
+  }
+
   @Override
   protected EmulatorModel toModel(GameEmulatorRepresentation emulatorRepresentation) {
     return new EmulatorModel(emulatorRepresentation);

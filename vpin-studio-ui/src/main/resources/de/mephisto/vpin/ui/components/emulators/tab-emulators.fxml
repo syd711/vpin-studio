@@ -191,8 +191,19 @@
                         <Tooltip text="Create a new emulator configuration" />
                      </tooltip>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-star" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
+                  </Button>
+                  <Button fx:id="duplicateBtn" mnemonicParsing="false" onAction="#onDuplicate" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Duplicate the selected emulator" />
+                     </tooltip>
                   </Button>
                   <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                      <font>
