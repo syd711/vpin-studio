@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.util.LocalizedValidation;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -191,6 +192,11 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
     });
 
     reload();
+
+    List<EmulatorModel> items = tableView.getItems();
+    if(!items.isEmpty()) {
+      tableView.getSelectionModel().select(0);
+    }
   }
 
   private void refresh(Optional<GameEmulatorRepresentation> emulator) {

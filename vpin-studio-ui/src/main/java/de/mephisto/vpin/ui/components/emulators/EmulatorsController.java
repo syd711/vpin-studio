@@ -61,10 +61,10 @@ public class EmulatorsController implements Initializable {
   private TextField gamesFolderField;
 
   @FXML
-  private TextField fileExtensionField;
+  private TextField customField2;
 
   @FXML
-  private TextField mediaFolderField;
+  private TextField customField1;
 
   @FXML
   private TextField romsFolderField;
@@ -88,6 +88,18 @@ public class EmulatorsController implements Initializable {
   private Button duplicateBtn;
 
   @FXML
+  private Label customField1Label;
+
+  @FXML
+  private Label customField2Label;
+
+  @FXML
+  private Label descriptionLabel;
+
+  @FXML
+  private Label romsFolderLabel;
+
+  @FXML
   private Separator firstSeparator;
 
 
@@ -107,6 +119,7 @@ public class EmulatorsController implements Initializable {
       return;
     }
 
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     GameEmulatorRepresentation emu = emulator.get();
     emu.setEnabled(enabledCheckbox.isSelected());
@@ -115,8 +128,16 @@ public class EmulatorsController implements Initializable {
     emu.setGamesDirectory(gamesFolderField.getText());
     emu.setRomDirectory(romsFolderField.getText());
     emu.setInstallationDirectory(launchFolderField.getText());
-    emu.setGameExt(fileExtensionField.getText());
-    emu.setMediaDirectory(mediaFolderField.getText());
+
+    if (frontendType.equals(FrontendType.Popper)) {
+      emu.setGameExt(customField2.getText());
+      emu.setMediaDirectory(customField1.getText());
+    }
+    else if (frontendType.equals(FrontendType.PinballX)) {
+      emu.setExeParameters(customField2.getText());
+      emu.setExeParameters(customField1.getText());
+    }
+
 
     if (startScriptController != null) {
       startScriptController.applyValues();
@@ -199,6 +220,8 @@ public class EmulatorsController implements Initializable {
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
     saveDisabled = true;
     this.emulator = model;
 
@@ -208,17 +231,17 @@ public class EmulatorsController implements Initializable {
     enabledCheckbox.setSelected(false);
     enabledCheckbox.setDisable(model.isEmpty());
     nameField.setText("");
-    nameField.setDisable(model.isEmpty());
+    nameField.setDisable(model.isEmpty() || !frontendType.supportEmulatorCreateDelete());
     descriptionField.setText("");
     descriptionField.setDisable(model.isEmpty());
     launchFolderField.setText("");
     launchFolderField.setDisable(model.isEmpty());
     gamesFolderField.setText("");
     gamesFolderField.setDisable(model.isEmpty());
-    fileExtensionField.setText("");
-    fileExtensionField.setDisable(model.isEmpty());
-    mediaFolderField.setText("");
-    mediaFolderField.setDisable(model.isEmpty());
+    customField2.setText("");
+    customField2.setDisable(model.isEmpty());
+    customField1.setText("");
+    customField1.setDisable(model.isEmpty());
     romsFolderField.setText("");
     romsFolderField.setDisable(model.isEmpty());
 
@@ -242,9 +265,16 @@ public class EmulatorsController implements Initializable {
       descriptionField.setText(emulator.getDescription());
       launchFolderField.setText(emulator.getInstallationDirectory());
       gamesFolderField.setText(emulator.getGamesDirectory());
-      fileExtensionField.setText(emulator.getGameExt());
-      mediaFolderField.setText(emulator.getMediaDirectory());
       romsFolderField.setText(emulator.getRomDirectory());
+
+      if (frontendType.equals(FrontendType.Popper)) {
+        customField2.setText(emulator.getGameExt());
+        customField1.setText(emulator.getMediaDirectory());
+      }
+      else if (frontendType.equals(FrontendType.PinballX)) {
+        customField2.setText(emulator.getExeName());
+        customField1.setText(emulator.getExeParameters());
+      }
     }
 
     saveDisabled = false;
@@ -334,6 +364,13 @@ public class EmulatorsController implements Initializable {
   }
 
   private void loadPinballXFrontend() {
+    descriptionField.setVisible(false);
+    descriptionLabel.setVisible(false);
+    romsFolderLabel.setVisible(false);
+    romsFolderField.setVisible(false);
+    customField1Label.setText("Parameters:");
+    customField2Label.setText("Executable:");
+
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorBatScriptPanelController.class.getResource("panel-emulator-batscript.fxml"));
       Parent builtInRoot = loader.load();

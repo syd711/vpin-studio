@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -65,27 +64,12 @@
                                       </rowConstraints>
                                        <children>
                                           <Label styleClass="default-text" text="Name:" GridPane.rowIndex="1" />
-                                          <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Description:" GridPane.rowIndex="2" />
+                                          <Label fx:id="descriptionLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Description:" GridPane.rowIndex="2" />
                                           <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Launch Folder:" GridPane.rowIndex="3" />
                                           <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="Games Folder:" GridPane.rowIndex="4" />
-                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="5">
-                                             <children>
-                                                <Label styleClass="default-text" text="File Extension:" />
-                                                <Label textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip prefWidth="300.0" text="The file ending of the game to launch, e.g. .zip or .vpx." wrapText="true" />
-                                                   </tooltip>
-                                                </Label>
-                                             </children>
-                                          </HBox>
-                                          <Label layoutX="10.0" layoutY="136.0" styleClass="default-text" text="Media Folder:" GridPane.rowIndex="6" />
-                                          <Label layoutX="10.0" layoutY="166.0" styleClass="default-text" text="ROMs Folder:" GridPane.rowIndex="7" />
+                                          <Label fx:id="customField2Label" styleClass="default-text" text="File Extension:" GridPane.rowIndex="5" />
+                                          <Label fx:id="customField1Label" layoutX="10.0" layoutY="136.0" styleClass="default-text" text="Media Folder:" GridPane.rowIndex="6" />
+                                          <Label fx:id="romsFolderLabel" layoutX="10.0" layoutY="166.0" styleClass="default-text" text="ROMs Folder:" GridPane.rowIndex="7" />
                                           <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
@@ -106,16 +90,12 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <children>
-                                                <TextField fx:id="fileExtensionField" prefWidth="80.0">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
-                                             </children>
-                                          </HBox>
-                                          <TextField fx:id="mediaFolderField" layoutX="213.0" layoutY="144.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                          <TextField fx:id="customField2" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <TextField fx:id="customField1" layoutX="213.0" layoutY="144.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
