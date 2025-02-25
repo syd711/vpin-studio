@@ -159,6 +159,18 @@ public class PinballXConnector extends BaseConnector {
     else if (emulator.getType().equals(EmulatorType.PinballArcade)) {
       emulatorNode = iniConfiguration.getSection("PinballArcade");
     }
+    else {
+      //find section by name
+      Set<String> sections = iniConfiguration.getSections();
+      for (String set : sections) {
+        SubnodeConfiguration section = iniConfiguration.getSection(set);
+        if (section.getString("Name") != null && section.getString("Name").equals(emulator.getName())) {
+          emulatorNode = section;
+          break;
+        }
+      }
+
+    }
 
     if (emulatorNode == null) {
       LOG.warn("No matching PinballX emulator configuration found for {}", emulator.getType());
@@ -330,24 +342,7 @@ public class PinballXConnector extends BaseConnector {
     afterScript.setExecuteable(afterExecutable);
     afterScript.setParameters(afterParameters);
 
-    EmulatorType type = null;
-    if (s.containsKey("SystemType")) {
-      int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case 2:
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.OTHER;
-          break; // Custom Exe
-      }
-    }
-    else {
-      type = EmulatorType.fromName(emuname);
-    }
+    EmulatorType type = EmulatorType.fromName(emuname);
 
     GameEmulator e = new GameEmulator();
     e.setLaunchScript(beforeScript);
