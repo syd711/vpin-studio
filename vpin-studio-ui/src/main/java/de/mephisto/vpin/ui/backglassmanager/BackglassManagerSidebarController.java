@@ -76,6 +76,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Label nameLabel;
 
   @FXML
+  private Label filenameLabel;  
+
+  @FXML
   private Label typeLabel;
 
   @FXML
@@ -189,6 +192,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private ComboBox<B2SFormPosition> formToPosition;
+
+  @FXML
+  private Button reloadBtn;
 
   @FXML
   private Button renameBtn;
@@ -400,6 +406,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   @FXML
+  protected void onReload(ActionEvent e) {
+    getBackglassManagerController().onBackglassReload(e);
+  }
+
+  @FXML
   protected void onRename(ActionEvent e) {
     getBackglassManagerController().onRename(e);
   }
@@ -568,6 +579,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     this.tableData = null;
 
     nameLabel.setText("-");
+    filenameLabel.setText("-");
     typeLabel.setText("-");
     authorLabel.setText("-");
     artworkLabel.setText("-");
@@ -585,6 +597,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     skipSolenoidFrames.setDisable(true);
     skipLEDFrames.setDisable(true);
 
+    this.reloadBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
 
@@ -612,6 +625,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
             loadImages(emulatorId, directb2sFilename);
 
+            filenameLabel.setText(directb2sFilename);
             nameLabel.setText(tableData.getName());
             typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
             authorLabel.setText(tableData.getAuthor());
@@ -628,6 +642,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
             modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
+            this.reloadBtn.setDisable(false);
             this.renameBtn.setDisable(false);
             this.duplicateBtn.setDisable(false);
 

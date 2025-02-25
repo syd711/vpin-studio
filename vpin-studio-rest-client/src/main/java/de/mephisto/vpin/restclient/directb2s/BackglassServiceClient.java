@@ -72,8 +72,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public boolean clearCache() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "directb2s/clearcache", Boolean.class);
+    return getRestClient().get(API + "directb2s/clearcache", Boolean.class);
   }
 
   //--------------------------------

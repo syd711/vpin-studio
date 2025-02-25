@@ -158,7 +158,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   @FXML
-  private void onBackglassReload(ActionEvent e) {
+  public void onBackglassReload(ActionEvent e) {
     reloadSelection();
   }
 
@@ -339,7 +339,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
   @FXML
   private void onReload() {
-    client.getBackglassServiceClient().clearCache();
+    ProgressDialog.createProgressDialog(new WaitProgressModel<>("Invalidate Cache",
+      "Invalidating Backglasses Cache...", () -> {
+        client.getBackglassServiceClient().clearCache();
+      }));
     doReload();
   }
 
