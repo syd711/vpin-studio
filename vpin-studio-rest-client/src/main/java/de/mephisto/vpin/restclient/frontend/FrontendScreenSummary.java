@@ -7,6 +7,7 @@ public class FrontendScreenSummary {
   private List<FrontendPlayerDisplay> screenResDisplays = new ArrayList<>();
   private List<FrontendPlayerDisplay> vpxDisplaysDisplays = new ArrayList<>();
   private List<FrontendPlayerDisplay> frontendDisplays = new ArrayList<>();
+  private List<String> errors = new ArrayList<>();
 
   public List<FrontendPlayerDisplay> getScreenResDisplays() {
     return screenResDisplays;
@@ -30,5 +31,13 @@ public class FrontendScreenSummary {
 
   public void setFrontendDisplays(List<FrontendPlayerDisplay> frontendDisplays) {
     this.frontendDisplays = frontendDisplays;
+  }
+
+  public List<String> getErrors() {
+    return errors;
+  }
+
+  public void setErrors(List<String> errors) {
+    this.errors = errors;
   }
 }

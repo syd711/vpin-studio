@@ -10,16 +10,15 @@ import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.video.VideoConverterService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
@@ -53,7 +52,7 @@ public class DMDPositionService {
   @Autowired
   private VideoConverterService videoConverterService;
   @Autowired
-  private SystemService systemService;
+  private VPinScreenService screenService;
 
 
   public DMDInfo getDMDInfo(int gameId) {
@@ -144,7 +143,7 @@ public class DMDPositionService {
   private void fillScreenInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
     DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
-    addDeviceOffsets(screenres);
+    screenService.addDeviceOffsets(screenres);
 
     // determine on which screen the DMD is positionned onto
     if (dmdinfo.getCenterX() < 0) {
@@ -164,38 +163,6 @@ public class DMDPositionService {
     dmdinfo.setDmdScreenSet(screenres.hasDMD());
   }
 
-  private void addDeviceOffsets(DirectB2sScreenRes screenres) {
-    List<MonitorInfo> monitors = systemService.getMonitorInfos();
-
-    MonitorInfo monitor = null;
-
-    // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
-    String backglassDisplay = screenres.getBackglassDisplay();
-    if (backglassDisplay.startsWith("@")) {
-      int xPos = Integer.parseInt(backglassDisplay.substring(1));
-      for (MonitorInfo m : monitors) {
-        if (m.getX() == xPos) {
-          monitor = m;
-        }
-      }
-    }
-    else if (backglassDisplay.startsWith("=")) {
-      int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
-      monitor = idx < monitors.size() ? monitors.get(idx) : null;
-    }
-    else {
-      for (MonitorInfo m : monitors) {
-        if (m.getName().endsWith(backglassDisplay)) {
-          monitor = m;
-        }
-      }
-    }
-
-    if (monitor != null) {
-      screenres.setBackglassDisplayX((int) monitor.getX());
-      screenres.setBackglassDisplayY((int) monitor.getY());
-    }
-  }
 
   private void fillScreenInfo(DMDInfo dmdinfo, DirectB2sScreenRes screenres, VPinScreen onScreen) {
     // All coordinates in DMDInfo are relative to display
@@ -316,7 +283,7 @@ public class DMDPositionService {
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
     DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
-    addDeviceOffsets(screenres);
+    screenService.addDeviceOffsets(screenres);
 
     // enforce aspect ratio
     dmdinfo.adjustAspectRatio();

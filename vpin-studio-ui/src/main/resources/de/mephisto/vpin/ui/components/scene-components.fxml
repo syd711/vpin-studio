@@ -101,11 +101,6 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="error-title" text="- This system manager is for PinUP Baller installer based installations." textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
                   <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="- Read the instruction boxes carefully." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />

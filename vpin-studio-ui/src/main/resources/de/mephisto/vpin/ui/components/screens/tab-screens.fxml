@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ToolBar?>
@@ -44,10 +45,12 @@
       </ToolBar>
    </top>
    <center>
-      <ScrollPane style="-fx-border-color: #111111;" BorderPane.alignment="CENTER">
-         <content>
-            <VBox fx:id="screenRoot" spacing="6.0" />
-         </content>
-      </ScrollPane>
+      <BorderPane fx:id="screenRoot" style="-fx-border-color: #111111;" BorderPane.alignment="CENTER">
+         <center>
+         </center>
+         <padding>
+            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+         </padding>
+      </BorderPane>
    </center>
 </BorderPane>
