@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -15,10 +16,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.frontend.FrontendResource;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameDetailsRepository;
-import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
@@ -57,6 +55,7 @@ abstract public class AbstractVPinServerTest {
 
   static {
     SystemService.RESOURCES = "../resources/";
+    Features.MANIA_ENABLED = false;
   }
 
   @Autowired
@@ -114,16 +113,17 @@ abstract public class AbstractVPinServerTest {
    * To force usage of a given Frontend
    */
   protected GameEmulator buildGameEmulator() {
-    Emulator emulator = new Emulator(EmulatorType.VisualPinball);
+    GameEmulator emulator = new GameEmulator();
     emulator.setDescription("VPX");
+    emulator.setType(EmulatorType.VisualPinball);
     emulator.setName("VPX");
-    emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
-    emulator.setDirRoms("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
-    emulator.setDirMedia("../testsystem/vPinball/PinUPSystem/POPMedia");
-    emulator.setDirGames("../testsystem/vPinball/VisualPinball/Tables/");
-    emulator.setGamesExt("vpx");
+    emulator.setInstallationDirectory("../testsystem/vPinball/VisualPinball/");
+    emulator.setRomDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");
+    emulator.setMediaDirectory("../testsystem/vPinball/PinUPSystem/POPMedia");
+    emulator.setGamesDirectory("../testsystem/vPinball/VisualPinball/Tables/");
+    emulator.setGameExt("vpx");
 
-    return new GameEmulator(emulator);
+    return emulator;
   }
 
   public void setupSystem(FrontendType frontendType) {

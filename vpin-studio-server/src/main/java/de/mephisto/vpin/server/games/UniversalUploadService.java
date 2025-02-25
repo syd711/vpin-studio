@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -76,6 +77,9 @@ public class UniversalUploadService {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
@@ -189,7 +193,7 @@ public class UniversalUploadService {
             rom = game.getRom();
           }
           //TODO better music bundle handling based on emulators
-          File musicFolder = frontendService.getDefaultGameEmulator().getMusicFolder();
+          File musicFolder = emulatorService.getDefaultGameEmulator().getMusicFolder();
           vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         }
         break;

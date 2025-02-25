@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -42,7 +44,6 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -209,6 +210,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button tableEditBtn;
 
   @FXML
+  private Button emulatorBtn;
+
+  @FXML
   private Separator importSeparator;
 
   @FXML
@@ -320,6 +324,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   // Add a public no-args constructor
   public TableOverviewController() {
+  }
+
+  @FXML
+  private void onEmulatorManager() {
+    GameEmulatorRepresentation emu = emulatorCombo.getSelectionModel().getSelectedItem();
+    if (emu != null) {
+      NavigationController.navigateTo(NavigationItem.SystemManager, new NavigationOptions(emulatorCombo.getSelectionModel().getSelectedItem()));
+    }
   }
 
   @FXML
@@ -609,13 +621,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void openUploadDialog(@Nullable UploadType uploadType) {
     GameRepresentation game = getSelection();
     if (game != null) {
-      GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-      TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
+      GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      TableDialogs.openTableUploadDialog(game, emu.getType(), uploadType, null);
     }
     else {
       GameEmulatorRepresentation value = emulatorCombo.getValue();
       if (value != null) {
-        TableDialogs.openTableUploadDialog(null, value.getEmulatorType(), uploadType, null);
+        TableDialogs.openTableUploadDialog(null, value.getType(), uploadType, null);
       }
       else {
         TableDialogs.openTableUploadDialog(null, null, uploadType, null);
@@ -898,7 +910,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameRepresentation selection = getSelection();
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    boolean isAllVpxSelected = client.getFrontendService().isAllVpx(value);
+    boolean isAllVpxSelected = client.getEmulatorService().isAllVpx(value);
 
     JFXFuture.supplyAsync(() -> {
           if (clearCache) {
@@ -992,9 +1004,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithAllVpx(uiSettings));
+    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings));
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
+
+    emulatorBtn.setDisable(selectedEmu == null || selectedEmu.getId() == -1);
 
     if (selectedEmu == null) {
       this.emulatorCombo.getSelectionModel().selectFirst();
@@ -1004,7 +1018,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   private void bindTable() {
-    tableView.setPlaceholder(new Label("No matching tables found."));
+    tableView.setPlaceholder(new Label("No matching games found."));
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -1643,7 +1657,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void reloadItem(GameRepresentation refreshedGame) {
     // reload only if the emulator is matching
     GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
       super.reloadItem(refreshedGame);
     }
   }
@@ -1712,6 +1726,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
 
+    refreshEmulators(uiSettings);
     if (this.models == null) {
       this.doReload();
     }
@@ -1801,7 +1816,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else {
       GameRepresentation game = client.getGameService().getGame(gameId);
-      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       GameEmulatorRepresentation value = emulatorCombo.getValue();
       if (value.getId() != gameEmulator.getId()) {
         reloadConsumers.add(new Consumer<GameRepresentation>() {
@@ -1824,7 +1839,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
     playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
-
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
@@ -1949,6 +1963,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importBtn.setDisable(!vpxOrFpEmulator);
+    this.emulatorBtn.setDisable(newValue == null || newValue.getId() == -1);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.uploadTableBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);
@@ -2062,7 +2077,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public GameEmulatorRepresentation getEmulatorSelection() {
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    return client.getFrontendService().isAllVpx(selectedEmu) ? null : selectedEmu;
+    return client.getEmulatorService().isAllVpx(selectedEmu) ? null : selectedEmu;
   }
 
   public void onPlay() {

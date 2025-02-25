@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;

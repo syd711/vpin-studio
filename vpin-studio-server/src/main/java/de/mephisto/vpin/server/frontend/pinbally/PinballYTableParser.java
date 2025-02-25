@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXTableParser;
+import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedWriter;
@@ -11,7 +11,7 @@ import java.text.ParseException;
 
 public class PinballYTableParser extends PinballXTableParser {
 
-  protected void doPreParsing(TableDetails detail, Emulator emu, String name) {
+  protected void doPreParsing(TableDetails detail, GameEmulator emu, String name) {
     super.doPreParsing(detail, emu, name);
   }
 

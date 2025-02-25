@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
@@ -18,7 +19,6 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
-import de.mephisto.vpin.server.webhooks.WebhooksService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.sql.Date;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
@@ -52,11 +51,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private VpsService vpsService;
 
   @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
 
   private FrontendStatusService frontendStatusService;
 
-  private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
   private List<FrontendPlayerDisplay> frontendPlayerDisplays;
 
   public void setFrontendStatusService(FrontendStatusService frontendStatusService) {
@@ -95,61 +96,15 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //----------------------------------------
   // Access to cached emulators
 
-  public GameEmulator getGameEmulator(int emulatorId) {
-    return this.emulators.get(emulatorId);
-  }
-
-  public List<GameEmulator> getGameEmulators() {
-    return new ArrayList<>(this.emulators.values());
-  }
-
-  public List<GameEmulator> getVpxGameEmulators() {
-    return this.emulators.values().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
-  }
-
-  public List<GameEmulator> getBackglassGameEmulators() {
-    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
-    return gameEmulators.stream().filter(e -> {
-      return e.isVpxEmulator() || e.isFpEmulator();
-    }).collect(Collectors.toList());
-  }
-
-  public GameEmulator getDefaultGameEmulator() {
-    Collection<GameEmulator> values = emulators.values();
-
-    // when there is only one VPX emulator, it is forcibly the default one
-    if (values.size() == 1) {
-      GameEmulator value = values.iterator().next();
-      return value.isVpxEmulator() ? value : null;
-    }
-
-    for (GameEmulator value : values) {
-      if (value.getDescription() != null && value.isVpxEmulator() && value.getDescription().contains("default")) {
-        return value;
-      }
-    }
-
-    for (GameEmulator value : values) {
-      if (value.isVpxEmulator() && value.getNvramFolder().exists()) {
-        return value;
-      }
-      else {
-        LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
-      }
-    }
-    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
-    return null;
-  }
-
   //-----------------------------------
 
   public TableDetails getTableDetails(int id) {
     FrontendConnector frontend = getFrontendConnector();
     TableDetails manifest = frontend.getTableDetails(id);
     if (manifest != null) {
-      GameEmulator emu = emulators.get(manifest.getEmulatorId());
+      GameEmulator emu = emulatorService.getGameEmulator(manifest.getEmulatorId());
       if (emu != null) {
-        manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
+        manifest.setLauncherList(new ArrayList<>(emulatorService.getAltExeNames(emu)));
       }
     }
     return manifest;
@@ -171,7 +126,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //--------------------------
   private Game setGameEmulator(Game game) {
     if (game != null) {
-      GameEmulator emulator = emulators.get(game.getEmulatorId());
+      GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
       if (emulator != null) {
         game.setEmulator(emulator);
       }
@@ -214,7 +169,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
    * Usefull to derive a game from a backglass name
    */
   public Game getGameByBaseFilename(int emulatorId, String filename) {
-    GameEmulator emu = getGameEmulator(emulatorId);
+    GameEmulator emu = emulatorService.getGameEmulator(emulatorId);
     String gameFilename = filename + "." + emu.getGameExt();
     return getGameByFilename(emulatorId, gameFilename);
   }
@@ -445,7 +400,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       count++;
     }
 
-    GameEmulator gameEmulator = emulators.get(emuId);
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emuId);
     String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
     return getFrontendConnector().importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
@@ -463,17 +418,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     getFrontendConnector().deleteGames(emuId);
   }
 
-  public int getGameCount() {
-    int count = 0;
-    for (GameEmulator value : this.emulators.values()) {
-      count += getFrontendConnector().getGameCount(value.getId());
-    }
-    return count;
-  }
-
   public List<Integer> getGameIds() {
     List<Integer> result = new ArrayList<>();
-    for (GameEmulator value : this.emulators.values()) {
+    List<GameEmulator> validGameEmulators = emulatorService.getValidGameEmulators();
+    for (GameEmulator value : validGameEmulators) {
       result.addAll(getFrontendConnector().getGameIds(value.getId()));
     }
     return result;
@@ -584,64 +532,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return frontendPlayerDisplays;
   }
 
-  public boolean isValidVPXEmulator(Emulator emulator) {
-    if (!emulator.getType().isVpxEmulator()) {
-      return false;
-    }
-
-    if (!emulator.isVisible()) {
-      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirGames())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
-      return false;
-    }
-
-    if (getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
-      return false;
-    }
-
-    return true;
-  }
-
-  public void loadEmulators() {
-    FrontendConnector frontendConnector = getFrontendConnector();
-    frontendConnector.reloadCache();
-    List<Emulator> ems = frontendConnector.getEmulators();
-    this.emulators.clear();
-    for (Emulator emulator : ems) {
-      try {
-        if (!emulator.isVisible()) {
-          continue;
-        }
-        if (!emulator.isEnabled()) {
-          continue;
-        }
-
-        if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
-          continue;
-        }
-
-        GameEmulator gameEmulator = new GameEmulator(emulator);
-        emulators.put(emulator.getId(), gameEmulator);
-
-        LOG.info("Loaded Emulator: " + gameEmulator);
-      }
-      catch (Exception e) {
-        LOG.error("Emulator initialization failed: " + e.getMessage(), e);
-      }
-    }
-
-    if (this.emulators.isEmpty()) {
-      LOG.error("*****************************************************************************************");
-      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your frontend.");
-      LOG.error("*****************************************************************************************");
-    }
-  }
-
   public boolean isFrontendRunning() {
     return getFrontendConnector().isFrontendRunning();
   }
@@ -657,7 +547,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //--------------------------
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
-    GameEmulator emu = getDefaultGameEmulator();
+    GameEmulator emu = emulatorService.getDefaultGameEmulator();
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
     return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emu, screen) : null;
   }
@@ -699,6 +589,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   /**
    * Launches the given game through the frontend.
+   *
    * @param game
    * @return
    */
@@ -773,11 +664,20 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     }
   }
 
+  public GameEmulator saveEmulator(GameEmulator emulator) {
+    return getFrontendConnector().saveEmulator(emulator);
+  }
+
+  public boolean deleteEmulator(int emulatorId) {
+    return getFrontendConnector().deleteEmulator(emulatorId);
+  }
+
   @Override
   public void afterPropertiesSet() {
     try {
+      emulatorService.setFrontendService(this);
       getFrontendConnector().initializeConnector();
-      this.loadEmulators();
+      emulatorService.loadEmulators();
 
       getFrontendConnector().getFrontendPlayerDisplays();
       preferencesService.addChangeListener(this);

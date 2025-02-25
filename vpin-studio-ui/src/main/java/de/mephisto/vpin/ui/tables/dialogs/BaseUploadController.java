@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
@@ -148,7 +148,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     if (useEmulators) {
       this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
+      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getVpxGameEmulators();
       emulator = gameEmulators.get(0);
       ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
       emulatorCombo.setItems(emulators);

@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
@@ -304,7 +304,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     filterButton.getStyleClass().remove("filter-button-selected");
-    if (emuIds.size() != client.getFrontendService().getVpxGameEmulators().size()) {
+    if (emuIds.size() != client.getEmulatorService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
     }
@@ -525,7 +525,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       tableView.setItems(data);
     });
 
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox(gameEmulator.getName());

@@ -2,11 +2,10 @@ package de.mephisto.vpin.ui.tables.alx.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -96,7 +95,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
     deleteBtn.setDisable(true);
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
     GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();

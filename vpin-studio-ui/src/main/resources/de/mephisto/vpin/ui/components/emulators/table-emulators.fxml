@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsTableController">
+   <center>
+      <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
+         <center>
+            <StackPane fx:id="loaderStack">
+               <BorderPane.margin>
+                  <Insets bottom="6.0" />
+               </BorderPane.margin>
+               <children>
+                  <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                     <children>
+                        <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" prefWidth="850.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                           <columns>
+                              <TableColumn fx:id="columnSelection" maxWidth="55.199952602386475" minWidth="40.0" prefWidth="90.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;" />
+                              <TableColumn fx:id="columnName" maxWidth="-1.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                              <TableColumn fx:id="columnDescription" minWidth="100.0" prefWidth="200.0" style="-fx-alignment: BASELINE_LEFT;" text="Description" />
+                              <TableColumn fx:id="columnGamesDir" minWidth="10.4000244140625" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Games Folder" />
+                              <TableColumn fx:id="columnExtension" minWidth="10.4000244140625" prefWidth="90.0" sortable="false" style="-fx-alignment: CENTER;" text="Extension" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </StackPane>
+               </children>
+            </StackPane>
+         </center>
+         <bottom>
+            <BorderPane BorderPane.alignment="CENTER">
+               <top>
+                  <VBox alignment="TOP_RIGHT" BorderPane.alignment="TOP_RIGHT">
+                     <BorderPane.margin>
+                        <Insets bottom="3.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <Label fx:id="labelCount" textFill="WHITE" />
+                     </children>
+                  </VBox>
+               </top>
+               <center>
+                  <BorderPane fx:id="validationError" BorderPane.alignment="CENTER">
+                     <center>
+                        <VBox styleClass="error-container">
+                           <children>
+                              <BorderPane>
+                                 <left>
+                                    <Label fx:id="validationErrorLabel" text="Loading Emulators..." textFill="WHITE" BorderPane.alignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </left>
+                                 <right>
+                                    <HBox BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets right="6.0" />
+                                       </BorderPane.margin>
+                                    </HBox>
+                                 </right>
+                              </BorderPane>
+                              <Label fx:id="validationErrorText" textFill="WHITE">
+                                 <font>
+                                    <Font name="System" size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </center>
+                  </BorderPane>
+               </center>
+            </BorderPane>
+         </bottom>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </BorderPane>
+   </center>
+</BorderPane>

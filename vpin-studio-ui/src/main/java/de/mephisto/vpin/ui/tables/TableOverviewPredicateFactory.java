@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import org.apache.commons.lang3.StringUtils;

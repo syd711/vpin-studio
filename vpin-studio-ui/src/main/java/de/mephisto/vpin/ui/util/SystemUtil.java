@@ -77,8 +77,11 @@ public class SystemUtil {
         if (folder.exists()) {
           openFolderWithOS(folder.getAbsolutePath());
         }
-        else if (fallback.exists()) {
+        else if (fallback != null && fallback.exists()) {
           openFolderWithOS(fallback.getAbsolutePath());
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
         }
       }
       catch (IOException e) {

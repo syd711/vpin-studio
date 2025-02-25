@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -39,7 +39,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
     File folder = new File(defaultGameEmulator.getInstallationDirectory());
     openFolder(folder);
   }

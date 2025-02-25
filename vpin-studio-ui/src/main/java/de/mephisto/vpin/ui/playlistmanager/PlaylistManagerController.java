@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
@@ -248,7 +248,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           parentId = treeView.getRoot().getValue().getId();
         }
 
-        createPlaylist(value, parentId, client.getFrontendService().getDefaultGameEmulator().getId());
+        createPlaylist(value, parentId, client.getEmulatorService().getDefaultGameEmulator().getId());
       }
     }
     else {
@@ -269,7 +269,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
       //workaround for PinballX
       if (!client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists()) {
-        newPlayList.setEmulatorId(client.getFrontendService().getDefaultGameEmulator().getId());
+        newPlayList.setEmulatorId(client.getEmulatorService().getDefaultGameEmulator().getId());
       }
 
       JFXFuture
@@ -502,7 +502,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
             TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
             PlaylistRepresentation pl = selectedItem.getValue();
 
-            int emuId = client.getFrontendService().getDefaultGameEmulator().getId();
+            int emuId = client.getEmulatorService().getDefaultGameEmulator().getId();
             value = value.replaceAll("\\[EMULATOR_ID\\]", String.valueOf(emuId));
             return value;
           }

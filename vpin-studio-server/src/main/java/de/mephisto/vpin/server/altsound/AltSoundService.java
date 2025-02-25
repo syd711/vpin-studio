@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameService;
@@ -40,7 +40,7 @@ public class AltSoundService implements InitializingBean {
   private MameService mameService;
 
   @Autowired
-  private FrontendService frontendService;
+  private EmulatorService emulatorService;
 
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
@@ -49,7 +49,7 @@ public class AltSoundService implements InitializingBean {
   }
 
   public boolean delete(@NonNull Game game) {
-    GameEmulator emulator = frontendService.getGameEmulator(game.getEmulatorId());
+    GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
     if (!StringUtils.isEmpty(game.getRom())) {
       File folder = new File(emulator.getAltSoundFolder(), game.getRom());
       if (folder.exists()) {
@@ -68,6 +68,7 @@ public class AltSoundService implements InitializingBean {
     if (isAltSoundAvailable(game)) {
       String folder = game.getAltSoundFolder().getAbsolutePath();
       AltSound altSound = altSoundFolder2AltSound.get(folder);
+      altSound.setFolder(folder);
       altSound = AltSoundLoaderFactory.load(altSound);
       altSoundFolder2AltSound.put(folder, altSound);
       return altSound;
@@ -109,7 +110,7 @@ public class AltSoundService implements InitializingBean {
   }
 
   public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive) {
-    GameEmulator gameEmulator = frontendService.getGameEmulator(emulatorId);
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
     File altSoundFolder = new File(gameEmulator.getAltSoundFolder(), rom);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
       return JobDescriptorFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
@@ -133,7 +134,7 @@ public class AltSoundService implements InitializingBean {
   public boolean clearCache() {
     long start = System.currentTimeMillis();
     this.altSoundFolder2AltSound.clear();
-    List<GameEmulator> vpxGameEmulators = frontendService.getVpxGameEmulators();
+    List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
       File altSoundFolder = vpxGameEmulator.getAltSoundFolder();
       if (altSoundFolder.exists()) {
@@ -174,7 +175,7 @@ public class AltSoundService implements InitializingBean {
    * @return
    */
   public AltSound getAltSound(int emuId, String name) {
-    GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    GameEmulator emulator = emulatorService.getGameEmulator(emuId);
     File folder = new File(emulator.getAltSoundFolder(), name);
     return AltSoundLoaderFactory.load(folder, emuId);
   }

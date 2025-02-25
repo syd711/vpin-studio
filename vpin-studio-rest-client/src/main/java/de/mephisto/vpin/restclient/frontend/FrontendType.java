@@ -5,18 +5,19 @@ package de.mephisto.vpin.restclient.frontend;
  * Use feature control to activate or not components in the tool
  */
 public enum FrontendType {
-  Standalone(SupportType.NONE, SupportType.NONE, false, SupportType.NONE, false, false, false, false, false, false, false),
-  Popper    (SupportType.FULL, SupportType.FULL, true, SupportType.FULL, true, false, true, true, true, true, true),
-  PinballX  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true),
-  PinballY  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true);
+  Standalone(SupportType.NONE, SupportType.NONE, SupportType.NONE,false, SupportType.NONE, false, false, false, false, false, false, false),
+  Popper    (SupportType.FULL, SupportType.FULL, SupportType.FULL, true, SupportType.FULL, true, false, true, true, true, true, true),
+  PinballX  (SupportType.MINI, SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true),
+  PinballY  (SupportType.MINI, SupportType.NONE, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true);
 
   enum SupportType {NONE, MINI, FULL}
 
-  FrontendType(SupportType supportFields, SupportType supportPlaylists, boolean supportPlaylistsCrud,
+  FrontendType(SupportType supportFields, SupportType supportEmulators, SupportType supportPlaylists, boolean supportPlaylistsCrud,
           SupportType supportStatuses, boolean supportMedias, boolean supportMediaCache,
           boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
           boolean supportControls, boolean supportRating) {
     this.supportFields = supportFields;
+    this.supportEmulators = supportEmulators;
     this.supportPlaylists = supportPlaylists;
     this.supportPlaylistsCrud = supportPlaylistsCrud;
     this.supportStatuses = supportStatuses;
@@ -33,12 +34,21 @@ public enum FrontendType {
    * or Whether extended set of fields are supported (cf all popper fields) */
   private SupportType supportFields;
 
-  /** Whether Playlists are supported or not
+  /**
+   * Whether Playlists are supported or not
    * MINI ie pinballX way, one level of favorites managed globally
-   * FULL is the pinup way of managing favorites : local and global favorites support + management at playlist level */
+   * FULL is the pinup way of managing favorites : local and global favorites support + management at playlist level
+   */
   private SupportType supportPlaylists;
   /** Whether Playlists creation / update / deletion are supported or not */
   private boolean supportPlaylistsCrud;
+
+
+  /**
+   * Whether Emulator configs are supported or not
+   * MINI ie pinballX way: no delete or create options
+   */
+  private SupportType supportEmulators;
 
   /** Whether frontend support statuses or not
    * MINI : just active / inactive
@@ -105,6 +115,8 @@ public enum FrontendType {
   public boolean isSupportMediaCache() {
     return supportMediaCache;
   }
+  public boolean supportEmulators() {return !supportEmulators.equals(SupportType.NONE);}
+  public boolean supportEmulatorCreateDelete() {return supportEmulators.equals(SupportType.FULL);}
 
   //----------
 

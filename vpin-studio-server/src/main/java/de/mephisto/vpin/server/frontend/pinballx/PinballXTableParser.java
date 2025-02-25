@@ -1,12 +1,11 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.GameEntry;
+import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -37,7 +36,7 @@ public class PinballXTableParser extends DefaultHandler {
 
 
   @Nullable
-  public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, Emulator emu) {
+  public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, GameEmulator emu) {
     int gamecount = 0;
     //try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.forName("UTF-8")))) {
     try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.defaultCharset()))) {
@@ -91,8 +90,8 @@ public class PinballXTableParser extends DefaultHandler {
     return gamecount;
   }
 
-  protected void doPreParsing(TableDetails detail, Emulator emu, String name) {
-    String gameFileName =  name + "." + emu.getGamesExt();
+  protected void doPreParsing(TableDetails detail, GameEmulator emu, String name) {
+    String gameFileName =  name + "." + emu.getGameExt();
     detail.setGameFileName(gameFileName);
     detail.setGameName(name);
     detail.setEmulatorId(emu.getId());
@@ -224,7 +223,7 @@ public class PinballXTableParser extends DefaultHandler {
 
   //----------------------------------------
 
-  public void writeGames(File pinballXDb, List<GameEntry> games, Map<String, TableDetails> mapTableDetails, Emulator emu) {
+  public void writeGames(File pinballXDb, List<GameEntry> games, Map<String, TableDetails> mapTableDetails, GameEmulator emu) {
     if (!pinballXDb.exists()) {
       try {
         pinballXDb.getParentFile().mkdirs();
@@ -242,7 +241,7 @@ public class PinballXTableParser extends DefaultHandler {
         TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), entry.getFilename()));
         if (detail!=null) {
           // <game name= /> stores the filename without extension 
-          String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGamesExt());
+          String gameFileName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGameExt());
           writer.append("  <game name=\"").append(escapeXml(gameFileName)).append("\">\n");
 
           appendDescription(writer, detail);

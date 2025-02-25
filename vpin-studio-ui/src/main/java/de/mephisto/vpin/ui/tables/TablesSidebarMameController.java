@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -196,7 +196,7 @@ public class TablesSidebarMameController implements Initializable {
   private void onMameSetup() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
       File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
       if (!file.exists()) {
         file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");

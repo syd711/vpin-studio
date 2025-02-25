@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.util.PackageUtil;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,7 +30,7 @@ public class DMDService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DMDService.class);
 
   @Autowired
-  private FrontendService frontendService;
+  private EmulatorService emulatorService;
 
   private Map<Integer, ComponentSummary> cache = new HashMap<>();
 
@@ -62,7 +62,7 @@ public class DMDService implements InitializingBean {
         tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
 
     File dmdFolder = null;
-    File[] subFolders = game.getEmulator().getTablesFolder().listFiles(File::isDirectory);
+    File[] subFolders = game.getEmulator().getGamesFolder().listFiles(File::isDirectory);
     for (File folder : subFolders) {
       if (folderNames.contains(folder.getName().toLowerCase())) {
         dmdFolder = folder;
@@ -128,7 +128,7 @@ public class DMDService implements InitializingBean {
 
   public ComponentSummary getFreezySummary(int emulatorId) {
     if (!cache.containsKey(emulatorId)) {
-      GameEmulator defaultGameEmulator = frontendService.getGameEmulator(emulatorId);
+      GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(emulatorId);
       cache.put(emulatorId, FreezySummarizer.summarizeFreezy(defaultGameEmulator));
     }
     return cache.get(emulatorId);

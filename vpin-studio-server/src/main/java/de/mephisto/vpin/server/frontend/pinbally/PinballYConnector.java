@@ -7,23 +7,22 @@ import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.*;
 
 @Service("PinballY")
@@ -77,7 +76,17 @@ public class PinballYConnector extends BaseConnector {
   }
 
   @Override
-  protected List<Emulator> loadEmulators() {
+  public boolean deleteEmulator(int emulatorId) {
+    throw new UnsupportedOperationException("Deletion of emulators not supported");
+  }
+
+  @Override
+  public GameEmulator saveEmulator(GameEmulator emulator) {
+    return null;
+  }
+
+  @Override
+  protected List<GameEmulator> loadEmulators() {
     Properties settings = loadPinballYSettings();
     if (settings == null) {
       return Collections.emptyList();
@@ -85,7 +94,7 @@ public class PinballYConnector extends BaseConnector {
 
     File pinballYFolder = getInstallationFolder();
 
-    List<Emulator> emulators = new ArrayList<>();
+    List<GameEmulator> emulators = new ArrayList<>();
     mapTableDetails = new HashMap<>();
 
     var settingsFileLines = readSettingsFileLines();
@@ -95,7 +104,7 @@ public class PinballYConnector extends BaseConnector {
     for (int emuId = 1; emuId < 20; emuId++) {
       String system = settings.getProperty("System" + emuId);
       if (StringUtils.isNotEmpty(system)) {
-        Emulator emulator = createEmulator(settings, pinballYFolder, emuId, system);
+        GameEmulator emulator = createEmulator(settings, pinballYFolder, emuId, system);
         if (emulator != null) {
           emulators.add(emulator);
 
@@ -157,7 +166,7 @@ System1.DefExt = .vpx
 System1.RunBefore = cmd /c echo Example RunBefore command! Path=[TABLEPATH], file=[TABLEFILE] && pause
 System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file=[TABLEFILE] && pause
   */
-  private Emulator createEmulator(Properties s, File pinballYFolder, int emuId, String emuname) {
+  private GameEmulator createEmulator(Properties s, File pinballYFolder, int emuId, String emuname) {
     String system = "System" + emuId;
 
     String sEnable = s.getProperty(system + ".Enabled");
@@ -188,14 +197,15 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
       type = EmulatorType.fromName(emuname);
     }
 
-    Emulator e = new Emulator(type);
+    GameEmulator e = new GameEmulator();
+    e.setType(type);
     e.setId(emuId);
     e.setName(emuname);
     e.setDisplayName(emuname);
 
     String mediaFolder = StringUtils.defaultIfEmpty(s.getProperty(system + ".MediaDir"), emuname);
     File mediaDir = new File(getMediaPath(s), mediaFolder);
-    e.setDirMedia(mediaDir.getAbsolutePath());
+    e.setMediaDirectory(mediaDir.getAbsolutePath());
 
     String databaseName = StringUtils.defaultIfEmpty(s.getProperty(system + ".DatabaseDir"), emuname);
     File databaseFile = new File(getTableDatabasePath(s), databaseName + "/" + databaseName + ".xml");
@@ -214,7 +224,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     }
 
     if (exe != null) {
-      e.setEmuLaunchDir(exe.getParentFile().getAbsolutePath());
+      e.setInstallationDirectory(exe.getParentFile().getAbsolutePath());
       e.setExeName(exe.getName());
     }
     else {
@@ -223,8 +233,8 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
         + "Please fill in the full path to executable !");
     }
 
-    e.setGamesExt(type.getExtension());
-    e.setVisible(enabled);
+    e.setGameExt(type.getExtension());
+    e.setEnabled(enabled);
 
     String tablePath = StringUtils.defaultIfEmpty(s.getProperty(system + ".TablePath"), "Tables");
     File dirGames = new File(tablePath);
@@ -236,13 +246,12 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     }
 
     if (dirGames != null) {
-      e.setDirGames(dirGames.getAbsolutePath());
+      e.setGamesDirectory(dirGames.getAbsolutePath());
     }
     else { 
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
       return null;
     }
-  
     return e;
   }
 
@@ -267,7 +276,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   }
 
   @Override
-  protected List<String> loadGames(Emulator emu) {
+  protected List<String> loadGames(GameEmulator emu) {
     List<String> games = new ArrayList<>();
     File pinballXDb = new File(emu.getDatabase());
     if (pinballXDb.exists()) {
@@ -298,7 +307,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   }
 
   @Override
-  protected void commitDb(Emulator emu) {
+  protected void commitDb(GameEmulator emu) {
     File pinballXDb = new File(emu.getDatabase());
     PinballYTableParser parser = new PinballYTableParser();
     parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);

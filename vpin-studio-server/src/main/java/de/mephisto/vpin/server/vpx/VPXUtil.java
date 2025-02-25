@@ -66,7 +66,7 @@ public class VPXUtil {
     }
     catch (Exception e) {
       LOG.error("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
-      throw new Exception("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
+      return null;
     }
     finally {
       try {

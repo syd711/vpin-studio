@@ -1,37 +1,23 @@
 package de.mephisto.vpin.ui.tables.alx.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.alx.AlxController;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class AlxUpdateStatsDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AlxUpdateStatsDialogController.class);

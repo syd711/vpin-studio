@@ -4,12 +4,15 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.components.emulators.EmulatorsController;
 import de.mephisto.vpin.ui.components.screens.ScreensController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -30,14 +33,19 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.fx.Features.EMULATORS_ENABLED;
 import static de.mephisto.vpin.commons.fx.Features.SCREEN_MANAGER_ENABLED;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
 public class ComponentsController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentsController.class);
+  public static final int TAB_UPDATES = 0;
+  public static final int TAB_EMULATORS = 1;
+  public static final int TAB_SCREENS = 2;
 
   @FXML
   private Parent root;
@@ -76,15 +84,13 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private Tab screensTab;
 
   @FXML
-  private Pane alx1;
+  private Tab emulatorsTab;
 
   @FXML
   private Pane hint;
 
-  @FXML
-  private Pane center;
-
   private boolean initialized = false;
+  private EmulatorsController emulatorsController;
 
   // Add a public no-args constructor
   public ComponentsController() {
@@ -140,11 +146,16 @@ public class ComponentsController implements Initializable, StudioFXController, 
   }
 
   private void refreshView(Number t1) {
-    if (t1.intValue() == 0) {
+    if (t1.intValue() == TAB_UPDATES) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
+      emulatorsController.onViewDeactivated();
     }
-    else if (t1.intValue() == 1) {
+    else if (t1.intValue() == TAB_EMULATORS) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Emulators"));
+    }
+    else if (t1.intValue() == TAB_SCREENS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));
+      emulatorsController.onViewDeactivated();
     }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
@@ -158,6 +169,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
     client.getPreferenceService().addListener(this);
 
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     try {
@@ -183,7 +196,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     updateForTabSelection(0);
 
-    if (SCREEN_MANAGER_ENABLED) {
+    if (SCREEN_MANAGER_ENABLED && frontendType.isNotStandalone()) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreensController.class.getResource("tab-screens.fxml"));
         Parent builtInRoot = loader.load();
@@ -195,6 +208,21 @@ public class ComponentsController implements Initializable, StudioFXController, 
     }
     else {
       rootTabPane.getTabs().remove(screensTab);
+    }
+
+    if (EMULATORS_ENABLED && frontendType.supportEmulators()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(EmulatorsController.class.getResource("tab-emulators.fxml"));
+        Parent builtInRoot = loader.load();
+        emulatorsController = loader.getController();
+        emulatorsTab.setContent(builtInRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load tab: " + e.getMessage(), e);
+      }
+    }
+    else {
+      rootTabPane.getTabs().remove(emulatorsTab);
     }
 
     rootTabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
@@ -217,6 +245,11 @@ public class ComponentsController implements Initializable, StudioFXController, 
   }
 
   @Override
+  public void onViewDeactivated() {
+    emulatorsController.onViewDeactivated();
+  }
+
+  @Override
   public void onViewActivated(NavigationOptions options) {
     updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
 
@@ -224,6 +257,11 @@ public class ComponentsController implements Initializable, StudioFXController, 
       ComponentChecksProgressModel model = new ComponentChecksProgressModel(false);
       ProgressDialog.createProgressDialog(model);
       initialized = true;
+    }
+
+    if(options != null && options.getModel() instanceof GameEmulatorRepresentation) {
+      rootTabPane.getSelectionModel().select(TAB_EMULATORS);
+      emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
     }
   }
 

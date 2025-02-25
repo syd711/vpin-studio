@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.fp;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -108,8 +109,8 @@ public class FPCommandLineService implements ApplicationContextAware {
   }
 
   public boolean launch() {
-    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
-    List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+    EmulatorService emulatorService = applicationContext.getBean(EmulatorService.class);
+    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isFpEmulator()) {
         File fpExe = gameEmulator.getExe();

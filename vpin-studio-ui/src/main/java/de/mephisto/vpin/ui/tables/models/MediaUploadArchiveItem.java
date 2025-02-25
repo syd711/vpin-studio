@@ -1,9 +1,8 @@
 package de.mephisto.vpin.ui.tables.models;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
@@ -97,7 +96,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the DMD bundle here
       if (dmdDir.equals(this.getName())) {
         assetType = AssetType.DMD_PACK;
-        target = emulator.getTablesDirectory() + "...";
+        target = emulator.getGamesDirectory() + "...";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -124,7 +123,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        target = emulator.getTablesDirectory() + "...";
+        target = emulator.getGamesDirectory() + "...";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -163,22 +162,22 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
 
       if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null) {
         this.assetType = asset;
-        this.target = client.getFrontendService().getDefaultGameEmulator().getNvramDirectory();
+        this.target = client.getEmulatorService().getDefaultGameEmulator().getNvramDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = asset;
-        this.target = client.getFrontendService().getDefaultGameEmulator().getRomDirectory();
+        this.target = client.getEmulatorService().getDefaultGameEmulator().getRomDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.VNI))) {
         this.assetType = asset;
-        this.target = client.getFrontendService().getDefaultGameEmulator().getAltColorDirectory();
+        this.target = client.getEmulatorService().getDefaultGameEmulator().getAltColorDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = AssetType.ROM;
-        this.target = client.getFrontendService().getDefaultGameEmulator().getRomDirectory();
+        this.target = client.getEmulatorService().getDefaultGameEmulator().getRomDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.DIF) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIF) == null) {
@@ -237,7 +236,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     String extension = FilenameUtils.getExtension(getName());
     for (AssetType tableAssetType : tableAssetTypes) {
       if (extension.equalsIgnoreCase(tableAssetType.name())) {
-        target = emulator.getTablesDirectory();
+        target = emulator.getGamesDirectory();
         assetType = tableAssetType;
         return true;
       }

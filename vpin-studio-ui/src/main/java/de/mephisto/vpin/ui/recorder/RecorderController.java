@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -303,7 +303,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getEmulatorService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
@@ -708,7 +708,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       else {
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
           models.add(0, new GameRepresentationModel(refreshedGame));
         }
       }

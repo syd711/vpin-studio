@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
@@ -53,6 +54,9 @@ public class GameMediaService {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @Autowired
   private DMDService dmdService;
@@ -209,7 +213,7 @@ public class GameMediaService {
   }
 
   public void uploadAndReplace(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     if (gameEmulator == null) {
       throw new Exception("No emulator found for id " + uploadDescriptor.getEmulatorId() + " to replace table for.");
     }
@@ -228,7 +232,7 @@ public class GameMediaService {
     boolean autoFill = uploadDescriptor.isAutoFill();
 
     //create backup first and delete existing table
-    File existingVPXFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
+    File existingVPXFile = new File(gameEmulator.getGamesDirectory(), tableDetails.getGameFileName());
     long existingModifiationDate = existingVPXFile.lastModified();
     if (existingVPXFile.exists()) {
       if (keepCopy) {
@@ -251,7 +255,7 @@ public class GameMediaService {
 
     //delete existing .vbs file
     String baseName = FilenameUtils.getBaseName(tableDetails.getGameFileName());
-    File existingVbsFile = new File(gameEmulator.getTablesDirectory(), baseName + ".vbs");
+    File existingVbsFile = new File(gameEmulator.getGamesDirectory(), baseName + ".vbs");
     if (existingVbsFile.exists() && !existingVbsFile.delete()) {
       LOG.error("Failed to delete existing .vbs file \"" + existingVbsFile.getAbsolutePath() + "\"");
     }
@@ -329,9 +333,9 @@ public class GameMediaService {
 
   public void uploadAndImport(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
-    File tablesFolder = gameEmulator.getTablesFolder();
+    File tablesFolder = gameEmulator.getGamesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
       LOG.info("Using folder based import.");
       tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName().trim());
@@ -376,13 +380,13 @@ public class GameMediaService {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     LOG.info("Starting cloning for {}", temporaryVPXFile.getAbsolutePath());
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     TableDetails tableDetails = getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 
     boolean autoFill = uploadDescriptor.isAutoFill();
 
-    File existingVPXFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
+    File existingVPXFile = new File(gameEmulator.getGamesDirectory(), tableDetails.getGameFileName());
     if (!existingVPXFile.exists()) {
       throw new UnsupportedOperationException("The VPX file to clone \"" + tableDetails.getGameFileName() + "\" does not exist.");
     }
@@ -393,7 +397,7 @@ public class GameMediaService {
     String fileName = target.getName();
     if (uploadDescriptor.isFolderBasedImport()) {
       //use the parents parent so that we are back inside the tables folder
-      targetSubFolder = new File(gameEmulator.getTablesFolder(), uploadDescriptor.getSubfolderName());
+      targetSubFolder = new File(gameEmulator.getGamesFolder(), uploadDescriptor.getSubfolderName());
       targetSubFolder = FileUtils.uniqueFolder(targetSubFolder);
       targetSubFolder.mkdirs();
       target = new File(targetSubFolder, target.getName());
@@ -722,7 +726,7 @@ public class GameMediaService {
 
         //delete the game folder if it is empty
         File gameFolder = game.getGameFile().getParentFile();
-        if (gameFolder.exists() && !gameFolder.equals(game.getEmulator().getTablesFolder())) {
+        if (gameFolder.exists() && !gameFolder.equals(game.getEmulator().getGamesFolder())) {
           String[] list = gameFolder.list();
           if (list == null || list.length == 0) {
             if (gameFolder.delete()) {

@@ -3,12 +3,14 @@ package de.mephisto.vpin.server.frontend.pinballx;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.GameEntry;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -127,7 +129,83 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  protected List<Emulator> loadEmulators() {
+  public boolean deleteEmulator(int emulatorId) {
+    throw new UnsupportedOperationException("Deletion of emulators not supported");
+  }
+
+  @Override
+  public GameEmulator saveEmulator(GameEmulator emulator) {
+    INIConfiguration iniConfiguration = loadPinballXIni();
+    if (iniConfiguration == null) {
+      return emulator;
+    }
+
+    SubnodeConfiguration emulatorNode = null;
+    if (emulator.getType().equals(EmulatorType.VisualPinball)) {
+      emulatorNode = iniConfiguration.getSection("VisualPinball");
+    }
+    else if (emulator.getType().equals(EmulatorType.FuturePinball)) {
+      emulatorNode = iniConfiguration.getSection("FuturePinball");
+    }
+    else if (emulator.getType().equals(EmulatorType.ZenFX2)) {
+      emulatorNode = iniConfiguration.getSection("PinballFX2");
+    }
+    else if (emulator.getType().equals(EmulatorType.ZenFX3)) {
+      emulatorNode = iniConfiguration.getSection("PinballFX3");
+    }
+    else if (emulator.getType().equals(EmulatorType.Zaccaria)) {
+      emulatorNode = iniConfiguration.getSection("Zaccaria");
+    }
+    else if (emulator.getType().equals(EmulatorType.PinballArcade)) {
+      emulatorNode = iniConfiguration.getSection("PinballArcade");
+    }
+    else {
+      //find section by name
+      Set<String> sections = iniConfiguration.getSections();
+      for (String set : sections) {
+        SubnodeConfiguration section = iniConfiguration.getSection(set);
+        if (section.getString("Name") != null && section.getString("Name").equals(emulator.getName())) {
+          emulatorNode = section;
+          break;
+        }
+      }
+
+    }
+
+    if (emulatorNode == null) {
+      LOG.warn("No matching PinballX emulator configuration found for {}", emulator.getType());
+      return emulator;
+    }
+
+
+    emulatorNode.setProperty("Enabled", emulator.isEnabled() ? "True" : "False");
+    emulatorNode.setProperty("Executable", emulator.getExeName());
+    emulatorNode.setProperty("Parameters", emulator.getExeParameters());
+    emulatorNode.setProperty("TablePath", emulator.getGamesDirectory());
+    emulatorNode.setProperty("WorkingPath", emulator.getInstallationFolder().getAbsolutePath());
+
+    if (emulator.getType().isVpxEmulator()) {
+      initVisualPinballXScripts(emulator, iniConfiguration);
+    }
+    else {
+      emulatorNode.setProperty("LaunchBeforeEnabled", emulator.getLaunchScript().isEnabled() ? "True" : "False");
+      emulatorNode.setProperty("LaunchBeforeExecutable", emulator.getLaunchScript().getExecuteable());
+      emulatorNode.setProperty("LaunchBeforeParameters", emulator.getLaunchScript().getExecuteable());
+      emulatorNode.setProperty("LaunchBeforeWorkingPath", emulator.getLaunchScript().getWorkingDirectory());
+
+      emulatorNode.setProperty("LaunchAfterEnabled", emulator.getExitScript().isEnabled() ? "True" : "False");
+      emulatorNode.setProperty("LaunchAfterExecutable", emulator.getExitScript().getExecuteable());
+      emulatorNode.setProperty("LaunchAfterParameters", emulator.getExitScript().getExecuteable());
+      emulatorNode.setProperty("LaunchAfterWorkingPath", emulator.getExitScript().getWorkingDirectory());
+    }
+
+    saveIni(iniConfiguration);
+
+    return emulator;
+  }
+
+  @Override
+  protected List<GameEmulator> loadEmulators() {
     INIConfiguration iniConfiguration = loadPinballXIni();
     if (iniConfiguration == null) {
       return Collections.emptyList();
@@ -135,7 +213,7 @@ public class PinballXConnector extends BaseConnector {
 
     File pinballXFolder = getInstallationFolder();
 
-    List<Emulator> emulators = new ArrayList<>();
+    List<GameEmulator> emulators = new ArrayList<>();
     mapTableDetails = new HashMap<>();
 
     // check standard emulators, starts with Visual Pinball as default one
@@ -148,7 +226,7 @@ public class PinballXConnector extends BaseConnector {
       String sectionName = emuName.replaceAll(" ", "");
       SubnodeConfiguration s = iniConfiguration.getSection(sectionName);
       if (!s.isEmpty()) {
-        Emulator emu = createEmulator(s, pinballXFolder, emuId, emuName);
+        GameEmulator emu = createEmulator(s, pinballXFolder, emuId, emuName);
         if (emu != null) {
           emulators.add(emu);
         }
@@ -160,7 +238,7 @@ public class PinballXConnector extends BaseConnector {
       SubnodeConfiguration s = iniConfiguration.getSection("System_" + k);
       if (!s.isEmpty()) {
         String emuname = s.getString("Name");
-        Emulator emulator = createEmulator(s, pinballXFolder, emuId++, emuname);
+        GameEmulator emulator = createEmulator(s, pinballXFolder, emuId++, emuname);
         if (emulator != null) {
           emulators.add(emulator);
         }
@@ -168,7 +246,7 @@ public class PinballXConnector extends BaseConnector {
     }
 
     //check the launch and exist scripts
-    for (Emulator emulator : emulators) {
+    for (GameEmulator emulator : emulators) {
       initVisualPinballXScripts(emulator, iniConfiguration);
     }
 
@@ -227,66 +305,71 @@ public class PinballXConnector extends BaseConnector {
   Executable=VPinballX.exe
   Parameters=-light
   */
-  private Emulator createEmulator(SubnodeConfiguration s, File installDir, int emuId, String emuname) {
+  private GameEmulator createEmulator(SubnodeConfiguration s, File installDir, int emuId, String emuname) {
     boolean enabled = s.getBoolean("Enabled", true);
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
     String executable = s.getString("Executable");
     String parameters = s.getString("Parameters");
 
-    if (tablePath == null || !new File(tablePath).exists()) {
-      LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
-      return null;
-    }
+    boolean beforeEnabled = s.getBoolean("LaunchBeforeEnabled", false);
+    boolean beforeHideWindow = s.getBoolean("LaunchBeforeHideWindow", true);
+    boolean beforeWaitForExit = s.getBoolean("LaunchBeforeWaitForExit", true);
+    String beforeWorkingPath = s.getString("LaunchBeforeWorkingPath");
+    String beforeExecutable = s.getString("LaunchBeforeExecutable");
+    String beforeParameters = s.getString("LaunchBeforeParameters");
 
-    if (workingPath == null || !new File(workingPath).exists()) {
-      LOG.warn("Skipped loading of \"" + emuname + "\" because the workingPath is invalid");
-      return null;
-    }
+    GameEmulatorScript beforeScript = new GameEmulatorScript();
+    beforeScript.setEnabled(beforeEnabled);
+    beforeScript.setHideWindow(beforeHideWindow);
+    beforeScript.setWaitForExit(beforeWaitForExit);
+    beforeScript.setWorkingDirectory(beforeWorkingPath);
+    beforeScript.setExecuteable(beforeExecutable);
+    beforeScript.setParameters(beforeParameters);
 
-    EmulatorType type = null;
-    if (s.containsKey("SystemType")) {
-      int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          type = EmulatorType.VisualPinball;
-          break; // Visual Pinball
-        case 2:
-          type = EmulatorType.FuturePinball;
-          break; // Future Pinball
-        default:
-          type = EmulatorType.OTHER;
-          break; // Custom Exe
-      }
-    }
-    else {
-      type = EmulatorType.fromName(emuname);
-    }
+    boolean afterEnabled = s.getBoolean("LaunchAfterEnabled", false);
+    boolean afterHideWindow = s.getBoolean("LaunchAfterHideWindow", true);
+    boolean afterWaitForExit = s.getBoolean("LaunchAfterWaitForExit", true);
+    String afterWorkingPath = s.getString("LaunchAfterWorkingPath");
+    String afterExecutable = s.getString("LaunchAfterExecutable");
+    String afterParameters = s.getString("LaunchAfterParameters");
 
-    Emulator e = new Emulator(type);
+    GameEmulatorScript afterScript = new GameEmulatorScript();
+    afterScript.setEnabled(afterEnabled);
+    afterScript.setHideWindow(afterHideWindow);
+    afterScript.setWaitForExit(afterWaitForExit);
+    afterScript.setWorkingDirectory(afterWorkingPath);
+    afterScript.setExecuteable(afterExecutable);
+    afterScript.setParameters(afterParameters);
+
+    EmulatorType type = EmulatorType.fromName(emuname);
+
+    GameEmulator e = new GameEmulator();
+    e.setLaunchScript(beforeScript);
+    e.setExitScript(afterScript);
+    e.setType(type);
     e.setId(emuId);
     e.setName(emuname);
     e.setDisplayName(emuname);
 
     File mediaDir = new File(installDir, "Media/" + emuname);
     if (mediaDir.exists() && mediaDir.isDirectory()) {
-      e.setDirMedia(mediaDir.getAbsolutePath());
+      e.setMediaDirectory(mediaDir.getAbsolutePath());
     }
 
-    e.setDirGames(tablePath);
-    e.setEmuLaunchDir(workingPath);
+    e.setGamesDirectory(tablePath);
+    e.setInstallationDirectory(workingPath);
     e.setExeName(executable);
     e.setExeParameters(parameters);
 
-    e.setGamesExt(type.getExtension());
-    e.setVisible(enabled);
-
+    e.setGameExt(type.getExtension());
+    e.setEnabled(enabled);
     return e;
   }
 
 
   @Override
-  protected List<String> loadGames(Emulator emu) {
+  protected List<String> loadGames(GameEmulator emu) {
     File pinballXFolder = getInstallationFolder();
     List<String> games = new ArrayList<>();
 
@@ -333,7 +416,7 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  protected void commitDb(Emulator emu) {
+  protected void commitDb(GameEmulator emu) {
     File pinballXFolder = getInstallationFolder();
     File pinballXDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + emu.getName() + ".xml");
 
@@ -433,7 +516,7 @@ public class PinballXConnector extends BaseConnector {
     playlists = playlists.stream().filter(p -> p.getId() == playlistId).collect(Collectors.toList());
 
     File pinballXFolder = getInstallationFolder();
-    for (Emulator emu : emulators.values()) {
+    for (GameEmulator emu : emulators.values()) {
       File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
       for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
         String playlistname = FilenameUtils.getBaseName(f.getName());
@@ -460,7 +543,7 @@ public class PinballXConnector extends BaseConnector {
     List<Playlist> result = new ArrayList<>();
 
     int id = 1;
-    for (Emulator emu : emulators.values()) {
+    for (GameEmulator emu : emulators.values()) {
       File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
       for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
         String playlistname = FilenameUtils.getBaseName(f.getName());
@@ -492,7 +575,7 @@ public class PinballXConnector extends BaseConnector {
   @Override
   protected void savePlaylistGame(int gameId, Playlist pl) {
     if (pl.getEmulatorId() != null) {
-      Emulator emu = getEmulator(pl.getEmulatorId());
+      GameEmulator emu = getEmulator(pl.getEmulatorId());
       PinballXTableParser parser = new PinballXTableParser();
       List<GameEntry> games = pl.getGames().stream().map(pg -> getGameEntry(pg.getId())).collect(Collectors.toList());
 
@@ -506,7 +589,7 @@ public class PinballXConnector extends BaseConnector {
   public Playlist savePlaylist(Playlist playlist) {
     try {
       if (playlist.getEmulatorId() != null) {
-        Emulator emulator = getEmulator(playlist.getEmulatorId());
+        GameEmulator emulator = getEmulator(playlist.getEmulatorId());
         File frontendInstallationFolder = getInstallationFolder();
         File dbfolder = new File(frontendInstallationFolder, "/Databases/" + emulator.getName());
 
@@ -593,7 +676,7 @@ public class PinballXConnector extends BaseConnector {
 
 //---------------- Utilities -----------------------------------------------------------------------------------------
 
-  private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
+  private void initVisualPinballXScripts(GameEmulator emulator, INIConfiguration iniConfiguration) {
     if (emulator.getType().isVpxEmulator()) {
       //VPX scripts
       SubnodeConfiguration visualPinball = iniConfiguration.getSection("VisualPinball");
@@ -610,11 +693,12 @@ public class PinballXConnector extends BaseConnector {
       //frontend launch script
       SubnodeConfiguration startup = iniConfiguration.getSection("StartupProgram");
       startup.setProperty("Enabled", " True");
+
       startup.setProperty("Executable", "frontend-launch.bat");
       startup.setProperty("WorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
-
       saveIni(iniConfiguration);
     }
+
   }
 
   private void saveIni(INIConfiguration iniConfiguration) {

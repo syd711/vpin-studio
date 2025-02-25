@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.fp.FPService;
@@ -55,7 +55,7 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * the loaded and cached emulators
    */
-  protected Map<Integer, Emulator> emulators = new HashMap<>();
+  protected Map<Integer, GameEmulator> emulators = new HashMap<>();
   /**
    * Map by emulator of GameEntry
    */
@@ -99,8 +99,8 @@ public abstract class BaseConnector implements FrontendConnector {
     // load all existing entries from database
     List<GameEntry> entries = gameEntryRepository.findAll();
 
-    List<Emulator> loaded = loadEmulators();
-    for (Emulator emu : loaded) {
+    List<GameEmulator> loaded = loadEmulators();
+    for (GameEmulator emu : loaded) {
       emulators.put(emu.getId(), emu);
 
       List<String> filenames = loadGames(emu);
@@ -183,12 +183,12 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * To be implemented by parent, to load a list of Emulators
    */
-  protected abstract List<Emulator> loadEmulators();
+  protected abstract List<GameEmulator> loadEmulators();
 
   /**
    * To be implemented by parent, to list games for an Emulators
    */
-  protected abstract List<String> loadGames(Emulator emu);
+  protected abstract List<String> loadGames(GameEmulator emu);
 
   /**
    * Get from the connector a game from DB
@@ -208,17 +208,17 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * To be implemented to persist modification in database
    */
-  protected abstract void commitDb(Emulator emu);
+  protected abstract void commitDb(GameEmulator emu);
 
   //-------------------------------------------------
 
   @Override
-  public final List<Emulator> getEmulators() {
+  public final List<GameEmulator> getEmulators() {
     return new ArrayList<>(emulators.values());
   }
 
   @Override
-  public Emulator getEmulator(int emulatorId) {
+  public GameEmulator getEmulator(int emulatorId) {
     return emulators.get(emulatorId);
   }
 
@@ -228,7 +228,7 @@ public abstract class BaseConnector implements FrontendConnector {
     }
 
     String filename = e.getFilename();
-    Emulator emu = emulators.get(e.getEmuId());
+    GameEmulator emu = emulators.get(e.getEmuId());
 
     TableDetails details = getGameFromDb(e.getEmuId(), filename);
     String gameName = FilenameUtils.getBaseName(filename);
@@ -244,7 +244,7 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
 
-    File table = new File(emu.getDirGames(), filename);
+    File table = new File(emu.getGamesDirectory(), filename);
     game.setGameFile(table);
 
     game.setDateAdded(details != null ? details.getDateAdded() : null);

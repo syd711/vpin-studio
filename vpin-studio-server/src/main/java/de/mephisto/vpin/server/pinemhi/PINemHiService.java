@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.pinemhi;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -39,7 +39,8 @@ public class PINemHiService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private FrontendService frontendService;
+  private EmulatorService emulatorService;
+
 
   private boolean enabled = false;
   
@@ -200,7 +201,7 @@ public class PINemHiService implements InitializingBean {
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
 
-            GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+            GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
             if(defaultGameEmulator != null) {
               adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
             }
@@ -227,7 +228,7 @@ public class PINemHiService implements InitializingBean {
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
     if(defaultGameEmulator != null) {
       adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
     }

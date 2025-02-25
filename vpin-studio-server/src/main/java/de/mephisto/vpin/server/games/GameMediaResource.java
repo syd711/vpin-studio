@@ -86,7 +86,7 @@ public class GameMediaResource {
     EmulatorType emulatorType = EmulatorType.VisualPinball;
     Game game = frontendService.getOriginalGame(search.getGameId());
     if (game != null) {
-      emulatorType = game.getEmulator().getEmulatorType();
+      emulatorType = game.getEmulator().getType();
     }
 
     List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
@@ -127,7 +127,7 @@ public class GameMediaResource {
                                                         @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = frontendService.getOriginalGame(gameId);
-    EmulatorType emulatorType = game.getEmulator().getEmulatorType();
+    EmulatorType emulatorType = game.getEmulator().getType();
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));

@@ -243,6 +243,17 @@
             </StackPane>
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+            <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Open Emulator Manager" />
+               </tooltip>
+            </Button>
 
             <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" promptText="Select Playlist..." />
             <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">

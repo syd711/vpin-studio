@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -93,11 +93,11 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     // check installation folder setup
     assertTrue(connector.getInstallationFolder().exists());
     // check emulators have been loaded
-    List<Emulator> emulators = connector.getEmulators();
+    List<GameEmulator> emulators = connector.getEmulators();
     assertEquals(expectedNbEmulators, emulators.size());
 
     // first one should be visual pinball and with id=1 else other tests will fail
-    Emulator vpx = emulators.get(0);
+    GameEmulator vpx = emulators.get(0);
     assertTrue(vpx.getType().isVpxEmulator());
     assertTrue(vpx.isEnabled());
     assertEquals(1, vpx.getId());

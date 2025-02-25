@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -1200,7 +1201,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private void refreshVersionsCombo(VpsTable tableById) {
     if (tableById != null) {
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       List<String> tableFormat = emulatorRepresentation.getVpsEmulatorFeatures();
       List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
 

@@ -22,6 +22,8 @@
     <logger name="net.dv8tion.jda.api" level="error" />
     <logger name="com.zaxxer" level="error" />
     <logger name="net.java.games.input" level="error" />
+    <!-- Debug DispatcherServlet#1080 instead    -->
+    <logger name="org.springframework.web.servlet.mvc.method.annotation" level="error" />
 
     <root level="INFO">
         <appender-ref ref="rollingFile"/>
