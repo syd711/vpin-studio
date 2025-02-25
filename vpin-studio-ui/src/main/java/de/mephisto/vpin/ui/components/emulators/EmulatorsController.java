@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -102,6 +104,18 @@ public class EmulatorsController implements Initializable {
   @FXML
   private Separator firstSeparator;
 
+  @FXML
+  private Button openFolderButtonLaunch;
+
+  @FXML
+  private Button openFolderButtonGames;
+
+  @FXML
+  private Button openFolderButtonRoms;
+
+  @FXML
+  private Button openFolderButtonMedia;
+
 
   private Optional<GameEmulatorRepresentation> emulator = Optional.empty();
 
@@ -110,7 +124,37 @@ public class EmulatorsController implements Initializable {
   private IEmulatorScriptPanel startScriptController;
   private IEmulatorScriptPanel exitScriptController;
 
-  private boolean saveDisabled = false;
+  @FXML
+  private void onFolderLaunch() {
+    if (!StringUtils.isEmpty(launchFolderField.getText())) {
+      File folder = new File(launchFolderField.getText());
+      SystemUtil.openFolder(folder);
+    }
+  }
+
+  @FXML
+  private void onFolderGames() {
+    if (!StringUtils.isEmpty(gamesFolderField.getText())) {
+      File folder = new File(gamesFolderField.getText());
+      SystemUtil.openFolder(folder);
+    }
+  }
+
+  @FXML
+  private void onFolderRoms() {
+    if (!StringUtils.isEmpty(romsFolderField.getText())) {
+      File folder = new File(romsFolderField.getText());
+      SystemUtil.openFolder(folder);
+    }
+  }
+
+  @FXML
+  private void onFolderMedia() {
+    if (!StringUtils.isEmpty(customField1.getText())) {
+      File folder = new File(customField1.getText());
+      SystemUtil.openFolder(folder);
+    }
+  }
 
   @FXML
   private void onSave() {
@@ -222,7 +266,6 @@ public class EmulatorsController implements Initializable {
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    saveDisabled = true;
     this.emulator = model;
 
     emulatorNameLabel.setText("");
@@ -277,7 +320,6 @@ public class EmulatorsController implements Initializable {
       }
     }
 
-    saveDisabled = false;
   }
 
   public void onViewDeactivated() {
@@ -291,22 +333,43 @@ public class EmulatorsController implements Initializable {
     deleteBtn.managedProperty().bindBidirectional(deleteBtn.visibleProperty());
     firstSeparator.managedProperty().bindBidirectional(firstSeparator.visibleProperty());
 
+    openFolderButtonLaunch.managedProperty().bindBidirectional(openFolderButtonLaunch.visibleProperty());
+    openFolderButtonLaunch.setVisible(client.getSystemService().isLocal());
+
+    openFolderButtonMedia.managedProperty().bindBidirectional(openFolderButtonMedia.visibleProperty());
+    openFolderButtonMedia.setVisible(client.getSystemService().isLocal());
+
+    openFolderButtonRoms.managedProperty().bindBidirectional(openFolderButtonRoms.visibleProperty());
+    openFolderButtonRoms.setVisible(client.getSystemService().isLocal());
+
+    openFolderButtonGames.managedProperty().bindBidirectional(openFolderButtonGames.visibleProperty());
+    openFolderButtonGames.setVisible(client.getSystemService().isLocal());
+
     try {
       FXMLLoader loader = new FXMLLoader(EmulatorsTableController.class.getResource("table-emulators.fxml"));
-      Parent builtInRoot = loader.load();
+      Parent parent = loader.load();
       tableController = loader.getController();
       tableController.setEmulatorController(this);
-      tableRoot.setCenter(builtInRoot);
+      tableRoot.setCenter(parent);
     }
     catch (IOException e) {
       LOG.error("Failed to load emulator table: " + e.getMessage(), e);
     }
+
+    stage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        refreshTableWidth();
+      }
+    });
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     if (frontendType.equals(FrontendType.Popper)) {
       loadPopperFrontend();
     }
     else if (frontendType.equals(FrontendType.PinballX)) {
+      openFolderButtonMedia.setVisible(false);
+      openFolderButtonRoms.setVisible(false);
       loadPinballXFrontend();
     }
     else {
@@ -337,7 +400,19 @@ public class EmulatorsController implements Initializable {
     Platform.runLater(() -> {
       tabPane.setPrefWidth(emulatorRoot.widthProperty().intValue() - tableController.getTableView().getWidth() - 30);
       tabPane.setPrefHeight(emulatorRoot.heightProperty().intValue() - 426);
+
+      refreshTableWidth();
     });
+  }
+
+  private void refreshTableWidth() {
+    Number newValue = stage.getWidth();
+    if (newValue.intValue() < 1400) {
+      tableRoot.setPrefWidth(500);
+    }
+    else {
+      tableRoot.setPrefWidth(-1);
+    }
   }
 
   private void loadPopperFrontend() {

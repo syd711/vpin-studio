@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -48,8 +49,8 @@
                                     <GridPane hgap="3.0" vgap="3.0">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="200.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="500.0" prefWidth="100.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="400.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -107,13 +108,73 @@
                                           </TextField>
                                           <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Enabled:" />
                                           <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Emulator is active" textFill="WHITE" GridPane.columnIndex="1" />
+                                          <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                             <children>
+                                                <Button fx:id="openFolderButtonLaunch" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open Visual Pinball Installation Folder" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                             <children>
+                                                <Button fx:id="openFolderButtonGames" mnemonicParsing="false" onAction="#onFolderGames" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open Visual Pinball Installation Folder" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                             <children>
+                                                <Button fx:id="openFolderButtonMedia" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open Visual Pinball Installation Folder" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                             <children>
+                                                <Button fx:id="openFolderButtonRoms" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open Visual Pinball Installation Folder" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </children>
                                     </GridPane>
                                  </children>
                               </VBox>
                            </top>
                            <center>
-                              <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                              <TabPane fx:id="tabPane" minHeight="320.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
                                 <tabs>
                                   <Tab fx:id="startScriptTab" text="Launch Script" />
                                   <Tab fx:id="exitScriptTab" text="Exit Script" />
