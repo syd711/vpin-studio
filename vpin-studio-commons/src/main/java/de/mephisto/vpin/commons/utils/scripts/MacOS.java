@@ -121,6 +121,11 @@ private static final String LOG_PATH = System.getProperty("MAC_WRITE_PATH") + "L
     String cfgfilePath = System.getProperty("MAC_JAR_PATH") + "/VPin-Studio.cfg";
     String pListfilePath = System.getProperty("MAC_JAR_PATH") + "/../Info.plist";
     try {
+      //Update patch for people who updated from 3.12.8 to anything higher.
+      // Update worked but APP bundle version was not incremented.
+      // Since we are always expecting the "current version" to be in those files, it won't ever find it,
+      // so we need to update it if it's there
+      ReplaceTextinFile(cfgfilePath, "3.12.8", newVersion);
       ReplaceTextinFile(cfgfilePath, appVersion, newVersion);
       LOG.info("Mac Updater: Incremented app version from " + appVersion + " to " + newVersion + " in " + cfgfilePath);
       ReplaceTextinFile(pListfilePath, appVersion, newVersion);
