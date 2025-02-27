@@ -3,17 +3,18 @@
 ## Changes
 
 - **Tables / Table Overview**: Added new column **Rating**. You can directly rate the game inside the column without opening the data manager.
-- **Tables / Table Overview**: Add disabled colors on new columns (playlists, rating, ...).
 - **Tables / Patching**: 
   - Added "Patch Version" field to the data manager for those who want to track this separately. **Note that by default, the value is written into the field "Custom5" for PinUP Popper users**. You can disable this in the server settings.
   - Added "Patch Version" field to the patch upload dialog.
-  - Added "Patch Version" column to the table overview. Note that this column is disabled by default and must be enabled in the client settings.
+  - Added "Patch Version" column to the table overview. Note that this column is **disabled by default** and must be enabled in the client settings.
 - **Tables / VPS Tables**: Added "Comment" column and comment input field. You can enter personal comments there, e.g. to mark the table for downloading or that you tried that table but did not like it. This comment is solely stored for you and not submitted to the VP-Spreadsheet database.
 - **System Manager**: This section has an additional tab called **Screens** now. The view should show you all screen setups of your VPin and helps you, troubleshooting screen position issues. Note that this feature is still a bit experimental, but we hope it will be of help.
 - **System Manager**: Added emulator management.
-- **System Manager**: Aligned layout of all "Open Folder" buttons.
+- **Preferences / Webhooks**:
 
 ## Bugfixes
 
+- **Tables / Table Overview**: Added missing disabled colors on new columns (playlists, rating, ...).
 - **Tables / Invalid Score Filter**: Fixed "Invalid Score Configuration" filter that did show valid tables before.
 - **Tables / Table Asset Manager**: Fixed various issues for the Asset Manager when opened for playlists.
+- **System Manager**: Aligned layout of all "Open Folder" buttons.
