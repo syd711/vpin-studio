@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -30,7 +33,7 @@ public class SystemUtil {
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArguments = runtimeMxBean.getInputArguments();
         for (String jvmArgument : jvmArguments) {
-          if(jvmArgument.startsWith("-Dstudio.server.port")) {
+          if (jvmArgument.startsWith("-Dstudio.server.port")) {
             port = jvmArgument.split("=")[1];
           }
         }
@@ -60,6 +63,47 @@ public class SystemUtil {
     return id;
   }
 
+  public static String getWindowsId() {
+    try {
+      Process process = Runtime.getRuntime().exec("wmic csproduct get UUID");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (line.length() > 0 && !line.contains("UUID")) {
+          return line;
+        }
+      }
+      reader.close();
+    }
+    catch (Exception e) {
+      //ignore
+    }
+    return null;
+  }
+
+  public static String getDriveId() {
+    try {
+      Process process = Runtime.getRuntime().exec("wmic diskdrive get serialnumber");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      List<String> lines = new ArrayList<>();
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (StringUtils.isEmpty(line) || line.trim().equals("SerialNumber")) {
+          continue;
+        }
+        lines.add(line.trim());
+      }
+
+      if (!lines.isEmpty()) {
+        return lines.get(lines.size() - 1);
+      }
+    }
+    catch (IOException e) {
+      //ignore
+    }
+    return null;
+  }
+
   private static String getBoardSerialNumber() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "baseboard", "get", "serialnumber"), false);
@@ -84,6 +128,7 @@ public class SystemUtil {
 
   /**
    * This one is NOT unique!
+   *
    * @return
    */
   private static String getProcessorId() {
@@ -142,6 +187,6 @@ public class SystemUtil {
   }
 
   public static void main(String[] args) {
-    System.out.println(getAudioDevices());
+    System.out.println(getWindowsId());
   }
 }

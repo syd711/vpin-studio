@@ -223,6 +223,8 @@ public class PlayerDialogController implements Initializable, DialogController {
 
       tournamentPlayerCheckbox.setSelected(false);
       tournamentPlayerCheckbox.setDisable(cabinet == null);
+      visibilityCheckbox.setSelected(cabinet != null);
+      visibilityCheckbox.setDisable(cabinet == null);
       String tournamentUserUuid = player.getTournamentUserUuid();
       if (!StringUtils.isEmpty(tournamentUserUuid)) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
@@ -231,6 +233,10 @@ public class PlayerDialogController implements Initializable, DialogController {
           this.visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(accountByUuid.getVisibility()));
           this.maniaNameField.setText(accountByUuid.getDisplayName());
         }
+      }
+      else {
+        visibilityCheckbox.setSelected(false);
+        visibilityCheckbox.setDisable(true);
       }
       refreshAvatar();
     }
@@ -290,6 +296,11 @@ public class PlayerDialogController implements Initializable, DialogController {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         maniaNameField.setDisable(!newValue);
+        visibilityCheckbox.setDisable(!newValue);
+
+        if(!newValue) {
+          visibilityCheckbox.setSelected(false);
+        }
       }
     });
 

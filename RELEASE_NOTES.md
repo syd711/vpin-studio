@@ -18,3 +18,4 @@
 - **Tables / Invalid Score Filter**: Fixed "Invalid Score Configuration" filter that did show valid tables before.
 - **Tables / Table Asset Manager**: Fixed various issues for the Asset Manager when opened for playlists.
 - **System Manager**: Aligned layout of all "Open Folder" buttons.
+- **Players**: Fixed "Visible For Friends" checkbox that must be disabled, when the player is not registered.
