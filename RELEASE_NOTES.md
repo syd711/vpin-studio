@@ -3,13 +3,22 @@
 ## Changes
 
 - **Tables / Table Overview**: Added new column **Rating**. You can directly rate the game inside the column without opening the data manager.
-- **Tables / Patching**: 
+- **Tables / VPS Tables**: Added "Comment" column and comment input field. You can enter personal comments there, e.g. to mark the table for downloading or that you tried that table but did not like it. This comment is solely stored for you and not submitted to the VP-Spreadsheet database.
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vps-comments.png" width="700" />
+  
+- **System Manager / Screens**: The **screens view is a new experimental view** and should show you all screens of your VPin, ordered by the different software components. It should help you to troubleshoot screen position issues. 
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/screens-manager.png" width="700" />
+
+- **System Manager / Emulators**: Added emulator management. The manager works for PinballX and PinUP Popper. For PinUP Popper you can add new emulators too.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/emulator-manager.png" width="700" />
+
+- **Tables / Patching**:
   - Added "Patch Version" field to the data manager for those who want to track this separately. **Note that by default, the value is written into the field "Custom5" for PinUP Popper users**. You can disable this in the server settings.
   - Added "Patch Version" field to the patch upload dialog.
   - Added "Patch Version" column to the table overview. Note that this column is **disabled by default** and must be enabled in the client settings.
-- **Tables / VPS Tables**: Added "Comment" column and comment input field. You can enter personal comments there, e.g. to mark the table for downloading or that you tried that table but did not like it. This comment is solely stored for you and not submitted to the VP-Spreadsheet database.
-- **System Manager**: This section has an additional tab called **Screens** now. The view should show you all screen setups of your VPin and helps you, troubleshooting screen position issues. Note that this feature is still a bit experimental, but we hope it will be of help.
-- **System Manager**: Added emulator management.
 - **Preferences / Webhooks**:
 
 ## Bugfixes
