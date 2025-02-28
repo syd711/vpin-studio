@@ -1,3 +1,11 @@
+## Release Notes 3.12.11
+
+## Changes
+
+- **Event Logging**: Detected key events are also logged as part of the event log now. So if you play a game and press the pause menu button, this should end up as message in the event log of the game. 
+
+---
+
 ## Release Notes 3.12.10
 
 ## Changes

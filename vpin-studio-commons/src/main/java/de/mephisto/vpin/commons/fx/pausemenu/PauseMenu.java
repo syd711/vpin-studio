@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -184,6 +185,7 @@ public class PauseMenu extends Application {
         }
         else {
           LOG.info("Found game status for " + status.getGameId());
+          SLOG.info("Found game status for " + status.getGameId());
         }
 
         togglePauseKey(0);
@@ -269,6 +271,7 @@ public class PauseMenu extends Application {
     }
     else {
       LOG.info("Exited pause menu");
+      SLOG.info("Exited pause menu");
       stage.hide();
 
       Platform.runLater(() -> {

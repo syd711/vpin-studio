@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
@@ -94,6 +95,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     if (name.equals(recordBtn)) {
       if (frontendStatusService.getGameStatus().isActive()) {
         LOG.info("Active game found for to recording, triggering recorder.");
+        SLOG.info("Active game found for to recording, triggering recorder.");
         recorderService.startInGameRecording();
       }
       else {
@@ -135,12 +137,14 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     this.overlayVisible = !overlayVisible;
     Platform.runLater(() -> {
       LOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
+      SLOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
       ServerFX.getInstance().showOverlay(overlayVisible);
     });
   }
 
   private void onTogglePauseMenu() {
     LOG.info("Toggle pause menu show");
+    SLOG.info("Toggle pause menu show");
     ServerFX.getInstance().togglePauseMenu();
   }
 
