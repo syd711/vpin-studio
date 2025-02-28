@@ -17,7 +17,7 @@ abstract public class SettingsSceneController {
       stack.getChildren().add(childNode);
     }
     else {
-      if (!stack.getChildren().isEmpty()) {
+      if (stack.getChildren().size() == 2) {
         stack.getChildren().remove(1);
       }
     }

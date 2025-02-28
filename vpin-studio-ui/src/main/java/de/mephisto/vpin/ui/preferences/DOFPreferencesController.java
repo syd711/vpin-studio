@@ -59,6 +59,12 @@ public class DOFPreferencesController implements Initializable {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
     DirectoryChooser chooser = new DirectoryChooser();
+
+    File path = new File(settings.getInstallationPath());
+    if(path.exists()) {
+      chooser.setInitialDirectory(path);
+    }
+
     chooser.setTitle("Select DOF Installation Folder");
     File folder = chooser.showDialog(stage);
     if (folder != null && folder.exists()) {
