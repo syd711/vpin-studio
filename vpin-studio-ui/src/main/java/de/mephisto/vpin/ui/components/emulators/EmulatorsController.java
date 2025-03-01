@@ -370,8 +370,8 @@ public class EmulatorsController implements Initializable {
 
   private void refreshTableWidth() {
     Number newValue = stage.getWidth();
-    if (newValue.intValue() < 1400) {
-      tableRoot.setPrefWidth(500);
+    if (newValue.intValue() < 1800) {
+      tableRoot.setPrefWidth(400);
     }
     else {
       tableRoot.setPrefWidth(-1);

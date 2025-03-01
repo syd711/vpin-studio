@@ -11,97 +11,104 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.screens.ManagedScreenController">
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
    <center>
       <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
             <Pane fx:id="previewCanvas" minHeight="300.0" minWidth="300.0" styleClass="media-container" />
          </content>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="6.0" top="12.0" />
+         </BorderPane.margin>
       </ScrollPane>
    </center>
    <left>
-      <VBox prefWidth="200.0" BorderPane.alignment="CENTER">
+      <VBox prefWidth="220.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="12.0" right="12.0" />
+            <Insets left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <children>
             <Label styleClass="default-title" text="Screens Overview" />
-            <VBox spacing="24.0">
+            <ScrollPane hbarPolicy="NEVER">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
-               <children>
-                  <VBox fx:id="frontendPanel" spacing="6.0">
+               <content>
+                  <VBox spacing="24.0">
                      <children>
-                        <Label styleClass="default-headline" text="Frontend Displays">
-                           <graphic>
-                              <FontIcon fx:id="frontendScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
-                           </graphic>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="showAllFrontendCheckbox" mnemonicParsing="false" selected="true" text="Show All">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
-                        </CheckBox>
+                        <VBox fx:id="frontendPanel" spacing="6.0">
+                           <children>
+                              <Label styleClass="default-headline" text="Frontend Displays">
+                                 <graphic>
+                                    <FontIcon fx:id="frontendScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <CheckBox fx:id="showAllFrontendCheckbox" mnemonicParsing="false" selected="true" text="Show All">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="screenResPanel" spacing="6.0">
+                           <children>
+                              <Label styleClass="default-headline" text="ScreenRes.txt Displays">
+                                 <graphic>
+                                    <FontIcon fx:id="screenResScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <CheckBox fx:id="showAllScreenResCheckbox" mnemonicParsing="false" selected="true" text="Show All">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="vpxPanel" spacing="6.0">
+                           <children>
+                              <Label styleClass="default-headline" text="VPX Display">
+                                 <graphic>
+                                    <FontIcon fx:id="vpxScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
+                                 </graphic>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <CheckBox fx:id="showAllVpxCheckbox" mnemonicParsing="false" selected="true" text="Show All">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
+                              </CheckBox>
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
-                  <VBox fx:id="screenResPanel" spacing="6.0">
-                     <children>
-                        <Label styleClass="default-headline" text="ScreenRes.txt Displays">
-                           <graphic>
-                              <FontIcon fx:id="screenResScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
-                           </graphic>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="showAllScreenResCheckbox" mnemonicParsing="false" selected="true" text="Show All">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="vpxPanel" spacing="6.0">
-                     <children>
-                        <Label styleClass="default-headline" text="VPX Display">
-                           <graphic>
-                              <FontIcon fx:id="vpxScreenIcon" iconColor="WHITE" iconLiteral="mdi2m-monitor" iconSize="18" />
-                           </graphic>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
-                        </Label>
-                        <CheckBox fx:id="showAllVpxCheckbox" mnemonicParsing="false" selected="true" text="Show All">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets bottom="6.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
+               </content>
+            </ScrollPane>
          </children>
       </VBox>
    </left>
    <bottom>
-      <VBox fx:id="errorsVbox" spacing="3.0">
+      <VBox fx:id="validationError" spacing="3.0" styleClass="error-container">
          <children>
          </children>
+         <BorderPane.margin>
+            <Insets top="6.0" />
+         </BorderPane.margin>
       </VBox>
    </bottom>
 </BorderPane>

@@ -110,6 +110,8 @@ public class EmulatorsTableController extends BaseTableController<GameEmulatorRe
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("emulator", "emulators", new EmulatorsTableColumnSorter(this));
 
+    validationError.setVisible(false);
+
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
       List<ValidationState> validationState = value.getValidationStates();
       FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(model));

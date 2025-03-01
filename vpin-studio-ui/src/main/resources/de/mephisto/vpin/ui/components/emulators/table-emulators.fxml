@@ -48,9 +48,9 @@
                   </VBox>
                </top>
                <center>
-                  <BorderPane fx:id="validationError" BorderPane.alignment="CENTER">
+                  <BorderPane fx:id="validationErrorParent" BorderPane.alignment="CENTER">
                      <center>
-                        <VBox styleClass="error-container">
+                        <VBox fx:id="validationError">
                            <children>
                               <BorderPane>
                                  <left>
@@ -74,6 +74,9 @@
                                  </font>
                               </Label>
                            </children>
+                           <padding>
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                           </padding>
                         </VBox>
                      </center>
                   </BorderPane>

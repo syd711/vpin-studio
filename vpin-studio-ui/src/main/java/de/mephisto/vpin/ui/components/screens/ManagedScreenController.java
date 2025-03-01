@@ -77,13 +77,13 @@ public class ManagedScreenController implements Initializable {
   private FontIcon vpxScreenIcon;
 
   @FXML
-  private VBox errorsVbox;  
+  private VBox validationError;
 
   private double zoom = 1;
 
-  private List<CheckBox> frontendScreensCheckboxes = new ArrayList<>();
-  private List<CheckBox> screenResScreensCheckboxes = new ArrayList<>();
-  private List<CheckBox> vpxScreensCheckboxes = new ArrayList<>();
+  private final List<CheckBox> frontendScreensCheckboxes = new ArrayList<>();
+  private final List<CheckBox> screenResScreensCheckboxes = new ArrayList<>();
+  private final List<CheckBox> vpxScreensCheckboxes = new ArrayList<>();
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -205,7 +205,7 @@ public class ManagedScreenController implements Initializable {
     drawScreens(screenSummary.getVpxDisplaysDisplays(), canvasMinX, canvasMinY, percentage, COLOR_VPX_SCREEN, 16, vpxScreensCheckboxes);
 
     if (relodData) {
-      addErrors(screenSummary.getErrors(), errorsVbox);
+      addErrors(screenSummary.getErrors(), validationError);
     }
   
     previewCanvas.requestLayout();
@@ -216,6 +216,7 @@ public class ManagedScreenController implements Initializable {
     errorsVbox.getChildren().clear();
     for (String error : errors) {
       Label l = new Label(error);
+      l.getStyleClass().add("error-title");
       errorsVbox.getChildren().add(l);
     }
   }
