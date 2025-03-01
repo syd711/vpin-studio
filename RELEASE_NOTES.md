@@ -3,6 +3,9 @@
 ## Changes
 
 - **Tables / Table Overview**: Added new column **Rating**. You can directly rate the game inside the column without opening the data manager.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/rating.png" width="100" />
+  
 - **Tables / VPS Tables**: Added "Comment" column and comment input field. You can enter personal comments there, e.g. to mark the table for downloading or that you tried that table but did not like it. This comment is solely stored for you and not submitted to the VP-Spreadsheet database.
   
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vps-comments.png" width="700" />
@@ -11,15 +14,21 @@
   
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/screens-manager.png" width="700" />
 
-- **System Manager / Emulators**: Added emulator management. The manager works for PinballX and PinUP Popper. For PinUP Popper you can add new emulators too.
+- **System Manager / Emulators**: Added emulator management. The manager works for PinballX and PinUP Popper. For PinUP Popper you can add new emulators too. The view comes with some validators too which do some folder checks for the corresponding values.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/emulator-manager.png" width="700" />
 
-- **Tables / Patching**:
+- **Tables / Overview**: Added preview for playlist icons. The actual icons are used for playlist now. The tooltips for those provide a detail view for the icon.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-icon.png" width="400" />
+
+- **Tables / Patching**: Several improvements have been made:
   - Added "Patch Version" field to the data manager for those who want to track this separately. **Note that by default, the value is written into the field "Custom5" for PinUP Popper users**. You can disable this in the server settings.
   - Added "Patch Version" field to the patch upload dialog.
   - Added "Patch Version" column to the table overview. Note that this column is **disabled by default** and must be enabled in the client settings.
-- **Preferences / Webhooks**:
+- **Preferences / Webhooks**: In order to support the development of https://github.com/mikedmor/ArcadeScore, we have added webhooks that can be used to integrate 3rd party systems into VPin Studio. A detailled documentation can be found here: https://github.com/syd711/vpin-studio/wiki/Webhooks. Note that this API is not final yet as the development is still in progress. We will give updates about this soon.
+
+  <img src="https://raw.githubusercontent.com/mikedmor/ArcadeScore/refs/heads/main/app/static/images/icons/arcadescore_256.png" width="150" />
 
 ## Bugfixes
 
