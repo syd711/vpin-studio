@@ -54,6 +54,13 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
 
   private CardSettings cardSettings;
 
+  public void updateGame(Game game) {
+    if (game != null) {
+      deleteDefaultPictures(game);
+      extractDefaultPicture(game);
+    }
+  }
+
   public void extractDefaultPicture(@NonNull Game game) {
     File rawDefaultPicture = getRawDefaultPicture(game);
     if (!rawDefaultPicture.getParentFile().exists() && !rawDefaultPicture.getParentFile().mkdirs()) {
@@ -64,7 +71,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
     if (game.getDirectB2SFile().exists()) {
       try {
         DirectB2SDataExtractor data = new DirectB2SDataExtractor();
-        data.extractData(game.getDirectB2SFile(), game.getEmulatorId(), "not needed", game.getId());
+        data.extractData(game.getDirectB2SFile(), game.getEmulatorId(), "not needed");
 
         if (data.getBackgroundBase64() != null) {
           DirectB2SImageExporter extractor = new DirectB2SImageExporter(data);

@@ -203,7 +203,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       Parent tablesRoot = loader.load();
       tableOverviewController = loader.getController();
       tableOverviewController.setRootController(this);
-      tablesSideBarController.setTableOverviewController(tableOverviewController);
+      tablesSideBarController.setRootController(this);
+      tablesSideBarController.loadSidePanels();
       tablesTab.setContent(tablesRoot);
     }
     catch (IOException e) {
@@ -358,51 +359,36 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     int selectedTab = getSelectedTab(newValue.intValue());
     Platform.runLater(() -> {
+      tableOverviewController.setVisible(selectedTab == TAB_TABLE);
+      repositorySideBarController.setVisible(selectedTab == TAB_REPOSITORY);
+      vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
+
       if (selectedTab == TAB_TABLE) {
-        tableOverviewController.setVisible(true);
-        repositorySideBarController.setVisible(false);
-        vpsTablesSidebarController.setVisible(false);
         tableOverviewController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
       else if (selectedTab == TAB_BACKGLASS) {
-        tableOverviewController.setVisible(false);
-        repositorySideBarController.setVisible(false);
-        vpsTablesSidebarController.setVisible(false);
         backglassManagerController.onViewActivated(null);
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
       else if (selectedTab == TAB_VPS) {
-        tableOverviewController.setVisible(false);
-        repositorySideBarController.setVisible(false);
-        vpsTablesSidebarController.setVisible(true);
         vpsTablesController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
       else if (selectedTab == TAB_STATISTICS) {
-        tableOverviewController.setVisible(false);
-        repositorySideBarController.setVisible(false);
-        vpsTablesSidebarController.setVisible(false);
         alxController.onViewActivated(null);
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
       else if (selectedTab == TAB_REPOSITORY) {
-        tableOverviewController.setVisible(false);
-        repositorySideBarController.setVisible(true);
-        vpsTablesSidebarController.setVisible(false);
         repositoryController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
       else if (selectedTab == TAB_RECORDER) {
-        tableOverviewController.setVisible(false);
-        repositorySideBarController.setVisible(false);
-        vpsTablesSidebarController.setVisible(false);
-        recorderController.setTablesController(this);
         recorderController.onViewActivated(null);
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);

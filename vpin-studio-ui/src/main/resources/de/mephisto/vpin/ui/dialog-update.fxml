@@ -77,7 +77,7 @@
             </VBox>
             <HBox fx:id="footer" alignment="CENTER_RIGHT">
                <children>
-                  <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#onClose" styleClass="submit-button" text="Close" />
+                  <Button fx:id="closeBtn" mnemonicParsing="false" onAction="#onClose" styleClass="submit-button" text="Cancel" />
                </children>
                <VBox.margin>
                   <Insets top="24.0" />

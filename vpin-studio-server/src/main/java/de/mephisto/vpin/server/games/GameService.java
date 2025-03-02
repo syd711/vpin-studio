@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.*;
@@ -76,6 +78,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private BackglassService backglassService;
 
   @Autowired
   private PupPacksService pupPackService;
@@ -390,6 +395,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return game;
   }
 
+  public Game getGameByDirectB2S(int emuId, String filename) {
+    String basefileName = de.mephisto.vpin.restclient.util.FileUtils.baseUniqueFile(filename);
+    return getGameByBaseFilename(emuId, basefileName);
+  }
+
   private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     boolean newGame = (gameDetails == null);
@@ -531,6 +541,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
     File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
     game.setDefaultBackgroundAvailable(rawDefaultPicture.exists());
+
+    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(game);
+    game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
 
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));

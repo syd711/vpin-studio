@@ -141,7 +141,8 @@ public class DMDPositionService {
   }
 
   private void fillScreenInfo(DMDInfo dmdinfo) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
     screenService.addDeviceOffsets(screenres);
 
     // determine on which screen the DMD is positionned onto
@@ -223,7 +224,8 @@ public class DMDPositionService {
   // MOVE AND POSITION
 
   public DMDInfo moveDMDInfo(DMDInfo dmdinfo, VPinScreen targetScreen) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
     if (screenres != null) {
       fillScreenInfo(dmdinfo, screenres, targetScreen);
     }
@@ -234,17 +236,18 @@ public class DMDPositionService {
   }
 
   public DMDInfo autoPositionDMDInfo(DMDInfo dmdinfo) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
 
     byte[] image = null;
     double factorX = 0, factorY = 0;
     if (VPinScreen.BackGlass.equals(dmdinfo.getOnScreen())) {
-      image = backglassService.getPreviewBackground(dmdinfo.getGameId(), false);
+      image = backglassService.getPreviewBackground(game, false);
       factorX = screenres.getBackglassWidth();
       factorY = screenres.getBackglassHeight();
     }
     else if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
-      image = backglassService.getPreviewDmd(dmdinfo.getGameId());
+      image = backglassService.getPreviewDmd(game);
       factorX = screenres.getDmdWidth();
       factorY = screenres.getDmdHeight();
     }
@@ -278,7 +281,8 @@ public class DMDPositionService {
   // SAVE
 
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
     screenService.addDeviceOffsets(screenres);
 
     // enforce aspect ratio
@@ -304,8 +308,6 @@ public class DMDPositionService {
     dmdinfo.setY(Math.round(dmdinfo.getY()));
     dmdinfo.setWidth(Math.round(dmdinfo.getWidth()));
     dmdinfo.setHeight(Math.round(dmdinfo.getHeight()));
-
-    Game game = gameService.getGame(dmdinfo.getGameId());
 
     boolean useExternalDmd = useExternalDmd(dmdinfo.getGameRom());
 
@@ -441,13 +443,13 @@ public class DMDPositionService {
   }
 
   public byte[] getPicture(int gameId, VPinScreen onScreen) {
+    Game game = gameService.getGame(gameId);
     if (VPinScreen.BackGlass.equals(onScreen)) {
-      return backglassService.getPreviewBackground(gameId, true);
+      return backglassService.getPreviewBackground(game, true);
     }
     else if (VPinScreen.DMD.equals(onScreen)) {
-      DirectB2S directb2s = backglassService.getDirectB2S(gameId);
-      DirectB2STableSettings tableSettings = backglassService.getTableSettings(gameId);
-      String base64 = backglassService.getDmdBase64(directb2s.getEmulatorId(), directb2s.getFileName());
+      DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
+      String base64 = backglassService.getDmdBase64(game.getEmulatorId(), game.getDirectB2SFilename());
 
       // use B2S DMD image if present and not hidden
       if (base64 != null && !(tableSettings != null && tableSettings.isHideB2SDMD())) {

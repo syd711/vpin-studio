@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 
@@ -297,8 +298,8 @@ public class VPinScreenService {
 
   //----------------------------------------------------------------- SCREENRES.TXT ---
 
-  public List<FrontendPlayerDisplay> getScreenResDisplays(int gameId, boolean absoluteCoordinate) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(gameId, false);
+  public List<FrontendPlayerDisplay> getScreenResDisplays(Game game, boolean absoluteCoordinate) {
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
     if (absoluteCoordinate) {
       addDeviceOffsets(screenres);
     }

@@ -127,6 +127,14 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openDirectb2sUploads(GameRepresentation game, File file, Runnable finalizer) {
+    Stage stage = Dialogs.createStudioDialogStage(Directb2sUploadController.class, "dialog-directb2s-upload.fxml", "Backglass Upload");
+    Directb2sUploadController controller = (Directb2sUploadController) stage.getUserData();
+    controller.setFile(stage, file, null, finalizer);
+    controller.setData(game);
+    stage.showAndWait();
+  }
+
   public static void openPinVolSettings(List<GameRepresentation> games) {
     Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", "PinVol Settings");
     PinVolSettingsDialogController controller = (PinVolSettingsDialogController) stage.getUserData();
@@ -178,6 +186,24 @@ public class TableDialogs {
     return false;
   }
 
+  public static void openBackglassUpload(@Nullable TablesController tablesController, Stage stage, GameRepresentation game, File file, Runnable finalizer) {
+    String directB2SPath = game.getDirectB2SPath();
+    if (directB2SPath != null) {
+      TableDialogs.openDirectb2sUploads(game, file, finalizer);
+    }
+    else {
+      if (file == null) {
+        boolean b = TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, null);
+        if (b) {
+          tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
+        }
+      }
+      else {
+        directBackglassUpload(stage, game, file, finalizer);
+      }
+    }
+  }
+
   public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       String help2 = null;
@@ -186,7 +212,7 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, finalizer);
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false, finalizer);
         ProgressDialog.createProgressDialog(model);
         return true;
       }
