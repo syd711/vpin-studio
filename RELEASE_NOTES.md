@@ -26,6 +26,7 @@
   - Added "Patch Version" field to the data manager for those who want to track this separately. **Note that by default, the value is written into the field "Custom5" for PinUP Popper users**. You can disable this in the server settings.
   - Added "Patch Version" field to the patch upload dialog.
   - Added "Patch Version" column to the table overview. Note that this column is **disabled by default** and must be enabled in the client settings.
+- **Preferences / Controller Setup**: Added input option to generate **screenshots**. This allows you to generate screenshots in-game. The feature might come in handy for competitions that require screenshot references. For more details see: https://github.com/syd711/vpin-studio/wiki/Taking-Screenshots
 - **Preferences / PinVOL / Volume**: Added option to mute the cabinet on startup.
 - **Preferences / Webhooks**: In order to support the development of https://github.com/mikedmor/ArcadeScore, we have added webhooks that can be used to integrate 3rd party systems into VPin Studio. A detailled documentation can be found here: https://github.com/syd711/vpin-studio/wiki/Webhooks. Note that this API is not final yet as the development is still in progress. We will give updates about this soon.
 
