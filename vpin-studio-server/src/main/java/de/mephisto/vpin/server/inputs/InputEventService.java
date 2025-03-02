@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.RecorderService;
+import de.mephisto.vpin.server.recorder.ScreenshotService;
 import de.mephisto.vpin.server.system.SystemService;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Autowired
   private RecorderService recorderService;
+
+  @Autowired
+  private ScreenshotService screenshotService;
 
   @Autowired
   private JobQueue queue;
@@ -90,14 +94,30 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     String pauseBtn = pauseMenuSettings.getPauseButton();
     String overlayBtn = pauseMenuSettings.getOverlayButton();
     String recordBtn = pauseMenuSettings.getRecordingButton();
+    String screenshotBtn = pauseMenuSettings.getScreenshotButton();
 
     if (name.equals(recordBtn)) {
       if (frontendStatusService.getGameStatus().isActive()) {
         LOG.info("Active game found for to recording, triggering recorder.");
         recorderService.startInGameRecording();
+        return;
       }
       else {
         LOG.info("Record button pressed, but no active game found.");
+        return;
+      }
+    }
+
+    if (name.equals(screenshotBtn)) {
+      if (frontendStatusService.getGameStatus().isActive()) {
+        LOG.info("Active game found for to screenshot, starting generation.");
+        screenshotService.takeScreenshots(frontendStatusService.getGameStatus().getGameId());
+        return;
+      }
+      else {
+        LOG.info("Screenshot button pressed, but no active game found, take menu screenshots.");
+        screenshotService.takeScreenshots(-1);
+        return;
       }
     }
 

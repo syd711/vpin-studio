@@ -25,6 +25,11 @@ public class DateUtil {
   }
 
   public static String formatTimeString(Date date) {
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
+    return df.format(date);
+  }
+
+  public static String formatDateTimeFileString(Date date) {
     SimpleDateFormat df = new SimpleDateFormat("HH:mm");
     return df.format(date);
   }
