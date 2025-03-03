@@ -303,7 +303,15 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
           folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
         }
-        SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
+        if (emulatorRepresentation.getAltColorDirectory() != null) {
+          File file = new File(emulatorRepresentation.getAltColorDirectory());
+          if (file.exists()) {
+            SystemUtil.openFolder(folder, file);
+            return;
+          }
+        }
+
+        WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for emulator \"" + emulatorRepresentation.getName() + "\".");
       }
     }
     catch (Exception e) {
@@ -833,6 +841,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   public TablesSidebarPlaylistsController getTablesSidebarPlaylistController() {
     return tablesSidebarPlaylistsController;
   }
+
   public TablesSidebarHighscoresController getTablesSidebarHighscoresController() {
     return tablesSidebarHighscoresController;
   }
