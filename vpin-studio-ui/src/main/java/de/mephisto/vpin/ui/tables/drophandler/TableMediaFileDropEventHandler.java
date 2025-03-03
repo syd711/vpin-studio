@@ -54,7 +54,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     List<File> files = event.getDragboard().getFiles();
     List<File> filtered = files.stream().filter(f -> {
       String suffix = FilenameUtils.getExtension(f.getName());
-      return suffixes.contains(suffix);
+      return suffixes.contains(suffix.toLowerCase());
     }).collect(Collectors.toList());
 
     if (filtered.isEmpty()) {

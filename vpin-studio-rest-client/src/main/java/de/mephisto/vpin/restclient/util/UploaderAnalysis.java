@@ -883,7 +883,7 @@ public class UploaderAnalysis<T> {
     }
 
     String suffix = FilenameUtils.getExtension(fileNameWithPath);
-    if (!mediaSuffixes.contains(suffix)) {
+    if (!mediaSuffixes.contains(suffix.toLowerCase())) {
       return false;
     }
 
