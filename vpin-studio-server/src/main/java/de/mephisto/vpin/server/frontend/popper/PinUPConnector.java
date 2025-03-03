@@ -1390,7 +1390,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, emulator.getDescription());
       preparedStatement.setString(index++, emulator.getGamesDirectory());
       preparedStatement.setString(index++, emulator.getMediaDirectory());
-      preparedStatement.setString(index++, emulator.getName());
+      preparedStatement.setString(index++, emulator.getDisplayName());
       preparedStatement.setInt(index++, emulator.isEnabled() ? 1 : 0);
       preparedStatement.setString(index++, emulator.getRomDirectory());
       preparedStatement.setString(index++, emulator.getInstallationDirectory());

@@ -28,6 +28,9 @@ public class GameEmulator {
   private int id;
   private boolean enabled;
 
+  /** The internal/technical name, not used for display */
+  private String internalName;
+
   private String exeName;
   private String exeParameters;
   private String gameExt;
@@ -205,6 +208,14 @@ public class GameEmulator {
   public int getId() {
     return id;
   }
+  
+  public String getInternalName() {
+    return internalName;
+  }
+
+  public void setInternalName(String internalName) {
+    this.internalName = internalName;
+  }
 
   public boolean isValid() {
     return !StringUtils.isEmpty(installationDirectory) && getInstallationFolder().exists();
@@ -332,6 +343,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getName() + " [" + gamesDirectory + "])";
+    return "\"" + this.displayName + "\" (ID: " + this.id + "/" + this.name + " [" + gamesDirectory + "])";
   }
 }
