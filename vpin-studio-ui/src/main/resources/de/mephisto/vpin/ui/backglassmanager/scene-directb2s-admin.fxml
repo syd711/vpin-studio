@@ -99,7 +99,7 @@
                         <Tooltip text="Open .res editor" />
                     </tooltip>
                 </Button>
-                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Positioner" textFill="WHITE">
+                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Position" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
