@@ -957,7 +957,7 @@ public abstract class BaseConnector implements FrontendConnector {
       return fpService.play(game, null);
     }
     else {
-      LOG.error("Emulator {} for Game \"{}\" cannot be started", emu.getDisplayName(), game.getGameFileName());
+      LOG.error("Emulator {} for Game \"{}\" cannot be started", emu.getName(), game.getGameFileName());
       return false;
     }
   }

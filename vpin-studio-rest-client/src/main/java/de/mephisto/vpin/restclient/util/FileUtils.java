@@ -90,45 +90,24 @@ public class FileUtils {
   }
 
   public static boolean renameToBaseName(File file, String name) {
-    if (file.exists()) {
-      String suffix = FilenameUtils.getExtension(file.getName());
-      String targetName = name + "." + suffix;
-      File newFile = new File(file.getParentFile(), targetName);
-      if (file.renameTo(newFile)) {
-        LOG.info("Renamed \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
-        return true;
-      }
+    String suffix = FilenameUtils.getExtension(file.getName());
+    String targetName = name + "." + suffix;
+    File newFile = new File(file.getParentFile(), targetName);
 
-      LOG.warn("Renaming \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed.");
-      return false;
-    }
-
-    LOG.warn("Renaming \"" + file.getAbsolutePath() + "\" to new base name \"" + name + "\" failed, the file does not exist.");
-    return false;
+    return rename(file, newFile);
   }
 
   public static boolean assetRename(File file, String oldBaseName, String newBaseName) {
-    if (file.exists()) {
-      String suffix = FilenameUtils.getExtension(file.getName());
-      String baseName = FilenameUtils.getBaseName(file.getName());
+    String suffix = FilenameUtils.getExtension(file.getName());
+    String baseName = FilenameUtils.getBaseName(file.getName());
 
-      //append the possible 01... to the base name
-      String baseNameSuffix = baseName.substring(oldBaseName.length());
-      String targetName = newBaseName + baseNameSuffix + "." + suffix;
-      File newFile = new File(file.getParentFile(), targetName);
-      if (file.renameTo(newFile)) {
-        LOG.info("Renamed asset \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
-        return true;
-      }
+    //append the possible 01... to the base name
+    String baseNameSuffix = baseName.substring(oldBaseName.length());
+    String targetName = newBaseName + baseNameSuffix + "." + suffix;
+    File newFile = new File(file.getParentFile(), targetName);
 
-      LOG.warn("Renaming asset \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed.");
-      return false;
-    }
-
-    LOG.warn("Renaming asset \"" + file.getAbsolutePath() + "\" to new base name \"" + newBaseName + "\" failed, the file does not exist.");
-    return false;
+    return rename(file, newFile);
   }
-
 
   public static boolean delete(@Nullable File file) {
     if (file != null && file.exists()) {
@@ -139,6 +118,31 @@ public class FileUtils {
         LOG.warn("Failed to delete " + file.getAbsolutePath());
         return false;
       }
+    }
+    return true;
+  }
+
+  public static boolean rename(File file, File newFile) {
+    if (file.exists()) {
+      try {
+        Files.createDirectories(newFile.getParentFile().toPath());
+        Files.move(file.toPath(), newFile.toPath());
+        LOG.info("Renamed file \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
+        return true;
+      }
+      catch (IOException ioe) {
+        LOG.warn("Renaming file \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed. " + ioe.getMessage());
+        return false;
+      }
+    }
+    LOG.warn("Renaming file \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed, the file does not exist.");
+    return false;
+  }
+
+  public static boolean isEmpty(File folder) {
+    if (folder.exists()) {
+      File[] files = folder.listFiles();
+      return files == null || files.length == 0;
     }
     return true;
   }

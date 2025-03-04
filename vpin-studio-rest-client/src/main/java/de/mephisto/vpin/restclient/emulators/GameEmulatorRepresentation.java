@@ -1,6 +1,5 @@
 package de.mephisto.vpin.restclient.emulators;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -11,9 +10,9 @@ import java.util.List;
 
 public class GameEmulatorRepresentation {
   private EmulatorType type;
+  private String safeName;
   private String name;
   private String description;
-  private String displayName;
   private String installationDirectory;
   private String gamesDirectory;
   private String mameDirectory;
@@ -21,8 +20,6 @@ public class GameEmulatorRepresentation {
   private String romDirectory;
   private int id;
   private boolean enabled;
-
-  private String internalName;
 
   private String exeName;
   private String exeParameters;
@@ -106,28 +103,20 @@ public class GameEmulatorRepresentation {
     this.name = name;
   }
 
+  public String getSafeName() {
+    return safeName;
+  }
+
+  public void setSafeName(String safeName) {
+    this.safeName = safeName;
+  }
+
   public EmulatorType getType() {
     return type;
   }
 
   public void setType(EmulatorType type) {
     this.type = type;
-  }
-
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
-
-  public String getInternalName() {
-    return internalName;
-  }
-
-  public void setInternalName(String internalName) {
-    this.internalName = internalName;
   }
   
   public String getMameDirectory() {

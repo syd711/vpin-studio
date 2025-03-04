@@ -200,8 +200,8 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     GameEmulator e = new GameEmulator();
     e.setType(type);
     e.setId(emuId);
+    e.setSafeName(emuname);
     e.setName(emuname);
-    e.setDisplayName(emuname);
 
     String mediaFolder = StringUtils.defaultIfEmpty(s.getProperty(system + ".MediaDir"), emuname);
     File mediaDir = new File(getMediaPath(s), mediaFolder);
