@@ -1,8 +1,30 @@
 ## Release Notes 3.12.11
 
-## Changes
+## Critical VPin Mania Update 
 
-- **VPin Mania / Players**: Disabled automatic player restoring which may restore players from other people. Investigation is ongoing.  
+Unfortunately I had to reset the VPin Mania database. This was required because of a critical error in the unique id generation for the registration (which wasn't so unique in the end).
+
+**What data is lost?**
+
+All highscores, accounts, tournaments, tournament highscores and friend settings have been deleted. 
+
+**What data is kept?**
+
+The deny lists for highscores are kept. Unfortunately, the information of the editor who submitted the entry is lost too, but I can restore these manually later.
+
+**Can I restore my data?**
+
+Almost all of it, yes. After updating, just press the "Friends" button or the VPin Mania registration button the preferences to re-register your cabinet.
+The updated registration process lets you automatically register your players and will synchronize all your highscores too.
+**This will restore most of the data.**
+Unfortunately, existing tournament data is lost forever.
+
+**...but...WHY? Give me the details!**
+
+The idea of the VPin Mania was to keep the registration simple and use a unique system id (instead of any personal data like email and password) to identify a cabinet (not the user).
+I have read different system parameters for that, including the system's processor id. I wasn't aware that this id is not unique.
+As a result, players have been automatically restored with data from other cabinets. Since I can't identify which accounts are affected by this problem, I've decided to reset all, even though I'll loose some users.
+But it was required to continue the feature development there.
 
 ---
 

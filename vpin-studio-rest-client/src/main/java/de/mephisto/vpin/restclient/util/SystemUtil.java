@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ import java.util.List;
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
 
-  private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial");
+  private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial", "Not applicable");
 
   public static int getPort() {
     try {
@@ -30,7 +33,7 @@ public class SystemUtil {
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArguments = runtimeMxBean.getInputArguments();
         for (String jvmArgument : jvmArguments) {
-          if(jvmArgument.startsWith("-Dstudio.server.port")) {
+          if (jvmArgument.startsWith("-Dstudio.server.port")) {
             port = jvmArgument.split("=")[1];
           }
         }
@@ -46,18 +49,42 @@ public class SystemUtil {
     return RestClient.PORT;
   }
 
-  public static String getUniqueSystemId() {
-    String id = getBoardSerialNumber();
-    //TODO this is actual a bug and should not be used,
-    //Not yet a problem, but the existing system ids must be migrated
-    if (StringUtils.isEmpty(id)) {
-      id = getProcessorId();
-    }
-
-    if (StringUtils.isEmpty(id)) {
-      return NetworkUtil.getMacAddress();
+  private static String getSystemId() {
+    String macAddress = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
+    String driveId = getDriveId() != null ? getDriveId().trim() : "#";
+    String boardId = getBoardSerialNumber() != null ? getBoardSerialNumber().trim() : "#";
+    String id = macAddress + "~" + driveId + "~" + boardId;
+    if (id.length() > 100) {
+      id = id.substring(0, 99);
     }
     return id;
+  }
+
+  public static String getUniqueSystemId() {
+    return getSystemId();
+  }
+
+  public static String getDriveId() {
+    try {
+      Process process = Runtime.getRuntime().exec("wmic diskdrive get serialnumber");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      List<String> lines = new ArrayList<>();
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        if (StringUtils.isEmpty(line) || line.trim().equals("SerialNumber")) {
+          continue;
+        }
+        lines.add(line.trim());
+      }
+
+      if (!lines.isEmpty()) {
+        return lines.get(lines.size() - 1);
+      }
+    }
+    catch (IOException e) {
+      //ignore
+    }
+    return null;
   }
 
   private static String getBoardSerialNumber() {
@@ -77,32 +104,7 @@ public class SystemUtil {
       }
     }
     catch (Exception e) {
-      LOG.warn("Failed to resolve cabinet id: " + e.getMessage());
-    }
-    return null;
-  }
-
-  /**
-   * This one is NOT unique!
-   * @return
-   */
-  private static String getProcessorId() {
-    try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "cpu", "get", "ProcessorId"), false);
-      executor.setIgnoreError(true);
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      if (standardOutputFromCommand != null) {
-        String[] split = standardOutputFromCommand.toString().trim().split("\n");
-        String serial = split[split.length - 1];
-        if (!isNotValid(serial)) {
-          return null;
-        }
-        return serial;
-      }
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to resolve cpu id: " + e.getMessage());
+      //ignore
     }
     return null;
   }
@@ -142,6 +144,6 @@ public class SystemUtil {
   }
 
   public static void main(String[] args) {
-    System.out.println(getAudioDevices());
+    System.out.println(getSystemId());
   }
 }

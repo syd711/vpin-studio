@@ -269,7 +269,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     for (Account account : accounts) {
       checkAccount(account);
     }
-
   }
 
   private void checkAccount(Account account) {
@@ -388,7 +387,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
         if (cabinet != null) {
           LOG.info("Cabinet is registered on VPin-Mania");
-//          checkPlayerRestoring();
+          checkPlayerRestoring();
         }
         else {
           LOG.info("Cabinet is not registered on VPin-Mania");
