@@ -43,6 +43,19 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
+                  <VBox styleClass="info-container">
+                     <children>
+                        <Label styleClass="default-text" text="The registration is bound to the hardware of your cabinet." />
+                        <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="To restore on older registration after a hardware update, " />
+                        <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="please drop a message on the VPin Studio Discord server." />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                  </VBox>
                </children>
             </VBox>
          </children>

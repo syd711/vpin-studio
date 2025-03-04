@@ -196,7 +196,9 @@ public class DMDPositionController implements Initializable, DialogController {
     radioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
       @Override
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-        ratioProperty.setValue((DMDAspectRatio) newValue.getUserData());
+        if(newValue != null) {
+          ratioProperty.setValue((DMDAspectRatio) newValue.getUserData());
+        }
       }
     });
 

@@ -16,13 +16,13 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.SystemUtil;
+import de.mephisto.vpin.ui.util.WaitProgressModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -37,7 +37,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -60,25 +59,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   private Button uploadBtn;
 
   @FXML
-  private SplitMenuButton deleteBtn;
-
-  @FXML
-  private Button directB2SSetDefaultBtn;
-
-  @FXML
-  private Button directB2SDisableBtn;
-
-  @FXML
-  private Label directB2SLabel;
-
-  @FXML
-  private ComboBox<String> directB2SCombo;
-
-  @FXML
-  private MenuItem directB2SDeleteBtn;
-
-  @FXML
   private Button openBtn;
+
+  @FXML
+  private Button renameBtn;
 
   @FXML
   private Button vpsOpenBtn;
@@ -141,11 +125,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   private void onUpload(ActionEvent e) {
     GameRepresentation game = getGameFromSelection();
     if (game != null) {
-      TableDialogs.openDirectb2sUploads(game, null, () -> {
-        // when done, force refresh
-        unselectVersion();
-        reloadSelection();
-      });
+      TableDialogs.openDirectb2sUploads(game, null, this::reloadSelection);
     }
   }
 
@@ -169,6 +149,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       BackglassManagerDialogs.openResGenerator(selection.getEmulatorId(), selection.getFileName());
     }
   }
+
   @FXML
   protected void onTableDataManager(ActionEvent e) {
     GameRepresentation game = getGameFromSelection();
@@ -182,7 +163,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     DirectB2SModel selection = getSelectedModel();
     if (selection != null) {
       //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      String newName = WidgetFactory.showInputDialog(Studio.stage, "Rename Backglass", "Enter new name for backglass file \"" + selection.getFileName() + "\"", null, null, selection.getName());
+      String newName = WidgetFactory.showInputDialog(Studio.stage, "Rename Backglass", "Enter new name for backglass file \"" + selection.getFileName() + "\"", "The renaming will include all versions of the backglass too.", null, selection.getName());
       if (newName != null) {
         if (!FileUtils.isValidFilename(newName)) {
           WidgetFactory.showAlert(stage, "Invalid Filename", "The specified file name contains invalid characters.");
@@ -196,7 +177,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
           DirectB2SAndVersions b2s = client.getBackglassServiceClient().renameBackglass(selection.getEmulatorId(), selection.getFileName(), newName);
           if (b2s != null) {
             selection.setBean(b2s);
-            unselectVersion();
             reloadSelection();
             applyFilter();
 
@@ -210,53 +190,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
         }
       }
-    }
-  }
-
-  @FXML
-  protected void onDuplicate(ActionEvent e) {
-    DirectB2SModel selection = getSelectedModel();
-    if (selection != null) {
-      //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Duplicate Backglass", "Duplicate backglass file \"" + selection.getFileName() + "\"?", null, "Duplicate");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        try {
-          DirectB2SAndVersions b2s = client.getBackglassServiceClient().duplicateBackglass(selection.getEmulatorId(), selection.getFileName());
-          if (b2s != null) {
-            reloadItem(b2s);
-          }
-        }
-        catch (Exception ex) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
-        }
-      }
-    }
-  }
-
-  @Override
-  protected void onDelete(Event e) {
-    try {
-      DirectB2SModel selection = getSelectedModel();
-      if (selection != null) {
-        //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", "This also deletes all version of this backglass.", "Delete");
-        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          if (client.getBackglassServiceClient().deleteBackglass(selection.getEmulatorId(), selection.getFileName())) {
-            // remove from the list if successfully deleted
-            models.remove(selection);
-
-            applyFilter();
-
-            // then notify changes
-            if (selection.getGameId() > 0) {
-              EventManager.getInstance().notifyTableChange(selection.getGameId(), null);
-            }
-          }
-        }
-      }
-    }
-    catch (Exception ex) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
     }
   }
 
@@ -277,52 +210,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   @FXML
-  private void onDirectB2SDefault() {
-    DirectB2SAndVersions selectedItem = getSelection();
-    String selectedVersion =  getSelectedVersion();
-    if (selectedItem != null &&  selectedVersion != null) {
-      JFXFuture
-          .supplyAsync(() -> client.getBackglassServiceClient().setBackglassAsDefault(selectedItem.getEmulatorId(), selectedVersion))
-          .thenAcceptLater((b2s) -> {
-            // reload table and selected view
-            unselectVersion();
-            reloadItem(b2s);
-          })
-          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + selectedVersion + " as default", e.getMessage()));
-    }
-  }
-
-  @FXML
   private void onDirectB2SDisable() {
     DirectB2SAndVersions selectedItem = getSelection();
     if (selectedItem != null) {
       JFXFuture
           .supplyAsync(() -> client.getBackglassServiceClient().disableBackglass(selectedItem.getEmulatorId(), selectedItem.getFileName()))
-          .thenAcceptLater((b2s) -> {
-            // reload table and selected view
-            unselectVersion();
-            reloadItem(b2s);
-          })
+          .thenAcceptLater(this::reloadItem)
           .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
-    }
-  }
-
-  @FXML
-  private void onDirectB2SDelete() {
-    DirectB2SAndVersions selectedItem = getSelection();
-    String selectedVersion =  getSelectedVersion();
-    if (selectedItem != null &&  selectedVersion != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete backglass version \"" + selectedVersion + "\"?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        JFXFuture
-            .supplyAsync(() -> client.getBackglassServiceClient().deleteBackglassVersion(selectedItem.getEmulatorId(), selectedVersion))
-            .thenAcceptLater((b2s) -> {
-              // reload table and selected view
-              unselectVersion();
-              reloadItem(b2s);
-            })
-            .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot disable backglass", e.getMessage()));
-      }
     }
   }
 
@@ -340,9 +234,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   @FXML
   private void onReload() {
     ProgressDialog.createProgressDialog(new WaitProgressModel<>("Invalidate Cache",
-      "Invalidating Backglasses Cache...", () -> {
-        client.getBackglassServiceClient().clearCache();
-      }));
+        "Invalidating Backglasses Cache...", () -> {
+      client.getBackglassServiceClient().clearCache();
+    }));
     doReload();
   }
 
@@ -351,9 +245,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     refreshPlaylists();
 
-    JFXFuture.supplyAsync(() -> {
-      return client.getBackglassServiceClient().getBackglasses();
-    }).thenAcceptLater(data -> {
+    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getBackglasses()).thenAcceptLater(data -> {
       setItems(data);
       endReload();
     });
@@ -362,6 +254,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
+
     resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
 
     // reference the controllers
@@ -380,13 +273,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     super.loadFilterPanel("scene-directb2s-admin-filter.fxml");
 
     super.loadPlaylistCombo();
-
-    directB2SCombo.valueProperty().addListener((obs, o, n) -> {
-      DirectB2SModel selection = getSelectedModel();
-      if (selection != null) {
-        backglassManagerSideBarController.versionChanged(selection.getEmulatorId(), n);
-      }
-    });
 
     // Install the handler for backglass selection
     this.tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -423,7 +309,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   private void bindTable() {
-
     BaseLoadingColumn.configureColumn(statusColumn, (value, model) -> {
       if (!model.isGameAvailable()) {
         Label icon = new Label();
@@ -542,36 +427,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.resBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
     this.openBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
     this.vpsOpenBtn.setDisable(true);
-    this.deleteBtn.setDisable(true);
 
-    int emulatorId = -1;
-    int gameId = -1;
     if (model != null) {
-      List<String> versions = model.getBacklass().getVersions();
-      // maintain current selection if possible 
-      String prevSelected = directB2SCombo.getValue();
-
-      if (versions.size() > 1) {
-        directB2SCombo.setItems(FXCollections.observableList(versions));
-        setVersioningDisabled(false);
-        // re-select previously one else first in the list
-        if (prevSelected != null && versions.contains(prevSelected)) {
-          directB2SCombo.getSelectionModel().select(prevSelected);
-        }
-        else {
-          directB2SCombo.getSelectionModel().selectFirst();
-        }
-      }
-      else {
-        setVersioningDisabled(true);
-      }
-
-      deleteBtn.setDisable(false);
-
-      emulatorId = model.getEmulatorId();
-      gameId = model.getGameId();
-
       JFXFuture
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {
@@ -580,26 +439,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
               resBtn.setDisable(false);
               uploadBtn.setDisable(false);
               openBtn.setDisable(false);
+              renameBtn.setDisable(false);
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
             }
-            backglassManagerSideBarController.refreshGame(game, model.isGameAvailable());
+            backglassManagerSideBarController.setData(game, model);
           });
     }
     else {
-      setVersioningDisabled(true);
-    }
-
-    // now refresh sidebar
-    backglassManagerSideBarController.refreshView(emulatorId, getSelectedVersion(), gameId);
-  }
-
-  public void setVersioningDisabled(boolean b) {
-    directB2SCombo.setDisable(b);
-    directB2SSetDefaultBtn.setDisable(b);
-    directB2SDisableBtn.setDisable(b);
-    directB2SDeleteBtn.setDisable(b);
-    if (b) {
-      directB2SCombo.setItems(null);
+      backglassManagerSideBarController.setData(null, null);
     }
   }
 
@@ -613,7 +460,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
         selectGame(gameBaseName);
       }
       else {
-        ChangeListener<ObservableList<DirectB2SModel>> listener = new ChangeListener<ObservableList<DirectB2SModel>>() {
+        ChangeListener<ObservableList<DirectB2SModel>> listener = new ChangeListener<>() {
           @Override
           public void changed(ObservableValue<? extends ObservableList<DirectB2SModel>> observable,
                               ObservableList<DirectB2SModel> oldValue, ObservableList<DirectB2SModel> newValue) {
@@ -636,21 +483,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     }
   }
 
-  public String getSelectedVersion() {
-    DirectB2SAndVersions selection = getSelection();
-      return selection == null ? null :
-        selection.getNbVersions() > 1 ? directB2SCombo.getValue() : 
-          selection.getNbVersions() > 0 ? selection.getVersion(0) : 
-            null;
-  }
-
-  /**
-   * Prior to reload, when user is modifying versions, we don't maintain version selection
-   */
-  private void unselectVersion() {
-    directB2SCombo.getSelectionModel().clearSelection();
-  }
-
   //------------------------------------------------
   // Implementation of StudioEventListener
 
@@ -662,10 +494,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     DirectB2SModel selection = getSelectedModel();
 
-      // tab should have been initiliazed to support reload
-      if (id > 0 && models != null) {
+    // tab should have been initialized to support reload
+    if (id > 0 && models != null) {
       // When a game is updated or added, the associated backglass in table + view should be updated
-      // If it is a new game, this backglas sis discovered and added into the table as a new row
+      // If it is a new game, this backglass sis discovered and added into the table as a new row
       DirectB2SAndVersions b2s = client.getBackglassServiceClient().getDirectB2S(id);
       reloadItem(b2s);
     }
@@ -685,13 +517,19 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     return value.isEnabled() ? "" : WidgetFactory.DISABLED_TEXT_STYLE;
   }
 
+  public void delete(DirectB2SModel selection) {
+    // remove from the list if successfully deleted
+    models.remove(selection);
+    applyFilter();
+    // then notify changes
+    if (selection.getGameId() > 0) {
+      EventManager.getInstance().notifyTableChange(selection.getGameId(), null);
+    }
+  }
+
   @Override
   protected DirectB2SModel toModel(DirectB2SAndVersions b2s) {
     return new DirectB2SModel(b2s);
-  }
-
-  protected DirectB2SModel getModel(int emulatorId, String fileName) {
-    return models.stream().filter(m -> m.sameBean(emulatorId, fileName)).findFirst().orElse(null);
   }
 
   protected GameRepresentation getGameFromSelection() {

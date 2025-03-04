@@ -253,6 +253,7 @@ public class EmulatorsController implements Initializable {
       emu.setType(template.getType());
       emu.setDescription(template.getDescription());
       emu.setMediaDirectory(template.getMediaDirectory());
+      emu.setAltColorDirectory(template.getAltColorDirectory());
       emu.setRomDirectory(template.getRomDirectory());
       emu.setGameExt(template.getGameExt());
       emu.setGamesDirectory(template.getGamesDirectory());

@@ -48,6 +48,11 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
     setDirectB2SData(b2sdata);
     setLoaded();
   }
+
+  public DirectB2SData getBackglassData() {
+    return backglassData;
+  }
+
   private void setDirectB2SData(DirectB2SData b2sdata) {
     this.backglassData = b2sdata;
     if (backglassData != null) {

@@ -25,7 +25,7 @@ import static de.mephisto.vpin.restclient.util.FileUtils.isFileBelowFolder;
 public class UploaderAnalysis<T> {
   private final static Logger LOG = LoggerFactory.getLogger(UploaderAnalysis.class);
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1");
-  private final static List<String> altColorSuffixes = Arrays.asList("vni", "czr", "pal", "pac", "pal");
+  private final static List<String> altColorSuffixes = Arrays.asList("vni", "crz", "pal", "pac", "pal");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
   private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg", "wav");
 
@@ -553,6 +553,10 @@ public class UploaderAnalysis<T> {
       result.add(AssetType.DIF);
     }
 
+    if (hasFileWithSuffix("cRZ")) {
+      result.add(AssetType.CRZ);
+    }
+
     if (hasFileWithSuffix("directb2s")) {
       result.add(AssetType.DIRECTB2S);
     }
@@ -672,7 +676,7 @@ public class UploaderAnalysis<T> {
 
   private boolean isAltColor() {
     for (String name : getFilteredFilenamesWithPath()) {
-      String suffix = FilenameUtils.getExtension(name);
+      String suffix = FilenameUtils.getExtension(name).toLowerCase();
       if (altColorSuffixes.contains(suffix)) {
         return true;
       }
@@ -879,7 +883,7 @@ public class UploaderAnalysis<T> {
     }
 
     String suffix = FilenameUtils.getExtension(fileNameWithPath);
-    if (!mediaSuffixes.contains(suffix)) {
+    if (!mediaSuffixes.contains(suffix.toLowerCase())) {
       return false;
     }
 

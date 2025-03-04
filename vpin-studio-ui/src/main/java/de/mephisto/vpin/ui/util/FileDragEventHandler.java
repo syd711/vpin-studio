@@ -69,7 +69,7 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
         }
 
         String extension = FilenameUtils.getExtension(file.getName());
-        if (!suffixes.contains(extension)) {
+        if (!suffixes.contains(extension.toLowerCase())) {
           return;
         }
       }

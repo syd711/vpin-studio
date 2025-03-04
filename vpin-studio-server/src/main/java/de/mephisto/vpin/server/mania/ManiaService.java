@@ -261,36 +261,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    if (Features.MANIA_ENABLED) {
-      try {
-        LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
-        frontendStatusService.addFrontendStatusChangeListener(this);
-
-        ManiaConfig config = getConfig();
-        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
-        maniaServiceCache.setManiaService(this);
-        ServerFX.maniaClient = maniaClient;
-
-        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-        if (cabinet != null) {
-          LOG.info("Cabinet is registered on VPin-Mania");
-          checkPlayerRestoring();
-        }
-        else {
-          LOG.info("Cabinet is not registered on VPin-Mania");
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Failed to init mania services: {}", e.getMessage(), e);
-        Features.MANIA_ENABLED = false;
-      }
-    }
-
-    highscoreService.setManiaService(this);
-  }
-
   /**
    * In case the Studio has been re-installed, the players of the VPin Mania accounts should be restored too.
    */
@@ -299,7 +269,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     for (Account account : accounts) {
       checkAccount(account);
     }
-
   }
 
   private void checkAccount(Account account) {
@@ -401,5 +370,35 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   @PreDestroy
   public void onShutdown() {
     this.setOffline();
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (Features.MANIA_ENABLED) {
+      try {
+        LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
+        frontendStatusService.addFrontendStatusChangeListener(this);
+
+        ManiaConfig config = getConfig();
+        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaServiceCache.setManiaService(this);
+        ServerFX.maniaClient = maniaClient;
+
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+        if (cabinet != null) {
+          LOG.info("Cabinet is registered on VPin-Mania");
+          checkPlayerRestoring();
+        }
+        else {
+          LOG.info("Cabinet is not registered on VPin-Mania");
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to init mania services: {}", e.getMessage(), e);
+        Features.MANIA_ENABLED = false;
+      }
+    }
+
+    highscoreService.setManiaService(this);
   }
 }

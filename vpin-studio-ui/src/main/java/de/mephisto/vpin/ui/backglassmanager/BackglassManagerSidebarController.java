@@ -13,7 +13,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
@@ -22,11 +22,18 @@ import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -38,12 +45,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -76,7 +83,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Label nameLabel;
 
   @FXML
-  private Label filenameLabel;  
+  private Label filenameLabel;
 
   @FXML
   private Label typeLabel;
@@ -133,6 +140,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private ImageView dmdThumbnailImage;
 
   @FXML
+  private Pane versionSelector;
+
+  @FXML
+  private Pane noneActiveInfo;
+
+  @FXML
   private Button downloadBackglassBtn;
   @FXML
   private Button useAsMediaBackglassBtn;
@@ -145,6 +158,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Button useAsMediaDMDBtn;
   @FXML
   private Button deleteDMDBtn;
+
+  @FXML
+  private CheckBox activateCheckbox;
+
+  @FXML
+  private ComboBox<String> directB2SCombo;
 
   //-- Editors
 
@@ -197,10 +216,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Button reloadBtn;
 
   @FXML
-  private Button renameBtn;
-
-  @FXML
-  private Button duplicateBtn;
+  private Button deleteBtn;
 
   @FXML
   private Label gameLabel;
@@ -217,13 +233,10 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private Button tableNavigateBtn;
 
-//-------------
-
-  private int emulatorId;
-  /** The current selected version */
-  private @Nullable String selectedVersion;
-
+  //-------------
   private GameRepresentation game;
+
+  private DirectB2SModel model;
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
   private int refreshingCounter;
@@ -232,7 +245,55 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   private FileDragEventHandler fileDragEventHandler;
 
+  private ChangeListener<Boolean> activationChangeListener = new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      if (newValue) {
+        setDirectB2SDefault();
+      }
+      else {
+        setDirectB2SDisabled();
+      }
+    }
+  };
+
   //------------------------------------------------ OPERATIONS ON BACKGLASS ---
+
+  @FXML
+  private void onBackglassDelete(Event e) {
+//    try {
+//      DirectB2SModel selection = backglassManagerController.getSelectedModel();
+//      if (selection != null) {
+//        //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+//        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", "This also deletes all version of this backglass.", "Delete");
+//        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+//          if (client.getBackglassServiceClient().deleteBackglass(selection.getEmulatorId(), selection.getFileName())) {
+//            backglassManagerController.delete(selection);
+//          }
+//        }
+//      }
+//    }
+//    catch (Exception ex) {
+//      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
+//    }
+    try {
+      DirectB2SModel selection = backglassManagerController.getSelectedModel();
+      if (selection != null) {
+        String filename = selection.getFileName();
+        if (versionSelector.isVisible()) {
+          filename = directB2SCombo.getValue();
+        }
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + filename + "\"?", null, "Delete");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          client.getBackglassServiceClient().deleteBackglassVersion(selection.getEmulatorId(), filename);
+          backglassManagerController.delete(selection);
+        }
+      }
+    }
+    catch (Exception ex) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
+    }
+  }
 
   @FXML
   private void onBackglassDownload() {
@@ -347,9 +408,36 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
   }
 
-  private void updateDMDImage(File selection) {
-    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", emulatorId, selectedVersion, selection));
+  private void setDirectB2SDefault() {
+    DirectB2SAndVersions selectedItem = backglassManagerController.getSelection();
+    String selectedVersion = getSelectedVersion();
+    if (selectedItem != null && selectedVersion != null) {
+      JFXFuture
+          .supplyAsync(() -> client.getBackglassServiceClient().setBackglassAsDefault(selectedItem.getEmulatorId(), selectedVersion))
+          .thenAcceptLater((b2s) -> {
+            backglassManagerController.reloadItem(b2s);
+          })
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + selectedVersion + " as default", e.getMessage()));
+    }
+  }
 
+  private void setDirectB2SDisabled() {
+    DirectB2SAndVersions selectedItem = backglassManagerController.getSelection();
+    String selectedVersion = getSelectedVersion();
+    if (selectedItem != null && selectedVersion != null) {
+      JFXFuture
+          .supplyAsync(() -> client.getBackglassServiceClient().disableBackglass(selectedItem.getEmulatorId(), selectedVersion))
+          .thenAcceptLater((b2s) -> {
+            backglassManagerController.reloadItem(b2s);
+          })
+          .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + selectedVersion + " as default", e.getMessage()));
+    }
+  }
+
+  private void updateDMDImage(File selection) {
+    String selectedVersion = getSelectedVersion();
+    int emulatorId = this.model.getEmulatorId();
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", emulatorId, selectedVersion, selection));
     // then refresh images and table
     getBackglassManagerController().reloadSelection();
 
@@ -359,6 +447,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   private void deleteDMDImage() {
+    String selectedVersion = getSelectedVersion();
+    int emulatorId = this.model.getEmulatorId();
     ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", emulatorId, selectedVersion, null));
 
     // then refresh images and table
@@ -368,6 +458,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
+
 
   private void export(InputStream in) {
     if (in != null) {
@@ -410,20 +501,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     getBackglassManagerController().onBackglassReload(e);
   }
 
-  @FXML
-  protected void onRename(ActionEvent e) {
-    getBackglassManagerController().onRename(e);
-  }
-
-  @FXML
-  private void onDuplicate(ActionEvent e) {
-    getBackglassManagerController().onDuplicate(e);
-  }
-
   //------------------------------------------------ EVENT CASCADING ---
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    versionSelector.managedProperty().bindBidirectional(versionSelector.visibleProperty());
+    noneActiveInfo.managedProperty().bindBidirectional(noneActiveInfo.visibleProperty());
 
     FrontendType frontendType = Studio.client.getFrontendService().getFrontendType();
     if (!frontendType.supportMedias()) {
@@ -433,6 +516,20 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       HBox dmdtoolbar = (HBox) this.useAsMediaDMDBtn.getParent();
       dmdtoolbar.getChildren().remove(useAsMediaDMDBtn);
     }
+
+    activateCheckbox.selectedProperty().addListener(activationChangeListener);
+    directB2SCombo.valueProperty().addListener((obs, o, n) -> {
+      if (refreshingCounter > 0) {
+        return;
+      }
+
+      DirectB2SModel selection = backglassManagerController.getSelectedModel();
+      if (selection != null) {
+        tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
+        refreshTableData(tableData);
+      }
+      refreshStatusCheckbox();
+    });
 
     hideGrill.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -550,33 +647,52 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         });
 
     // deactivate all elements in the right sections
-    refreshView(-1, null, -1);
+    setData(null, null);
   }
 
-  public void refreshView(int emulatorId, String selectedVersion, int gameId) {
+  private void refreshStatusCheckbox() {
+    activateCheckbox.selectedProperty().removeListener(activationChangeListener);
+    activateCheckbox.setSelected(false);
+    String selectedVersion = directB2SCombo.getValue();
     if (selectedVersion != null) {
-      fileDragEventHandler.setDisabled(false);
+      boolean selected = false;
+      if (game != null) {
+        selected = FileUtils.baseNameMatches(selectedVersion, game.getGameFileName());
+      }
+      else {
+        selected = !FilenameUtils.getBaseName(selectedVersion).endsWith(")");
+      }
+      activateCheckbox.setSelected(selected);
     }
-    else {
-      fileDragEventHandler.setDisabled(true);
-    }
-
-    // start refresh and reset counter
-    this.refreshingCounter = 1;
-
-    // now refresh other sections
-    this.emulatorId = emulatorId;
-    this.selectedVersion = selectedVersion;
-
-    refreshTableData(emulatorId, selectedVersion);
-    refreshTableSettings(gameId);
-    refreshGame(null, false);
-
-    this.refreshingCounter = 0;
+    activateCheckbox.selectedProperty().addListener(activationChangeListener);
   }
 
-  protected void refreshTableData(int emulatorId, String directb2sFilename) {
-    this.tableData = null;
+//
+//  private void refreshView(int emulatorId, String selectedVersion, int gameId) {
+//    if (selectedVersion != null) {
+//      fileDragEventHandler.setDisabled(false);
+//    }
+//    else {
+//      fileDragEventHandler.setDisabled(true);
+//    }
+//
+//    // start refresh and reset counter
+//    this.refreshingCounter = 1;
+//
+//    // now refresh other sections
+//    this.emulatorId = emulatorId;
+//    this.selectedVersion = selectedVersion;
+//
+//    refreshTableData(emulatorId, selectedVersion);
+//    refreshTableSettings(gameId);
+//    setGame(null, false);
+//
+//    this.refreshingCounter = 0;
+//  }
+
+  protected void refreshTableData(@Nullable DirectB2SData directB2SData) {
+    int emulatorId = directB2SData != null ? directB2SData.getEmulatorId() : -1;
+    String directb2sFilename = directB2SData != null ? directB2SData.getFilename() : null;
 
     nameLabel.setText("-");
     filenameLabel.setText("-");
@@ -598,9 +714,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     skipLEDFrames.setDisable(true);
 
     this.reloadBtn.setDisable(true);
-    this.renameBtn.setDisable(true);
-    this.duplicateBtn.setDisable(true);
-
     downloadBackglassBtn.setDisable(true);
     uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
@@ -613,7 +726,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     fullDmdLabel.setText("");
 
     if (directb2sFilename != null) {
-
       thumbnailImagePane.setCenter(new ProgressIndicator());
       dmdThumbnailImagePane.setCenter(new ProgressIndicator());
 
@@ -643,17 +755,26 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
             this.reloadBtn.setDisable(false);
-            this.renameBtn.setDisable(false);
-            this.duplicateBtn.setDisable(false);
 
             this.refreshingCounter--;
           });
     }
   }
 
-  protected void refreshGame(GameRepresentation game, boolean gameAvailable) {
+  public String getSelectedVersion() {
+    DirectB2SAndVersions selection = backglassManagerController.getSelection();
+    return selection == null ? null :
+        selection.getNbVersions() > 1 ? directB2SCombo.getValue() :
+            selection.getNbVersions() > 0 ? selection.getVersion(0) :
+                null;
+  }
+
+  protected void setData(@Nullable GameRepresentation game, @Nullable DirectB2SModel model) {
+    refreshingCounter = 1;
     // refresh Game and Emulator
     this.game = game;
+    this.model = model;
+    this.tableData = model != null ? model.getBackglassData() : null;
 
     // set emulator name
     emulatorNameLabel.setText("-");
@@ -662,36 +783,79 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     // depend on the game selection
     this.dataManagerBtn.setDisable(true);
     this.tableNavigateBtn.setDisable(true);
+    this.deleteBtn.setDisable(model == null);
 
     useAsMediaBackglassBtn.setDisable(true);
     useAsMediaDMDBtn.setDisable(true);
 
+    setVersioningDisabled(true);
+    directB2SCombo.getItems().clear();
+    noneActiveInfo.setVisible(false);
+    if (model != null) {
+      //TODO why is this required? The versions of the model that is passed here are always "0" on second select
+      DirectB2SAndVersions directB2SVersions = client.getBackglassServiceClient().getDirectB2S(model.getEmulatorId(), model.getFileName());
+      List<String> versions = directB2SVersions.getVersions();
+      versionSelector.setVisible(versions.size() > 1);
+      // maintain current selection if possible
+      String prevSelected = directB2SCombo.getValue();
+
+      if (versions.size() > 1) {
+        directB2SCombo.setItems(FXCollections.observableList(versions));
+        setVersioningDisabled(false);
+        // re-select previously one else first in the list
+        if (prevSelected != null && versions.contains(prevSelected)) {
+          directB2SCombo.getSelectionModel().select(prevSelected);
+        }
+        else {
+          directB2SCombo.getSelectionModel().selectFirst();
+        }
+      }
+
+      boolean showNoActiveInfo = game != null;
+      if (game != null) {
+        String gameFileName = game.getGameFileName();
+        for (String version : versions) {
+          if (FileUtils.baseNameMatches(version, gameFileName)) {
+            showNoActiveInfo = false;
+            break;
+          }
+        }
+      }
+      noneActiveInfo.setVisible(showNoActiveInfo);
+    }
+    else {
+      versionSelector.setVisible(false);
+    }
+
+    gameLabel.setText("?");
+    emulatorNameLabel.setText("?");
+    gameFilenameLabel.setText("(Available, but not installed)");
+
+    refreshTableSettings(game != null ? game.getId() : -1);
+    refreshTableData(model != null ? tableData : null);
+    refreshStatusCheckbox();
+
+
+    refreshingCounter = game == null ? 0 : 1;
     if (game != null) {
       JFXFuture.supplyAsync(() -> {
-        return client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      })
-      .thenAcceptLater(emu -> {
-        if (emu != null) {
-          emulatorNameLabel.setText(emu.getName());
-        }
-      });
+            return client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+          })
+          .thenAcceptLater(emu -> {
+            if (emu != null) {
+              emulatorNameLabel.setText(emu.getName());
+            }
+          });
 
       gameLabel.setText(game.getGameDisplayName());
       gameFilenameLabel.setText(game.getGameFileName());
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);
-  
+
       dataManagerBtn.setDisable(false);
       tableNavigateBtn.setDisable(false);
-    }
-    else {
-      //VPX is not installed, but available!
-      if (gameAvailable) {
-        gameLabel.setText("?");
-        emulatorNameLabel.setText("?");
-        gameFilenameLabel.setText("(Available, but not installed)");
-      }
+      refreshingCounter = 0;
     }
   }
 
@@ -775,6 +939,16 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     skipGIFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
     skipSolenoidFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
     skipLEDFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
+  }
+
+  public void setVersioningDisabled(boolean b) {
+    //TODO
+//    directB2SCombo.setDisable(b);
+//    directB2SSetDefaultBtn.setDisable(b);
+//    directB2SDisableBtn.setDisable(b);
+//    if (b) {
+//      directB2SCombo.setItems(null);
+//    }
   }
 
   private void loadImages(int emulatorId, String fileName) {
@@ -863,19 +1037,10 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   //---------------------------------------------
 
-  public void versionChanged(int emulatorId, String selectedVersion) {
-    if (refreshingCounter == 0) {
-      this.emulatorId = emulatorId;
-      this.selectedVersion = selectedVersion;
-      refreshTableData(emulatorId, selectedVersion);
-    }
-  }
-
-  //---------------------------------------------
-
-  public void setBackglassManagerController( BackglassManagerController backglassManagerController) {
+  public void setBackglassManagerController(BackglassManagerController backglassManagerController) {
     this.backglassManagerController = backglassManagerController;
   }
+
   private BackglassManagerController getBackglassManagerController() {
     return backglassManagerController;
   }
