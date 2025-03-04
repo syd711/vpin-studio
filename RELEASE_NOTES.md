@@ -14,10 +14,10 @@ The deny lists for highscores are kept. Unfortunately, the information of the ed
 
 **Can I restore my data?**
 
-Almost all of it, yes. After updating, just press the "Friends" button or the VPin Mania registration button the preferences to re-register your cabinet.
+**Almost all of it, yes.** After updating, just press the "Friends" button or the VPin Mania registration button the preferences to re-register your cabinet.
 The updated registration process lets you automatically register your players and will synchronize all your highscores too.
-**This will restore most of the data.**
-Unfortunately, existing tournament data is lost forever.
+This will restore most of the data.
+**Unfortunately, existing tournament data and linked friends data is lost forever, and you need to set up these again.**
 
 **...but...WHY? Give me the details!**
 
