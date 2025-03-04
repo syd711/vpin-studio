@@ -20,7 +20,7 @@ import java.util.List;
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
 
-  private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial");
+  private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial", "Not applicable");
 
   public static int getPort() {
     try {
@@ -49,36 +49,19 @@ public class SystemUtil {
     return RestClient.PORT;
   }
 
-  public static String getUniqueSystemId() {
-    String id = getBoardSerialNumber();
-    //TODO this is actual a bug and should not be used,
-    //Not yet a problem, but the existing system ids must be migrated
-    if (StringUtils.isEmpty(id)) {
-      id = getProcessorId();
-    }
-
-    if (StringUtils.isEmpty(id)) {
-      return NetworkUtil.getMacAddress();
+  private static String getSystemId() {
+    String macAddress = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
+    String driveId = getDriveId() != null ? getDriveId().trim() : "#";
+    String boardId = getBoardSerialNumber() != null ? getBoardSerialNumber().trim() : "#";
+    String id = macAddress + "~" + driveId + "~" + boardId;
+    if (id.length() > 100) {
+      id = id.substring(0, 99);
     }
     return id;
   }
 
-  public static String getWindowsId() {
-    try {
-      Process process = Runtime.getRuntime().exec("wmic csproduct get UUID");
-      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        if (line.length() > 0 && !line.contains("UUID")) {
-          return line;
-        }
-      }
-      reader.close();
-    }
-    catch (Exception e) {
-      //ignore
-    }
-    return null;
+  public static String getUniqueSystemId() {
+    return getSystemId();
   }
 
   public static String getDriveId() {
@@ -121,33 +104,7 @@ public class SystemUtil {
       }
     }
     catch (Exception e) {
-      LOG.warn("Failed to resolve cabinet id: " + e.getMessage());
-    }
-    return null;
-  }
-
-  /**
-   * This one is NOT unique!
-   *
-   * @return
-   */
-  private static String getProcessorId() {
-    try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "cpu", "get", "ProcessorId"), false);
-      executor.setIgnoreError(true);
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      if (standardOutputFromCommand != null) {
-        String[] split = standardOutputFromCommand.toString().trim().split("\n");
-        String serial = split[split.length - 1];
-        if (!isNotValid(serial)) {
-          return null;
-        }
-        return serial;
-      }
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to resolve cpu id: " + e.getMessage());
+      //ignore
     }
     return null;
   }
@@ -187,6 +144,6 @@ public class SystemUtil {
   }
 
   public static void main(String[] args) {
-    System.out.println(getWindowsId());
+    System.out.println(getSystemId());
   }
 }
