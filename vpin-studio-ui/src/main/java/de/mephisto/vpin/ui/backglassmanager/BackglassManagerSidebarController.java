@@ -45,6 +45,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -654,7 +655,13 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     activateCheckbox.setSelected(false);
     String selectedVersion = directB2SCombo.getValue();
     if (selectedVersion != null) {
-      boolean selected = game != null && FileUtils.baseNameMatches(selectedVersion, game.getGameFileName());
+      boolean selected = false;
+      if (game != null) {
+        selected = FileUtils.baseNameMatches(selectedVersion, game.getGameFileName());
+      }
+      else {
+        selected = !FilenameUtils.getBaseName(selectedVersion).endsWith(")");
+      }
       activateCheckbox.setSelected(selected);
     }
     activateCheckbox.selectedProperty().addListener(activationChangeListener);
