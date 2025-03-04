@@ -618,7 +618,7 @@
             <HBox fx:id="playlistHint" spacing="6.0">
                <children>
                   <Button fx:id="openPlaylistManagerBtn" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="default-button" text="Open Playlist Manager" />
-                  <Button fx:id="openDataManager" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="Open Table Data Manager" />
+                  <Button fx:id="openDataManager" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="Open Data Manager" />
                   <Button fx:id="cancelBtn" cancelButton="true" mnemonicParsing="false" onAction="#onCancel" styleClass="submit-button" text="Close" />
                </children>
             </HBox>
