@@ -22,6 +22,8 @@ public class GameEmulatorRepresentation {
   private int id;
   private boolean enabled;
 
+  private String internalName;
+
   private String exeName;
   private String exeParameters;
   private String gameExt;
@@ -120,6 +122,14 @@ public class GameEmulatorRepresentation {
     this.displayName = displayName;
   }
 
+  public String getInternalName() {
+    return internalName;
+  }
+
+  public void setInternalName(String internalName) {
+    this.internalName = internalName;
+  }
+  
   public String getMameDirectory() {
     return mameDirectory;
   }

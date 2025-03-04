@@ -229,7 +229,7 @@ public class EmulatorsController implements Initializable {
         exitScriptController.applyValues();
       }
 
-      client.getEmulatorService().saveGameEmulator(emulator.get());
+      client.getEmulatorService().saveGameEmulator(emu);
     }).thenLater(() -> {
       onReload();
       saveBtn.setDisable(false);
