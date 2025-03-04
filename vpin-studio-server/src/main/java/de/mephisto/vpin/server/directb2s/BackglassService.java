@@ -449,22 +449,6 @@ public class BackglassService implements InitializingBean {
     return b2s;
   }
 
-  public DirectB2SAndVersions duplicate(int emulatorId, String fileName) throws IOException {
-    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
-    File b2sFile = new File(emulator.getGamesDirectory(), fileName);
-    try {
-      File target = FileUtils.uniqueFile(b2sFile);
-      org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
-      LOG.info("Copied \"" + fileName + "\" to \"" + target.getAbsolutePath() + "\"");
-
-      return reloadDirectB2SAndVersions(emulator, fileName);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public DirectB2SAndVersions setAsDefault(int emulatorId, String fileName) {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
     File b2sFile = new File(emulator.getGamesDirectory(), fileName);

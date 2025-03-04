@@ -99,7 +99,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     long size = Files.size(Path.of(emu.getGamesDirectory(), f));
 
     // Duplicate first version
-    DirectB2SAndVersions b2stest = backglassService.duplicate(emu.getId(), f);
+    DirectB2SAndVersions b2stest = backglassService.getDirectB2SAndVersions(emu.getId(), f);
     assertEquals(nbVersions + 1, b2stest.getNbVersions());
     for (int i = 0; i < nbVersions; i++) {
       assertEquals(b2s.getVersion(i), b2stest.getVersion(i));

@@ -4,9 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -78,8 +76,19 @@
                         <Tooltip text="Upload a new backglass" />
                     </tooltip>
                 </Button>
+            <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Rename the backglass (including versions)" />
+               </tooltip>
+            </Button>
                 <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" textFill="WHITE">
+                <Button fx:id="resBtn" layoutX="632.0" layoutY="11.0" mnemonicParsing="false" onAction="#onResEdit" text=".res Editor" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -90,7 +99,7 @@
                         <Tooltip text="Open .res editor" />
                     </tooltip>
                 </Button>
-                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
+                <Button fx:id="dmdPositionBtn" layoutX="732.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDMDPosition" text="DMD Positioner" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -101,54 +110,7 @@
                         <Tooltip text="Adjust DMD position" />
                     </tooltip>
                 </Button>
-                <Separator layoutX="914.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Label fx:id="directB2SLabel" text="Version:" textFill="WHITE">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <padding>
-                        <Insets left="6.0" right="6.0" />
-                    </padding>
-                </Label>
-                <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="280.0" />
-                <Button fx:id="directB2SSetDefaultBtn" mnemonicParsing="false" onAction="#onDirectB2SDefault" textFill="WHITE">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <tooltip>
-                        <Tooltip text="Rename directB2S file so that it becomes the one used in the game" />
-                    </tooltip>
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-multiple-marked-outline" iconSize="18" />
-                    </graphic>
-                </Button>
-                <Button fx:id="directB2SDisableBtn" mnemonicParsing="false" onAction="#onDirectB2SDisable" textFill="WHITE">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <tooltip>
-                        <Tooltip text="Rename directB2S file so that it becomes disabled" />
-                    </tooltip>
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-checkbox-blank-off-outline" iconSize="18" />
-                    </graphic>
-                </Button>
                 <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
-                    <items>
-                        <MenuItem fx:id="directB2SDeleteBtn" mnemonicParsing="false" onAction="#onDirectB2SDelete" text="Delete Backglass Version" />
-                    </items>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                    <tooltip>
-                        <Tooltip text="Delete the selected directB2S file or version." />
-                    </tooltip>
-                    <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                    </graphic>
-                </SplitMenuButton>
-                <Separator layoutX="988.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="vpsOpenBtn" mnemonicParsing="false" onAction="#onVpsOpen" styleClass="link-component" textFill="WHITE">
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" text="󰌷" />

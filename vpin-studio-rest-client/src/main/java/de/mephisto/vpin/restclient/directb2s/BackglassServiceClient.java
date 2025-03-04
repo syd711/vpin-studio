@@ -56,6 +56,13 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
   }
 
+  public DirectB2SAndVersions getDirectB2S(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/versions", params, DirectB2SAndVersions.class);
+  }
+
   public DirectB2SData getDirectB2SData(int emulatorId, String fileName) {
     Map<String, Object> params = new HashMap<>();
     params.put("emulatorId", emulatorId);
@@ -133,14 +140,6 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public DirectB2SAndVersions renameBackglass(int emulatorId, String fileName, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("newName", newName);
-    params.put("emulatorId", emulatorId);
-    params.put("fileName", fileName);
-    return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
-  }
-
-  public DirectB2SAndVersions duplicateBackglass(int emulatorId, String fileName) throws Exception {
-    Map<String, Object> params = new HashMap<>();
-    params.put("duplicate", true);
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
     return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);

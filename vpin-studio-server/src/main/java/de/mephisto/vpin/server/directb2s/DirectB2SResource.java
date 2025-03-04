@@ -80,7 +80,7 @@ public class DirectB2SResource {
   @PostMapping("/gameId")
   public Integer getGameId(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
     String basefileName = StringUtils.removeEndIgnoreCase(fileName, ".directb2s");
-    Game game = frontedService.getGameByBaseFilename(emulatorId, basefileName);  
+    Game game = frontedService.getGameByBaseFilename(emulatorId, basefileName);
     return game != null ? game.getId() : -1;
   }
 
@@ -101,9 +101,14 @@ public class DirectB2SResource {
   }
 
   @GetMapping("/{gameId}/versions")
-  public DirectB2SAndVersions getVersions(@PathVariable("gameId") int gameId) {
+  public DirectB2SAndVersions getVersionsByGame(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     return backglassService.getDirectB2SAndVersions(game);
+  }
+
+  @PostMapping("/versions")
+  public DirectB2SAndVersions getVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
+    return backglassService.getDirectB2SAndVersions(emulatorId, fileName);
   }
 
   @GetMapping("/clearcache")
@@ -122,6 +127,7 @@ public class DirectB2SResource {
     }
     return getBackground(game.getEmulatorId(), game.getDirectB2SFilename());
   }
+
   @GetMapping("/background/{emulatorId}/{fileName}")
   public ResponseEntity<Resource> getBackground(@PathVariable("emulatorId") int emulatorId, @PathVariable("fileName") String fileName) {
     // first decoding done by the RestService but an extra one is needed
@@ -140,11 +146,12 @@ public class DirectB2SResource {
     }
     return getDmdImage(game.getEmulatorId(), game.getDirectB2SFilename());
   }
+
   @GetMapping("/dmdimage/{emulatorId}/{fileName}")
   public ResponseEntity<Resource> getDmdImage(@PathVariable("emulatorId") int emulatorId, @PathVariable("fileName") String fileName) {
     // first decoding done by the RestService but an extra one is needed
     fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
-    return download(backglassService.getDmdBase64(emulatorId, fileName), FilenameUtils.getBaseName(fileName)+".dmd.png");
+    return download(backglassService.getDmdBase64(emulatorId, fileName), FilenameUtils.getBaseName(fileName) + ".dmd.png");
   }
 
   @GetMapping("/previewBackground/{gameId}.png")
@@ -152,18 +159,20 @@ public class DirectB2SResource {
     Game game = gameService.getGame(gameId);
     return download(backglassService.getPreviewBackground(game, includeFrame), gameId + ".png", false);
   }
+
   @GetMapping("/previewBackground/{emulatorId}/{fileName}.png")
   public ResponseEntity<Resource> getPreviewBackground(@PathVariable("emulatorId") int emulatorId, @PathVariable("fileName") String fileName, @RequestParam(required = false) boolean includeFrame) {
     // first decoding done by the RestService but an extra one is needed as filename is encoded by caller too
     fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
     Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
-    return download(backglassService.getPreviewBackground(emulatorId, fileName, game, includeFrame), FilenameUtils.getBaseName(fileName)+".png", false);
+    return download(backglassService.getPreviewBackground(emulatorId, fileName, game, includeFrame), FilenameUtils.getBaseName(fileName) + ".png", false);
   }
 
   @GetMapping("/croppedBackground/{gameId}")
   public ResponseEntity<StreamingResponseBody> getCroppedBackground(@PathVariable("gameId") int gameId) {
     return download(gameId, game -> defaultPictureService.getCroppedDefaultPicture(game));
   }
+
   @GetMapping("/croppedDmd/{gameId}")
   public ResponseEntity<StreamingResponseBody> getCroppedDmd(@PathVariable("gameId") int gameId) {
     return download(gameId, game -> defaultPictureService.getDMDPicture(game));
@@ -221,13 +230,13 @@ public class DirectB2SResource {
     headers.add("X-Frame-Options", "SAMEORIGIN");
 
     return ResponseEntity.ok()
-      .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(file)))
-      .headers(headers)
-      .body(out -> {
-        try (FileInputStream fis = new FileInputStream(file)) {
-          StreamUtils.copy(fis, out);
-        }
-      });
+        .contentType(MediaType.parseMediaType(MimeTypeUtil.determineMimeType(file)))
+        .headers(headers)
+        .body(out -> {
+          try (FileInputStream fis = new FileInputStream(file)) {
+            StreamUtils.copy(fis, out);
+          }
+        });
   }
 
   //--------------------------------------------------
@@ -245,9 +254,6 @@ public class DirectB2SResource {
     String newName = (String) values.get("newName");
     if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
       return backglassService.rename(emulatorId, fileName, newName);
-    }
-    else if (values.containsKey("duplicate")) {
-      return backglassService.duplicate(emulatorId, fileName);
     }
     else if (values.containsKey("setVersionAsDefault")) {
       return backglassService.setAsDefault(emulatorId, fileName);
@@ -363,7 +369,7 @@ public class DirectB2SResource {
   // SCREENRES & FRAME
 
   @PostMapping("/screenRes")
-  public DirectB2sScreenRes getScreenRes(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName, @RequestParam(required=false) boolean tableOnly) {
+  public DirectB2sScreenRes getScreenRes(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName, @RequestParam(required = false) boolean tableOnly) {
     Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
     return backglassService.getScreenRes(emulatorId, fileName, game, tableOnly);
   }
@@ -391,7 +397,7 @@ public class DirectB2SResource {
 
   @PostMapping("/screenRes/uploadFrame")
   public String uploadScreenResFrame(@RequestParam(value = "file", required = false) MultipartFile file,
-                                @RequestParam("emulatorId") int emulatorId, @RequestParam("fileName") String b2sFilename) {
+                                     @RequestParam("emulatorId") int emulatorId, @RequestParam("fileName") String b2sFilename) {
     if (file == null) {
       LOG.error("Upload request did not contain a file object.");
       return null;

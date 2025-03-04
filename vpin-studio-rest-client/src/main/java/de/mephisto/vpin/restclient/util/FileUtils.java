@@ -170,10 +170,11 @@ public class FileUtils {
 
   public static File writeBatch(String name, String content) throws IOException {
     File path;
-    if (!OSUtil.isMac()){
-       path = new File("./" + name);
-    }else {
-       path = new File(System.getProperty("MAC_WRITE_PATH") + name);
+    if (!OSUtil.isMac()) {
+      path = new File("./" + name);
+    }
+    else {
+      path = new File(System.getProperty("MAC_WRITE_PATH") + name);
     }
 
     if (path.exists()) {
@@ -263,5 +264,15 @@ public class FileUtils {
 
   public static boolean isMainFilename(String filename) {
     return filename.equals(fromUniqueFile(filename));
+  }
+
+  public static boolean baseNameMatches(@Nullable String file1, @Nullable String file2) {
+    if (file1 == null || file2 == null) {
+      return false;
+    }
+
+    String base1 = FilenameUtils.getBaseName(file1);
+    String base2 = FilenameUtils.getBaseName(file2);
+    return base1.equalsIgnoreCase(base2);
   }
 }
