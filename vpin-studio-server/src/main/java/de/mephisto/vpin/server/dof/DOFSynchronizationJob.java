@@ -1,34 +1,22 @@
 package de.mephisto.vpin.server.dof;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.util.RarUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.client.RestTemplate;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.util.Arrays;
 
 public class DOFSynchronizationJob implements Job {
@@ -36,10 +24,12 @@ public class DOFSynchronizationJob implements Job {
 
   @NonNull
   private final DOFSettings settings;
-  private HttpsURLConnection connection;
+  @NonNull
+  private String workingDir;
 
-  public DOFSynchronizationJob(@NonNull DOFSettings dofSettings) {
+  public DOFSynchronizationJob(@NonNull DOFSettings dofSettings, @NonNull String workingDir) {
     this.settings = dofSettings;
+    this.workingDir = workingDir;
   }
 
   @Override
@@ -49,19 +39,14 @@ public class DOFSynchronizationJob implements Job {
       LOG.info("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
       result.setStatus("Downloading " + "https://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
 
-      File zipFile = new File(SystemService.RESOURCES, "directoutputconfig.zip");
+      File zipFile = new File(workingDir, "directoutputconfig.zip");
       if (zipFile.exists()) {
         zipFile.delete();
       }
 
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("cscript", "downloader.vbs", "\"" + downloadUrl + "\"", "\"" + zipFile.getAbsolutePath() + "\""), false);
-      executor.setDir(new File(SystemService.RESOURCES));
-      executor.executeCommand();
+      String output = downloadViaWebClient(downloadUrl, zipFile);
 
-      Thread.sleep(500);
-
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      LOG.info("DOF download finished: {}", standardOutputFromCommand);
+      LOG.info("DOF download finished: {}", output);
 
       if (zipFile.exists()) {
         LOG.info("Downloaded file " + zipFile.getAbsolutePath());
@@ -78,6 +63,7 @@ public class DOFSynchronizationJob implements Job {
       }
       else {
         LOG.info("Failed to download DOF configuration, please check your API key !");
+        result.setError("Failed to download DOF configuration");
       }
 
       if (result.isCancelled()) {
@@ -95,21 +81,32 @@ public class DOFSynchronizationJob implements Job {
     }
   }
 
+  protected String downloadViaWebClient(String downloadUrl, File zipFile) throws Exception {
+    try (final WebClient webClient = new WebClient(BrowserVersion.FIREFOX)) {
+      UnexpectedPage downloadPage = webClient.getPage(downloadUrl);
+      try (InputStream in = downloadPage.getInputStream()) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(zipFile)) {
+          StreamUtils.copy(in, fileOutputStream);
+        }
+      }
+    }
+    return "file downloaded";
+  }
+
+  protected String downloadViaDownloaderVbs(String downloadUrl, File zipFile) throws Exception {
+    SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("cscript", "downloader.vbs", "\"" + downloadUrl + "\"", "\"" + zipFile.getAbsolutePath() + "\""), false);
+    executor.setDir(new File(workingDir));
+    executor.executeCommand();
+
+    Thread.sleep(500);
+
+    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    return standardOutputFromCommand.toString();
+  }
+
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
     Job.super.cancel(jobDescriptor);
-
-    try {
-      if (connection != null) {
-        connection.disconnect();
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to cancel DOF job: " + e.getMessage());
-    }
-    finally {
-      jobDescriptor.setError("The job has been cancelled");
-    }
     LOG.info("Cancelled " + this);
   }
 }

@@ -41,3 +41,4 @@
 - **Players**: Fixed "Visible For Friends" checkbox that must be disabled, when the player is not registered.
 - **Tables / Uploads**: Fixed detection of bundles ALT color serum files.
 - **Tables / ALT Color**: Fixed "Open Folder" action.
+- **DOF / Config Sync**: Fixed DOF sync job that corrupted config files when DOF configuration is smaller than installed one.
