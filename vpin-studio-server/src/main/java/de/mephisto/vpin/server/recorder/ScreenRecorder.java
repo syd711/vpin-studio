@@ -78,6 +78,7 @@ public class ScreenRecorder {
         resources = new File("../" + SystemInfo.RESOURCES);
       }
 
+      //original: ffmpeg -y -report -t 60 %wAudio% -filter_complex ddagrab=framerate=%curFPS%,hwdownload,format=bgra -c:v libx264 -r %curFPS% -preset ultrafast -crf 0 output.mkv
       List<String> commandList = new ArrayList<>();
       commandList.add("ffmpeg.exe");
       if (recordingScreen.getScreen().equals(VPinScreen.PlayField) && options.isRotated()) {
@@ -121,12 +122,12 @@ public class ScreenRecorder {
       commandList.add("-r");
       commandList.add("30");
       commandList.add("-preset");
-//      commandList.add("ultrafast");
-      commandList.add("fast");
+      commandList.add("ultrafast");
+//      commandList.add("fast");
       commandList.add("-tune");
       commandList.add("zerolatency");
       commandList.add("-crf");
-      commandList.add("25");
+      commandList.add("0");
       commandList.add("-pix_fmt");
       commandList.add("yuv420p");
       if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
