@@ -698,7 +698,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       GameRepresentationModel model = getModel(refreshedGame);
       if (model != null) {
         model.setBean(refreshedGame);
-        model.reload();
+        model.reload(null);
       }
       else {
         // new table, add it to the list only if the emulator is matching

@@ -98,7 +98,13 @@ public class EmulatorService {
         return value;
       }
       else {
-        LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
+        // avoid NPE when installationFolder is null like in test
+        if (value.isValid()) {
+          LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
+        }
+        else {
+          LOG.error(value + " has no valid nvram folder");
+        }
       }
     }
     LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + this.emulators.size() + " VPX emulators found).");

@@ -39,14 +39,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
   @Override
   public void load() {
     gameId = client.getBackglassServiceClient().getGameId(bean.getEmulatorId(), bean.getFileName());
-    setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean.getEmulatorId(), bean.getFileName()));
-  }
-  /**
-   * Simulate a load and initialize fully
-   */
-  public void load(DirectB2SData b2sdata) {
-    setDirectB2SData(b2sdata);
-    setLoaded();
+    setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean.getEmulatorId(), bean.getVersion(0)));
   }
 
   public DirectB2SData getBackglassData() {

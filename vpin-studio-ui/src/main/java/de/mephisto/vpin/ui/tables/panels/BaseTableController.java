@@ -297,21 +297,21 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public void reloadItem(T bean) {
     if (bean != null) {
       try {
-        M model = getModel(bean);
+        final M model = getModel(bean);
         if (model != null) {
           model.setBean(bean);
-          model.reload();
-
-          // refresh views too if the game is selected
-          T selected = getSelection();
-          if (selected != null && model.sameBean(selected)) {
-            refreshView(model);
-          }
+          model.reload(() -> {
+            // refresh views too if the game is selected
+            T selected = getSelection();
+            if (selected != null && model.sameBean(selected)) {
+              refreshView(model);
+            }
+          });
         }
         else {
-          model = toModel(bean);
-          if (model != null) {
-            models.add(0, model);
+          M newModel = toModel(bean);
+          if (newModel != null) {
+            models.add(0, newModel);
           }
         }
         // force refresh the view for elements not observed by the table
