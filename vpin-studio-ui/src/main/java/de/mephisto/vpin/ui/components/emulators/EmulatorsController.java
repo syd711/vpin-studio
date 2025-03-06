@@ -20,6 +20,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -135,6 +138,15 @@ public class EmulatorsController implements Initializable {
 
   @FXML
   private Button selectFolderButtonMedia;
+
+  @FXML
+  private Pane emuScrollRoot;
+
+  @FXML
+  private Pane emuScrollChild;
+
+  @FXML
+  private ScrollPane emuScrollPane;
 
   private Optional<GameEmulatorRepresentation> emulator = Optional.empty();
 
@@ -312,8 +324,8 @@ public class EmulatorsController implements Initializable {
 
     this.emulator = model;
 
-    emulatorNameLabel.setText("");
-    emulatorIdLabel.setText("");
+    emulatorNameLabel.setText("-");
+    emulatorIdLabel.setText("-");
 
     enabledCheckbox.setSelected(false);
     enabledCheckbox.setDisable(model.isEmpty());
@@ -367,6 +379,15 @@ public class EmulatorsController implements Initializable {
         customField1.setText(emulator.getExeParameters());
       }
     }
+  }
+
+  public void onViewActivated() {
+    Platform.runLater(() -> {
+      refreshTableWidth();
+
+      stage.setWidth(stage.getWidth() - 5);
+      stage.setWidth(stage.getWidth() + 5);
+    });
   }
 
   public void onViewDeactivated() {

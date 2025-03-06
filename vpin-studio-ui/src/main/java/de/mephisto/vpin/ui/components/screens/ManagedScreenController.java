@@ -87,6 +87,9 @@ public class ManagedScreenController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
+    validationError.setVisible(false);
+
     Studio.stage.widthProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
       refreshPreview(false);
     }));
@@ -214,10 +217,12 @@ public class ManagedScreenController implements Initializable {
 
   private void addErrors(List<String> errors, VBox errorsVbox) {
     errorsVbox.getChildren().clear();
+    validationError.setVisible(false);
     for (String error : errors) {
       Label l = new Label(error);
       l.getStyleClass().add("error-title");
       errorsVbox.getChildren().add(l);
+      validationError.setVisible(true);
     }
   }
   
