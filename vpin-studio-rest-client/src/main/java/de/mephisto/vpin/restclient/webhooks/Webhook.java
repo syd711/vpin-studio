@@ -33,6 +33,20 @@ public class Webhook {
     this.subscribe = subscribe;
   }
 
+  public String toParameterString() {
+    StringBuilder builder = new StringBuilder();
+    Set<Map.Entry<String, Object>> entries = parameters.entrySet();
+    for (Map.Entry<String, Object> entry : entries) {
+      String key = entry.getKey();
+      Object value = entry.getValue();
+      builder.append(key);
+      builder.append("=");
+      builder.append(value);
+      builder.append(";");
+    }
+    return builder.toString();
+  }
+
   public void applyParameterString(String text) {
     parameters.clear();
     if (!StringUtils.isEmpty(text)) {

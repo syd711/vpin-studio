@@ -387,7 +387,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
         if (cabinet != null) {
           LOG.info("Cabinet is registered on VPin-Mania");
-          checkPlayerRestoring();
         }
         else {
           LOG.info("Cabinet is not registered on VPin-Mania");

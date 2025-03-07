@@ -32,12 +32,11 @@ public class NetworkUtil {
   }
 
   public static boolean isValidUrl(@Nullable String url) {
-    if(!StringUtils.isEmpty(url)) {
+    if (StringUtils.isEmpty(url)) {
       return false;
     }
-
     try {
-      URL u = new URL(url);
+      new URL(url);
     }
     catch (MalformedURLException e) {
       return false;

@@ -264,7 +264,7 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public PupPack loadPupPack(String rom) {
+  public void loadPupPack(String rom) {
     if (!StringUtils.isEmpty(rom)) {
       File pupVideosFolder = getPupPackFolder();
       if (pupVideosFolder.exists()) {
@@ -274,7 +274,6 @@ public class PupPacksService implements InitializingBean {
         }
       }
     }
-    return null;
   }
 
   public boolean clearCache() {

@@ -313,7 +313,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Import existing games files into [Frontend]" />
+                        <Tooltip text="Import existing game files into [Frontend]" />
                      </tooltip>
                   </Button>
                   <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">

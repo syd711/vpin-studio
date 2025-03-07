@@ -26,10 +26,10 @@ import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -45,12 +45,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -240,20 +238,17 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
   private int refreshingCounter;
+  private String latestSelection;
 
   private BackglassManagerController backglassManagerController;
 
-  private FileDragEventHandler fileDragEventHandler;
-
-  private ChangeListener<Boolean> activationChangeListener = new ChangeListener<Boolean>() {
-    @Override
-    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-      if (newValue) {
-        setDirectB2SDefault();
-      }
-      else {
-        setDirectB2SDisabled();
-      }
+  private ChangeListener<Boolean> activationChangeListener = (observable, oldValue, newValue) -> {
+    latestSelection = null;
+    if (newValue) {
+      setDirectB2SDefault();
+    }
+    else {
+      setDirectB2SDisabled();
     }
   };
 
@@ -360,7 +355,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
   }
 
-  private void uploadImageAsMedia(@Nonnull GameRepresentation game, VPinScreen screen, String screenName, Image img) throws IOException {
+  private void uploadImageAsMedia(@NonNull GameRepresentation game, VPinScreen screen, String screenName, Image img) throws IOException {
     Path tmp = Files.createTempFile("tmp_" + screen, ".png");
     RenderedImage renderedImage = SwingFXUtils.fromFXImage(img, null);
     ImageIO.write(renderedImage, "png", tmp.toFile());
@@ -519,7 +514,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       if (refreshingCounter > 0) {
         return;
       }
-
+      latestSelection = n;
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       if (selection != null) {
         tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
@@ -632,7 +627,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     });
 
     // add the overlay for DMD image drag    
-    fileDragEventHandler = FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
+    FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
         .setOnDragDropped(e -> {
           List<File> files = e.getDragboard().getFiles();
           if (files != null && files.size() == 1) {
@@ -795,14 +790,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     this.model = model;
     this.tableData = model != null ? model.getBackglassData() : null;
 
-    // maintain current selection if possible 
-    String prevSelected = directB2SCombo.getValue();
-
-    setVersioningDisabled(true);
+    // maintain current selection if possible
     directB2SCombo.getItems().clear();
     noneActiveInfo.setVisible(false);
     if (model != null) {
-      // (todo) why is this required? The versions of the model that is passed here are always "0" on second select
+      // TODO why is this required? The versions of the model that is passed here are always "0" on second select
       //DirectB2SAndVersions directB2SVersions = client.getBackglassServiceClient().getDirectB2S(model.getEmulatorId(), model.getFileName());
       //List<String> versions = directB2SVersions.getVersions();
       List<String> versions = model.getBean().getVersions();
@@ -811,10 +803,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       if (versions.size() > 1) {
         directB2SCombo.getItems().addAll(versions);
-        setVersioningDisabled(false);
         // re-select previously one else first in the list
-        if (prevSelected != null && versions.contains(prevSelected)) {
-          directB2SCombo.getSelectionModel().select(prevSelected);
+        if (latestSelection != null && versions.contains(latestSelection)) {
+          directB2SCombo.getSelectionModel().select(latestSelection);
         }
         else {
           directB2SCombo.getSelectionModel().selectFirst();
@@ -826,6 +817,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       versionSelector.setVisible(false);
     }
 
+    if (model != null && getSelectedVersion() != null) {
+      tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
+    }
     refreshTableSettings(model != null ? model.getGameId() : -1);
     refreshTableData(tableData);
     refreshStatusCheckbox();
@@ -915,63 +909,52 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     skipLEDFrames.setDisable(tableSettings != null && tableData != null && tableData.getIlluminations() == 0);
   }
 
-  public void setVersioningDisabled(boolean b) {
-    //TODO
-//    directB2SCombo.setDisable(b);
-//    directB2SSetDefaultBtn.setDisable(b);
-//    directB2SDisableBtn.setDisable(b);
-//    if (b) {
-//      directB2SCombo.setItems(null);
-//    }
-  }
-
   private void loadImages(int emulatorId, String fileName) {
+    JFXFuture.supplyAsync(() -> {
+          if (tableData != null && tableData.isBackgroundAvailable()) {
+            String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(emulatorId, fileName, true);
+            return new Image(url);
+          }
+          return null;
+        })
+        .thenAcceptLater(_thumbnail -> {
+          if (_thumbnail != null) {
+            thumbnailImage.setImage(_thumbnail);
+            thumbnailImagePane.setCenter(thumbnailImage);
+            downloadBackglassBtn.setDisable(false);
+            resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
+          }
+          else {
+            thumbnailImage.setImage(null);
+            thumbnailImagePane.setCenter(null);
+            resolutionLabel.setText("No Image data available.");
+          }
+        });
 
     JFXFuture.supplyAsync(() -> {
-      if (tableData != null && tableData.isBackgroundAvailable()) {
-        String url = client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(emulatorId, fileName, true);
-        return new Image(url);
-      }
-      return null;
-    })
-    .thenAcceptLater(_thumbnail -> {
-      if (_thumbnail != null) {
-        thumbnailImage.setImage(_thumbnail);
-        thumbnailImagePane.setCenter(thumbnailImage);
-        downloadBackglassBtn.setDisable(false);
-        resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
-      }
-      else {
-        thumbnailImage.setImage(null);
-        thumbnailImagePane.setCenter(null);
-        resolutionLabel.setText("No Image data available.");
-      }
-    });
-
-    JFXFuture.supplyAsync(() -> {
-      if (tableData != null && tableData.isDmdImageAvailable()) {
-        String url = client.getBackglassServiceClient().getDirectB2sDmdUrl(emulatorId, fileName);
-        return new Image(url);
-      }
-      return null;
-    })
-    .thenAcceptLater(_dmdThumbnail -> {
-      uploadDMDBtn.setDisable(false);
-      if (_dmdThumbnail != null) {
-        dmdThumbnailImage.setImage(_dmdThumbnail);
-        dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
-        downloadDMDBtn.setDisable(false);
-        deleteDMDBtn.setDisable(false);
-        dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
-        fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
-      }
-      else {
-        dmdThumbnailImage.setImage(null);
-        dmdThumbnailImagePane.setCenter(null);
-        dmdResolutionLabel.setText("No DMD background available.");
-        fullDmdLabel.setText("No");
-      }
-    });
+          if (tableData != null && tableData.isDmdImageAvailable()) {
+            String url = client.getBackglassServiceClient().getDirectB2sDmdUrl(emulatorId, fileName);
+            return new Image(url);
+          }
+          return null;
+        })
+        .thenAcceptLater(_dmdThumbnail -> {
+          uploadDMDBtn.setDisable(false);
+          if (_dmdThumbnail != null) {
+            dmdThumbnailImage.setImage(_dmdThumbnail);
+            dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
+            downloadDMDBtn.setDisable(false);
+            deleteDMDBtn.setDisable(false);
+            dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
+            fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
+          }
+          else {
+            dmdThumbnailImage.setImage(null);
+            dmdThumbnailImagePane.setCenter(null);
+            dmdResolutionLabel.setText("No DMD background available.");
+            fullDmdLabel.setText("No");
+          }
+        });
   }
 
   public void setVisible(boolean visible) {
