@@ -405,7 +405,7 @@ public class DMDPositionController implements Initializable, DialogController {
       if (dmdinfo.isOnBackglass()) {
         radioOnBackglass.setSelected(true);
       }
-      else if (hasDMD && dmdinfo.isOnDMD()) {
+      else if (hasDMD && dmdinfo.isOnFullDmd()) {
         radioOnB2sDMD.setSelected(true);
       }
       else {
@@ -426,7 +426,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private VPinScreen getSelectedScreen() {
     return radioOnBackglass.isSelected() ? VPinScreen.BackGlass :
-        radioOnB2sDMD.isSelected() ? VPinScreen.DMD : VPinScreen.PlayField;
+        radioOnB2sDMD.isSelected() ? VPinScreen.Menu : VPinScreen.PlayField;
   }
 
   private void loadDmdInfo(DMDInfo dmdinfo) {

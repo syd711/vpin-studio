@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.frontend.FrontendScreenSummary;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
@@ -52,11 +53,11 @@ public class VPinScreenService {
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
     switch (screen) {
       case PlayField:
-        return firstDefined(screen, getVpxDisplays(), getFrontendDisplays(false));
+        return firstDefined(screen, getVpxDisplays(false), getFrontendDisplays(false));
       case BackGlass:
-        return firstDefined(screen, getVpxDisplays(), getScreenResDisplays(), getFrontendDisplays(false));
+        return firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
       case Menu:
-        return firstDefined(screen, getVpxDisplays(), getScreenResDisplays(), getFrontendDisplays(false));
+        return firstDefined(screen, getVpxDisplays(false), getScreenResDisplays(), getFrontendDisplays(false));
       default:
         return firstDefined(screen, getFrontendDisplays(false));
     }
@@ -89,41 +90,58 @@ public class VPinScreenService {
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
     checkMonitors(errors, monitors);
 
-    checkDisplays(errors, getVpxDisplays(), getScreenResDisplays(), getFrontendDisplays(true));
+    checkDisplays(errors, getVpxDisplays(true), getScreenResDisplays(), getFrontendDisplays(true));
     return errors;
   }
 
-  public void checkMonitors(List<String> errors, List<MonitorInfo> monitors) {
+  protected void checkMonitors(List<String> errors, List<MonitorInfo> monitors) {
     if (monitors.size() > 1) {
+
+      //for pinup popper, all monitors left to the primary are irrelevant
+      if (systemService.getFrontendType().equals(FrontendType.Popper)) {
+        boolean primaryFound = false;
+        int i = 0;
+        for (MonitorInfo monitor : monitors) {
+          if (!monitor.isPrimary() && !primaryFound) {
+            errors.add("Monitor " + (i + 1) + ", named " + monitor.getName() + " is left to the primary one, this is not supported in Popper");
+          }
+          primaryFound |= monitor.isPrimary();
+        }
+      }
+
       MonitorInfo monitor = monitors.get(0);
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
         if (monitor.getY() !=  second.getY()) {
-          errors.add("Monitor " + (i + 1) + ", named " + monitor.getName() + "is not aligned on top with first one");
+          errors.add("Monitor " + (i + 1) + ", named " + second.getName() + " is not aligned on top with first one");
         }
       }
     }
   }
 
-  public void checkDisplays(List<String> errors, List<FrontendPlayerDisplay> vpxDisplays,
+  protected void checkDisplays(List<String> errors, List<FrontendPlayerDisplay> vpxDisplays,
       List<FrontendPlayerDisplay> screenresDisplays, List<FrontendPlayerDisplay> frontendDisplays) {
 
     String frontend = frontendService.getFrontendName();
 
-    compare(errors, VPinScreen.PlayField, vpxDisplays, "VPinballX.ini", screenresDisplays, "screenres.txt");
-    compare(errors, VPinScreen.PlayField, vpxDisplays, "VPinballX.ini", frontendDisplays, frontend);
-    compare(errors, VPinScreen.BackGlass, screenresDisplays, "screenres.txt", frontendDisplays, frontend);
-    compare(errors, VPinScreen.Menu, screenresDisplays, "screenres.txt", frontendDisplays, frontend);
+    // VPX is master when defining playfield dimensions, so is the main point of comparison
+    // screenres does not contain display number nor x/X so just compare size
+    compareDimensions(errors, VPinScreen.PlayField, null, vpxDisplays, "VPinballX.ini", screenresDisplays, "screenres.txt");
+    compare(errors, VPinScreen.PlayField, null, vpxDisplays, "VPinballX.ini", frontendDisplays, frontend);
+
+    // screenres / B2S is master for Backglass and fullDmd
+    compare(errors, VPinScreen.BackGlass, null, screenresDisplays, "screenres.txt", frontendDisplays, frontend);
+    compare(errors, VPinScreen.Menu, "FullDMD", screenresDisplays, "screenres.txt", frontendDisplays, frontend);
   }
 
-  private void compare(List<String> errors, VPinScreen screen,
+  private void compare(List<String> errors, VPinScreen screen, String name, 
                        List<FrontendPlayerDisplay> displays1, String name1,
                        List<FrontendPlayerDisplay> displays2, String name2) {
-    comparePositions(errors, screen, displays1, name1, displays2, name2);
-    compareDimensions(errors, screen, displays1, name1, displays2, name2);
+    comparePositions(errors, screen, name, displays1, name1, displays2, name2);
+    compareDimensions(errors, screen, name, displays1, name1, displays2, name2);
   }
 
-  private void comparePositions(List<String> errors, VPinScreen screen,
+  private void comparePositions(List<String> errors, VPinScreen screen, String name, 
                                 List<FrontendPlayerDisplay> displays1, String name1,
                                 List<FrontendPlayerDisplay> displays2, String name2) {
 
@@ -131,17 +149,17 @@ public class VPinScreenService {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getX() != display2.getX()) {
-        errors.add(screen.name() + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
+        errors.add(StringUtils.defaultString(name, screen.name()) + " x position in " + name1 + " mismatch with x position defined in " + name2 + ": " +
             display1.getX() + " vs " + display2.getX());
       }
       if (display1.getY() != display2.getY()) {
-        errors.add(screen.name() + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
+        errors.add(StringUtils.defaultString(name, screen.name()) + " y position in " + name1 + " mismatch with y position defined in " + name2 + ": " +
             display1.getY() + " vs " + display2.getY());
       }
     }
   }
 
-  private void compareDimensions(List<String> errors, VPinScreen screen,
+  private void compareDimensions(List<String> errors, VPinScreen screen, String name, 
                                  List<FrontendPlayerDisplay> displays1, String name1,
                                  List<FrontendPlayerDisplay> displays2, String name2) {
 
@@ -149,11 +167,11 @@ public class VPinScreenService {
     FrontendPlayerDisplay display2 = FrontendPlayerDisplay.valueOfScreen(displays2, screen);
     if (display1 != null && display2 != null) {
       if (display1.getWidth() != display2.getWidth()) {
-        errors.add(screen.name() + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
+        errors.add(StringUtils.defaultString(name, screen.name()) + " width in " + name1 + " mismatch with width defined in " + name2 + ": " +
             display1.getWidth() + " vs " + display2.getWidth());
       }
       if (display1.getHeight() != display2.getHeight()) {
-        errors.add(screen.name() + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
+        errors.add(StringUtils.defaultString(name, screen.name()) + " height in " + name1 + " mismatch with height defined in " + name2 + ": " +
             display1.getHeight() + " vs " + display2.getHeight());
       }
     }
@@ -166,9 +184,9 @@ public class VPinScreenService {
     FrontendScreenSummary summary = new FrontendScreenSummary();
     summary.setScreenResDisplays(addMonitorInfo(getScreenResDisplays()));
     //we do not want the cached version here
-    //do not add monitorInfo as it i salready done  by the connector
+    //do not add monitorInfo as it is already done  by the connector
     summary.setFrontendDisplays(getFrontendDisplays(true));
-    summary.setVpxDisplaysDisplays(addMonitorInfo(getVpxDisplays()));
+    summary.setVpxDisplaysDisplays(addMonitorInfo(getVpxDisplays(true)));
 
     List<String> errors = new ArrayList<>();
     checkMonitors(errors, monitors);
@@ -182,7 +200,8 @@ public class VPinScreenService {
     for (FrontendPlayerDisplay display : displays) {
       MonitorInfo monitor = null;
       for (MonitorInfo m : monitors) {
-        if (monitor == null || m.getName().endsWith(Integer.toString(display.getMonitor()))) {
+        // match for VPinballX seems by id
+        if (m.getId() == display.getMonitor() || m.getName().endsWith(Integer.toString(display.getMonitor()))) {
           monitor = m;
         }
       }
@@ -202,6 +221,7 @@ public class VPinScreenService {
     }
     return displays;
   }
+
   
   //------------------------------------------------------ VPINBALLX.INI ---
 
@@ -211,10 +231,10 @@ public class VPinScreenService {
    *
    * @return a List of FrontendPlayerDisplay
    */
-  public List<FrontendPlayerDisplay> getVpxDisplays() {
+  public List<FrontendPlayerDisplay> getVpxDisplays(boolean forceReload) {
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
 
-    Configuration vpxConfiguration = vpxService.getPlayerConfiguration();
+    Configuration vpxConfiguration = vpxService.getPlayerConfiguration(forceReload);
     if (vpxConfiguration != null && !vpxConfiguration.isEmpty()) {
       createVpxPlayfieldDisplay(vpxConfiguration, displayList);
       //createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
@@ -327,8 +347,10 @@ public class VPinScreenService {
       backglass.setHeight(screenres.getBackglassHeight());
       displays.add(backglass);
 
-      if (screenres.hasDMD()) {
-        FrontendPlayerDisplay fulldmd = new FrontendPlayerDisplay(VPinScreen.DMD);
+      if (screenres.hasFullDmd()) {
+        FrontendPlayerDisplay fulldmd = new FrontendPlayerDisplay(VPinScreen.Menu);
+        // override the name
+        fulldmd.setName("FullDMD");
         // DMD is relative to backglass so use same monitor
         fulldmd.setMonitor(Integer.parseInt(screenres.getBackglassDisplay()));
         fulldmd.setX(screenres.getBackglassX() + screenres.getDmdX());

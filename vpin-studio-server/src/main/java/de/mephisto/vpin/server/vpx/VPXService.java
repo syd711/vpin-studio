@@ -42,11 +42,16 @@ public class VPXService implements InitializingBean {
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
 
-  /** The cached information o,in vPïnballX.ini file */
+  /** The cached information in vPïnballX.ini file */
   private INIConfiguration iniConfiguration;
 
   private VPXKeyManager keyManager; 
 
+
+  public File getVPXFile() {
+    String userhome = System.getProperty("user.home");
+    return new File(userhome, "AppData/Roaming/VPinballX/VPinballX.ini");
+  }
 
   private void loadIni() {
     File vpxInFile = getVPXFile();
@@ -59,20 +64,25 @@ public class VPXService implements InitializingBean {
         iniConfiguration.read(fileReader);
         LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath()); 
 
-        this.keyManager = new VPXKeyManager(getPlayerConfiguration());
+        this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
       } catch (Exception e) {
         LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
       }
     } 
   }
 
-  public @Nullable Configuration getPlayerConfiguration() {
+  public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
+    if (forceReload) {
+      loadIni();
+    }
     return iniConfiguration != null ? iniConfiguration.getSection("Player") : null;
   }
 
   public VPXKeyManager getKeyManager() {
     return keyManager;
   }
+
+  //---------------------------------------------------- POV Management ---
 
   public POV getPOV(Game game) {
     try {
@@ -86,11 +96,6 @@ public class VPXService implements InitializingBean {
     } catch (VPinStudioException e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
-  }
-
-  public File getVPXFile() {
-    String userhome = System.getProperty("user.home");
-    return new File(userhome, "AppData/Roaming/VPinballX/VPinballX.ini");
   }
 
   public boolean savePOVPreference(Game game, Map<String, Object> values) {
@@ -139,6 +144,23 @@ public class VPXService implements InitializingBean {
     }
   }
 
+  public boolean delete(Game game) {
+    if (game != null) {
+      File povFile = game.getPOVFile();
+      if (povFile.exists()) {
+        LOG.info("Deleting " + povFile.getAbsolutePath());
+        return povFile.delete();
+      }
+      else {
+        LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
+      }
+    }
+    else {
+      LOG.error("No game found for pov deletion");
+    }
+    return false;
+  }
+
   public POV createPOV(Game game) {
     if (game != null) {
       try {
@@ -155,6 +177,8 @@ public class VPXService implements InitializingBean {
     }
     return null;
   }
+
+  //---------------------------------------------------- GAME Management ---
 
   public String getScript(Game game) {
     if (game != null) {
@@ -223,23 +247,6 @@ public class VPXService implements InitializingBean {
           //already logged
         }
       }
-    }
-    return false;
-  }
-
-  public boolean delete(Game game) {
-    if (game != null) {
-      File povFile = game.getPOVFile();
-      if (povFile.exists()) {
-        LOG.info("Deleting " + povFile.getAbsolutePath());
-        return povFile.delete();
-      }
-      else {
-        LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
-      }
-    }
-    else {
-      LOG.error("No game found for pov deletion");
     }
     return false;
   }
