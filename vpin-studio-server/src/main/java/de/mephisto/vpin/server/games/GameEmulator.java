@@ -17,13 +17,14 @@ public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
 
   private EmulatorType type;
-  /** The internal folder name, not used for display */
+  /**
+   * The internal folder name, not used for display
+   */
   private String safeName;
   private String name;
   private String description;
   private String installationDirectory;
   private String gamesDirectory;
-  private String mameDirectory;
   private String mediaDirectory;
   private String romDirectory;
   private int id;
@@ -81,10 +82,6 @@ public class GameEmulator {
 
   public void setGamesDirectory(String gamesDirectory) {
     this.gamesDirectory = gamesDirectory;
-  }
-
-  public void setMameDirectory(String mameDirectory) {
-    this.mameDirectory = mameDirectory;
   }
 
   public void setMediaDirectory(String mediaDirectory) {
@@ -168,7 +165,11 @@ public class GameEmulator {
   }
 
   public String getMameDirectory() {
-    return mameDirectory;
+    File mameFolder = new File(installationDirectory, "VPinMAME");
+    if (mameFolder.exists()) {
+      return mameFolder.getAbsolutePath();
+    }
+    return null;
   }
 
   public String getRomDirectory() {
@@ -206,7 +207,7 @@ public class GameEmulator {
   public int getId() {
     return id;
   }
-  
+
   public boolean isValid() {
     return !StringUtils.isEmpty(installationDirectory) && getInstallationFolder().exists();
   }

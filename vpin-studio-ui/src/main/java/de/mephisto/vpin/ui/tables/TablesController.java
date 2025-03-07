@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
+import de.mephisto.vpin.ui.backglassmanager.DirectB2SModel;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -73,6 +74,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   public boolean isTablesSelected() {
     return tabPane.getSelectionModel().getSelectedIndex() == 0;
+  }
+
+  public boolean isBackglassManagerSelected() {
+    return tabPane.getSelectionModel().getSelectedIndex() == 1;
   }
 
   @FXML

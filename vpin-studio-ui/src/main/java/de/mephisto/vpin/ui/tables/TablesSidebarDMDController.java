@@ -89,8 +89,8 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private void onDmdDevice() {
-    if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    if (client.getSystemService().isLocal() && defaultGameEmulator.getMameDirectory() != null) {
       File folder = new File(defaultGameEmulator.getMameDirectory());
       File ini = new File(folder, "DmdDevice.ini");
       Dialogs.editFile(ini);
@@ -115,12 +115,17 @@ public class TablesSidebarDMDController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
-      File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+      if (emulatorRepresentation.getMameDirectory() != null) {
+        File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          Studio.open(file);
+        }
       }
       else {
-        Studio.open(file);
+        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "No matching VPinMAME installation found.");
       }
     }
   }

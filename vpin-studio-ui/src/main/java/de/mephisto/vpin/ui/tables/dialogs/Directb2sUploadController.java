@@ -45,6 +45,9 @@ public class Directb2sUploadController extends BaseUploadController {
   @FXML
   private RadioButton uploadAndAppendRadio;
 
+  @FXML
+  private Label gameLabel;
+
   public Directb2sUploadController() {
     super(AssetType.DIRECTB2S, false, false, "zip", "7z", "rar", "directb2s");
   }
@@ -119,5 +122,6 @@ public class Directb2sUploadController extends BaseUploadController {
 
   public void setData(GameRepresentation gameRepresentation) {
     this.game = gameRepresentation;
+    this.gameLabel.setText(gameRepresentation.getGameDisplayName());
   }
 }

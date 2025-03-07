@@ -53,6 +53,7 @@
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <HBox GridPane.columnIndex="1">
@@ -73,6 +74,8 @@
                                  </children>
                               </HBox>
                               <Label styleClass="default-text" text="Backglass File:" />
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game:" GridPane.rowIndex="1" />
+                              <Label fx:id="gameLabel" layoutX="10.0" layoutY="49.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                      </children>

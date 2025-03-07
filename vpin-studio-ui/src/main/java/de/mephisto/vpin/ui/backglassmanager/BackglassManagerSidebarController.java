@@ -817,7 +817,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       versionSelector.setVisible(false);
     }
 
-    tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
+    if (model != null && getSelectedVersion() != null) {
+      tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
+    }
     refreshTableSettings(model != null ? model.getGameId() : -1);
     refreshTableData(tableData);
     refreshStatusCheckbox();
