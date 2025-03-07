@@ -104,7 +104,7 @@ public class PinballXStatisticsParser {
   }
 
   protected SubnodeConfiguration getGameSection(INIConfiguration iniConfiguration, GameEmulator emu, String gameName) {
-    String sectionName =  emu.getInternalName() + "_" + gameName.trim();
+    String sectionName =  emu.getSafeName() + "_" + gameName.trim();
     sectionName = sectionName.replaceAll("[^A-Za-z0-9]", "_");
     int p = -1;
     while ((p = sectionName.indexOf("__")) >= 0) {

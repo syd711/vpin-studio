@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.dof;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -56,7 +57,7 @@ public class DOFService implements InitializingBean {
   }
 
   public JobDescriptor asyncSync() {
-    DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings());
+    DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings(), SystemInfo.RESOURCES);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.DOF_SYNC);
     jobDescriptor.setTitle("Synchronizing DOF Settings");
     jobDescriptor.setJob(job);
@@ -68,7 +69,7 @@ public class DOFService implements InitializingBean {
 
   public JobDescriptor sync(boolean wait) {
     if (wait) {
-      DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings());
+      DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings(), SystemInfo.RESOURCES);
       JobDescriptor result = new JobDescriptor();
       result.setTitle("Synchronizing DOF Settings");
       result.setJob(job);

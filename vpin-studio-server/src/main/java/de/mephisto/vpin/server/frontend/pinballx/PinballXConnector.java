@@ -17,7 +17,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.io.ByteOrderMark;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -140,10 +144,32 @@ public class PinballXConnector extends BaseConnector {
       return emulator;
     }
 
-    SubnodeConfiguration emulatorNode = iniConfiguration.getSection(emulator.getInternalName());
+    SubnodeConfiguration emulatorNode = iniConfiguration.getSection(emulator.getSafeName());
     if (emulatorNode == null || emulatorNode.isEmpty()) {
-      LOG.warn("No matching PinballX emulator configuration found for {}, cannot save", emulator.getName());
+      LOG.warn("No matching PinballX emulator configuration found for {}, cannot save", emulator.getSafeName());
       return emulator;
+    }
+
+    if (isSystemEmulator(emulator)) {
+      // if the emulator has changed, rename also the database file
+      if (!emulatorNode.getString("Name").equalsIgnoreCase(emulator.getName())) {
+        File oldDb = getDatabase(emulatorNode.getString("Name"));
+        File newDb = getDatabase(emulator);
+        if (!FileUtils.rename(oldDb, newDb)) {
+          LOG.warn("Cannot rename database file {}, cannot save", oldDb.getAbsolutePath());
+          return emulator;
+        }
+
+        // check also if playlists should be moved ??
+
+        // also delete old folder if empty
+        if (FileUtils.isEmpty(oldDb.getParentFile())) {
+          FileUtils.deleteFolder(oldDb.getParentFile());
+        }
+
+        // change now the name
+        emulatorNode.setProperty("Name", emulator.getName());
+      }
     }
 
     emulatorNode.setProperty("Enabled", emulator.isEnabled() ? "True" : "False");
@@ -170,6 +196,10 @@ public class PinballXConnector extends BaseConnector {
     saveIni(iniConfiguration);
 
     return emulator;
+  }
+
+  private boolean isSystemEmulator(GameEmulator emu) {
+    return StringUtils.startsWith(emu.getSafeName(), "System_");
   }
 
   @Override
@@ -232,8 +262,11 @@ public class PinballXConnector extends BaseConnector {
     return new File(pinballXFolder, "/Databases/" + emu.getName());
   }
   private File getDatabase(GameEmulator emu) {
+    return getDatabase(emu.getName());
+  }
+  private File getDatabase(String emuName) {
     File pinballXFolder = getInstallationFolder();
-    return new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + emu.getName() + ".xml");
+    return new File(pinballXFolder, "/Databases/" + emuName + "/" + emuName + ".xml");
   }
 
   private INIConfiguration loadPinballXIni() {
@@ -259,17 +292,28 @@ public class PinballXConnector extends BaseConnector {
     iniConfiguration.setSeparatorUsedInOutput("=");
     //iniConfiguration.setSeparatorUsedInInput("=");
 
-    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName(charset))) {
-      iniConfiguration.read(fileReader);
+    try (FileInputStream in = new FileInputStream(pinballXIni)) {
+      try (BOMInputStream bOMInputStream = BOMInputStream.builder().setInputStream(in).get()) {
+        ByteOrderMark bom = bOMInputStream.getBOM();
+        String charsetName = bom == null ? charset : bom.getCharsetName();
+        try (InputStreamReader reader = new InputStreamReader(new BufferedInputStream(bOMInputStream), charsetName)) {
+          iniConfiguration.read(reader);
+          // check presence of [internal] section
+          SubnodeConfiguration s = iniConfiguration.getSection("Display");
+          return s.isEmpty() ? null : iniConfiguration;
+        }
+        catch (Exception e) {
+          LOG.error("Cannot parse {}", pinballXIni.getAbsolutePath(), e);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Cannot decode charset of {}}", pinballXIni.getAbsolutePath(), e);
+      }
     }
     catch (Exception e) {
-      LOG.error("cannot parse ini file " + pinballXIni, e);
-      return null;
+      LOG.error("Cannot open {}", pinballXIni.getAbsolutePath(), e);
     }
-
-    // check presence of [internal] section
-    SubnodeConfiguration s = iniConfiguration.getSection("Display");
-    return s.isEmpty() ? null : iniConfiguration;
+    return null;
   }
 
   /*
@@ -350,9 +394,8 @@ public class PinballXConnector extends BaseConnector {
     e.setExitScript(afterScript);
     e.setType(type);
     e.setId(emuId);
+    e.setSafeName(sectionName);
     e.setName(emuname);
-    e.setDisplayName(emuname);
-    e.setInternalName(sectionName);
 
     File mediaDir = new File(installDir, "Media/" + emuname);
     if (mediaDir.exists() && mediaDir.isDirectory()) {
@@ -541,27 +584,29 @@ public class PinballXConnector extends BaseConnector {
     int id = 1;
     for (GameEmulator emu : emulators.values()) {
       File dbfolder = getDatabaseFolder(emu);
-      for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
-        String playlistname = FilenameUtils.getBaseName(f.getName());
-        if (!StringUtils.equalsIgnoreCase(playlistname, emu.getName())) {
+      if (dbfolder.exists()) {
+        for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+          String playlistname = FilenameUtils.getBaseName(f.getName());
+          if (!StringUtils.equalsIgnoreCase(playlistname, emu.getName())) {
 
-          Playlist playlist = new Playlist();
-          playlist.setId(id++);
-          playlist.setEmulatorId(emu.getId());
-          playlist.setName(playlistname);
-          // don't set mediaName, studio will use the name
+            Playlist playlist = new Playlist();
+            playlist.setId(id++);
+            playlist.setEmulatorId(emu.getId());
+            playlist.setName(playlistname);
+            // don't set mediaName, studio will use the name
 
-          PinballXTableParser parser = new PinballXTableParser();
-          List<String> _games = new ArrayList<>();
-          Map<String, TableDetails> _tabledetails = new HashMap<>();
-          parser.addGames(f, _games, _tabledetails, emu);
+            PinballXTableParser parser = new PinballXTableParser();
+            List<String> _games = new ArrayList<>();
+            Map<String, TableDetails> _tabledetails = new HashMap<>();
+            parser.addGames(f, _games, _tabledetails, emu);
 
-          List<PlaylistGame> pg = _games.stream()
-              .map(g -> toPlaylistGame(findIdFromFilename(emu.getId(), g)))
-              .collect(Collectors.toList());
-          playlist.setGames(pg);
+            List<PlaylistGame> pg = _games.stream()
+                .map(g -> toPlaylistGame(findIdFromFilename(emu.getId(), g)))
+                .collect(Collectors.toList());
+            playlist.setGames(pg);
 
-          result.add(playlist);
+            result.add(playlist);
+          }
         }
       }
     }

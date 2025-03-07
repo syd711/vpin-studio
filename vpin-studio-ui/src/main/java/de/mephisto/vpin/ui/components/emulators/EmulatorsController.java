@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.components.emulators;
 
-import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -21,7 +20,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -57,6 +57,9 @@ public class EmulatorsController implements Initializable {
 
   @FXML
   private CheckBox enabledCheckbox;
+
+  @FXML
+  private TextField safeNameField;
 
   @FXML
   private TextField nameField;
@@ -136,6 +139,15 @@ public class EmulatorsController implements Initializable {
   @FXML
   private Button selectFolderButtonMedia;
 
+  @FXML
+  private Pane emuScrollRoot;
+
+  @FXML
+  private Pane emuScrollChild;
+
+  @FXML
+  private ScrollPane emuScrollPane;
+
   private Optional<GameEmulatorRepresentation> emulator = Optional.empty();
 
   private EmulatorsTableController tableController;
@@ -199,7 +211,7 @@ public class EmulatorsController implements Initializable {
   @FXML
   private void onSave() {
     saveBtn.setDisable(true);
-    if (!FileUtils.isValidFilename(nameField.getText())) {
+    if (!FileUtils.isValidFilename(safeNameField.getText())) {
       WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
       return;
     }
@@ -209,6 +221,7 @@ public class EmulatorsController implements Initializable {
 
       GameEmulatorRepresentation emu = emulator.get();
       emu.setEnabled(enabledCheckbox.isSelected());
+      emu.setSafeName(safeNameField.getText());
       emu.setName(nameField.getText());
       emu.setDescription(descriptionField.getText());
       emu.setGamesDirectory(gamesFolderField.getText());
@@ -238,18 +251,17 @@ public class EmulatorsController implements Initializable {
 
   @FXML
   private void onDuplicate() {
-    String s = WidgetFactory.showInputDialog(Studio.stage, "Clone Emulator", "Enter the folder save name for the copy of \"" + emulator.get().getName() + "\".", "You can edit the additional emulator parameters afterwards.", null, "Copy of " + emulator.get().getName());
+    GameEmulatorRepresentation template = emulator.get();
+    String s = WidgetFactory.showInputDialog(Studio.stage, "Clone Emulator", "Enter the folder save name for the copy of \"" + emulator.get().getName() + "\".", "You can edit the additional emulator parameters afterwards.", null, "Copy of " + template);
     if (!StringUtils.isEmpty(s)) {
       if (!FileUtils.isValidFilename(s)) {
         WidgetFactory.showAlert(stage, "Invalid Name", "The specified name contains invalid characters.");
         return;
       }
 
-      GameEmulatorRepresentation template = emulator.get();
-
       GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
+      emu.setSafeName(s);
       emu.setName(s);
-      emu.setDisplayName(s);
       emu.setType(template.getType());
       emu.setDescription(template.getDescription());
       emu.setMediaDirectory(template.getMediaDirectory());
@@ -291,6 +303,7 @@ public class EmulatorsController implements Initializable {
       }
 
       GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
+      emu.setSafeName(s);
       emu.setName(s);
       emu.setType(EmulatorType.OTHER);
       GameEmulatorRepresentation gameEmulatorRepresentation = client.getEmulatorService().saveGameEmulator(emu);
@@ -311,13 +324,15 @@ public class EmulatorsController implements Initializable {
 
     this.emulator = model;
 
-    emulatorNameLabel.setText("");
-    emulatorIdLabel.setText("");
+    emulatorNameLabel.setText("-");
+    emulatorIdLabel.setText("-");
 
     enabledCheckbox.setSelected(false);
     enabledCheckbox.setDisable(model.isEmpty());
+    safeNameField.setText("");
+    safeNameField.setDisable(model.isEmpty() || !frontendType.supportEmulatorCreateDelete());
     nameField.setText("");
-    nameField.setDisable(model.isEmpty() || !frontendType.supportEmulatorCreateDelete());
+    nameField.setDisable(model.isEmpty());
     descriptionField.setText("");
     descriptionField.setDisable(model.isEmpty());
     launchFolderField.setText("");
@@ -332,6 +347,7 @@ public class EmulatorsController implements Initializable {
     romsFolderField.setDisable(model.isEmpty());
 
     duplicateBtn.setDisable(model.isEmpty());
+    saveBtn.setDisable(model.isEmpty());
     deleteBtn.setDisable(model.isEmpty());
 
     if (startScriptController != null) {
@@ -347,6 +363,7 @@ public class EmulatorsController implements Initializable {
       emulatorIdLabel.setText("(ID #" + emulator.getId() + ")");
 
       enabledCheckbox.setSelected(emulator.isEnabled());
+      safeNameField.setText(emulator.getSafeName());
       nameField.setText(emulator.getName());
       descriptionField.setText(emulator.getDescription());
       launchFolderField.setText(emulator.getInstallationDirectory());
@@ -362,7 +379,15 @@ public class EmulatorsController implements Initializable {
         customField1.setText(emulator.getExeParameters());
       }
     }
+  }
 
+  public void onViewActivated() {
+    Platform.runLater(() -> {
+      refreshTableWidth();
+
+      stage.setWidth(stage.getWidth() - 5);
+      stage.setWidth(stage.getWidth() + 5);
+    });
   }
 
   public void onViewDeactivated() {

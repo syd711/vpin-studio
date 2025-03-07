@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -65,10 +65,17 @@ public class RarUtil {
         else {
           String entryName = item.getPath().replaceAll("\\\\", "/");
           if (entryName.toLowerCase().endsWith(name.toLowerCase())) {
-            //folder creation
-            File parent = targetFile.getParentFile();
-            if (!parent.isDirectory() && !parent.mkdirs()) {
-              throw new IOException("Failed to create directory " + parent);
+            // delete existing file and don't simply write in it 
+            // that would corrupt the file in case conten tto be comied is smaller than previous size
+            if (targetFile.exists()) {
+              targetFile.delete();
+            }
+            else {
+              //folder creation
+              File parent = targetFile.getParentFile();
+              if (!parent.isDirectory() && !parent.mkdirs()) {
+                throw new IOException("Failed to create directory " + parent);
+              }
             }
 
             RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
@@ -112,10 +119,20 @@ public class RarUtil {
         else {
           String entryName = item.getPath().replaceAll("\\\\", "/");
           File target = new File(targetFolder, item.getPath());
-          File parent = target.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
+          
+          // delete existing file and don't simply write in it 
+          // that would corrupt the file in case conten tto be comied is smaller than previous size
+          if (target.exists()) {
+            target.delete();
           }
+          else {
+            // folder creation 
+            File parent = target.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+          }
+
           RandomAccessFile rafOut = new RandomAccessFile(target, "rw");
           RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
           ExtractOperationResult result = item.extractSlow(fos);

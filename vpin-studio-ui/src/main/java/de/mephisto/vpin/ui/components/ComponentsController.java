@@ -152,6 +152,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     }
     else if (t1.intValue() == TAB_EMULATORS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Emulators"));
+      emulatorsController.onViewActivated();
     }
     else if (t1.intValue() == TAB_SCREENS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));

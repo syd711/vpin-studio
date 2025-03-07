@@ -12,15 +12,14 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.ComponentsController">
    <center>
       <BorderPane fx:id="root" styleClass="subpanel">
       
           <center>
               <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
                   <BorderPane.margin>
-                      <Insets bottom="12.0" />
+                      <Insets bottom="6.0" />
                   </BorderPane.margin>
                <center>
                   <TabPane fx:id="rootTabPane" BorderPane.alignment="CENTER">
@@ -169,7 +168,7 @@
             </BorderPane>
          </top>
          <padding>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="6.0" left="12.0" right="12.0" top="12.0" />
          </padding>
          <BorderPane.margin>
             <Insets bottom="12.0" right="12.0" />

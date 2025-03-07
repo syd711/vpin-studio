@@ -17,9 +17,10 @@ public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
 
   private EmulatorType type;
+  /** The internal folder name, not used for display */
+  private String safeName;
   private String name;
   private String description;
-  private String displayName;
   private String installationDirectory;
   private String gamesDirectory;
   private String mameDirectory;
@@ -27,9 +28,6 @@ public class GameEmulator {
   private String romDirectory;
   private int id;
   private boolean enabled;
-
-  /** The internal/technical name, not used for display */
-  private String internalName;
 
   private String exeName;
   private String exeParameters;
@@ -65,16 +63,16 @@ public class GameEmulator {
     this.type = type;
   }
 
+  public void setSafeName(String safeName) {
+    this.safeName = safeName;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
   }
 
   public void setInstallationDirectory(String installationDirectory) {
@@ -165,10 +163,6 @@ public class GameEmulator {
     return gameExt;
   }
 
-  public String getDisplayName() {
-    return displayName;
-  }
-
   public String getMediaDirectory() {
     return mediaDirectory;
   }
@@ -193,6 +187,10 @@ public class GameEmulator {
     return gamesDirectory;
   }
 
+  public String getSafeName() {
+    return safeName;
+  }
+
   public String getName() {
     return name;
   }
@@ -209,14 +207,6 @@ public class GameEmulator {
     return id;
   }
   
-  public String getInternalName() {
-    return internalName;
-  }
-
-  public void setInternalName(String internalName) {
-    this.internalName = internalName;
-  }
-
   public boolean isValid() {
     return !StringUtils.isEmpty(installationDirectory) && getInstallationFolder().exists();
   }
@@ -343,6 +333,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.displayName + "\" (ID: " + this.id + "/" + this.name + " [" + gamesDirectory + "])";
+    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.safeName + " [" + gamesDirectory + "])";
   }
 }

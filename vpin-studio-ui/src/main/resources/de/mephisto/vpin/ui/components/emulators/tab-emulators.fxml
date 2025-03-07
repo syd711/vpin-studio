@@ -20,102 +20,102 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="emulatorRoot" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsController">
+<BorderPane fx:id="emulatorRoot" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorsController">
    <center>
       <BorderPane>
          <center>
-            <ScrollPane>
+            <ScrollPane fx:id="emuScrollPane" hbarPolicy="NEVER">
                <content>
-                  <BorderPane>
-                     <top>
-                        <VBox BorderPane.alignment="TOP_LEFT">
+                  <VBox fx:id="emuScrollRoot">
+                     <children>
+                        <VBox fx:id="emuScrollChild">
                            <children>
-                              <Label fx:id="emulatorNameLabel" styleClass="default-title" text="Emulator Name" />
+                              <Label fx:id="emulatorNameLabel" styleClass="default-title" text="Emulator Name">
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </Label>
                               <Label fx:id="emulatorIdLabel" layoutX="10.0" layoutY="10.0" text="Emulator id" textFill="WHITE" />
-                           </children>
-                        </VBox>
-                     </top>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
-                     <center>
-                        <BorderPane BorderPane.alignment="CENTER">
-                           <BorderPane.margin>
-                              <Insets top="12.0" />
-                           </BorderPane.margin>
-                           <top>
-                              <VBox BorderPane.alignment="CENTER">
+                              <VBox>
                                  <children>
                                     <GridPane hgap="3.0" vgap="3.0">
                                       <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="200.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="400.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="400.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" />
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="33.200048828125006" minHeight="10.0" prefHeight="29.200048828125006" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="33.200048828125006" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="33.200048828125006" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="33.200048828125006" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label styleClass="default-text" text="Name:" GridPane.rowIndex="1" />
-                                          <Label fx:id="descriptionLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Description:" GridPane.rowIndex="2" />
-                                          <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Launch Folder:" GridPane.rowIndex="3" />
-                                          <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="Games Folder:" GridPane.rowIndex="4" />
-                                          <Label fx:id="customField2Label" styleClass="default-text" text="File Extension:" GridPane.rowIndex="5" />
-                                          <Label fx:id="customField1Label" layoutX="10.0" layoutY="136.0" styleClass="default-text" text="Media Folder:" GridPane.rowIndex="6" />
-                                          <Label fx:id="romsFolderLabel" layoutX="10.0" layoutY="166.0" styleClass="default-text" text="ROMs Folder:" GridPane.rowIndex="7" />
-                                          <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                          <Label styleClass="default-text" text="Enabled:" />
+                                          <Label styleClass="default-text" text="Name (folder safe):" GridPane.rowIndex="1" />
+                                          <Label styleClass="default-text" text="Display Name:" GridPane.rowIndex="2" />
+                                          <Label fx:id="descriptionLabel" layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Description:" GridPane.rowIndex="3" />
+                                          <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Launch Folder:" GridPane.rowIndex="4" />
+                                          <Label layoutX="10.0" layoutY="76.0" styleClass="default-text" text="Games Folder:" GridPane.rowIndex="5" />
+                                          <Label fx:id="customField2Label" styleClass="default-text" text="File Extension:" GridPane.rowIndex="6" />
+                                          <Label fx:id="customField1Label" layoutX="10.0" layoutY="136.0" styleClass="default-text" text="Media Folder:" GridPane.rowIndex="7" />
+                                          <Label fx:id="romsFolderLabel" layoutX="10.0" layoutY="166.0" styleClass="default-text" text="ROMs Folder:" GridPane.rowIndex="8" />
+      
+                                                      <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Emulator is active" textFill="WHITE" GridPane.columnIndex="1" />
+                                          <TextField fx:id="safeNameField" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="descriptionField" layoutX="213.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="launchFolderField" layoutX="213.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <TextField fx:id="descriptionField" layoutX="213.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="gamesFolderField" layoutX="213.0" layoutY="78.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                          <TextField fx:id="launchFolderField" layoutX="213.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="customField2" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                          <TextField fx:id="gamesFolderField" layoutX="213.0" layoutY="78.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="customField1" layoutX="213.0" layoutY="144.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                          <TextField fx:id="customField2" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="romsFolderField" layoutX="213.0" layoutY="178.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                          <TextField fx:id="customField1" layoutX="213.0" layoutY="144.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                          <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Enabled:" />
-                                          <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Emulator is active" textFill="WHITE" GridPane.columnIndex="1" />
-                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                          <TextField fx:id="romsFolderField" layoutX="213.0" layoutY="178.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+      
+                                                      <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                              <children>
-                                                <Button fx:id="selectFolderButtonLaunch" mnemonicParsing="false" onAction="#onSelectFolderLaunch" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                                                <Button fx:id="selectFolderButtonLaunch" mnemonicParsing="false" onAction="#onSelectFolderLaunch" prefHeight="26.0" prefWidth="110.0" text="Select Folder...">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonLaunch" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                <Button fx:id="openFolderButtonLaunch" mnemonicParsing="false" onAction="#onFolderLaunch" styleClass="folder-component" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -128,34 +128,14 @@
                                                 </Button>
                                              </children>
                                           </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                              <children>
-                                                <Button fx:id="selectFolderButtonGames" mnemonicParsing="false" onAction="#onSelectFolderGames" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                                                <Button fx:id="selectFolderButtonGames" mnemonicParsing="false" onAction="#onSelectFolderGames" prefHeight="26.0" prefWidth="110.0" text="Select Folder...">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonGames" mnemonicParsing="false" onAction="#onFolderGames" styleClass="folder-component" text="Open Folder" textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Open the folder on the local system if it exists." />
-                                                   </tooltip>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                                             <children>
-                                                <Button fx:id="selectFolderButtonMedia" mnemonicParsing="false" onAction="#onSelectFolderMedia" prefHeight="26.0" prefWidth="99.0" text="Select File...">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Button>
-                                                <Button fx:id="openFolderButtonMedia" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                <Button fx:id="openFolderButtonGames" mnemonicParsing="false" onAction="#onFolderGames" styleClass="folder-component" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -170,12 +150,32 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                              <children>
-                                                <Button fx:id="selectFolderButtonRoms" mnemonicParsing="false" onAction="#onSelectFolderRoms" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                                                <Button fx:id="selectFolderButtonMedia" mnemonicParsing="false" onAction="#onSelectFolderMedia" prefHeight="26.0" prefWidth="110.0" text="Select Folder...">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Button>
-                                                <Button fx:id="openFolderButtonRoms" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="folder-component" text="Open Folder" textFill="WHITE">
+                                                <Button fx:id="openFolderButtonMedia" mnemonicParsing="false" onAction="#onFolderMedia" styleClass="folder-component" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open the folder on the local system if it exists." />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                                             <children>
+                                                <Button fx:id="selectFolderButtonRoms" mnemonicParsing="false" onAction="#onSelectFolderRoms" prefHeight="26.0" prefWidth="110.0" text="Select Folder...">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Button>
+                                                <Button fx:id="openFolderButtonRoms" mnemonicParsing="false" onAction="#onFolderRoms" styleClass="folder-component" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -189,21 +189,25 @@
                                              </children>
                                           </HBox>
                                        </children>
+                                       <VBox.margin>
+                                          <Insets bottom="24.0" />
+                                       </VBox.margin>
                                     </GridPane>
                                  </children>
                               </VBox>
-                           </top>
-                           <center>
-                              <TabPane fx:id="tabPane" minHeight="320.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                              <TabPane fx:id="tabPane" minHeight="320.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
                                   <Tab fx:id="startScriptTab" text="Launch Script" />
                                   <Tab fx:id="exitScriptTab" text="Exit Script" />
                                 </tabs>
                               </TabPane>
-                           </center>
-                        </BorderPane>
-                     </center>
-                  </BorderPane>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="12.0" />
+                           </VBox.margin>
+                        </VBox>
+                     </children>
+                  </VBox>
                </content>
             </ScrollPane>
          </center>

@@ -116,6 +116,7 @@ abstract public class AbstractVPinServerTest {
     GameEmulator emulator = new GameEmulator();
     emulator.setDescription("VPX");
     emulator.setType(EmulatorType.VisualPinball);
+    emulator.setSafeName("VPX");
     emulator.setName("VPX");
     emulator.setInstallationDirectory("../testsystem/vPinball/VisualPinball/");
     emulator.setRomDirectory("../testsystem/vPinball/VisualPinball/VPinMAME/roms/");

@@ -49,7 +49,7 @@ public class ExportEntityConverter {
     }
     else if (property instanceof GameEmulator) {
       GameEmulator s = (GameEmulator) property;
-      property = s.getDisplayName();
+      property = s.getName();
     }
     else {
       LOG.warn("Unmapped field type: " + property.getClass().getSimpleName() + ", field name:" + name);

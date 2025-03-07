@@ -1386,11 +1386,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         preparedStatement.setInt(index++, emulator.getId());
       }
 
-      preparedStatement.setString(index++, emulator.getName());
+      preparedStatement.setString(index++, emulator.getSafeName());
       preparedStatement.setString(index++, emulator.getDescription());
       preparedStatement.setString(index++, emulator.getGamesDirectory());
       preparedStatement.setString(index++, emulator.getMediaDirectory());
-      preparedStatement.setString(index++, emulator.getDisplayName());
+      preparedStatement.setString(index++, emulator.getName());
       preparedStatement.setInt(index++, emulator.isEnabled() ? 1 : 0);
       preparedStatement.setString(index++, emulator.getRomDirectory());
       preparedStatement.setString(index++, emulator.getInstallationDirectory());
@@ -1455,10 +1455,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     GameEmulator e = new GameEmulator();
     e.setType(type);
     e.setId(rs.getInt("EMUID"));
-    e.setName(emuName);
+    e.setSafeName(emuName);
     e.setGamesDirectory(dirGames);
     e.setGameExt(extension);
-    e.setDisplayName(rs.getString("EmuDisplay"));
+    e.setName(rs.getString("EmuDisplay"));
     e.setMediaDirectory(rs.getString("DirMedia"));
     e.setRomDirectory(rs.getString("DirRoms"));
     e.setDescription(rs.getString("Description"));

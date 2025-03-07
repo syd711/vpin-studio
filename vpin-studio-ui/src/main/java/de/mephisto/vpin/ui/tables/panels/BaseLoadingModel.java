@@ -40,27 +40,13 @@ public abstract class BaseLoadingModel<T, M> extends ObjectPropertyBase<M> {
   public abstract boolean sameBean(T object);
 
 
-  public void reload() {
+  public void reload(Runnable callback) {
     loadRequested = false;
     loaded = false;
     // force reload process
-    isLoaded();
+    isLoaded(callback);
   }
 
-  /** Invoked from Executor thread */
-  protected void doLoad() throws Exception {
-    load();
-    setLoaded();
-  }
-
-  protected void setLoaded() {
-    // update the table
-    loaded = true;
-    Platform.runLater(() -> {
-      fireValueChangedEvent();
-      loaded();
-    });
-  }    
 
   /** Invoked from Executor thread */
   protected void loadFailed() {
@@ -99,9 +85,13 @@ public abstract class BaseLoadingModel<T, M> extends ObjectPropertyBase<M> {
    * Whether or not the value has been loaded.
    */
   public final boolean isLoaded() {
+    return isLoaded(null);
+  }
+  private boolean isLoaded(Runnable callback) {
     if (!loadRequested) {
       loadRequested = true ;
-      executor.execute(new LoadingTask<>(this));
+      LoadingTask<?> task = new LoadingTask<>(this, callback); 
+      executor.execute(task);
     }
     return loaded;
   }
@@ -128,13 +118,25 @@ public abstract class BaseLoadingModel<T, M> extends ObjectPropertyBase<M> {
 
     private M model;
 
-    LoadingTask(M model) {
+    private Runnable callback;
+
+    LoadingTask(M model, Runnable callback) {
       this.model = model;
+      this.callback = callback;
     }
 
     @Override
     protected Boolean call() throws Exception {
-      model.doLoad();
+      model.load();
+
+      model.loaded = true;
+      Platform.runLater(() -> {
+        model.fireValueChangedEvent();
+        if (callback != null) {
+          callback.run();
+        }
+        model.loaded();
+      });
       return true;
     }
 

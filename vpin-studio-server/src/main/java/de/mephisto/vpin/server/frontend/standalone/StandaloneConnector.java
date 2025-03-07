@@ -120,8 +120,8 @@ public class StandaloneConnector extends BaseConnector {
     GameEmulator e = new GameEmulator();
     e.setType(type);
     e.setId(emuId);
+    e.setSafeName(emuname);
     e.setName(emuname);
-    e.setDisplayName(emuname);
     e.setGamesDirectory(tablesDir.getAbsolutePath());
     e.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
     e.setExeName(vpxExe.getName());

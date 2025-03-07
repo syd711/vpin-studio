@@ -37,7 +37,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -139,6 +138,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
   @FXML
   public void onBackglassReload(ActionEvent e) {
+    DirectB2SModel selectedModel = getSelectedModel();
+    DirectB2SAndVersions versions = client.getBackglassServiceClient().reloadDirectB2S(selectedModel.getEmulatorId(), selectedModel.getFileName());
+    selectedModel.setBean(versions);
     reloadSelection();
   }
 
@@ -430,7 +432,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.renameBtn.setDisable(true);
     this.vpsOpenBtn.setDisable(true);
 
+    // load the sidebar
+    backglassManagerSideBarController.setData(model);
+
     if (model != null) {
+      // empty game sidebar section while loading game
+      backglassManagerSideBarController.setGame(null);
       JFXFuture
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {
@@ -442,11 +449,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
               renameBtn.setDisable(false);
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
             }
-            backglassManagerSideBarController.setData(game, model);
+            // Pass Game to sidebar so that it also updates the Game section
+            backglassManagerSideBarController.setGame(game);
           });
-    }
-    else {
-      backglassManagerSideBarController.setData(null, null);
     }
   }
 

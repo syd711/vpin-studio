@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.directb2s;
 import java.util.List;
 import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,8 @@ public class DirectB2SAndVersions { //extends DirectB2S {
   private List<String> versions = new ArrayList<>();
 
   public List<String> getVersions() {
-    return versions; //Collections.unmodifiableList(versions);
+    // prevent caller from modifying the model
+    return Collections.unmodifiableList(versions);
   }
 
   public boolean isEnabled() {
