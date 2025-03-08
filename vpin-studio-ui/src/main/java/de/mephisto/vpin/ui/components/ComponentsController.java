@@ -148,15 +148,21 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private void refreshView(Number t1) {
     if (t1.intValue() == TAB_UPDATES) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
-      emulatorsController.onViewDeactivated();
+      if (emulatorsController != null) {
+        emulatorsController.onViewDeactivated();
+      }
     }
     else if (t1.intValue() == TAB_EMULATORS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Emulators"));
-      emulatorsController.onViewActivated();
+      if (emulatorsController != null) {
+        emulatorsController.onViewActivated();
+      }
     }
     else if (t1.intValue() == TAB_SCREENS) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Screens"));
-      emulatorsController.onViewDeactivated();
+      if (emulatorsController != null) {
+        emulatorsController.onViewDeactivated();
+      }
     }
     else {
       throw new UnsupportedOperationException("Invalid tab id");
@@ -247,7 +253,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @Override
   public void onViewDeactivated() {
-    emulatorsController.onViewDeactivated();
+    if (emulatorsController != null) {
+      emulatorsController.onViewDeactivated();
+    }
   }
 
   @Override
@@ -262,7 +270,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     if(options != null && options.getModel() instanceof GameEmulatorRepresentation) {
       rootTabPane.getSelectionModel().select(TAB_EMULATORS);
-      emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
+      if (emulatorsController != null) {
+        emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
+      }
     }
   }
 
