@@ -2,6 +2,10 @@
 
 ## Changes
 
+- **Tables / Backglass Manager**: Added support for managing multiple backglasses for one table. Check out our YouTube channel for more details.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-versions.png" width="700" />
+  
 - **Tables / Table Overview**: Added new column **Rating**. You can directly rate the game inside the column without opening the data manager.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/rating.png" width="100" />

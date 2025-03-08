@@ -1847,6 +1847,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
+
+    //manually fix new columns
+    if (!getTableSettings().getColumnOrder().contains(columnRating.getId())) {
+      tableView.getColumns().remove(columnRating);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnPlaylists), columnRating);
+    }
+
+
 //    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
