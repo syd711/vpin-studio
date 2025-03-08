@@ -322,9 +322,9 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     if (settings != null) {
       createDisplay(displayList, settings, "PlayfieldWindow", VPinScreen.PlayField, "PlayField", true);
       createDisplay(displayList, settings, "BackglassWindow", VPinScreen.BackGlass, "Backglass", false);
-      createDisplay(displayList, settings, "DMDWindow", VPinScreen.DMD, "DMD", false);
+      createDisplay(displayList, settings, "DMDWindow", VPinScreen.Menu, "DMD", false);
       createDisplay(displayList, settings, "TopperWindow", VPinScreen.Topper, "Topper", false);
-      createDisplay(displayList, settings, "InstCardWindow", VPinScreen.Menu, "Apron", false);
+      createDisplay(displayList, settings, "InstCardWindow", VPinScreen.Other2, "Apron", false);
     }
     return displayList;
   }

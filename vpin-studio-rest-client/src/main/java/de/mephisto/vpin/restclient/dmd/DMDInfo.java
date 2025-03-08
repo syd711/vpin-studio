@@ -182,11 +182,7 @@ public class DMDInfo {
     return onScreen != null && VPinScreen.BackGlass.equals(onScreen);
   }
 
-  public boolean isOnDMD() {
-    return onScreen != null && VPinScreen.DMD.equals(onScreen);
-  }
-
-  public boolean isOnMenu() {
+  public boolean isOnFullDmd() {
     return onScreen != null && VPinScreen.Menu.equals(onScreen);
   }
 

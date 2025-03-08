@@ -150,7 +150,7 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "hidedmd": {
-        setKeepDisplays(detail, content, VPinScreen.DMD);
+        setKeepDisplays(detail, content, VPinScreen.Menu);
         break;
       }
       case "hidetopper": {
@@ -250,7 +250,7 @@ public class PinballXTableParser extends DefaultHandler {
           appendValue(writer, "manufacturer", detail.getManufacturer());
           appendValue(writer, "year", detail.getGameYear()!=null? detail.getGameYear().toString(): "");
           appendValue(writer, "type", detail.getGameType()!=null? detail.getGameType(): "");
-          appendKeepDisplays(writer, "hidedmd", detail.getKeepDisplays(), VPinScreen.DMD);
+          appendKeepDisplays(writer, "hidedmd", detail.getKeepDisplays(), VPinScreen.Menu);
           appendKeepDisplays(writer, "hidetopper", detail.getKeepDisplays(), VPinScreen.Topper);
           appendKeepDisplays(writer, "hidebackglass", detail.getKeepDisplays(), VPinScreen.BackGlass);
           appendValue(writer, "enabled", detail.getStatus()!=0);

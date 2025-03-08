@@ -475,9 +475,9 @@ public class PinballXConnector extends BaseConnector {
     if (iniConfiguration != null) {
       createPlayfieldDisplay(iniConfiguration, displayList);
       createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
-      createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.DMD, false);
+      createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.Menu, false);
       createDisplay(iniConfiguration, displayList, "Topper", VPinScreen.Topper, false);
-      createDisplay(iniConfiguration, displayList, "Apron", VPinScreen.Menu, false);
+      createDisplay(iniConfiguration, displayList, "Apron", VPinScreen.Other2, false);
     }
     return displayList;
   }

@@ -152,15 +152,15 @@ public class DMDPositionService {
     else if (screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
     }
-    else if (screenres.hasDMD() && screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
-      fillScreenInfo(dmdinfo, screenres, VPinScreen.DMD);
+    else if (screenres.hasFullDmd() && screenres.isOnFullDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.Menu);
     }
     else {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
       dmdinfo.centerOnScreen();
     }
 
-    dmdinfo.setDmdScreenSet(screenres.hasDMD());
+    dmdinfo.setDmdScreenSet(screenres.hasFullDmd());
   }
 
 
@@ -188,8 +188,8 @@ public class DMDPositionService {
         dmdinfo.setScreenHeight(screenres.getBackglassHeight());
       }
     }
-    else if (VPinScreen.DMD.equals(onScreen)) {
-      dmdinfo.setOnScreen(VPinScreen.DMD);
+    else if (VPinScreen.Menu.equals(onScreen)) {
+      dmdinfo.setOnScreen(VPinScreen.Menu);
       dmdinfo.setX(dmdinfo.getX() - screenres.getDmdMinX());
       dmdinfo.setY(dmdinfo.getY() - screenres.getDmdMinY());
       dmdinfo.setScreenWidth(screenres.getDmdWidth());
@@ -246,7 +246,7 @@ public class DMDPositionService {
       factorX = screenres.getBackglassWidth();
       factorY = screenres.getBackglassHeight();
     }
-    else if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
+    else if (VPinScreen.Menu.equals(dmdinfo.getOnScreen())) {
       image = backglassService.getPreviewDmd(game);
       factorX = screenres.getDmdWidth();
       factorY = screenres.getDmdHeight();
@@ -298,7 +298,7 @@ public class DMDPositionService {
       dmdinfo.setX(dmdinfo.getX() + screenres.getBackglassMinX());
       dmdinfo.setY(dmdinfo.getY() + screenres.getBackglassMinY());
     }
-    if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
+    if (VPinScreen.Menu.equals(dmdinfo.getOnScreen())) {
       dmdinfo.setX(dmdinfo.getX() + screenres.getDmdMinX());
       dmdinfo.setY(dmdinfo.getY() + screenres.getDmdMinY());
     }
@@ -447,7 +447,7 @@ public class DMDPositionService {
     if (VPinScreen.BackGlass.equals(onScreen)) {
       return backglassService.getPreviewBackground(game, true);
     }
-    else if (VPinScreen.DMD.equals(onScreen)) {
+    else if (VPinScreen.Menu.equals(onScreen)) {
       DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
       String base64 = backglassService.getDmdBase64(game.getEmulatorId(), game.getDirectB2SFilename());
 
