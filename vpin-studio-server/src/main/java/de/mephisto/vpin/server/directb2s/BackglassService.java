@@ -320,6 +320,9 @@ public class BackglassService implements InitializingBean {
 
     List<GameEmulator> gameEmulators = emulatorService.getBackglassGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
+      if (!gameEmulator.isEnabled()) {
+        continue;
+      }
       File tablesFolder = gameEmulator.getGamesFolder();
       Path tablesPath = tablesFolder.toPath();
 
