@@ -36,6 +36,10 @@ public enum EmulatorType {
     return MAME.equals(this);
   }
 
+  public boolean isOther() {
+    return OTHER.equals(this);
+  }
+
   public String shortName() {
     switch (this) {
       case VisualPinball:

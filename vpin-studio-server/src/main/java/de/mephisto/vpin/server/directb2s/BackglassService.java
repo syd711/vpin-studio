@@ -372,7 +372,12 @@ public class BackglassService implements InitializingBean {
   }
 
   @Nullable
-  private DirectB2SAndVersions reloadDirectB2SAndVersions(GameEmulator emulator, String fileName) {
+  private DirectB2SAndVersions reloadDirectB2SAndVersions(@NonNull GameEmulator emulator, String fileName) {
+    //do not check this for emulators that do not support backglasses anyway
+    if (emulator.isMameEmulator()|| emulator.isOtherEmulator()) {
+      return null;
+    }
+
     File file = new File(emulator.getGamesDirectory(), fileName);
     String[] fileNames = file.getParentFile().list();
     if (fileNames == null) {
@@ -541,7 +546,7 @@ public class BackglassService implements InitializingBean {
 
   public DirectB2sScreenRes getScreenRes(Game game, boolean perTableOnly) {
     if (game != null) {
-      GameEmulator emulator = game.getEmulator();  
+      GameEmulator emulator = game.getEmulator();
       String b2sFilename = game.getDirectB2SFilename();
       File b2sFile = new File(emulator.getGamesDirectory(), b2sFilename);
       DirectB2sScreenRes res = getScreenRes(b2sFile, perTableOnly);

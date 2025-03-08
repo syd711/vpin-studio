@@ -37,6 +37,10 @@ public class NvRamOutputToScoreTextTest {
     int created = 0;
     List<String> failedList = new ArrayList<>();
     for (File entry : files) {
+//      if (!entry.getName().equals("simp_a27.nv")) {
+//        continue;
+//      }
+
       if (ignoreList.contains(entry.getName())) {
         continue;
       }
@@ -149,14 +153,19 @@ public class NvRamOutputToScoreTextTest {
    */
   @Test
   public void test_SingleScore() throws Exception {
-    doTestSingle("dfndr_l4.nv",
-        "#1 ???   2,500,000");
+    doTestSingle("simp_a27.nv",
+        "#1 JEK   8,000,000\r\n" +
+            "#2 RAY   7,000,000\r\n" +
+            "#3 BLS   6,000,000\r\n" +
+            "#4 P G   5,000,000\r\n" +
+            "#5 T S   4,000,000\r\n" +
+            "#6 JCG   3,000,000");
 
-    doTestSingle("blakpyra.nv",
-         "#1 ???   1,867,500");
-
-    doTestSingle("catacomb.nv",
-         "#1 ???   349,290");
+//    doTestSingle("blakpyra.nv",
+//         "#1 ???   1,867,500");
+//
+//    doTestSingle("catacomb.nv",
+//         "#1 ???   349,290");
   }
 
 

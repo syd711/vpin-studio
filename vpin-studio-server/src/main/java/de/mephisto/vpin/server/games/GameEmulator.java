@@ -152,6 +152,11 @@ public class GameEmulator {
     return type.isMameEmulator();
   }
 
+  @JsonIgnore
+  public boolean isOtherEmulator() {
+    return type.isOther();
+  }
+
   public String getGameFileName(@NonNull File file) {
     return file.getAbsolutePath().substring(getGamesFolder().getAbsolutePath().length() + 1);
   }
