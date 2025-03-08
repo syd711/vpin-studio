@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -141,16 +141,7 @@ public class WidgetFactory {
   }
 
   public static HBox createCheckAndUpdateIcon(String tooltip) {
-    HBox root = new HBox(3);
-    root.setAlignment(Pos.CENTER);
-    Label icon1 = new Label();
-    icon1.setGraphic(createCheckIcon("#FFFFFF"));
-    Label icon2 = new Label();
-    icon2.setTooltip(new Tooltip(tooltip));
-    icon2.setGraphic(createUpdateIcon());
-
-    root.getChildren().addAll(icon2, icon1);
-    return root;
+    return addUpdateIcon(createCheckIcon("#FFFFFF"), tooltip);
   }
 
   public static FontIcon createUpdateStar() {
@@ -219,9 +210,21 @@ public class WidgetFactory {
   }
 
   public static FontIcon createIcon(String s) {
+    return createIcon(s, null);
+  }
+
+  public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconLiteral(s);
+    return fontIcon;
+  }
+
+  public static FontIcon createIcon(String s, int size, String color) {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(size);
+    fontIcon.setIconColor(Paint.valueOf(color != null? color : "#FFFFFF"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -245,7 +248,6 @@ public class WidgetFactory {
     }
     return fontIcon;
   }
-
 
   public static Label createCheckboxIcon(@Nullable String color, @NonNull String tooltip) {
     Label label = new Label();
@@ -288,6 +290,26 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static HBox addUpdateIcon(FontIcon icon, String tooltip) {
+    HBox root = new HBox(3);
+    root.setAlignment(Pos.CENTER);
+    Label icon1 = new Label();
+    icon1.setGraphic(icon);
+    Label icon2 = new Label();
+    icon2.setTooltip(new Tooltip(tooltip));
+    icon2.setGraphic(createUpdateIcon());
+
+    root.getChildren().addAll(icon2, icon1);
+    return root;
+  }
+  public static Label wrapIcon(FontIcon icon, @NonNull String tooltip) {
+    Label label = new Label();
+    label.setTooltip(new Tooltip(tooltip));
+    label.setGraphic(icon);
+    return label;
+  }
+
+
   public static String hexColor(Integer color) {
     String hex = "FFFFFF";
     if (color != null) {
@@ -318,6 +340,10 @@ public class WidgetFactory {
   }
 
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings) {
+    return createPlaylistIcon(playlist, uiSettings, false);
+  }
+
+  public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
@@ -367,6 +393,10 @@ public class WidgetFactory {
     }
     else if (playlist.getName().endsWith(" M")) {
       fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+    }
+
+    if (disabled) {
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
     }
 
     label.setGraphic(fontIcon);
@@ -434,7 +464,7 @@ public class WidgetFactory {
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
-    return createDialogStage(fxmlLoader,owner, title, stateId, null);
+    return createDialogStage(fxmlLoader, owner, title, stateId, null);
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId, String modalStateId) {

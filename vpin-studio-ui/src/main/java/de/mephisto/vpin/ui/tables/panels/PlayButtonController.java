@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.util.FrontendUtil;
@@ -74,8 +74,8 @@ public class PlayButtonController implements Initializable {
       playBtn.getItems().add(new SeparatorMenuItem());
     }
 
-    GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-    List<String> altExeNames = gameEmulator.getAltExeNames();
+    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
     for (String altExeName : altExeNames) {
       MenuItem item = new MenuItem(altExeName);
       item.setOnAction(new EventHandler<ActionEvent>() {

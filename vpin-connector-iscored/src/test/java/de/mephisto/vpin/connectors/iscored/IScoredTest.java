@@ -2,6 +2,8 @@ package de.mephisto.vpin.connectors.iscored;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IScoredTest {
@@ -11,12 +13,17 @@ public class IScoredTest {
     GameRoom gameRoom = IScored.loadGameRoom("https://www.iScored.info/Syd");
     assertNotNull(gameRoom);
     assertNotNull(gameRoom.getSettings());
-    assertFalse(gameRoom.getGames().isEmpty());
+    List<IScoredGame> games = gameRoom.getGames();
+    assertFalse(games.isEmpty());
 //    assertFalse(gameRoom.getGames().get(0).getScores().isEmpty());
 //    assertFalse(gameRoom.getGames().get(0).getTags().isEmpty());
     assertTrue(gameRoom.getSettings().isLongNameInputEnabled());
 
     gameRoom = IScored.loadGameRoom("https://www.iScored.info?mode=public&user=Syd");
     assertNotNull(gameRoom);
+
+    IScoredResult iScoredResult = IScored.submitScore(gameRoom, games.get(0), "Matthias", "MFA", 999999);
+    assertNotNull(iScoredResult);
+    assertEquals(200, iScoredResult.getReturnCode());
   }
 }

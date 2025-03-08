@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import javafx.beans.value.ChangeListener;
@@ -40,7 +40,7 @@ public class OverlayPreferencesController implements Initializable {
   private RadioButton radioD;
 
   @FXML
-  private ComboBox<ScreenInfo> screenInfoComboBox;
+  private ComboBox<MonitorInfo> screenInfoComboBox;
 
   @FXML
   private TextField externalPageUrl;
@@ -67,9 +67,9 @@ public class OverlayPreferencesController implements Initializable {
     else {
       screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getScreenInfo(overlaySettings.getOverlayScreenId()));
     }
-    screenInfoComboBox.valueProperty().addListener(new ChangeListener<ScreenInfo>() {
+    screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override
-      public void changed(ObservableValue<? extends ScreenInfo> observable, ScreenInfo oldValue, ScreenInfo newValue) {
+      public void changed(ObservableValue<? extends MonitorInfo> observable, MonitorInfo oldValue, MonitorInfo newValue) {
         overlaySettings.setOverlayScreenId(newValue.getId());
         client.getPreferenceService().setJsonPreference(overlaySettings);
       }

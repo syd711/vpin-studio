@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -38,8 +39,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
     FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
-    String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
-    if(altExe != null) {
+    String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
+    if (altExe != null) {
       vpxExe = new File(game.getEmulator().getInstallationFolder(), altExe);
     }
     else if (!StringUtils.isEmpty(altLaunchExe)) {
@@ -64,7 +65,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
         return false;
       }
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
     return false;
@@ -86,7 +88,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("VPX command failed:\n" + standardErrorFromCommand);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
 
@@ -95,7 +98,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
       count++;
       try {
         Thread.sleep(500);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
       if (count > 20) {
@@ -109,8 +113,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
   }
 
   public boolean launch() {
-    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    EmulatorService emulatorService = applicationContext.getBean(EmulatorService.class);
+    GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
     File vpxExe = defaultGameEmulator.getExe();
     try {
       List<String> strings = Arrays.asList(vpxExe.getName());
@@ -122,7 +126,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("VPX command failed:\n" + standardErrorFromCommand);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
     return false;

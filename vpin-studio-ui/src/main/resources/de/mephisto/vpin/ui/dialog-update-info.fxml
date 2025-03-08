@@ -27,7 +27,7 @@
                <right>
                   <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
+                        <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
                         <Button fx:id="updateBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUpdate" styleClass="submit-button" text="Update" />
                      </children>
                   </HBox>

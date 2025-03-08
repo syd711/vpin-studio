@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
+import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -10,15 +11,19 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.INIConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +33,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class VPXService {
+public class VPXService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VPXService.class);
 
   @Autowired
@@ -36,6 +41,48 @@ public class VPXService {
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
+
+  /** The cached information in vPïnballX.ini file */
+  private INIConfiguration iniConfiguration;
+
+  private VPXKeyManager keyManager; 
+
+
+  public File getVPXFile() {
+    String userhome = System.getProperty("user.home");
+    return new File(userhome, "AppData/Roaming/VPinballX/VPinballX.ini");
+  }
+
+  private void loadIni() {
+    File vpxInFile = getVPXFile();
+    if (vpxInFile.exists()) {
+      try (FileReader fileReader = new FileReader(vpxInFile)) {
+        this.iniConfiguration = new INIConfiguration();
+        iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+        iniConfiguration.setSeparatorUsedInOutput("=");
+        iniConfiguration.setSeparatorUsedInInput("=");
+        iniConfiguration.read(fileReader);
+        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath()); 
+
+        this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
+      } catch (Exception e) {
+        LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
+      }
+    } 
+  }
+
+  public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
+    if (forceReload) {
+      loadIni();
+    }
+    return iniConfiguration != null ? iniConfiguration.getSection("Player") : null;
+  }
+
+  public VPXKeyManager getKeyManager() {
+    return keyManager;
+  }
+
+  //---------------------------------------------------- POV Management ---
 
   public POV getPOV(Game game) {
     try {
@@ -49,11 +96,6 @@ public class VPXService {
     } catch (VPinStudioException e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
-  }
-
-  public File getVPXFile() {
-    String user = System.getProperty("user.name");
-    return new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
   }
 
   public boolean savePOVPreference(Game game, Map<String, Object> values) {
@@ -102,6 +144,23 @@ public class VPXService {
     }
   }
 
+  public boolean delete(Game game) {
+    if (game != null) {
+      File povFile = game.getPOVFile();
+      if (povFile.exists()) {
+        LOG.info("Deleting " + povFile.getAbsolutePath());
+        return povFile.delete();
+      }
+      else {
+        LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
+      }
+    }
+    else {
+      LOG.error("No game found for pov deletion");
+    }
+    return false;
+  }
+
   public POV createPOV(Game game) {
     if (game != null) {
       try {
@@ -118,6 +177,8 @@ public class VPXService {
     }
     return null;
   }
+
+  //---------------------------------------------------- GAME Management ---
 
   public String getScript(Game game) {
     if (game != null) {
@@ -190,23 +251,6 @@ public class VPXService {
     return false;
   }
 
-  public boolean delete(Game game) {
-    if (game != null) {
-      File povFile = game.getPOVFile();
-      if (povFile.exists()) {
-        LOG.info("Deleting " + povFile.getAbsolutePath());
-        return povFile.delete();
-      }
-      else {
-        LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
-      }
-    }
-    else {
-      LOG.error("No game found for pov deletion");
-    }
-    return false;
-  }
-
   public boolean play(@Nullable Game game, @Nullable String altExe) {
     if (game != null) {
       return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
@@ -237,5 +281,12 @@ public class VPXService {
   public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis<?> analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
     MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
+  }
+
+  //------------------------------------------
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    loadIni();
   }
 }

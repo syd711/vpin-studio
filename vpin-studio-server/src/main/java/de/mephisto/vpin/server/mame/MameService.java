@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -18,11 +19,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -59,6 +57,9 @@ public class MameService implements InitializingBean {
   @Autowired
   private FrontendService frontendService;
 
+  @Autowired
+  private EmulatorService emulatorService;
+
   private GameService gameService;
 
   public boolean clearCache() {
@@ -78,7 +79,7 @@ public class MameService implements InitializingBean {
 
     l = System.currentTimeMillis();
     romValidationCache.clear();
-    List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       validateRoms(gameEmulator);
     }
@@ -201,12 +202,12 @@ public class MameService implements InitializingBean {
   }
 
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
   }
 
   public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
   }
 
@@ -287,7 +288,7 @@ public class MameService implements InitializingBean {
   }
 
   public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
   }
 

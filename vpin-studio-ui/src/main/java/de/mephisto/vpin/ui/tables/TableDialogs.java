@@ -3,6 +3,9 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
@@ -17,17 +20,19 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.playlistmanager.PlaylistManagerController;
+import de.mephisto.vpin.ui.preferences.dialogs.WebhooksDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -41,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,6 +127,14 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openDirectb2sUploads(GameRepresentation game, File file, Runnable finalizer) {
+    Stage stage = Dialogs.createStudioDialogStage(Directb2sUploadController.class, "dialog-directb2s-upload.fxml", "Backglass Upload");
+    Directb2sUploadController controller = (Directb2sUploadController) stage.getUserData();
+    controller.setFile(stage, file, null, finalizer);
+    controller.setData(game);
+    stage.showAndWait();
+  }
+
   public static void openPinVolSettings(List<GameRepresentation> games) {
     Stage stage = Dialogs.createStudioDialogStage(PinVolSettingsDialogController.class, "dialog-pinvol-settings.fxml", "PinVol Settings");
     PinVolSettingsDialogController controller = (PinVolSettingsDialogController) stage.getUserData();
@@ -174,6 +186,24 @@ public class TableDialogs {
     return false;
   }
 
+  public static void openBackglassUpload(@Nullable TablesController tablesController, Stage stage, GameRepresentation game, File file, Runnable finalizer) {
+    String directB2SPath = game.getDirectB2SPath();
+    if (directB2SPath != null) {
+      TableDialogs.openDirectb2sUploads(game, file, finalizer);
+    }
+    else {
+      if (file == null) {
+        boolean b = TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, null);
+        if (b) {
+          tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
+        }
+      }
+      else {
+        directBackglassUpload(stage, game, file, finalizer);
+      }
+    }
+  }
+
   public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       String help2 = null;
@@ -182,7 +212,7 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, finalizer);
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, false, finalizer);
         ProgressDialog.createProgressDialog(model);
         return true;
       }
@@ -414,7 +444,7 @@ public class TableDialogs {
   }
 
   public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis<?> analysis) {
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulatorsByType(emutype);
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
       return Optional.empty();
@@ -556,6 +586,14 @@ public class TableDialogs {
     controller.setSource(source);
     stage.showAndWait();
     return controller.getArchiveSource();
+  }
+
+
+  public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
+    Stage stage = Dialogs.createStudioDialogStage(WebhooksDialogController.class, "dialog-webhook-set.fxml", "Webhook Set");
+    WebhooksDialogController controller = (WebhooksDialogController) stage.getUserData();
+    controller.setData(settings, set);
+    stage.showAndWait();
   }
 
   public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {

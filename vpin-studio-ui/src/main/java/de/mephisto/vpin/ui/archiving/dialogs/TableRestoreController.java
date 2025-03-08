@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -78,7 +78,7 @@ public class TableRestoreController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> emulators = client.getEmulatorService().getVpxGameEmulators();
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
     this.emulatorCombo.setValue(data.get(0));

@@ -37,6 +37,7 @@ public class Game {
   private String hsFileName;
   private String scannedHsFileName;
   private boolean cardDisabled;
+  private String patchVersion;
 
   private int gameStatus;
 
@@ -56,6 +57,8 @@ public class Game {
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
   private AltColorTypes altColorType;
+
+  private int nbDirectB2S;
 
   private boolean defaultBackgroundAvailable;
   private boolean eventLogAvailable;
@@ -82,7 +85,25 @@ public class Game {
   private boolean vrRoomSupport = false;
   private boolean vrRoomEnabled = false;
 
+  private int rating = 0;
+
   public Game() {
+  }
+
+  public String getPatchVersion() {
+    return patchVersion;
+  }
+
+  public void setPatchVersion(String patchVersion) {
+    this.patchVersion = patchVersion;
+  }
+
+  public int getRating() {
+    return rating;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
   }
 
   public boolean isVrRoomSupport() {
@@ -737,6 +758,14 @@ public class Game {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
     File folder = new File(getGameFileName()).getParentFile();
     return new File(folder, baseName + ".directb2s").toString();
+  }
+
+  public int getNbDirectB2S() {
+    return nbDirectB2S;
+  }
+
+  public void setNbDirectB2S(int nbDirectB2S) {
+    this.nbDirectB2S = nbDirectB2S;
   }
 
   @NonNull

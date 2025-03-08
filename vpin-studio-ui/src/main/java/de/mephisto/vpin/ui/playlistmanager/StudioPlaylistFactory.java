@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public class StudioPlaylistFactory {
   //could be used instead of SQL
   private static List<GameRepresentation> getByVPSFeature(String feature) {
     List<GameRepresentation> result = new ArrayList<>();
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       List<GameRepresentation> gamesByEmulator = client.getGameService().getGamesByEmulator(gameEmulator.getId());
       for (GameRepresentation gameRepresentation : gamesByEmulator) {

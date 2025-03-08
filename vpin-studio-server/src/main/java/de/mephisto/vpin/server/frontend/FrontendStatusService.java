@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -8,6 +9,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -41,6 +43,9 @@ public class FrontendStatusService implements InitializingBean {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   private boolean eventsEnabled = true;
 
@@ -254,12 +259,12 @@ public class FrontendStatusService implements InitializingBean {
 
   @NonNull
   public List<GameEmulator> getBackglassGameEmulators() {
-    return frontendService.getBackglassGameEmulators();
+    return emulatorService.getBackglassGameEmulators();
   }
 
   @Nullable
   public GameEmulator getGameEmulator(int id) {
-    return frontendService.getGameEmulator(id);
+    return emulatorService.getGameEmulator(id);
   }
 
   public int getVersion() {

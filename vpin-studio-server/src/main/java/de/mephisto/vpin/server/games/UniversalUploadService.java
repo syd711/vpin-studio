@@ -6,8 +6,9 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -77,6 +79,9 @@ public class UniversalUploadService {
   @Autowired
   private FrontendService frontendService;
 
+  @Autowired
+  private EmulatorService emulatorService;
+
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
@@ -122,7 +127,7 @@ public class UniversalUploadService {
         }
       }
       else if (uploadDescriptor.isFileAsset(assetType)) {
-        copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType);
+        copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, uploadDescriptor.getUploadType());
       }
     }
     catch (Exception e) {
@@ -189,7 +194,7 @@ public class UniversalUploadService {
             rom = game.getRom();
           }
           //TODO better music bundle handling based on emulators
-          File musicFolder = frontendService.getDefaultGameEmulator().getMusicFolder();
+          File musicFolder = emulatorService.getDefaultGameEmulator().getMusicFolder();
           vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         }
         break;
@@ -243,8 +248,18 @@ public class UniversalUploadService {
   }
 
   private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType) throws IOException {
+    copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, UploadType.uploadAndReplace);
+  }
+
+  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, UploadType uploadType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.name().toLowerCase();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
+
+    if (UploadType.uploadAndAppend.equals(uploadType)) {
+      gameAssetFile = FileUtils.uniqueFile(gameAssetFile);
+      LOG.info("Creating unique game asset file {}", gameAssetFile.getAbsolutePath());
+    }
+
     boolean replaced = false;
     if (gameAssetFile.exists()) {
       if (!gameAssetFile.delete()) {

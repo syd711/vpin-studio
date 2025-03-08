@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.mame;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -27,10 +27,10 @@ public class MameRomAliasService implements InitializingBean {
 
   private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
 
-  private Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
+  private final Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
 
   @Autowired
-  private FrontendService frontendService;
+  private EmulatorService emulatorService;
 
   @NonNull
   @JsonIgnore
@@ -123,7 +123,7 @@ public class MameRomAliasService implements InitializingBean {
 
   public void clearCache() {
     aliasNamToRom.clear();
-    List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
+    List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
     }

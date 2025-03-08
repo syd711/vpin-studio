@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -43,7 +44,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesSidebarController implements Initializable, PreferenceChangeListener {
+public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
 
   @FXML
@@ -181,7 +182,6 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private Optional<GameRepresentation> game = Optional.empty();
   private List<GameRepresentation> games = Collections.emptyList();
 
-  private TableOverviewController tablesController;
   private POVRepresentation pov;
 
   // Add a public no-args constructor
@@ -191,7 +191,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   @FXML
   private void onVpsBtn() {
     String url = VPS.getVpsBaseUrl();
-    GameRepresentation selection = this.tablesController.getSelection();
+    GameRepresentation selection = getTableOverviewController().getSelection();
     if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
       url = VPS.getVpsTableUrl(selection.getExtTableId());
     }
@@ -206,7 +206,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         if (gameRepresentation.getHighscoreType() != null) {
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
-            GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+            GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
             String hsName = gameRepresentation.getHsFileName();
             if (!StringUtils.isEmpty(hsName)) {
               File hsFile = new File(emulatorRepresentation.getUserDirectory(), gameRepresentation.getHsFileName());
@@ -224,7 +224,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
           }
         }
 
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
         File nvRamFolder = new File(emulatorRepresentation.getNvramDirectory());
         File nvRamFile = new File(nvRamFolder, gameRepresentation.getRom() + ".nv");
         if (nvRamFile.exists()) {
@@ -245,8 +245,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     try {
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         File file = new File(folder, g.getGameFileName());
         SystemUtil.openFile(file);
       }
@@ -279,7 +279,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private void onAltSound() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
         if (!altSoundFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
           altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRomAlias());
@@ -298,12 +298,20 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private void onAltColor() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
         if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
           folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
         }
-        SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
+        if (emulatorRepresentation.getAltColorDirectory() != null) {
+          File file = new File(emulatorRepresentation.getAltColorDirectory());
+          if (file.exists()) {
+            SystemUtil.openFolder(folder, file);
+            return;
+          }
+        }
+
+        WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for emulator \"" + emulatorRepresentation.getName() + "\".");
       }
     }
     catch (Exception e) {
@@ -316,8 +324,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     try {
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         String backglassName = FilenameUtils.getBaseName(g.getGameFileName()) + ".directb2s";
         File file = new File(folder, backglassName);
         SystemUtil.openFile(file);
@@ -333,8 +341,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     try {
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".ini";
         File file = new File(folder, fileName);
         SystemUtil.openFile(file);
@@ -350,8 +358,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     try {
       if (this.game.isPresent()) {
         GameRepresentation g = game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getGamesDirectory());
         String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".pov";
         File file = new File(folder, fileName);
         SystemUtil.openFile(file);
@@ -368,16 +376,16 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         if (dmdPackage != null) {
-          GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-          File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
+          GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
+          File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
           File dmdFolder = new File(tablesFolder, dmdPackage.getName());
           SystemUtil.openFolder(dmdFolder);
           return;
         }
       }
 
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-      SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
+      SystemUtil.openFolder(new File(emulatorRepresentation.getGamesDirectory()));
     }
     catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -389,9 +397,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     try {
       if (this.game.isPresent()) {
         GameRepresentation game = this.game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
 
-        String vpxFilePath = "\"" + new File(emulatorRepresentation.getTablesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
+        String vpxFilePath = "\"" + new File(emulatorRepresentation.getGamesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
         String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX64.exe").getAbsolutePath();
         ProcessBuilder builder = new ProcessBuilder(vpxExePath, "-Edit", vpxFilePath);
         builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));
@@ -470,7 +478,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     client.getPreferenceService().addListener(this);
   }
 
-  private void loadSidePanels() {
+  public void loadSidePanels() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendType frontendType = frontend.getFrontendType();
 
@@ -599,7 +607,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       FXMLLoader loader = new FXMLLoader(TablesSidebarDirectB2SController.class.getResource("scene-tables-sidebar-directb2s.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarDirectB2SController = loader.getController();
-      tablesSidebarDirectB2SController.setSidebarController(this);
+      tablesSidebarDirectB2SController.setRootController(tablesController);
       titledPaneDirectB2s.setContent(tablesRoot);
     }
     catch (IOException e) {
@@ -752,17 +760,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     refreshSidebarSections();
   }
 
-  public void setTableOverviewController(TableOverviewController tablesController) {
-    this.tablesController = tablesController;
-    loadSidePanels();
-  }
-
-  public TablesController getTablesController() {
-    return tablesController.getTablesController();
-  }
-
   public TableOverviewController getTableOverviewController() {
-    return tablesController;
+    return tablesController.getTableOverviewController();
   }
 
   public void setGames(Optional<GameRepresentation> game, List<GameRepresentation> games) {
@@ -842,10 +841,12 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   public TablesSidebarPlaylistsController getTablesSidebarPlaylistController() {
     return tablesSidebarPlaylistsController;
   }
+
   public TablesSidebarHighscoresController getTablesSidebarHighscoresController() {
     return tablesSidebarHighscoresController;
   }
 
+  @Override
   public void setVisible(boolean b) {
     tableAccordion.setVisible(b);
   }
@@ -865,7 +866,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     titledPaneAltColor.setVisible(vpxMode);
     titledPaneScriptDetails.setVisible(vpxMode);
 
-    if (!tablesController.isAssetManagerMode()) {
+    if (!getTableOverviewController().isAssetManagerMode()) {
       refreshSidebarSections();
     }
   }
@@ -890,7 +891,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
     index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
 
-    getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+    tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
   }
 
   private int refreshSection(TitledPane section, boolean sectionAssets, int index) {

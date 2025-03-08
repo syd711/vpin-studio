@@ -184,7 +184,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   private File getGameFile(GameEmulator emulator, TableDetails manifest) {
-    File tablesFolder = emulator.getTablesFolder();
+    File tablesFolder = emulator.getGamesFolder();
     return new File(tablesFolder, manifest.getGameFileName());
   }
 

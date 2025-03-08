@@ -7,10 +7,9 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringMode;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.ToolbarController;
-import de.mephisto.vpin.ui.preferences.LogsDownloadProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -165,8 +164,8 @@ public class CabMonitorController implements Initializable, DialogController {
       }, 300);
     });
 
-    List<RecordingScreen> supportedRecordingScreens = client.getRecorderService().getRecordingScreens();
-    for (RecordingScreen recordingScreen : supportedRecordingScreens) {
+    List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
+    for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       VPinScreen screen = recordingScreen.getScreen();
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox();

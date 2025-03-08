@@ -14,6 +14,7 @@ import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
+import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -49,36 +50,38 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       LOG.warn("iScored is not enabled");
       return;
     }
+    String dashboardUrl = tournament.getDashboardUrl();
+    if (!IScored.isIscoredGameRoomUrl(dashboardUrl)) {
+      LOG.info("Not a tournament url for iScored: {}", dashboardUrl);
+      return;
+    }
 
     try {
-      String dashboardUrl = tournament.getDashboardUrl();
-      if (dashboardUrl != null && dashboardUrl.contains("iscored")) {
-        GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
-        if (gameRoom != null) {
-          if (!gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
-            LOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
-            SLOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
-            return;
-          }
-
-          String vpsTableId = tournamentTable.getVpsTableId();
-          String vpsVersionId = tournamentTable.getVpsVersionId();
-
-          IScoredGame gameRoomGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
-          if (gameRoomGame == null) {
-            LOG.info("Skipped iScored score submission, because no game was found for " + tournament);
-            SLOG.info("Skipped iScored score submission, because no game was found for " + tournament);
-            return;
-          }
-
-          if (gameRoomGame.isDisabled()) {
-            LOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
-            SLOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
-            return;
-          }
-
-          IScored.submitScore(gameRoom, gameRoomGame, account.getDisplayName(), account.getInitials(), tableScore.getScore());
+      GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+      if (gameRoom != null) {
+        if (!gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
+          LOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
+          SLOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
+          return;
         }
+
+        String vpsTableId = tournamentTable.getVpsTableId();
+        String vpsVersionId = tournamentTable.getVpsVersionId();
+
+        IScoredGame gameRoomGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
+        if (gameRoomGame == null) {
+          LOG.info("Skipped iScored score submission, because no game was found for " + tournament);
+          SLOG.info("Skipped iScored score submission, because no game was found for " + tournament);
+          return;
+        }
+
+        if (gameRoomGame.isDisabled()) {
+          LOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
+          SLOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
+          return;
+        }
+
+        IScored.submitScore(gameRoom, gameRoomGame, account.getDisplayName(), account.getInitials(), tableScore.getScore());
       }
     }
     catch (Exception e) {
@@ -87,14 +90,22 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
     }
   }
 
-  public boolean isIscoredGameRoomUrl(String dashboardUrl) {
-    return dashboardUrl.toLowerCase().contains("iscored.info");
-  }
+  public void submitScore(Competition iScoredSubscription, Score newScore) {
+    String url = iScoredSubscription.getUrl();
+    if (!IScored.isIscoredGameRoomUrl(url)) {
+      LOG.warn("The URL of " + iScoredSubscription + " (" + url + ") is not a valid iScored URL.");
+      SLOG.warn("The URL of " + iScoredSubscription + " (" + url + ") is not a valid iScored URL.");
+      return;
+    }
 
-  public void submitScore(String url, Score newScore, String vpsTableId, String vpsVersionId) {
+    LOG.info("Emitting iScored game score to " + url);
+    SLOG.info("Emitting iScored game score to " + url);
+
     IScored.invalidate();
     GameRoom gameRoom = IScored.getGameRoom(url);
     if (gameRoom != null) {
+      String vpsTableId = iScoredSubscription.getVpsTableId();
+      String vpsVersionId = iScoredSubscription.getVpsTableVersionId();
       IScoredGame iScoredGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
       if (iScoredGame != null) {
         String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();

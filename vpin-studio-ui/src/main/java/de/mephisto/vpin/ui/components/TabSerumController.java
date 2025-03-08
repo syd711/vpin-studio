@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -24,9 +24,11 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getMameDirectory());
-    openFolder(folder);
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    if (defaultGameEmulator.getMameDirectory() != null) {
+      File folder = new File(defaultGameEmulator.getMameDirectory());
+      openFolder(folder);
+    }
   }
 
   @FXML
@@ -41,8 +43,8 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   @FXML
   private void onDmdDevice() {
-    if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    if (client.getSystemService().isLocal() && defaultGameEmulator.getMameDirectory() != null) {
       File folder = new File(defaultGameEmulator.getMameDirectory());
       File exe = new File(folder, "DmdDevice.ini");
       super.editFile(exe);
@@ -54,7 +56,8 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DmdDeviceIni file: " + e.getMessage());
       }

@@ -9,7 +9,10 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -104,38 +107,70 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Adjust system volume settings." textFill="WHITE" />
-                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="243.2000732421875" minWidth="10.0" prefWidth="166.39999389648438" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="342.4000549316406" minWidth="10.0" prefWidth="329.6000061035156" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Initial System Volume:" textFill="WHITE" />
-                        <Spinner fx:id="volumeSpinner" prefWidth="80.0" />
-                        <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" />
-                        <Label>
+                        <Label styleClass="default-text" text="Initial System Volume:" textFill="WHITE" GridPane.rowIndex="1" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Spinner fx:id="volumeSpinner" prefWidth="80.0" />
+                              <Label layoutX="10.0" layoutY="12.0" styleClass="default-text" text="\%" textFill="WHITE" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Set the value to '0' to disable the volume initialization." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Button mnemonicParsing="false" onAction="#onVolumeApply" text="Apply Now" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <tooltip>
-                              <Tooltip prefWidth="300.0" text="Set the value to '0' to disable the volume initialization." wrapText="true" />
-                           </tooltip>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-high" iconSize="18" />
                            </graphic>
-                        </Label>
+                        </Button>
+                        <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Initial Mute:" textFill="WHITE" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                           <children>
+                              <CheckBox fx:id="muteCheckbox" mnemonicParsing="false" text="Mute System Volume on Startup" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="It is recommended that the &quot;Unmute on volume change&quot; setting is enabled in PinVOL." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
-                  </HBox>
-                  <Button mnemonicParsing="false" onAction="#onVolumeApply" text="Apply Now" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-high" iconSize="18" />
-                     </graphic>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </Button>
+                  </GridPane>
                   <Label layoutX="34.0" layoutY="390.0" styleClass="preference-subtitle" text="PinVol System Volume Settings">
                      <VBox.margin>
                         <Insets bottom="12.0" top="24.0" />

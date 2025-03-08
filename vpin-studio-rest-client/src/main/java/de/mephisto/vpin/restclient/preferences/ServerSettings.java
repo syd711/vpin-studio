@@ -13,10 +13,21 @@ public class ServerSettings extends JsonSettings {
   private boolean launchPopperOnExit = false;
   private boolean useVPXTableMonitor = false;
   private int volume = 0;
+  private boolean initialMute = false;
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+  private String mappingPatchVersion = "CUSTOM5";
   private boolean stickyKeysEnabled = true;
+
+
+  public boolean isInitialMute() {
+    return initialMute;
+  }
+
+  public void setInitialMute(boolean initialMute) {
+    this.initialMute = initialMute;
+  }
 
   public boolean isStickyKeysEnabled() {
     return stickyKeysEnabled;
@@ -88,6 +99,14 @@ public class ServerSettings extends JsonSettings {
 
   public void setMappingVpsTableId(String mappingVpsTableId) {
     this.mappingVpsTableId = mappingVpsTableId;
+  }
+
+  public String getMappingPatchVersion() {
+    return mappingPatchVersion;
+  }
+
+  public void setMappingPatchVersion(String mappingPatchVersion) {
+    this.mappingPatchVersion = mappingPatchVersion;
   }
 
   public String getMappingHsFileName() {

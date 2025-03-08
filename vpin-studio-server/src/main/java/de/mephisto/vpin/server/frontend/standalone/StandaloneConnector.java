@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.standalone;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -95,8 +96,8 @@ public class StandaloneConnector extends BaseConnector {
 
   //------------------------------------------------------
   @Override
-  protected List<Emulator> loadEmulators() {
-    List<Emulator> emulators = new ArrayList<>();
+  protected List<GameEmulator> loadEmulators() {
+    List<GameEmulator> emulators = new ArrayList<>();
 
     // so far only VPX is supported in standalone mode
     File vpxInstallDir = getInstallationFolder();
@@ -104,7 +105,7 @@ public class StandaloneConnector extends BaseConnector {
     if (vpxTableDir.exists()) {
       LOG.info("VPX tables folder detected in " + vpxTableDir.getAbsolutePath());
       String emuName = vpxInstallDir.getName();
-      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
+      GameEmulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
       vpxemu.setDescription("default");
       emulators.add(vpxemu);
     }
@@ -114,22 +115,18 @@ public class StandaloneConnector extends BaseConnector {
     return emulators;
   }
 
-  private Emulator createEmulator(File installDir, File tablesDir, int emuId, String emuname) {
+  private GameEmulator createEmulator(File installDir, File tablesDir, int emuId, String emuname) {
     EmulatorType type = EmulatorType.VisualPinball;
-    Emulator e = new Emulator(type);
+    GameEmulator e = new GameEmulator();
+    e.setType(type);
     e.setId(emuId);
+    e.setSafeName(emuname);
     e.setName(emuname);
-    e.setDisplayName(emuname);
-
-    e.setDirGames(tablesDir.getAbsolutePath());
-
-    e.setEmuLaunchDir(vpxExe.getParentFile().getAbsolutePath());
+    e.setGamesDirectory(tablesDir.getAbsolutePath());
+    e.setInstallationDirectory(vpxExe.getParentFile().getAbsolutePath());
     e.setExeName(vpxExe.getName());
-
-    e.setGamesExt(type.getExtension());
-
-    e.setVisible(true);
-
+    e.setGameExt(type.getExtension());
+    e.setEnabled(true);
     return e;
   }
 
@@ -137,10 +134,10 @@ public class StandaloneConnector extends BaseConnector {
    * Initial loading of Games from filesystem discovery
    */
   @Override
-  protected List<String> loadGames(Emulator emu) {
+  protected List<String> loadGames(GameEmulator emu) {
     List<String> filenames = new ArrayList<>();
-    File vpxTableDir = new File(emu.getDirGames());
-    Path pTables = Path.of(emu.getDirGames());
+    File vpxTableDir = new File(emu.getGamesDirectory());
+    Path pTables = Path.of(emu.getGamesDirectory());
     if (vpxTableDir.exists()) {
       Iterator<File> tablesIterator = FileUtils.iterateFiles(vpxTableDir, new String[]{"vpx"}, true);
       while (tablesIterator.hasNext()) {
@@ -180,8 +177,18 @@ public class StandaloneConnector extends BaseConnector {
   }
 
   @Override
-  protected void commitDb(Emulator emu) {
+  protected void commitDb(GameEmulator emu) {
     // do nothing
+  }
+
+  @Override
+  public boolean deleteEmulator(int emulatorId) {
+    return false;
+  }
+
+  @Override
+  public GameEmulator saveEmulator(GameEmulator emulator) {
+    return null;
   }
 
   //----------------------------------

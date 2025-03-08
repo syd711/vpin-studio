@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -64,9 +64,9 @@ public class InputPreferencesController implements Initializable {
 
     if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
       JFXFuture.supplyAsync(() -> {
-        List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
+        List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
         for (GameEmulatorRepresentation emulator : gameEmulators) {
-          String script = emulator.getLaunchScript();
+          String script = emulator.getLaunchScript().getScript();
           if (!StringUtils.isEmpty(script)) {
             String[] split = script.split("\n");
             for (String line : split) {

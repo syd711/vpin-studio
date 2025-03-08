@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -33,21 +33,32 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getMameDirectory());
-    openFolder(folder);
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    if (defaultGameEmulator.getMameDirectory() != null) {
+      File folder = new File(defaultGameEmulator.getMameDirectory());
+      openFolder(folder);
+    }
+    else {
+      File folder = new File(defaultGameEmulator.getInstallationDirectory());
+      openFolder(folder);
+    }
   }
 
   @FXML
   private void onMameSetup() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    if (defaultGameEmulator.getMameDirectory() != null) {
+      File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
 
-    if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      }
+      else {
+        Studio.open(file);
+      }
     }
     else {
-      Studio.open(file);
+      WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The game doesn't seem to belong to a VPX emulator.");
     }
   }
 
@@ -78,6 +89,6 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @Override
   public void refreshTab(ComponentRepresentation component) {
     openFolderButton.setDisable(!component.isInstalled());
-    mameBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());  
+    mameBtn.setDisable(!component.isInstalled() || !client.getSystemService().isLocal());
   }
 }

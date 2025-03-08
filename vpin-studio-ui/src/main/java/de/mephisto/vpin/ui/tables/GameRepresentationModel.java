@@ -5,7 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
@@ -108,7 +108,7 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
     this.frontendMedia = null;
     if (bean != null) {
       this.vpsTable = client.getVpsService().getTableById(bean.getExtTableId());
-      this.gameEmulator = client.getFrontendService().getGameEmulator(bean.getEmulatorId());
+      this.gameEmulator = client.getEmulatorService().getGameEmulator(bean.getEmulatorId());
     }
   }
 }

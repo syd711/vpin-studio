@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -64,7 +64,7 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     setupSystem(FrontendType.PinballX);
     assertTrue(frontendService.getFrontendConnector() instanceof PinballXConnector);
 
-    int id = testLoad(2, 3);
+    int id = testLoad(8, 3);
     testSave(id); 
   }
 
@@ -73,9 +73,8 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     setupSystem(FrontendType.PinballY);
     assertTrue(frontendService.getFrontendConnector() instanceof PinballYConnector);
 
-    //TODO FrontendConnectorsTest.testPinballYConnector:76->testLoad:96 expected:<3> but was:<1>
-//    int id = testLoad(3, 3);
-//    testSave(id);
+    int id = testLoad(7, 3);
+    testSave(id);
   }
 
   @Test
@@ -83,7 +82,7 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     setupSystem(FrontendType.Standalone);
     assertTrue(frontendService.getFrontendConnector() instanceof StandaloneConnector);
 
-    //TODO testLoad(1, 4); ////Error:    FrontendConnectorsTest.testStandaloneConnector:86->testLoad:96 � NullPointer??
+    testLoad(1, 3);
   }
 
   //------------------------------------------------
@@ -93,11 +92,11 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     // check installation folder setup
     assertTrue(connector.getInstallationFolder().exists());
     // check emulators have been loaded
-    List<Emulator> emulators = connector.getEmulators();
+    List<GameEmulator> emulators = connector.getEmulators();
     assertEquals(expectedNbEmulators, emulators.size());
 
     // first one should be visual pinball and with id=1 else other tests will fail
-    Emulator vpx = emulators.get(0);
+    GameEmulator vpx = emulators.get(0);
     assertTrue(vpx.getType().isVpxEmulator());
     assertTrue(vpx.isEnabled());
     assertEquals(1, vpx.getId());

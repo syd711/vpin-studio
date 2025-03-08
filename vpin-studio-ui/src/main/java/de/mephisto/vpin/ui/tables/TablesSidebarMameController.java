@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -196,16 +196,21 @@ public class TablesSidebarMameController implements Initializable {
   private void onMameSetup() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-      File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
-      if (!file.exists()) {
-        file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
-      }
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+      if (emulatorRepresentation.getMameDirectory() != null) {
+        File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
+        if (!file.exists()) {
+          file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
+        }
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          Studio.open(file);
+        }
       }
       else {
-        Studio.open(file);
+        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "No matching VPinMAME installation found.");
       }
     }
   }

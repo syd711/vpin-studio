@@ -42,8 +42,21 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return new RestClient(SCHEME, host, port);
   }
 
+  public static RestClient createInstance(String baseUrl) {
+    return new RestClient(baseUrl);
+  }
+
+  private RestClient(String baseUrl) {
+    this.baseUrl = baseUrl;
+    initRestClient();
+  }
+
   private RestClient(String scheme, String host, int port) {
     baseUrl = scheme + "://" + host + ":" + port + "/";
+    initRestClient();
+  }
+
+  private void initRestClient() {
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
     interceptors.add(this);
 

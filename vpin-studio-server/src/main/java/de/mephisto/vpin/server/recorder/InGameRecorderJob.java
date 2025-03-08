@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
@@ -26,7 +27,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   public InGameRecorderJob(DMDPositionService dmdPositionService, NotificationService notificationService, GameService gameService, FrontendConnector frontend,
                            FrontendStatusService frontendStatusService, RecorderSettings settings,
                            NotificationSettings notificationSettings, RecordingDataSummary recordingDataSummary,
-                           List<RecordingScreen> recordingScreens) {
+                           List<FrontendPlayerDisplay> recordingScreens) {
     super(dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
     this.notificationService = notificationService;
     this.notificationSettings = notificationSettings;

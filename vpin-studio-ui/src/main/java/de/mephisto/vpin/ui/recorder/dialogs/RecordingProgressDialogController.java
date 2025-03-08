@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.recorder.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
@@ -301,8 +301,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     });
 
-    GameEmulatorRepresentation gameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    List<String> altExeNames = gameEmulator.getAltExeNames();
+    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
     launcherCombo.setItems(FXCollections.observableList(altExeNames));
 
     if (!StringUtils.isEmpty(settings.getCustomLauncher())) {

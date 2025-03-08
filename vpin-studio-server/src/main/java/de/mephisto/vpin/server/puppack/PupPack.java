@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,13 +29,10 @@ public class PupPack {
   private ScreensPub screensPup;
   private TriggersPup triggersPup;
 
-  private final File playlistPup;
-
   private boolean scriptOnly = false;
 
   private final File packFolder;
 
-  private List<File> files = new ArrayList<>();
   private List<String> options = new ArrayList<>();
   private List<String> txtFiles = new ArrayList<>();
   private String selectedOption = null;
@@ -45,7 +41,6 @@ public class PupPack {
   private long size = 0;
 
   public PupPack(@NonNull File packFolder) {
-    playlistPup = new File(packFolder, PLAYLISTS_PUP);
     this.packFolder = packFolder;
     this.init();
   }
@@ -147,37 +142,8 @@ public class PupPack {
 
       this.getOptions().clear();
       this.getMissingResources().clear();
-      this.selectedOption = null;
+      this.selectedOption = PupPackOptionMatcher.getSelectedOption(this);
 
-      String[] optionsBat = packFolder.list((dir, name) -> name.endsWith(".bat"));
-      if (optionsBat != null) {
-        for (String optionBat : optionsBat) {
-          String name = FilenameUtils.getBaseName(optionBat);
-          getOptions().add(name);
-        }
-
-        File optionsFolder = new File(packFolder, "PuP-Pack_Options");
-        if (optionsFolder.exists()) {
-          for (String option : getOptions()) {
-            File optionFolder = new File(optionsFolder, option);
-
-            if (optionFolder.exists()) {
-              File screensPup = new File(optionFolder, SCREENS_PUP);
-              File triggersPup = new File(optionFolder, TRIGGERS_PUP);
-              File playlistsPup = new File(optionFolder, PLAYLISTS_PUP);
-
-              if (screensPup.exists() && triggersPup.exists() && triggersPup.canRead() && playlistsPup.exists()
-                  && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
-                long length = screensPup.length() + triggersPup.length() + playlistsPup.length();
-                if (length == this.playlistPup.length() + this.screensPup.length() + this.triggersPup.length()) {
-                  selectedOption = option;
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
 
       if (getTriggersPup().exists()) {
         List<TriggerEntry> entries = getTriggersPup().getEntries();

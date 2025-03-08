@@ -1,20 +1,18 @@
 package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.server.archiving.*;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class IOService {
@@ -47,6 +44,9 @@ public class IOService {
   private SystemService systemService;
 
   @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
@@ -58,7 +58,7 @@ public class IOService {
   public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
-      GameEmulator emulator = frontendService.getGameEmulator(installDescriptor.getEmulatorId());
+      GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");

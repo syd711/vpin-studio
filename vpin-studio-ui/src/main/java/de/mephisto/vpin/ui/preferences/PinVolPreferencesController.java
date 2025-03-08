@@ -56,6 +56,9 @@ public class PinVolPreferencesController implements Initializable {
   private CheckBox columnPinVol;
 
   @FXML
+  private CheckBox muteCheckbox;
+
+  @FXML
   private Spinner<Integer> volumeSpinner;
 
   private PinVolSettingsController pinVolController;
@@ -99,6 +102,12 @@ public class PinVolPreferencesController implements Initializable {
       uiSettings.setColumnPinVol(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    muteCheckbox.setSelected(serverSettings.isInitialMute());
+    muteCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setInitialMute(t1);
+      client.getPreferenceService().setJsonPreference(serverSettings);
     });
 
     try {

@@ -1,21 +1,16 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemCommandOutput;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,14 +32,15 @@ public class VpbmService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpbmService.class);
   public static String VPBM_FOLDER = RESOURCES + "vpbm";
 
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private PreferencesService preferencesService;
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   public File getArchiveFolder() {
     return new File(getArchivesFolder(), "backups/Visual Pinball X/");
@@ -81,7 +77,7 @@ public class VpbmService implements InitializingBean {
   public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
     // use the default emulator, VpbmService, does not support multiple emulator
-    GameEmulator defaultEmu = frontendService.getDefaultGameEmulator();
+    GameEmulator defaultEmu = emulatorService.getDefaultGameEmulator();
     Game game = frontendService.getGameByFilename(defaultEmu.getId(), vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
@@ -133,7 +129,6 @@ public class VpbmService implements InitializingBean {
     LOG.info("Executing VPBM update");
     boolean result = executeVPBM(Arrays.asList("-u")) != null;
     LOG.info("Finished VPBM update, refreshing config.");
-    refreshConfig();
     return result;
   }
 
@@ -193,109 +188,10 @@ public class VpbmService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.BACKUP_VIEW_ENABLED) {
-      refreshConfig();
-    }
-  }
-
-  private void refreshConfig() {
-    long start = System.currentTimeMillis();
-    try {
-      File configFileFolder = new File(VPBM_FOLDER);
-      File configJsonFile = new File(configFileFolder, "vPinBackupManager.json");
-      File archives = new File(SystemService.ARCHIVES_FOLDER);
-      if (!archives.exists()) {
-        archives.mkdirs();
-      }
-
-
-      File exportFolder = new File(SystemService.ARCHIVES_FOLDER, "exports");
-      if (!exportFolder.exists()) {
-        exportFolder.mkdirs();
-      }
-
-
-      File backupsFolder = new File(SystemService.ARCHIVES_FOLDER, "backups");
-      if (!backupsFolder.exists()) {
-        backupsFolder.mkdirs();
-      }
-
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-
-      VPinBackupManagerConfig config = new VPinBackupManagerConfig();
-      if (configJsonFile.exists()) {
-        config = objectMapper.readValue(configJsonFile, VPinBackupManagerConfig.class);
-      }
-
-      boolean dirty = false;
-      File exportPath = new File(config.getExportPath());
-      if (!exportPath.getAbsolutePath().equals(getExportFolder().getParentFile().getAbsolutePath())) {
-        config.setExportPath(exportFolder.getAbsolutePath());
-        LOG.info("Updated VPBM export path to " + exportFolder.getAbsolutePath());
-        dirty = true;
-      }
-
-      File backUpPath = new File(config.getBackupPath());
-      if (!backUpPath.getAbsolutePath().equals(getArchiveFolder().getParentFile().getAbsolutePath())) {
-        config.setBackupPath(backupsFolder.getAbsolutePath());
-        LOG.info("Updated VPBM backup path to " + backupsFolder.getAbsolutePath());
-        dirty = true;
-      }
-
-      File vPinballPath = new File(config.getVpinballBasePath());
-      if (!vPinballPath.exists()) {
-        GameEmulator defaultEmu = frontendService.getDefaultGameEmulator();
-        if (defaultEmu != null) {
-          File vpBase = defaultEmu.getInstallationFolder().getParentFile();
-          config.setVpinballBasePath(vpBase.getAbsolutePath());
-          LOG.info("Updated VPBM VP path to " + vpBase.getAbsolutePath());
-          dirty = true;
-        }
-      }
-
-      FrontendType frontendType = frontendService.getFrontendType();
-      if (frontendType.supportPupPacks()) {
-        File pinupSystemPath = new File(config.getPinup().getPinupDir());
-        if (!pinupSystemPath.exists()) {
-          pinupSystemPath = new File(config.getVpinballBasePath(), config.getPinup().getPinupDir());
-        }
-
-        if (!pinupSystemPath.exists()) {
-          config.getPinup().setPinupDir(systemService.getPinupInstallationFolder().getAbsolutePath());
-          LOG.info("Updated PinUPSystem path to " + systemService.getPinupInstallationFolder().getAbsolutePath());
-          dirty = true;
-        }
-      }
-
-      if (dirty || !configJsonFile.exists()) {
-        objectMapper.writeValue(configJsonFile, config);
-        LOG.info("Written updated VPBM config " + configJsonFile.getAbsolutePath());
-      }
-
-      BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-      if (StringUtils.isEmpty(backupSettings.getVpbmInternalHostId()) || backupSettings.getVpbmInternalHostId().contains("ERROR")) {
-        String hostId = executeVPBM(Arrays.asList("-h")).getStdOut();
-        if (hostId != null) {
-          backupSettings.setVpbmInternalHostId(hostId.trim());
-          preferencesService.savePreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
-          LOG.info("Updated internal host id to '" + hostId.trim() + "'");
-        }
-        else {
-          LOG.error("VPBM did not return a host id during setup!");
-        }
-      }
-      LOG.info("Finished VPBM configuration check, took " + (System.currentTimeMillis() - start) + "ms.");
-    }
-    catch (Exception e) {
-      String msg = "Failed to run configuration check for vpbm: " + e.getMessage();
-      LOG.error(msg, e);
     }
   }
 
   public boolean clearCache() {
-    refreshConfig();
     return true;
   }
 }

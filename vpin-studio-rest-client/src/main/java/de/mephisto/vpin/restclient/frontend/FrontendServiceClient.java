@@ -4,11 +4,9 @@ import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.preferences.UISettings;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +14,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*********************************************************************************************************************
  * Frontend
@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 public class FrontendServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private static final String API_SEGMENT_FRONTEND = "frontend";
-
-  private static final int ALL_VPX_ID = -10;
 
   private FrontendType frontendType;
 
@@ -56,7 +54,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public GameList getImportableTablesVpx() {
     GameList games = new GameList();
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       if (gameEmulator.isVpxEmulator()) {
         GameList l = getImportableTables(gameEmulator.getId());
@@ -84,90 +82,19 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/pincontrol/" + screen.name(), FrontendControl.class);
   }
 
-  public GameEmulatorRepresentation getGameEmulator(int id) {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
-  }
-
   public FrontendMediaRepresentation getFrontendMedia(int gameId) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class);
-  }
-
-  public GameEmulatorRepresentation getDefaultGameEmulator() {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
   }
 
-  public List<FrontendPlayerDisplay> getScreenDisplays() {
-    FrontendPlayerDisplay[] displays = getRestClient().get(API + API_SEGMENT_FRONTEND + "/screens", FrontendPlayerDisplay[].class);
-    return displays != null ? Arrays.asList(displays) : Collections.emptyList();
-  }
-
-  public List<GameEmulatorRepresentation> getGameEmulators() {
-    GameEmulatorRepresentation[] emus = getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class);
-    return emus != null ? Arrays.asList(emus) : Collections.emptyList();
-  }
-
-  public List<GameEmulatorRepresentation> getVpxGameEmulators() {
-    return getGameEmulators().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
-  }
-
-  public List<GameEmulatorRepresentation> getFpGameEmulators() {
-    return getGameEmulators().stream().filter(e -> e.isFpEmulator()).collect(Collectors.toList());
-  }
-
-  public List<GameEmulatorRepresentation> getGameEmulatorsByType(@Nullable EmulatorType emutype) {
-    if (emutype != null) {
-      if (emutype.equals(EmulatorType.VisualPinball)) {
-        return getVpxGameEmulators();
-      }
-      else if (emutype.equals(EmulatorType.FuturePinball)) {
-        return getFpGameEmulators();
-      }
+  public FrontendScreenSummary getScreenSummary(boolean forceReload) {
+    if(forceReload) {
+      getRestClient().clearCache(API + API_SEGMENT_FRONTEND + "/screens");
     }
-    return Collections.emptyList();
-  }
-
-  public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
-    List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-    List<GameEmulatorRepresentation> vpxEmulators = filtered.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
-
-    if (vpxEmulators.size() > 1) {
-      filtered.add(0, createAllVpx());
-    }
-    return filtered;
-  }
-
-  public List<GameEmulatorRepresentation> getFilteredEmulatorsWithEmptyOption(UISettings uiSettings) {
-    List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-    filtered.add(0, null);
-    return filtered;
-  }
-
-  public GameEmulatorRepresentation createAllVpx() {
-    GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
-    allVpx.setId(ALL_VPX_ID);
-    allVpx.setName("All VPX Tables");
-    allVpx.setEmulatorType(EmulatorType.VisualPinball);
-    return allVpx;
-  }
-
-  public boolean isAllVpx(GameEmulatorRepresentation emu) {
-    return emu != null ? emu.getId() == ALL_VPX_ID : true;
-  }
-
-  public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
-    return Arrays.asList(getRestClient().get(API + API_SEGMENT_FRONTEND + "/emulators", GameEmulatorRepresentation[].class));
-  }
-
-  public List<GameEmulatorRepresentation> getBackglassGameEmulators() {
-    return Arrays.asList(getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/backglassemulators", GameEmulatorRepresentation[].class));
+    return getRestClient().getCached(API + API_SEGMENT_FRONTEND + "/screens", FrontendScreenSummary.class);
   }
 
   public FrontendControls getPinUPControls() {

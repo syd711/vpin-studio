@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.recorder.EmulatorRecorderJob;
@@ -89,7 +90,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return systemService.getPinupInstallationFolder();
   }
 
-  private void initEmulatorScripts(Emulator emulator) {
+  private void initEmulatorScripts(GameEmulator emulator) {
     String emulatorName = emulator.getName();
 
     String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
@@ -105,7 +106,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
   }
 
-  private void checkScript(String dbFieldName, Emulator emulator, String script, String call, String legacyCall) {
+  private void checkScript(String dbFieldName, GameEmulator emulator, String script, String call, String legacyCall) {
     if (script.contains(legacyCall)) {
       script = script.replace(legacyCall, "").trim();
     }
@@ -1269,7 +1270,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read playlist for gameId: " + e.getMessage(), e);
+      LOG.error("Failed to read playlist for gameId: {}", e.getMessage(), e);
     }
     finally {
       disconnect(connect);
@@ -1279,14 +1280,14 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   @NonNull
-  public List<Emulator> getEmulators() {
+  public List<GameEmulator> getEmulators() {
     Connection connect = this.connect();
-    List<Emulator> result = new ArrayList<>();
+    List<GameEmulator> result = new ArrayList<>();
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
-        Emulator e = createEmulatorFromResultSet(rs);
+        GameEmulator e = createEmulatorFromResultSet(rs);
         result.add(e);
       }
 
@@ -1301,7 +1302,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
 
     //this can not be executed within a fetch!!!
-    for (Emulator emulator : result) {
+    for (GameEmulator emulator : result) {
       if (emulator.getType().isVpxEmulator() || emulator.getType().isFpEmulator()) {
         initEmulatorScripts(emulator);
       }
@@ -1311,10 +1312,118 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   @Override
-  @NonNull
-  public Emulator getEmulator(int emuId) {
+  public boolean deleteEmulator(int emulatorId) {
     Connection connect = this.connect();
-    Emulator emulator = null;
+    try {
+      //maybe recursive deletion in the future?
+        PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Emulators WHERE EMUID = ?");
+        preparedStatement.setInt(1, emulatorId);
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        LOG.info("Deleted emulator {}", emulatorId);
+      return true;
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to delete emulator: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return false;
+  }
+
+  /**
+   * 	"EMUID"	INTEGER NOT NULL,
+   * 	"EmuName"	VARCHAR(100) NOT NULL COLLATE NOCASE,
+   * 	"Description"	VARCHAR(200),
+   * 	"DirGames"	VARCHAR(250),
+   * 	"DirMedia"	VARCHAR(255),
+   * 	"EmuDisplay"	VARCHAR(200) COLLATE NOCASE,
+   * 	"Visible"	INTEGER DEFAULT (1),
+   * 	"DirRoms"	VARCHAR(250),
+   * 	"EmuLaunchDir"	VARCHAR(250),
+   * 	"HideScreens"	INTEGER,
+   * 	"GamesExt"	VARCHAR(200),
+   * 	"ImageExt"	VARCHAR(25),
+   * 	"VideoExt"	VARCHAR(25),
+   * 	"EscapeKeyCode"	INTEGER,
+   * 	"LaunchScript"	TEXT,
+   * 	"PostScript"	TEXT,
+   * 	"KeepDisplays"	VARCHAR(20),
+   * 	"ProcessName"	VARCHAR(50),
+   * 	"WinTitle"	VARCHAR(50),
+   * 	"SkipScan"	INTEGER,
+   * 	"emuVolume"	INTEGER DEFAULT (-1),
+   * 	"DirGamesShare"	VARCHAR(250),
+   * 	"DirRomsShare"	VARCHAR(250),
+   * 	"DirMediaShare"	VARCHAR(250),
+   * 	"CanPause"	INTEGER DEFAULT 0,
+   * 	"CoreFile"	VARCHAR(250),
+   * 	"HelpScript"	TEXT,
+   * 	"AutoScanStartup"	INTEGER DEFAULT 0,
+   * 	"IgnoreFileScan"	TEXT,
+   * 	"SafeLaunch"	INTEGER DEFAULT 0,
+   * 	"SafeReturn"	INTEGER DEFAULT 0,
+   * @param emulator
+   * @return
+   */
+  @Override
+  public GameEmulator saveEmulator(GameEmulator emulator) {
+    Connection connect = this.connect();
+    try {
+      int index = 1;
+
+      PreparedStatement preparedStatement = null;
+      if (emulator.getId() < 0) {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
+                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+      }
+      else {
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
+                "EMUID, EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?,?)"
+            , Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(index++, emulator.getId());
+      }
+
+      preparedStatement.setString(index++, emulator.getSafeName());
+      preparedStatement.setString(index++, emulator.getDescription());
+      preparedStatement.setString(index++, emulator.getGamesDirectory());
+      preparedStatement.setString(index++, emulator.getMediaDirectory());
+      preparedStatement.setString(index++, emulator.getName());
+      preparedStatement.setInt(index++, emulator.isEnabled() ? 1 : 0);
+      preparedStatement.setString(index++, emulator.getRomDirectory());
+      preparedStatement.setString(index++, emulator.getInstallationDirectory());
+      preparedStatement.setString(index++, emulator.getGameExt());
+      preparedStatement.setString(index++, emulator.getLaunchScript() != null ? emulator.getLaunchScript().getScript() : null);
+      preparedStatement.setString(index++, emulator.getExitScript() != null ? emulator.getExitScript().getScript() : null);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+
+      LOG.info("Saved " + emulator);
+      try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+        if (keys.next()) {
+          int id = keys.getInt(1);
+          return getEmulator(id);
+        }
+      }
+
+      return getEmulator(emulator.getId());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update emulator: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return null;
+  }
+
+  @Override
+  @NonNull
+  public GameEmulator getEmulator(int emuId) {
+    Connection connect = this.connect();
+    GameEmulator emulator = null;
     try {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators WHERE EMUID = " + emuId + ";");
@@ -1336,33 +1445,34 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return emulator;
   }
 
-  private Emulator createEmulatorFromResultSet(ResultSet rs) throws SQLException {
+  private GameEmulator createEmulatorFromResultSet(ResultSet rs) throws SQLException {
     String emuName = rs.getString("EmuName");
     String dirGames = rs.getString("DirGames");
     String extension = rs.getString("GamesExt");
 
     EmulatorType type = getEmulatorType(emuName, dirGames, extension);
 
-    Emulator e = new Emulator(type);
+    GameEmulator e = new GameEmulator();
+    e.setType(type);
     e.setId(rs.getInt("EMUID"));
-    e.setName(emuName);
-    e.setDirGames(dirGames);
-    e.setGamesExt(extension);
-    e.setDisplayName(rs.getString("EmuDisplay"));
-    e.setDirMedia(rs.getString("DirMedia"));
-    e.setDirRoms(rs.getString("DirRoms"));
+    e.setSafeName(emuName);
+    e.setGamesDirectory(dirGames);
+    e.setGameExt(extension);
+    e.setName(rs.getString("EmuDisplay"));
+    e.setMediaDirectory(rs.getString("DirMedia"));
+    e.setRomDirectory(rs.getString("DirRoms"));
     e.setDescription(rs.getString("Description"));
-    e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-    e.setLaunchScript(rs.getString("LaunchScript"));
-    e.setExitScript(rs.getString("PostScript"));
-    e.setVisible(rs.getInt("Visible") == 1);
+    e.setInstallationDirectory(rs.getString("EmuLaunchDir"));
+    e.getLaunchScript().setScript(rs.getString("LaunchScript"));
+    e.getExitScript().setScript(rs.getString("PostScript"));
+    e.setEnabled(rs.getInt("Visible") == 1);
 
     // specific initialization
     setEmulatorExe(e, rs);
     return e;
   }
 
-  private void setEmulatorExe(Emulator e, ResultSet rs) throws SQLException {
+  private void setEmulatorExe(GameEmulator e, ResultSet rs) throws SQLException {
     if (e.getType().equals(EmulatorType.VisualPinball)) {
       String exeName = "VPinballX64.exe";
 
@@ -2005,6 +2115,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       game.setGameStatus(-1);
     }
 
+    game.setRating(rs.getInt("GameRating"));
+    if (rs.wasNull()) {
+      game.setRating(0);
+    }
+
     String dirGame = rs.getString("DirGames");
     File vpxFile = new File(dirGame, gameFileName);
     game.setGameFile(vpxFile);
@@ -2017,6 +2132,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
     if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
       game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
+    }
+    if (!StringUtils.isEmpty(serverSettings.getMappingPatchVersion())) {
+      game.setPatchVersion(rs.getString(serverSettings.getMappingPatchVersion()));
     }
 
     return game;
@@ -2177,49 +2295,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return result;
   }
 
-  public static boolean isValidVPXEmulator(Emulator emulator) {
-    if (!emulator.getType().isVpxEmulator()) {
-      return false;
-    }
-
-    if (!emulator.isVisible()) {
-      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirGames())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
-      return false;
-    }
-
-    if (!new File(emulator.getDirGames()).exists()) {
-      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" does not exist.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirRoms())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
-      return false;
-    }
-
-    if (!new File(emulator.getDirRoms()).exists()) {
-      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is does not exist.");
-      return false;
-    }
-
-    if (StringUtils.isEmpty(emulator.getDirMedia())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
-      return false;
-    }
-
-    if (!new File(emulator.getDirMedia()).exists()) {
-      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" does not exist.");
-      return false;
-    }
-
-    return true;
-  }
-
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
@@ -2265,7 +2340,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
     frontend.setSystemVolumeControlEnabled(isSystemVolumeControlled());
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD, VPinScreen.Topper, VPinScreen.Menu));
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));

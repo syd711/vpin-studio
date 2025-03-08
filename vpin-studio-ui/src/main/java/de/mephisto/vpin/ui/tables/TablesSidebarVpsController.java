@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -323,7 +323,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
       VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
       if (tableById != null) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
         List<String> tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
         refreshTableView(tableById, tableFormats);
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
@@ -476,7 +476,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
     List<VpsTableVersion> tableVersions;
     if (game != null) {
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       List<String> tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
       tableVersions = vpsTable.getTableFilesForFormat(tableFormats);
     }

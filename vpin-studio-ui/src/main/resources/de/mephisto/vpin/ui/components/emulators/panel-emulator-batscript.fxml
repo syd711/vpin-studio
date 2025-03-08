@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="root" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.emulators.EmulatorBatScriptPanelController">
+   <padding>
+      <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+   </padding>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="infoContainer" styleClass="info-container">
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+               <children>
+                  <Label styleClass="default-text" text="For VPX emulators, these values are generated on server startup." />
+                  <Label layoutX="23.0" layoutY="23.0" styleClass="default-text" text="You need to edit the emulator-****.bat files in the &quot;resources&quot; folder of the VPin Studio Server" />
+                  <Label layoutX="23.0" layoutY="43.0" styleClass="default-text" text="manually to add or remove statements." />
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+            <VBox minHeight="220.0">
+               <children>
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="400.0" prefWidth="400.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="default-text" text="Enabled:" />
+                        <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="Script Execution Enabled" GridPane.columnIndex="1" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Working Directory:" GridPane.rowIndex="1" />
+                        <TextField fx:id="workingDirectoryField" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Executable:" GridPane.rowIndex="2" />
+                        <TextField fx:id="executableField" layoutX="158.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Parameters:" GridPane.rowIndex="3" />
+                        <TextField fx:id="parametersField" layoutX="158.0" layoutY="78.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <CheckBox fx:id="waitForExitCheckbox" layoutX="158.0" layoutY="15.0" mnemonicParsing="false" styleClass="default-text" text="Wait For Exit" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="hideWindowCheckbox" layoutX="158.0" layoutY="150.0" mnemonicParsing="false" styleClass="default-text" text="Hide Window" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+         </padding>
+      </VBox>
+   </center>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="accordion-container" />
+   </styleClass>
+</BorderPane>

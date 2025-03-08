@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
 
@@ -44,21 +45,41 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return new ByteArrayInputStream(bytes);
   }
 
+  public int getGameId(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/gameId", params, Integer.class);
+  }
+
   public DirectB2SData getDirectB2SData(int gameId) {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
   }
 
-  public DirectB2SData getDirectB2SData(DirectB2S directB2S) {
-    return getRestClient().post(API + "directb2s/get", directB2S, DirectB2SData.class);
+  public DirectB2SData getDirectB2SData(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/get", params, DirectB2SData.class);
   }
 
-  public List<DirectB2S> getBackglasses() {
-    return Arrays.asList(getRestClient().get(API + "directb2s", DirectB2S[].class));
+  public DirectB2SAndVersions getDirectB2S(int gameId) {
+    return getRestClient().get(API + "directb2s/" + gameId + "/versions", DirectB2SAndVersions.class);
+  }
+
+  public List<DirectB2SAndVersions> getBackglasses() {
+    return Arrays.asList(getRestClient().get(API + "directb2s", DirectB2SAndVersions[].class));
+  }
+
+  public DirectB2SAndVersions reloadDirectB2S(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/versions", params, DirectB2SAndVersions.class);
   }
 
   public boolean clearCache() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "directb2s/clearcache", Boolean.class);
+    return getRestClient().get(API + "directb2s/clearcache", Boolean.class);
   }
 
   //--------------------------------
@@ -109,30 +130,57 @@ public class BackglassServiceClient extends VPinStudioClientService {
   //--------------------------------
   // BACKGLASS OPERATIONS
 
-  //--------------------------------
-  // BACKGLASS OPERATIONS
-
-  public boolean deleteBackglass(DirectB2S directB2S) throws Exception {
+  public boolean deleteBackglass(int emulatorId, String fileName) throws Exception {
     Map<String, Object> params = new HashMap<>();
-    params.put("emulatorId", directB2S.getEmulatorId());
-    params.put("fileName", directB2S.getFileName());
-    return getRestClient().post(API + "directb2s/delete", directB2S, Boolean.class);
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/delete", params, Boolean.class);
   }
 
-  public DirectB2S renameBackglass(DirectB2S directB2S, String newName) throws Exception {
+  public DirectB2SAndVersions renameBackglass(int emulatorId, String fileName, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("newName", newName);
-    params.put("emulatorId", directB2S.getEmulatorId());
-    params.put("fileName", directB2S.getFileName());
-    return getRestClient().put(API + "directb2s", params, DirectB2S.class);
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
   }
 
-  public DirectB2S duplicateBackglass(DirectB2S directB2S) throws Exception {
+  public DirectB2SAndVersions setBackglassAsDefault(int emulatorId, String fileName) {
     Map<String, Object> params = new HashMap<>();
-    params.put("duplicate", true);
-    params.put("emulatorId", directB2S.getEmulatorId());
-    params.put("fileName", directB2S.getFileName());
-    return getRestClient().put(API + "directb2s", params, DirectB2S.class);
+    params.put("setVersionAsDefault", fileName);
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    try {
+      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+  public DirectB2SAndVersions disableBackglass(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("disable", true);
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    try {
+      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
+  public DirectB2SAndVersions deleteBackglassVersion(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("deleteVersion", true);
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    try {
+      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+    } catch (Exception e) {
+      throw new RuntimeException(e.getMessage());
+    }
   }
 
   public GameRepresentation saveGame(GameRepresentation game) throws Exception {
@@ -184,10 +232,11 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   //--------------------------------
 
-  public UploadDescriptor uploadDirectB2SFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadDirectB2SFile(File file, int gameId, boolean append, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      HttpEntity<?> upload = createUpload(file, gameId, null, AssetType.DIRECTB2S, listener);
+      String uploadType = append ? UploadType.uploadAndAppend.name() : UploadType.uploadAndImport.name();
+      HttpEntity<?> upload = createUpload(file, gameId, uploadType, AssetType.DIRECTB2S, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
@@ -201,20 +250,26 @@ public class BackglassServiceClient extends VPinStudioClientService {
   //--------------------------------
   // DMD Image management
 
-  public boolean uploadDMDImage(DirectB2S directb2s, File file) {
-    return uploadFile(directb2s.getEmulatorId(), directb2s.getFileName(), "directb2s/uploadDmdImage", file, Boolean.class);
+  public boolean uploadDMDImage(int emulatorId, String fileName, File file) {
+    return uploadFile(emulatorId, fileName, "directb2s/uploadDmdImage", file, Boolean.class);
   }
 
-  public boolean removeDMDImage(DirectB2S directb2s) throws Exception {
-    return getRestClient().post(API + "directb2s/removeDmdImage", directb2s, Boolean.class);
+  public boolean removeDMDImage(int emulatorId, String fileName) throws Exception {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/removeDmdImage", params, Boolean.class);
   }
 
   //--------------------------------
   // screen res management
 
-  public DirectB2sScreenRes getScreenRes(DirectB2S directb2s, boolean tableOnly) {
+  public DirectB2sScreenRes getScreenRes(int emulatorId, String fileName, boolean tableOnly) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
     return getRestClient().post(API + "directb2s/screenRes" + (tableOnly ? "?tableOnly=true" : ""),
-        directb2s, DirectB2sScreenRes.class);
+        params, DirectB2sScreenRes.class);
   }
 
   public InputStream getScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
@@ -234,7 +289,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {
-    return uploadFile(screenres.getEmulatorId(), screenres.getB2SFileName(), 
+    return uploadFile(screenres.getEmulatorId(), screenres.getB2SFileName(),
         "directb2s/screenRes/uploadFrame", file, String.class);
   }
 
@@ -248,11 +303,11 @@ public class BackglassServiceClient extends VPinStudioClientService {
   //--------------------------------
   // common methods
 
-  private <T> T uploadFile(int emuId, String filename, String suburl, File file, Class<T> responseType) {
+  private <T> T uploadFile(int emulatorId, String fileName, String suburl, File file, Class<T> responseType) {
     try {
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("emuid", emuId);
-      map.add("filename", filename);
+      map.add("emulatorId", emulatorId);
+      map.add("fileName", fileName);
       String url = getRestClient().getBaseUrl() + API + suburl;
       HttpEntity<?> upload = createUpload(map, file, -1, null, AssetType.DIRECTB2S, null);
 

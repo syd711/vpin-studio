@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileUtils {
   private final static Logger LOG = LoggerFactory.getLogger(FileUtils.class);
@@ -88,45 +90,24 @@ public class FileUtils {
   }
 
   public static boolean renameToBaseName(File file, String name) {
-    if (file.exists()) {
-      String suffix = FilenameUtils.getExtension(file.getName());
-      String targetName = name + "." + suffix;
-      File newFile = new File(file.getParentFile(), targetName);
-      if (file.renameTo(newFile)) {
-        LOG.info("Renamed \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
-        return true;
-      }
+    String suffix = FilenameUtils.getExtension(file.getName());
+    String targetName = name + "." + suffix;
+    File newFile = new File(file.getParentFile(), targetName);
 
-      LOG.warn("Renaming \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed.");
-      return false;
-    }
-
-    LOG.warn("Renaming \"" + file.getAbsolutePath() + "\" to new base name \"" + name + "\" failed, the file does not exist.");
-    return false;
+    return rename(file, newFile);
   }
 
   public static boolean assetRename(File file, String oldBaseName, String newBaseName) {
-    if (file.exists()) {
-      String suffix = FilenameUtils.getExtension(file.getName());
-      String baseName = FilenameUtils.getBaseName(file.getName());
+    String suffix = FilenameUtils.getExtension(file.getName());
+    String baseName = FilenameUtils.getBaseName(file.getName());
 
-      //append the possible 01... to the base name
-      String baseNameSuffix = baseName.substring(oldBaseName.length());
-      String targetName = newBaseName + baseNameSuffix + "." + suffix;
-      File newFile = new File(file.getParentFile(), targetName);
-      if (file.renameTo(newFile)) {
-        LOG.info("Renamed asset \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
-        return true;
-      }
+    //append the possible 01... to the base name
+    String baseNameSuffix = baseName.substring(oldBaseName.length());
+    String targetName = newBaseName + baseNameSuffix + "." + suffix;
+    File newFile = new File(file.getParentFile(), targetName);
 
-      LOG.warn("Renaming asset \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed.");
-      return false;
-    }
-
-    LOG.warn("Renaming asset \"" + file.getAbsolutePath() + "\" to new base name \"" + newBaseName + "\" failed, the file does not exist.");
-    return false;
+    return rename(file, newFile);
   }
-
 
   public static boolean delete(@Nullable File file) {
     if (file != null && file.exists()) {
@@ -137,6 +118,31 @@ public class FileUtils {
         LOG.warn("Failed to delete " + file.getAbsolutePath());
         return false;
       }
+    }
+    return true;
+  }
+
+  public static boolean rename(File file, File newFile) {
+    if (file.exists()) {
+      try {
+        Files.createDirectories(newFile.getParentFile().toPath());
+        Files.move(file.toPath(), newFile.toPath());
+        LOG.info("Renamed file \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\"");
+        return true;
+      }
+      catch (IOException ioe) {
+        LOG.warn("Renaming file \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed. " + ioe.getMessage());
+        return false;
+      }
+    }
+    LOG.warn("Renaming file \"" + file.getAbsolutePath() + "\" to \"" + newFile.getAbsolutePath() + "\" failed, the file does not exist.");
+    return false;
+  }
+
+  public static boolean isEmpty(File folder) {
+    if (folder.exists()) {
+      File[] files = folder.listFiles();
+      return files == null || files.length == 0;
     }
     return true;
   }
@@ -168,10 +174,11 @@ public class FileUtils {
 
   public static File writeBatch(String name, String content) throws IOException {
     File path;
-    if (!OSUtil.isMac()){
-       path = new File("./" + name);
-    }else {
-       path = new File(System.getProperty("MAC_WRITE_PATH") + name);
+    if (!OSUtil.isMac()) {
+      path = new File("./" + name);
+    }
+    else {
+      path = new File(System.getProperty("MAC_WRITE_PATH") + name);
     }
 
     if (path.exists()) {
@@ -227,5 +234,49 @@ public class FileUtils {
       segment = String.format("%02d", index);
     }
     return target;
+  }
+
+  static Pattern filePattern = Pattern.compile(" \\(\\d\\d?\\)$");
+
+  public static boolean equalsUniqueFile(String file1, String file2) {
+    return StringUtils.equalsIgnoreCase(fromUniqueFile(file1), fromUniqueFile(file2));
+  }
+
+  /**
+   * subfolder/Ace Of Speed (Original 2019) (2).directb2s => subfolder/Ace Of Speed (Original 2019).directb2s
+   */
+  public static String fromUniqueFile(String filename) {
+    String basename = FilenameUtils.removeExtension(filename).trim();
+    Matcher match = filePattern.matcher(basename);
+    if (match.find()) {
+      basename = match.replaceAll("");
+    }
+    return basename + "." + FilenameUtils.getExtension(filename);
+  }
+
+  /**
+   * subfolder/Ace Of Speed (Original 2019) (2).directb2s => subfolder/Ace Of Speed (Original 2019)
+   */
+  public static String baseUniqueFile(String filename) {
+    String basename = FilenameUtils.removeExtension(filename).trim();
+    Matcher match = filePattern.matcher(basename);
+    if (match.find()) {
+      basename = match.replaceAll("");
+    }
+    return basename;
+  }
+
+  public static boolean isMainFilename(String filename) {
+    return filename.equals(fromUniqueFile(filename));
+  }
+
+  public static boolean baseNameMatches(@Nullable String file1, @Nullable String file2) {
+    if (file1 == null || file2 == null) {
+      return false;
+    }
+
+    String base1 = FilenameUtils.getBaseName(file1);
+    String base2 = FilenameUtils.getBaseName(file2);
+    return base1.equalsIgnoreCase(base2);
   }
 }

@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.apache.commons.csv.CSVFormat;
@@ -32,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
@@ -57,7 +57,7 @@ public class PinballYStatisticsParser {
     return new File(installationFolder, "/GameStats.csv");
   }
 
-  public void getAlxData(Collection<Emulator> emus, List<TableAlxEntry> stats, Set<Integer> favs, List<Playlist> playlists) {
+  public void getAlxData(Collection<GameEmulator> emus, List<TableAlxEntry> stats, Set<Integer> favs, List<Playlist> playlists) {
     getGameData(emus, (record, g) -> getAlxData(record, stats, favs, playlists, g));
   }
 
@@ -136,14 +136,14 @@ public class PinballYStatisticsParser {
 
   //------------------------------------
 
-  private void getGameData(Collection<Emulator> emus, RecordVisitor visitor) {
+  private void getGameData(Collection<GameEmulator> emus, RecordVisitor visitor) {
     if (getGameStatsFile().exists()) {
       if (!getGameData(emus, visitor, "UTF-8")) {
         getGameData(emus, visitor, "UTF-16");
       }
     }
   }
-  private boolean getGameData(Collection<Emulator> emus, RecordVisitor visitor, String charset) {
+  private boolean getGameData(Collection<GameEmulator> emus, RecordVisitor visitor, String charset) {
     try (FileReader fileReader = new FileReader(getGameStatsFile(), Charset.forName(charset))) {
 
       CSVFormat format = CSVFormat.RFC4180.builder()
@@ -165,7 +165,7 @@ public class PinballYStatisticsParser {
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
         String game = safeGet(record, "Game");
-        for (Emulator emu : emus) {
+        for (GameEmulator emu : emus) {
           if (StringUtils.endsWith(game, "." + emu.getName())) {
             String gameName = StringUtils.substringBefore(game, "." + emu.getName());
             Game g = connector.getGameByName(emu.getId(), gameName);
@@ -254,7 +254,7 @@ public class PinballYStatisticsParser {
       .setTrim(true)
       .build();
 
-    Emulator emu = connector.getEmulator(g.getEmulatorId());
+    GameEmulator emu = connector.getEmulator(g.getEmulatorId());
 
     try (CSVPrinter printer = new CSVPrinter(new FileWriter(gamestatsW, Charset.forName("UTF-16")), format)) {
       boolean[] found = { false };

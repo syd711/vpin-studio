@@ -110,7 +110,7 @@ public class DirectB2sScreenRes {
 	}
 
   @JsonIgnore
-  public boolean isOnDmd(double x, double y) {
+  public boolean isOnFullDmd(double x, double y) {
     return getDmdMinX() <= x && x <= getDmdMaxX() && getDmdMinY() <= y && y <= getDmdMaxY();
   }
 
@@ -343,7 +343,7 @@ public class DirectB2sScreenRes {
     this.turnOnBackground = turnOnBackground;
   }
 
-  public boolean hasDMD() {
+  public boolean hasFullDmd() {
     return (dmdWidth > 0) && (dmdHeight > 0); 
   }
 }

@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient.frontend;
 
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,6 +34,9 @@ public enum VPinScreen {
     if (Other2.name().equalsIgnoreCase(name)) {
       return Other2;
     }
+    if ("Apron".equalsIgnoreCase(name)) {
+      return Other2;
+    }
     if (GameInfo.name().equalsIgnoreCase(name)) {
       return GameInfo;
     }
@@ -45,17 +46,23 @@ public enum VPinScreen {
     if (BackGlass.name().equalsIgnoreCase(name)) {
       return BackGlass;
     }
+    if (Menu.name().equalsIgnoreCase(name)) {
+      return Menu;
+    }
     if ("Apron/FullDMD".equalsIgnoreCase(name)) {
       return Menu;
     }
-    if ("Menu".equalsIgnoreCase(name)) {
+    if ("FullDMD".equalsIgnoreCase(name)) {
       return Menu;
     }
-    if ("Apron".equalsIgnoreCase(name)) {
-      return Menu;
+    if (Audio.name().equalsIgnoreCase(name)) {
+      return Audio;
     }
     if ("Music".equalsIgnoreCase(name)) {
       return Audio;
+    }
+    if (AudioLaunch.name().equalsIgnoreCase(name)) {
+      return AudioLaunch;
     }
     if (Topper.name().equalsIgnoreCase(name)) {
       return Topper;
@@ -66,14 +73,11 @@ public enum VPinScreen {
     if (PlayField.name().equalsIgnoreCase(name)) {
       return PlayField;
     }
-    return null;
-  }
-
-  public static FrontendPlayerDisplay valueOfScreen(List<FrontendPlayerDisplay> displays, VPinScreen screen) {
-    for (FrontendPlayerDisplay display : displays) {
-      if (display.getScreen() != null && display.getScreen().equals(screen)) {
-        return display;
-      }
+    if (Loading.name().equalsIgnoreCase(name)) {
+      return Loading;
+    }
+    if (Wheel.name().equalsIgnoreCase(name)) {
+      return Wheel;
     }
     return null;
   }

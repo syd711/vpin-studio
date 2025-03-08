@@ -22,6 +22,7 @@ public class PauseMenuSettings extends JsonSettings {
   private String leftButton;
   private String rightButton;
   private String overlayButton;
+  private String screenshotButton;
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
@@ -114,6 +115,14 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setRightButton(String rightButton) {
     this.rightButton = rightButton;
+  }
+
+  public String getScreenshotButton() {
+    return screenshotButton;
+  }
+
+  public void setScreenshotButton(String screenshotButton) {
+    this.screenshotButton = screenshotButton;
   }
 
   public String getOverlayButton() {

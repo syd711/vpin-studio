@@ -152,6 +152,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label prefHeight="20.0" styleClass="preference-label" text="Highscore .txt File Name" textFill="WHITE">
@@ -182,6 +184,14 @@
                               <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="(Used by some tables to write scores into)" textFill="WHITE" GridPane.rowIndex="1" />
                               <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="(The id for the overall table type on VPS)" textFill="WHITE" GridPane.rowIndex="3" />
                               <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="(The id of the version/mod of the table type)" textFill="WHITE" GridPane.rowIndex="5" />
+                              <Label layoutX="10.0" layoutY="146.0" styleClass="default-text" text="Patch Version:" textFill="WHITE" GridPane.rowIndex="6">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="10.0" layoutY="178.0" styleClass="preference-description" text="(The version number or name of the patch)" textFill="WHITE" GridPane.rowIndex="7" />
+                              <Label layoutX="314.0" layoutY="148.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ComboBox fx:id="patchVersionCombo" layoutX="440.0" layoutY="144.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                            </children>
                         </GridPane>
                      </children>

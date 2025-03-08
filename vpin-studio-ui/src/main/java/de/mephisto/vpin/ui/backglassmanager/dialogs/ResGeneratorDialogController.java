@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.backglassmanager.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
@@ -65,28 +64,13 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   private Label screenResLabel;
 
   @FXML
-  private Label playfieldDimensionLabel;
+  private Label backglassScreenLabel;
 
   @FXML
   private Label backglassDimensionLabel;
 
   @FXML
-  private Label dmdDimensionLabel;
-
-  @FXML
-  private Label dmdPositionLabel;
-
-  @FXML
-  private Label playfieldScreenLabel;
-
-  @FXML
-  private Label backglassScreenLabel;
-
-  @FXML
   private Label backglassPositionLabel;
-
-  @FXML
-  private Label dmdScreenLabel;
 
   @FXML
   private Button clearBtn;
@@ -297,27 +281,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     tg.selectToggle(radioStretchBackglass);
 
     // load screen dimensions
-    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplays())
-        .thenAcceptLater(displays -> {
-          if (displays != null) {
-            for (FrontendPlayerDisplay display : displays) {
-              if (VPinScreen.PlayField.equals(display.getScreen())) {
-                playfieldScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
-              }
-              else if (VPinScreen.BackGlass.equals(display.getScreen())) {
-                this.backglassDisplay = display;
-                backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplay(VPinScreen.BackGlass))
+        .thenAcceptLater(display -> {
+          if (display != null) {
+            this.backglassDisplay = display;
+            backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
 
-                // resize the preview proportionnaly
-                this.previewHeight = (int) previewImage.getFitHeight();
-                double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
-                previewImage.setFitWidth(width);
-                this.previewWidth = (int) width;
-              }
-              else if (VPinScreen.DMD.equals(display.getScreen())) {
-                dmdScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
-              }
-            }
+            // resize the preview proportionnaly
+            this.previewHeight = (int) previewImage.getFitHeight();
+            double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
+            previewImage.setFitWidth(width);
+            this.previewWidth = (int) width;
             refreshPreview();
           }
         });
@@ -327,21 +301,21 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   public void onDialogCancel() {
   }
 
-  public void setData(Stage stage, DirectB2S directB2S) {
+  public void setData(Stage stage, int emulatorId, String fileName) {
     this.stage = stage;
 
-    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(directB2S, false))
+    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(emulatorId, fileName, false))
         .thenAcceptLater(res -> setScreenRes(res));
 
     JFXFuture.supplyAsync(() -> {
-          DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(directB2S);
+          DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(emulatorId, fileName);
           if (data != null) {
             try {
               return client.getBackglassServiceClient().getDirectB2sBackground(data);
             }
             catch (IOException ioe) {
               LOG.error("Cannot get background for backglass {} of emulator {} : {}",
-                  directB2S.getFileName(), directB2S.getEmulatorId(), ioe.getMessage());
+              fileName, emulatorId, ioe.getMessage());
             }
           }
           return null;
@@ -354,7 +328,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
             catch (IOException ioe) {
               backglassImg = null;
               LOG.error("Cannot load background image for backglass {} of emulator {} : {}",
-                  directB2S.getFileName(), directB2S.getEmulatorId(), ioe.getMessage());
+                  fileName, emulatorId, ioe.getMessage());
             }
           }
           else {
@@ -369,11 +343,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
     if (screenres != null) {
       screenResLabel.setText(screenres.getScreenresFilePath());
-      playfieldDimensionLabel.setText(formatDimension(screenres.getPlayfieldWidth(), screenres.getPlayfieldHeight()));
       backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
       backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
-      dmdPositionLabel.setText(formatLocation(screenres.getBackglassX() + screenres.getDmdX(), screenres.getBackglassY() + screenres.getDmdY()));
-      dmdDimensionLabel.setText(formatDimension(screenres.getDmdWidth(), screenres.getDmdHeight()));
 
       if (res.isBackglassCentered()) {
         radioCenterBackglass.setSelected(true);
@@ -400,9 +371,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     }
     else {
       screenResLabel.setText("No screen res file found, please run B2S_ScreenResIdentifier.exe");
-      playfieldDimensionLabel.setText("--");
       backglassDimensionLabel.setText("--");
-      dmdDimensionLabel.setText("--");
     }
   }
 

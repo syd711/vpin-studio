@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
@@ -89,8 +89,8 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private void onDmdDevice() {
-    if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+    if (client.getSystemService().isLocal() && defaultGameEmulator.getMameDirectory() != null) {
       File folder = new File(defaultGameEmulator.getMameDirectory());
       File ini = new File(folder, "DmdDevice.ini");
       Dialogs.editFile(ini);
@@ -114,13 +114,18 @@ public class TablesSidebarDMDController implements Initializable {
   private void onFlexDMDUI() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
-      File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
+      if (emulatorRepresentation.getMameDirectory() != null) {
+        File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          Studio.open(file);
+        }
       }
       else {
-        Studio.open(file);
+        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "No matching VPinMAME installation found.");
       }
     }
   }

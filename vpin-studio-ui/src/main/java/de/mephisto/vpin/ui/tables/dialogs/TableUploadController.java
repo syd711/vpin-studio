@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -550,7 +550,7 @@ public class TableUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getValidatedGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
     emulatorRepresentation = gameEmulators.get(0);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
@@ -568,7 +568,7 @@ public class TableUploadController implements Initializable, DialogController {
         backupTableOnOverwriteCheckbox.setDisable(!sameEmulator);
       }
 
-      EmulatorType emulatorType = emulatorRepresentation.getEmulatorType();
+      EmulatorType emulatorType = emulatorRepresentation.getType();
       if (this.uploaderAnalysis != null) {
         this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
       }
@@ -723,7 +723,7 @@ public class TableUploadController implements Initializable, DialogController {
       this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
 
-      GameEmulatorRepresentation gameEmulator = Studio.client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation gameEmulator = Studio.client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);
     }
     else {

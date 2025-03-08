@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
@@ -23,10 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -52,6 +49,9 @@ public class PatchUploadController extends BaseUploadController {
   private VBox uploadCloneBox;
 
   @FXML
+  private TextField patchVersionField;
+
+  @FXML
   private RadioButton patchAndReplaceRadio;
 
   @FXML
@@ -70,6 +70,7 @@ public class PatchUploadController extends BaseUploadController {
 
   @FXML
   private VBox assetsView;
+
   private Optional<UploadDescriptor> result;
 
   public PatchUploadController() {
@@ -90,6 +91,7 @@ public class PatchUploadController extends BaseUploadController {
   protected void onUploadClick(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
+    String version = patchVersionField.getText();
     Platform.runLater(() -> {
       stage.close();
     });
@@ -98,6 +100,7 @@ public class PatchUploadController extends BaseUploadController {
     if (result.isPresent()) {
       try {
         UploadDescriptor uploadDescriptor = result.get();
+        uploadDescriptor.setPatchVersion(version);
         uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
         uploadDescriptor.setAutoFill(false);
@@ -105,11 +108,11 @@ public class PatchUploadController extends BaseUploadController {
 
         GameRepresentation gameRepresentation = client.getGameService().getGame(uploadDescriptor.getGameId());
         LOG.info("Fetched Game " + gameRepresentation.getGameDisplayName());
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
-        LOG.info("Fetched Emulator " + emulatorRepresentation.getTablesDirectory());
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(gameRepresentation.getEmulatorId());
+        LOG.info("Fetched Emulator " + emulatorRepresentation.getGamesDirectory());
 
         File gameFile = new File(gameRepresentation.getGameFilePath());
-        File emuDir = new File(emulatorRepresentation.getTablesDirectory());
+        File emuDir = new File(emulatorRepresentation.getGamesDirectory());
         if (!gameFile.getAbsoluteFile().getParentFile().equals(emuDir)) {
           uploadDescriptor.setFolderBasedImport(true);
           uploadDescriptor.setSubfolderName(FilenameUtils.getBaseName(gameRepresentation.getGameFileName()) + "_[Patched]");

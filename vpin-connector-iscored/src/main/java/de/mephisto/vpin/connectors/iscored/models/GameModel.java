@@ -1,5 +1,8 @@
 package de.mephisto.vpin.connectors.iscored.models;
 
+import de.mephisto.vpin.connectors.iscored.Score;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameModel {
@@ -7,6 +10,15 @@ public class GameModel {
   private String gameName;
   private String hidden;
   private List<String> tags;
+  private List<Score> scores = new ArrayList<>();
+
+  public List<Score> getScores() {
+    return scores;
+  }
+
+  public void setScores(List<Score> scores) {
+    this.scores = scores;
+  }
 
   public String getHidden() {
     return hidden;

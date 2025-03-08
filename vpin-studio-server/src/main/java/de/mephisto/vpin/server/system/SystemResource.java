@@ -168,7 +168,7 @@ public class SystemResource {
   public SystemSummary info() {
     SystemSummary info = new SystemSummary();
     try {
-      info.setScreenInfos(systemService.getScreenInfos());
+      info.setScreenInfos(systemService.getMonitorInfos());
       info.setArchiveType(systemService.getArchiveType());
       info.setSystemId(SystemUtil.getUniqueSystemId());
     }

@@ -117,6 +117,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button highscoresBtn;
 
   @FXML
+  private Button webhooksBtn;
+
+  @FXML
   private BorderPane preferencesMain;
 
   @FXML
@@ -213,6 +216,10 @@ public class PreferencesController extends SettingsSceneController implements In
     load("preference-settings_client.fxml", event);
   }
 
+  @FXML
+  private void onWebhooks(ActionEvent event) throws IOException {
+    load("preference-webhooks.fxml", event);
+  }
 
   @FXML
   private void onSystemSettings(ActionEvent event) throws IOException {
@@ -444,6 +451,7 @@ public class PreferencesController extends SettingsSceneController implements In
     tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
+    webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -467,6 +475,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);
+    webhooksBtn.setVisible(Features.WEBHOOKS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());

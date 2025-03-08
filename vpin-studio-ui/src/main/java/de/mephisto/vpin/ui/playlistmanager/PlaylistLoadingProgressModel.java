@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;

@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.monitor.panels;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
@@ -31,18 +31,18 @@ public class ScreenPanelController implements Initializable {
   @FXML
   Label screenName;
 
-  private RecordingScreen recordingScreen;
+  private FrontendPlayerDisplay recordingScreen;
 
   private Stage stage;
   private CabMonitorController recorderController;
-  private ScreenInfo screenInfo;
+  private MonitorInfo monitorInfo;
   private double scaling = 1;
 
   public VPinScreen getScreen() {
     return recordingScreen.getScreen();
   }
 
-  public void setData(Stage stage, CabMonitorController recorderController, RecordingScreen recordingScreen) {
+  public void setData(Stage stage, CabMonitorController recorderController, FrontendPlayerDisplay recordingScreen) {
     this.stage = stage;
     this.recorderController = recorderController;
     root.prefWidthProperty().bind(Studio.stage.widthProperty().subtract(960));
@@ -52,16 +52,16 @@ public class ScreenPanelController implements Initializable {
     if (recordingScreen.getScreen().name().equalsIgnoreCase("Menu")) {
       screenName.setText(recordingScreen.getScreen().name() + "/FullDMD");
     }
-    screenName.setText(screenName.getText() + " (" + recordingScreen.getDisplay().getWidth() + " x " + recordingScreen.getDisplay().getHeight() + ")");
+    screenName.setText(screenName.getText() + " (" + recordingScreen.getWidth() + " x " + recordingScreen.getHeight() + ")");
     refresh();
   }
 
-  public void setData(Stage stage, CabMonitorController recorderController, ScreenInfo screenInfo) {
+  public void setData(Stage stage, CabMonitorController recorderController, MonitorInfo monitorInfo) {
     this.stage = stage;
     this.recorderController = recorderController;
-    this.screenInfo = screenInfo;
+    this.monitorInfo = monitorInfo;
     root.prefWidthProperty().bind(Studio.stage.widthProperty().subtract(960));
-    screenName.setText("Monitor #" + screenInfo.getId() + " (" + screenInfo.getOriginalWidth() + " x " + screenInfo.getOriginalHeight() + ")");
+    screenName.setText("Monitor #" + monitorInfo.getId() + " (" + monitorInfo.getWidth() + " x " + monitorInfo.getHeight() + ")");
     refresh();
   }
 
@@ -86,8 +86,8 @@ public class ScreenPanelController implements Initializable {
           Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);
           imageView.setImage(image);
         }
-        else if (screenInfo != null) {
-          Image image = MonitoringManager.getInstance().getMonitorImage(screenInfo);
+        else if (monitorInfo != null) {
+          Image image = MonitoringManager.getInstance().getMonitorImage(monitorInfo);
           imageView.setImage(image);
         }
       }

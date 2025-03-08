@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.dmd;
 
-import de.mephisto.vpin.commons.MonitorInfo;
-import de.mephisto.vpin.commons.MonitorInfoUtil;
+import com.google.common.io.Files;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -15,12 +14,12 @@ import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.video.VideoConverterService;
-
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
@@ -31,23 +30,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.io.Files;
-
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Service
 public class DMDPositionService {
@@ -63,6 +51,8 @@ public class DMDPositionService {
   private FrontendService frontendService;
   @Autowired
   private VideoConverterService videoConverterService;
+  @Autowired
+  private VPinScreenService screenService;
 
 
   public DMDInfo getDMDInfo(int gameId) {
@@ -151,8 +141,9 @@ public class DMDPositionService {
   }
 
   private void fillScreenInfo(DMDInfo dmdinfo) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
-    addDeviceOffsets(screenres);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
+    screenService.addDeviceOffsets(screenres);
 
     // determine on which screen the DMD is positionned onto
     if (dmdinfo.getCenterX() < 0) {
@@ -161,51 +152,17 @@ public class DMDPositionService {
     else if (screenres.isOnBackglass(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
     }
-    else if (screenres.hasDMD() && screenres.isOnDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
-      fillScreenInfo(dmdinfo, screenres, VPinScreen.DMD);
+    else if (screenres.hasFullDmd() && screenres.isOnFullDmd(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
+      fillScreenInfo(dmdinfo, screenres, VPinScreen.Menu);
     }
     else {
       fillScreenInfo(dmdinfo, screenres, VPinScreen.BackGlass);
       dmdinfo.centerOnScreen();
     }
 
-    dmdinfo.setDmdScreenSet(screenres.hasDMD());
+    dmdinfo.setDmdScreenSet(screenres.hasFullDmd());
   }
 
-  private void addDeviceOffsets(DirectB2sScreenRes screenres) {
-    List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
-    // sort by xPosition
-    monitors.sort((m1, m2) -> m1.getScreenX() - m2.getScreenX());
-
-    MonitorInfo monitor = null;
-
-    // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
-    String backglassDisplay = screenres.getBackglassDisplay();
-    if (backglassDisplay.startsWith("@")) {
-      int xPos = Integer.parseInt(backglassDisplay.substring(1));
-      for (MonitorInfo m : monitors) {
-        if (m.getScreenX() == xPos) {
-          monitor = m;
-        }
-      }
-    }
-    else if (backglassDisplay.startsWith("=")) {
-      int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
-      monitor = idx < monitors.size() ? monitors.get(idx) : null;
-    }
-    else {
-      for (MonitorInfo m : monitors) {
-        if (m.getDeviceName().endsWith(backglassDisplay)) {
-          monitor = m;
-        }
-      }
-    }
-
-    if (monitor != null) {
-      screenres.setBackglassDisplayX(monitor.getScreenX());
-      screenres.setBackglassDisplayY(monitor.getScreenY());
-    }
-  }
 
   private void fillScreenInfo(DMDInfo dmdinfo, DirectB2sScreenRes screenres, VPinScreen onScreen) {
     // All coordinates in DMDInfo are relative to display
@@ -231,8 +188,8 @@ public class DMDPositionService {
         dmdinfo.setScreenHeight(screenres.getBackglassHeight());
       }
     }
-    else if (VPinScreen.DMD.equals(onScreen)) {
-      dmdinfo.setOnScreen(VPinScreen.DMD);
+    else if (VPinScreen.Menu.equals(onScreen)) {
+      dmdinfo.setOnScreen(VPinScreen.Menu);
       dmdinfo.setX(dmdinfo.getX() - screenres.getDmdMinX());
       dmdinfo.setY(dmdinfo.getY() - screenres.getDmdMinY());
       dmdinfo.setScreenWidth(screenres.getDmdWidth());
@@ -267,7 +224,8 @@ public class DMDPositionService {
   // MOVE AND POSITION
 
   public DMDInfo moveDMDInfo(DMDInfo dmdinfo, VPinScreen targetScreen) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
     if (screenres != null) {
       fillScreenInfo(dmdinfo, screenres, targetScreen);
     }
@@ -278,17 +236,18 @@ public class DMDPositionService {
   }
 
   public DMDInfo autoPositionDMDInfo(DMDInfo dmdinfo) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
 
     byte[] image = null;
     double factorX = 0, factorY = 0;
     if (VPinScreen.BackGlass.equals(dmdinfo.getOnScreen())) {
-      image = backglassService.getPreviewBackground(dmdinfo.getGameId(), false);
+      image = backglassService.getPreviewBackground(game, false);
       factorX = screenres.getBackglassWidth();
       factorY = screenres.getBackglassHeight();
     }
-    else if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
-      image = backglassService.getPreviewDmd(dmdinfo.getGameId());
+    else if (VPinScreen.Menu.equals(dmdinfo.getOnScreen())) {
+      image = backglassService.getPreviewDmd(game);
       factorX = screenres.getDmdWidth();
       factorY = screenres.getDmdHeight();
     }
@@ -322,8 +281,9 @@ public class DMDPositionService {
   // SAVE
 
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
-    DirectB2sScreenRes screenres = backglassService.getScreenRes(dmdinfo.getGameId(), false);
-    addDeviceOffsets(screenres);
+    Game game = gameService.getGame(dmdinfo.getGameId());
+    DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
+    screenService.addDeviceOffsets(screenres);
 
     // enforce aspect ratio
     dmdinfo.adjustAspectRatio();
@@ -338,7 +298,7 @@ public class DMDPositionService {
       dmdinfo.setX(dmdinfo.getX() + screenres.getBackglassMinX());
       dmdinfo.setY(dmdinfo.getY() + screenres.getBackglassMinY());
     }
-    if (VPinScreen.DMD.equals(dmdinfo.getOnScreen())) {
+    if (VPinScreen.Menu.equals(dmdinfo.getOnScreen())) {
       dmdinfo.setX(dmdinfo.getX() + screenres.getDmdMinX());
       dmdinfo.setY(dmdinfo.getY() + screenres.getDmdMinY());
     }
@@ -348,8 +308,6 @@ public class DMDPositionService {
     dmdinfo.setY(Math.round(dmdinfo.getY()));
     dmdinfo.setWidth(Math.round(dmdinfo.getWidth()));
     dmdinfo.setHeight(Math.round(dmdinfo.getHeight()));
-
-    Game game = gameService.getGame(dmdinfo.getGameId());
 
     boolean useExternalDmd = useExternalDmd(dmdinfo.getGameRom());
 
@@ -485,13 +443,13 @@ public class DMDPositionService {
   }
 
   public byte[] getPicture(int gameId, VPinScreen onScreen) {
+    Game game = gameService.getGame(gameId);
     if (VPinScreen.BackGlass.equals(onScreen)) {
-      return backglassService.getPreviewBackground(gameId, true);
+      return backglassService.getPreviewBackground(game, true);
     }
-    else if (VPinScreen.DMD.equals(onScreen)) {
-      DirectB2S directb2s = backglassService.getDirectB2S(gameId);
-      DirectB2STableSettings tableSettings = backglassService.getTableSettings(gameId);
-      String base64 = backglassService.getDmdBase64(directb2s.getEmulatorId(), directb2s.getFileName());
+    else if (VPinScreen.Menu.equals(onScreen)) {
+      DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
+      String base64 = backglassService.getDmdBase64(game.getEmulatorId(), game.getDirectB2SFilename());
 
       // use B2S DMD image if present and not hidden
       if (base64 != null && !(tableSettings != null && tableSettings.isHideB2SDMD())) {
@@ -499,7 +457,7 @@ public class DMDPositionService {
       }
       else {
         TableDetails tableDetails = frontendService.getTableDetails(gameId);
-        String keepDisplays = tableDetails!=null? tableDetails.getKeepDisplays(): null;
+        String keepDisplays = tableDetails != null ? tableDetails.getKeepDisplays() : null;
         if (StringUtils.isNotEmpty(keepDisplays)) {
           boolean keepFullDmd = VPinScreen.keepDisplaysContainsScreen(keepDisplays, VPinScreen.Menu);
           if (keepFullDmd) {
@@ -519,12 +477,13 @@ public class DMDPositionService {
       }
     }
     // else all other cases
-    return null; 
+    return null;
   }
 
   /**
    * Extracts a frame from a video file.
    * ffmpeg -i vido.mp4 -ss 00:00:05 -vframes 1 frame_out.jpg
+   *
    * @param file the video file
    */
   private byte[] extractFrame(File file) {

@@ -6,10 +6,11 @@ import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.WaitOverlay;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.beans.binding.Bindings;
@@ -53,10 +54,13 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   @FXML
   protected Label labelCount;
 
+
   private String name;
   private String names;
 
   protected TablesController tablesController;
+
+  protected BaseSideBarController<T> sideBarController;
 
   protected ObservableList<M> models = FXCollections.observableArrayList();
 
@@ -100,6 +104,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+  }
+
+  public void setSideBarController(BaseSideBarController<T> sideBarController) {
+    this.sideBarController = sideBarController;
   }
 
   public BaseTableSettings getTableSettings() {
@@ -289,21 +297,21 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public void reloadItem(T bean) {
     if (bean != null) {
       try {
-        M model = getModel(bean);
+        final M model = getModel(bean);
         if (model != null) {
           model.setBean(bean);
-          model.reload();
-
-          // refresh views too if the game is selected
-          T selected = getSelection();
-          if (selected != null && model.sameBean(selected)) {
-            refreshView(model.getBean());
-          }
+          model.reload(() -> {
+            // refresh views too if the game is selected
+            T selected = getSelection();
+            if (selected != null && model.sameBean(selected)) {
+              refreshView(model);
+            }
+          });
         }
         else {
-          model = toModel(bean);
-          if (model != null) {
-            models.add(0, model);
+          M newModel = toModel(bean);
+          if (newModel != null) {
+            models.add(0, newModel);
           }
         }
         // force refresh the view for elements not observed by the table
@@ -332,7 +340,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   /**
    * Refresh the sidebar view
    */
-  protected void refreshView(T bean) {
+  protected void refreshView(M model) {
   }
 
   //----------------------
@@ -343,7 +351,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   //----------------------
 
-  protected void setItems(List<T> data) {
+  protected void setItems(List<? extends T> data) {
     this.models = FXCollections.observableArrayList();
     for (T bean : data) {
       models.add(toModel(bean));
@@ -505,7 +513,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       if (item != null) {
         UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
-        setGraphic(playlistIcon);
+        Tooltip tooltip = TableOverviewController.createPlaylistTooltip(item, playlistIcon);
+
+        setGraphic(playlistIcon.getGraphic());
 
         setText(" " + item.toString());
       }
@@ -514,5 +524,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public GameEmulatorRepresentation getEmulatorSelection() {
     return null;
+  }
+
+  public TableView<M> getTableView() {
+    return tableView;
   }
 }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;

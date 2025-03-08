@@ -7,6 +7,7 @@ public enum EmulatorType {
   ZenFX(null), ZenFX2("pxp"), ZenFX3("pxp"), PinballM(null),
   Zaccaria(null),
   PinballArcade(null),
+  MAME(null),
   OTHER(null);
 
   private String extension;
@@ -29,6 +30,10 @@ public enum EmulatorType {
 
   public boolean isFxEmulator() {
     return ZenFX.equals(this) || ZenFX2.equals(this) || ZenFX3.equals(this) || PinballM.equals(this);
+  }
+
+  public boolean isMameEmulator() {
+    return MAME.equals(this);
   }
 
   public String shortName() {
@@ -65,6 +70,9 @@ public enum EmulatorType {
     }
     else if (emu.startsWith("pinballarcade")) {
       return PinballArcade;
+    }
+    else if (emu.contains("mame")) {
+      return MAME;
     }
     else {
       return null;

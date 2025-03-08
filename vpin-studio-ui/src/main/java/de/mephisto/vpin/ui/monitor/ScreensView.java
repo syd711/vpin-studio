@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.monitor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.ui.monitor.panels.ScreenPanelController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,9 +28,9 @@ public class ScreensView implements IMonitoringView {
 
   public ScreensView(Stage stage, CabMonitorController recorderController, ScrollPane scrollPane) {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-    List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
+    List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
     flowPane = new FlowPane();
-    for (RecordingScreen recordingScreen : recordingScreens) {
+    for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         FXMLLoader loader = new FXMLLoader(ScreenPanelController.class.getResource("screen-monitor-panel.fxml"));
         Parent panelRoot = loader.load();

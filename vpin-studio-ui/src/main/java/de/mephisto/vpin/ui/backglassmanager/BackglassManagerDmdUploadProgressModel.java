@@ -9,20 +9,21 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 
 public class BackglassManagerDmdUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerDmdUploadProgressModel.class);
 
-  private DirectB2S directb2S;
+  private int emulatorId;
+  private String fileName;
 
   private final Iterator<File> iterator;
 
-  public BackglassManagerDmdUploadProgressModel(String title, DirectB2S directb2S, File file) {
+  public BackglassManagerDmdUploadProgressModel(String title, int emulatorId, String fileName, File file) {
     super(title);
-    this.directb2S = directb2S;
+    this.emulatorId = emulatorId;
+    this.fileName = fileName;
     this.iterator = Arrays.asList(file).iterator();
   }
 
@@ -62,9 +63,9 @@ public class BackglassManagerDmdUploadProgressModel extends ProgressModel<File> 
   public void processNext(ProgressResultModel progressResultModel, File f) {
     try {
       if (f != null) {
-        client.getBackglassServiceClient().uploadDMDImage(directb2S, f);
+        client.getBackglassServiceClient().uploadDMDImage(emulatorId, fileName, f);
       } else {
-        client.getBackglassServiceClient().removeDMDImage(directb2S);
+        client.getBackglassServiceClient().removeDMDImage(emulatorId, fileName);
       }
     } 
     catch (Exception e) {

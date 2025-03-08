@@ -70,6 +70,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private ComboBox<String> mappingVpsVersionIdCombo;
 
   @FXML
+  private ComboBox<String> patchVersionCombo;
+
+  @FXML
   private VBox popperDataMappingFields;
 
   @FXML
@@ -154,6 +157,15 @@ public class ServerSettingsPreferencesController implements Initializable {
     mappingVpsVersionIdCombo.setValue(serverSettings.getMappingVpsTableVersionId());
     mappingVpsVersionIdCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       serverSettings.setMappingVpsTableVersionId(newValue);
+      PreferencesController.markDirty(PreferenceType.serverSettings);
+      client.getPreferenceService().setJsonPreference(serverSettings);
+    });
+
+    List<String> patchVersionFields = Arrays.asList(null, "WEBGameID", "CUSTOM2", "CUSTOM3", "CUSTOM4", "CUSTOM5");
+    patchVersionCombo.setItems(FXCollections.observableList(patchVersionFields));
+    patchVersionCombo.setValue(serverSettings.getMappingPatchVersion());
+    patchVersionCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      serverSettings.setMappingPatchVersion(newValue);
       PreferencesController.markDirty(PreferenceType.serverSettings);
       client.getPreferenceService().setJsonPreference(serverSettings);
     });

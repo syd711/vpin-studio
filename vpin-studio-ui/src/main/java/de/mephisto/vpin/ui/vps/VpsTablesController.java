@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
@@ -14,16 +15,20 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Paint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +53,9 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
   @FXML
   TableColumn<VpsTableModel, VpsTableModel> nameColumn;
+
+  @FXML
+  TableColumn<VpsTableModel, VpsTableModel> commentColumn;
 
   @FXML
   TableColumn<VpsTableModel, VpsTableModel> versionsColumn;
@@ -216,7 +224,6 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("table", "tables", new VpsTablesColumnSorter(this));
-
     tableView.setPlaceholder(new Label("The list of VPS tables is shown here."));
 
     super.loadFilterPanel("scene-vps-tables-filter.fxml");
@@ -232,7 +239,33 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
-      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), model.getUpdates(), null) : null;
+      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), false, model.getUpdates(), null) : null;
+    });
+
+    BaseLoadingColumn.configureLoadingColumn(commentColumn, "Loading...", (value, model) -> {
+      String comment = value.getComment();
+      if (!StringUtils.isEmpty(comment)) {
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        Label label = new Label();
+        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+        label.setTooltip(new Tooltip(comment));
+        label.setGraphic(icon);
+
+        if (comment.toLowerCase().contains("//error")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
+        }
+        else if (comment.toLowerCase().contains("//todo")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
+        }
+        else if (comment.toLowerCase().contains("//outdated")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+        }
+
+        hBox.getChildren().add(label);
+        return hBox;
+      }
+      return new Label();
     });
 
     BaseLoadingColumn.configureColumn(versionsColumn, (value, model) -> {
@@ -310,6 +343,18 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
     refreshModel(selection);
+  }
+
+  @Override
+  public void vpsTableChanged(@NotNull String vpsTableId) {
+    Platform.runLater(() -> {
+      VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
+      Optional<VpsTableModel> first = tableView.getItems().stream().filter(i -> i.getVpsTable().getId().equals(tableById.getId())).findFirst();
+      if (first.isPresent()) {
+        first.get().setBean(tableById);
+        tableView.refresh();
+      }
+    });
   }
 
   protected void refreshModel(@Nullable VpsTableModel newSelection) {

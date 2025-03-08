@@ -91,6 +91,15 @@ public class PinVolService implements InitializingBean, FileChangeListener {
     }
   }
 
+
+  private void setInitialMute() {
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    if (serverSettings.isInitialMute()) {
+      NirCmd.muteSystem(true);
+      LOG.info("Applied initial system volume mute.");
+    }
+  }
+
   public boolean setSystemVolume() {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     if (serverSettings.getVolume() > 0) {
@@ -326,6 +335,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   @Override
   public void afterPropertiesSet() throws Exception {
     setSystemVolume();
+    setInitialMute();
     this.enabled = getPinVolAutoStart();
     if (enabled) {
       startPinVol();

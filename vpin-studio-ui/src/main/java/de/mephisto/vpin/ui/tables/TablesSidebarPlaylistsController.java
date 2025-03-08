@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
@@ -198,9 +198,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
         });
 
         Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
+        Tooltip playlistTooltip = TableOverviewController.createPlaylistTooltip(playlist, playlistIcon);
+        playlistIcon.setTooltip(playlistTooltip);
         if (frontendType.supportPlaylistsCrud() && isEditablePlaylist(playlist)) {
           Button plyButton = new Button();
           plyButton.setGraphic(playlistIcon.getGraphic());
+          plyButton.setTooltip(playlistTooltip);
           plyButton.getStyleClass().add("ghost-button-tiny");
           plyButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override

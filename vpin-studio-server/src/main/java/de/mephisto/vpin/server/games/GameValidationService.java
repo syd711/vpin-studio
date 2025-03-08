@@ -5,12 +5,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
-import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
+import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -89,7 +91,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPX_NOT_EXISTS));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_VPX_NOT_EXISTS));
         if (findFirst) {
           return result;
         }
@@ -98,7 +100,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_ROM));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_ROM));
         if (findFirst) {
           return result;
         }
@@ -107,7 +109,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_ROM_INVALID)) {
       if (!StringUtils.isEmpty(game.getRom()) && !mameService.isValidRom(game.getRom())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_INVALID));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_INVALID));
         if (findFirst) {
           return result;
         }
@@ -116,7 +118,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
       if (!game.isRomExists() && game.isRomRequired()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
         if (findFirst) {
           return result;
         }
@@ -125,7 +127,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_VR_DISABLED)) {
       if (game.isVrRoomSupport() && !game.isVrRoomEnabled()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VR_DISABLED));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_VR_DISABLED));
         if (findFirst) {
           return result;
         }
@@ -134,14 +136,14 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (game.getDirectB2SPath() == null && game.getPupPackPath() == null) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {
           return result;
         }
       }
 
       if (game.getDirectB2SPath() == null && game.getPupPack() != null && pupPacksService.isPupPackDisabled(game)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED));
         if (findFirst) {
           return result;
         }
@@ -150,7 +152,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (Features.SCREEN_VALIDATOR && isValidationEnabled(game, CODE_SCREEN_SIZE_ISSUE)) {
       //TODO add impl
-      result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCREEN_SIZE_ISSUE));
+      result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCREEN_SIZE_ISSUE));
     }
 
     //screen assets are validated for all emulators
@@ -161,7 +163,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
       if (game.getPupPackPath() != null && !game.getPupPack().getMissingResources().isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
         if (findFirst) {
           return result;
         }
@@ -170,7 +172,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
         if (findFirst) {
           return result;
         }
@@ -209,7 +211,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         File romFile = game.getRomFile();
         if (romFile != null && romFile.exists()) {
           if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
-            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
+            result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
             if (findFirst) {
               return result;
             }
@@ -227,7 +229,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             if (otherGame != null) {
               //only complain if it is another table or has no VPS mapping
               if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {
-                result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+                result.add(ValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
                 if (findFirst) {
                   return result;
                 }
@@ -243,7 +245,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private @NonNull List<ValidationState> validateScreenAssets(@NonNull Game game, boolean findFirst, List<ValidationState> result) {
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
       if (!validScreenAssets(game, VPinScreen.Audio)) {
-        result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
+        result.add(ValidationStateFactory.create(CODE_NO_AUDIO));
         if (findFirst) {
           return result;
         }
@@ -252,7 +254,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
       if (!validScreenAssets(game, VPinScreen.AudioLaunch)) {
-        result.add(GameValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH));
+        result.add(ValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH));
         if (findFirst) {
           return result;
         }
@@ -261,7 +263,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
       if (!validScreenAssets(game, VPinScreen.Menu)) {
-        result.add(GameValidationStateFactory.create(CODE_NO_APRON));
+        result.add(ValidationStateFactory.create(CODE_NO_APRON));
         if (findFirst) {
           return result;
         }
@@ -270,7 +272,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_INFO)) {
       if (!validScreenAssets(game, VPinScreen.GameInfo)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_INFO));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_INFO));
         if (findFirst) {
           return result;
         }
@@ -279,7 +281,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_HELP)) {
       if (!validScreenAssets(game, VPinScreen.GameHelp)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_HELP));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_HELP));
         if (findFirst) {
           return result;
         }
@@ -288,7 +290,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_TOPPER)) {
       if (!validScreenAssets(game, VPinScreen.Topper)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_TOPPER));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_TOPPER));
         if (findFirst) {
           return result;
         }
@@ -297,7 +299,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_BACKGLASS)) {
       if (!validScreenAssets(game, VPinScreen.BackGlass)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_BACKGLASS));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_BACKGLASS));
         if (findFirst) {
           return result;
         }
@@ -306,7 +308,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_DMD)) {
       if (!validScreenAssets(game, VPinScreen.DMD)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DMD));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMD));
         if (findFirst) {
           return result;
         }
@@ -315,7 +317,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_PLAYFIELD)) {
       if (!validScreenAssets(game, VPinScreen.PlayField)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_PLAYFIELD));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_PLAYFIELD));
         if (findFirst) {
           return result;
         }
@@ -324,7 +326,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
       if (!validScreenAssets(game, VPinScreen.PlayField)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
         if (findFirst) {
           return result;
         }
@@ -333,7 +335,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_OTHER2)) {
       if (!validScreenAssets(game, VPinScreen.Other2)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_OTHER2));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_OTHER2));
         if (findFirst) {
           return result;
         }
@@ -342,7 +344,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_WHEEL_IMAGE)) {
       if (!validScreenAssets(game, VPinScreen.Wheel)) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
         if (findFirst) {
           return result;
         }
@@ -392,13 +394,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       if (gameOptions.isExistInRegistry()) {
         //no in registry, so check against defaults
         if (!gameOptions.isForceStereo()) {
-          result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
+          result.add(ValidationStateFactory.create(CODE_FORCE_STEREO));
         }
       }
       else {
         //no in registry, so check against defaults
         if (!options.isForceStereo()) {
-          result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
+          result.add(ValidationStateFactory.create(CODE_FORCE_STEREO));
         }
       }
     }
@@ -426,15 +428,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
       if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
       }
 
       if (!dmdextexe.exists()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
       }
 
       if (!dmdDeviceIni.exists()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
       }
     }
 
@@ -445,7 +447,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 //            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
 //          }
           if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
-            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
+            result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
           }
         }
         break;
@@ -453,7 +455,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       case serum: {
         String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
         break;
       }
@@ -466,19 +468,19 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       MameOptions gameOptions = mameService.getOptions(game.getRom());
       if (gameOptions.isExistInRegistry()) {
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
         }
         if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !gameOptions.isUseExternalDmd()) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
         }
       }
       else {
         //no in registry, so check against defaults
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
         }
         if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !options.isUseExternalDmd()) {
-          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
         }
       }
     }
@@ -489,13 +491,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
       if (game.isAltSoundAvailable() && altSoundService.getAltSoundMode(game) <= 0) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
       }
     }
 
     if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
       if (game.isAltSoundAvailable() && altSoundService.getAltSound(game).isMissingAudioFiles()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
       }
     }
     return result;
@@ -505,13 +507,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
       if (game.getPupPack() != null && !game.getPupPack().getMissingResources().isEmpty()) {
-        ValidationState validationState = GameValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
+        ValidationState validationState = ValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
         result.add(validationState);
       }
     }
 
     if (game.getDirectB2SPath() == null && game.getPupPack() != null && pupPacksService.isPupPackDisabled(game)) {
-      ValidationState validationState = GameValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
+      ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
       result.add(validationState);
     }
     return result;
@@ -585,7 +587,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return false;
   }
 
-  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails) {
+  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails, FrontendType frontendType, ServerSettings serverSettings) {
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
 
@@ -593,7 +595,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
-    String rom = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomName() : null, gameDetails.getRomName());
+    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
 
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
@@ -602,8 +604,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       rom = originalRom;
     }
 
-    String tableName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomAlt() : null, gameDetails.getTableName());
-    String hsName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getHsFilename() : null, gameDetails.getHsFileName());
+    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails, frontendType);
+    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings, frontendType);
 
     //the highscore file was found
     if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {

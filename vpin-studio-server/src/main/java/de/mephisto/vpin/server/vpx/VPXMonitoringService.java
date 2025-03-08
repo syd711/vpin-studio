@@ -4,8 +4,9 @@ import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -36,7 +37,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   private GameService gameService;
 
   @Autowired
-  private FrontendService frontendService;
+  private EmulatorService emulatorService;
 
   @Autowired
   private FrontendStatusService frontendStatusService;
@@ -54,7 +55,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       }
       Thread.currentThread().setName("VPX Monitor Thread");
 
-      List<GameEmulator> emulators = frontendService.getGameEmulators();
+      List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
 
       List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
       boolean playerRunning = windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));

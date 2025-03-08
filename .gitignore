@@ -74,6 +74,7 @@ resources/media-cropped/
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
 /resources/component-archives/**
+/resources/screenshots/**
 /resources/directoutputconfig.zip
 /resources/VPReg/*
 /resources/vpa2/*

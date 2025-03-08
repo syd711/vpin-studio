@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import java.util.List;
 import java.util.Objects;
 
 public class FrontendPlayerDisplay {
@@ -16,6 +17,24 @@ public class FrontendPlayerDisplay {
    * TODO check how much this is redundant with rotation=270
    */
   private boolean inverted;
+
+  public FrontendPlayerDisplay() {
+  }
+  public FrontendPlayerDisplay(VPinScreen screen) {
+    setName(screen.name());
+    setScreen(screen);
+  }
+
+  public static FrontendPlayerDisplay valueOfScreen(List<FrontendPlayerDisplay> displays, VPinScreen screen) {
+    if (displays != null) {
+      for (FrontendPlayerDisplay display : displays) {
+        if (display.getScreen() != null && display.getScreen().equals(screen)) {
+          return display;
+        }
+      }
+    }
+    return null;
+  }
 
   public int getMonitor() {
     return monitor;

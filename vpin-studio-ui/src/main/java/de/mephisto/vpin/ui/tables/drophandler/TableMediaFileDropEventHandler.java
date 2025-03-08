@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
@@ -54,7 +54,7 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
     List<File> files = event.getDragboard().getFiles();
     List<File> filtered = files.stream().filter(f -> {
       String suffix = FilenameUtils.getExtension(f.getName());
-      return suffixes.contains(suffix);
+      return suffixes.contains(suffix.toLowerCase());
     }).collect(Collectors.toList());
 
     if (filtered.isEmpty()) {

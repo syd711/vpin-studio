@@ -1,283 +1,46 @@
-## Release Notes 3.12.11
-
-## Critical VPin Mania Update 
-
-Unfortunately I had to reset the VPin Mania database. This was required because of a critical error in the unique id generation for the registration (which wasn't so unique in the end).
-
-**What data is lost?**
-
-All highscores, accounts, tournaments, tournament highscores and friend settings have been deleted. 
-
-**What data is kept?**
-
-The deny lists for highscores are kept. Unfortunately, the information of the editor who submitted the entry is lost too, but I can restore these manually later.
-
-**Can I restore my data?**
-
-**Almost all of it, yes.** After updating, just press the "Friends" button or the VPin Mania registration button the preferences to re-register your cabinet.
-The updated registration process lets you automatically register your players and will synchronize all your highscores too.
-This will restore most of the data.
-**Unfortunately, existing tournament data and linked friends data is lost forever, and you need to set up these again.**
-
-**...but...WHY? Give me the details!**
-
-The idea of the VPin Mania was to keep the registration simple and use a unique system id (instead of any personal data like email and password) to identify a cabinet (not the user).
-I have read different system parameters for that, including the system's processor id. I wasn't aware that this id is not unique.
-As a result, players have been automatically restored with data from other cabinets. Since I can't identify which accounts are affected by this problem, I've decided to reset all, even though I'll loose some users.
-But it was required to continue the feature development there.
-
----
-
-## Release Notes 3.12.10
+## Release Notes 3.13.0
 
 ## Changes
 
-- **Tables / ALT Sound**: Fixed error during loading of ALT sound bundles ...again.
-- **macOS Updates**: Fixed setting of app version for future updates.
+- **Tables / Table Overview**: Added new column **Rating**. You can directly rate the game inside the column without opening the data manager.
 
----
-
-## Release Notes 3.12.9
-
-## Changes
-
-- **Tables / ALT Sound**: Fixed error during loading of ALT sound bundles, caused by previous lazy-loading optimizations.
-- **PinVOL Integration**: Fixed reading/writing of the **PinVolTables.ini** file, which may have caused duplicated entries.
-- **VPin Mania**: Added automatic player restoring when you re-install VPin Studio and your cabinet was already registered.
-- **VPin Mania**: The registration has been re-implemented so that you can immediately register your players and synchronize your highscores too.  
-
-
----
-
-## Release Notes 3.12.8
-
-## Changes
-
-- **MacOS Support**: Fixed additional path problems for the updater.
-- **Pause Menu**: Force focus improvements for web browser when playing tutorial videos.
-- **Tables / Media Recorder**: Fixed resizing issues under macOS (hopefully).
-- **Linux Support**: Fixed installation script.
-- **Linux Support**: Fixed client updates (you need to update manually once again for this, see https://github.com/syd711/vpin-studio/wiki#updates).
-
----
-
-## Release Notes 3.12.7
-
-## Changes
-
-- **MacOS Support**: Fixed various issues for editing .vbs files and saving local UI settings.
-- **Tables / Asset Manager**: Fixed search input field so that the search is triggered on enter pressed again.
-- **Tables / Table Data Manager**: Improved error handling.
-
----
-
-## Release Notes 3.12.6
-
-## Changes
-
-- **MacOS Support**: The VPin Studio finally supports client installers for **x64 and arm**. Big shoutout to @gonzonia here!
-- **VPin Studio Server**: Added updating of launch and exit calls for VPX tables in PinballY.
-- **Tables / Media Preview**: Fixed "Other2" screen preview.
-- **Tables / Asset Manager**: Dropping multiple files on the preview screens is now allowed (it was only 1x before).
-- **Tables / Asset Manager**: Improved empty texts depending on the search state.
-- **Tables / Table Data Manager**: Fixed issue that the dialog did not open when used from remote (hopefully).
-
----
-
-## Release Notes 3.12.5
-
-## Changes
-
-- **Visual Pinball Backup Manager (VPBM)**: Updated to the newest version 3.5 (used for fresh installations).
-- **Visual Pinball Backup Manager (VPBM) / Table Backups**: Removed the backup view from the Studio client and from the server. This way the server has no .net dependency anymore. VPBM is still available, but Studio does not intermingle with it's configuration anymore.
-- **Table Views / Persistent Columns**: You can change the width and order (drag and drop) of columns and this state is saved now.
-- **VPin Studio Client**: New pincab avatar used in client.
-- **VPin Studio Client/Server**: Added possibility to change the default port from 8098 to another one. Consult the wiki help articles for more details.
-- **VPin Studio Server**: Fixed update of start/exit curl calls in the emulator scripts which may have failed because of invalid SQL escaping.
-- **VPin Studio Server**: Possible fix for the connection issues.
-- **DMD Position Tool**: Support of full video for positioning from frontend when frontend menu screen is kept displayed
-- **Server Performance Optimizations**: It is hard to put the results here in numbers, so they may vary depending on your machine. So here is what happened:
-  - Some initialization processes like the lookup for resetted nvrams are executed asynchronous now, so that the server is faster available.  
-  - PUP pack scanning: The media detection has been simplified, so the initial detection time is significantly faster.
-  - ALT Sound scanning: Only if the validator is active, all ALT sound packages are precached. Otherwise they will be lazy loaded when opened in the "ALT Sound" section. 
-
----
-
-## Release Notes 3.12.4
-
-## Changes
-
-- **Installation**: Fixed **critical initial table scan bug** which sometimes corrupted the database so that the whole installation broke. For users where no tables where detected at all: just delete all files in the installation folder and restart the installation using the full installer .exe file.  
-- **Highscore Resets**: Switched the default from 99 to 0. These values are only used when the highscore has been reset through the "Delete Table" dialog. 
-- **Highscore Displays**: use client default thousands separator eveywhere when displaying scores, dashboard and player badges were not rendered properly 
-- **VPin Studio Server**: Improved launch and exit curl calls. The curl call is replaced now with the additional parameter **emu** which contains additional information about the game emulator used, depending on the frontend you are using. This way, you can share your tables folder between different VPX emulators and the correct emulator is still detected corrected. The parameter is optional, so if the automatic update of the **curl** call fails for some reason, the old format is still valid. 
-- **Highscore Settings**: Removed configuration option for highscore titles, e.g. "GRAND CHAMPION". These values are now part of the internal scoring database so that the user never has to deal with this kind of stuff.
-- **Highscore Parsing**: Fixed highscores for tables **Defender, Black Pyramid and Catacomb**.
-- **Highscore Parsing**: Fixed encoding problems when displaying highscore values with number separators. 
-- **Tables / Playlists**: Renamed **Local Favorites** to **Playlist Favorites**.
-- **Tables / PinVOL Settings**: The user interface for the PinVOL settings used the SSF DB limit value now. You can't configure this via Studio yet and have to configure it once via the PinVOL UI.
-- **PinballX Frontend**: fixed zero byte download by using FTP passive mode, then try active mode if failure
-- **System Manager**: Fixed **Backglass Server** update detection.
-
----
-
-## Release Notes 3.12.3
-
-## Changes
-
-- **Tables / Asset Manager**: **Disabled auto-search for the asset manager and PinUP Popper**. It this was causing too much traffic. You have to hit "Search" manually from now on.
-- **Tables / Backglasses**:  Support Alias Mapping for DMD Positioning.
-- **VPin Mania / Online Status**: Again, improved check to set the online status back to "offline"/"online".
-- **Tables / Highscores**: Added button to open the table on VPin Mania.
-- **Tables / Locale Settings:** Removed the hard-coded "English" locale from the VPin Studio client. I don't why I've set this once, but depending on the country, the dot is shown as number separator again.
-- **Competitions / iScored**: Added missing highscore reset for iScored subscriptions.
-- **Tables / Media Recorder**: Added information how many videos have actually been recorded to the status and summary messages.
-- **Pause Menu**: Fixed issue that the pause menu did not hide on table exit.
-- **Pause Menu / Tutorial Videos**: Switched from **Chrome** to **Edge**. By default, **Microsoft Edge** will now be used for the tutorial playback via YouTube. This way, users don't have to install additional software.
-- **Tables / Validations**: Switched back to a fix height for the validation error box to avoid accidental double-clicking the wrong table (avoids the table jumping when switching between valid and invalid tables).
-- **Tables / Table Data Manager**: Switched the order of **Auto-Naming** and **VPS Entry** panels on the first tab. The renaming panel belongs closer to the actual fields it changes.
-- **Tables / Launch Actions** When a table launched via Studio (through VPX.exe selection), the game status is set now. This allows the pause menu and in-game recording to work without the need to launch a game through the frontend.
-- **Tables / PUP Pack Section**: Removed the PUP pack tweaker tool again as it is writing invalid configs for PinUP Popper.
-- **Tables / PinVOL Settings**: Improved persistence layer to read/write only valid values. These may got broken due to the initial errorneous integration here.
-- **Drop-In Folder**: The installation from the drop-in menu is now only allowed, when the table overview is selected. Otherwise, the table selection from the other views might lead to confusion.
-
----
-
-## Release Notes 3.12.2
-
-## Changes
-
-- **VPin Studio Server**: Fixed critical possible deadlock that would block all tables from being read. 
-- **Tables / Playlist Manager**: Improved error handling for media assets.
-- **VPin Mania / Deny Lists**: The initials are evaluated for denied score anymore, so scores are only filtered by their value. Although not relevant anymore, the initials of the denied score are still shown with a hint.
-- **VPin Mania / Online Status**: Added additional check to set the online status back to "offline".
-- **Tables / Uploads**: Added "wav" as additional audio format for music packs and alt sound.
-
----
-
-
-## Release Notes 3.12.1
-
-## Changes
-
-- **Tables / Playlist Manager**: Fixed several tooltips.
-- **Tables / Table Data Manager**: Fixed broken auto-renaming where the filename was duplicated.
-- **Tables / Playlist Manager**: Added missing ordering of playlist via drag and drop (PinUP Popper only).
-- **Tables / Pin Vol Settings**: Fixed mixed up front and rear exciter inputs.  
-- **VPin Mania / Invites**: Fixed some display issues with invites.
-
----
-
-## Release Notes 3.12.0
-
-## Changes
-
-- **Tables / Playlist Manager** Added playlist manager to create, edit and delete playlists. Note that the interaction concept differs from Popper here, as you can only remove tables from playlists there and use the table overview to add tables instead. This feature comes with a bunch of other changes regarding the playlist management.
-  - The playlist section in the table overview has been re-designed to support multi-selection. So you select multiple tables from the table overview and add them to a playlist.
-  - Added icons to indicate if a playlist is a curated one or a SQL playlist.
-  - Added "edit" button next to the playlist selector on the table overview toolbar.
-  - Predefined SQL templates support
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/rating.png" width="100" />
   
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/sql-templates.png" width="500" />
-  - Predefined curated playlists support
+- **Tables / VPS Tables**: Added "Comment" column and comment input field. You can enter personal comments there, e.g. to mark the table for downloading or that you tried that table but did not like it. This comment is solely stored for you and not submitted to the VP-Spreadsheet database.
   
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-templates.png" width="600" />
-    
-  - All playlist icon from the table overview and playlist sidebar section have been converted into a button which directly opens the playlist inside the management dialog.
-  - Added separate icon for "Pinball M".
-
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-manager.png" width="750" />
-
-- **Tables / Cabinet Monitor**: Added screenshot option. The action takes screenshots from the activates screens and writes a timestamp into them. The screens can be used for score submission of online competitions, like https://worldofvirtualpinball.com/.
-- **Tables / Media Recorder**: Added 180 degree rotation option for playfield recordings.
-- **Tables / PUP Packs**: Added [PupPackScreenTweaker.exe](https://github.com/matiou11/PupPackScreenTweaker) as additional PUP pack editor to the PUP pack section. Note that this editor is only available when working on the cabinet itself.
-- **Tables / Table Data Manager**: The auto-naming has no restrictions on VPX files that are located in sub-folders anymore. You can also rename them now.
-- **Tables / Backglasses**: Added button for DMD positioning.
-- **Tables / VPS Section**: This section supports multi-selection now. This way, you can bulk auto-match a selection of tables. 
-- **Tables / Highscores Section**: This section has undergone a revamp:
-  - Added support for multi-selection from the table overview.
-  - Added bulk operation support for highscore resets.
-  - Added bulk operation support for highscore backups.
-  - Re-implemented the highscore reset dialog which shows more information about the actual reset, e.g. if a resetted nvram is available.
-  - Added a **reset value** input option for the highscore reset dialog. Note that this input is not enabled for non-rom based tables.
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vps-comments.png" width="700" />
   
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/highscore-reset.png" width="600" />
+- **System Manager / Screens**: The **screens view is a new experimental view** and should show you all screens of your VPin, ordered by the different software components. It should help you to troubleshoot screen position issues. 
   
-- **Preferences / Controller Setup**: Added error message that is displayed when "SET FSMODE=EnableTrueFullScreen" is set in the emulator launch script, as this will avoid any VPin Studio overlays from getting the focus.
-- **Preferences / Backglass Server**: Add possibility to configure default visibility for grill, DMD and B2S DMD.
-- **Preferences / Backglass Server**: Add possibility to configure default Bring Forms settings.
-- **Tables / Overview:** Added new column "Comment". The colum is hidden by default, not sortable and placed as last table column. 
-- **Tables / Overview:** Added context menu item "Edit Comment". 
-- **Tables / Overview:** Added ROM alias name in square brackets to the ROMs column (if set). 
-- **Tables / Overview:** Added VPS, Playlist and Comments columns for FX emulators. 
-- **Tables / Filter:** Added filter option "No comment". 
-- **Tables / Overview:** De-cluttering:
-  - **Context Menu**: Removing less used entries.
-  - **Toolbar**: When switching into asset-view mode, unnecessary actions are hidden.
-- **Backglass Manager / DMD Positioning**:
-  - Added "Center Horizontally" button that will center the selection canvas in the frame.
-  - Added +Shift in mouse gesture to resize DMD while keeping its center at same location
-  - Added ability to move dmd with arrow keys and resize it with Ctrl / Alt / Shift
-  - Added 3:1 aspect ratio for large Sega DMDs and a smaller 8:1 ratio for Data East displays.
-  - Added margin field to configure margins added to the calculated auto position. Useful when the DMD zone has rounded corner
-  
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/dmd-positioner.png" width="700" />
-- **Backglass Manager / Bring Forms**: revisited the 'bring BG form' to support Form to Back option. Also modified in Tables sidebar
-- **Backglass Manager / Misc**
-  - Added "Open" button to show backglass in Explorer (only available when working on the cabinet).
-  - Added "Open VPS Table" button for backglasses that have a game and are linked via VPS.
-- **Hook Support**: The VPin Studio allows to execute customs scripts from any client. You can add these "hooks" by adding .exe or .bat files into the server installation directory **resources/hooks**. The list of files is picked up and added to the preferences split button of the Studio client and will be executed on click. See also: https://github.com/syd711/vpin-studio/wiki/Hooks
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/screens-manager.png" width="700" />
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/hooks.png" width="300" />
+- **System Manager / Emulators**: Added emulator management. The manager works for PinballX and PinUP Popper. For PinUP Popper you can add new emulators too. The view comes with some validators too which do some folder checks for the corresponding values.
 
-- **Pause Menu / iScored**: New highscore views have been added to the pause menu. If the active table is part of an iScored competition, the top-5 iScored dashboard scores are shown as a menu entry now.
-  
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/pause-menu/pause-menu-iscored.png" width="700" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/emulator-manager.png" width="700" />
 
-- **Pause Menu / VPin Mania**: If enabled, the top-5 VPin Mania scores are shown as a menu entry now.
-  
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/pause-menu/pause-menu-mania.png" width="700" />
+- **Tables / Overview**: Added preview for playlist icons. The actual icons are used for playlist now. The tooltips for those provide a detail view for the icon.
 
-- **Pause Menu / Preferences**: Both new views are configurable in the preferences. Note that the "Test" parameters for the dialog are also remembered now.
-  
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/pause-menu/pause-menu-scores.png" width="600" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlist-icon.png" width="400" />
 
-## VPin Mania Changes
+- **Tables / Patching**: Several improvements have been made:
+  - Added "Patch Version" field to the data manager for those who want to track this separately. **Note that by default, the value is written into the field "Custom5" for PinUP Popper users**. You can disable this in the server settings.
+  - Added "Patch Version" field to the patch upload dialog.
+  - Added "Patch Version" column to the table overview. Note that this column is **disabled by default** and must be enabled in the client settings.
+- **Preferences / Controller Setup**: Added input option to generate **screenshots**. This allows you to generate screenshots in-game. The feature might come in handy for competitions that require screenshot references. For more details see: https://github.com/syd711/vpin-studio/wiki/Taking-Screenshots
+- **Preferences / PinVOL / Volume**: Added option to mute the cabinet on startup.
+- **Preferences / Webhooks**: In order to support the development of https://github.com/mikedmor/ArcadeScore, we have added webhooks that can be used to integrate 3rd party systems into VPin Studio. A detailled documentation can be found here: https://github.com/syd711/vpin-studio/wiki/Webhooks. Note that this API is not final yet as the development is still in progress. We will give updates about this soon.
 
-- **Added Friends**: Added new "Friends" button on the top window toolbar.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/friends-btn.png" width="300" />
-
-  Connecting with friends (cabinets) allows you to see their online status and what table they are playing. Once you connected your cabinet with with your friends, you user players that have been added as **VPin Mania Players** are visible for your friends too, which allows to share highscores with then. You can adjust the visibility of the accounts in the "Friends" menu.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/friends.png" width="670" />
-
-- **Merged Highscore Cards**: Adding friends means you can merge the highscores from your friends accounts with yours. The highscore card template editors comes with a new preference for this. To highlight these, you and choose another color for these scores.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/merged-card.png" width="500" />
-
-- **VPin Mania Preferences**: The preferences section "VPin Mania Preferences" has been split into an "Account" and a "Tournaments" section to separate these two.
-- **Open in VPin Mania Action**: For more convenience you can open a VPin Mania table overview directly from
-    - the table overview using the corresponding context menu action.
-    - the highscore editor by clicking on the VPin Mania logo.
-- **Deny Lists**: A list of selected user has additional permissions to add and remove highscores to/from deny lists. These highscores are ignored for all rankings and for merged highscore cards. Default highscores that are posted on VPin Mania can be ignored this way. For more information, visit our Discord server linked in the preferences.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/deny-list.png" width="700" />
-
-- **Installed Indicator**: The recent scores and table overview item show an additional green icon if the table with the given VPS mapping is installed on the users cabinet. Note that only the table is checked, not the version.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/score-entry.png" width="350" />
-
+  <img src="https://raw.githubusercontent.com/mikedmor/ArcadeScore/refs/heads/main/app/static/images/icons/arcadescore_256.png" width="150" />
 
 ## Bugfixes
 
-- **Tables / PUP Packs**: The PUP pack data in the PUP pack section is now refreshed on table selection.
-- **Tables / Asset Preview Dialog**: The dialog has been re-implemented to ensure the shown media is properly scaled.
-- **Tables / Auto-Naming**: Fixed suggested file name suffixes for .fpt tables.
-- **Tables / Overview**: Default sorting by display name is not case-sensitive anymore.
-- **Backglass Manager / Grill visibility**: When grill visibility is standard, Backglass preview now takes in account the global grill visibility.
-- **Backglass Manager / support of sub-folders**: When table is in sub-folder, the backglass and associated res or screenres files were not properly got.
-- **Studio Exit Dialog**: Fixed issues when cancelling the exit dialog.
-- **Highscore Cards Editor**: Fixed various weight and posture issues with the font selection and the preview of it.
-- **Tables / Table Data Manager**: Fixed error during auto-applying values from VPS tables selection.
-- **VPS Mappings**: Added missing FX2 Support for table versions.
+- **Tables / Table Overview**: Added missing disabled colors on new columns (playlists, rating, ...).
+- **Tables / Invalid Score Filter**: Fixed "Invalid Score Configuration" filter that did show valid tables before.
+- **Tables / Table Asset Manager**: Fixed various issues for the Asset Manager when opened for playlists.
+- **System Manager**: Aligned layout of all "Open Folder" buttons.
+- **Players**: Fixed "Visible For Friends" checkbox that must be disabled, when the player is not registered.
+- **Tables / Uploads**: Fixed detection of bundles ALT color serum files.
+- **Tables / ALT Color**: Fixed "Open Folder" action.
+- **DOF / Config Sync**: Fixed DOF sync job that corrupted config files when DOF configuration is smaller than installed one.
+- **Media Recorder**: Changed ffmpeg preset from **fast** to **ultrafast** to avoid stuttering. This matches with the recording parameters of PinUP Popper.
+- **iScored**: Fixed iScored integration according to their new API.

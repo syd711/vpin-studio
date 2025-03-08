@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
@@ -24,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -74,10 +75,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private TableColumn<GameRepresentation, Label> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentation, Button> columnTemplate;
+  private TableColumn<GameRepresentation, Label> columnTemplate;
 
   @FXML
-  private TableColumn<GameRepresentation, String> columnStatus;
+  private TableColumn<GameRepresentation, Node> columnStatus;
 
   @FXML
   private MenuButton filterButton;
@@ -304,7 +305,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     filterButton.getStyleClass().remove("filter-button-selected");
-    if (emuIds.size() != client.getFrontendService().getVpxGameEmulators().size()) {
+    if (emuIds.size() != client.getEmulatorService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
     }
@@ -417,14 +418,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
-        return new SimpleObjectProperty(label);
+        return new SimpleObjectProperty<>(label);
       }
 
       FontIcon checkIcon = WidgetFactory.createCheckIcon();
       if (value.isCardDisabled()) {
         checkIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
       }
-      return new SimpleObjectProperty(checkIcon);
+      return new SimpleObjectProperty<>(checkIcon);
     });
 
     columnDisplayName.setCellValueFactory(cellData -> {
@@ -437,7 +438,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         label.setTooltip(new Tooltip("The card generation is disabled for this game."));
       }
 
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     columnTemplate.setCellValueFactory(cellData -> {
@@ -455,7 +456,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       Label label = new Label(templateName);
       label.getStyleClass().add("default-text");
       label.setTooltip(new Tooltip(templateName));
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
 
@@ -466,7 +467,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     tableView.setSortPolicy(new Callback<TableView<GameRepresentation>, Boolean>() {
       @Override
       public Boolean call(TableView<GameRepresentation> gameRepresentationTableView) {
-        GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+        //GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
           TableColumn<GameRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
           if (column.equals(columnDisplayName)) {
@@ -525,7 +526,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       tableView.setItems(data);
     });
 
-    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox(gameEmulator.getName());

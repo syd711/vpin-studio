@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -111,7 +112,8 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
       scoreLabel.setText("");
 
       if(t1 != null) {
-        scoreLabel.setText(t1.getRaw());
+        String raw = ScoreFormatUtil.formatRaw(t1.getRaw());
+        scoreLabel.setText(raw);
       }
       else {
         scoreLabel.setText("No score selected.");
