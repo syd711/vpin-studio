@@ -43,3 +43,4 @@
 - **Tables / ALT Color**: Fixed "Open Folder" action.
 - **DOF / Config Sync**: Fixed DOF sync job that corrupted config files when DOF configuration is smaller than installed one.
 - **Media Recorder**: Changed ffmpeg preset from **fast** to **ultrafast** to avoid stuttering. This matches with the recording parameters of PinUP Popper.
+- **iScored**: Fixed iScored integration according to their new API.

@@ -68,7 +68,7 @@ public class IScored {
       String baseUrl = getBaseURL(roomurl);
       Map<String, String> params = getBaseParams(roomurl);
 
-      URL gameRoomURL = composeURL(baseUrl, params, "/publicCommands.php?c=getRoomInfo");
+      URL gameRoomURL = composeURL(baseUrl, params, "/roomCommands.php?c=getRoomInfo");
       GameRoom gameRoom = new GameRoom();
       gameRoom.setUrl(url);
 
@@ -80,7 +80,7 @@ public class IScored {
         gameRoom.setSettings(gameRoomModel.getSettings());
         gameRoom.setName(gameRoomModel.getSettings().getRoomName());
 
-        URL gamesInfoURL = composeURL(baseUrl, params, "/publicCommands.php?c=getAllGames&roomID=" + gameRoomModel.getRoomID());
+        URL gamesInfoURL = composeURL(baseUrl, params, "/roomCommands.php?c=getAllGamesAndScores&roomID=" + gameRoomModel.getRoomID());
         if (gameRoom.getSettings().isApiReadingEnabled()) {
           LOG.info("READ API enabled, using API endpoint for game infos.");
           gamesInfoURL = composeURL(baseUrl, params, "/api/" + params.get("user"));
@@ -89,22 +89,13 @@ public class IScored {
         String gamesInfo = loadJson(gamesInfoURL);
         GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
 
-        URL gameScoresURL = composeURL(baseUrl, params, "/publicCommands.php?c=getScores2&roomID=" + gameRoomModel.getRoomID());
-        String scoresInfo = loadJson(gameScoresURL);
-        Score[] scores = objectMapper.readValue(scoresInfo, Score[].class);
-
         for (GameModel gameModel : games) {
           IScoredGame game = new IScoredGame();
           game.setId(gameModel.getGameID());
           game.setName(gameModel.getGameName());
           game.setTags(gameModel.getTags());
           game.setHidden(gameModel.getHidden());
-
-          for (Score score : scores) {
-            if (score.getGame().equals(String.valueOf(game.getId()))) {
-              game.getScores().add(score);
-            }
-          }
+          game.setScores(gameModel.getScores());
           gameRoom.getGames().add(game);
         }
 
@@ -243,7 +234,7 @@ public class IScored {
       String baseUrl = getBaseURL(roomurl);
       Map<String, String> params = getBaseParams(roomurl);
 
-      URL url = composeURL(baseUrl, params, "/publicCommands.php?c=addScore&name=" + name + "&game=" + game.getId() + "&score=" + highscore + "&wins=undefined&losses=undefined&roomID=" + gameRoom.getRoomID());
+      URL url = composeURL(baseUrl, params, "/roomCommands.php?c=addScore&name=" + name + "&game=" + game.getId() + "&score=" + highscore + "&wins=undefined&losses=undefined&roomID=" + gameRoom.getRoomID());
 
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("POST"); // PUT is another valid option
