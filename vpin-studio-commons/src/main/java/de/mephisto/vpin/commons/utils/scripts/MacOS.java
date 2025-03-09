@@ -126,6 +126,7 @@ private static final String LOG_PATH = System.getProperty("MAC_WRITE_PATH") + "L
       // Since we are always expecting the "current version" to be in those files, it won't ever find it,
       // so we need to update it if it's there
       ReplaceTextinFile(cfgfilePath, "3.12.8", newVersion);
+      ReplaceTextinFile(pListfilePath, "3.12.8", newVersion);
       ReplaceTextinFile(cfgfilePath, appVersion, newVersion);
       LOG.info("Mac Updater: Incremented app version from " + appVersion + " to " + newVersion + " in " + cfgfilePath);
       ReplaceTextinFile(pListfilePath, appVersion, newVersion);
