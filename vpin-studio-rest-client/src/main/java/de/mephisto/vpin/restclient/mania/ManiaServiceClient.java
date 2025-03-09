@@ -30,7 +30,7 @@ public class ManiaServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + "mania/register", registration, ManiaRegistration.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to save game: " + e.getMessage(), e);
+      LOG.error("Failed to register for VPin Mania: " + e.getMessage(), e);
       throw e;
     }
   }

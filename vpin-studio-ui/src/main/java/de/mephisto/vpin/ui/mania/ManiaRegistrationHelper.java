@@ -36,7 +36,9 @@ public class ManiaRegistrationHelper {
       try {
         ManiaRegistration register = client.getManiaService().register(registration);
         if (!StringUtils.isEmpty(register.getResult())) {
-          throw new Exception(register.getResult());
+          WidgetFactory.showAlert(Studio.stage, "Registration Failed", "The registration failed: " + register.getResult());
+          LOG.error("VPin Mania registration failed: {}", register.getResult());
+          return false;
         }
 
         Cabinet registeredCabinet = maniaClient.getCabinetClient().getCabinet();

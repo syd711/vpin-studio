@@ -49,14 +49,37 @@ public class SystemUtil {
     return RestClient.PORT;
   }
 
+  private static String getWindowsSystemId() {
+    try {
+      Process process = Runtime.getRuntime().exec("wmic csproduct get UUID");
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (!line.isEmpty() && !line.contains("UUID")) {
+          reader.close();
+          return line.trim();
+        }
+      }
+      reader.close();
+    }
+    catch (Exception e) {
+      //ignore
+    }
+    return null;
+  }
+
   private static String getSystemId() {
-    String macAddress = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
+    String firstSegment = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
+    if (StringUtils.isEmpty(firstSegment)) {
+      firstSegment = getWindowsSystemId();
+    }
     String driveId = getDriveId() != null ? getDriveId().trim() : "#";
     String boardId = getBoardSerialNumber() != null ? getBoardSerialNumber().trim() : "#";
-    String id = macAddress + "~" + driveId + "~" + boardId;
+    String id = firstSegment + "~" + driveId + "~" + boardId;
     if (id.length() > 100) {
       id = id.substring(0, 99);
     }
+
     return id;
   }
 
@@ -144,6 +167,6 @@ public class SystemUtil {
   }
 
   public static void main(String[] args) {
-    System.out.println(getSystemId());
+    System.out.println(getWindowsSystemId());
   }
 }
