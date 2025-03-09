@@ -1522,21 +1522,22 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @NotNull
   public static Tooltip createPlaylistTooltip(PlaylistRepresentation match, Label playlistIcon) {
-    FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMediaCached(match.getId());
-    FrontendMediaItemRepresentation mediaItem = medias.getDefaultMediaItem(VPinScreen.Wheel);
     Tooltip tooltip = new Tooltip(match.getName());
-    if (mediaItem != null) {
-      String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
-      InputStream in = client.getCachedUrlImage(url);
-      if (in != null) {
-        Image scaledWheel = new Image(in, 150, 150, false, true);
-        ImageView imageView = new ImageView(scaledWheel);
-        tooltip.setGraphic(imageView);
 
-        Image icon = new Image(client.getCachedUrlImage(url), 24, 24, false, true);
-        playlistIcon.setGraphic(new ImageView(icon));
-      }
-    }
+//    FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMediaCached(match.getId());
+//    FrontendMediaItemRepresentation mediaItem = medias.getDefaultMediaItem(VPinScreen.Wheel);
+//    if (mediaItem != null) {
+//      String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+//      InputStream in = client.getCachedUrlImage(url);
+//      if (in != null) {
+//        Image scaledWheel = new Image(in, 150, 150, false, false);
+//        ImageView imageView = new ImageView(scaledWheel);
+//        tooltip.setGraphic(imageView);
+//
+//        Image icon = new Image(client.getCachedUrlImage(url), 24, 24, false, true);
+//        playlistIcon.setGraphic(new ImageView(icon));
+//      }
+//    }
     playlistIcon.setTooltip(tooltip);
     return tooltip;
   }

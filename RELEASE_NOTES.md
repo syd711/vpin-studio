@@ -1,3 +1,11 @@
+## Release Notes 3.13.1
+
+## Changes
+
+- **Tables / Table Overview**: Disabled playlist icon previews again, because of a really bad rendering performance which blocks the whole table usage.
+
+---
+
 ## Release Notes 3.13.0
 
 ## Changes
