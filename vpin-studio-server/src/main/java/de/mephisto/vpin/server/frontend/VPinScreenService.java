@@ -103,7 +103,7 @@ public class VPinScreenService {
         int i = 0;
         for (MonitorInfo monitor : monitors) {
           if (!monitor.isPrimary() && !primaryFound) {
-            errors.add("Monitor " + (i + 1) + ", named " + monitor.getName() + " is left to the primary one, this is not supported in Popper");
+            errors.add("Monitor " + (i + 1) + ", named " + monitor.getFormattedName() + " is left to the primary one, this is not supported in Popper");
           }
           primaryFound |= monitor.isPrimary();
         }
@@ -112,16 +112,15 @@ public class VPinScreenService {
       MonitorInfo monitor = monitors.get(0);
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
-        if (monitor.getY() !=  second.getY()) {
-          errors.add("Monitor " + (i + 1) + ", named " + second.getName() + " is not aligned on top with first one");
+        if (monitor.getY() != second.getY()) {
+          errors.add("Monitor " + (i + 1) + ", named " + second.getFormattedName() + " is not aligned on top with first one");
         }
       }
     }
   }
 
   protected void checkDisplays(List<String> errors, List<FrontendPlayerDisplay> vpxDisplays,
-      List<FrontendPlayerDisplay> screenresDisplays, List<FrontendPlayerDisplay> frontendDisplays) {
-
+                               List<FrontendPlayerDisplay> screenresDisplays, List<FrontendPlayerDisplay> frontendDisplays) {
     String frontend = frontendService.getFrontendName();
 
     // VPX is master when defining playfield dimensions, so is the main point of comparison
@@ -134,14 +133,14 @@ public class VPinScreenService {
     compare(errors, VPinScreen.Menu, "FullDMD", screenresDisplays, "screenres.txt", frontendDisplays, frontend);
   }
 
-  private void compare(List<String> errors, VPinScreen screen, String name, 
+  private void compare(List<String> errors, VPinScreen screen, String name,
                        List<FrontendPlayerDisplay> displays1, String name1,
                        List<FrontendPlayerDisplay> displays2, String name2) {
     comparePositions(errors, screen, name, displays1, name1, displays2, name2);
     compareDimensions(errors, screen, name, displays1, name1, displays2, name2);
   }
 
-  private void comparePositions(List<String> errors, VPinScreen screen, String name, 
+  private void comparePositions(List<String> errors, VPinScreen screen, String name,
                                 List<FrontendPlayerDisplay> displays1, String name1,
                                 List<FrontendPlayerDisplay> displays2, String name2) {
 
@@ -159,7 +158,7 @@ public class VPinScreenService {
     }
   }
 
-  private void compareDimensions(List<String> errors, VPinScreen screen, String name, 
+  private void compareDimensions(List<String> errors, VPinScreen screen, String name,
                                  List<FrontendPlayerDisplay> displays1, String name1,
                                  List<FrontendPlayerDisplay> displays2, String name2) {
 
@@ -178,7 +177,6 @@ public class VPinScreenService {
   }
 
   public FrontendScreenSummary getScreenSummary() {
-
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
     FrontendScreenSummary summary = new FrontendScreenSummary();
@@ -201,7 +199,7 @@ public class VPinScreenService {
       MonitorInfo monitor = null;
       for (MonitorInfo m : monitors) {
         // match for VPinballX seems by id
-        if (m.getId() == display.getMonitor() || m.getName().endsWith(Integer.toString(display.getMonitor()))) {
+        if (m.getId() == display.getMonitorId() || m.getName().endsWith(String.valueOf(display.getMonitorId()))) {
           monitor = m;
         }
       }
@@ -222,7 +220,7 @@ public class VPinScreenService {
     return displays;
   }
 
-  
+
   //------------------------------------------------------ VPINBALLX.INI ---
 
   /**
@@ -255,33 +253,66 @@ public class VPinScreenService {
    * Height = 900
    */
   private void createVpxPlayfieldDisplay(Configuration vpxConfiguration, List<FrontendPlayerDisplay> players) {
-    FrontendPlayerDisplay player = new FrontendPlayerDisplay(VPinScreen.PlayField);
-    int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
-    player.setMonitor(monitor);
-    player.setRotation(safeGetInteger(vpxConfiguration, "Rotate", 0));
-    player.setInverted(true);
+    try {
+      FrontendPlayerDisplay player = new FrontendPlayerDisplay(VPinScreen.PlayField);
+      int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
+      player.setMonitor(monitor);
+      player.setRotation(safeGetInteger(vpxConfiguration, "Rotate", 0));
+      player.setInverted(true);
 
-    int fullscreened = safeGetInteger(vpxConfiguration, "FullScreen", 1);
-    if (fullscreened == 0) {
-      player.setX(safeGetInteger(vpxConfiguration, "WindowPosX", 0));
-      player.setY(safeGetInteger(vpxConfiguration, "WindowPosY", 0));
-      player.setWidth(safeGetInteger(vpxConfiguration, "Width", 0));
-      player.setHeight(safeGetInteger(vpxConfiguration, "Height", 0));
-    }
-    else {
-      player.setX(0);
-      player.setY(0);
-      player.setWidth(-1);
-      player.setHeight(-1);
-    }
-    LOG.info("Created vPinballX player display {}", player);
+      //VPX stores the monitor ids starting from 0
+      int windowsMonitorId = monitor + 1;
+      MonitorInfo monitorInfo = systemService.getMonitor(windowsMonitorId);
+      player.setMonitorId(monitorInfo.getId());
 
-    players.add(player);
+
+      int fullscreened = safeGetInteger(vpxConfiguration, "FullScreen", 1);
+      if (fullscreened == 0) {
+        player.setX(safeGetInteger(vpxConfiguration, "WindowPosX", 0));
+        player.setY(safeGetInteger(vpxConfiguration, "WindowPosY", 0));
+        player.setWidth(safeGetIntegerLargerNull(vpxConfiguration, "Width", monitorInfo.getWidth()));
+        player.setHeight(safeGetIntegerLargerNull(vpxConfiguration, "Height", monitorInfo.getHeight()));
+
+        //center window
+        if (player.getX() == 0 && player.getY() == 0) {
+          player.setX(monitorInfo.getWidth() / 2 - player.getWidth() / 2);
+          player.setY(monitorInfo.getHeight() / 2 - player.getHeight() / 2);
+        }
+      }
+      else {
+        player.setX(0);
+        player.setY(0);
+        player.setWidth(monitorInfo.getWidth());
+        player.setHeight(monitorInfo.getHeight());
+      }
+      LOG.info("Created vPinballX player display {}", player);
+
+      players.add(player);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to resolve VPX playfield display info: {}", e.getMessage(), e);
+    }
   }
 
   private int safeGetInteger(Configuration configuration, String key, int defaultValue) {
     String value = configuration.getString(key, null);
-    return StringUtils.isNotBlank(value) ? Integer.parseInt(value) : defaultValue;
+    String formattedValue = value != null ? value.replaceAll("\"", "") : null;
+    try {
+      return StringUtils.isNotBlank(formattedValue) ? Integer.parseInt(formattedValue) : defaultValue;
+    }
+    catch (NumberFormatException e) {
+      LOG.warn("Invalid number read from VPinballX.ini file. Unable to parse " + value + " to a valid integer number, assuming '" + defaultValue + "' instead.");
+    }
+    return defaultValue;
+  }
+
+
+  private int safeGetIntegerLargerNull(Configuration configuration, String key, int defaultValue) {
+    int i = safeGetInteger(configuration, key, defaultValue);
+    if (i > 0) {
+      return i;
+    }
+    return defaultValue;
   }
 
   /*

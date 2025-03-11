@@ -12,6 +12,10 @@ public class FrontendPlayerDisplay {
   private int width;
   private int height;
   private int rotation;
+
+  //only set when the position is not absolute
+  private int monitorId = -1;
+
   /**
    * For pinballX, playfield videos are inverted
    * TODO check how much this is redundant with rotation=270
@@ -20,6 +24,7 @@ public class FrontendPlayerDisplay {
 
   public FrontendPlayerDisplay() {
   }
+
   public FrontendPlayerDisplay(VPinScreen screen) {
     setName(screen.name());
     setScreen(screen);
@@ -34,6 +39,14 @@ public class FrontendPlayerDisplay {
       }
     }
     return null;
+  }
+
+  public int getMonitorId() {
+    return monitorId;
+  }
+
+  public void setMonitorId(int monitorId) {
+    this.monitorId = monitorId;
   }
 
   public int getMonitor() {

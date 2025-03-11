@@ -427,6 +427,16 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return monitors;
   }
 
+  public MonitorInfo getMonitor(int monitor) {
+    List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
+    for (MonitorInfo monitorInfo : monitors) {
+      if (monitorInfo.getId() == monitor) {
+        return monitorInfo;
+      }
+    }
+    return null;
+  }
+
   /**
    * Checks to see if a specific port is available.
    *

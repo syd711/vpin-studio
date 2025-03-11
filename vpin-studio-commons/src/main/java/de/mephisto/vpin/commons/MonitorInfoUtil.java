@@ -43,21 +43,24 @@ public class MonitorInfoUtil {
     }
   }
 
+  private static int index = 1;
+
   public static List<MonitorInfo> getMonitors() {
+    index = 1;
     List<MonitorInfo> monitors = new ArrayList<>();
     if (OSUtil.isWindows()) {
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
         @Override
         public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
-          MonitorInfo mon = enumerate(hMonitor);
-          mon.setId(monitors.size());
+          MonitorInfo mon = enumerate(hMonitor, index);
           monitors.add(mon);
+          index++;
           return 1;
         }
       }, new LPARAM(0));
     }
     else {
-      int index = 0;
+      int index = 1;
       GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
       for (GraphicsDevice gd : gds) {
         monitors.add(gdToMonitorInfo(gd, index));
@@ -70,7 +73,7 @@ public class MonitorInfoUtil {
     return monitors;
   }
 
-  private static MonitorInfo enumerate(HMONITOR hMonitor) {
+  private static MonitorInfo enumerate(HMONITOR hMonitor, int index) {
     MonitorInfo monitor = new MonitorInfo();
 
     MONITORINFOEX info = new MONITORINFOEX();
@@ -88,6 +91,17 @@ public class MonitorInfoUtil {
 
     String deviceName = new String(info.szDevice);
     monitor.setName(deviceName.trim());
+
+    int numericId = 0;
+    try {
+      String formattedName = monitor.getFormattedName();
+      String id = formattedName.substring(formattedName.length() - 1);
+      numericId = Integer.parseInt(id);
+    }
+    catch (NumberFormatException e) {
+      numericId = index;
+    }
+    monitor.setId(numericId);
     return monitor;
   }
 
@@ -99,7 +113,6 @@ public class MonitorInfoUtil {
     monitor.setY(bounds.y);
     monitor.setWidth(bounds.width);
     monitor.setHeight(bounds.height);
-    monitor.setId(index);
 
     boolean isPrimary = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice() == gd;
     monitor.setPrimary(isPrimary);
@@ -110,6 +123,17 @@ public class MonitorInfoUtil {
       deviceName = deviceName.replaceAll("\\\\", "").replaceAll("\\.", "");
     }
     monitor.setName(deviceName);
+
+    int numericId = 0;
+    try {
+      String id = deviceName.substring(deviceName.length() - 1);
+      numericId = Integer.parseInt(id);
+    }
+    catch (NumberFormatException e) {
+      numericId = index;
+    }
+    monitor.setId(numericId);
+
     return monitor;
   }
 

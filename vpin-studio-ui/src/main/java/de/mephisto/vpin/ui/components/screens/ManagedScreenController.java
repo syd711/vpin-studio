@@ -33,12 +33,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class ManagedScreenController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManagedScreenController.class);
-  public static final int OFFSET =410;
+  public static final int OFFSET = 410;
 
   private static final String COLOR_MONITOR = "#CCCCCC";
   private static final String COLOR_FRONTEND_SCREEN = "#9999FF";
   private static final String COLOR_SCREENRES_SCREEN = "#33FF33";
-  private static final String COLOR_VPX_SCREEN = "#66AA11";
+  private static final String COLOR_VPX_SCREEN = "#AA6611";
 
   @FXML
   private ScrollPane scrollPane;
@@ -164,7 +164,7 @@ public class ManagedScreenController implements Initializable {
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
     List<MonitorInfo> monitorInfos = systemSummary.getScreenInfos();
-    previewCanvas.getChildren().clear();
+    previewCanvas.getChildren().removeAll(previewCanvas.getChildren());
 
     double canvasMinX = Integer.MAX_VALUE, canvasMinY = Integer.MAX_VALUE;
     double canvasMaxX = Integer.MIN_VALUE, canvasMaxY = Integer.MIN_VALUE;
@@ -186,7 +186,13 @@ public class ManagedScreenController implements Initializable {
       double x = (monitorInfo.getX() - canvasMinX) * percentage * zoom;
       double y = (monitorInfo.getY() - canvasMinY) * percentage * zoom;
 
-      drawScreenCanvas(monitorInfo.toString(), (int) x, (int) y, (int) width, (int) height, COLOR_MONITOR, 36);
+      drawScreenCanvas("Monitor \"" + monitorInfo.getFormattedName() + "\"", (int) x, (int) y, (int) width, (int) height, COLOR_MONITOR, 36);
+      Text text = new Text(x + 36 - 12, y + 52, monitorInfo.getWidth() + "x" + monitorInfo.getHeight());
+      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 14);
+      text.setFont(defaultFont);
+      text.setStroke(Color.valueOf(COLOR_MONITOR));
+      text.setFill(Color.valueOf(COLOR_MONITOR));
+      previewCanvas.getChildren().add(text);
     }
 
     previewCanvas.setPrefWidth(canvasTotalWidth * percentage * zoom);
@@ -210,7 +216,7 @@ public class ManagedScreenController implements Initializable {
     if (relodData) {
       addErrors(screenSummary.getErrors(), validationError);
     }
-  
+
     previewCanvas.requestLayout();
     root.requestLayout();
   }
@@ -225,9 +231,9 @@ public class ManagedScreenController implements Initializable {
       validationError.setVisible(true);
     }
   }
-  
-  private void drawScreens(List<FrontendPlayerDisplay> frontendDisplays, double canvasMinX, double canvasMinY, double scalingPercentage, 
-      String color, int textYOffset, List<CheckBox> checkboxes) {
+
+  private void drawScreens(List<FrontendPlayerDisplay> frontendDisplays, double canvasMinX, double canvasMinY, double scalingPercentage,
+                           String color, int textYOffset, List<CheckBox> checkboxes) {
     for (FrontendPlayerDisplay frontendDisplay : frontendDisplays) {
       Optional<CheckBox> first = checkboxes.stream().filter(c -> c.getUserData().equals(frontendDisplay)).findFirst();
       if (first.isPresent() && !first.get().isSelected()) {
@@ -235,7 +241,7 @@ public class ManagedScreenController implements Initializable {
       }
 
       int x = (int) ((frontendDisplay.getX() - canvasMinX) * scalingPercentage * zoom);
-      int y = (int) ((frontendDisplay.getY() - canvasMinY)* scalingPercentage * zoom);
+      int y = (int) ((frontendDisplay.getY() - canvasMinY) * scalingPercentage * zoom);
       int w = (int) (frontendDisplay.getWidth() * scalingPercentage * zoom);
       int h = (int) (frontendDisplay.getHeight() * scalingPercentage * zoom);
 

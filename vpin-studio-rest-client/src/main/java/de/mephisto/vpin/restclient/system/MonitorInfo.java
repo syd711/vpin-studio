@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.system;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class MonitorInfo {
   private boolean portraitMode;
   private boolean primary;
@@ -9,6 +11,11 @@ public class MonitorInfo {
   private double x;
   private double y;
   private String name;
+
+  @JsonIgnore
+  public String getFormattedName() {
+    return String.valueOf(name).replaceAll("\\\\", "").replaceAll("\\.", "");
+  }
 
   public String getName() {
     return name;
@@ -77,9 +84,9 @@ public class MonitorInfo {
   @Override
   public String toString() {
     if (primary) {
-      return "Monitor " + (id+1) + " (primary) [" + getWidth() + "x" + getHeight() + "]";
+      return "Monitor " + (id + 1) + " (primary) [" + getWidth() + "x" + getHeight() + "]";
     }
-    return "Monitor " + (id+1) + " [" + getWidth() + "x" + getHeight() + "]";
+    return "Monitor " + (id + 1) + " [" + getWidth() + "x" + getHeight() + "]";
   }
 
   @Override
