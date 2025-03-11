@@ -1,3 +1,12 @@
+## Release Notes 3.13.2
+
+## Changes
+
+- **Tables / Media Recorder**: Fixed issues reading the resolutions from VisualPinball X which resulted in broken tabs for the media recorder and for the screens section in the system manager. 
+ 
+
+---
+
 ## Release Notes 3.13.1
 
 ## Changes

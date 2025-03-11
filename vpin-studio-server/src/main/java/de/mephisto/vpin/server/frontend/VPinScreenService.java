@@ -112,7 +112,7 @@ public class VPinScreenService {
       MonitorInfo monitor = monitors.get(0);
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
-        if (monitor.getY() !=  second.getY()) {
+        if (monitor.getY() != second.getY()) {
           errors.add("Monitor " + (i + 1) + ", named " + second.getName() + " is not aligned on top with first one");
         }
       }
@@ -120,7 +120,7 @@ public class VPinScreenService {
   }
 
   protected void checkDisplays(List<String> errors, List<FrontendPlayerDisplay> vpxDisplays,
-      List<FrontendPlayerDisplay> screenresDisplays, List<FrontendPlayerDisplay> frontendDisplays) {
+                               List<FrontendPlayerDisplay> screenresDisplays, List<FrontendPlayerDisplay> frontendDisplays) {
 
     String frontend = frontendService.getFrontendName();
 
@@ -134,14 +134,14 @@ public class VPinScreenService {
     compare(errors, VPinScreen.Menu, "FullDMD", screenresDisplays, "screenres.txt", frontendDisplays, frontend);
   }
 
-  private void compare(List<String> errors, VPinScreen screen, String name, 
+  private void compare(List<String> errors, VPinScreen screen, String name,
                        List<FrontendPlayerDisplay> displays1, String name1,
                        List<FrontendPlayerDisplay> displays2, String name2) {
     comparePositions(errors, screen, name, displays1, name1, displays2, name2);
     compareDimensions(errors, screen, name, displays1, name1, displays2, name2);
   }
 
-  private void comparePositions(List<String> errors, VPinScreen screen, String name, 
+  private void comparePositions(List<String> errors, VPinScreen screen, String name,
                                 List<FrontendPlayerDisplay> displays1, String name1,
                                 List<FrontendPlayerDisplay> displays2, String name2) {
 
@@ -159,7 +159,7 @@ public class VPinScreenService {
     }
   }
 
-  private void compareDimensions(List<String> errors, VPinScreen screen, String name, 
+  private void compareDimensions(List<String> errors, VPinScreen screen, String name,
                                  List<FrontendPlayerDisplay> displays1, String name1,
                                  List<FrontendPlayerDisplay> displays2, String name2) {
 
@@ -222,7 +222,7 @@ public class VPinScreenService {
     return displays;
   }
 
-  
+
   //------------------------------------------------------ VPINBALLX.INI ---
 
   /**
@@ -281,7 +281,14 @@ public class VPinScreenService {
 
   private int safeGetInteger(Configuration configuration, String key, int defaultValue) {
     String value = configuration.getString(key, null);
-    return StringUtils.isNotBlank(value) ? Integer.parseInt(value) : defaultValue;
+    String formattedValue = value != null ? value.replaceAll("\"", "") : null;
+    try {
+      return StringUtils.isNotBlank(formattedValue) ? Integer.parseInt(formattedValue) : defaultValue;
+    }
+    catch (NumberFormatException e) {
+      LOG.warn("Invalid number read from VPinballX.ini file. Unable to parse " + value + " to a valid integer number, assuming '" + defaultValue + "' instead.");
+    }
+    return defaultValue;
   }
 
   /*
