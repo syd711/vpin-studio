@@ -4,10 +4,7 @@ import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -25,5 +22,13 @@ public class WebhooksResource {
   @PostMapping
   public WebhookSet save(@RequestBody WebhookSet webhookSet) throws Exception {
     return webhooksService.save(webhookSet);
+  }
+
+  /**
+   * Delete the given webhook set.
+   */
+  @DeleteMapping("/{uuid}")
+  public boolean delete(@PathVariable("uuid") String uuid) throws Exception {
+    return webhooksService.delete(uuid);
   }
 }

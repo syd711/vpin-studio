@@ -407,23 +407,23 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public List<MonitorInfo> getMonitorInfos() {
     List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
 
-    //for pinup popper, all monitors left to the primary are irrelevant
-    if (frontendType.equals(FrontendType.Popper)) {
-      boolean primaryFound = false;
-      List<MonitorInfo> filtered = new ArrayList<>();
-      for (MonitorInfo monitor : monitors) {
-        if (!monitor.isPrimary() && !primaryFound) {
-          continue;
-        }
-
-        if (monitor.isPrimary()) {
-          primaryFound = true;
-        }
-        filtered.add(monitor);
-      }
-
-      monitors = filtered;
-    }
+//    //for pinup popper, all monitors left to the primary are irrelevant
+//    if (frontendType.equals(FrontendType.Popper)) {
+//      boolean primaryFound = false;
+//      List<MonitorInfo> filtered = new ArrayList<>();
+//      for (MonitorInfo monitor : monitors) {
+//        if (!monitor.isPrimary() && !primaryFound) {
+//          continue;
+//        }
+//
+//        if (monitor.isPrimary()) {
+//          primaryFound = true;
+//        }
+//        filtered.add(monitor);
+//      }
+//
+//      monitors = filtered;
+//    }
     return monitors;
   }
 

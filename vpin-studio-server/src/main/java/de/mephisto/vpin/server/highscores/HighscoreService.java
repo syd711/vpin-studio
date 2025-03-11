@@ -508,6 +508,7 @@ public class HighscoreService implements InitializingBean {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
+    HighscoreChangeEvent event = null;
     if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
       if (changedPositions.isEmpty()) {
@@ -533,8 +534,7 @@ public class HighscoreService implements InitializingBean {
 
             if (!scoreFilter.isScoreFiltered(newScore)) {
               //finally, fire the update event to notify all listeners
-              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore, eventOrigin);
-              triggerHighscoreChange(event);
+              event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore, eventOrigin);
             }
           }
         }
@@ -555,6 +555,10 @@ public class HighscoreService implements InitializingBean {
     highscoreRepository.saveAndFlush(oldHighscore);
     LOG.info("Saved updated highscore for " + game + " to Studio database.");
     SLOG.info("Saved updated highscore for " + game + " to Studio database.");
+
+    if (event != null) {
+      triggerHighscoreChange(event);
+    }
 
     triggerHighscoreUpdate(game, oldHighscore);
 

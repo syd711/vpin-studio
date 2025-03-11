@@ -11,7 +11,6 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerLifecycleListener;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -109,6 +108,19 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     }
   }
 
+  public boolean delete(String uuid) throws Exception {
+    try {
+      List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> s.getUuid().equals(uuid)).collect(Collectors.toList()));
+      webhookSettings.setSets(collect);
+      preferencesService.savePreference(PreferenceNames.WEBHOOK_SETTINGS, webhookSettings);
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Saving webhook set failed: {}", e.getMessage(), e);
+      throw e;
+    }
+  }
+
   //----------------------------------- Scores Listener ----------------------------------------------------------------
 
   @Override
@@ -137,8 +149,8 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   public void playerDeleted(@NotNull Player player) {
     notifyPlayerHooks(player.getId(), WebhookEventType.delete);
   }
-
   //----------------------------------- Games Listener  ----------------------------------------------------------------
+
   @Override
   public void gameCreated(@NotNull Game game) {
     notifyGameHooks(game.getId(), WebhookEventType.create);

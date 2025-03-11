@@ -1,3 +1,13 @@
+## Release Notes 3.13.2
+
+## Changes
+
+- **Webhooks**: Fixed issue that highscore update events fired **after** they result has been recorded.
+- **Webhooks**: Added DELETE request endpoint to delete a webhook set.
+- **System Manager / Screens**: Removed filtering for PinUP Popper where monitors left to the primary one have been ignored. 
+
+---
+
 ## Release Notes 3.13.1
 
 ## Changes
