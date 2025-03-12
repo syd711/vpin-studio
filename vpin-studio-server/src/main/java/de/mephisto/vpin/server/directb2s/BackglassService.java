@@ -35,6 +35,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+import static de.mephisto.vpin.server.util.NumberUtil.parseIntSafe;
+
 @Service
 public class BackglassService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassService.class);
@@ -374,11 +376,27 @@ public class BackglassService implements InitializingBean {
   @Nullable
   private DirectB2SAndVersions reloadDirectB2SAndVersions(@NonNull GameEmulator emulator, String fileName) {
     //do not check this for emulators that do not support backglasses anyway
-    if (emulator.isMameEmulator()|| emulator.isOtherEmulator()) {
+    if (emulator.isMameEmulator() || emulator.isOtherEmulator()) {
+      return null;
+    }
+
+    if (StringUtils.isEmpty(emulator.getGamesDirectory())) {
+      LOG.info("Return DirectB2SAndVersions null, emulator {} has no game directory set.", emulator.getName());
+      return null;
+    }
+
+    File gamesDirectory = new File(emulator.getGamesDirectory());
+    if (!gamesDirectory.exists()) {
+      LOG.info("Return DirectB2SAndVersions null, emulator {} has an invalid game directory set.", emulator.getGamesDirectory());
       return null;
     }
 
     File file = new File(emulator.getGamesDirectory(), fileName);
+    if (!file.exists()) {
+      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
+      return null;
+    }
+
     String[] fileNames = file.getParentFile().list();
     if (fileNames == null) {
       LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
@@ -587,31 +605,31 @@ public class BackglassService implements InitializingBean {
     res.setGlobal(b2sFile == null || StringUtils.containsIgnoreCase(res.getScreenresFilePath(), b2sFile.getName()));
 
     // cf https://github.com/vpinball/b2s-backglass/blob/7842b3638b62741e21ebb511e2a886fa2091a40f/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L105
-    res.setPlayfieldWidth(Integer.parseInt(lines.get(0)));
-    res.setPlayfieldHeight(Integer.parseInt(lines.get(1)));
+    res.setPlayfieldWidth(parseIntSafe(lines.get(0)));
+    res.setPlayfieldHeight(parseIntSafe(lines.get(1)));
 
-    res.setBackglassWidth(Integer.parseInt(lines.get(2)));
-    res.setBackglassHeight(Integer.parseInt(lines.get(3)));
+    res.setBackglassWidth(parseIntSafe(lines.get(2)));
+    res.setBackglassHeight(parseIntSafe(lines.get(3)));
 
     res.setBackglassDisplay(lines.get(4));
 
-    res.setBackglassX(Integer.parseInt(lines.get(5)));
-    res.setBackglassY(Integer.parseInt(lines.get(6)));
+    res.setBackglassX(parseIntSafe(lines.get(5)));
+    res.setBackglassY(parseIntSafe(lines.get(6)));
 
-    res.setDmdWidth(Integer.parseInt(lines.get(7)));
-    res.setDmdHeight(Integer.parseInt(lines.get(8)));
+    res.setDmdWidth(parseIntSafe(lines.get(7)));
+    res.setDmdHeight(parseIntSafe(lines.get(8)));
 
-    res.setDmdX(Integer.parseInt(lines.get(9)));
-    res.setDmdY(Integer.parseInt(lines.get(10)));
+    res.setDmdX(parseIntSafe(lines.get(9)));
+    res.setDmdY(parseIntSafe(lines.get(10)));
 
     res.setDmYFlip("1".equals(lines.get(11)));
 
     if (lines.size() > 16) {
-      res.setBackgroundX(Integer.parseInt(lines.get(12)));
-      res.setBackgroundY(Integer.parseInt(lines.get(13)));
+      res.setBackgroundX(parseIntSafe(lines.get(12)));
+      res.setBackgroundY(parseIntSafe(lines.get(13)));
 
-      res.setBackgroundWidth(Integer.parseInt(lines.get(14)));
-      res.setBackgroundHeight(Integer.parseInt(lines.get(15)));
+      res.setBackgroundWidth(parseIntSafe(lines.get(14)));
+      res.setBackgroundHeight(parseIntSafe(lines.get(15)));
 
       File file = new File(lines.get(16));
       if (file.exists()) {
