@@ -62,6 +62,11 @@ public class GameEmulatorValidationTexts {
         text = "Fix the configuration by setting a valid media folder.";
         break;
       }
+      case CODE_NO_GAMES_FOUND: {
+        label = "No games found.";
+        text = "No matching games have been found for the selected games folder and file extension.";
+        break;
+      }
       default: {
         throw new UnsupportedOperationException("unmapped validation state");
       }

@@ -4,7 +4,9 @@
 
 - **Screen Resolving**: Fixed issues reading the resolutions from Visual Pinball X which resulted in broken tabs for the media recorder and for the screens section in the system manager.
 - **Screen Resolving**: Fixed calculation of the Playfield screen which is determined through the Visual Pinball X settings since 3.13. 
+- **Screen Resolving**: Fixed parsing issues for the _screenres.txt_. 
 - **System Manager / Screens**: Removed filtering for PinUP Popper where monitors left to the primary one have been ignored.
+- **System Manager / Emulators**: Added validator that checks if there are matching games in the games folder.
 - **Webhooks**: Fixed issue that highscore update events fired **after** they result has been recorded.
 - **Webhooks**: Added DELETE request endpoint to delete a webhook set.
 

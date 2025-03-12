@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,25 @@ public class GameEmulatorValidationService {
       }
     }
 
+    if ((emulator.isFxEmulator() || emulator.isFpEmulator() || emulator.isVpxEmulator() || emulator.isMameEmulator()) && !StringUtils.isEmpty(emulator.getGamesDirectory()) && !StringUtils.isEmpty(emulator.getGameExt())) {
+      File folder = new File(emulator.getGamesDirectory());
+      if (folder.exists()) {
+        File[] files = folder.listFiles(new FileFilter() {
+          @Override
+          public boolean accept(File pathname) {
+            return pathname.getName().toLowerCase().endsWith(emulator.getGameExt());
+          }
+        });
+
+        if (files == null || files.length == 0) {
+          result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_NO_GAMES_FOUND));
+          if (findFirst) {
+            return result;
+          }
+        }
+      }
+
+    }
 
     if (!StringUtils.isEmpty(emulator.getMediaDirectory()) && !new File(emulator.getMediaDirectory()).exists()) {
       result.add(ValidationStateFactory.create(GameEmulatorValidationCode.CODE_INVALID_MEDIA_FOLDER));

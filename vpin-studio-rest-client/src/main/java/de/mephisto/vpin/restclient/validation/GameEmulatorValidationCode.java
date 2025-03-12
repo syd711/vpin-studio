@@ -6,4 +6,5 @@ public interface GameEmulatorValidationCode {
   int CODE_NO_GAMES_FOLDER = 3;
   int CODE_INVALID_ROMS_FOLDER = 4;
   int CODE_INVALID_MEDIA_FOLDER = 5;
+  int CODE_NO_GAMES_FOUND = 6;
 }
