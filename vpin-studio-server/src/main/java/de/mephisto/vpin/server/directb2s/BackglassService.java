@@ -391,15 +391,16 @@ public class BackglassService implements InitializingBean {
       return null;
     }
 
-    File file = new File(emulator.getGamesDirectory(), fileName);
-    if (!file.exists()) {
-      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
-      return null;
-    }
+    //It's ok to return an empty object as long as the game directory is there
+//    File file = new File(emulator.getGamesDirectory(), fileName);
+//    if (!file.exists()) {
+//      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
+//      return null;
+//    }
 
-    String[] fileNames = file.getParentFile().list();
+    String[] fileNames = gamesDirectory.list();
     if (fileNames == null) {
-      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
+      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder {}", gamesDirectory.getAbsolutePath());
       return null;
     }
 
@@ -510,8 +511,12 @@ public class BackglassService implements InitializingBean {
           throw new RuntimeException("Cannot rename " + mainFile + ", operation ignored");
         }
       }
-      b2sFile.renameTo(mainFile);
-      cacheDirectB2SData.remove(mainFile.getPath());
+      if (b2sFile.renameTo(mainFile)) {
+        cacheDirectB2SData.remove(mainFile.getPath());
+      }
+      else {
+        throw new RuntimeException("Cannot rename " + b2sFile + ", operation ignored");
+      }
     }
     return reloadDirectB2SAndVersions(emulator, fileName);
   }
