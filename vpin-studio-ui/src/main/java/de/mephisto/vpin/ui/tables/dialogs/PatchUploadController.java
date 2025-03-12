@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -101,8 +102,8 @@ public class PatchUploadController extends BaseUploadController {
       try {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setPatchVersion(version);
-        uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
-        uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
+        uploadDescriptor.setExcludedFiles(analysis != null ? analysis.getExcludedFiles() : Collections.emptyList());
+        uploadDescriptor.setExcludedFolders(analysis != null ? analysis.getExcludedFolders() : Collections.emptyList());
         uploadDescriptor.setAutoFill(false);
         LOG.info("Created Upload Descriptor for patching");
 
