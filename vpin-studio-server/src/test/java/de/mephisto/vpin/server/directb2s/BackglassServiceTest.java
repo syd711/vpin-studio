@@ -84,7 +84,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     // check no folder
     doAllTests("Twister (1996)", 2);
     // check folder
-//    doAllTests("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992)", 1);
+    doAllTests("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992)", 1);
   }
 
   public void doAllTests(String directb2s, int nbVersions) throws Exception {
@@ -156,7 +156,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
       assertEquals(b2s.getVersion(i), b2stest.getVersion(i));
     }
   
-    // also verify we did not corrup the cache
+    // also verify we did not corrupt the cache
     List<DirectB2SAndVersions> allb2s = backglassService.getBackglasses();
     assertEquals(4, allb2s.size());
   }

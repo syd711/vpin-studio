@@ -392,13 +392,12 @@ public class BackglassService implements InitializingBean {
     }
 
     //It's ok to return an empty object as long as the game directory is there
-//    File file = new File(emulator.getGamesDirectory(), fileName);
-//    if (!file.exists()) {
-//      LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder " + file.getParentFile());
-//      return null;
-//    }
+    File file = new File(emulator.getGamesDirectory(), fileName);
+    if(file.getParentFile() == null || !file.getParentFile().exists()) {
+      return null;
+    }
 
-    String[] fileNames = gamesDirectory.list();
+    String[] fileNames = file.getParentFile().list();
     if (fileNames == null) {
       LOG.info("Return DirectB2SAndVersions null as there is no file to process in folder {}", gamesDirectory.getAbsolutePath());
       return null;
