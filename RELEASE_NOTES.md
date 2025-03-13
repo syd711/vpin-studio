@@ -13,6 +13,7 @@
 - **Webhooks**: Added DELETE request endpoint to delete a webhook set.
 - **Highscore Parsing**: Added support for "Pool Sharks".
 - **macOS Clients**: Fixed location of image cache.
+- **PinVol Service**: Fixed new system mute option that did not work in combination with the PinVol auto-start.
 
 ---
 
