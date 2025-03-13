@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -335,12 +336,17 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   @Override
   public void afterPropertiesSet() throws Exception {
     setSystemVolume();
-    setInitialMute();
     this.enabled = getPinVolAutoStart();
-    if (enabled) {
-      startPinVol();
-      LOG.info("Auto-started PinVol");
-    }
+
+    new Thread(() -> {
+      if (enabled) {
+        startPinVol();
+        LOG.info("Auto-started PinVol");
+        boolean pinVolFound = systemService.waitForProcess("PinVol", 3);
+        LOG.info("Found PinVol.exe process: {}", pinVolFound);
+      }
+      setInitialMute();
+    }).start();
 
     loadIni();
     initListener();
