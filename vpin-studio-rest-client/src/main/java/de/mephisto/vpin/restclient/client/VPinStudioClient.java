@@ -48,6 +48,7 @@ import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.video.VideoConversionServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
@@ -395,10 +396,19 @@ public class VPinStudioClient implements OverlayClient {
   public InputStream getPersistentCachedUrlImage(String cache, String url) {
     try {
       String asset = url.substring(url.lastIndexOf("/") + 1, url.length());
-      File folder = new File("./resources/cache/" + cache + "/");
+      File folder;
+
+      if (!OSUtil.isMac()) {
+         folder = new File("./resources/cache/" + cache + "/");
+      }
+      else {
+         folder =new File(System.getProperty("MAC_WRITE_PATH") + "resources/cache/" + cache + "/");
+      }
+
       if (!folder.exists()) {
         folder.mkdirs();
       }
+
       File file = new File(folder, asset);
       if (file.exists()) {
         return new FileInputStream(file);
