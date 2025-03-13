@@ -90,6 +90,8 @@ public class ManagedScreenController implements Initializable {
     validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     validationError.setVisible(false);
 
+    vpxPanel.managedProperty().bindBidirectional(vpxPanel.visibleProperty());
+
     Studio.stage.widthProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
       refreshPreview(false);
     }));
@@ -203,6 +205,7 @@ public class ManagedScreenController implements Initializable {
 
     FrontendScreenSummary screenSummary = client.getFrontendService().getScreenSummary(relodData);
 
+    vpxPanel.setVisible(!screenSummary.getVpxDisplaysDisplays().isEmpty());
     if (relodData) {
       renderScreenCheckboxes(screenSummary.getFrontendDisplays(), frontendPanel, frontendScreensCheckboxes, showAllFrontendCheckbox);
       renderScreenCheckboxes(screenSummary.getScreenResDisplays(), screenResPanel, screenResScreensCheckboxes, showAllScreenResCheckbox);

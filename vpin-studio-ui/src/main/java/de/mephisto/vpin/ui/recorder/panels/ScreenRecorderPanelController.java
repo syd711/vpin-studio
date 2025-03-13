@@ -149,11 +149,24 @@ public class ScreenRecorderPanelController implements Initializable {
 
     rotationPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
     rotationCheckbox.setSelected(option.isRotated());
+    if (rotationPanel.isVisible() && option.isRotated()) {
+      imageView.setRotate(180);
+    }
+
     rotationCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
       RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
       option2.setRotated(t1);
       client.getPreferenceService().setJsonPreference(s);
+
+      if (recordingScreen.getScreen().equals(VPinScreen.PlayField)) {
+        if (t1) {
+          imageView.setRotate(180);
+        }
+        else {
+          imageView.setRotate(0);
+        }
+      }
     });
 
     audioCheckbox.setSelected(option.isRecordAudio());

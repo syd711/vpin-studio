@@ -2,17 +2,17 @@
 
 ## Changes
 
-- **Screen Resolving**: Fixed issues reading the resolutions from Visual Pinball X which resulted in broken tabs for the media recorder, creating screenshots and for the screens section in the system manager.
-- **Screen Resolving**: Fixed calculation of the Playfield screen which is determined through the Visual Pinball X settings since 3.13 (and not through the Popper playfield location anymore). 
+- **Screen Resolving**: Switched reading the playfield information from Visual Pinball X back to using frontend's playfield screen information.
 - **Screen Resolving**: Fixed parsing issues for the _screenres.txt_. 
 - **System Manager / Screens**: Removed filtering for PinUP Popper where monitors left to the primary one have been ignored.
 - **System Manager / Emulators**: Added validator that checks if there are matching games in the games folder.
 - **Backglass Manager**: Fixed issues handling multiple backglasses when located in a separate folder.
 - **Tables / Table Patching**: Fixed possible error during patching.
+- **Tables / Media Recorder**: If the playfield is rotated by 180 degrees, the preview is now too.
 - **Webhooks**: Fixed issue that highscore update events fired **after** they result has been recorded.
 - **Webhooks**: Added DELETE request endpoint to delete a webhook set.
 - **Highscore Parsing**: Added support for "Pool Sharks".
-- **macOS Clients**: Fixed location of image cache.
+- **macOS Clients**: Fixed location of clients image cache.
 
 ---
 

@@ -48,6 +48,11 @@ public class VPinScreenService {
   @Autowired
   private SystemService systemService;
 
+  /**
+   * Wether to read the VPX playfield data or not
+   */
+  private final static boolean USE_VPX_PLAYFIELD = false;
+
   //---------------------------------------------------
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
@@ -232,15 +237,18 @@ public class VPinScreenService {
   public List<FrontendPlayerDisplay> getVpxDisplays(boolean forceReload) {
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
 
-    Configuration vpxConfiguration = vpxService.getPlayerConfiguration(forceReload);
-    if (vpxConfiguration != null && !vpxConfiguration.isEmpty()) {
-      createVpxPlayfieldDisplay(vpxConfiguration, displayList);
-      //createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
-      //createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.DMD, false);
+    if(USE_VPX_PLAYFIELD) {
+      Configuration vpxConfiguration = vpxService.getPlayerConfiguration(forceReload);
+      if (vpxConfiguration != null && !vpxConfiguration.isEmpty()) {
+        createVpxPlayfieldDisplay(vpxConfiguration, displayList);
+        //createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
+        //createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.DMD, false);
+      }
+      else {
+        LOG.warn("Unable to create displays from VPinball.ini");
+      }
     }
-    else {
-      LOG.warn("Unable to create displays from VPinball.ini");
-    }
+
     return displayList;
   }
 
