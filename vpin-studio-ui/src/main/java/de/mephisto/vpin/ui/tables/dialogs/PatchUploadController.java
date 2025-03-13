@@ -92,6 +92,9 @@ public class PatchUploadController extends BaseUploadController {
   protected void onUploadClick(ActionEvent event) {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
 
+    //instance variables are cleaned up, so safe them
+    UploaderAnalysis uploaderAnalysis = this.analysis;
+
     String version = patchVersionField.getText();
     Platform.runLater(() -> {
       stage.close();
@@ -102,8 +105,8 @@ public class PatchUploadController extends BaseUploadController {
       try {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setPatchVersion(version);
-        uploadDescriptor.setExcludedFiles(analysis != null ? analysis.getExcludedFiles() : Collections.emptyList());
-        uploadDescriptor.setExcludedFolders(analysis != null ? analysis.getExcludedFolders() : Collections.emptyList());
+        uploadDescriptor.setExcludedFiles(uploaderAnalysis != null ? uploaderAnalysis.getExcludedFiles() : Collections.emptyList());
+        uploadDescriptor.setExcludedFolders(uploaderAnalysis != null ? uploaderAnalysis.getExcludedFolders() : Collections.emptyList());
         uploadDescriptor.setAutoFill(false);
         LOG.info("Created Upload Descriptor for patching");
 

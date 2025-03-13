@@ -11,6 +11,7 @@
 - **Tables / Table Patching**: Fixed possible error during patching (blind fix as I have not been able to reproduce this).
 - **Webhooks**: Fixed issue that highscore update events fired **after** they result has been recorded.
 - **Webhooks**: Added DELETE request endpoint to delete a webhook set.
+- **Highscore Parsing**: Added support for "Pool Sharks".
 
 ---
 

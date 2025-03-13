@@ -36,6 +36,7 @@ public class NvRamOutputToScoreTextConverter {
     adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
     adapters.add(new FixTitleScoreAdapter("rs_l6.nv", "TODAY'S HIGHEST SCORES", "ALL TIME HIGHEST SCORES"));
     adapters.add(new SinglePlayerScoreAdapter());
+    adapters.add(new MultiBlockAdapter("pool_l7.nv", 8));
   }
 
   @Nullable

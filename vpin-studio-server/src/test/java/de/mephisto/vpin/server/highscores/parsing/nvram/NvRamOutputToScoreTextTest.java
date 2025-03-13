@@ -153,19 +153,21 @@ public class NvRamOutputToScoreTextTest {
    */
   @Test
   public void test_SingleScore() throws Exception {
-    doTestSingle("simp_a27.nv",
-        "#1 JEK   8,000,000\r\n" +
-            "#2 RAY   7,000,000\r\n" +
-            "#3 BLS   6,000,000\r\n" +
-            "#4 P G   5,000,000\r\n" +
-            "#5 T S   4,000,000\r\n" +
-            "#6 JCG   3,000,000");
-
-//    doTestSingle("blakpyra.nv",
-//         "#1 ???   1,867,500");
+//    doTestSingle("pool_l7.nv",
+//        "#1 DAK   1.582.140\n" +
+//            "#2 DAK   1.561.190\n" +
+//            "#3 DAK   1.394.100\n" +
+//            "#4 DAK   1.354.040\n" +
+//            "#5 DAK   2.522.560\n" +
+//            "#6 ???   455.320\n" +
+//            "#7 BRE   0\n" +
+//            "#8 XAQ   0");
 //
-//    doTestSingle("catacomb.nv",
-//         "#1 ???   349,290");
+    doTestSingle("blakpyra.nv",
+         "#1 ???   1,867,500");
+
+    doTestSingle("catacomb.nv",
+         "#1 ???   349,290");
   }
 
 

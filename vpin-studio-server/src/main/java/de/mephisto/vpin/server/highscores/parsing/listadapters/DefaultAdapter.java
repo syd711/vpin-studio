@@ -71,7 +71,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
     return filterDuplicates(scores);
   }
 
-  private static boolean isScoreLine(String line, int index) {
+  protected static boolean isScoreLine(String line, int index) {
     return line.startsWith(index + ")") || line.startsWith("#" + index) || line.startsWith(index + "#") || line.indexOf(".:") == 1;
   }
 
@@ -80,7 +80,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
    * These scores do not have a leading position number.
    */
   @Nullable
-  private Score createTitledScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
+  protected Score createTitledScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
     String initials = "???";
     if (line.trim().length() >= 3) {
       initials = line.trim().substring(0, 3);
@@ -103,7 +103,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
   }
 
   @Nullable
-  private Score createScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
+  protected Score createScore(@NonNull Date createdAt, @NonNull String line, @Nullable String source, int gameId) {
     List<String> scoreLineSegments = Arrays.stream(line.trim().split(" ")).filter(s -> s.trim().length() > 0).collect(Collectors.toList());
     if (scoreLineSegments.size() == 2) {
       String score = scoreLineSegments.get(1);

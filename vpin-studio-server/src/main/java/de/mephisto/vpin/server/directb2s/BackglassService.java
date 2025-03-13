@@ -35,8 +35,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import static de.mephisto.vpin.server.util.NumberUtil.parseIntSafe;
-
 @Service
 public class BackglassService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassService.class);
@@ -930,6 +928,23 @@ public class BackglassService implements InitializingBean {
   }
 
   //------------------------------
+
+  private static int parseIntSafe(String value) {
+    return parseIntSafe(value, 0);
+  }
+
+  private static int parseIntSafe(String value, int defaultValue) {
+    try {
+      if (!StringUtils.isEmpty(value)) {
+        value = value.replaceAll("@", "").trim();
+        return Integer.parseInt(value);
+      }
+    }
+    catch (NumberFormatException e) {
+      //ignore
+    }
+    return defaultValue;
+  }
 
   @Override
   public void afterPropertiesSet() throws Exception {
