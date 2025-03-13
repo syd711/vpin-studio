@@ -12,6 +12,7 @@
 - **Webhooks**: Fixed issue that highscore update events fired **after** they result has been recorded.
 - **Webhooks**: Added DELETE request endpoint to delete a webhook set.
 - **Highscore Parsing**: Added support for "Pool Sharks".
+- **macOS Clients**: Fixed location of image cache.
 
 ---
 
