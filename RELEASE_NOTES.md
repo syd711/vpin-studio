@@ -8,7 +8,7 @@
 - **System Manager / Screens**: Removed filtering for PinUP Popper where monitors left to the primary one have been ignored.
 - **System Manager / Emulators**: Added validator that checks if there are matching games in the games folder.
 - **Backglass Manager**: Fixed issues handling multiple backglasses when located in a separate folder.
-- **Tables / Table Patching**: Fixed possible error during patching (blind fix as I have not been able to reproduce this).
+- **Tables / Table Patching**: Fixed possible error during patching.
 - **Webhooks**: Fixed issue that highscore update events fired **after** they result has been recorded.
 - **Webhooks**: Added DELETE request endpoint to delete a webhook set.
 - **Highscore Parsing**: Added support for "Pool Sharks".
