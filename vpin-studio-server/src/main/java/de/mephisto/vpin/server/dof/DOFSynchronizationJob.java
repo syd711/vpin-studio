@@ -56,7 +56,7 @@ public class DOFSynchronizationJob implements Job {
             result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
             return;
           }
-          LOG.info("Extracting DOF config folder " + settings.getInstallationPath());
+          LOG.info("Extracting DOF config folder " + targetFolder.getAbsolutePath());
           result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
           RarUtil.unrar(zipFile, targetFolder);
         }

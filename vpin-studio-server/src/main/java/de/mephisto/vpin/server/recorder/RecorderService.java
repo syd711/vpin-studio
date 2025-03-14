@@ -155,7 +155,7 @@ public class RecorderService {
   public List<FrontendPlayerDisplay> getRecordingScreens() {
     List<FrontendPlayerDisplay> result = new ArrayList<>();
     for (VPinScreen screen : supportedRecodingScreens) {
-      FrontendPlayerDisplay display = screenService.getScreenDisplay(screen);
+      FrontendPlayerDisplay display = screenService.getRecordingScreenDisplay(screen);
       // recording screen may not be among the effective displays
       if (display != null) {
         result.add(display);

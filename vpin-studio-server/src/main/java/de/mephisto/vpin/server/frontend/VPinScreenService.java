@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.configuration2.Configuration;
@@ -66,6 +67,10 @@ public class VPinScreenService {
       default:
         return firstDefined(screen, getFrontendDisplays(false));
     }
+  }
+
+  public FrontendPlayerDisplay getRecordingScreenDisplay(VPinScreen screen) {
+    return firstDefined(screen, Collections.emptyList(), getFrontendDisplays(false));
   }
 
   private FrontendPlayerDisplay firstDefined(VPinScreen screen,
@@ -237,7 +242,7 @@ public class VPinScreenService {
   public List<FrontendPlayerDisplay> getVpxDisplays(boolean forceReload) {
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
 
-    if(USE_VPX_PLAYFIELD) {
+    if (USE_VPX_PLAYFIELD) {
       Configuration vpxConfiguration = vpxService.getPlayerConfiguration(forceReload);
       if (vpxConfiguration != null && !vpxConfiguration.isEmpty()) {
         createVpxPlayfieldDisplay(vpxConfiguration, displayList);
@@ -438,11 +443,6 @@ public class VPinScreenService {
   //----------------------------------------------------------------- FRONTEND ---
 
   private List<FrontendPlayerDisplay> getFrontendDisplays(boolean forceReload) {
-    if (forceReload) {
-      return frontendService.getFrontendConnector().getFrontendPlayerDisplays();
-    }
-    else {
-      return frontendService.getFrontendPlayerDisplays();
-    }
+    return frontendService.getFrontendPlayerDisplays(forceReload);
   }
 }

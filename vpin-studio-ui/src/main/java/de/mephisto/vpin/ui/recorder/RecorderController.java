@@ -201,6 +201,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private void doReload(boolean clearCache) {
     startReload("Loading Tables...");
 
+    if (clearCache) {
+      client.getFrontendService().getScreenSummary(true);
+    }
     refreshEmulators();
     refreshPlaylists();
 
