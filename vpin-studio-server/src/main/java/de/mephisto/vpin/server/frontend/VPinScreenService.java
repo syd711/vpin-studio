@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static de.mephisto.vpin.server.directb2s.BackglassService.parseIntSafe;
+
 
 /**
  * Add a uniform way to access to screen dimensions, abstracting the source of the information
@@ -311,7 +313,7 @@ public class VPinScreenService {
     String value = configuration.getString(key, null);
     String formattedValue = value != null ? value.replaceAll("\"", "") : null;
     try {
-      return StringUtils.isNotBlank(formattedValue) ? Integer.parseInt(formattedValue) : defaultValue;
+      return StringUtils.isNotBlank(formattedValue) ? parseIntSafe(formattedValue) : defaultValue;
     }
     catch (NumberFormatException e) {
       LOG.warn("Invalid number read from VPinballX.ini file. Unable to parse " + value + " to a valid integer number, assuming '" + defaultValue + "' instead.");
@@ -384,7 +386,7 @@ public class VPinScreenService {
       displays.add(playfield);
 
       FrontendPlayerDisplay backglass = new FrontendPlayerDisplay(VPinScreen.BackGlass);
-      backglass.setMonitor(Integer.parseInt(screenres.getBackglassDisplay()));
+      backglass.setMonitor(parseIntSafe(screenres.getBackglassDisplay()));
       backglass.setX(screenres.getBackglassX());
       backglass.setY(screenres.getBackglassY());
       backglass.setWidth(screenres.getBackglassWidth());
@@ -396,7 +398,7 @@ public class VPinScreenService {
         // override the name
         fulldmd.setName("FullDMD");
         // DMD is relative to backglass so use same monitor
-        fulldmd.setMonitor(Integer.parseInt(screenres.getBackglassDisplay()));
+        fulldmd.setMonitor(parseIntSafe(screenres.getBackglassDisplay()));
         fulldmd.setX(screenres.getBackglassX() + screenres.getDmdX());
         fulldmd.setY(screenres.getBackglassY() + screenres.getDmdY());
         fulldmd.setWidth(screenres.getDmdWidth());
@@ -415,7 +417,7 @@ public class VPinScreenService {
     // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
     String backglassDisplay = screenres.getBackglassDisplay();
     if (backglassDisplay.startsWith("@")) {
-      int xPos = Integer.parseInt(backglassDisplay.substring(1));
+      int xPos = parseIntSafe(backglassDisplay);
       for (MonitorInfo m : monitors) {
         if (m.getX() == xPos) {
           monitor = m;
@@ -423,7 +425,7 @@ public class VPinScreenService {
       }
     }
     else if (backglassDisplay.startsWith("=")) {
-      int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
+      int idx = parseIntSafe(backglassDisplay.substring(1)) - 1;
       monitor = idx < monitors.size() ? monitors.get(idx) : null;
     }
     else {

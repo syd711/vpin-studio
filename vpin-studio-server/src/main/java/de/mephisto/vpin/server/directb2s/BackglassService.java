@@ -929,11 +929,11 @@ public class BackglassService implements InitializingBean {
 
   //------------------------------
 
-  private static int parseIntSafe(String value) {
+  public static int parseIntSafe(String value) {
     return parseIntSafe(value, 0);
   }
 
-  private static int parseIntSafe(String value, int defaultValue) {
+  public static int parseIntSafe(String value, int defaultValue) {
     try {
       if (!StringUtils.isEmpty(value)) {
         value = value.replaceAll("@", "").trim();
