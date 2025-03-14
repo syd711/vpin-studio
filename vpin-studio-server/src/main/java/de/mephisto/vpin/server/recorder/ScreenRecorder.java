@@ -122,12 +122,12 @@ public class ScreenRecorder {
       commandList.add("-r");
       commandList.add("30");
       commandList.add("-preset");
+//      commandList.add("ultrafast");
       commandList.add("ultrafast");
-//      commandList.add("fast");
       commandList.add("-tune");
       commandList.add("zerolatency");
       commandList.add("-crf");
-      commandList.add("0");
+      commandList.add("25");
       commandList.add("-pix_fmt");
       commandList.add("yuv420p");
       if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
