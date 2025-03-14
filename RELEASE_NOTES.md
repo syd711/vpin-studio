@@ -1,3 +1,13 @@
+## Release Notes 3.13.3
+
+## Changes
+
+- **Tables / Media Recorder**: Switched screen information reading back to frontend/Popper again.
+- **Tables / Media Recorder**: Fixed issue in compression parameter for ffmpeg.
+- **Highscore Parsing**: Added support for "Al's Garage Band Goes On A World Tour".
+
+---
+
 ## Release Notes 3.13.2
 
 ## Changes
