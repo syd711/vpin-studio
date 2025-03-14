@@ -163,11 +163,11 @@ public class NvRamOutputToScoreTextTest {
 //            "#7 BRE   0\n" +
 //            "#8 XAQ   0");
 //
-    doTestSingle("wrldtou2.nv",
-         "#1 ???   1,867,500");
+//    doTestSingle("wrldtou2.nv",
+//         "#1 ???   1,867,500");
 
-//    doTestSingle("catacomb.nv",
-//         "#1 ???   349,290");
+    doTestSingle("catacomb.nv",
+         "#1 ???   349,290");
   }
 
 
