@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class FrontendPlayerDisplay {
+  /**
+   * The position of the monitor in MonitorInfoUtils.getMonitors()
+   */
   private int monitor;
   private VPinScreen screen;
   private String name;
@@ -12,9 +15,6 @@ public class FrontendPlayerDisplay {
   private int width;
   private int height;
   private int rotation;
-
-  //only set when the position is not absolute
-  private int monitorId = -1;
 
   /**
    * For pinballX, playfield videos are inverted
@@ -39,14 +39,6 @@ public class FrontendPlayerDisplay {
       }
     }
     return null;
-  }
-
-  public int getMonitorId() {
-    return monitorId;
-  }
-
-  public void setMonitorId(int monitorId) {
-    this.monitorId = monitorId;
   }
 
   public int getMonitor() {

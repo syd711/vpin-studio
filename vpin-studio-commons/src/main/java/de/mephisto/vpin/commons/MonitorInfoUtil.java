@@ -25,6 +25,9 @@ import de.mephisto.vpin.restclient.util.OSUtil;
  * @author Martin Steiger
  */
 public class MonitorInfoUtil {
+
+  private static boolean USE_GRAPHICS_ENVIRONMENT = true;
+
   /**
    * List monitors
    *
@@ -43,18 +46,17 @@ public class MonitorInfoUtil {
     }
   }
 
-  private static int index = 1;
-
   public static List<MonitorInfo> getMonitors() {
-    index = 1;
     List<MonitorInfo> monitors = new ArrayList<>();
-    if (OSUtil.isWindows()) {
+    if (OSUtil.isWindows() && !USE_GRAPHICS_ENVIRONMENT) {
+
+      int[] index = { 1 };
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
         @Override
         public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
-          MonitorInfo mon = enumerate(hMonitor, index);
+          MonitorInfo mon = enumerate(hMonitor, index[0]);
           monitors.add(mon);
-          index++;
+          index[0]++;
           return 1;
         }
       }, new LPARAM(0));
@@ -91,17 +93,9 @@ public class MonitorInfoUtil {
 
     String deviceName = new String(info.szDevice);
     monitor.setName(deviceName.trim());
+    // index starts with 1
+    monitor.setId(index);
 
-    int numericId = 0;
-    try {
-      String formattedName = monitor.getFormattedName();
-      String id = formattedName.substring(formattedName.length() - 1);
-      numericId = Integer.parseInt(id);
-    }
-    catch (NumberFormatException e) {
-      numericId = index;
-    }
-    monitor.setId(numericId);
     return monitor;
   }
 
@@ -124,15 +118,7 @@ public class MonitorInfoUtil {
     }
     monitor.setName(deviceName);
 
-    int numericId = 0;
-    try {
-      String id = deviceName.substring(deviceName.length() - 1);
-      numericId = Integer.parseInt(id);
-    }
-    catch (NumberFormatException e) {
-      numericId = index;
-    }
-    monitor.setId(numericId);
+    monitor.setId(index);
 
     return monitor;
   }
