@@ -89,7 +89,7 @@ public class B2SServerSettingsSerializer {
         node.setTextContent(settings.isHideGrill() ? "1" : "0");
         break;
       }
-      case "HideB2sDMD": {
+      case "HideB2SDMD": {
         node.setTextContent(settings.isHideB2SDMD() ? "1" : "0");
         break;
       }
