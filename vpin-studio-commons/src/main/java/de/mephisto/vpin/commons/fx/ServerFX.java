@@ -72,6 +72,7 @@ public class ServerFX extends Application {
   }
 
   public static void main(String[] args) {
+    System.setProperty("java.awt.headless", "false");
     Application.launch(args);
   }
 
