@@ -179,6 +179,9 @@ public class B2STableSettingsSerializer  {
       case "FormToBack": {
         return intValue(settings.isFormToBack());
       }
+      case "Animations": {
+        return "";
+      }
       default : {
         return null;
       }
