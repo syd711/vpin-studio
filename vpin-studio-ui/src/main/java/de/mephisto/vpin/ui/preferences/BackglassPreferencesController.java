@@ -105,7 +105,7 @@ public class BackglassPreferencesController implements Initializable {
 
         hideGrillCheckbox.setSelected(backglassServerSettings.isHideGrill());
         hideGrillCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-          backglassServerSettings.setHideGrill(newValue);
+          backglassServerSettings.setHideGrillBoolean(newValue);
           saveSettings();
         });
         hideB2SDMDCheckbox.setSelected(backglassServerSettings.isHideB2SDMD());
@@ -115,7 +115,7 @@ public class BackglassPreferencesController implements Initializable {
         });
         hideDMDCheckbox.setSelected(backglassServerSettings.isHideDMD());
         hideDMDCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-          backglassServerSettings.setHideDMD(newValue);
+          backglassServerSettings.setHideDMDBoolean(newValue);
           saveSettings();
         });
 

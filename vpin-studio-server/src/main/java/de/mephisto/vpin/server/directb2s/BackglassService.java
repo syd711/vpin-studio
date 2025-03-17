@@ -208,7 +208,7 @@ public class BackglassService implements InitializingBean {
     B2STableSettingsParser tableSettingsParser = cacheB2STableSettingsParser.get(settingsXml.getPath());
     if (tableSettingsParser == null) {
       if (settingsXml.exists() && !StringUtils.isEmpty(rom)) {
-        tableSettingsParser = new B2STableSettingsParser(settingsXml);
+        tableSettingsParser = new B2STableSettingsParser(getBackglassServerFolder(), settingsXml);
         cacheB2STableSettingsParser.put(settingsXml.getPath(), tableSettingsParser);
       }
     }
@@ -242,15 +242,21 @@ public class BackglassService implements InitializingBean {
       return null;
     }
     File settingsXml = getB2STableSettingsXml();
-    B2SServerSettingsParser serverSettingsParser = new B2SServerSettingsParser(getBackglassServerFolder(), settingsXml);
+    B2STableSettingsParser serverSettingsParser = new B2STableSettingsParser(getBackglassServerFolder(), settingsXml);
     return serverSettingsParser.getSettings();
   }
 
-  public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) {
-    File settingsXml = getB2STableSettingsXml();
-    B2SServerSettingsSerializer serverSettingsSerializer = new B2SServerSettingsSerializer(settingsXml);
-    serverSettingsSerializer.serialize(settings);
-    return getServerSettings();
+  public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws VPinStudioException {
+    try {
+      File settingsXml = getB2STableSettingsXml();
+      B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
+      serverSettingsSerializer.serialize(settings);
+      return getServerSettings();
+    }
+    catch (VPinStudioException e) {
+      LOG.error("Failed to save server settings: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   @NonNull
