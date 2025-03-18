@@ -22,6 +22,8 @@ public class SystemUtil {
 
   private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial", "Not applicable");
 
+  private static String systemId = null;
+
   public static int getPort() {
     try {
       String port = System.getProperty("studio.server.port");
@@ -69,18 +71,22 @@ public class SystemUtil {
   }
 
   private static String getSystemId() {
-    String firstSegment = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
-    if (StringUtils.isEmpty(firstSegment)) {
-      firstSegment = getWindowsSystemId();
-    }
-    String driveId = getDriveId() != null ? getDriveId().trim() : "#";
-    String boardId = getBoardSerialNumber() != null ? getBoardSerialNumber().trim() : "#";
-    String id = firstSegment + "~" + driveId + "~" + boardId;
-    if (id.length() > 100) {
-      id = id.substring(0, 99);
+    if(systemId == null) {
+      String firstSegment = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
+      if (StringUtils.isEmpty(firstSegment)) {
+        firstSegment = getWindowsSystemId();
+      }
+      String driveId = getDriveId() != null ? getDriveId().trim() : "#";
+      String boardId = getBoardSerialNumber() != null ? getBoardSerialNumber().trim() : "#";
+      String id = firstSegment + "~" + driveId + "~" + boardId;
+      if (id.length() > 100) {
+        id = id.substring(0, 99);
+      }
+
+      systemId = id;
     }
 
-    return id;
+    return systemId;
   }
 
   public static String getUniqueSystemId() {
@@ -167,6 +173,6 @@ public class SystemUtil {
   }
 
   public static void main(String[] args) {
-    System.out.println(getWindowsSystemId());
+    System.out.println(getSystemId());
   }
 }
