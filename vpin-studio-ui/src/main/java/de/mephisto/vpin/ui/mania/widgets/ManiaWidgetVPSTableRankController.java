@@ -235,7 +235,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
         return;
       }
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", Arrays.asList(vpsTable)));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(Arrays.asList(vpsTable)));
       List<Object> results = progressDialog.getResults();
       int count = 0;
       for (Object result : results) {

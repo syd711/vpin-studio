@@ -5,7 +5,16 @@ import java.util.List;
 
 public class ManiaRegistration {
   private List<Long> playerIds = new ArrayList<>();
+  private boolean synchronizeRatings = false;
   private String result;
+
+  public boolean isSynchronizeRatings() {
+    return synchronizeRatings;
+  }
+
+  public void setSynchronizeRatings(boolean synchronizeRatings) {
+    this.synchronizeRatings = synchronizeRatings;
+  }
 
   public String getResult() {
     return result;

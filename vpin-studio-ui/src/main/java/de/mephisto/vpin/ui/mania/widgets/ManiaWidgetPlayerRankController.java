@@ -14,7 +14,7 @@ import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
-import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -177,7 +177,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     if (b.get().equals(ButtonType.OK)) {
       List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", vpsTables));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
       List<Object> results = progressDialog.getResults();
       int count = 0;
       for (Object result : results) {

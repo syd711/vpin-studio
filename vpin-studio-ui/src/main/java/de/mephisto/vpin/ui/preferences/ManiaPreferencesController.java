@@ -33,13 +33,16 @@ public class ManiaPreferencesController implements Initializable {
   private VBox registrationPanel;
 
   @FXML
-  private CheckBox registrationCheckbox;
-
-  @FXML
   private CheckBox submitAllCheckbox;
 
   @FXML
+  private CheckBox submitAllRatingsCheckbox;
+
+  @FXML
   private Label idLabel;
+
+  @FXML
+  private Label systemIdLabel;
 
   @FXML
   private void onIdCopy() {
@@ -48,6 +51,28 @@ public class ManiaPreferencesController implements Initializable {
       Clipboard clipboard = Clipboard.getSystemClipboard();
       ClipboardContent content = new ClipboardContent();
       content.putString(cabinet.getUuid());
+      clipboard.setContent(content);
+    }
+  }
+
+  @FXML
+  private void onRegister() {
+    boolean registered = ManiaRegistrationHelper.register();
+    if (registered) {
+      registrationPanel.setVisible(false);
+      preferencesPanel.setVisible(true);
+      Cabinet cab = maniaClient.getCabinetClient().getCabinet();
+      idLabel.setText(cab.getUuid());
+    }
+  }
+
+  @FXML
+  private void onSystemIdCopy() {
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    if (cabinet != null) {
+      Clipboard clipboard = Clipboard.getSystemClipboard();
+      ClipboardContent content = new ClipboardContent();
+      content.putString(cabinet.getSystemId());
       clipboard.setContent(content);
     }
   }
@@ -90,24 +115,11 @@ public class ManiaPreferencesController implements Initializable {
 
     if (cabinet != null) {
       idLabel.setText(cabinet.getUuid());
+      systemIdLabel.setText(cabinet.getSystemId());
     }
 
     TournamentSettings settings = client.getTournamentsService().getSettings();
     preferencesPanel.setVisible(cabinet != null);
-    registrationCheckbox.setSelected(false);
-
-    registrationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (!newValue) {
-        return;
-      }
-      boolean registered = ManiaRegistrationHelper.register();
-      if (registered) {
-        registrationPanel.setVisible(false);
-        preferencesPanel.setVisible(true);
-        Cabinet cab = maniaClient.getCabinetClient().getCabinet();
-        idLabel.setText(cab.getUuid());
-      }
-    });
 
     submitAllCheckbox.setSelected(settings.isSubmitAllScores());
     submitAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -116,6 +128,21 @@ public class ManiaPreferencesController implements Initializable {
         try {
           TournamentSettings settings = client.getTournamentsService().getSettings();
           settings.setSubmitAllScores(newValue);
+          client.getTournamentsService().saveSettings(settings);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        }
+      }
+    });
+
+    submitAllRatingsCheckbox.setSelected(settings.isSubmitAllRatings());
+    submitAllRatingsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        try {
+          TournamentSettings settings = client.getTournamentsService().getSettings();
+          settings.setSubmitAllRatings(newValue);
           client.getTournamentsService().saveSettings(settings);
         }
         catch (Exception e) {

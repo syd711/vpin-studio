@@ -11,6 +11,7 @@ public class TournamentSettings extends JsonSettings {
   private String defaultDescription;
   private String defaultWebsite;
   private boolean submitAllScores = true;
+  private boolean submitAllRatings = false;
   private boolean showOnlineStatus = true;
   private boolean showActiveGameStatus = true;
 
@@ -28,6 +29,14 @@ public class TournamentSettings extends JsonSettings {
 
   public void setShowActiveGameStatus(boolean showActiveGameStatus) {
     this.showActiveGameStatus = showActiveGameStatus;
+  }
+
+  public boolean isSubmitAllRatings() {
+    return submitAllRatings;
+  }
+
+  public void setSubmitAllRatings(boolean submitAllRatings) {
+    this.submitAllRatings = submitAllRatings;
   }
 
   public boolean isTournamentsEnabled() {

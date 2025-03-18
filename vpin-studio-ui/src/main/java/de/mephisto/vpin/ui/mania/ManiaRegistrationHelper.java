@@ -52,7 +52,7 @@ public class ManiaRegistrationHelper {
           }
           else {
             List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
-            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", vpsTables));
+            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
             List<Object> results = progressDialog.getResults();
             int count = 0;
             for (Object result : results) {

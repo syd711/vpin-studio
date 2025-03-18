@@ -21,13 +21,25 @@
             <Label styleClass="default-title" text="VPin Mania Registration" />
             <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="This registers your cabinet for the online service &quot;VPin Mania&quot;.">
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets />
                </VBox.margin>
             </Label>
             <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The account is bound to your cabinet." />
             <CheckBox fx:id="registrationCheckbox" mnemonicParsing="false" styleClass="default-text" text="I understand, register my cabinet.">
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label styleClass="default-title" text="Table Ratings">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label styleClass="preference-description" text="You can contribute to the global table ratings on VPin Mania by allowing " />
+            <Label layoutX="10.0" layoutY="174.0" styleClass="preference-description" text="to synchronize your table ratings." />
+            <CheckBox fx:id="synchronizeRatingsCheckbox" mnemonicParsing="false" styleClass="default-text" text="Synchronize Table Ratings">
+               <VBox.margin>
+                  <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
             <VBox fx:id="playersRoot">

@@ -12,14 +12,14 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class HighscoreSynchronizeProgressModel extends ProgressModel<VpsTable> {
-  private final static Logger LOG = LoggerFactory.getLogger(HighscoreSynchronizeProgressModel.class);
+public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinManiaSynchronizeProgressModel.class);
 
   private final Iterator<VpsTable> iterator;
   private final List<VpsTable> vpsTableList;
 
-  public HighscoreSynchronizeProgressModel(String title, List<VpsTable> vpsTableList) {
-    super(title);
+  public VPinManiaSynchronizeProgressModel(List<VpsTable> vpsTableList) {
+    super("VPin Mania Synchronization");
     this.iterator = vpsTableList.iterator();
     this.vpsTableList = vpsTableList;
   }
