@@ -1,3 +1,13 @@
+## Release Notes 3.13.4
+
+## Changes
+
+- **Tables / Overview**: Fixed issue of "Open Emulator" button being initially disabled.
+- **Tables / Table Uploads**: Fixed issue that dialog buttons were disabled after a wrong file was selected.
+- **System Manager / Freezy**: Fixed "null" error when saving DmdDevice.ini file, using the internal remote editor.
+
+---
+
 ## Release Notes 3.13.3
 
 ## Changes

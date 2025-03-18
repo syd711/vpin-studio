@@ -326,6 +326,8 @@ public class TableUploadController implements Initializable, DialogController {
           if (rescan) {
             this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
           }
+          this.fileBtn.setDisable(false);
+          this.cancelBtn.setDisable(false);
 
           // If null the analysis was not successful.
           if (this.uploaderAnalysis != null) {
@@ -400,6 +402,12 @@ public class TableUploadController implements Initializable, DialogController {
   private boolean selectMatchingEmulator() {
     EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
     GameEmulatorRepresentation value = emulatorCombo.getValue();
+
+    if(emulatorType == null) {
+      WidgetFactory.showAlert(stage, "Invalid File", "No matching emulator found for the selected file.");
+      return false;
+    }
+
 
     if (emulatorType != null && emulatorType.isVpxEmulator()) {
       if (value != null && value.isVpxEmulator()) {

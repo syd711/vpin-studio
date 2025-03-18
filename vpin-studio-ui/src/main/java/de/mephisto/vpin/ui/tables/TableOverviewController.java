@@ -1006,12 +1006,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
 
-    emulatorBtn.setDisable(selectedEmu == null || selectedEmu.getId() == -1);
-
     if (selectedEmu == null) {
       this.emulatorCombo.getSelectionModel().selectFirst();
     }
-
+    selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    emulatorBtn.setDisable(selectedEmu == null || selectedEmu.getId() == -1);
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
 
