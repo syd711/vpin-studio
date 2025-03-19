@@ -17,6 +17,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,34 +52,51 @@ public class B2STableSettingsSerializer  {
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
       DocumentBuilder db = dbf.newDocumentBuilder();
-      Document doc = db.parse(xmlFile);
+      Document doc = null;
+      try {
+        doc = db.parse(xmlFile);
+      }
+      catch (Exception e) {
+        LOG.error("Cannot parse " + xmlFile + ", recreate an empty one.", e);
+        doc = db.newDocument();
+      }
 
-      doc.getDocumentElement().normalize();
+      Node root = doc.getDocumentElement();
+      if (root == null) {
+        root = doc.createElement("B2STableSettings");
+        doc.appendChild(root);
+      }
+      // check document is valid 
+      else if (!root.getNodeName().equalsIgnoreCase("B2STableSettings")) {
+        throw new IOException("The file exists but is not a valid B2STableSettings file. " +
+          "Nothing saved to prevent erasing data, please check your file!");
+      }
+      else {
+        root.normalize();
+      }
 
       Node rootNodeByRom = null;
       if (rom != null) {
-        NodeList list = doc.getElementsByTagName(rom);
-        if (list.getLength() == 0) {
+        rootNodeByRom = findChild(root, rom);
+        if (rootNodeByRom == null) {
           rootNodeByRom = doc.createElement(rom);
-          doc.getDocumentElement().appendChild(rootNodeByRom);
-        }
-        else {
-          rootNodeByRom = list.item(0);
+          root.appendChild(rootNodeByRom);
         }
       }
       // case of server settings
       else {
-        rootNodeByRom = doc.getDocumentElement();
+        rootNodeByRom = root;
       }
 
      if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {       
+        Node insertionPoint = findFirstChildWithChildNodes(rootNodeByRom);
         for (String tableEntry : tableEntries) {
           String newValue = getter.getValue(settings, tableEntry);
-          Node settingsNode = findChild(rootNodeByRom.getChildNodes(), tableEntry);
+          Node settingsNode = findChild(rootNodeByRom, tableEntry);
           if (newValue != null) {
             if (settingsNode==null) {
               settingsNode = doc.createElement(tableEntry);
-              rootNodeByRom.appendChild(settingsNode);
+              rootNodeByRom.insertBefore(settingsNode, insertionPoint);
             }
             if (settingsNode.getNodeType() == Node.ELEMENT_NODE) {
               settingsNode.setTextContent(newValue);
@@ -100,10 +118,22 @@ public class B2STableSettingsSerializer  {
     }
   }
 
-  private Node findChild(NodeList childNodes, String tableEntry) {
+  private Node findChild(Node node, String tableEntry) {
+    NodeList childNodes = node.getChildNodes();
     for (int i = 0; i < childNodes.getLength(); i++) {
       Node settingsNode = childNodes.item(i);
       if (settingsNode.getNodeName().equals(tableEntry)) {
+        return settingsNode;
+      }
+    }
+    return null;
+  }
+
+  private Node findFirstChildWithChildNodes(Node node) {
+    NodeList childNodes = node.getChildNodes();
+    for (int i = 0; i < childNodes.getLength(); i++) {
+      Node settingsNode = childNodes.item(i);
+      if (settingsNode.hasChildNodes()) {
         return settingsNode;
       }
     }
