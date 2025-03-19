@@ -1,3 +1,12 @@
+## Release Notes 3.13.4
+
+## Changes
+
+- **PinVol Service**: Trying to fix the initial system volume mute option by adding a delay.
+- **Competitions**: Fixed background image for the score overview header panel.
+
+---
+
 ## Release Notes 3.13.3
 
 ## Changes
