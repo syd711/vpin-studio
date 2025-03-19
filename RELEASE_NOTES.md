@@ -2,6 +2,10 @@
 
 ## Changes
 
+- **Tables / Overview**: Fixed issue of "Open Emulator" button being initially disabled.
+- **Tables / Table Uploads**: Fixed issue that dialog buttons were disabled after a wrong file was selected.
+- **System Manager / Freezy**: Fixed "null" error when saving DmdDevice.ini file, using the internal remote editor.
+- **Discord Integration**: Added asynchronous client creation for the server so that the startup is not blocked in case of issues.
 - **PinVol Service**: Trying to fix the initial system volume mute option by adding a delay.
 - **Competitions**: Fixed background image for the score overview header panel.
 

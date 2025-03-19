@@ -161,10 +161,10 @@ public class ManagedScreenController implements Initializable {
   /**
    * Reload / redraw the preview
    */
-  private void refreshPreview(boolean relodData) {
+  private void refreshPreview(boolean reloadData) {
     this.previewCanvas.setPrefWidth((Studio.stage.getWidth() - OFFSET));
 
-    SystemSummary systemSummary = client.getSystemService().getSystemSummary();
+    SystemSummary systemSummary = client.getSystemService().getSystemSummary(reloadData);
     List<MonitorInfo> monitorInfos = systemSummary.getScreenInfos();
     previewCanvas.getChildren().removeAll(previewCanvas.getChildren());
 
@@ -203,10 +203,10 @@ public class ManagedScreenController implements Initializable {
     previewCanvas.setPrefHeight(canvasTotalHeight * percentage * zoom);
     previewCanvas.setMinHeight(canvasTotalHeight * percentage * zoom);
 
-    FrontendScreenSummary screenSummary = client.getFrontendService().getScreenSummary(relodData);
+    FrontendScreenSummary screenSummary = client.getFrontendService().getScreenSummary(reloadData);
 
     vpxPanel.setVisible(!screenSummary.getVpxDisplaysDisplays().isEmpty());
-    if (relodData) {
+    if (reloadData) {
       renderScreenCheckboxes(screenSummary.getFrontendDisplays(), frontendPanel, frontendScreensCheckboxes, showAllFrontendCheckbox);
       renderScreenCheckboxes(screenSummary.getScreenResDisplays(), screenResPanel, screenResScreensCheckboxes, showAllScreenResCheckbox);
       renderScreenCheckboxes(screenSummary.getVpxDisplaysDisplays(), vpxPanel, vpxScreensCheckboxes, showAllVpxCheckbox);
@@ -216,7 +216,7 @@ public class ManagedScreenController implements Initializable {
     drawScreens(screenSummary.getScreenResDisplays(), canvasMinX, canvasMinY, percentage, COLOR_SCREENRES_SCREEN, 16, screenResScreensCheckboxes);
     drawScreens(screenSummary.getVpxDisplaysDisplays(), canvasMinX, canvasMinY, percentage, COLOR_VPX_SCREEN, 16, vpxScreensCheckboxes);
 
-    if (relodData) {
+    if (reloadData) {
       addErrors(screenSummary.getErrors(), validationError);
     }
 

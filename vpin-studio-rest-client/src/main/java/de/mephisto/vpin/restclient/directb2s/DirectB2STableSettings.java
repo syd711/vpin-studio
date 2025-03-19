@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.directb2s;
 public class DirectB2STableSettings implements DirectB2sConstants {
   private String rom;
 
+  //private Boolean disableBuiltInEMReelSound = null;
   private int hideGrill = 2;
   private boolean hideB2SDMD = false;
   private boolean hideB2SBackglass = false;
@@ -11,11 +12,17 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private int solenoidsSkipFrames = 3;
   private int giStringsSkipFrames = 3;
   private int ledsSkipFrames = 0;
-  private int usedLEDType = 2;
+  private int usedLEDType = 0;
   private boolean isGlowBulbOn = false;
   private int glowIndex = -1;
   private Boolean startAsEXE = null;
   private int startBackground = 2; // standard
+  private boolean disableFuzzyMatching = true;
+  /**
+   * 0 => FormToBack = 1
+   * 1 => FormToFront = 1
+   * 2 (Standard) FormToBack = 0 & FormToFront = 0 
+   */
   private int formToPosition = FORM_TO_STANDARD;
 
   public boolean isHideB2SBackglass() {
@@ -130,6 +137,14 @@ public class DirectB2STableSettings implements DirectB2sConstants {
     this.startBackground = startBackground;
   }
 
+  public boolean isDisableFuzzyMatching() {
+    return disableFuzzyMatching;
+  }
+
+  public void setDisableFuzzyMatching(boolean disableFuzzyMatching) {
+    this.disableFuzzyMatching = disableFuzzyMatching;
+  }
+
   public boolean isFormToFront() {
     return getFormToPosition() == FORM_TO_FRONT;
   }
@@ -142,5 +157,19 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   }
   public void setFormToPosition(int formToPosition) {
     this.formToPosition = formToPosition;
+  }
+
+  public boolean isHideGrill() {
+    return hideGrill == 1;
+  }
+  public void setHideGrillBoolean(boolean hideGrill) {
+    this.hideGrill = hideGrill ? 1 : 0;
+  }
+
+  public boolean isHideDMD() {
+    return hideDMD == 1;
+  }
+  public void setHideDMDBoolean(boolean hideDMD) {
+    this.hideDMD = hideDMD ? 1 : 0;
   }
 }

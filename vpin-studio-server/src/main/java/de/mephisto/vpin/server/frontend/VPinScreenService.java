@@ -192,11 +192,11 @@ public class VPinScreenService {
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
     FrontendScreenSummary summary = new FrontendScreenSummary();
-    summary.setScreenResDisplays(addMonitorInfo(getScreenResDisplays()));
+    summary.setScreenResDisplays(getScreenResDisplays());
     //we do not want the cached version here
     //do not add monitorInfo as it is already done  by the connector
     summary.setFrontendDisplays(getFrontendDisplays(true));
-    summary.setVpxDisplaysDisplays(addMonitorInfo(getVpxDisplays(true)));
+    summary.setVpxDisplaysDisplays(getVpxDisplays(true));
 
     List<String> errors = new ArrayList<>();
     checkMonitors(errors, monitors);
@@ -204,34 +204,6 @@ public class VPinScreenService {
     summary.setErrors(errors);
     return summary;
   }
-
-  public List<FrontendPlayerDisplay> addMonitorInfo(List<FrontendPlayerDisplay> displays) {
-    List<MonitorInfo> monitors = systemService.getMonitorInfos();
-    for (FrontendPlayerDisplay display : displays) {
-      MonitorInfo monitor = null;
-      for (MonitorInfo m : monitors) {
-        // match for VPinballX seems by id
-        if (m.getId() == display.getMonitorId() || m.getName().endsWith(String.valueOf(display.getMonitorId()))) {
-          monitor = m;
-        }
-      }
-      if (monitor != null) {
-        display.setX((int) monitor.getX() + display.getX());
-        display.setY((int) monitor.getY() + display.getY());
-
-        // full screen indicator
-        if (display.getWidth() < 0) {
-          display.setWidth(monitor.getWidth());
-        }
-        // full screen indicator
-        if (display.getHeight() < 0) {
-          display.setHeight(monitor.getHeight());
-        }
-      }
-    }
-    return displays;
-  }
-
 
   //------------------------------------------------------ VPINBALLX.INI ---
 
@@ -241,21 +213,22 @@ public class VPinScreenService {
    *
    * @return a List of FrontendPlayerDisplay
    */
-  public List<FrontendPlayerDisplay> getVpxDisplays(boolean forceReload) {
+  protected List<FrontendPlayerDisplay> getVpxDisplays(boolean forceReload) {
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
 
     if (USE_VPX_PLAYFIELD) {
       Configuration vpxConfiguration = vpxService.getPlayerConfiguration(forceReload);
       if (vpxConfiguration != null && !vpxConfiguration.isEmpty()) {
         createVpxPlayfieldDisplay(vpxConfiguration, displayList);
+
         //createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
         //createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.DMD, false);
       }
       else {
         LOG.warn("Unable to create displays from VPinball.ini");
       }
+      _addMonitorInfo(displayList);
     }
-
     return displayList;
   }
 
@@ -270,15 +243,14 @@ public class VPinScreenService {
   private void createVpxPlayfieldDisplay(Configuration vpxConfiguration, List<FrontendPlayerDisplay> players) {
     try {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay(VPinScreen.PlayField);
+      
+      // the windows index, but how to match it with MonitorInfoUtils.getMonitor(), this is still unknows
       int monitor = safeGetInteger(vpxConfiguration, "Display", 0);
-      player.setMonitor(monitor);
+      MonitorInfo monitorInfo = systemService.getMonitorFromOS(monitor);
+
+      player.setMonitor(monitorInfo.getId());
       player.setRotation(safeGetInteger(vpxConfiguration, "Rotate", 0));
       player.setInverted(true);
-
-      //VPX stores the monitor ids starting from 0
-      int windowsMonitorId = monitor + 1;
-      MonitorInfo monitorInfo = systemService.getMonitor(windowsMonitorId);
-      player.setMonitorId(monitorInfo.getId());
 
 
       int fullscreened = safeGetInteger(vpxConfiguration, "FullScreen", 1);
@@ -330,6 +302,33 @@ public class VPinScreenService {
     return defaultValue;
   }
 
+  public List<FrontendPlayerDisplay> _addMonitorInfo(List<FrontendPlayerDisplay> displays) {
+    List<MonitorInfo> monitors = systemService.getMonitorInfos();
+    for (FrontendPlayerDisplay display : displays) {
+      MonitorInfo monitor = null;
+      for (MonitorInfo m : monitors) {
+        // tbd match by windows number, but don't know how to get it yet
+        // see 
+      }
+
+      if (monitor != null) {
+        display.setX((int) monitor.getX() + display.getX());
+        display.setY((int) monitor.getY() + display.getY());
+
+        // full screen indicator
+        if (display.getWidth() < 0) {
+          display.setWidth(monitor.getWidth());
+        }
+        // full screen indicator
+        if (display.getHeight() < 0) {
+          display.setHeight(monitor.getHeight());
+        }
+      }
+    }
+    return displays;
+  }
+
+
   /*
    COPIED FROM FRONTENDCONNECTORS TO BE ADAPTED
 
@@ -364,11 +363,8 @@ public class VPinScreenService {
 
   //----------------------------------------------------------------- SCREENRES.TXT ---
 
-  public List<FrontendPlayerDisplay> getScreenResDisplays(Game game, boolean absoluteCoordinate) {
+  public List<FrontendPlayerDisplay> getScreenResDisplays(Game game) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
-    if (absoluteCoordinate) {
-      addDeviceOffsets(screenres);
-    }
     return screenResToDisplays(screenres);
   }
 
@@ -379,28 +375,59 @@ public class VPinScreenService {
 
   private List<FrontendPlayerDisplay> screenResToDisplays(DirectB2sScreenRes screenres) {
     List<FrontendPlayerDisplay> displays = new ArrayList<>();
-    if (screenres != null) {
+    List<MonitorInfo> monitors = systemService.getMonitorInfos();
+
+    if (screenres != null && monitors.size() > 0) {
+
+      MonitorInfo monitor = null;
+      // screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x)
+      String backglassDisplay = screenres.getBackglassDisplay();
+      if (backglassDisplay.startsWith("@")) {
+        int xPos = Integer.parseInt(backglassDisplay.substring(1));
+        for (MonitorInfo m : monitors) {
+          if (m.getX() == xPos) {
+            monitor = m;
+          }
+        }
+      }
+      else if (backglassDisplay.startsWith("=")) {
+        int idx = Integer.parseInt(backglassDisplay.substring(1)) - 1;
+        monitor = idx < monitors.size() ? monitors.get(idx) : null;
+      }
+      else {
+        for (MonitorInfo m : monitors) {
+          if (m.getName().endsWith(backglassDisplay)) {
+            monitor = m;
+          }
+        }
+      }
+
       FrontendPlayerDisplay playfield = new FrontendPlayerDisplay(VPinScreen.PlayField);
+      MonitorInfo firstMonitor = monitors.get(0);
+      playfield.setX((int) firstMonitor.getX());
+      playfield.setY((int) firstMonitor.getY());
       playfield.setWidth(screenres.getPlayfieldWidth());
       playfield.setHeight(screenres.getPlayfieldHeight());
       displays.add(playfield);
 
       FrontendPlayerDisplay backglass = new FrontendPlayerDisplay(VPinScreen.BackGlass);
-      backglass.setMonitor(parseIntSafe(screenres.getBackglassDisplay()));
       backglass.setX(screenres.getBackglassX());
       backglass.setY(screenres.getBackglassY());
       backglass.setWidth(screenres.getBackglassWidth());
       backglass.setHeight(screenres.getBackglassHeight());
       displays.add(backglass);
+      if (monitor != null) {
+        backglass.setX((int) monitor.getX() + backglass.getX());
+        backglass.setY((int) monitor.getY() + backglass.getY());
+      }
 
       if (screenres.hasFullDmd()) {
         FrontendPlayerDisplay fulldmd = new FrontendPlayerDisplay(VPinScreen.Menu);
         // override the name
         fulldmd.setName("FullDMD");
-        // DMD is relative to backglass so use same monitor
-        fulldmd.setMonitor(parseIntSafe(screenres.getBackglassDisplay()));
-        fulldmd.setX(screenres.getBackglassX() + screenres.getDmdX());
-        fulldmd.setY(screenres.getBackglassY() + screenres.getDmdY());
+        // DMD is relative to backglass so use prevously calculated coordinate
+        fulldmd.setX(backglass.getX() + screenres.getDmdX());
+        fulldmd.setY(backglass.getY() + screenres.getDmdY());
         fulldmd.setWidth(screenres.getDmdWidth());
         fulldmd.setHeight(screenres.getDmdHeight());
         displays.add(fulldmd);
@@ -409,6 +436,7 @@ public class VPinScreenService {
     return displays;
   }
 
+  //TODO move dmdInfo and FrameRes to use vpinScreenService and remove that method
   public void addDeviceOffsets(DirectB2sScreenRes screenres) {
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 

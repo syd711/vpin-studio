@@ -142,7 +142,7 @@ public class TextEditService {
   public TextFile save(TextFile textFile) {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-
+      textFile.setLastModified(new Date());
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
@@ -164,6 +164,8 @@ public class TextEditService {
           else {
             throw new IOException("Failed to delete target file.");
           }
+          textFile.setSize(iniFile.length());
+          textFile.setLastModified(new Date(iniFile.lastModified()));
           return textFile;
         }
         case DOFLinxINI: {
@@ -184,6 +186,7 @@ public class TextEditService {
             throw new IOException("Failed to delete target file.");
           }
           textFile.setLastModified(new Date(dofLinxIni.lastModified()));
+          textFile.setSize(dofLinxIni.length());
           return textFile;
         }
         case VPMAliasTxt: {

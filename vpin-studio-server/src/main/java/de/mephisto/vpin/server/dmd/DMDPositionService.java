@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.dmd;
 
 import com.google.common.io.Files;
-import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;

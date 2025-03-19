@@ -282,7 +282,7 @@ public class DirectB2SResource {
       return backglassService.saveTableSettings(gameId, settings);
     }
     catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table not supported: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Save error: " + e.getMessage());
     }
   }
 

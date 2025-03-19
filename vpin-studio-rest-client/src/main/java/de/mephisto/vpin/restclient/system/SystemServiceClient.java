@@ -131,7 +131,11 @@ public class SystemServiceClient extends VPinStudioClientService {
   }
 
   public SystemSummary getSystemSummary() {
-    return getRestClient().getCached(API + "system/info", SystemSummary.class);
+    return getSystemSummary(false);
+  }
+
+  public SystemSummary getSystemSummary(boolean reloadData) {
+    return getRestClient().getCached(API + "system/info", SystemSummary.class, reloadData);
   }
 
   public ScoringDB getScoringDatabase() {

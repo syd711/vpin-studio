@@ -429,6 +429,18 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public MonitorInfo getMonitor(int monitor) {
     List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
+    if (monitor < monitors.size()) {
+      return monitors.get(monitor);
+    }
+    return null;
+  }
+
+  /**
+   * Find a monitor by the windows index (used in VPX), 
+   * TODO how to match it with MonitorInfoUtils.getMonitor(), this is still unknown, uses getId() for time being but incorrect
+   */
+  public MonitorInfo getMonitorFromOS(int monitor) {
+    List<MonitorInfo> monitors = MonitorInfoUtil.getMonitors();
     for (MonitorInfo monitorInfo : monitors) {
       if (monitorInfo.getId() == monitor) {
         return monitorInfo;
@@ -436,6 +448,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
     return null;
   }
+
 
   /**
    * Checks to see if a specific port is available.

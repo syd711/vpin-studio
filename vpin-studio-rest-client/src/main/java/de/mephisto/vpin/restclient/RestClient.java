@@ -104,7 +104,12 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public <T> T getCached(String path, Class<T> entityType) {
-    if (cache.contains(path)) {
+    return getCached(path, entityType, false);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T getCached(String path, Class<T> entityType, boolean forceReload) {
+    if (!forceReload && cache.contains(path)) {
       return (T) cache.get(path);
     }
     T t = get(path, entityType, new HashMap<>());
