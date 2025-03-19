@@ -51,7 +51,8 @@ public class NirCmd {
   }
 
   public static void main(String[] args) {
-    NirCmd.setTopMost("Chrome");
-    NirCmd.setTopMost("Edge");
+//    NirCmd.setTopMost("Chrome");
+//    NirCmd.setTopMost("Edge");
+    NirCmd.muteSystem(true);
   }
 }
