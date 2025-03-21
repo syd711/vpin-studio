@@ -2,6 +2,14 @@
 
 ## Changes
 
+- **Tables / Media Recorder**: Fixed flag for 60fps recording.
+
+---
+
+## Release Notes 3.13.4
+
+## Changes
+
 - **Tables / Overview**: Fixed issue of "Open Emulator" button being initially disabled.
 - **Tables / Table Uploads**: Fixed issue that dialog buttons were disabled after a wrong file was selected.
 - **Tables / Backglass Manager**: Fixed issue that server settings were updated, but no new entries have been appended. The **B2STableSettings.xml** is also written properly formatted now.

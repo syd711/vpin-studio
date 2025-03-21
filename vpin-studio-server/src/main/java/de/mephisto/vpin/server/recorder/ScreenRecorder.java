@@ -120,7 +120,12 @@ public class ScreenRecorder {
       commandList.add("-c:v");
       commandList.add("libx264");
       commandList.add("-r");
-      commandList.add("30");
+      if (options.isFps60()) {
+        commandList.add("60");
+      }
+      else {
+        commandList.add("30");
+      }
       commandList.add("-preset");
 //      commandList.add("ultrafast");
       commandList.add("ultrafast");
