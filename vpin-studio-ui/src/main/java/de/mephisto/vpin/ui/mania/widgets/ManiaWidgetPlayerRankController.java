@@ -10,7 +10,7 @@ import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.RankedAccount;
 import de.mephisto.vpin.connectors.mania.model.RankedAccountPagingResult;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
@@ -181,7 +181,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       List<Object> results = progressDialog.getResults();
       int count = 0;
       for (Object result : results) {
-        ManiaHighscoreSyncResult syncResult = (ManiaHighscoreSyncResult) result;
+        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
         count += syncResult.getTableScores().size();
       }
       WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");

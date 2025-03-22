@@ -115,6 +115,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   private ServerSettings serverSettings;
 
   private final List<GameLifecycleListener> lifecycleListeners = new ArrayList<>();
+  private final List<GameDataChangedListener> gameDataChangedListeners = new ArrayList<>();
 
   /**
    * the refresh timer to keep VPS updated
@@ -807,6 +808,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     this.lifecycleListeners.add(lifecycleListener);
   }
 
+  public void addGameDataChangedListener(@NonNull GameDataChangedListener listener) {
+    this.gameDataChangedListeners.add(listener);
+  }
+
   private void notifyGameCreated(@NonNull Game game) {
     for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
       lifecycleListener.gameCreated(game);
@@ -822,6 +827,13 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public void notifyGameDeleted(@NonNull Game game) {
     for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
       lifecycleListener.gameDeleted(game);
+    }
+  }
+
+  public void notifyGameDataChanged(@NonNull Game game, @NonNull TableDetails oldData, @NonNull TableDetails newData) {
+    GameDataChangedEvent event = new GameDataChangedEvent( game,  oldData,  newData);
+    for (GameDataChangedListener listener : gameDataChangedListeners) {
+      listener.gameDataChanged(event);
     }
   }
 

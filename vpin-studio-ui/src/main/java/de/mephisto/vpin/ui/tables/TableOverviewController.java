@@ -24,6 +24,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.mania.TableRatingHelper;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
@@ -1542,18 +1543,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   private void setGameRating(GameRepresentation value, int i) {
-    try {
-      TableDetails tableDetails = client.getFrontendService().getTableDetails(value.getId());
-      if (tableDetails != null) {
-        tableDetails.setGameRating((i + 1));
-        client.getFrontendService().saveTableDetails(tableDetails, value.getId());
-        EventManager.getInstance().notifyTableChange(value.getId(), null, null);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Rating update failed: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Error", "Rating update failed: " + e.getMessage());
-    }
+    TableRatingHelper.ratingClicked(value, i);
   }
 
   //------------------------------

@@ -165,8 +165,7 @@ public class VPinStudioClient implements OverlayClient {
     this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
-
-    this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+    this.tournamentsServiceClient = new TournamentsServiceClient(this);
   }
 
   public EmulatorServiceClient getEmulatorService() {

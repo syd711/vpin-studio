@@ -3,7 +3,8 @@ package de.mephisto.vpin.ui.friends;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.friends.panels.FriendCabinetRowPanelController;
 import javafx.application.Platform;
@@ -39,11 +40,11 @@ public class FriendsPrivacySettingsController implements Initializable {
   @FXML
   private VBox playersBox;
 
-  private TournamentSettings settings;
+  private ManiaSettings settings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    settings = client.getTournamentsService().getSettings();
+    settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     CabinetSettings cabinetSettings = cabinet.getSettings();
 
@@ -58,7 +59,7 @@ public class FriendsPrivacySettingsController implements Initializable {
           if (!newValue) {
             settings.setShowActiveGameStatus(false);
           }
-          settings = client.getTournamentsService().saveSettings(settings);
+          client.getPreferenceService().setJsonPreference(settings);
           showActiveGameCheckbox.setDisable(!settings.isShowOnlineStatus());
         }
         catch (Exception e) {
@@ -73,7 +74,7 @@ public class FriendsPrivacySettingsController implements Initializable {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
           settings.setShowActiveGameStatus(newValue);
-          settings = client.getTournamentsService().saveSettings(settings);
+          client.getPreferenceService().setJsonPreference(settings);
         }
         catch (Exception e) {
           LOG.error("Failed to save mania settings: " + e.getMessage(), e);

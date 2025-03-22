@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -31,7 +31,7 @@ import java.util.List;
 public class TournamentsHighscoreChangeListener implements HighscoreChangeListener, PreferenceChangedListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsHighscoreChangeListener.class);
 
-  private TournamentSettings tournamentSettings;
+  private ManiaSettings maniaSettings;
 
   @Autowired
   private PlayerService playerService;
@@ -90,7 +90,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
         // the user might have selected not to submit all scores, but only tournament scores
         TableScore createdTableScore = null;
-        if (tournamentSettings.isSubmitAllScores()) {
+        if (maniaSettings.isSubmitAllScores()) {
           try {
             createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
             LOG.info("Submitted VPinMania score " + createdTableScore);
@@ -102,7 +102,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
           }
         }
 
-        if (createdTableScore != null && tournamentSettings.isTournamentsEnabled()) {
+        if (createdTableScore != null && maniaSettings.isTournamentsEnabled()) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           for (Tournament tournament : tournaments) {
             try {
@@ -201,14 +201,14 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.TOURNAMENTS_SETTINGS)) {
-      this.tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
+    if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
+      this.maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     }
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
+    preferenceChanged(PreferenceNames.MANIA_SETTINGS, null, null);
   }
 }

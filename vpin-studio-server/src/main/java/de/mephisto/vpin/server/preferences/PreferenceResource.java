@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.preferences.*;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
@@ -61,8 +61,8 @@ public class PreferenceResource {
         case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
           return preferencesService.getJsonPreference(key, CardSettings.class);
         }
-        case PreferenceNames.TOURNAMENTS_SETTINGS: {
-          return preferencesService.getJsonPreference(key, TournamentSettings.class);
+        case PreferenceNames.MANIA_SETTINGS: {
+          return preferencesService.getJsonPreference(key, ManiaSettings.class);
         }
         case PreferenceNames.DOF_SETTINGS: {
           return preferencesService.getJsonPreference(key, DOFSettings.class);

@@ -9,7 +9,7 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.mania.ManiaRegistrationHelper;
+import de.mephisto.vpin.ui.mania.ManiaHelper;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -75,7 +75,7 @@ public class HeaderResizeableController implements Initializable {
     if (cabinet == null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services to connect your cabinet with friends.", null, "Register Cabinet");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        boolean register = ManiaRegistrationHelper.register();
+        boolean register = ManiaHelper.register();
         if (register) {
           toggleFriendsView();
         }

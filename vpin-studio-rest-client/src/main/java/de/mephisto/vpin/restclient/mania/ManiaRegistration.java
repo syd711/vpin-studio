@@ -5,15 +5,24 @@ import java.util.List;
 
 public class ManiaRegistration {
   private List<Long> playerIds = new ArrayList<>();
-  private boolean synchronizeRatings = false;
+  private boolean submitRatings = false;
+  private boolean submitPlayCount = false;
   private String result;
 
-  public boolean isSynchronizeRatings() {
-    return synchronizeRatings;
+  public boolean isSubmitPlayCount() {
+    return submitPlayCount;
   }
 
-  public void setSynchronizeRatings(boolean synchronizeRatings) {
-    this.synchronizeRatings = synchronizeRatings;
+  public void setSubmitPlayCount(boolean submitPlayCount) {
+    this.submitPlayCount = submitPlayCount;
+  }
+
+  public boolean isSubmitRatings() {
+    return submitRatings;
+  }
+
+  public void setSubmitRatings(boolean submitRatings) {
+    this.submitRatings = submitRatings;
   }
 
   public String getResult() {

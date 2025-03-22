@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, VpsTable next) {
     try {
-      ManiaHighscoreSyncResult result = client.getManiaService().synchronizeHighscore(next.getId());
+      ManiaTableSyncResult result = client.getManiaService().synchronize(next.getId());
       progressResultModel.getResults().add(result);
     } catch (Exception e) {
       LOG.error("Failed to synchronize the highscore for \"" + next.getDisplayName() + "\": " + e.getMessage(), e);

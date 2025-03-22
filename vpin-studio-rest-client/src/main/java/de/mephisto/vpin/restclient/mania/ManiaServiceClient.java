@@ -2,10 +2,12 @@ package de.mephisto.vpin.restclient.mania;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /*********************************************************************************************************************
  * Mania
@@ -21,8 +23,8 @@ public class ManiaServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "mania/config", ManiaConfig.class);
   }
 
-  public ManiaHighscoreSyncResult synchronizeHighscore(String vpsTableId) {
-    return getRestClient().get(API + "mania/scoresync/" + vpsTableId, ManiaHighscoreSyncResult.class);
+  public ManiaTableSyncResult synchronize(String vpsTableId) {
+    return getRestClient().get(API + "mania/synchronize/table/" + vpsTableId, ManiaTableSyncResult.class);
   }
 
   public ManiaRegistration register(@NonNull ManiaRegistration registration) {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.util.NetworkUtil;
 import de.mephisto.vpin.restclient.webhooks.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleListener;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -34,6 +35,9 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private GameService gameService;
 
   private WebhooksRestClient webhooksRestClient;
   private WebhookSettings webhookSettings;
@@ -132,7 +136,6 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
     //not used
   }
-
   //----------------------------------- Player Listener ----------------------------------------------------------------
 
   @Override
@@ -169,9 +172,11 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   @Override
   public void afterPropertiesSet() throws Exception {
     webhooksRestClient = new WebhooksRestClient();
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.WEBHOOK_SETTINGS, null, null);
 
+    preferencesService.addChangeListener(this);
+    gameService.addGameLifecycleListener(this);
     highscoreService.addHighscoreChangeListener(this);
+
+    preferenceChanged(PreferenceNames.WEBHOOK_SETTINGS, null, null);
   }
 }

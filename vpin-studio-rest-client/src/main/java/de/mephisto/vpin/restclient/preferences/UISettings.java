@@ -30,6 +30,7 @@ public class UISettings extends JsonSettings {
 
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
+  private boolean hideRatingSyncInfo;
 
   private boolean autoApplyVpsData = true;
 
@@ -628,6 +629,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideUpdateInfo(boolean hideUpdateInfo) {
     this.hideUpdateInfo = hideUpdateInfo;
+  }
+
+  public boolean isHideRatingSyncInfo() {
+    return hideRatingSyncInfo;
+  }
+
+  public void setHideRatingSyncInfo(boolean hideRatingSyncInfo) {
+    this.hideRatingSyncInfo = hideRatingSyncInfo;
   }
 
   @Override

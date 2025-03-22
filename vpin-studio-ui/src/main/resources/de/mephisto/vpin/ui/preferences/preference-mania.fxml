@@ -65,7 +65,8 @@
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="319.199951171875" minWidth="10.0" prefWidth="110.4" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="538.4" minWidth="10.0" prefWidth="538.4" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="538.4" minWidth="10.0" prefWidth="383.99992065429694" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="538.4" minWidth="10.0" prefWidth="153.60007934570308" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -74,9 +75,8 @@
                           </rowConstraints>
                            <children>
                               <Label styleClass="default-text" text="Cabinet Id:" />
-                              <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="1">
+                              <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2">
                                  <children>
-                                    <Label fx:id="idLabel" styleClass="default-text" text="-id-" />
                                     <Button mnemonicParsing="false" onAction="#onIdCopy">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
@@ -91,9 +91,8 @@
                                  </children>
                               </HBox>
                               <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="System Id:" GridPane.rowIndex="1" />
-                              <HBox alignment="CENTER_LEFT" layoutX="120.0" layoutY="10.0" spacing="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                              <HBox alignment="CENTER_LEFT" layoutX="120.0" layoutY="10.0" spacing="12.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
-                                    <Label fx:id="systemIdLabel" styleClass="default-text" text="-id-" />
                                     <Button mnemonicParsing="false" onAction="#onSystemIdCopy">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
@@ -108,6 +107,8 @@
                                     <Label fx:id="idLabel11" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="(do not share)" />
                                  </children>
                               </HBox>
+                              <Label fx:id="systemIdLabel" styleClass="default-text" text="-id-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="idLabel" styleClass="default-text" text="-id-" GridPane.columnIndex="1" />
                            </children>
                            <VBox.margin>
                               <Insets top="12.0" />
@@ -137,7 +138,16 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="299.0" styleClass="checkbox-description" text="This will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="299.0" styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
+                        <CheckBox fx:id="submitPlayedCountCheckbox" layoutX="10.0" layoutY="348.0" mnemonicParsing="false" text="Submit Play Count">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="368.0" styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
                         <CheckBox fx:id="registrationCheckbox11" disable="true" mnemonicParsing="false" selected="true" text="Synchronize Cabinet Name &amp; Avatar">
                            <font>
                               <Font size="14.0" />
