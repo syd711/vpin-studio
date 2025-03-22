@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FieldLookups {
+  private List<String> altExe = new ArrayList<>();
   private List<String> gameType = new ArrayList<>();
   private List<String> gameTheme = new ArrayList<>();
   private List<String> category = new ArrayList<>();
@@ -11,6 +12,14 @@ public class FieldLookups {
   private List<String> custom1 = new ArrayList<>();
   private List<String> custom2 = new ArrayList<>();
   private List<String> custom3 = new ArrayList<>();
+
+  public List<String> getAltExe() {
+    return altExe;
+  }
+
+  public void setAltExe(List<String> altExe) {
+    this.altExe = altExe;
+  }
 
   public List<String> getCategory() {
     return category;

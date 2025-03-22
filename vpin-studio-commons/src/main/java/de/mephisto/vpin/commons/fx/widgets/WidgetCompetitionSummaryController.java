@@ -307,23 +307,23 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
             tableNameLabel.setText("Top-5 Scores");
           }
 
-          InputStream competitionBackground = client.getCompetitionBackground(competition.getGameId());
-          if (competitionBackground != null) {
-            Image image = new Image(competitionBackground);
-            BackgroundImage myBI = new BackgroundImage(image,
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-            topBox.setBackground(new Background(myBI));
-          }
-
-          topBox.setVisible(true);
           loadingPane.setVisible(false);
         });
       }
       else {
-        emptyPanel.setVisible(true);
         loadingPane.setVisible(false);
       }
+
+      InputStream competitionBackground = client.getCompetitionBackground(competition.getGameId());
+      if (competitionBackground != null) {
+        Image image = new Image(competitionBackground);
+        BackgroundImage myBI = new BackgroundImage(image,
+            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+            BackgroundSize.DEFAULT);
+        topBox.setBackground(new Background(myBI));
+      }
+
+      topBox.setVisible(true);
     });
   }
 

@@ -344,6 +344,12 @@ public class PinVolService implements InitializingBean, FileChangeListener {
         LOG.info("Auto-started PinVol");
         boolean pinVolFound = systemService.waitForProcess("PinVol", 3);
         LOG.info("Found PinVol.exe process: {}", pinVolFound);
+        try {
+          Thread.sleep(3000);
+        }
+        catch (InterruptedException e) {
+          //ignore
+        }
       }
       setInitialMute();
     }).start();
