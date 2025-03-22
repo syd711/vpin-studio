@@ -38,7 +38,7 @@ public class EmulatorService {
   public List<String> getAltExeNames(GameEmulator emulator) {
     if (emulator.isVpxEmulator() && emulator.isValid() && emulator.getInstallationFolder().exists()) {
       File installationFolder = emulator.getInstallationFolder();
-      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
+      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && !name.toLowerCase().contains("install"));
       if (exeFiles == null) {
         exeFiles = new String[]{};
       }

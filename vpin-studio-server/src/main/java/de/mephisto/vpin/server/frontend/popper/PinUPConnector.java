@@ -2196,6 +2196,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         results.put("Custom1", rs.getString("Custom1"));
         results.put("Custom2", rs.getString("Custom2"));
         results.put("Custom3", rs.getString("Custom3"));
+        results.put("AltExe", rs.getString("Altexe"));
       }
       rs.close();
       statement.close();
@@ -2349,6 +2350,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.getFieldLookups().getCustom1().addAll(toList(lookups, "Custom1"));
     frontend.getFieldLookups().getCustom2().addAll(toList(lookups, "Custom2"));
     frontend.getFieldLookups().getCustom3().addAll(toList(lookups, "Custom3"));
+    frontend.getFieldLookups().getAltExe().addAll(toList(lookups, "AltExe"));
 
     return frontend;
   }
