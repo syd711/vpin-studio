@@ -737,6 +737,9 @@ public class BackglassService implements InitializingBean {
           writer.write(System.lineSeparator());
         }
         int currentLine = 0;
+        while (lines.size() <= 16) {
+          lines.add("");
+        }
         for (String line : lines) {
           if (line.startsWith("#")) {
             writer.write(line);
