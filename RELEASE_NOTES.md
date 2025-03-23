@@ -5,6 +5,7 @@
 - **Tables / Media Recorder**: Fixed flag for 60fps recording.
 - **Tables / Media Previews**: Added tooltips with filename, size and modification date to all previews.
 - **Webhooks**: Added missing change listener for the game lifecycle events (create, update and delete).
+- **Backglass Manager / .res Editor**: Fixed saving .res files without frame images.
 
 ---
 
