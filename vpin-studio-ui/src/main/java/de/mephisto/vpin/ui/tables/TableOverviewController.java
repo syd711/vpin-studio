@@ -597,7 +597,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
         FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getFrontendService().terminateFrontend();
+      JFXFuture.supplyAsync(() -> {
+        return client.getFrontendService().terminateFrontend();
+      }).thenAcceptLater((requestResult) -> {
+        LOG.info("Kill frontend request finished.");
+      });
     }
   }
 

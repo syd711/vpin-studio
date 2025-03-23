@@ -38,9 +38,6 @@ public class GameDetails {
   @Column(name = "extRating", nullable = false, columnDefinition = "integer default 0")
   private int extRating = 0;
 
-  @Column(name = "extPlayCount", nullable = false, columnDefinition = "bigint default 0")
-  private long extPlayCount = 0;
-
   private String notes;
 
   private String eventLog;
@@ -273,13 +270,5 @@ public class GameDetails {
 
   public void setExtRating(int extRating) {
     this.extRating = extRating;
-  }
-
-  public long getExtPlayCount() {
-    return extPlayCount;
-  }
-
-  public void setExtPlayCount(long extPlayCount) {
-    this.extPlayCount = extPlayCount;
   }
 }

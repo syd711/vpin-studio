@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.PaginatedTableScoreDetails;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetPlayerStatsController;
@@ -58,7 +59,8 @@ public class TableScoreLoadingProgressModel extends ProgressModel<TableScore> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, TableScore score) {
     try {
-      List<TableScoreDetails> highscoresByTable = maniaClient.getHighscoreClient().getHighscoresByTable(score.getVpsTableId());
+      PaginatedTableScoreDetails pResults = maniaClient.getHighscoreClient().getHighscoresByTable(score.getVpsTableId());
+      List<TableScoreDetails> highscoresByTable = pResults.getData();
       Collections.sort(highscoresByTable, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
       progressResultModel.getResults().add(new ManiaWidgetPlayerStatsController.TableScoreModel(score, account, highscoresByTable));
     }

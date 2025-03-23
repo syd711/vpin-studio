@@ -415,23 +415,29 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       this.reloadBtn.setDisable(true);
       this.tableView.setVisible(false);
 
-      List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
-      titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
-      sub1Label.setText("Recorded Scores: " + highscoresByAccount.size());
+      JFXFuture.supplyAsync(() -> {
+        List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+        return highscoresByAccount;
+      }).thenAcceptLater((accountScores) -> {
+        titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
+        sub1Label.setText("Recorded Scores: " + accountScores.size());
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
+        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, accountScores));
 
-      List<TableScoreModel> results = (List<TableScoreModel>) (List<?>) progressDialog.getResults();
-      Collections.sort(results, Comparator.comparing(TableScoreModel::getName));
-      ObservableList<TableScoreModel> data = FXCollections.observableList(results);
+        List<TableScoreModel> results = (List<TableScoreModel>) (List<?>) progressDialog.getResults();
+        Collections.sort(results, Comparator.comparing(TableScoreModel::getName));
+        ObservableList<TableScoreModel> data = FXCollections.observableList(results);
 
-      Platform.runLater(() -> {
-        tableStack.getChildren().remove(loadingOverlay);
-        tableView.setVisible(true);
-        tableView.setItems(data);
-        tableView.refresh();
-        this.reloadBtn.setDisable(false);
+        Platform.runLater(() -> {
+          tableStack.getChildren().remove(loadingOverlay);
+          tableView.setVisible(true);
+          tableView.setItems(data);
+          tableView.refresh();
+          this.reloadBtn.setDisable(false);
+        });
       });
+
+
     }
     catch (Exception e) {
       this.reloadBtn.setDisable(false);

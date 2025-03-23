@@ -103,8 +103,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
     synchronizeHighscores(result, game, vpsTable);
     synchronizeInitialRating(game);
-    synchronizeInitialPlayCount(game);
-
     return result;
   }
 
@@ -197,35 +195,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
       //We want to push the initial value here, so start from 0
       maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), 0, game.getRating());
-    }
-  }
-
-  /**
-   * Used for the initial sync
-   *
-   * @param game
-   */
-  private void synchronizeInitialPlayCount(@NonNull Game game) {
-    if (!maniaSettings.isSubmitRatings()) {
-      return;
-    }
-
-    long playCount = game.getNumberPlayed();
-    if (playCount > 0 && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-      if (gameDetails == null) {
-        return;
-      }
-
-      if (gameDetails.getExtRating() != 0) {
-        return;
-      }
-
-      gameDetails.setExtPlayCount(game.getNumberPlayed());
-      gameDetailsRepository.saveAndFlush(gameDetails);
-
-      //We want to push the initial value here, so the old one and new one are the same. This way the rating is counted.
-      maniaClient.getVpsTableClient().updatePlayedCount(game.getExtTableId(), game.getExtTableVersionId(), game.getNumberPlayed());
     }
   }
 
@@ -483,7 +452,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         if (cabinet != null) {
           LOG.info("Updating mania played counter for \"{}\"", game.getGameDisplayName());
           new Thread(() -> {
-            maniaClient.getVpsTableClient().updatePlayedCount(game.getExtTableId(), game.getExtTableVersionId(), 1);
+            maniaClient.getVpsTableClient().updatePlayedCount(game.getExtTableId(), game.getExtTableVersionId());
           }).start();
         }
       }
@@ -526,7 +495,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
         LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
         frontendStatusService.addFrontendStatusChangeListener(this);
+        frontendStatusService.addTableStatusChangeListener(this);
         gameService.addGameDataChangedListener(this);
+
 
         ManiaConfig config = getConfig();
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
