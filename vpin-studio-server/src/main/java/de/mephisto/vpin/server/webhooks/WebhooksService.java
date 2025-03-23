@@ -70,25 +70,28 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
       return;
     }
 
-    webhook.getParameters().put("id", entityId);
-    switch (eventType) {
-      case update: {
-        webhooksRestClient.onUpdate(webhook.getEndpoint(), webhook.getParameters());
-        break;
-      }
-      case delete: {
-        String url = webhook.getEndpoint();
-        if (!url.endsWith("/")) {
-          url = url + "/" + entityId;
+    new Thread(() -> {
+      Thread.currentThread().setName("WebHook Executer");
+      webhook.getParameters().put("id", entityId);
+      switch (eventType) {
+        case update: {
+          webhooksRestClient.onUpdate(webhook.getEndpoint(), webhook.getParameters());
+          break;
         }
-        webhooksRestClient.onDelete(url);
-        break;
+        case delete: {
+          String url = webhook.getEndpoint();
+          if (!url.endsWith("/")) {
+            url = url + "/" + entityId;
+          }
+          webhooksRestClient.onDelete(url);
+          break;
+        }
+        case create: {
+          webhooksRestClient.onCreate(webhook.getEndpoint(), webhook.getParameters());
+          break;
+        }
       }
-      case create: {
-        webhooksRestClient.onCreate(webhook.getEndpoint(), webhook.getParameters());
-        break;
-      }
-    }
+    }).start();
   }
 
   public WebhookSet save(@NonNull WebhookSet webhookSet) throws Exception {

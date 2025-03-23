@@ -415,29 +415,20 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       this.reloadBtn.setDisable(true);
       this.tableView.setVisible(false);
 
-      JFXFuture.supplyAsync(() -> {
-        List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
-        return highscoresByAccount;
-      }).thenAcceptLater((accountScores) -> {
-        titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
-        sub1Label.setText("Recorded Scores: " + accountScores.size());
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account));
+      List<ManiaWidgetPlayerStatsController.TableScoreModel> models = (List<TableScoreModel>) progressDialog.getResults().get(0);
 
-        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, accountScores));
+      titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
+      sub1Label.setText("Recorded Scores: " + models.size());
+      ObservableList<TableScoreModel> data = FXCollections.observableList(models);
 
-        List<TableScoreModel> results = (List<TableScoreModel>) (List<?>) progressDialog.getResults();
-        Collections.sort(results, Comparator.comparing(TableScoreModel::getName));
-        ObservableList<TableScoreModel> data = FXCollections.observableList(results);
-
-        Platform.runLater(() -> {
-          tableStack.getChildren().remove(loadingOverlay);
-          tableView.setVisible(true);
-          tableView.setItems(data);
-          tableView.refresh();
-          this.reloadBtn.setDisable(false);
-        });
+      Platform.runLater(() -> {
+        tableStack.getChildren().remove(loadingOverlay);
+        tableView.setVisible(true);
+        tableView.setItems(data);
+        tableView.refresh();
+        this.reloadBtn.setDisable(false);
       });
-
-
     }
     catch (Exception e) {
       this.reloadBtn.setDisable(false);
@@ -473,20 +464,13 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     private String name = "???";
     private int position = -1;
 
-    public TableScoreModel(TableScore tableScore, Account account, List<TableScoreDetails> highscoresByTable) {
+    public TableScoreModel(TableScore tableScore) {
       this.score = tableScore.getScore();
+      this.position = tableScore.getPosition();
       this.vpsTable = client.getVpsService().getTableById(tableScore.getVpsTableId());
       if (vpsTable != null) {
         this.name = vpsTable.getName().trim();
         this.vpsTableVersion = vpsTable.getTableVersionById(tableScore.getVpsVersionId());
-      }
-
-      for (int i = 0; i < highscoresByTable.size(); i++) {
-        TableScoreDetails tableScoreDetails = highscoresByTable.get(i);
-        if (tableScoreDetails.getAccountUUID().equals(account.getUuid())) {
-          position = i + 1;
-          break;
-        }
       }
     }
 

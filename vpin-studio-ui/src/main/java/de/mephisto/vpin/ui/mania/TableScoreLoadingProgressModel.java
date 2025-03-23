@@ -1,34 +1,30 @@
 package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.PaginatedTableScoreDetails;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
-import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetPlayerStatsController;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class TableScoreLoadingProgressModel extends ProgressModel<TableScore> {
+public class TableScoreLoadingProgressModel extends ProgressModel<Account> {
   private final static Logger LOG = LoggerFactory.getLogger(TableScoreLoadingProgressModel.class);
 
   private final Account account;
-  private List<TableScore> tableScores;
+  private final Iterator<Account> iterator;
 
-  private final Iterator<TableScore> tableScoresIterator;
-
-  public TableScoreLoadingProgressModel(Account account, List<TableScore> tableScores) {
-    super("Loading \"" + account.getDisplayName() + "\"");
+  public TableScoreLoadingProgressModel(Account account) {
+    super("Loading Player Data");
     this.account = account;
-    this.tableScores = tableScores;
-    this.tableScoresIterator = tableScores.iterator();
+    this.iterator = Arrays.asList(account).iterator();
   }
 
   @Override
@@ -38,31 +34,39 @@ public class TableScoreLoadingProgressModel extends ProgressModel<TableScore> {
 
   @Override
   public int getMax() {
-    return tableScores.size();
+    return 1;
+  }
+
+  @Override
+  public boolean isIndeterminate() {
+    return true;
   }
 
   @Override
   public boolean hasNext() {
-    return this.tableScoresIterator.hasNext();
+    return this.iterator.hasNext();
   }
 
   @Override
-  public TableScore getNext() {
-    return tableScoresIterator.next();
+  public Account getNext() {
+    return iterator.next();
   }
 
   @Override
-  public String nextToString(TableScore score) {
-    return score.getTableName();
+  public String nextToString(Account acc) {
+    return "Fetching data for " + acc.getDisplayName();
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, TableScore score) {
+  public void processNext(ProgressResultModel progressResultModel, Account account) {
     try {
-      PaginatedTableScoreDetails pResults = maniaClient.getHighscoreClient().getHighscoresByTable(score.getVpsTableId());
-      List<TableScoreDetails> highscoresByTable = pResults.getData();
-      Collections.sort(highscoresByTable, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
-      progressResultModel.getResults().add(new ManiaWidgetPlayerStatsController.TableScoreModel(score, account, highscoresByTable));
+      List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+      List<ManiaWidgetPlayerStatsController.TableScoreModel> models = new ArrayList<>();
+      for (TableScore tableScore : highscoresByAccount) {
+        models.add(new ManiaWidgetPlayerStatsController.TableScoreModel(tableScore));
+      }
+
+      progressResultModel.getResults().add(models);
     }
     catch (Exception e) {
       LOG.error("Error during loading account scores: " + e.getMessage(), e);
