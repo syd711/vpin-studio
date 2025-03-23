@@ -1,11 +1,31 @@
 package de.mephisto.vpin.restclient.games;
 
+import java.util.Date;
+
 public class FrontendMediaItemRepresentation {
   private String mimeType;
   private String uri;
   private String screen;
   private int gameId;
   private String name;
+  private Date modificationDate;
+  private long size;
+
+  public long getSize() {
+    return size;
+  }
+
+  public void setSize(long size) {
+    this.size = size;
+  }
+
+  public Date getModificationDate() {
+    return modificationDate;
+  }
+
+  public void setModificationDate(Date modificationDate) {
+    this.modificationDate = modificationDate;
+  }
 
   public String getName() {
     return name;

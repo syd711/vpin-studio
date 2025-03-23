@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.util;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,8 +12,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class DateUtil {
+  private final static Logger LOG = LoggerFactory.getLogger(DateUtil.class);
 
-  private static List<String> MINUTE_INTERVALS = Arrays.asList("00", "15", "30", "45");
+  private final static List<String> MINUTE_INTERVALS = Arrays.asList("00", "15", "30", "45");
 
   public static List<String> TIMES = new ArrayList<>();
 
@@ -48,6 +51,7 @@ public class DateUtil {
     int minutes = Integer.parseInt(split[1]);
     Date date = Date.from(value.atStartOfDay(ZoneId.systemDefault()).toInstant());
     return DateUtil.toDate(date, hours, minutes);
+
   }
 
   public static String formatDuration(Date start, Date end) {

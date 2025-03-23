@@ -7,8 +7,10 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -224,7 +226,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, int size, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(size);
-    fontIcon.setIconColor(Paint.valueOf(color != null? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -302,6 +304,7 @@ public class WidgetFactory {
     root.getChildren().addAll(icon2, icon1);
     return root;
   }
+
   public static Label wrapIcon(FontIcon icon, @NonNull String tooltip) {
     Label label = new Label();
     label.setTooltip(new Tooltip(tooltip));
@@ -732,6 +735,7 @@ public class WidgetFactory {
 
     if (previewEnabled && mediaItem != null) {
       addMediaItemToBorderPane(client, mediaItem, parent);
+      Tooltip.install(parent, createMediaItemTooltip(mediaItem));
     }
   }
 
@@ -785,6 +789,17 @@ public class WidgetFactory {
     }
 
     return null;
+  }
+
+  public static Tooltip createMediaItemTooltip(FrontendMediaItemRepresentation item) {
+    StringBuilder builder = new StringBuilder(item.getName());
+    builder.append("\n");
+    builder.append("Size: ");
+    builder.append(FileUtils.readableFileSize(item.getSize()));
+    builder.append("\n");
+    builder.append("Last Modified: ");
+    builder.append(DateUtil.formatDateTime(item.getModificationDate()));
+    return new Tooltip(builder.toString());
   }
 
   public static class HighscoreBackgroundImageListCell extends ListCell<String> {
@@ -866,6 +881,7 @@ public class WidgetFactory {
   }
 
   public static void disposeMediaPane(BorderPane parent) {
+    Tooltip.uninstall(parent, null);
     if (parent.getCenter() != null) {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {

@@ -891,6 +891,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         String url = client.getURL(mediaItem.getUri()) + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
         LOG.info("Loading " + url);
 
+        Tooltip.uninstall(mediaPane, null);
         if (baseType.equals("image")) {
           new ImageViewer(mediaPane, url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
         }
@@ -902,6 +903,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
           videoMediaPlayer.render();
         }
+        Tooltip.install(mediaPane, WidgetFactory.createMediaItemTooltip(mediaItem));
       }
     });
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 
 import java.io.File;
+import java.util.Date;
 
 public class FrontendMediaItem {
   private String mimeType;
@@ -11,6 +12,8 @@ public class FrontendMediaItem {
   private final File file;
   private final VPinScreen screen;
   private int gameId;
+  private Date modificationDate;
+  private long size;
 
   public FrontendMediaItem(int gameId, VPinScreen screen, File file) {
     this.file = file;
@@ -18,6 +21,24 @@ public class FrontendMediaItem {
     this.screen = screen;
     this.uri = "media/" + gameId + "/" + screen.name();
     this.mimeType = MimeTypeUtil.determineMimeType(file);
+    this.modificationDate = new Date(file.lastModified());
+    this.size = file.length();
+  }
+
+  public long getSize() {
+    return size;
+  }
+
+  public void setSize(long size) {
+    this.size = size;
+  }
+
+  public Date getModificationDate() {
+    return modificationDate;
+  }
+
+  public void setModificationDate(Date modificationDate) {
+    this.modificationDate = modificationDate;
   }
 
   @JsonIgnore
