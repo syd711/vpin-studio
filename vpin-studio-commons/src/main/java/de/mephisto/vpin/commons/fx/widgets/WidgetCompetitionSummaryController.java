@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.PaginatedTableScoreDetails;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
@@ -222,8 +223,8 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         }
       }
       else if (competitionType.equals(CompetitionType.MANIA)) {
-        List<TableScoreDetails> highscoresByTable = ServerFX.maniaClient.getHighscoreClient().getHighscoresByTable(game.getExtTableId());
-        scoreSummary = fromManiaScores(highscoresByTable);
+        PaginatedTableScoreDetails highscoresByTable = ServerFX.maniaClient.getHighscoreClient().getHighscoresByTable(game.getExtTableId());
+        scoreSummary = fromManiaScores(highscoresByTable.getData());
       }
       else {
         scoreSummary = client.getCompetitionScore(competition.getId());
