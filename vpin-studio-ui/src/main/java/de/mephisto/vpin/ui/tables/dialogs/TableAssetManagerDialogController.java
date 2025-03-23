@@ -1094,6 +1094,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private void setGame(@Nullable GameRepresentation game, @Nullable VPinScreen screen) {
+    serverAssetsList.setItems(FXCollections.emptyObservableList());
+
     // detection of change in game
     if (this.game != null && (game == null || this.game.getId() != game.getId())) {
       searchField.setText("");
