@@ -321,6 +321,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
             BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
             BackgroundSize.DEFAULT);
         topBox.setBackground(new Background(myBI));
+        emptyPanel.setVisible(false);
       }
 
       topBox.setVisible(true);
