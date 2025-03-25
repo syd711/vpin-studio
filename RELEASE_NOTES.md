@@ -6,6 +6,7 @@
 - **Tables / Media Previews**: Added tooltips with filename, size and modification date to all previews.
 - **Tables / Asset Manager**: Fixed reset of the server asset list on game selection change.
 - **Tables / Asset Manager**: Fixed reset media players when the dialog is closed an media playback is still running.
+- **Competitions / iScored**: Added error message in case the game room's read API is not enabled.
 - **Webhooks**: Added missing change listener for the game lifecycle events (create, update and delete).
 - **Backglass Manager / .res Editor**: Fixed saving .res files without frame images.
 

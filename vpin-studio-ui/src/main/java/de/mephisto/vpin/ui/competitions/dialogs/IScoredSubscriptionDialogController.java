@@ -70,6 +70,9 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private Pane validationContainer;
 
   @FXML
+  private Label validationTitle;
+
+  @FXML
   private CheckBox selectAllCheckbox;
 
   @FXML
@@ -135,7 +138,6 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   }
 
   private void loadIScoredGameRoomTables(boolean cached) {
-
     if (!cached) {
       IScored.invalidate();
     }
@@ -148,6 +150,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     this.selectAllCheckbox.setSelected(true);
 
+    this.validationContainer.setVisible(false);
     this.gameRoom = null;
     if (!StringUtils.isEmpty(dashboardUrl)) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl));
@@ -161,6 +164,9 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresReadingEnabled());
         iscoredReadAPIScoresEnabled.setSelected(gameRoom.getSettings().isApiReadingEnabled());
+
+        this.validationContainer.setVisible(!iscoredReadAPIScoresEnabled.isSelected());
+        this.validationTitle.setText("The read API for this game room is disabled. Please enable it in the preferences of iScored.");
 
         List<IScoredGame> games = gameRoom.getGames();
         List<IScoredGame> errornousGames = new ArrayList<>();
