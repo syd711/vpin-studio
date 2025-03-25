@@ -16,8 +16,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.ui.Studio;
@@ -241,6 +241,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private FrontendMediaRepresentation frontendMedia;
   private Node lastSelected;
   private boolean embedded = false;
+  private AudioMediaPlayer serverAudioMediaPlayer;
+  private VideoMediaPlayer serverVideoMediaPlayer;
+  private AudioMediaPlayer assetAudioMediaPlayer;
+  private VideoMediaPlayer assetVideoMediaPlayer;
 
   public static void close() {
     if (INSTANCE != null) {
@@ -607,12 +611,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
         }
         else if (baseType.equals("audio")) {
-          AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
-          audioMediaPlayer.render();
+          serverAudioMediaPlayer = new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
+          serverAudioMediaPlayer.render();
         }
         else if (baseType.equals("video")) {
-          VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
-          videoMediaPlayer.render();
+          serverVideoMediaPlayer = new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+          serverVideoMediaPlayer.render();
         }
       }
       catch (Exception e) {
@@ -666,11 +670,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onCancel(ActionEvent e) {
-    EventManager.getInstance().removeListener(this);
-    if (this.game != null) {
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    }
-
+    onDialogCancel();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -825,7 +825,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
+    serverAssetsList.setPlaceholder(new Label("          Press the search button\nto find assets for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -896,12 +896,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new ImageViewer(mediaPane, url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
         }
         else if (baseType.equals("audio")) {
-          AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(mediaPane, mediaItem, url);
-          audioMediaPlayer.render();
+          assetAudioMediaPlayer = new AudioMediaPlayer(mediaPane, mediaItem, url);
+          assetAudioMediaPlayer.render();
         }
         else if (baseType.equals("video")) {
-          VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
-          videoMediaPlayer.render();
+          assetVideoMediaPlayer = new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
+          assetVideoMediaPlayer.render();
         }
         Tooltip.install(mediaPane, WidgetFactory.createMediaItemTooltip(mediaItem));
       }
@@ -1019,6 +1019,28 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @Override
   public void onDialogCancel() {
+    try {
+      if (this.serverAudioMediaPlayer != null && this.serverAudioMediaPlayer.getMediaPlayer() != null) {
+        this.serverAudioMediaPlayer.getMediaPlayer().stop();
+        this.serverAudioMediaPlayer.getMediaPlayer().dispose();
+      }
+      if (this.serverVideoMediaPlayer != null && this.serverVideoMediaPlayer.getMediaPlayer() != null) {
+        this.serverVideoMediaPlayer.getMediaPlayer().stop();
+        this.serverVideoMediaPlayer.getMediaPlayer().dispose();
+      }
+      if (this.assetVideoMediaPlayer != null && this.assetVideoMediaPlayer.getMediaPlayer() != null) {
+        this.assetVideoMediaPlayer.getMediaPlayer().stop();
+        this.assetVideoMediaPlayer.getMediaPlayer().dispose();
+      }
+      if (this.assetAudioMediaPlayer != null && this.assetAudioMediaPlayer.getMediaPlayer() != null) {
+        this.assetAudioMediaPlayer.getMediaPlayer().stop();
+        this.assetAudioMediaPlayer.getMediaPlayer().dispose();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage(), e);
+    }
+
     EventManager.getInstance().removeListener(this);
     if ((this.game != null)) {
       EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
