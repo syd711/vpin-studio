@@ -25,7 +25,6 @@ public class GameEmulatorRepresentation {
   private String exeParameters;
   private String gameExt;
 
-  private String userDirectory;
   private String altSoundDirectory;
   private String altColorDirectory;
   private String nvramDirectory;
@@ -189,14 +188,6 @@ public class GameEmulatorRepresentation {
 
   public void setNvramDirectory(String nvramDirectory) {
     this.nvramDirectory = nvramDirectory;
-  }
-
-  public String getUserDirectory() {
-    return userDirectory;
-  }
-
-  public void setUserDirectory(String userDirectory) {
-    this.userDirectory = userDirectory;
   }
 
   public String getAltSoundDirectory() {

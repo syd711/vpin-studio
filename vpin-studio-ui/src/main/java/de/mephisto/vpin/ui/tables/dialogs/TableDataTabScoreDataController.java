@@ -103,9 +103,14 @@ public class TableDataTabScoreDataController implements Initializable {
   @FXML
   private void onEMHighscore() {
     GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.getEmulatorId());
-    File folder = new File(emulatorRepresentation.getUserDirectory());
+    File installationFolder = new File(emulatorRepresentation.getInstallationDirectory());
+    File userFolder = new File(installationFolder, "User");
+    if(!userFolder.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file, \"User\" folder not found.");
+      return;
+    }
     try {
-      Desktop.getDesktop().open(folder);
+      Desktop.getDesktop().open(userFolder);
     } catch (IOException e) {
       LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file: " + e.getMessage());

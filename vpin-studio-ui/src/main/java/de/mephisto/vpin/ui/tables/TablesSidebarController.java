@@ -208,8 +208,10 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
             GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
             String hsName = gameRepresentation.getHsFileName();
+            File installationFolder = new File(emulatorRepresentation.getInstallationDirectory());
+            File userFolder = new File(installationFolder, "User");
             if (!StringUtils.isEmpty(hsName)) {
-              File hsFile = new File(emulatorRepresentation.getUserDirectory(), gameRepresentation.getHsFileName());
+              File hsFile = new File(userFolder, gameRepresentation.getHsFileName());
               if (hsFile.exists()) {
                 SystemUtil.openFile(hsFile);
                 return;
@@ -219,7 +221,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
                 return;
               }
             }
-            SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
+            SystemUtil.openFolder(userFolder);
             return;
           }
         }
