@@ -1095,6 +1095,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen, boolean embedded) {
+    serverAssetsList.setItems(FXCollections.emptyObservableList());
     if (this.playlistHint != null) {
       this.playlistHint.setVisible(false);
     }
