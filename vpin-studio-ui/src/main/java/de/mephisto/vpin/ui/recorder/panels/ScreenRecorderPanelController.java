@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import de.mephisto.vpin.ui.recorder.RecorderDialogs;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -47,9 +48,6 @@ public class ScreenRecorderPanelController implements Initializable {
   private AnchorPane anchorPreview;
 
   @FXML
-  private Pane audioPanel;
-
-  @FXML
   private ImageView imageView;
 
   @FXML
@@ -62,10 +60,16 @@ public class ScreenRecorderPanelController implements Initializable {
   private Label previewLabel;
 
   @FXML
+  private Button settingsBtn;
+
+  @FXML
   private CheckBox fps60Checkbox;
 
   @FXML
   private CheckBox inGameRecordingCheckbox;
+
+  @FXML
+  private CheckBox expertModeCheckbox;
 
   @FXML
   private CheckBox rotationCheckbox;
@@ -83,9 +87,20 @@ public class ScreenRecorderPanelController implements Initializable {
   private Pane rotationPanel;
 
   @FXML
+  private Pane fpsPanel;
+
+  @FXML
+  private Pane audioPanel;
+
+  @FXML
   private ComboBox<RecordingWriteMode> recordModeComboBox;
 
   private FrontendPlayerDisplay recordingScreen;
+
+  @FXML
+  private void onSettings() {
+    RecorderDialogs.openRecordingSettings(recordingScreen.getScreen());
+  }
 
   public void setData(RecorderController recorderController, FrontendPlayerDisplay recordingScreen) {
     audioPanel.setVisible(false);
@@ -139,6 +154,19 @@ public class ScreenRecorderPanelController implements Initializable {
       client.getPreferenceService().setJsonPreference(s);
     });
 
+
+    expertModeCheckbox.setSelected(option.isExpertSettingsEnabled());
+    expertModeCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+      option2.setExpertSettingsEnabled(t1);
+      client.getPreferenceService().setJsonPreference(s);
+
+      fpsPanel.setVisible(!t1);
+      rotationPanel.setVisible(!t1);
+      settingsBtn.setDisable(!t1);
+    });
+
     inGameRecordingCheckbox.setSelected(option.isInGameRecording());
     inGameRecordingCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
@@ -147,7 +175,11 @@ public class ScreenRecorderPanelController implements Initializable {
       client.getPreferenceService().setJsonPreference(s);
     });
 
-    rotationPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField));
+
+    settingsBtn.setDisable(!option.isExpertSettingsEnabled());
+    fpsPanel.setVisible(!option.isExpertSettingsEnabled());
+
+    rotationPanel.setVisible(recordingScreen.getScreen().equals(VPinScreen.PlayField) && !option.isExpertSettingsEnabled());
     rotationCheckbox.setSelected(option.isRotated());
     if (rotationPanel.isVisible() && option.isRotated()) {
       imageView.setRotate(180);
@@ -253,6 +285,7 @@ public class ScreenRecorderPanelController implements Initializable {
     previewLabel.managedProperty().bindBidirectional(previewLabel.visibleProperty());
     imageView.managedProperty().bindBidirectional(imageView.visibleProperty());
     audioPanel.managedProperty().bindBidirectional(audioPanel.visibleProperty());
+    fpsPanel.managedProperty().bindBidirectional(fpsPanel.visibleProperty());
   }
 
   public VPinScreen getScreen() {

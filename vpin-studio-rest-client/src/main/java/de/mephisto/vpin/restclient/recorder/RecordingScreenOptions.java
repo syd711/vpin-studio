@@ -11,6 +11,25 @@ public class RecordingScreenOptions {
   private boolean recordAudio = false;
   private boolean rotated = false;
 
+  private boolean expertSettingsEnabled = false;
+  private String customFfmpegCommand = null;
+
+  public boolean isExpertSettingsEnabled() {
+    return expertSettingsEnabled;
+  }
+
+  public void setExpertSettingsEnabled(boolean expertSettingsEnabled) {
+    this.expertSettingsEnabled = expertSettingsEnabled;
+  }
+
+  public String getCustomFfmpegCommand() {
+    return customFfmpegCommand;
+  }
+
+  public void setCustomFfmpegCommand(String customFfmpegCommand) {
+    this.customFfmpegCommand = customFfmpegCommand;
+  }
+
   public boolean isRotated() {
     return rotated;
   }

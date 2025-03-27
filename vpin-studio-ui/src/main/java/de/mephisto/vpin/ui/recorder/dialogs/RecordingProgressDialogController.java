@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.recorder.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -107,6 +109,22 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   @FXML
   private void onRecord(ActionEvent e) {
     TableAssetManagerDialogController.close();
+
+    if (client.getSystemService().isLocal()) {
+      new Thread(() -> {
+        try {
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException ex) {
+          //ignore
+        }
+
+        Platform.runLater(() -> {
+          Studio.stage.toBack();
+        });
+      }).start();
+
+    }
 
     finished = false;
     recordBtn.setVisible(false);
@@ -215,10 +233,10 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       else {
         String game = "game";
         String video = "video";
-        if(recordingDataSummary.size() > 1) {
+        if (recordingDataSummary.size() > 1) {
           game = "games";
         }
-        if(((int)jobDescriptor.getUserData()) > 1) {
+        if (((int) jobDescriptor.getUserData()) > 1) {
           video = "videos";
         }
         WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " " + game + ", recorded " + jobDescriptor.getUserData() + " " + video + ".\"");

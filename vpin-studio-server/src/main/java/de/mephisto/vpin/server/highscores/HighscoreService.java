@@ -508,7 +508,7 @@ public class HighscoreService implements InitializingBean {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game, serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
-    HighscoreChangeEvent event = null;
+    List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
     if (!oldScores.isEmpty()) {
       List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
       if (changedPositions.isEmpty()) {
@@ -534,7 +534,8 @@ public class HighscoreService implements InitializingBean {
 
             if (!scoreFilter.isScoreFiltered(newScore)) {
               //finally, fire the update event to notify all listeners
-              event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore, eventOrigin);
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore, eventOrigin);
+              highscoreChangeEvents.add(event);
             }
           }
         }
@@ -556,9 +557,7 @@ public class HighscoreService implements InitializingBean {
     LOG.info("Saved updated highscore for " + game + " to Studio database.");
     SLOG.info("Saved updated highscore for " + game + " to Studio database.");
 
-    if (event != null) {
-      triggerHighscoreChange(event);
-    }
+    triggerHighscoreChange(highscoreChangeEvents);
 
     triggerHighscoreUpdate(game, oldHighscore);
 
@@ -641,14 +640,17 @@ public class HighscoreService implements InitializingBean {
     LOG.info("Setting highscore change events to: " + pauseHighscoreEvents);
   }
 
-  public void triggerHighscoreChange(@NonNull HighscoreChangeEvent event) {
+  public void triggerHighscoreChange(@NonNull List<HighscoreChangeEvent> events) {
     if (pauseHighscoreEvents) {
       LOG.info("Skipping highscore change event because change events are paused.");
       return;
     }
 
-    for (HighscoreChangeListener listener : listeners) {
-      listener.highscoreChanged(event);
+    Collections.sort(events, (o1, o2) -> Long.compare(o2.getNewScore().getScore(), o1.getNewScore().getScore()));
+    for (HighscoreChangeEvent event : events) {
+      for (HighscoreChangeListener listener : listeners) {
+        listener.highscoreChanged(event);
+      }
     }
   }
 

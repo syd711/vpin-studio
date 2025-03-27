@@ -82,6 +82,7 @@ public class DiscordCompetitionService {
             oldScores = versionedScoreSummary.cloneEmptyScores();
           }
 
+          List<HighscoreChangeEvent> highscoreChangeEvents = new ArrayList<>();
           List<Integer> changedPositions = highscoreService.calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
           if (!changedPositions.isEmpty()) {
             LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
@@ -91,8 +92,10 @@ public class DiscordCompetitionService {
 
               HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, versionedScoreSummary.getRaw(), oldScores.size(), false, EventOrigin.DISCORD_COMPETITION_UPDATE);
               event.setEventReplay(true);
-              highscoreService.triggerHighscoreChange(event);
+              highscoreChangeEvents.add(event);
             }
+
+            highscoreService.triggerHighscoreChange(highscoreChangeEvents);
           }
         }
       }

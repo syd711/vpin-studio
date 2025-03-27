@@ -4,13 +4,17 @@ import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.util.Ffmpeg;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,6 +35,7 @@ public class ScreenRecorder {
 
   @NonNull
   private final FrontendPlayerDisplay recordingScreen;
+
   @NonNull
   private final File target;
 
@@ -67,96 +72,54 @@ public class ScreenRecorder {
       if (height % 2 == 1) {
         height--;
       }
+      int x = recordingScreen.getX();
+      int y = recordingScreen.getY();
+      long duration = options.getRecordingDuration();
 
-      String videoSize = width + "x" + height;
-      String offsetX = String.valueOf(recordingScreen.getX());
-      String offsetY = String.valueOf(recordingScreen.getY());
-      String duration = String.valueOf(options.getRecordingDuration());
-
-      File resources = new File(SystemInfo.RESOURCES);
-      if (!resources.exists()) {
-        resources = new File("../" + SystemInfo.RESOURCES);
+      String command = Ffmpeg.DEFAULT_COMMAND;
+      if (options.isExpertSettingsEnabled()) {
+        command = options.getCustomFfmpegCommand();
       }
-
-      //original: ffmpeg -y -report -t 60 %wAudio% -filter_complex ddagrab=framerate=%curFPS%,hwdownload,format=bgra -c:v libx264 -r %curFPS% -preset ultrafast -crf 0 output.mkv
-      List<String> commandList = new ArrayList<>();
-      commandList.add("ffmpeg.exe");
-      if (recordingScreen.getScreen().equals(VPinScreen.PlayField) && options.isRotated()) {
-        commandList.add("-display_rotation");
-        commandList.add("180");
-      }
-      commandList.add("-y");
-      commandList.add("-video_size");
-      commandList.add(videoSize);
-      commandList.add("-offset_x");
-      commandList.add(offsetX);
-      commandList.add("-offset_y");
-      commandList.add(offsetY);
-      commandList.add("-rtbufsize");
-      commandList.add("100M");
-      commandList.add("-f");
-      commandList.add("gdigrab");
-      commandList.add("-framerate");
-      if (options.isFps60()) {
-        commandList.add("60");
-      }
-      else {
-        commandList.add("30");
-      }
-      commandList.add("-t");
-      commandList.add(duration);
-
-      //-f dshow -i audio="Stereo Mix (Realtek(R) Audio)" -acodec libmp3lame
-//      if (options.isRecordAudio()) {
-//        commandList.add("-i");
-//        commandList.add("audio=\"Stereo Mix (Realtek(R) Audio)\"");
-//        commandList.add("-acodec");
-//        commandList.add("libmp3lame");
-//      }
-      commandList.add("-draw_mouse");
-      commandList.add("0");
-      commandList.add("-i");
-      commandList.add("desktop");
-      commandList.add("-c:v");
-      commandList.add("libx264");
-      commandList.add("-r");
-      if (options.isFps60()) {
-        commandList.add("60");
-      }
-      else {
-        commandList.add("30");
-      }
-      commandList.add("-preset");
-//      commandList.add("ultrafast");
-      commandList.add("ultrafast");
-      commandList.add("-tune");
-      commandList.add("zerolatency");
-      commandList.add("-crf");
-      commandList.add("25");
-      commandList.add("-pix_fmt");
-      commandList.add("yuv420p");
-      if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
-        commandList.add("-vf");
-        commandList.add("\"transpose=2,transpose=2\"");
-      }
-      commandList.add(target.getAbsolutePath());
-
-      executor = new SystemCommandExecutor(commandList);
-//      executor.enableLogging(true);
-      executor.setDir(resources);
-      executor.executeCommand();
-
-      String err = executor.getStandardErrorFromCommand().toString();
-//      if (!StringUtils.isEmpty(err)) {
-//        throw new Exception(err);
-//      }
-
-      result.setDuration(System.currentTimeMillis() - start);
+      String formattedCommand = formatCommand(command, width, height, x, y, duration);
+      executeCommand(formattedCommand, result, start);
     }
     catch (Exception e) {
       LOG.error("Screen recording failed: {}", e.getMessage(), e);
+      result.setErrorLog(e.getMessage());
     }
     return result;
+  }
+
+  private String formatCommand(String cmd, int width, int height, int x, int y, long duration) {
+    String command = cmd;
+    command = command.replace("[x]", String.valueOf(x));
+    command = command.replace("[y]", String.valueOf(y));
+    command = command.replace("[duration]", String.valueOf(duration));
+    command = command.replace("[width]", String.valueOf(width));
+    command = command.replace("[height]", String.valueOf(height));
+    return command;
+  }
+
+  private void executeCommand(@NonNull String command, @NonNull RecordingResult result, long start) throws Exception {
+    List<String> commandList = new ArrayList<>(Arrays.asList(command.split(" ")));
+    commandList.add(target.getAbsolutePath());
+
+    File resources = new File(SystemInfo.RESOURCES);
+    if (!resources.exists()) {
+      resources = new File("../" + SystemInfo.RESOURCES);
+    }
+
+    result.setCommand(String.join(" ", commandList));
+    executor = new SystemCommandExecutor(commandList);
+//    executor.enableLogging(true);
+    executor.setDir(resources);
+    executor.executeCommand();
+
+    String err = executor.getStandardErrorFromCommand().toString();
+    String info = executor.getStandardOutputFromCommand().toString();
+    result.setErrorLog(err);
+    result.setInfoLog(info);
+    result.setDuration(System.currentTimeMillis() - start);
   }
 
   private void stop() {

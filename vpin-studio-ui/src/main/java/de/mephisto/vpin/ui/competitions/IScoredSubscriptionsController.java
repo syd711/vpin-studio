@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
@@ -167,9 +168,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
           help, null, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription", 
-          "Deleting iScored Subscription", 
-          () -> client.getCompetitionService().deleteCompetition(selection)));
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
+            "Deleting iScored Subscription",
+            () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         onReload();
       }
@@ -182,8 +183,10 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Delete Subscriptions", selections,
-          selection -> "Deleting iScored Subscription", 
-          selection -> { client.getCompetitionService().deleteCompetition(selection); }));
+            selection -> "Deleting iScored Subscription",
+            selection -> {
+              client.getCompetitionService().deleteCompetition(selection);
+            }));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         onReload();
       }
@@ -201,40 +204,40 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       tableStack.getChildren().add(loadingOverlay);
     }
 
-    new Thread(() -> {
-      CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+
+    JFXFuture.supplyAsync(() -> {
       competitions = client.getCompetitionService().getIScoredSubscriptions();
+      return competitions;
+    }).thenAcceptLater((competitionRepresentations) -> {
       filterCompetitions(competitions);
       data = FXCollections.observableList(competitions);
 
-      Platform.runLater(() -> {
-        competitionWidget.setVisible(true);
-        if (competitions.isEmpty()) {
-          competitionWidget.setTop(null);
+      competitionWidget.setVisible(true);
+      if (competitions.isEmpty()) {
+        competitionWidget.setTop(null);
+      }
+      else {
+        if (competitionWidget.getTop() == null) {
+          competitionWidget.setTop(competitionWidgetRoot);
         }
-        else {
-          if (competitionWidget.getTop() == null) {
-            competitionWidget.setTop(competitionWidgetRoot);
-          }
-        }
+      }
 
-        tableView.setItems(data);
-        tableView.refresh();
-        if (selection != null && data.contains(selection)) {
-          tableView.getSelectionModel().select(selection);
-        }
-        else if (!data.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
-        else {
-          refreshView(Optional.empty());
-        }
+      tableView.setItems(data);
+      tableView.refresh();
+      if (selection != null && data.contains(selection)) {
+        tableView.getSelectionModel().select(selection);
+      }
+      else if (!data.isEmpty()) {
+        tableView.getSelectionModel().select(0);
+      }
+      else {
+        refreshView(Optional.empty());
+      }
 
-        tableStack.getChildren().remove(loadingOverlay);
-        tableView.setVisible(true);
-      });
-    }).start();
-
+      tableStack.getChildren().remove(loadingOverlay);
+      tableView.setVisible(true);
+    });
   }
 
   @Override

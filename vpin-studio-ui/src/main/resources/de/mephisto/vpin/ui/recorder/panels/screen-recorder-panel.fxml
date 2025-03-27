@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -43,6 +44,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <ComboBox fx:id="recordModeComboBox" prefWidth="150.0" GridPane.columnIndex="1" />
@@ -72,12 +74,6 @@
                               </Label>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="fps60Checkbox" layoutX="144.0" layoutY="15.0" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="FPS:" GridPane.rowIndex="4" />
                         <Label layoutX="10.0" layoutY="150.0" styleClass="default-text" text="In-Game Recording:" GridPane.rowIndex="3" />
                         <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
@@ -99,10 +95,59 @@
                               </Label>
                            </children>
                         </HBox>
+                        <Label layoutX="10.0" layoutY="116.0" styleClass="default-text" text="Expert Settings:" GridPane.rowIndex="4" />
+                        <HBox alignment="CENTER_LEFT" layoutX="144.0" layoutY="111.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <children>
+                              <CheckBox fx:id="expertModeCheckbox" mnemonicParsing="false" text="Enabled" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="If enabled, a custom ffmpeg command can be configured." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Button fx:id="settingsBtn" mnemonicParsing="false" onAction="#onSettings" text="Settings" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Edit the ffmpeg.exe command" />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                           </graphic>
+                        </Button>
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
+                  </GridPane>
+                  <GridPane fx:id="fpsPanel" layoutX="22.0" layoutY="328.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.599951171875" minWidth="10.0" prefWidth="132.599951171875" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="182.20007324218747" minWidth="10.0" prefWidth="167.80004882812497" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label styleClass="default-text" text="FPS:" />
+                        <CheckBox fx:id="fps60Checkbox" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
                   </GridPane>
                   <GridPane fx:id="audioPanel" vgap="3.0">
                      <columnConstraints>
@@ -124,11 +169,6 @@
                         <Insets top="3.0" />
                      </VBox.margin>
                   </GridPane>
-                  <HBox spacing="12.0">
-                     <children>
-                        <VBox spacing="3.0" />
-                     </children>
-                  </HBox>
                   <GridPane fx:id="rotationPanel" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.599951171875" minWidth="10.0" prefWidth="132.599951171875" />
