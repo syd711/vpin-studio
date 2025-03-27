@@ -26,49 +26,55 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
 
   @NonNull
   public List<Score> getScores(@Nullable Game game, @NonNull Date createdAt, @NonNull List<String> lines, List<String> titles) {
-    List<Score> scores = new ArrayList<>();
+    try {
+      List<Score> scores = new ArrayList<>();
 
-    int gameId = -1;
-    String source = null;
-    if (game != null) {
-      gameId = game.getId();
-      source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
-    }
+      int gameId = -1;
+      String source = null;
+      if (game != null) {
+        gameId = game.getId();
+        source = game.getGameDisplayName() + "/" + game.getRom() + "/" + game.getHsFileName();
+      }
 
-    int index = 1;
-    for (int i = 0; i < lines.size(); i++) {
-      String line = lines.get(i);
+      int index = 1;
+      for (int i = 0; i < lines.size(); i++) {
+        String line = lines.get(i);
 
-      //the if there is a highscore title, in that case...
-      if (titles.contains(line.trim())) {
-        String scoreLine = lines.get(i + 1);
+        //the if there is a highscore title, in that case...
+        if (titles.contains(line.trim())) {
+          String scoreLine = lines.get(i + 1);
 
-        //the next line could be a raw score without a positions
-        if (!isScoreLine(scoreLine, (i + 1))) {
-          Score score = createTitledScore(createdAt, scoreLine, source, gameId);
-          if (score != null) {
-            scores.add(score);
+          //the next line could be a raw score without a positions
+          if (!isScoreLine(scoreLine, (i + 1))) {
+            Score score = createTitledScore(createdAt, scoreLine, source, gameId);
+            if (score != null) {
+              scores.add(score);
+            }
+            //do not increase index, as we still search for #1
+            continue;
           }
-          //do not increase index, as we still search for #1
-          continue;
+        }
+
+        if (isScoreLine(line, index)) {
+          Score score = createScore(createdAt, line, source, gameId);
+          if (score != null) {
+            score.setPosition(scores.size() + 1);
+            scores.add(score);
+            index++;
+          }
+        }
+
+        if (scores.size() >= 3 && StringUtils.isEmpty(line)) {
+          break;
         }
       }
 
-      if (isScoreLine(line, index)) {
-        Score score = createScore(createdAt, line, source, gameId);
-        if (score != null) {
-          score.setPosition(scores.size() + 1);
-          scores.add(score);
-          index++;
-        }
-      }
-
-      if (scores.size() >= 3 && StringUtils.isEmpty(line)) {
-        break;
-      }
+      return filterDuplicates(scores);
     }
-
-    return filterDuplicates(scores);
+    catch (Exception e) {
+      LOG.error("Score parsing failed for \"" + game.getGameDisplayName() + "\": {}", e.getMessage(), e);
+      throw e;
+    }
   }
 
   protected static boolean isScoreLine(String line, int index) {
