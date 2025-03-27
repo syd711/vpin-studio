@@ -472,8 +472,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       if (maniaSettings.isSubmitRatings() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
         Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
         if (cabinet != null) {
-          int oldRating = event.getOldData().getGameRating();
-          int newRating = event.getNewData().getGameRating();
+          int oldRating = event.getOldData().getGameRating() != null ? event.getOldData().getGameRating() : 0;
+          int newRating = event.getNewData().getGameRating() != null ? event.getNewData().getGameRating() : 1;
 
           LOG.info("Updating mania rating for \"{}\" from {} to {}", game.getGameDisplayName(), oldRating, newRating);
           if (oldRating != newRating) {
