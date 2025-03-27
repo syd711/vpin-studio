@@ -26,7 +26,7 @@ import de.mephisto.vpin.restclient.util.OSUtil;
  */
 public class MonitorInfoUtil {
 
-  private static boolean USE_GRAPHICS_ENVIRONMENT = true;
+  private static boolean USE_GRAPHICS_ENVIRONMENT = false;
 
   /**
    * List monitors
