@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -175,7 +175,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     newTournament.setEndDate(end);
     newTournament.setStartDate(DateUtil.today());
 
-    TournamentSettings settings = client.getTournamentsService().getSettings();
+    ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     newTournament.setDashboardUrl(settings.getDefaultDashboardUrl());
     newTournament.setDiscordLink(settings.getDefaultDiscordLink());
     newTournament.setDescription(settings.getDefaultDescription());

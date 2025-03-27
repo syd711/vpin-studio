@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.CabinetOnlineStatus;
 import de.mephisto.vpin.connectors.mania.model.CabinetStatus;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
@@ -20,8 +20,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.annotation.PreDestroy;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -47,21 +45,6 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
   @Autowired
   private ManiaService maniaService;
 
-  public TournamentSettings saveSettings(TournamentSettings settings) {
-    try {
-      preferencesService.savePreference(PreferenceNames.TOURNAMENTS_SETTINGS, settings);
-      return getSettings();
-    }
-    catch (Exception e) {
-      LOG.error("Saving tournament settings failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving tournament settings failed: " + e.getMessage());
-    }
-  }
-
-  public TournamentSettings getSettings() {
-    return preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
-  }
-
   public boolean synchronize(TournamentMetaData metaData) {
     return tournamentSynchronizer.synchronize(metaData);
   }
@@ -77,7 +60,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
         if (cabinet != null) {
-          TournamentSettings settings = getSettings();
+          ManiaSettings settings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
           if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
             CabinetStatus status = cabinet.getStatus();
             Game game = event.getGame();
@@ -101,7 +84,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
       try {
         Cabinet cabinet = maniaService.getClient().getCabinetClient().getCabinet();
         if (cabinet != null) {
-          TournamentSettings settings = getSettings();
+          ManiaSettings settings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
           if (settings.isShowOnlineStatus() && settings.isShowActiveGameStatus()) {
             cabinet.getStatus().setStatus(CabinetOnlineStatus.online);
             cabinet.getStatus().setActiveGame(null);
@@ -132,9 +115,9 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
           cabinet.getStatus().setStatus(CabinetOnlineStatus.offline);
           cabinet.getStatus().setActiveGame(null);
 
-          TournamentSettings settings = getSettings();
+          ManiaSettings settings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
           settings.setEnabled(true);
-          preferencesService.savePreference(PreferenceNames.TOURNAMENTS_SETTINGS, settings);
+          preferencesService.savePreference(PreferenceNames.MANIA_SETTINGS, settings);
 
           if (settings.isShowOnlineStatus()) {
             cabinet.getStatus().setStatus(CabinetOnlineStatus.online);

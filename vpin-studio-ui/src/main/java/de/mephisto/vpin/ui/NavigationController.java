@@ -10,7 +10,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
@@ -286,8 +286,8 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
-      TournamentSettings settings = client.getTournamentsService().getSettings();
+    if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
+      ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       tournamentsBtn.setVisible(settings.isEnabled() && settings.isTournamentsEnabled());
       if (!tournamentsBtn.isVisible()) {
         navigateTo(NavigationItem.Tables);
@@ -316,7 +316,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     tournamentsBtn.setVisible(false);
     maniaBtn.setVisible(false);
     try {
-      TournamentSettings settings = client.getTournamentsService().getSettings();
+      ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null && settings.isTournamentsEnabled()) {
         tournamentsBtn.setVisible(settings.isEnabled());
       }

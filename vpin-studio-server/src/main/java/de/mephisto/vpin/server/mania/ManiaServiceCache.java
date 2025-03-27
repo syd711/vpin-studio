@@ -59,12 +59,9 @@ public class ManiaServiceCache {
       List<Player> buildInPlayers = playerService.getBuildInPlayers();
       for (Player buildInPlayer : buildInPlayers) {
         Account accountByUuid = maniaService.getClient().getAccountClient().getAccountByUuid(buildInPlayer.getTournamentUserUuid());
-        if (accountByUuid != null) {
-          playerCache.put(buildInPlayer.getInitials(), accountByUuid);
-        }
+        playerCache.put(buildInPlayer.getInitials(), accountByUuid);
       }
     }
-    LOG.info("Finished precaching.");
   }
 
   public Game getGame(String vpsTableId) {
@@ -72,7 +69,7 @@ public class ManiaServiceCache {
   }
 
   public boolean containsAccountForInitials(String playerInitials) {
-    return playerCache.containsKey(playerInitials);
+    return playerCache.containsKey(playerInitials) && playerCache.get(playerInitials) != null;
   }
 
   public Account getAccountForInitials(String playerInitials) {

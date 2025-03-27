@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -50,7 +50,7 @@ public class TournamentPreferencesController implements Initializable, Preferenc
   @FXML
   private Pane notRegisteredPane;
 
-  private TournamentSettings settings;
+  private ManiaSettings settings;
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -69,7 +69,7 @@ public class TournamentPreferencesController implements Initializable, Preferenc
       return;
     }
 
-    settings = client.getTournamentsService().getSettings();
+    settings = client.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
 
     dashboardUrl.setText(settings.getDefaultDashboardUrl());
@@ -80,10 +80,10 @@ public class TournamentPreferencesController implements Initializable, Preferenc
     dashboardUrl.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("dashboardUrl", () -> {
       try {
         settings.setDefaultDashboardUrl(t1);
-        settings = client.getTournamentsService().saveSettings(settings);
+        client.getPreferenceService().setJsonPreference(settings);
       }
       catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        LOG.error("Failed to save mania settings: " + e.getMessage(), e);
       }
     }, 300));
 
@@ -93,10 +93,10 @@ public class TournamentPreferencesController implements Initializable, Preferenc
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
           settings.setTournamentsEnabled(newValue);
-          settings = client.getTournamentsService().saveSettings(settings);
+          client.getPreferenceService().setJsonPreference(settings);
         }
         catch (Exception e) {
-          LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+          LOG.error("Failed to save mania settings: " + e.getMessage(), e);
         }
       }
     });
@@ -104,20 +104,20 @@ public class TournamentPreferencesController implements Initializable, Preferenc
     discordLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("discordLink", () -> {
       try {
         settings.setDefaultDiscordLink(t1);
-        settings = client.getTournamentsService().saveSettings(settings);
+        client.getPreferenceService().setJsonPreference(settings);
       }
       catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        LOG.error("Failed to save mania settings: " + e.getMessage(), e);
       }
     }, 300));
 
     websiteLink.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("websiteLink", () -> {
       try {
         settings.setDefaultWebsite(t1);
-        settings = client.getTournamentsService().saveSettings(settings);
+        client.getPreferenceService().setJsonPreference(settings);
       }
       catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        LOG.error("Failed to save mania settings: " + e.getMessage(), e);
       }
     }, 300));
 
@@ -128,10 +128,10 @@ public class TournamentPreferencesController implements Initializable, Preferenc
       }
       try {
         settings.setDefaultDescription(value);
-        settings = client.getTournamentsService().saveSettings(settings);
+        client.getPreferenceService().setJsonPreference(settings);
       }
       catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        LOG.error("Failed to save mania settings: " + e.getMessage(), e);
       }
     }, 300));
 
@@ -140,7 +140,7 @@ public class TournamentPreferencesController implements Initializable, Preferenc
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
+    if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
       preferencesPanel.setVisible(settings.isEnabled());
     }
   }

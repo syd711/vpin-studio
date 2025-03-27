@@ -13,7 +13,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -235,11 +235,11 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
         return;
       }
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", Arrays.asList(vpsTable)));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(Arrays.asList(vpsTable)));
       List<Object> results = progressDialog.getResults();
       int count = 0;
       for (Object result : results) {
-        ManiaHighscoreSyncResult syncResult = (ManiaHighscoreSyncResult) result;
+        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
         count += syncResult.getTableScores().size();
       }
       WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");
@@ -506,10 +506,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
           Platform.runLater(() -> {
             WidgetFactory.showAlert(stage, "Error", "Loading ranked accounts: " + e.getMessage());
           });
-          return Collections.emptyList();
+          return null;
         })
         .thenAcceptLater(searchResult -> {
-          tableScores = searchResult;
+          if(searchResult == null) {
+            tableScores = Collections.emptyList();
+          }
+          else {
+            tableScores = searchResult.getData();
+          }
           ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
           tableView.setItems(data);
           highscoresTab.setText("Highscores (" + data.size() + ")");

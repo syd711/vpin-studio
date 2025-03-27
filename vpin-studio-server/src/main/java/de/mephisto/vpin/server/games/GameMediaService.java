@@ -127,7 +127,7 @@ public class GameMediaService {
 
   public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
-    TableDetails oldDetails = getTableDetails(gameId);
+    TableDetails originalTableDetails = getTableDetails(gameId);
     Game game = frontendService.getOriginalGame(gameId);
 
     //fix input and save input
@@ -143,12 +143,12 @@ public class GameMediaService {
     //for upload and replace, we do not need any renaming
     if (game.isVpxGame()) {
       if (!renamingChecks) {
-        runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+        runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
         return updatedTableDetails;
       }
 
       //rename game filename which results in renaming VPX related files
-      if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
+      if (!updatedTableDetails.getGameFileName().equals(originalTableDetails.getGameFileName())) {
         String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
         String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
         if (!existingName.equalsIgnoreCase(name)) {
@@ -175,27 +175,29 @@ public class GameMediaService {
           if (game.getVBSFile().exists()) {
             de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getVBSFile(), name);
           }
-          LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
+          LOG.info("Finished game file renaming from \"" + originalTableDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
         }
         else {
           //revert to old value
-          updatedTableDetails.setGameFileName(oldDetails.getGameFileName());
+          updatedTableDetails.setGameFileName(originalTableDetails.getGameFileName());
           frontendService.saveTableDetails(gameId, updatedTableDetails);
-          LOG.info("Renaming game file from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
+          LOG.info("Renaming game file from \"" + originalTableDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
         }
       }
     }
 
 
     //rename the game name, which results in renaming all assets
-    if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
+    if (!updatedTableDetails.getGameName().equals(originalTableDetails.getGameName())) {
       //TODO this smells!
-      renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
+      renameGameMedia(game, originalTableDetails.getGameName(), updatedTableDetails.getGameName());
     }
 
     if (game.isVpxGame()) {
-      runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+      runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
     }
+
+    gameService.notifyGameDataChanged(game, originalTableDetails, updatedTableDetails);
 
     return updatedTableDetails;
   }

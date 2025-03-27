@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.games.Game;
@@ -53,8 +53,8 @@ public class TournamentSynchronizer {
   public synchronized boolean synchronize(TournamentMetaData metaData) {
     VPinManiaClient maniaClient = maniaService.getClient();
     if (maniaClient.getCabinetClient().getCabinet() != null) {
-      TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
-      if (tournamentSettings.isTournamentsEnabled()) {
+      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      if (maniaSettings.isTournamentsEnabled()) {
         Tournament tournament = maniaClient.getTournamentClient().getTournament(metaData.getTournamentId());
         if (tournament != null) {
           List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
@@ -99,8 +99,8 @@ public class TournamentSynchronizer {
       VPinManiaClient maniaClient = maniaService.getClient();
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
       if (cabinet != null) {
-        TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
-        if (tournamentSettings.isTournamentsEnabled()) {
+        ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+        if (maniaSettings.isTournamentsEnabled()) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           synchronize(tournaments);
         }
@@ -115,8 +115,8 @@ public class TournamentSynchronizer {
     VPinManiaClient maniaClient = maniaService.getClient();
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     if (cabinet != null) {
-      TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
-      if (tournamentSettings.isTournamentsEnabled()) {
+      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      if (maniaSettings.isTournamentsEnabled()) {
         List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
         List<TournamentTableInfo> byGameId = tournamentTablesRepository.findByGameId(game.getId());
         List<Tournament> filtered = new ArrayList<>();

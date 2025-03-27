@@ -26,7 +26,11 @@ public class VpsEntryService implements InitializingBean {
     }
     vpsEntry.setComment(vpsTable.getComment());
     vpsEntry.setVpsTableId(vpsTable.getId());
-    vpsEntriesRepository.saveAndFlush(vpsEntry);
+    save(vpsEntry);
+  }
+
+  public void save(VpsDbEntry vpsDbEntry) {
+    vpsEntriesRepository.saveAndFlush(vpsDbEntry);
   }
 
   @Override

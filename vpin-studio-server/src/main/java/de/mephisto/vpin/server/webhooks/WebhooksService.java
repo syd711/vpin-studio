@@ -139,7 +139,6 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
     //not used
   }
-
   //----------------------------------- Player Listener ----------------------------------------------------------------
 
   @Override

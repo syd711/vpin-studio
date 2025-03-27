@@ -5,7 +5,25 @@ import java.util.List;
 
 public class ManiaRegistration {
   private List<Long> playerIds = new ArrayList<>();
+  private boolean submitRatings = false;
+  private boolean submitPlayCount = false;
   private String result;
+
+  public boolean isSubmitPlayCount() {
+    return submitPlayCount;
+  }
+
+  public void setSubmitPlayCount(boolean submitPlayCount) {
+    this.submitPlayCount = submitPlayCount;
+  }
+
+  public boolean isSubmitRatings() {
+    return submitRatings;
+  }
+
+  public void setSubmitRatings(boolean submitRatings) {
+    this.submitRatings = submitRatings;
+  }
 
   public String getResult() {
     return result;

@@ -1,18 +1,40 @@
-package de.mephisto.vpin.restclient.tournaments;
+package de.mephisto.vpin.restclient.mania;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 
-public class TournamentSettings extends JsonSettings {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ManiaSettings extends JsonSettings {
   private boolean enabled;
   private boolean tournamentsEnabled = false;
   private String defaultDiscordLink;
   private String defaultDashboardUrl;
   private String defaultDescription;
   private String defaultWebsite;
+
   private boolean submitAllScores = true;
+  private boolean submitRatings = false;
+  private boolean submitPlayed = false;
   private boolean showOnlineStatus = true;
   private boolean showActiveGameStatus = true;
+
+  public boolean isSubmitRatings() {
+    return submitRatings;
+  }
+
+  public void setSubmitRatings(boolean submitRatings) {
+    this.submitRatings = submitRatings;
+  }
+
+  public boolean isSubmitPlayed() {
+    return submitPlayed;
+  }
+
+  public void setSubmitPlayed(boolean submitPlayed) {
+    this.submitPlayed = submitPlayed;
+  }
 
   public boolean isShowOnlineStatus() {
     return showOnlineStatus;
@@ -88,6 +110,6 @@ public class TournamentSettings extends JsonSettings {
 
   @Override
   public String getSettingsName() {
-    return PreferenceNames.TOURNAMENTS_SETTINGS;
+    return PreferenceNames.MANIA_SETTINGS;
   }
 }

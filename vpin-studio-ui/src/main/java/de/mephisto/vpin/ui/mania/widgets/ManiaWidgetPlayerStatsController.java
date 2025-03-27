@@ -415,15 +415,12 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       this.reloadBtn.setDisable(true);
       this.tableView.setVisible(false);
 
-      List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account));
+      List<ManiaWidgetPlayerStatsController.TableScoreModel> models = (List<TableScoreModel>) progressDialog.getResults().get(0);
+
       titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
-      sub1Label.setText("Recorded Scores: " + highscoresByAccount.size());
-
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
-
-      List<TableScoreModel> results = (List<TableScoreModel>) (List<?>) progressDialog.getResults();
-      Collections.sort(results, Comparator.comparing(TableScoreModel::getName));
-      ObservableList<TableScoreModel> data = FXCollections.observableList(results);
+      sub1Label.setText("Recorded Scores: " + models.size());
+      ObservableList<TableScoreModel> data = FXCollections.observableList(models);
 
       Platform.runLater(() -> {
         tableStack.getChildren().remove(loadingOverlay);
@@ -467,20 +464,13 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     private String name = "???";
     private int position = -1;
 
-    public TableScoreModel(TableScore tableScore, Account account, List<TableScoreDetails> highscoresByTable) {
+    public TableScoreModel(TableScore tableScore) {
       this.score = tableScore.getScore();
+      this.position = tableScore.getPosition();
       this.vpsTable = client.getVpsService().getTableById(tableScore.getVpsTableId());
       if (vpsTable != null) {
         this.name = vpsTable.getName().trim();
         this.vpsTableVersion = vpsTable.getTableVersionById(tableScore.getVpsVersionId());
-      }
-
-      for (int i = 0; i < highscoresByTable.size(); i++) {
-        TableScoreDetails tableScoreDetails = highscoresByTable.get(i);
-        if (tableScoreDetails.getAccountUUID().equals(account.getUuid())) {
-          position = i + 1;
-          break;
-        }
       }
     }
 

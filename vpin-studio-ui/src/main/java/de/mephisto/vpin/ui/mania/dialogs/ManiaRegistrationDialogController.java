@@ -37,6 +37,12 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   @FXML
   private CheckBox registrationCheckbox;
 
+  @FXML
+  private CheckBox synchronizePlayCountCheckbox;
+
+  @FXML
+  private CheckBox synchronizeRatingsCheckbox;
+
   private final List<CheckBox> playerCheckboxes = new ArrayList<>();
 
   private ManiaRegistration maniaRegistration;
@@ -55,6 +61,8 @@ public class ManiaRegistrationDialogController implements DialogController, Init
   @FXML
   private void onDialogSubmit(ActionEvent e) {
     maniaRegistration = new ManiaRegistration();
+    maniaRegistration.setSubmitRatings(synchronizeRatingsCheckbox.isSelected());
+    maniaRegistration.setSubmitPlayCount(synchronizeRatingsCheckbox.isSelected());
 
     for (CheckBox playerCheckbox : playerCheckboxes) {
       if (playerCheckbox.isSelected()) {
@@ -72,9 +80,16 @@ public class ManiaRegistrationDialogController implements DialogController, Init
     playerList.managedProperty().bindBidirectional(playerList.visibleProperty());
     playersRoot.managedProperty().bindBidirectional(playersRoot.visibleProperty());
 
+    synchronizeRatingsCheckbox.setDisable(true);
+    synchronizeRatingsCheckbox.setSelected(true);
+    synchronizePlayCountCheckbox.setDisable(true);
+    synchronizePlayCountCheckbox.setSelected(true);
+
     registrationCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        synchronizeRatingsCheckbox.setDisable(!newValue);
+        synchronizePlayCountCheckbox.setDisable(!newValue);
         okButton.setDisable(!newValue);
       }
     });

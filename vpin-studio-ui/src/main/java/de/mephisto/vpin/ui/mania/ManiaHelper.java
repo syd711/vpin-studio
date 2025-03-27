@@ -4,11 +4,12 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.system.SystemId;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,8 +22,8 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class ManiaRegistrationHelper {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaRegistrationHelper.class);
+public class ManiaHelper {
+  private final static Logger LOG = LoggerFactory.getLogger(ManiaHelper.class);
 
   public static boolean register() {
     SystemId systemId = client.getSystemService().getSystemId();
@@ -43,30 +44,17 @@ public class ManiaRegistrationHelper {
 
         Cabinet registeredCabinet = maniaClient.getCabinetClient().getCabinet();
         if (registeredCabinet != null) {
-          TournamentSettings settings = client.getTournamentsService().getSettings();
-          settings.setEnabled(true);
-          client.getTournamentsService().saveSettings(settings);
+          ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
-          if (registration.getPlayerIds().isEmpty()) {
-            return true;
-          }
-          else {
-            List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
-            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", vpsTables));
-            List<Object> results = progressDialog.getResults();
-            int count = 0;
-            for (Object result : results) {
-              ManiaHighscoreSyncResult syncResult = (ManiaHighscoreSyncResult) result;
-              count += syncResult.getTableScores().size();
-            }
-            WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");
+          if (!registration.getPlayerIds().isEmpty() || settings.isSubmitPlayed() || settings.isSubmitRatings()) {
+            runSynchronization();
           }
           return true;
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for details).");
+        LOG.error("Failed to finish registration: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Registration failed! Please contact the administrator (see preference footer for contact details).");
       }
     }
     return false;
@@ -97,5 +85,19 @@ public class ManiaRegistrationHelper {
       return true;
     }
     return false;
+  }
+
+  public static void runSynchronization() {
+    List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
+    List<Object> results = progressDialog.getResults();
+    int count = 0;
+    String msg = null;
+    for (Object result : results) {
+      ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
+      count += syncResult.getTableScores().size();
+      msg = syncResult.getResult();
+    }
+    WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
   }
 }

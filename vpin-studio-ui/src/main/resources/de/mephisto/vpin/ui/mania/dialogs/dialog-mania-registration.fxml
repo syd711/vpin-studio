@@ -4,9 +4,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.dialogs.ManiaRegistrationDialogController">
    <top>
@@ -21,15 +24,61 @@
             <Label styleClass="default-title" text="VPin Mania Registration" />
             <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="This registers your cabinet for the online service &quot;VPin Mania&quot;.">
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets />
                </VBox.margin>
             </Label>
             <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The account is bound to your cabinet." />
             <CheckBox fx:id="registrationCheckbox" mnemonicParsing="false" styleClass="default-text" text="I understand, register my cabinet.">
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets top="6.0" />
                </VBox.margin>
             </CheckBox>
+            <Label styleClass="default-title" text="Privacy Settings">
+               <VBox.margin>
+                  <Insets top="24.0" />
+               </VBox.margin>
+            </Label>
+            <Label styleClass="preference-description" text="You can contribute to the global table ratings on VPin Mania by allowing " />
+            <Label layoutX="10.0" layoutY="174.0" styleClass="preference-description" text="to submit the following data anonymously." />
+            <VBox spacing="6.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <CheckBox fx:id="synchronizeRatingsCheckbox" mnemonicParsing="false" styleClass="default-text" text="Submit Table Ratings" />
+                        <Label textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="This will synchronize your table ratings with the existing ones on VPin Mania." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <CheckBox fx:id="synchronizePlayCountCheckbox" mnemonicParsing="false" styleClass="default-text" text="Submit Play Count" />
+                        <Label textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="This will synchronize the play count of your tables with the existing ones on VPin Mania." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin>
+            </VBox>
             <VBox fx:id="playersRoot">
                <children>
                   <Label styleClass="default-title" text="Player Registration">

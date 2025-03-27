@@ -37,7 +37,7 @@ public interface PreferenceNames {
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
-  String TOURNAMENTS_SETTINGS = "tournamentSettings";
+  String MANIA_SETTINGS = "tournamentSettings";
 
   String RECORDER_SETTINGS = "recorderSettings";
   String WEBHOOK_SETTINGS = "webhookSettings";

@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
@@ -323,7 +323,7 @@ public class BuiltInPlayersController extends BasePlayersController implements I
 
     client.getPreferenceService().addListener(this);
 
-    preferencesChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null);
+    preferencesChanged(PreferenceNames.MANIA_SETTINGS, null);
     this.onReload();
   }
 
@@ -331,8 +331,8 @@ public class BuiltInPlayersController extends BasePlayersController implements I
   public void preferencesChanged(String key, Object value) {
     tournamentColumn.setVisible(Features.MANIA_ENABLED);
 
-    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
-      TournamentSettings settings = client.getTournamentsService().getSettings();
+    if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
+      ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
       if (Features.MANIA_ENABLED) {
         tournamentColumn.setVisible(settings.isEnabled());
