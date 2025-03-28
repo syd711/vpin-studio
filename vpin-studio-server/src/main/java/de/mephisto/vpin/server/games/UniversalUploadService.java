@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -54,6 +55,9 @@ public class UniversalUploadService {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private FPService fpService;
 
   @Autowired
   private AltColorService altColorService;
@@ -217,6 +221,12 @@ public class UniversalUploadService {
         }
         break;
       }
+      case BAM_CFG: {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
+          fpService.installBAMCfg(uploadDescriptor, tempFile, frontendService.getFrontend(), analysis);
+        }
+        break;
+      }
       default: {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
@@ -297,9 +307,15 @@ public class UniversalUploadService {
     importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
     importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
     importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
-    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
 
-    if (analysis.isTable()) {
+    if (analysis.isVpxTable()) {
+      importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
+    }
+    if (analysis.isFpTable()) {
+      importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.BAM_CFG, true);
+    }
+
+    if (analysis.isVpxOrFpTable()) {
       notifyUpdates(uploadDescriptor);
     }
   }

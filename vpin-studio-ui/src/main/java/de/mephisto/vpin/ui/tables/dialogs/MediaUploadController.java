@@ -112,7 +112,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
 
-  private Map<String, Image> previewCache = new HashMap<>();
+  private final Map<String, Image> previewCache = new HashMap<>();
 
   @FXML
   private void onCancelClick(ActionEvent e) {

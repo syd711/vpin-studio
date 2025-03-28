@@ -42,10 +42,12 @@ public class VPXService implements InitializingBean {
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
 
-  /** The cached information in vPïnballX.ini file */
+  /**
+   * The cached information in vPïnballX.ini file
+   */
   private INIConfiguration iniConfiguration;
 
-  private VPXKeyManager keyManager; 
+  private VPXKeyManager keyManager;
 
 
   public File getVPXFile() {
@@ -62,13 +64,14 @@ public class VPXService implements InitializingBean {
         iniConfiguration.setSeparatorUsedInOutput("=");
         iniConfiguration.setSeparatorUsedInInput("=");
         iniConfiguration.read(fileReader);
-        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath()); 
+        LOG.info("loaded VPX ini file {}", vpxInFile.getAbsolutePath());
 
         this.keyManager = new VPXKeyManager(getPlayerConfiguration(false));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to read VPX ini file: " + e.getMessage(), e);
       }
-    } 
+    }
   }
 
   public @Nullable Configuration getPlayerConfiguration(boolean forceReload) {
@@ -93,7 +96,8 @@ public class VPXService implements InitializingBean {
         }
       }
       return null;
-    } catch (VPinStudioException e) {
+    }
+    catch (VPinStudioException e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
@@ -139,7 +143,8 @@ public class VPXService implements InitializingBean {
         POVSerializer.serialize(pov, game);
       }
       return pov;
-    } catch (VPinStudioException e) {
+    }
+    catch (VPinStudioException e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
   }
@@ -168,7 +173,8 @@ public class VPXService implements InitializingBean {
         if (target.exists()) {
           return getPOV(game);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
       }
     }
@@ -188,9 +194,11 @@ public class VPXService implements InitializingBean {
           LOG.info("Reading vbs file " + target.getAbsolutePath() + " (" + FileUtils.readableFileSize(target.length()) + ")");
           Path filePath = Path.of(target.toURI());
           return Files.readString(filePath);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to read " + target.getAbsolutePath() + ": " + e.getMessage(), e);
-        } finally {
+        }
+        finally {
           if (!target.delete()) {
             LOG.error("Failed to clean up vbs file " + target.getAbsolutePath());
           }
@@ -213,7 +221,8 @@ public class VPXService implements InitializingBean {
           if (values != null) {
             return new TableInfo(values);
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to read table info: " + e.getMessage());
         }
       }
@@ -243,7 +252,8 @@ public class VPXService implements InitializingBean {
           VPXUtil.importVBS(gameFile, vbs, useTempFile);
           LOG.info("Written table sources " + gameFile.getAbsolutePath());
           return true;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //already logged
         }
       }
@@ -251,9 +261,15 @@ public class VPXService implements InitializingBean {
     return false;
   }
 
-  public boolean play(@Nullable Game game, @Nullable String altExe) {
+  public boolean play(@Nullable Game game, @Nullable String altExe, @Nullable String option) {
     if (game != null) {
-      return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
+      if ("cameraMode".equals(option)) {
+        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-PovEdit");
+      }
+      else {
+        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
+      }
+
     }
     return vpxCommandLineService.launch();
   }

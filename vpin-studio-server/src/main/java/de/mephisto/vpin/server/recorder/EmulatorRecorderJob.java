@@ -76,7 +76,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         }
 
         if (game.getEmulator().isVpxEmulator()) {
-          vpxService.play(game, altExe);
+          vpxService.play(game, altExe, null);
         }
         else if (game.getEmulator().isFpEmulator()) {
           fpService.play(game, altExe);

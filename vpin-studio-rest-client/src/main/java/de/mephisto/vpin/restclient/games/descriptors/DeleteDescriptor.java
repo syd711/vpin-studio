@@ -14,12 +14,21 @@ public class DeleteDescriptor {
   private boolean deleteAltSound;
   private boolean deleteAltColor;
   private boolean deleteCfg;
+  private boolean deleteBAMCfg;
   private boolean deletePov;
   private boolean deleteRes;
   private boolean deleteIni;
   private boolean deleteVbs;
   private boolean deletePinVol;
   private boolean keepAssets;
+
+  public boolean isDeleteBAMCfg() {
+    return deleteBAMCfg;
+  }
+
+  public void setDeleteBAMCfg(boolean deleteBAMCfg) {
+    this.deleteBAMCfg = deleteBAMCfg;
+  }
 
   public boolean isDeletePinVol() {
     return deletePinVol;

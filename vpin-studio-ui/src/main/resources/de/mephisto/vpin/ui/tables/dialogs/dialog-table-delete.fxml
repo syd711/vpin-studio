@@ -168,7 +168,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="Delete Highscores">
+                                    <CheckBox fx:id="bamCfgCheckbox" mnemonicParsing="false" text="Delete BAM .cfg Files">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -181,6 +181,26 @@
                            </VBox.margin>
                         </HBox>
                         <VBox />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="highscoreCheckbox" mnemonicParsing="false" text="Delete Highscores">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="This will delete the highscore history of the game and also reset existing ones." wrapText="true" />
+                                 </tooltip>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <BorderPane.margin>
                         <Insets />

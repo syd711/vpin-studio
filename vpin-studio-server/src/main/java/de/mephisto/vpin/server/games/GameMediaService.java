@@ -136,14 +136,20 @@ public class GameMediaService {
       gameFilename = gameFilename + ".vpx";
       updatedTableDetails.setGameFileName(gameFilename);
     }
+    else if (game.isFpGame() && !gameFilename.endsWith(".fpt")) {
+      gameFilename = gameFilename + ".fpt";
+      updatedTableDetails.setGameFileName(gameFilename);
+    }
 
     gameService.fixVersion(gameId, updatedTableDetails.getGameVersion(), true);
     frontendService.saveTableDetails(gameId, updatedTableDetails);
 
     //for upload and replace, we do not need any renaming
-    if (game.isVpxGame()) {
+    if (game.isVpxGame() || game.isFpGame()) {
       if (!renamingChecks) {
-        runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
+        if (game.isVpxGame()) {
+          runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
+        }
         return updatedTableDetails;
       }
 
@@ -172,6 +178,10 @@ public class GameMediaService {
             de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getIniFile(), name);
           }
 
+          if (game.getBAMCfgFile().exists()) {
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getBAMCfgFile(), name);
+          }
+
           if (game.getVBSFile().exists()) {
             de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getVBSFile(), name);
           }
@@ -181,7 +191,7 @@ public class GameMediaService {
           //revert to old value
           updatedTableDetails.setGameFileName(originalTableDetails.getGameFileName());
           frontendService.saveTableDetails(gameId, updatedTableDetails);
-          LOG.info("Renaming game file from \"" + originalTableDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
+          LOG.info("Renaming game file from \"" + originalTableDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, game file renaming failed.");
         }
       }
     }
@@ -600,6 +610,12 @@ public class GameMediaService {
 
         if (descriptor.isDeleteIni()) {
           if (!FileUtils.delete(game.getIniFile())) {
+            success = false;
+          }
+        }
+
+        if (descriptor.isDeleteBAMCfg()) {
+          if (!FileUtils.delete(game.getBAMCfgFile())) {
             success = false;
           }
         }

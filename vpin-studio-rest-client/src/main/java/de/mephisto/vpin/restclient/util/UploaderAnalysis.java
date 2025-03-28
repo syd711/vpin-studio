@@ -35,6 +35,7 @@ public class UploaderAnalysis<T> {
   public final static String SERUM_SUFFIX = "cRZ";
   public final static String NVRAM_SUFFIX = "nv";
   public final static String CFG_SUFFIX = "cfg";
+  public final static String BAM_CFG_SUFFIX = "cfg";
 
   private final Frontend frontend;
   private final File file;
@@ -492,6 +493,12 @@ public class UploaderAnalysis<T> {
         }
         return "This archive does not have a .cfg file.";
       }
+      case BAM_CFG: {
+        if (hasFileWithSuffix(BAM_CFG_SUFFIX)) {
+          return null;
+        }
+        return "This archive does not have a BAM .cfg file.";
+      }
       case ALT_COLOR:
       case PAC:
       case VNI:
@@ -547,6 +554,14 @@ public class UploaderAnalysis<T> {
 
     if (hasFileWithSuffix("fpt")) {
       result.add(AssetType.FPT);
+    }
+
+    if (hasFileWithSuffix("fpt") && hasFileWithSuffix("cfg")) {
+      result.add(AssetType.BAM_CFG);
+    }
+
+    if (hasFileWithSuffix("vpx") && hasFileWithSuffix("cfg")) {
+      result.add(AssetType.CFG);
     }
 
     if (hasFileWithSuffix("dif")) {
@@ -636,13 +651,31 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-  public boolean isTable() {
+  public boolean isVpxOrFpTable() {
     String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
     if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.FPT.name())) {
       return true;
     }
 
     return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
+  }
+
+  public boolean isVpxTable() {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (ext.equalsIgnoreCase(AssetType.VPX.name())) {
+      return true;
+    }
+
+    return validateAssetTypeInArchive(AssetType.VPX) == null;
+  }
+
+  public boolean isFpTable() {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (ext.equalsIgnoreCase(AssetType.FPT.name())) {
+      return true;
+    }
+
+    return validateAssetTypeInArchive(AssetType.FPT) == null;
   }
 
   public boolean isPatch() {
@@ -874,6 +907,10 @@ public class UploaderAnalysis<T> {
   }
 
   private static boolean isPopperMediaFile(VPinScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
+    if (fileNameWithPath.toLowerCase().contains("screenshot")) {
+      return false;
+    }
+
     if (!screen.equals(VPinScreen.Menu) && !screen.equals(VPinScreen.DMD) && fileNameWithPath.contains("DMD/")) {
       return false;
     }

@@ -127,6 +127,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openBamCfgUploads(File file, Runnable finalizer) {
+    Stage stage = Dialogs.createStudioDialogStage(BAMCfgUploadController.class, "dialog-bam-cfg-upload.fxml", "BAM .cfg File Upload");
+    BAMCfgUploadController controller = (BAMCfgUploadController) stage.getUserData();
+    controller.setFile(stage, file, null, finalizer);
+    stage.showAndWait();
+  }
+
   public static void openDirectb2sUploads(GameRepresentation game, File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(Directb2sUploadController.class, "dialog-directb2s-upload.fxml", "Backglass Upload");
     Directb2sUploadController controller = (Directb2sUploadController) stage.getUserData();

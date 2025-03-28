@@ -55,9 +55,9 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   private Button uploadBtn;
 
   @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+  protected ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
-  private GameEmulatorRepresentation emulator;
+  protected GameEmulatorRepresentation emulator;
 
   private List<File> selection;
 
@@ -148,15 +148,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     if (useEmulators) {
       this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getVpxGameEmulators();
-      emulator = gameEmulators.get(0);
-      ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-      emulatorCombo.setItems(emulators);
-      emulatorCombo.setValue(emulator);
-      emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
-        emulator = t1;
-        refreshSelection(null);
-      });
+      refreshEmulators();
     }
 
     root.setOnDragOver(new FileSelectorDragEventHandler(root, multiSelection, suffixes));
@@ -164,6 +156,18 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       selection = files;
       refreshSelection(null);
     }));
+  }
+
+  protected void refreshEmulators() {
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getVpxGameEmulators();
+    emulator = gameEmulators.get(0);
+    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
+    emulatorCombo.setItems(emulators);
+    emulatorCombo.setValue(emulator);
+    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
+      emulator = t1;
+      refreshSelection(null);
+    });
   }
 
   @Override
@@ -196,7 +200,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     return this.selection;
   }
 
-  private void refreshSelection(UploaderAnalysis<?> analysis) {
+  protected void refreshSelection(UploaderAnalysis<?> analysis) {
     this.uploadBtn.setDisable(true);
 
     if (this.selection != null && !this.selection.isEmpty()) {

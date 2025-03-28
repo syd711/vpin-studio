@@ -286,6 +286,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private MenuItem pupPackUploadItem;
 
   @FXML
+  private MenuItem bamCfgUploadItem;
+
+  @FXML
   private MenuItem povItem;
 
   @FXML
@@ -504,6 +507,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
       boolean b = TableDialogs.directUpload(stage, AssetType.POV, selectedItems.get(0), null);
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
+      }
+    }
+  }
+
+  @FXML
+  public void onBamCfgUpload() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      boolean b = TableDialogs.directUpload(stage, AssetType.BAM_CFG, selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
@@ -1973,6 +1987,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     getTableFilterController().setEmulator(newValue);
     boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
     boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
+    boolean fpEmulator = newValue == null || newValue.isFpEmulator();
 
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone) && vpxOrFpEmulator);
@@ -1996,7 +2011,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     musicUploadItem.setVisible(vpxEmulator);
     cfgUploadItem.setVisible(vpxEmulator);
     romsUploadItem.setVisible(vpxEmulator);
-    pupPackUploadItem.setVisible(vpxEmulator);
+    pupPackUploadItem.setVisible(vpxOrFpEmulator);
+    bamCfgUploadItem.setVisible(fpEmulator);
 
     deleteSeparator.setVisible(vpxOrFpEmulator);
 

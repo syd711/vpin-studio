@@ -536,7 +536,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   private int toColorCode(String color) {
-    if(color.startsWith("#")) {
+    if (color.startsWith("#")) {
       color = color.substring(1);
     }
     return Integer.valueOf(color, 16);
@@ -948,7 +948,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private boolean launchGame(Game game, boolean wait) {
     GameEmulator emu = game.getEmulator();
     if (emu.isVpxEmulator()) {
-      if (vpxService.play(game, null)) {
+      if (vpxService.play(game, null, null)) {
         return !wait ? true : vpxService.waitForPlayer();
       }
       return false;

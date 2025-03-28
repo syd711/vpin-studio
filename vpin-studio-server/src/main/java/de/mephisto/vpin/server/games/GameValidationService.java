@@ -88,8 +88,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
     List<ValidationState> result = new ArrayList<>();
     boolean isVPX = game.isVpxGame();
+    boolean isFP = game.isFpGame();
+    boolean fptOrVpx = isVPX || isFP;
 
-    if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
+    if (fptOrVpx && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_VPX_NOT_EXISTS));
         if (findFirst) {
@@ -134,7 +136,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
+    if (fptOrVpx && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (game.getDirectB2SPath() == null && game.getPupPackPath() == null) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {

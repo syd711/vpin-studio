@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
@@ -64,7 +63,7 @@ public class UniversalUploadResource {
       analysis.analyze();
       analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
-      if (analysis.isTable()) {
+      if (analysis.isVpxOrFpTable()) {
         LOG.info("Importing table bundle, not media bundle.");
 
         String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());

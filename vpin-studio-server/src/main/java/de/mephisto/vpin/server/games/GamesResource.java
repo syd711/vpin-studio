@@ -82,10 +82,11 @@ public class GamesResource {
     systemService.setMaintenanceMode(false);
 
     String altExe = (String) values.get("altExe");
+    String option = (String) values.get("option");
     Game game = gameService.getGame(id);
     if (game.getEmulator().isVpxEmulator()) {
       frontendService.killFrontend();
-      if (vpxService.play(game, altExe)) {
+      if (vpxService.play(game, altExe, option)) {
         gameStatusService.setActiveStatus(id);
         return true;
       }

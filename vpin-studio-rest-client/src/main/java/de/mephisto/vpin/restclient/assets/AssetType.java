@@ -7,6 +7,7 @@ public enum AssetType {
   COMPETITION,
   VPIN_AVATAR,
   TABLE,
+  BAM_CFG,
   CFG,
   DIF,
   NV,
@@ -36,7 +37,7 @@ public enum AssetType {
   CARD_BACKGROUND;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-    ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPX, FPT, PAL, PAC, CRZ, CFG, NV
+    ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
   };
 
   public static AssetType fromExtension(String extension) {
@@ -73,6 +74,9 @@ public enum AssetType {
       }
       case INI: {
         return ".ini File";
+      }
+      case BAM_CFG: {
+        return "BAM .cfg File";
       }
       case DIRECTB2S: {
         return "Backglass";
@@ -162,6 +166,9 @@ public enum AssetType {
         return "*.zip";
       }
       case CFG: {
+        return ".cfg";
+      }
+      case BAM_CFG: {
         return ".cfg";
       }
       case FPT: {

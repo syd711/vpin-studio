@@ -3,9 +3,9 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.util.FrontendUtil;
@@ -46,7 +46,7 @@ public class PlayButtonController implements Initializable {
 
   @FXML
   public void onPlay() {
-    onPlay(null);
+    onPlay(null, null);
   }
 
   public void setData(GameRepresentation game) {
@@ -74,29 +74,62 @@ public class PlayButtonController implements Initializable {
       playBtn.getItems().add(new SeparatorMenuItem());
     }
 
-    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
-    for (String altExeName : altExeNames) {
-      MenuItem item = new MenuItem(altExeName);
-      item.setOnAction(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-          onPlay(altExeName);
+    if (game.isVpxGame()) {
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+      List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
+      for (String altExeName : altExeNames) {
+        MenuItem item = new MenuItem(altExeName);
+        item.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            onPlay(altExeName, null);
+          }
+        });
+        playBtn.getItems().add(item);
+
+        if (isCameraModeSupported(altExeName)) {
+          item = new MenuItem(altExeName + " [Camera Mode]");
+          item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              onPlay(altExeName, "cameraMode");
+            }
+          });
+          playBtn.getItems().add(item);
         }
-      });
-      playBtn.getItems().add(item);
+      }
     }
+    else if (game.isFpGame()) {
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      if (gameEmulator != null) {
+        List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
+        for (String altExeName : altExeNames) {
+          MenuItem item = new MenuItem(altExeName);
+          item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              onPlay(altExeName, null);
+            }
+          });
+          playBtn.getItems().add(item);
+        }
+      }
+    }
+  }
+
+  private static boolean isCameraModeSupported(String altExeName) {
+    return altExeName.startsWith("VPinballX");
   }
 
   public void setDisable(boolean b) {
     playBtn.setDisable(b);
   }
 
-  public void onPlay(String altExe) {
+  public void onPlay(String altExe, String option) {
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isHideVPXStartInfo()) {
-        client.getGameService().playGame(game.getId(), altExe);
+        client.getGameService().playGame(game.getId(), altExe, option);
         return;
       }
 
@@ -104,7 +137,7 @@ public class PlayButtonController implements Initializable {
 
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
           "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
-          FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
+          FrontendUtil.replaceNames("All existing emulator and [Frontend] processes will be terminated.", frontend, "VPX"),
           null, "Do not show again", false);
 
       if (!confirmationResult.isApplyClicked()) {
@@ -112,7 +145,7 @@ public class PlayButtonController implements Initializable {
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(uiSettings);
         }
-        client.getGameService().playGame(game.getId(), altExe);
+        client.getGameService().playGame(game.getId(), altExe, option);
       }
     }
   }

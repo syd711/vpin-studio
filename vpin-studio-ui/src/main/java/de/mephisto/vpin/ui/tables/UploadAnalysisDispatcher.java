@@ -66,6 +66,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openCfgUploads(file, finalizer);
         return;
       }
+      case BAM_CFG: {
+        TableDialogs.openBamCfgUploads(file, finalizer);
+        return;
+      }
       case DIF: {
         TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         return;
@@ -188,7 +192,7 @@ public class UploadAnalysisDispatcher {
     if (analysis != null) {
       List<AssetType> assetTypes = analysis.getAssetTypes();
       if (!assetTypes.isEmpty()) {
-        if (analysis.isTable()) {
+        if (analysis.isVpxOrFpTable()) {
           TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
         }
         else if (analysis.isPatch()) {

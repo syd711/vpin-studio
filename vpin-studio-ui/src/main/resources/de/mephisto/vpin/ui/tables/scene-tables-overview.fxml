@@ -333,6 +333,11 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                            </graphic>
                         </MenuItem>
+                        <MenuItem fx:id="bamCfgUploadItem" mnemonicParsing="false" onAction="#onBamCfgUpload" text="Upload BAM .cfg File">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                        </MenuItem>
                         <MenuItem fx:id="cfgUploadItem" mnemonicParsing="false" onAction="#onCfgUpload" text="Upload .cfg File">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
