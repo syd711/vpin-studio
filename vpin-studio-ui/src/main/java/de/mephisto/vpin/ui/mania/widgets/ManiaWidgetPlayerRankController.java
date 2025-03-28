@@ -5,20 +5,16 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.RankedAccount;
 import de.mephisto.vpin.connectors.mania.model.RankedAccountPagingResult;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
-import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.mania.ManiaHelper;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -46,7 +42,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.*;
@@ -175,16 +173,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
     Optional<ButtonType> b = WidgetFactory.showConfirmation(Studio.stage, "Highscore Synchronization", "This will synchronize all highscores from all tables from all your VPin-Mania players.", "Only tables with a valid Virtual Pinball Spreadsheet mapping will be synchronized.", "Start Synchronization");
     if (b.get().equals(ButtonType.OK)) {
-      List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
-
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
-      List<Object> results = progressDialog.getResults();
-      int count = 0;
-      for (Object result : results) {
-        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
-        count += syncResult.getTableScores().size();
-      }
-      WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");
+      ManiaHelper.runSynchronization(true);
       onReload();
     }
   }

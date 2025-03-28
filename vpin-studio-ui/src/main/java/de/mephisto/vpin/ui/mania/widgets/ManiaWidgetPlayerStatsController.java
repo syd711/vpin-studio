@@ -416,8 +416,13 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       this.tableView.setVisible(false);
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account));
-      List<ManiaWidgetPlayerStatsController.TableScoreModel> models = (List<TableScoreModel>) progressDialog.getResults().get(0);
+      List<Object> results = progressDialog.getResults();
+      if(results.isEmpty()) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to load player data, please try again later.");
+        return;
+      }
 
+      List<ManiaWidgetPlayerStatsController.TableScoreModel> models = (List<TableScoreModel>) results.get(0);
       titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
       sub1Label.setText("Recorded Scores: " + models.size());
       ObservableList<TableScoreModel> data = FXCollections.observableList(models);

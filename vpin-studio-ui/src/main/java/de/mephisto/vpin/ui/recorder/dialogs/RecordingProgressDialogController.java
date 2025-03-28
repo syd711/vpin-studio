@@ -239,7 +239,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         if (((int) jobDescriptor.getUserData()) > 1) {
           video = "videos";
         }
-        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " " + game + ", recorded " + jobDescriptor.getUserData() + " " + video + ".\"");
+        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " " + game + ", recorded " + jobDescriptor.getUserData() + " " + video + ".");
       }
 
     });

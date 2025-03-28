@@ -1,18 +1,16 @@
 package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.Ffmpeg;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +74,7 @@ public class ScreenRecorder {
       int y = recordingScreen.getY();
       long duration = options.getRecordingDuration();
 
-      String command = Ffmpeg.DEFAULT_COMMAND;
+      String command = getDefaultCommand(options);
       if (options.isExpertSettingsEnabled()) {
         command = options.getCustomFfmpegCommand();
       }
@@ -88,6 +86,24 @@ public class ScreenRecorder {
       result.setErrorLog(e.getMessage());
     }
     return result;
+  }
+
+  private String getDefaultCommand(RecordingScreenOptions options) {
+    String command = Ffmpeg.DEFAULT_COMMAND;
+    if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && recordingScreen.isInverted()) {
+      command = command + " -vf \"transpose=2,transpose=2\"";
+    }
+
+    if (options.isFps60()) {
+      command = command.replace("-framerate 30", "-framerate 60");
+      command = command.replace("-r 30", "-r 60");
+    }
+
+    if (VPinScreen.PlayField.equals(recordingScreen.getScreen()) && options.isRotated()) {
+      command = command.replace("ffmpeg.exe", "ffmpeg.exe -display_rotation 180");
+    }
+
+    return command;
   }
 
   private String formatCommand(String cmd, int width, int height, int x, int y, long duration) {
@@ -102,7 +118,7 @@ public class ScreenRecorder {
 
   private void executeCommand(@NonNull String command, @NonNull RecordingResult result, long start) throws Exception {
     List<String> commandList = new ArrayList<>(Arrays.asList(command.split(" ")));
-    commandList.add(target.getAbsolutePath());
+    commandList.add("\"" + target.getAbsolutePath() + "\"");
 
     File resources = new File(SystemInfo.RESOURCES);
     if (!resources.exists()) {

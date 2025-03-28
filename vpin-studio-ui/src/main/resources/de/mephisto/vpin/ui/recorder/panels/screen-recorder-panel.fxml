@@ -26,7 +26,7 @@
             <Insets left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <left>
-            <VBox BorderPane.alignment="CENTER">
+            <VBox minWidth="330.0" BorderPane.alignment="CENTER">
                <children>
                   <BorderPane prefWidth="300.0">
                      <left>

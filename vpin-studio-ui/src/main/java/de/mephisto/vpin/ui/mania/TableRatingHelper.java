@@ -50,8 +50,7 @@ public class TableRatingHelper {
             maniaSettings.setSubmitRatings(true);
             maniaSettings.setSubmitPlayed(true);
             client.getPreferenceService().setJsonPreference(maniaSettings);
-            List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
-            ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
+            ManiaHelper.runSynchronization(false);
           }
         }
       }

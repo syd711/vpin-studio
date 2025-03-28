@@ -356,6 +356,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setText(model.getTarget());
+      label.setTooltip(new Tooltip(model.getTarget()));
       return label;
     }, this, true);
 

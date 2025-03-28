@@ -211,6 +211,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public boolean clearCache() {
     this.contacts = null;
+    this.maniaClient.getCabinetClient().getCabinet();
     return maniaServiceCache.clear();
   }
 

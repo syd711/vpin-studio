@@ -163,7 +163,7 @@ public class ScreenRecorderPanelController implements Initializable {
       client.getPreferenceService().setJsonPreference(s);
 
       fpsPanel.setVisible(!t1);
-      rotationPanel.setVisible(!t1);
+      rotationPanel.setVisible(!t1 && VPinScreen.PlayField.equals(this.recordingScreen.getScreen()));
       settingsBtn.setDisable(!t1);
     });
 
@@ -283,9 +283,11 @@ public class ScreenRecorderPanelController implements Initializable {
     root.managedProperty().bindBidirectional(root.visibleProperty());
     preview.managedProperty().bindBidirectional(preview.visibleProperty());
     previewLabel.managedProperty().bindBidirectional(previewLabel.visibleProperty());
+
     imageView.managedProperty().bindBidirectional(imageView.visibleProperty());
     audioPanel.managedProperty().bindBidirectional(audioPanel.visibleProperty());
     fpsPanel.managedProperty().bindBidirectional(fpsPanel.visibleProperty());
+    rotationPanel.managedProperty().bindBidirectional(rotationPanel.visibleProperty());
   }
 
   public VPinScreen getScreen() {

@@ -97,6 +97,7 @@ public class ManiaPreferencesController implements Initializable {
       settings.setEnabled(false);
       try {
         client.getPreferenceService().setJsonPreference(settings);
+        client.getManiaService().clearCache();
       }
       catch (Exception e) {
         LOG.error("Failed to save mania settings: " + e.getMessage(), e);
@@ -186,7 +187,7 @@ public class ManiaPreferencesController implements Initializable {
   private void showSyncPrompt() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Cabinet", "You privacy settings have been changed. Do you wish to synchronize you cabinet data with the VPin Mania services?", "The data is send anonymously and will help to rank table by popularity.", "Synchronize Data");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ManiaHelper.runSynchronization();
+      ManiaHelper.runSynchronization(false);
     }
   }
 }

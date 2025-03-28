@@ -40,7 +40,7 @@ public class ManiaDialogs {
   }
 
   public static ManiaRegistration openRegistrationDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(AccountSearchDialogController.class, "dialog-mania-registration.fxml", "VPin Mania Registration");
+    Stage stage = Dialogs.createStudioDialogStage(ManiaRegistrationDialogController.class, "dialog-mania-registration.fxml", "VPin Mania Registration");
     ManiaRegistrationDialogController controller = (ManiaRegistrationDialogController) stage.getUserData();
     stage.showAndWait();
     return controller.getManiaRegistration();

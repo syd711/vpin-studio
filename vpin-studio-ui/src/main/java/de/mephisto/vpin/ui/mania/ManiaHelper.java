@@ -44,10 +44,11 @@ public class ManiaHelper {
 
         Cabinet registeredCabinet = maniaClient.getCabinetClient().getCabinet();
         if (registeredCabinet != null) {
+          client.getPreferenceService().clearCache(PreferenceNames.MANIA_SETTINGS);
           ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
           if (!registration.getPlayerIds().isEmpty() || settings.isSubmitPlayed() || settings.isSubmitRatings()) {
-            runSynchronization();
+            runSynchronization(false);
           }
           return true;
         }
@@ -87,17 +88,19 @@ public class ManiaHelper {
     return false;
   }
 
-  public static void runSynchronization() {
+  public static void runSynchronization(boolean showScoreSummary) {
     List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
-    List<Object> results = progressDialog.getResults();
-    int count = 0;
-    String msg = null;
-    for (Object result : results) {
-      ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
-      count += syncResult.getTableScores().size();
-      msg = syncResult.getResult();
+    if (showScoreSummary) {
+      List<Object> results = progressDialog.getResults();
+      int count = 0;
+      String msg = null;
+      for (Object result : results) {
+        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
+        count += syncResult.getTableScores().size();
+        msg = syncResult.getResult();
+      }
+      WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
     }
-    WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
   }
 }

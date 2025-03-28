@@ -95,7 +95,7 @@
                                           <TableColumn fx:id="columnFilename" minWidth="100.0" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;" text="Archive Entry" />
                                           <TableColumn fx:id="columnPreview" minWidth="10.4000244140625" prefWidth="250.0" sortable="false" style="-fx-alignment: CENTER;" text="Preview" />
                                           <TableColumn fx:id="columnAssetType" minWidth="100.0" prefWidth="150.0" style="-fx-alignment: BASELINE_CENTER;" text="Asset Type" />
-                                          <TableColumn fx:id="columnTarget" minWidth="10.4000244140625" prefWidth="300.0" style="-fx-alignment: CENTER;" text="Target" />
+                                          <TableColumn fx:id="columnTarget" minWidth="10.4000244140625" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Target" />
                                        </columns>
                                     </TableView>
                                  </children>
