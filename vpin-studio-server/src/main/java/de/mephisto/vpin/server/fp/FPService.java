@@ -49,7 +49,7 @@ public class FPService {
     }
 
     File out = new File(folder, uploadDescriptor.getOriginalUploadFileName());
-    String bamCfgFile = analysis.getFileNameForAssetType(assetType);
+    String bamCfgFile = analysis.getFileNameForExtension("cfg");
     if (bamCfgFile != null) {
       out = new File(folder, bamCfgFile);
       if (out.exists() && !out.delete()) {
@@ -58,12 +58,12 @@ public class FPService {
       ZipUtil.unzipTargetFile(tempFile, out, bamCfgFile);
       LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
-    else {
-      if (out.exists() && !out.delete()) {
-        throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
-      }
-      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
-      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
-    }
+//    else {
+//      if (out.exists() && !out.delete()) {
+//        throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
+//      }
+//      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+//      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+//    }
   }
 }

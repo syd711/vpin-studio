@@ -758,7 +758,7 @@ public class Game {
   @JsonIgnore
   public File getBAMCfgFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(getGameFile().getParentFile(), "BAM/cfg/" + baseName + ".cfg");
+    return new File(emulator.getInstallationFolder(), "BAM/cfg/" + baseName + ".cfg");
   }
 
   @NonNull

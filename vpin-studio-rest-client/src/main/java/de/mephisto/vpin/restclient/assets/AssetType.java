@@ -166,10 +166,10 @@ public enum AssetType {
         return "*.zip";
       }
       case CFG: {
-        return ".cfg";
+        return "*.cfg";
       }
       case BAM_CFG: {
-        return ".cfg";
+        return "*.cfg";
       }
       case FPT: {
         return "*.fpt";

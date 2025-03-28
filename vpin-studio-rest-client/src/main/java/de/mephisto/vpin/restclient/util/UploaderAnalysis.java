@@ -431,6 +431,16 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
+  public String getFileNameForExtension(String extension) {
+    for (String file : getFilteredFilenamesWithPath()) {
+      String fileName = getFileName(file);
+      if (fileName.toLowerCase().endsWith("." + extension.toLowerCase())) {
+        return fileName;
+      }
+    }
+    return null;
+  }
+
   public String validateAssetTypeInArchive(AssetType assetType) {
     switch (assetType) {
       case VPX: {
