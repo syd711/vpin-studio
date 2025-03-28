@@ -35,7 +35,9 @@ public class XMLUtil {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       transformerFactory.setAttribute("indent-number", 2);
 
-      Transformer transformer = transformerFactory.newTransformer();
+      Transformer transformer = prettyPrintXsl == null ?
+          transformerFactory.newTransformer() :
+          transformerFactory.newTransformer(new StreamSource(new StringReader(prettyPrintXsl)));
       transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
       transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, ignoreDeclaration ? "yes" : "no");
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");

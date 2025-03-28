@@ -81,7 +81,10 @@ public class DOFService implements InitializingBean {
   }
 
   private boolean isValidInstallation(DOFSettings settings) {
-    return !StringUtils.isEmpty(settings.getInstallationPath()) && (new File(settings.getInstallationPath(), "x64").exists() || new File(settings.getInstallationPath(), "x86").exists());
+    if (StringUtils.isEmpty(settings.getInstallationPath())) {
+      return false;
+    }
+    return new File(settings.getInstallationPath(), "x64").exists() || new File(settings.getInstallationPath(), "x86").exists();
   }
 
   private boolean doSync(String installationPath, int interval) {
