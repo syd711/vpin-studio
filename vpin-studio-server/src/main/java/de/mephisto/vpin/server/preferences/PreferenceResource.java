@@ -51,69 +51,9 @@ public class PreferenceResource {
   @GetMapping("/json/{key}")
   public JsonSettings getJson(@PathVariable("key") String key) {
     try {
-      switch (key) {
-        case PreferenceNames.UI_SETTINGS: {
-          return preferencesService.getJsonPreference(key, UISettings.class);
-        }
-        case PreferenceNames.SERVER_SETTINGS: {
-          return preferencesService.getJsonPreference(key, ServerSettings.class);
-        }
-        case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
-          return preferencesService.getJsonPreference(key, CardSettings.class);
-        }
-        case PreferenceNames.MANIA_SETTINGS: {
-          return preferencesService.getJsonPreference(key, ManiaSettings.class);
-        }
-        case PreferenceNames.DOF_SETTINGS: {
-          return preferencesService.getJsonPreference(key, DOFSettings.class);
-        }
-        case PreferenceNames.DOFLINX_SETTINGS: {
-          return preferencesService.getJsonPreference(key, DOFLinxSettings.class);
-        }
-        case PreferenceNames.PAUSE_MENU_SETTINGS: {
-          return preferencesService.getJsonPreference(key, PauseMenuSettings.class);
-        }
-        case PreferenceNames.VALIDATION_SETTINGS: {
-          return preferencesService.getJsonPreference(key, ValidationSettings.class);
-        }
-        case PreferenceNames.IGNORED_VALIDATION_SETTINGS: {
-          return preferencesService.getJsonPreference(key, IgnoredValidationSettings.class);
-        }
-        case PreferenceNames.NOTIFICATION_SETTINGS: {
-          return preferencesService.getJsonPreference(key, NotificationSettings.class);
-        }
-        case PreferenceNames.PINBALLX_SETTINGS: {
-          return preferencesService.getJsonPreference(key, PinballXSettings.class);
-        }
-        case PreferenceNames.FILTER_SETTINGS: {
-          return preferencesService.getJsonPreference(key, FilterSettings.class);
-        }
-        case PreferenceNames.VPU_SETTINGS: {
-          return preferencesService.getJsonPreference(key, VPUSettings.class);
-        }
-        case PreferenceNames.OVERLAY_SETTINGS: {
-          return preferencesService.getJsonPreference(key, OverlaySettings.class);
-        }
-        case PreferenceNames.VPF_SETTINGS: {
-          return preferencesService.getJsonPreference(key, VPFSettings.class);
-        }
-        case PreferenceNames.BACKUP_SETTINGS: {
-          return preferencesService.getJsonPreference(key, BackupSettings.class);
-        }
-        case PreferenceNames.RECORDER_SETTINGS: {
-          return preferencesService.getJsonPreference(key, RecorderSettings.class);
-        }
-        case PreferenceNames.MONITORING_SETTINGS: {
-          return preferencesService.getJsonPreference(key, MonitoringSettings.class);
-        }
-        case PreferenceNames.WEBHOOK_SETTINGS: {
-          return preferencesService.getJsonPreference(key, WebhookSettings.class);
-        }
-        default: {
-          throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
-        }
-      }
-    } catch (Exception e) {
+      return preferencesService.getJsonPreference(key);
+    } 
+    catch (Exception e) {
       LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Failed to read JSON preferences: " + e.getMessage());
     }

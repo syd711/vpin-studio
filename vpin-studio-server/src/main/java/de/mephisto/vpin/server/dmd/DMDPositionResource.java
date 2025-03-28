@@ -41,6 +41,11 @@ public class DMDPositionResource {
     return download(dmdPositionService.getPicture(gameId, VPinScreen.valueOf(onScreen)), onScreen + ".png", false);
   }
 
+  // @PostMapping("/disable")
+  // public DMDInfo disableDMD(@RequestBody DMDInfo dmdInfo) {
+  //   return dmdPositionService.moveDMDInfo(dmdInfo, null);
+  // }
+
   @PostMapping("/move")
   public DMDInfo moveDMD(@RequestBody DMDInfo dmdInfo, @RequestParam VPinScreen target) {
     return dmdPositionService.moveDMDInfo(dmdInfo, target);

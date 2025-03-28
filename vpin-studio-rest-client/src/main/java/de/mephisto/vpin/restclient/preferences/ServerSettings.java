@@ -20,6 +20,11 @@ public class ServerSettings extends JsonSettings {
   private String mappingPatchVersion = "CUSTOM5";
   private boolean stickyKeysEnabled = true;
 
+  /** When virtual DMD is disabled, disable DMD in DmdDevice.ini */
+  private boolean disableDmdViaIni = false;
+  /** When virtual DMD is disabled, turn external dmd off in VpinMame */
+  private boolean disableDmdInMame = true;
+
 
   public boolean isInitialMute() {
     return initialMute;
@@ -139,6 +144,22 @@ public class ServerSettings extends JsonSettings {
 
   public void setVpxKeepDisplayNames(boolean vpxKeepDisplayNames) {
     this.vpxKeepDisplayNames = vpxKeepDisplayNames;
+  }
+
+  public boolean isDisableDmdViaIni() {
+    return disableDmdViaIni;
+  }
+
+  public void setDisableDmdViaIni(boolean disableDmdViaIni) {
+    this.disableDmdViaIni = disableDmdViaIni;
+  }
+
+  public boolean isDisableDmdInMame() {
+    return disableDmdInMame;
+  }
+
+  public void setDisableDmdInMame(boolean disableDmdInMame) {
+    this.disableDmdInMame = disableDmdInMame;
   }
 
   @Override
