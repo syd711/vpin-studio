@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,34 +37,44 @@ public class FPService {
     return fpCommandLineService.launch();
   }
 
-  public void installBAMCfg(@NonNull UploadDescriptor uploadDescriptor, @NonNull File tempFile, @NonNull Frontend frontend, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
+  public void installBAMCfg(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, @NonNull File tempFile, @NonNull Frontend frontend, UploaderAnalysis analysis) throws IOException {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
     File bamFolder = new File(gameEmulator.getInstallationFolder(), "BAM/cfg/");
-    installBAMFile(uploadDescriptor, tempFile, analysis, AssetType.BAM_CFG, frontend, bamFolder);
+    installBAMFile(uploadDescriptor, game, tempFile, analysis, AssetType.BAM_CFG, frontend, bamFolder);
   }
 
-  public void installBAMFile(@NonNull UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, Frontend frontend, File folder) throws IOException {
+  public void installBAMFile(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, File tempFile, UploaderAnalysis analysis, AssetType assetType, Frontend frontend, File folder) throws IOException {
     if (analysis == null) {
       analysis = new UploaderAnalysis(frontend, tempFile);
       analysis.analyze();
     }
 
-    File out = new File(folder, uploadDescriptor.getOriginalUploadFileName());
-    String bamCfgFile = analysis.getFileNameForExtension("cfg");
+    String bamCfgFile = analysis.getFileNameWithPathForExtension("cfg");
     if (bamCfgFile != null) {
-      out = new File(folder, bamCfgFile);
+      String filename = bamCfgFile;
+      if (filename.contains("/")) {
+        filename = filename.substring(filename.lastIndexOf("/") + 1);
+      }
+      File out = new File(folder, filename);
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
       ZipUtil.unzipTargetFile(tempFile, out, bamCfgFile);
       LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
-//    else {
-//      if (out.exists() && !out.delete()) {
-//        throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
-//      }
-//      org.apache.commons.io.FileUtils.copyFile(tempFile, out);
-//      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
-//    }
+    else {
+      if (game != null) {
+        String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + ".cfg";
+        File out = new File(folder, fileName);
+        if (out.exists() && !out.delete()) {
+          throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
+        }
+        org.apache.commons.io.FileUtils.copyFile(tempFile, out);
+        LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+      }
+      else {
+        LOG.error("Failed to install BAM cfg file, no game found for id {}", uploadDescriptor.getGameId());
+      }
+    }
   }
 }

@@ -24,6 +24,7 @@ import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.emulators.EmulatorServiceClient;
+import de.mephisto.vpin.restclient.fp.FpServiceClient;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -86,6 +87,7 @@ public class VPinStudioClient implements OverlayClient {
   private final DOFServiceClient dofServiceClient;
   private final DOFLinxServiceClient dofLinxServiceClient;
   private final EmulatorServiceClient emulatorServiceClient;
+  private final FpServiceClient fpServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final GameMediaServiceClient gameMediaServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
@@ -136,6 +138,7 @@ public class VPinStudioClient implements OverlayClient {
     this.dofLinxServiceClient = new DOFLinxServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.emulatorServiceClient = new EmulatorServiceClient(this);
+    this.fpServiceClient = new FpServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.gameMediaServiceClient = new GameMediaServiceClient(this);
     this.gameStatusServiceClient = new GameStatusServiceClient(this);
@@ -166,6 +169,10 @@ public class VPinStudioClient implements OverlayClient {
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
     this.tournamentsServiceClient = new TournamentsServiceClient(this);
+  }
+
+  public FpServiceClient getFpService() {
+    return fpServiceClient;
   }
 
   public EmulatorServiceClient getEmulatorService() {

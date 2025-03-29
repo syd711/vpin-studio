@@ -441,6 +441,15 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
+  public String getFileNameWithPathForExtension(String extension) {
+    for (String file : getFilteredFilenamesWithPath()) {
+      if (file.toLowerCase().endsWith("." + extension.toLowerCase())) {
+        return file;
+      }
+    }
+    return null;
+  }
+
   public String validateAssetTypeInArchive(AssetType assetType) {
     switch (assetType) {
       case VPX: {
@@ -655,7 +664,7 @@ public class UploaderAnalysis<T> {
     for (String file : getFilteredFilenamesWithPath()) {
       String suffix = FilenameUtils.getExtension(file);
       if (altColorSuffixes.contains(suffix)) {
-        return AssetType.fromExtension(suffix);
+        return AssetType.fromExtension(null, suffix);
       }
     }
     return null;

@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
@@ -44,7 +43,7 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="preference-description" text="The selected .cfg files will be uploaded into the BAM &quot;cfg&quot; folder of Future Pinball." />
+                  <Label styleClass="preference-description" text="The selected .cfg file will be uploaded into the BAM &quot;cfg&quot; folder of Future Pinball." />
                </children>
             </VBox>
          </top>
@@ -77,13 +76,13 @@
                      </children>
                   </HBox>
                   <Label styleClass="default-text" text="BAM .cfg File:" GridPane.rowIndex="1" />
-                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
-                  <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
+                  <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Game:" />
                   <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File..." GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Label fx:id="gameLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
                </children>
             </GridPane>
          </center>

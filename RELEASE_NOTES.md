@@ -21,7 +21,7 @@
   - Fixed auto-renaming for .fpt files.
   - Fixed some validations that have been skipped for .fpt files.
   - Added renaming support for BAM configuration files.
-  - Added upload detection for BAM configuration files, including a separate upload dialog.
+  - Added upload detection for BAM configuration files, including a separate upload dialog. When you upload **Terry Red** bundles, make sure to select only the BAM files you wish to install by using the media filter dialog (which is part of the table upload dialog).
   - Added option in the table deletion dialog for BAM configuration files.
 
 ## VPin Mania
