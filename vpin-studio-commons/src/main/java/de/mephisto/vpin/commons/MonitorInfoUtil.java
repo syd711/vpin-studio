@@ -26,7 +26,7 @@ import de.mephisto.vpin.restclient.util.OSUtil;
  */
 public class MonitorInfoUtil {
 
-  private static boolean USE_GRAPHICS_ENVIRONMENT = false;
+  private static boolean FORCE_USE_GRAPHICS_ENVIRONMENT = false;
 
   /**
    * List monitors
@@ -48,7 +48,7 @@ public class MonitorInfoUtil {
 
   public static List<MonitorInfo> getMonitors() {
     List<MonitorInfo> monitors = new ArrayList<>();
-    if (OSUtil.isWindows() && !USE_GRAPHICS_ENVIRONMENT) {
+    if (OSUtil.isWindows() && !FORCE_USE_GRAPHICS_ENVIRONMENT) {
 
       int[] index = { 1 };
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {

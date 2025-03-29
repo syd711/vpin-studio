@@ -1,10 +1,13 @@
 package de.mephisto.vpin.restclient.dmd;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
-public class DMDInfo {
+public class DMDInfo extends DMDInfoZone {
   private int gameId;
   private String gameRom;
 
@@ -18,13 +21,15 @@ public class DMDInfo {
   /** Whether dmd position is a per table one (true) or a global settings (false) */
   private boolean locallySaved;
 
-  private double x;
-  private double y;
-  private double width;
-  private double height;
+  /** Whether external DMD is used for that table or VpinMame */
+  private DMDType dmdType;
 
   /** additional marging used to autoposition the dmd */
   private int margin;
+
+  /** When disabled, whether use virtualdmd enabled = false or turn external dmd off in VpinMame settings */
+  private boolean disableInVpinMame;
+  private boolean disableViaIni;
 
   /** The screen where the DMD is displayed */  
   private VPinScreen onScreen;
@@ -36,6 +41,9 @@ public class DMDInfo {
 
   /** when dmd is positioned on grill, dmd size is 0x0, then option to position on dmd should be turned off */ 
   private boolean dmdScreenSet;
+
+  List<DMDInfoZone> zones = null;
+
 
   public int getGameId() {
     return gameId;
@@ -85,36 +93,12 @@ public class DMDInfo {
 		this.locallySaved = locallySaved;
 	}
 
-	public double getX() {
-    return x;
+  public DMDType getDMDType() {
+    return dmdType;
   }
 
-  public void setX(double x) {
-    this.x = x;
-  }
-
-  public double getY() {
-    return y;
-  }
-
-  public void setY(double y) {
-    this.y = y;
-  }
-
-  public double getWidth() {
-    return width;
-  }
-
-  public void setWidth(double width) {
-    this.width = width;
-  }
-
-  public double getHeight() {
-    return height;
-  }
-
-  public void setHeight(double height) {
-    this.height = height;
+  public void setDMDType(DMDType dmdType) {
+    this.dmdType = dmdType;
   }
   
   public int getMargin() {
@@ -165,14 +149,23 @@ public class DMDInfo {
     this.dmdScreenSet = dmdScreenSet;
   }
 
-  //-----------------------
+  public boolean isDisableInVpinMame() {
+    return disableInVpinMame;
+  }
 
-  public double getCenterX() {
-    return x + width / 2;
+  public void setDisableInVpinMame(boolean disableInVpinMame) {
+    this.disableInVpinMame = disableInVpinMame;
   }
-  public double getCenterY() {
-    return y + height / 2;
+
+  public boolean isDisableViaIni() {
+    return disableViaIni;
   }
+
+  public void setDisableViaIni(boolean disableViaIni) {
+    this.disableViaIni = disableViaIni;
+  }
+
+  //-----------------------
 
   public boolean isOnPlayfield() {
     return onScreen != null && VPinScreen.PlayField.equals(onScreen);
@@ -211,17 +204,30 @@ public class DMDInfo {
   }
 
   public void adjustAspectRatio() {
-    if (aspectRatio != null && aspectRatio.isKeepRatio()) {
-      if (width / height > aspectRatio.getValue()) {
-        // adjust width
-        x += (width - aspectRatio.getValue() * height) / 2;
-        width = aspectRatio.getValue() * height;
-      }
-      else {
-        // adjust height
-        y += (height - width / aspectRatio.getValue()) / 2;
-        height = width / aspectRatio.getValue();
-      }
-    }
+    super.adjustAspectRatio(aspectRatio);
   }
+
+  public boolean isUseExternalDmd() {
+    return dmdType.equals(DMDType.VirtualDMD) || dmdType.equals(DMDType.AlphaNumericDMD);
+  }
+
+  public boolean isDisabled() {
+    return dmdType.equals(DMDType.NoDMD);
+  }
+
+  public void addAlphaNumericScore(DMDInfoZone rect) {
+    if (zones == null) {
+      zones = new ArrayList<>();
+    }
+    zones.add(rect);
+  }
+
+  public List<DMDInfoZone> getAlphaNumericScores() {
+    return zones != null? Collections.unmodifiableList(zones) : Collections.emptyList();
+  }
+
+  public void setAlphaNumericScores(List<DMDInfoZone> zones) {
+    this.zones = zones;
+  }
+
 }

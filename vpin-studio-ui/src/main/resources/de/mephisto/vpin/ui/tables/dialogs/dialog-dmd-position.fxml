@@ -2,10 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -55,41 +57,69 @@
          <right>
             <VBox BorderPane.alignment="TOP_LEFT">
                <children>
-
-                  <Label styleClass="default-headline" text="DMD Position Storage" />
-                  <GridPane vgap="3.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="95" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
+                  <Label styleClass="default-headline" text="DMD Type" />
+                  <VBox spacing="3.0">
                      <children>
-                        <Label fx:id="tablePositionLabel" text="--" GridPane.columnSpan="2" GridPane.rowIndex="0">
+                        <ComboBox fx:id="DMDTypeCombo" />
+                        <HBox fx:id="disablePane">
+                           <children>
+                              <VBox spacing="3.0">
+                                 <children>
+                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="Turn off in VpinMAME" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="Disable in dmddevice.ini" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Deactivate External DMD in VPinMame settings and/or disable DMD in DmdDevice.ini. At least one option must be selected" wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="12.0" top="6.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Label fx:id="tablePositionLabel" text="--" >
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label styleClass="default-text" text="ROM (or alias):" GridPane.rowIndex="1" />
-                        <Label fx:id="romLabel" text="--" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <HBox>
+                           <children>
+                              <Label styleClass="default-text" text="ROM (or alias):" />
+                              <Label fx:id="romLabel" text="--" >
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
-                  </GridPane>
+                  </VBox>
 
                   <Label styleClass="default-headline" text="Position">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox spacing="3.0">
+                  <VBox spacing="3.0" fx:id="radioOnPane" >
                      <children>
                         <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="On Backglass" textFill="WHITE">
                            <font>
@@ -112,7 +142,7 @@
                      </VBox.margin>
                   </VBox>
 
-                  <GridPane vgap="3.0">
+                  <GridPane fx:id="spinnersPane" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="95" minWidth="10.0" prefWidth="60" />
                         <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
@@ -156,7 +186,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox spacing="3.0">
+                  <VBox fx:id="ratiosPane" spacing="3.0">
                      <children>
                         <RadioButton fx:id="ratioOff" layoutX="10.0" layoutY="57.0" mnemonicParsing="false" text="Off" textFill="WHITE">
                            <font>
@@ -189,7 +219,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <GridPane vgap="3.0">
+                  <GridPane fx:id="autoPositionPane" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="95" minWidth="10.0" prefWidth="60" />
                         <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
@@ -216,6 +246,8 @@
                         <Insets top="8.0" />
                      </VBox.margin>
                   </GridPane>
+
+
                </children>
 
                <BorderPane.margin>
