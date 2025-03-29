@@ -20,7 +20,7 @@
 - **Backglass Manager / .res Editor**: Fixed saving .res files without frame images.
 - **Backglass Manager / Screen offset**: Fixed the backglass screen identification when parsing screenres.txt.
 - **Highscore Event Handling**: Fixed issue that if the player achieved multiple new highscores during one game, only one highscore change event was emitted. The server emits now messages for every change, starting with the highest one. This way, all new scores are posted to iScored too (or only the highest if the single score submission is enabled).
-- **Future Pinball Support**: Phew, this was neglected a lot. So here comes a bunch of fixes based on table archives from **Terry Red**. I still lack some knowledge here, so feel free to drop some feedback on the VPin Studio's Discord server.
+- **Future Pinball Support**: Phew, this was neglected a lot. So here comes a bunch of fixes based on table archives from **Terry Red**. I still lack some knowledge here, so feel free to drop feedback on the VPin Studio's Discord server.
   - Fixed auto-renaming for .fpt files.
   - Fixed some validations that have been skipped for .fpt files.
   - Added renaming support for BAM configuration files.
