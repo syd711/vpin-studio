@@ -45,7 +45,7 @@ public class AltSoundService implements InitializingBean {
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
-    return game.getAltSoundFolder() != null && altSoundFolder2AltSound.containsKey(game.getAltSoundFolder().getAbsolutePath());
+    return game.getAltSoundFolder() != null && altSoundFolder2AltSound.containsKey(game.getAltSoundFolder().getAbsolutePath().toLowerCase());
   }
 
   public boolean delete(@NonNull Game game) {
@@ -53,7 +53,7 @@ public class AltSoundService implements InitializingBean {
     if (!StringUtils.isEmpty(game.getRom())) {
       File folder = new File(emulator.getAltSoundFolder(), game.getRom());
       if (folder.exists()) {
-        altSoundFolder2AltSound.remove(game.getAltSoundFolder().getAbsolutePath());
+        altSoundFolder2AltSound.remove(game.getAltSoundFolder().getAbsolutePath().toLowerCase());
         LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
         if (FileUtils.deleteFolder(folder)) {
           return clearCache();
@@ -67,10 +67,10 @@ public class AltSoundService implements InitializingBean {
   public AltSound getAltSound(@NonNull Game game) {
     if (isAltSoundAvailable(game)) {
       String folder = game.getAltSoundFolder().getAbsolutePath();
-      AltSound altSound = altSoundFolder2AltSound.get(folder);
+      AltSound altSound = altSoundFolder2AltSound.get(folder.toLowerCase());
       altSound.setFolder(folder);
       altSound = AltSoundLoaderFactory.load(altSound);
-      altSoundFolder2AltSound.put(folder, altSound);
+      altSoundFolder2AltSound.put(folder.toLowerCase(), altSound);
       return altSound;
     }
     return new AltSound();
@@ -159,7 +159,7 @@ public class AltSoundService implements InitializingBean {
     if (altSoundDir != null) {
       AltSound altSound = AltSoundLoaderFactory.create(altSoundDir, emualtorId);
       if (altSound != null) {
-        altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath(), altSound);
+        altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath().toLowerCase(), altSound);
       }
       else {
         LOG.warn("Skipped caching ALT sound '{}'", altSoundDir.getName());

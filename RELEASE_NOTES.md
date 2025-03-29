@@ -15,6 +15,7 @@
 - **Tables / Asset Manager**: Fixed reset media players when the dialog is closed and media playback is still running.
 - **Tables / Media Recorder**: Fixed flag for 60fps recording.
 - **Tables / Media Recorder**: Added "move back" behaviour when the recording is started from the client on the cabinet. This should solve the issue that the Studio stays in front during the recording.
+- **Tables / ALT Sound**: Fixed case sensitive issue for upper-case ROM names.
 - **Webhooks**: Added missing change listener for the game lifecycle events (create, update and delete).
 - **Backglass Manager / .res Editor**: Fixed saving .res files without frame images.
 - **Backglass Manager / Screen offset**: Fixed the backglass screen identification when parsing screenres.txt.
