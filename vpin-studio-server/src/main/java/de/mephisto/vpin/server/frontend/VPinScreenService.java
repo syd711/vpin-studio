@@ -413,8 +413,8 @@ public class VPinScreenService {
       FrontendPlayerDisplay backglass = new FrontendPlayerDisplay(VPinScreen.BackGlass);
       backglass.setX(screenres.getBackglassX());
       backglass.setY(screenres.getBackglassY());
-      backglass.setWidth(screenres.getBackglassWidth());
-      backglass.setHeight(screenres.getBackglassHeight());
+      backglass.setWidth(screenres.getBackgroundWidth() > 0 ? screenres.getBackgroundWidth() : screenres.getBackglassWidth());
+      backglass.setHeight(screenres.getBackgroundHeight() > 0 ? screenres.getBackgroundHeight() : screenres.getBackglassHeight());
       displays.add(backglass);
       if (monitor != null) {
         backglass.setX((int) monitor.getX() + backglass.getX());
