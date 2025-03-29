@@ -223,7 +223,7 @@ public class UniversalUploadService {
       }
       case BAM_CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
-          fpService.installBAMCfg(uploadDescriptor, tempFile, frontendService.getFrontend(), analysis);
+          fpService.installBAMCfg(uploadDescriptor, game, tempFile, frontendService.getFrontend(), analysis);
         }
         break;
       }

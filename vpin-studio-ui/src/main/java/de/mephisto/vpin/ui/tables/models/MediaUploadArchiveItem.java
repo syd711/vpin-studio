@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -32,7 +34,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   private boolean selected = true;
   private Image image;
 
-  public MediaUploadArchiveItem(String bean, GameEmulatorRepresentation emulator, UploaderAnalysis uploaderAnalysis, AssetType filterMode) {
+  public MediaUploadArchiveItem(String bean, @NonNull GameEmulatorRepresentation emulator, UploaderAnalysis uploaderAnalysis, AssetType filterMode) {
     super(bean);
     this.name = bean;
     this.emulator = emulator;
@@ -148,19 +150,24 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
     }
 
-    if (resolveTableFileAssets(Arrays.asList(AssetType.INI, AssetType.POV, AssetType.BAM_CFG, AssetType.RES, AssetType.DIRECTB2S, AssetType.VPX, AssetType.FPT))) {
+    if (resolveTableFileAssets(Arrays.asList(AssetType.INI, AssetType.POV, AssetType.RES, AssetType.DIRECTB2S, AssetType.VPX, AssetType.FPT))) {
       LOG.info(fileNameWithPath + ": " + assetType.name());
       return;
     }
 
     String extension = FilenameUtils.getExtension(fileNameWithPath);
-    AssetType asset = AssetType.fromExtension(extension);
+    AssetType asset = AssetType.fromExtension(emulator.getType(), extension);
     if (asset != null) {
       if (asset.equals(AssetType.RAR) || asset.equals(AssetType.SEVENZIP)) {
         return;
       }
 
-      if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null) {
+      if (asset.equals(AssetType.BAM_CFG) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
+        this.assetType = asset;
+        this.target = emulator.getInstallationDirectory() + "BAM/cfg/";
+        LOG.info(fileNameWithPath + ": " + assetType.name());
+      }
+      else if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null) {
         this.assetType = asset;
         this.target = client.getEmulatorService().getDefaultGameEmulator().getNvramDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());

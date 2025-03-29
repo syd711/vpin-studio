@@ -13,19 +13,19 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-public class CfgUploadProgressModel extends UploadProgressModel {
-  private final static Logger LOG = LoggerFactory.getLogger(CfgUploadProgressModel.class);
+public class BamCfgUploadProgressModel extends UploadProgressModel {
+  private final static Logger LOG = LoggerFactory.getLogger(BamCfgUploadProgressModel.class);
 
   private final Iterator<File> iterator;
-  private final int emuId;
   private final List<File> files;
   private double percentage = 0;
+  private final int gameId;
 
-  public CfgUploadProgressModel(String title, List<File> files, int emuId, Runnable finalizer) {
+  public BamCfgUploadProgressModel(String title, List<File> files, int gameId, Runnable finalizer) {
     super(files, title, finalizer);
     this.files = files;
     this.iterator = files.iterator();
-    this.emuId = emuId;
+    this.gameId = gameId;
   }
 
   @Override
@@ -51,7 +51,7 @@ public class CfgUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor descriptor = Studio.client.getMameService().uploadCfg(emuId, next, percent -> {
+      UploadDescriptor descriptor = Studio.client.getFpService().uploadCfg(gameId, next, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
@@ -63,9 +63,9 @@ public class CfgUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("Cfg upload failed: " + e.getMessage(), e);
+      LOG.error("BAM Cfg upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Cfg upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "BAM Cfg upload failed: " + e.getMessage());
       });
     }
   }

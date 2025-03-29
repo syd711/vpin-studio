@@ -2,22 +2,31 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 
 import java.util.List;
 
 public class BAMCfgUploadController extends BaseUploadController {
 
+  private GameRepresentation game;
+
   public BAMCfgUploadController() {
-    super(AssetType.BAM_CFG, true, true, "cfg", "zip", "7z", "rar");
+    super(AssetType.BAM_CFG, true, false, "cfg", "zip", "7z", "rar");
   }
+
+  @FXML
+  private Label gameLabel;
+
 
   @Override
   protected UploadProgressModel createUploadModel() {
-    return new CfgUploadProgressModel("BAM Configuration File Upload", getSelections(), getSelectedEmulatorId(), finalizer);
+    return new BamCfgUploadProgressModel("BAM Configuration File Upload", getSelections(), game.getId(), finalizer);
   }
 
   protected void refreshEmulators() {
@@ -30,5 +39,10 @@ public class BAMCfgUploadController extends BaseUploadController {
       emulator = t1;
       refreshSelection(null);
     });
+  }
+
+  public void setGame(GameRepresentation game) {
+    this.game = game;
+    this.gameLabel.setText(game.getGameDisplayName());
   }
 }

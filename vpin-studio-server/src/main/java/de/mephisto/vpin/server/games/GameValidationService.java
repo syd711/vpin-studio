@@ -136,7 +136,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (fptOrVpx && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (game.getDirectB2SPath() == null && game.getPupPackPath() == null) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {
@@ -172,7 +172,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
+    if (fptOrVpx && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
         if (findFirst) {

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.assets;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 public enum AssetType {
@@ -37,24 +39,31 @@ public enum AssetType {
   CARD_BACKGROUND;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-    ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
   };
 
-  public static AssetType fromExtension(String extension) {
+  public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
     try {
-      if(extension.equalsIgnoreCase("7z")) {
+      if (extension.equalsIgnoreCase("7z")) {
         return SEVENZIP;
       }
 
-      return AssetType.valueOf(extension.toUpperCase());
+      //correction to BAM config
+      AssetType assetType = AssetType.valueOf(extension.toUpperCase());
+      if (emulatorType != null && emulatorType.equals(EmulatorType.FuturePinball) && assetType.equals(AssetType.CFG)) {
+        assetType = AssetType.BAM_CFG;
+      }
+      return assetType;
     }
     catch (IllegalArgumentException e) {
       return null;
     }
   }
-  public static boolean isInstallable(String extension) {
-    return isInstallable(fromExtension(extension));
+
+  public static boolean isInstallable(EmulatorType emulatorType, String extension) {
+    return isInstallable(fromExtension(emulatorType, extension));
   }
+
   public static boolean isInstallable(AssetType assetType) {
     return ArrayUtils.contains(INSTALLABLE_ASSET_TYPES, assetType);
   }
@@ -139,7 +148,7 @@ public enum AssetType {
   }
 
   public String[] installableExtension() {
-    return new String[] {  defaultExtension(), "*.zip", "*.rar", "*.7z" };
+    return new String[]{defaultExtension(), "*.zip", "*.rar", "*.7z"};
   }
 
   public String defaultExtension() {
@@ -197,7 +206,7 @@ public enum AssetType {
       }
       case MUSIC:
       case MUSIC_BUNDLE: {
-          return "*.zip";
+        return "*.zip";
       }
       case PUP_PACK: {
         return "*.zip";

@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,10 +128,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openBamCfgUploads(File file, Runnable finalizer) {
+  public static void openBamCfgUploads(File file, GameRepresentation game, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(BAMCfgUploadController.class, "dialog-bam-cfg-upload.fxml", "BAM .cfg File Upload");
     BAMCfgUploadController controller = (BAMCfgUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
+    controller.setGame(game);
     stage.showAndWait();
   }
 
@@ -255,6 +257,21 @@ public class TableDialogs {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
           IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file, finalizer);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean directBamCfgUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String help2 = null;
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload BAM .cfg file for \"" + game.getGameDisplayName() + "\"?", help2);
+        if (result.get().equals(ButtonType.OK)) {
+          BamCfgUploadProgressModel model = new BamCfgUploadProgressModel("BAM .cfg Upload", Arrays.asList(file), game.getId(), finalizer);
           ProgressDialog.createProgressDialog(model);
         }
       });

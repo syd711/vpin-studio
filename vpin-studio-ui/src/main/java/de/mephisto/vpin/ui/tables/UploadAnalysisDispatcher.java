@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
@@ -29,7 +30,12 @@ public class UploadAnalysisDispatcher {
 
   public static void dispatch(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     String extension = FilenameUtils.getExtension(file.getName());
-    AssetType assetType = AssetType.fromExtension(extension);
+    EmulatorType emulatorType = null;
+    if (game != null) {
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+      emulatorType = gameEmulator.getType();
+    }
+    AssetType assetType = AssetType.fromExtension(emulatorType, extension);
     if (assetType == null) {
       LOG.error("Unsupported upload type: " + assetType);
       Platform.runLater(() -> {
@@ -66,10 +72,6 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openCfgUploads(file, finalizer);
         return;
       }
-      case BAM_CFG: {
-        TableDialogs.openBamCfgUploads(file, finalizer);
-        return;
-      }
       case DIF: {
         TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         return;
@@ -102,6 +104,10 @@ public class UploadAnalysisDispatcher {
     switch (assetType) {
       case DIRECTB2S: {
         TableDialogs.openBackglassUpload(null, Studio.stage, game, file, finalizer);
+        return;
+      }
+      case BAM_CFG: {
+        TableDialogs.openBamCfgUploads(file, game, finalizer);
         return;
       }
       case RES: {

@@ -90,7 +90,7 @@ public class ZipUtil {
             }
             fos.close();
             written = true;
-            LOG.info("Extracted file " + targetFile.getAbsolutePath());
+            LOG.info("Extracted '{}' to target: '{}'", entryName, targetFile.getAbsolutePath());
           }
         }
         zis.closeEntry();
