@@ -18,13 +18,16 @@ public class ScoreListAdapterBase {
 
   private final static Logger LOG = LoggerFactory.getLogger(DefaultAdapter.class);
 
-  protected long toNumericScore(@NonNull String score, @Nullable String source) {
+  protected long toNumericScore(@NonNull String score, @Nullable String source, boolean log) {
     try {
       String cleanScore = ScoreFormatUtil.cleanScore(score);
       return Long.parseLong(cleanScore);
     }
     catch (NumberFormatException e) {
-      LOG.warn("Failed to parse numeric highscore string '{}', ignoring segment '{}', source: {}", score, score, source);
+      if(log) {
+        LOG.warn("Failed to parse numeric highscore string '{}', ignoring this segment, source: {}", score, source);
+      }
+
       return -1;
     }
   }

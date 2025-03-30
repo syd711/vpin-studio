@@ -1,3 +1,12 @@
+## Release Notes 3.14.1
+
+## Changes
+
+- **Server Game Launch Events**: Fixed issue that when multiple VPX emulators have been setup with the same installation directory, the active game was not detected properly. Therefore, the pause menu did not work and no highscore change event could be fired.  
+- **VPin Mania Table Rating Enablement**: Fixed possible database deadlock that froze the UI.  
+
+---
+
 ## Release Notes 3.14
 
 ## Changes

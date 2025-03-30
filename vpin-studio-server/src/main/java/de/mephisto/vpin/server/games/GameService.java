@@ -275,7 +275,6 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
 
-
   /**
    * Returns a complete list of highscore versions
    */
@@ -608,9 +607,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   public Game getGameByTableAndEmuParameter(@NonNull String table, @Nullable String emuDirOrName) {
     File tableFile = new File(table.trim());
-    int emuId = -1;
 
     // derive the emulator from the name or folder
+    List<GameEmulator> matchingEmulators = new ArrayList<>();
     if (!StringUtils.isEmpty(emuDirOrName)) {
       for (GameEmulator emu : emulatorService.getValidGameEmulators()) {
         if (!emu.isEnabled()) {
@@ -618,17 +617,21 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         }
 
         if (emu.getInstallationFolder().getAbsolutePath().equals(emuDirOrName)) {
-          emuId = emu.getId();
-          break;
+          matchingEmulators.add(emu);
+          continue;
         }
+
         if (emu.getName() != null && emu.getName().equals(emuDirOrName)) {
-          emuId = emu.getId();
-          break;
+          matchingEmulators.add(emu);
         }
       }
     }
 
-    if (emuId == -1) {
+    if (!StringUtils.isEmpty(emuDirOrName) && matchingEmulators.isEmpty()) {
+      LOG.warn("No matching emulator found for emulator installation parameter \"{}\"", emuDirOrName);
+    }
+
+    if (matchingEmulators.isEmpty()) {
       // derive the emulator from the table folder
       for (GameEmulator emu : emulatorService.getValidGameEmulators()) {
         if (!emu.isEnabled()) {
@@ -636,17 +639,29 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         }
 
         if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getGamesDirectory())) {
-          emuId = emu.getId();
+          matchingEmulators.add(emu);
           break;
         }
       }
     }
 
-    Game game = getGameByFilename(emuId, tableFile.getName());
-    if (game == null && tableFile.getParentFile() != null) {
-      game = getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+    Game game = null;
+    int emuId = -1;
+    for (GameEmulator matchingEmulator : matchingEmulators) {
+      emuId = matchingEmulator.getId();
+      game = getGameByFilename(emuId, tableFile.getName());
+      if (game == null && tableFile.getParentFile() != null) {
+        LOG.warn("No game found with name \"{}\" for emulator with id \"{}\"", table, emuId);
+        game = getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+      }
+
+      if (game != null) {
+        break;
+      }
     }
-    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
+
+
+    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\" from emulator {}", emuId);
     return game;
   }
 
@@ -831,7 +846,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public void notifyGameDataChanged(@NonNull Game game, @NonNull TableDetails oldData, @NonNull TableDetails newData) {
-    GameDataChangedEvent event = new GameDataChangedEvent( game,  oldData,  newData);
+    GameDataChangedEvent event = new GameDataChangedEvent(game, oldData, newData);
     for (GameDataChangedListener listener : gameDataChangedListeners) {
       listener.gameDataChanged(event);
     }

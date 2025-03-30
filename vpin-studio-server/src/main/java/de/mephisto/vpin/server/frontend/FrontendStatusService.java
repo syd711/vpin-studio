@@ -162,10 +162,10 @@ public class FrontendStatusService implements InitializingBean {
       return true;
     }
 
-    LOG.info("Received game launch event for " + table.trim());
+    LOG.info("Received game launch event for \"{}\", emu: \"{}\"", table, emuDirOrName);
     Game game = gameService.getGameByTableAndEmuParameter(table, emuDirOrName);
     if (game == null) {
-      LOG.warn("No game found for name '" + table);
+      LOG.warn("No game found for name \"{}\" and emulator \"{}\"", table, emuDirOrName);
       return false;
     }
 
@@ -187,10 +187,10 @@ public class FrontendStatusService implements InitializingBean {
       return true;
     }
 
-    LOG.info("Received game exit event for " + table.trim());
+    LOG.info("Received game exit event for \"{}\", emu: \"{}\"", table, emuDirOrName);
     Game game = gameService.getGameByTableAndEmuParameter(table, emuDirOrName);
     if (game == null) {
-      LOG.warn("No game found for name '" + table);
+      LOG.warn("No game found for name \"{}\" and emulator {}", table, emuDirOrName);
       return false;
     }
 
