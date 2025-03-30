@@ -41,7 +41,7 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
         String line = lines.get(i);
 
         //the if there is a highscore title, in that case...
-        if (titles.contains(line.trim())) {
+        if (titles.contains(line.trim()) && ((i+1) < titles.size())) {
           String scoreLine = lines.get(i + 1);
 
           //the next line could be a raw score without a positions
