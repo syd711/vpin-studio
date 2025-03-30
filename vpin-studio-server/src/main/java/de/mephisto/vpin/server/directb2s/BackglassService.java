@@ -397,7 +397,7 @@ public class BackglassService implements InitializingBean {
 
     //It's ok to return an empty object as long as the game directory is there
     File file = new File(emulator.getGamesDirectory(), fileName);
-    if(file.getParentFile() == null || !file.getParentFile().exists()) {
+    if (file.getParentFile() == null || !file.getParentFile().exists()) {
       return null;
     }
 
@@ -592,7 +592,7 @@ public class BackglassService implements InitializingBean {
       if (res != null) {
         res.setEmulatorId(emulatorId);
         res.setB2SFileName(fileName);
-        res.setGameId(game != null ? game.getId() : null);
+        res.setGameId(game != null ? game.getId() : -1);
         return res;
       }
     }
