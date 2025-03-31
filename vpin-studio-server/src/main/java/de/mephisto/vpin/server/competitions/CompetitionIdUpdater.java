@@ -127,5 +127,6 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   @Override
   public void afterPropertiesSet() throws Exception {
     this.competitionService.addCompetitionChangeListener(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

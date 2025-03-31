@@ -356,5 +356,6 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
     loadIni();
     initListener();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

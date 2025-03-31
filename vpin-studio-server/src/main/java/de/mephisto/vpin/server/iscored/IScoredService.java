@@ -153,5 +153,6 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

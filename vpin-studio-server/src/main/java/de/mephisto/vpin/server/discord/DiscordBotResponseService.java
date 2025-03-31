@@ -162,5 +162,6 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
   @Override
   public void afterPropertiesSet() throws Exception {
     discordService.setBotCommandListener(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

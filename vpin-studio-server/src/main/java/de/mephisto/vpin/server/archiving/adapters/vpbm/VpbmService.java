@@ -189,6 +189,7 @@ public class VpbmService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     if (Features.BACKUP_VIEW_ENABLED) {
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   public boolean clearCache() {

@@ -137,5 +137,6 @@ public class MameRomAliasService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     clearCache();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

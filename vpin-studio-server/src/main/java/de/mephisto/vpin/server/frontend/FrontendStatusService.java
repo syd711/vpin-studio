@@ -286,5 +286,6 @@ public class FrontendStatusService implements InitializingBean {
 
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

@@ -73,5 +73,6 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     refreshScoreFilterSettings();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

@@ -304,5 +304,6 @@ public class VPXService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     loadIni();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

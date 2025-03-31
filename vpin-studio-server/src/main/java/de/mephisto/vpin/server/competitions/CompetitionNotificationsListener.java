@@ -11,12 +11,15 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service //TODO not a service
 public class CompetitionNotificationsListener implements CompetitionChangeListener, InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(CompetitionNotificationsListener.class);
 
   @Autowired
   private NotificationService notificationService;
@@ -74,5 +77,6 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
   @Override
   public void afterPropertiesSet() throws Exception {
     competitionService.addCompetitionChangeListener(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

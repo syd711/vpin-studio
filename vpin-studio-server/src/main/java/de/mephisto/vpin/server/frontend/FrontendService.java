@@ -679,5 +679,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     catch (Exception e) {
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

@@ -137,5 +137,6 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);
       }
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

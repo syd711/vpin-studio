@@ -247,6 +247,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   //-------------------------

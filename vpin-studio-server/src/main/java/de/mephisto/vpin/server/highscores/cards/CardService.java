@@ -266,5 +266,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     this.preferencesService.addChangeListener(this);
     this.frontendStatusService.addTableStatusChangeListener(this);
     this.preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

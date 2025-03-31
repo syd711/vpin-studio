@@ -770,5 +770,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         LOG.error("Failed to initialize Discord Service: " + e.getMessage());
       }
     }).start();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

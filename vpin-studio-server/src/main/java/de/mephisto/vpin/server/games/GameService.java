@@ -862,6 +862,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     catch (Exception e) {
       LOG.error("Error initializing GameService: " + e.getMessage(), e);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   @Override

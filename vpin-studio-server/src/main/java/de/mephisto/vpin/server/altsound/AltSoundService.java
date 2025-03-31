@@ -186,5 +186,6 @@ public class AltSoundService implements InitializingBean {
       Thread.currentThread().setName("ALTSound Loader");
       clearCache();
     }).start();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

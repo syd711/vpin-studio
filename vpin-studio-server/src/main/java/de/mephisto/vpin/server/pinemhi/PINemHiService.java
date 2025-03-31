@@ -232,6 +232,7 @@ public class PINemHiService implements InitializingBean {
     if(defaultGameEmulator != null) {
       adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   /**

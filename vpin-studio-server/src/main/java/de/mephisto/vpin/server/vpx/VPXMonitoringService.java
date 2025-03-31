@@ -124,6 +124,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   @Override

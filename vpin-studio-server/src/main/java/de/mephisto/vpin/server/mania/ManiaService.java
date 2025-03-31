@@ -26,7 +26,6 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -520,5 +519,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
 
     highscoreService.setManiaService(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

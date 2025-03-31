@@ -959,5 +959,6 @@ public class BackglassService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     // force initialisation of table cache
     reloadDirectB2SAndVersions();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

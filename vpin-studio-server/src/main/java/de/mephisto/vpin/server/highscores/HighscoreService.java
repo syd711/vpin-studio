@@ -726,6 +726,7 @@ public class HighscoreService implements InitializingBean {
   public void afterPropertiesSet() {
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   public void setManiaService(ManiaService maniaService) {

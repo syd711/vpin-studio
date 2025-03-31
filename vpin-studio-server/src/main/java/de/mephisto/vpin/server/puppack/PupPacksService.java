@@ -309,5 +309,6 @@ public class PupPacksService implements InitializingBean {
         LOG.error("Error in PUP Pack Scanner thread: " + e.getMessage(), e);
       }
     }).start();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

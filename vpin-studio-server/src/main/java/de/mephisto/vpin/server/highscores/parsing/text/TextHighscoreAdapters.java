@@ -107,12 +107,6 @@ public class TextHighscoreAdapters implements InitializingBean {
     return null;
   }
 
-  @Override
-  public void afterPropertiesSet() {
-    ScoringDB scoringDatabase = systemService.getScoringDatabase();
-    loadParsers(scoringDatabase);
-  }
-
   public void loadParsers(ScoringDB scoringDatabase) {
     try {
       List<Map<String, Object>> highscoreTextParsers = scoringDatabase.getHighscoreTextParsers();
@@ -157,5 +151,12 @@ public class TextHighscoreAdapters implements InitializingBean {
     catch (Exception e) {
       LOG.error("Error setting parser param '" + key + "': " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    ScoringDB scoringDatabase = systemService.getScoringDatabase();
+    loadParsers(scoringDatabase);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

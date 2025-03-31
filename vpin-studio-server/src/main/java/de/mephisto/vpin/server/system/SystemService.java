@@ -614,5 +614,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     catch (Exception e) {
       LOG.error("Failed to initialize system service: {}", e.getMessage(), e);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

@@ -172,18 +172,19 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
+      notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() throws Exception {
     frontendStatusService.addTableStatusChangeListener(this);
     frontendStatusService.addFrontendStatusChangeListener(this);
 
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
-      notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-    }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

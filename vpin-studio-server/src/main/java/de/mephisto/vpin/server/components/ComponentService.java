@@ -298,5 +298,6 @@ public class ComponentService implements InitializingBean {
         componentRepository.saveAndFlush(component);
       }
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

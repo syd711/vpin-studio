@@ -253,5 +253,6 @@ public class AltColorService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

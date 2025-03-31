@@ -350,11 +350,6 @@ public class CompetitionService implements InitializingBean {
     return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
-  }
-
   private List<Competition> autoFixCompetitionGames(List<Competition> collect) {
     List<Competition> validatedCompetitions = new ArrayList<>();
     for (Competition competition : collect) {
@@ -398,5 +393,11 @@ public class CompetitionService implements InitializingBean {
       validatedCompetitions.add(competition);
     }
     return validatedCompetitions;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

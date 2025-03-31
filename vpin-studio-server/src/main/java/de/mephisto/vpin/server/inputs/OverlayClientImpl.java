@@ -333,5 +333,6 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   public void afterPropertiesSet() throws Exception {
     mapper = new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

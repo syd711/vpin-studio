@@ -2569,5 +2569,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     catch (Exception e) {
       LOG.error("Failed to initialize PinUPConnector: {}", e.getMessage(), e);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

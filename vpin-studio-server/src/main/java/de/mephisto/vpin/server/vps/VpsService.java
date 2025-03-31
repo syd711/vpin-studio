@@ -249,5 +249,6 @@ public class VpsService implements InitializingBean {
     catch (Exception e) {
       LOG.info("Failed to initialize VPS service: " + e.getMessage(), e);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

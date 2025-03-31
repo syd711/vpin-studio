@@ -273,6 +273,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     }
 
     addChangeListener(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   @Override

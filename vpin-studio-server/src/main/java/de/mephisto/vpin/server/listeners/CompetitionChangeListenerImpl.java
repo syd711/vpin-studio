@@ -42,5 +42,6 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
   @Override
   public void afterPropertiesSet() throws Exception {
     competitionService.addCompetitionChangeListener(this);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

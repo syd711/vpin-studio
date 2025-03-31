@@ -353,5 +353,6 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
     GameController.getInstance().addListener(this);
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

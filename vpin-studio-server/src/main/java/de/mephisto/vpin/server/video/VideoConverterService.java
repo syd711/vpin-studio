@@ -214,6 +214,7 @@ public class VideoConverterService implements InitializingBean {
     commands.add(new VideoConversionCommand("Rotate Clockwise 90°").setImageArgs(ImageOp.ROTATE_90));
     commands.add(new VideoConversionCommand("Rotate Counter Clockwise 90°").setImageArgs(ImageOp.ROTATE_90_CCW));
     commands.add(new VideoConversionCommand("Rotate 180°").setImageArgs(ImageOp.ROTATE_180));
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
   public List<VideoConversionCommand> getCommandList() {

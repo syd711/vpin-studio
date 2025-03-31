@@ -133,5 +133,6 @@ public class DiscoveryBroadcaster implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     start();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

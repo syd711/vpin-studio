@@ -181,5 +181,6 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     highscoreService.addHighscoreChangeListener(this);
 
     preferenceChanged(PreferenceNames.WEBHOOK_SETTINGS, null, null);
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

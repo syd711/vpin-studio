@@ -140,5 +140,6 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     catch (Exception e) {
       LOG.error("DOFLinx service initialization failed: {}", e.getMessage(), e);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

@@ -133,5 +133,6 @@ public class DOFService implements InitializingBean {
         LOG.error("Failed to synchronize DOF settings: " + e.getMessage(), e);
       }
     }).start();
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

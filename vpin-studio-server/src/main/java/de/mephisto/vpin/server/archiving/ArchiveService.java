@@ -250,5 +250,6 @@ public class ArchiveService implements InitializingBean {
       ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
       this.adapterCache.put(as.getId(), vpaSourceAdapter);
     }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }
