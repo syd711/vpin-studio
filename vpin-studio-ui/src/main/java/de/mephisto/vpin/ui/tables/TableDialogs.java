@@ -306,11 +306,15 @@ public class TableDialogs {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
     GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
-    boolean hd = defaultConfiguration.getBounds().getHeight() <= 1080;
+    boolean hd = defaultConfiguration.getBounds().getHeight() <= 1024;
+    boolean fullhd = defaultConfiguration.getBounds().getHeight() <= 1080;
 
     String fxml = "dialog-table-asset-manager.fxml";
     if (hd) {
       fxml = "dialog-table-asset-manager-hd.fxml";
+    }
+    if (fullhd) {
+      fxml = "dialog-table-asset-manager-fullhd.fxml";
     }
     Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();

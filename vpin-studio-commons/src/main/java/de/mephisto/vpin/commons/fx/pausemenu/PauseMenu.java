@@ -75,6 +75,7 @@ public class PauseMenu extends Application {
     PauseMenu.togglePauseMenu();
   }
 
+
   @Override
   public void start(Stage stage) {
     loadPauseMenu();

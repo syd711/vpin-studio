@@ -1038,7 +1038,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     }
     catch (Exception e) {
-      LOG.error("Media disposal failed: {}", e.getMessage(), e);
+      LOG.error("Media disposal failed: {}", e.getMessage());
     }
 
     EventManager.getInstance().removeListener(this);

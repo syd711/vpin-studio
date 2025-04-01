@@ -213,11 +213,8 @@
                         </ScrollPane>
                      </center>
                      <padding>
-                        <Insets left="1.0" />
+                        <Insets left="1.0" right="24.0" />
                      </padding>
-                     <BorderPane.margin>
-                        <Insets right="6.0" />
-                     </BorderPane.margin>
                   </BorderPane>
 
                </left>
@@ -252,7 +249,7 @@
                                           <Insets />
                                        </BorderPane.margin>
                                        <left>
-                                          <ListView fx:id="serverAssetsList" prefHeight="250.0" prefWidth="320.0" BorderPane.alignment="CENTER" />
+                                          <ListView fx:id="serverAssetsList" prefHeight="250.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
                                        </left>
                                        <center>
                                           <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
@@ -291,13 +288,13 @@
                                        </center>
                                        <top>
                                           <ToolBar BorderPane.alignment="CENTER">
-                                            <items>
+                                             <items>
                                                 <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </TextField>
-                                              <Button mnemonicParsing="false" onAction="#onSearch" textFill="WHITE">
+                                                <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -316,7 +313,7 @@
                                                       <Tooltip text="Rebuilds the search index to fetch the latest assets." />
                                                    </tooltip>
                                                 </Button>
-                                            </items>
+                                             </items>
                                           </ToolBar>
                                        </top>
                                     </BorderPane>
@@ -355,7 +352,7 @@
                                           <Insets />
                                        </BorderPane.margin>
                                        <left>
-                                          <ListView fx:id="assetList" prefHeight="200.0" prefWidth="325.0" BorderPane.alignment="CENTER" />
+                                          <ListView fx:id="assetList" prefHeight="200.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
                                        </left>
                                        <center>
                                           <BorderPane BorderPane.alignment="CENTER">
@@ -379,7 +376,7 @@
                                                    </tooltip>
                                                 </Button>
                                                 <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                                <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" textFill="WHITE">
+                                                <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -387,7 +384,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                                    </graphic>
                                                 </Button>
-                                                <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" textFill="WHITE">
+                                                <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -395,7 +392,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                                                    </graphic>
                                                 </Button>
-                                                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
+                                                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
                                                    <graphic>
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                                    </graphic>
@@ -407,7 +404,7 @@
                                                    </font>
                                                 </Button>
                                                 <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                                <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                                                <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -415,6 +412,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                                    </graphic>
                                                 </Button>
+                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                                                 <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
                                                    <graphic>
                                                       <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
@@ -465,6 +463,7 @@
                                                       <Tooltip prefWidth="350.0" text="Shows all metadata extracted from the selected asset." wrapText="true" />
                                                    </tooltip>
                                                 </Button>
+                                                <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                                                 <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
@@ -531,22 +530,34 @@
                      <left>
                         <HBox BorderPane.alignment="CENTER">
                            <children>
-                              <HBox fx:id="tableSelection" alignment="CENTER_LEFT" spacing="6.0">
+                              <HBox fx:id="tableSelection">
                                  <children>
-                                    <Label fx:id="tableLabel2" text="Table:" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="250.0" />
-                                    <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
-                                       </graphic>
-                                    </Button>
+                                    <GridPane prefHeight="30.0" prefWidth="640.0" vgap="3.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="58.79998779296875" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="881.6" minWidth="10.0" prefWidth="414.6000244140625" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1045.4000305175782" minWidth="10.0" prefWidth="162.5999755859375" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
+                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
                                  </children>
                               </HBox>
                               <HBox fx:id="playlistSelection">
@@ -565,13 +576,10 @@
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="250.0" GridPane.columnIndex="1" />
+                                          <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
                                  </children>
-                                 <HBox.margin>
-                                    <Insets left="12.0" />
-                                 </HBox.margin>
                               </HBox>
                            </children>
                         </HBox>
@@ -591,7 +599,7 @@
                               </RadioButton>
                            </children>
                            <padding>
-                              <Insets right="12.0" />
+                              <Insets right="24.0" />
                            </padding>
                         </HBox>
                      </center>
@@ -607,7 +615,7 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <right>
-            <HBox spacing="6.0">
+            <HBox fx:id="playlistHint" spacing="6.0">
                <children>
                   <Button fx:id="openPlaylistManagerBtn" mnemonicParsing="false" onAction="#onPlaylistManager" styleClass="default-button" text="Open Playlist Manager" />
                   <Button fx:id="openDataManager" mnemonicParsing="false" onAction="#onDataManager" styleClass="default-button" text="Open Data Manager" />
@@ -621,7 +629,7 @@
          <left>
             <HBox fx:id="playlistHint" alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="preference-description" />
+                  <Label styleClass="preference-description" text="Default loading videos are shown by playlist. Set your default on each playlist. or set it for the HOME playlist for global defaults." />
                </children>
             </HBox>
          </left>
