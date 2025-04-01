@@ -1,3 +1,11 @@
+## Release Notes 3.14.2
+
+## Changes
+
+- **Tables / Asset Manager**: Added another compact dialog variant used on smaller screens (<= 1024px height).
+
+---
+
 ## Release Notes 3.14.1
 
 ## Changes
