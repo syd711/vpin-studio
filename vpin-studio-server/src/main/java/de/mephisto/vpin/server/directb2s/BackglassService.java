@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.restclient.directb2s.*;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.emulators.EmulatorService;
@@ -324,14 +325,22 @@ public class BackglassService implements InitializingBean {
 
     List<DirectB2SAndVersions> result = new ArrayList<>();
 
+    long start = System.currentTimeMillis();
     List<GameEmulator> gameEmulators = emulatorService.getBackglassGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (!gameEmulator.isEnabled()) {
         continue;
       }
       File tablesFolder = gameEmulator.getGamesFolder();
+
+      if (!tablesFolder.exists()) {
+        LOG.info("Skipping backglass scan for: {}", tablesFolder.getAbsolutePath());
+        continue;
+      }
+
       Path tablesPath = tablesFolder.toPath();
 
+      LOG.info("Running backglass scan for: {}", tablesFolder.getAbsolutePath());
       IOFileFilter filter = new SuffixFileFilter(new String[]{"directb2s"}, IOCase.INSENSITIVE);
       Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
       DirectB2SAndVersions currentDirectB2S = null;
@@ -353,6 +362,9 @@ public class BackglassService implements InitializingBean {
         currentDirectB2S.addVersion(tablesPath.relativize(file.toPath()).toString());
       }
     }
+
+    long duration = System.currentTimeMillis() - start;
+    LOG.info("Backglass scan finished, scanned {} files in {}ms", cacheDirectB2SVersion.size(), duration);
   }
 
   public DirectB2SAndVersions getDirectB2SAndVersions(Game game) {
