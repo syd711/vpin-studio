@@ -74,7 +74,7 @@ public class EmulatorService {
   public List<GameEmulator> getBackglassGameEmulators() {
     List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
     return gameEmulators.stream().filter(GameEmulator::isValid).filter(e -> {
-      return e.isVpxEmulator() || e.isFpEmulator();
+      return e.isVpxEmulator();
     }).collect(Collectors.toList());
   }
 
