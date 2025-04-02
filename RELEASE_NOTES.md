@@ -3,6 +3,8 @@
 ## Changes
 
 - **Tables / Asset Manager**: Added another compact dialog variant used on smaller screens (<= 1024px height).
+- **Pause Menu / Auto-Shutdown**: The automatic shutdown check if the pause menu or overlay is opened now. In that case, the shutdown is not executed, so you can pause as long as you want.
+- **Pause Menu** Added option to mute the system on pause.
 
 ---
 

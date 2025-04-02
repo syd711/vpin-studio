@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.inputs;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.jobs.JobQueue;
@@ -27,6 +29,13 @@ public class ShutdownThread extends Thread {
     while (true) {
       try {
         Thread.sleep(60 * 1000);
+
+        boolean uiRunning = ServerFX.getInstance().isOverlayVisible() || PauseMenu.isVisible();
+        if (uiRunning) {
+          idleMinutes = 0;
+          continue;
+        }
+
         idleMinutes += 1;
 
         Object preferenceValue = preferencesService.getPreferenceValue(PreferenceNames.IDLE_TIMEOUT);
@@ -46,7 +55,8 @@ public class ShutdownThread extends Thread {
             }
           }
         }
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         LOG.error("Error in shutdown thread: " + e.getMessage(), e);
       }
     }
@@ -60,7 +70,8 @@ public class ShutdownThread extends Thread {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("shutdown", "-s"));
       executor.executeCommand();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error executing shutdown: " + e.getMessage(), e);
     }
   }

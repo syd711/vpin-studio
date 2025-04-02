@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
@@ -79,6 +80,10 @@ public class PauseMenu extends Application {
   @Override
   public void start(Stage stage) {
     loadPauseMenu();
+  }
+
+  public static boolean isVisible() {
+    return visible;
   }
 
   public static void loadPauseMenu() {
@@ -219,39 +224,43 @@ public class PauseMenu extends Application {
         StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
         stage.getScene().setCursor(Cursor.NONE);
 
-        new Thread(() -> {
-          Platform.runLater(() -> {
-            try {
-              screenAssets.clear();
-              PauseMenuStyle style = pauseMenuSettings.getStyle();
-              if (style == null) {
-                style = PauseMenuStyle.embedded;
-              }
+        JFXFuture.supplyAsync(() -> {
+          if (pauseMenuSettings.isMuteOnPause()) {
+            NirCmd.muteSystem(true);
+          }
+          return true;
+        }).thenAcceptLater((result) -> {
+          try {
+            screenAssets.clear();
+            PauseMenuStyle style = pauseMenuSettings.getStyle();
+            if (style == null) {
+              style = PauseMenuStyle.embedded;
+            }
 
-              if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
-                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
+            if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
+              screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
 
-                List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
-                if (!videoTutorials.isEmpty()) {
-                  VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
-                  String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-                  if (visible) {
-                    Browser.getInstance().showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
-                  }
+              List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+              if (!videoTutorials.isEmpty()) {
+                VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
+                String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
+                if (visible) {
+                  Browser.getInstance().showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
                 }
               }
-              LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
             }
-            catch (Exception e) {
-              LOG.error("Failed to prepare pause menu screens: " + e.getMessage(), e);
-            }
-          });
+            LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
+          }
+          catch (Exception e) {
+            LOG.error("Failed to prepare pause menu screens: " + e.getMessage(), e);
+          }
 
           ServerFX.toFront(stage, visible);
           ServerFX.toFront(stage, visible);
           ServerFX.toFront(stage, visible);
           ServerFX.toFront(stage, visible);
-        }).start();
+        });
+
         ServerFX.forceShow(stage);
       }
       catch (Exception e) {
@@ -291,6 +300,10 @@ public class PauseMenu extends Application {
 
       try {
         NirCmd.focusWindow("Visual Pinball Player");
+        PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+        if (pauseMenuSettings.isMuteOnPause()) {
+          NirCmd.muteSystem(false);
+        }
       }
       catch (Exception e) {
         LOG.error("Failed to execute focus command: " + e.getMessage(), e);

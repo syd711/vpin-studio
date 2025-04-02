@@ -27,7 +27,17 @@ public class PauseMenuSettings extends JsonSettings {
   private String recordingButton;
   private String inputFilterList;
 
+  private boolean muteOnPause = false;
+
   private int pauseMenuScreenId = -1;
+
+  public boolean isMuteOnPause() {
+    return muteOnPause;
+  }
+
+  public void setMuteOnPause(boolean muteOnPause) {
+    this.muteOnPause = muteOnPause;
+  }
 
   public int getTestDuration() {
     return testDuration;

@@ -51,6 +51,9 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox iScoredScoresCheckbox;
 
   @FXML
+  private CheckBox pauseMenuMuteCheckbox;
+
+  @FXML
   private TextField videoAuthorsAllowList;
 
   @FXML
@@ -102,6 +105,12 @@ public class PauseMenuPreferencesController implements Initializable {
     pauseMenuCheckbox.setSelected(pauseMenuSettings.isUseOverlayKey());
     pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setUseOverlayKey(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
+    pauseMenuMuteCheckbox.setSelected(pauseMenuSettings.isMuteOnPause());
+    pauseMenuMuteCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setMuteOnPause(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 

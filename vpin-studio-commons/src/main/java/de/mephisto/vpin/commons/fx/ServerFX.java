@@ -82,6 +82,10 @@ public class ServerFX extends Application {
     listeners.add(listener);
   }
 
+  public boolean isOverlayVisible() {
+    return overlayVisible;
+  }
+
   public static void waitForOverlay() {
     try {
       latch.await();
