@@ -3,8 +3,11 @@
 ## Changes
 
 - **Tables / Asset Manager**: Added another compact dialog variant used on smaller screens (<= 1024px height).
+- **Tables / Media Recorder**: Instead of moving the Studio window to the back, it is minimized now during recordings.
 - **Pause Menu / Auto-Shutdown**: The automatic shutdown check if the pause menu or overlay is opened now. In that case, the shutdown is not executed, so you can pause as long as you want.
 - **Pause Menu** Added option to mute the system on pause.
+- **Competitions / iScores**: Fixed reading highscores from the iScored dashboard, leading to an empty list in the competitions overview.
+- **Preferences / Emulators** Fixed configuration issue with the visibility of the Future Pinball emulator.
 
 ---
 

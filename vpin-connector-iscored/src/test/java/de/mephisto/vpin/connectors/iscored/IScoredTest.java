@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class IScoredTest {
 
+  private final static int gameIndex = 7;
+
   @Test
   public void testIscored() throws Exception {
     GameRoom gameRoom = IScored.loadGameRoom("https://www.iScored.info/Syd");
@@ -15,8 +17,8 @@ public class IScoredTest {
     assertNotNull(gameRoom.getSettings());
     List<IScoredGame> games = gameRoom.getGames();
     assertFalse(games.isEmpty());
-//    assertFalse(gameRoom.getGames().get(0).getScores().isEmpty());
-//    assertFalse(gameRoom.getGames().get(0).getTags().isEmpty());
+    assertFalse(gameRoom.getGames().get(gameIndex).getScores().isEmpty());
+    assertFalse(gameRoom.getGames().get(gameIndex).getTags().isEmpty());
     assertTrue(gameRoom.getSettings().isLongNameInputEnabled());
 
     gameRoom = IScored.loadGameRoom("https://www.iScored.info?mode=public&user=Syd");

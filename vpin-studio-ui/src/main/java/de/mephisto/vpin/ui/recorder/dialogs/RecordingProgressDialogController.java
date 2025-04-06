@@ -120,7 +120,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         }
 
         Platform.runLater(() -> {
-          Studio.stage.toBack();
+          Studio.stage.setIconified(true);
         });
       }).start();
 
@@ -207,6 +207,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     jobDescriptor = client.getJobsService().getJob(jobDescriptor.getUuid());
 
     Platform.runLater(() -> {
+      Studio.stage.setIconified(false);
+
       stopBtn.setVisible(false);
       progressBar.setDisable(true);
       cancelBtn.setVisible(true);

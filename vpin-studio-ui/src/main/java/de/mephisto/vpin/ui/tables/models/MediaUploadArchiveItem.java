@@ -83,7 +83,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the PUP pack folder here
       if (pupPackDir.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
         assetType = AssetType.PUP_PACK;
-        target = client.getFrontendService().getFrontendCached().getInstallationDirectory() + "...";
+        target = client.getFrontendService().getFrontendCached().getInstallationDirectory() + "\\PUPVideos";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -98,7 +98,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the DMD bundle here
       if (dmdDir.equals(this.getName())) {
         assetType = AssetType.DMD_PACK;
-        target = emulator.getGamesDirectory() + "...";
+        target = emulator.getGamesDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -111,7 +111,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     if (altSoundFolder != null) {
       if (altSoundFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
         assetType = AssetType.ALT_SOUND;
-        target = emulator.getMameDirectory() + "...";
+        target = emulator.getMameDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -125,7 +125,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        target = emulator.getGamesDirectory() + "...";
+        target = emulator.getGamesDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 

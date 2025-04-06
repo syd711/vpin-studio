@@ -230,6 +230,10 @@ public class GameEmulator {
     return exeParameters;
   }
 
+  public String getNvramDirectory() {
+    return getNvramFolder().getAbsolutePath();
+  }
+
   @NonNull
   @JsonIgnore
   public File getNvramFolder() {
@@ -241,6 +245,7 @@ public class GameEmulator {
     }
     return new File(getMameFolder(), "nvram");
   }
+
 
   @NonNull
   @JsonIgnore
@@ -301,10 +306,13 @@ public class GameEmulator {
     return new File(getInstallationFolder(), "User");
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public File getInstallationFolder() {
-    return new File(installationDirectory);
+    if(!StringUtils.isEmpty(installationDirectory)) {
+      return new File(installationDirectory);
+    }
+    return new File("./");
   }
 
   @NonNull

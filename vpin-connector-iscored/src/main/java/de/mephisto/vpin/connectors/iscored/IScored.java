@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.connectors.iscored.models.GameModel;
 import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
+import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -20,10 +21,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class IScored {
   private final static Logger LOG = LoggerFactory.getLogger(IScored.class);
@@ -80,27 +78,29 @@ public class IScored {
         gameRoom.setSettings(gameRoomModel.getSettings());
         gameRoom.setName(gameRoomModel.getSettings().getRoomName());
 
-        URL gamesInfoURL = composeURL(baseUrl, params, "/roomCommands.php?c=getAllGamesAndScores&roomID=" + gameRoomModel.getRoomID());
         if (gameRoom.getSettings().isApiReadingEnabled()) {
           LOG.info("READ API enabled, using API endpoint for game infos.");
-          gamesInfoURL = composeURL(baseUrl, params, "/api/" + params.get("user"));
+          URL gamesInfoURL = composeURL(baseUrl, params, "/api/" + params.get("user"));
+          String gamesInfo = loadJson(gamesInfoURL);
+          GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
+
+          URL allScoresUrl = composeURL(baseUrl, params, "/roomCommands.php?c=getAllGamesAndScores&roomID=" + gameRoomModel.getRoomID());
+          String allScoresJson = loadJson(allScoresUrl);
+          GameScoreModel[] allScores = objectMapper.readValue(allScoresJson, GameScoreModel[].class);
+
+          for (GameModel gameModel : games) {
+            IScoredGame game = new IScoredGame();
+            game.setId(gameModel.getGameID());
+            game.setName(gameModel.getGameName());
+            game.setTags(gameModel.getTags());
+            game.setHidden(gameModel.getHidden());
+            game.setScores(getScoresFor(game.getId(), allScores));
+            gameRoom.getGames().add(game);
+          }
+
+          LOG.info("Loaded game room from URL '" + url + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
+          return gameRoom;
         }
-
-        String gamesInfo = loadJson(gamesInfoURL);
-        GameModel[] games = objectMapper.readValue(gamesInfo, GameModel[].class);
-
-        for (GameModel gameModel : games) {
-          IScoredGame game = new IScoredGame();
-          game.setId(gameModel.getGameID());
-          game.setName(gameModel.getGameName());
-          game.setTags(gameModel.getTags());
-          game.setHidden(gameModel.getHidden());
-          game.setScores(gameModel.getScores());
-          gameRoom.getGames().add(game);
-        }
-
-        LOG.info("Loaded game room from URL '" + url + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
-        return gameRoom;
       }
     }
     catch (Exception e) {
@@ -108,6 +108,15 @@ public class IScored {
     }
 
     return null;
+  }
+
+  private static List<Score> getScoresFor(int id, GameScoreModel[] allScores) {
+    for (GameScoreModel allScore : allScores) {
+      if (allScore.getGameID() == id) {
+        return allScore.getScores();
+      }
+    }
+    return Collections.emptyList();
   }
 
   private static String getBaseURL(URL roomUrl) {
@@ -124,7 +133,7 @@ public class IScored {
       String userName = roomUrl.getPath();
       if (userName.startsWith("/")) {
         userName = userName.substring(1);
-      }        
+      }
       if (userName == null || userName.isEmpty()) {
         throw new UnsupportedOperationException("Invalid gameroom URL (no user provider) \"" + roomUrl + "\"");
       }
@@ -152,7 +161,7 @@ public class IScored {
       try (BufferedInputStream in = new BufferedInputStream(conn.getInputStream())) {
         IOUtils.copy(in, out);
       }
- 
+
       out.flush();
       out.close();
       conn.disconnect();
@@ -175,7 +184,8 @@ public class IScored {
         int idx = pair.indexOf("=");
         if (idx < 0) {
           query_pairs.put(URLDecoder.decode(pair, StandardCharsets.UTF_8), null);
-        } else {
+        }
+        else {
           query_pairs.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8), URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
         }
       }
@@ -192,6 +202,7 @@ public class IScored {
           if (game.isSingleScore()) {
             LOG.info("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
             result.setMessage("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
+            result.setReturnCode(200);
             return result;
           }
 
@@ -199,12 +210,14 @@ public class IScored {
           if (l > highscore) {
             LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
             result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+            result.setReturnCode(200);
             return result;
           }
         }
         catch (NumberFormatException e) {
           LOG.error("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
           result.setMessage("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
+          result.setReturnCode(500);
           return result;
         }
       }

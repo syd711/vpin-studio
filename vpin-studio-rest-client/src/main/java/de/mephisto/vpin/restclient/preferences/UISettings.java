@@ -72,7 +72,7 @@ public class UISettings extends JsonSettings {
   private boolean columnAltSound = true;
   private boolean columnBackglass = true;
   private boolean columnRating = true;
-  private boolean columnDateAdded = false;
+  private boolean columnDateAdded = true;
   private boolean columnDateModified = false;
   private boolean columnLauncher = false;
   private boolean columnHighscore = true;
