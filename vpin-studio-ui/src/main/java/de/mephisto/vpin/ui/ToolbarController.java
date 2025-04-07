@@ -312,7 +312,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       preferencesBtn.getItems().remove(shutdownMenuItem);
     }
 
-    this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty());
+    this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty() && !client.getSystemService().isLocal());
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);

@@ -10,7 +10,8 @@
 - **Pause Menu** Added option to mute the system on pause.
 - **Competitions / iScores**: Fixed reading highscores from the iScored dashboard, leading to an empty list in the competitions overview.
 - **Preferences / Emulators** Fixed configuration issue with the visibility of the Future Pinball emulator.
-- **Default Emulator Resolving**: There are some situations, e.g. for the component manager, where just the first emulator is picked to see calculate VPX related summaries. This may not hold up when the Popper defaults have changed. For now, at least the first VPX emulator with the lowest id is picked. This is yet subject to change since may need to provide more emulator selections in these situations. 
+- **Default Emulator Resolving**: There are some situations, e.g. for the component manager, where just the first emulator is picked to see calculate VPX related summaries. This may not hold up when the Popper defaults have changed. For now, at least the first VPX emulator with the lowest id is picked. This is yet subject to change since may need to provide more emulator selections in these situations.
+- **Remote Monitor**: The button for toggling the remote monitor screens is now only shown when connected from remote.
 
 ---
 
