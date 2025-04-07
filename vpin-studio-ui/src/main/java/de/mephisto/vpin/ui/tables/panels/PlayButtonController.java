@@ -75,7 +75,7 @@ public class PlayButtonController implements Initializable {
     }
 
     if (game.isVpxGame()) {
-      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
+      GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
       List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
       for (String altExeName : altExeNames) {
         MenuItem item = new MenuItem(altExeName);

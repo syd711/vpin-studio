@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingMode;
 import de.mephisto.vpin.ui.Studio;
@@ -256,6 +257,19 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       GameRepresentation game = client.getGameService().getGame(recordingDataSummary.getRecordingData().get(0).getGameId());
       tablesLabel.setText(game.getGameDisplayName());
     }
+
+    List<RecordingData> recordingData = recordingDataSummary.getRecordingData();
+    for (RecordingData data : recordingData) {
+      GameRepresentation game = client.getGame(data.getGameId());
+      if (!game.isVpxGame()) {
+        frontendRecordingRadio.setSelected(true);
+        emulatorRecordingRadio.setDisable(true);
+        launcherCombo.setDisable(true);
+        customLauncherCheckbox.setDisable(true);
+        break;
+      }
+    }
+
 
     refresh();
   }

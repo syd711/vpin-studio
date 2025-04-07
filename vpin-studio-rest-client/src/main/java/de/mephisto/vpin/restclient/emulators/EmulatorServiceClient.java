@@ -8,9 +8,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
@@ -28,7 +26,8 @@ public class EmulatorServiceClient extends VPinStudioClientService {
   }
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {
-    List<GameEmulatorRepresentation> gameEmulators = getValidatedGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(getGameEmulatorsByType(EmulatorType.VisualPinball));
+    gameEmulators.sort((o1, o2) -> o2.getId() - o1.getId());
     return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
