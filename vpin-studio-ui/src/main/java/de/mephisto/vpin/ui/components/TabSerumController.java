@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -23,15 +22,6 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
   private final static Logger LOG = LoggerFactory.getLogger(TabSerumController.class);
 
   @FXML
-  private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    if (defaultGameEmulator.getMameDirectory() != null) {
-      File folder = new File(defaultGameEmulator.getMameDirectory());
-      openFolder(folder);
-    }
-  }
-
-  @FXML
   private void onReload() {
     client.getDmdService().clearCache();
     refreshCustomValues();
@@ -43,9 +33,8 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   @FXML
   private void onDmdDevice() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    if (client.getSystemService().isLocal() && defaultGameEmulator.getMameDirectory() != null) {
-      File folder = new File(defaultGameEmulator.getMameDirectory());
+    File folder = client.getMameService().getMameFolder();
+    if (client.getSystemService().isLocal() && folder != null && folder.exists()) {
       File exe = new File(folder, "DmdDevice.ini");
       super.editFile(exe);
     }

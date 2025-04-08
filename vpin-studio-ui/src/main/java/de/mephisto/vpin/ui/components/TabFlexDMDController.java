@@ -23,12 +23,6 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
   private Button flexDMDBtn;
 
   @FXML
-  private void onFolder() {
-    File folder = client.getMameService().getMameFolder();
-    openFolder(folder);
-  }
-
-  @FXML
   private void onFlexDMD() {
     File folder = client.getMameService().getMameFolder();
     File file = new File(folder, "FlexDMDUI.exe");

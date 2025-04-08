@@ -40,8 +40,8 @@ public class DMDServiceClient extends VPinStudioClientService {
     }
   }
 
-  public ComponentSummary getFreezySummary(int emulatorId) {
-    return getRestClient().get(API + "dmd/freezy/" + emulatorId, ComponentSummary.class);
+  public ComponentSummary getFreezySummary() {
+    return getRestClient().get(API + "dmd/freezy", ComponentSummary.class);
   }
 
   public boolean clearCache() {

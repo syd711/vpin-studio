@@ -21,6 +21,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,6 +138,17 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  @FXML
+  public final void onFolder() {
+    String folder = component.getTargetFolder();
+    if (/*client.getSystemService().isLocal() &&*/ StringUtils.isNotBlank(folder)) {
+      openFolder(new File(folder));
+    }
+    else {
+      WidgetFactory.showAlert(Studio.stage, "Error", "The server was unable to determine the target folder.");
+    }
   }
 
   protected void openFolder(File file) {

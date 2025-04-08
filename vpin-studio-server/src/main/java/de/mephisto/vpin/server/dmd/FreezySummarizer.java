@@ -2,8 +2,6 @@ package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.server.games.GameEmulator;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
@@ -18,11 +16,11 @@ public class FreezySummarizer {
   private final static Logger LOG = LoggerFactory.getLogger(FreezySummarizer.class);
 
 
-  public static ComponentSummary summarizeFreezy(@NonNull GameEmulator emulator) {
+  public static ComponentSummary summarizeFreezy(File mameFolder) {
     ComponentSummary summary = new ComponentSummary();
     summary.setType(ComponentType.freezy);
 
-    File iniFile = new File(emulator.getMameFolder(), "DmdDevice.ini");
+    File iniFile = new File(mameFolder, "DmdDevice.ini");
     try {
       if (!iniFile.exists()) {
         summary.addEntry("DmdDevice.ini", null, false, "The file \"" + iniFile.getAbsolutePath() + "\" does not exist.");

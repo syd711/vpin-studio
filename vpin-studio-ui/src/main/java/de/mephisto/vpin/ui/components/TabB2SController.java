@@ -42,17 +42,6 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
 
   }
 
-  @FXML
-  private void onFolder() {
-    File folder = client.getBackglassServiceClient().getBackglassServerFolder();
-    if (folder != null) {
-      openFolder(folder);
-    }
-    else {
-      WidgetFactory.showAlert(Studio.stage, "Error", "The server was unable to determine the backglass server installation directory.");
-    }
-  }
-
   @Override
   protected ComponentType getComponentType() {
     return ComponentType.b2sbackglass;

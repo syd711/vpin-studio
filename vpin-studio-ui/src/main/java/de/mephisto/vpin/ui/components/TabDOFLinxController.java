@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -74,9 +72,9 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
       }
     }
 
-    DOFLinxSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
-    if (!StringUtils.isEmpty(settings.getInstallationFolder())) {
-      File folder = new File(settings.getInstallationFolder());
+    String installFolder = component.getTargetFolder();
+    if (!StringUtils.isEmpty(installFolder)) {
+      File folder = new File(installFolder);
       if (folder.exists()) {
         try {
           boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.DOFLinxINI), "DOFLinx.INI");
@@ -96,24 +94,10 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
   }
 
   @FXML
-  private void onFolder() {
-    DOFLinxSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
-    if (!StringUtils.isEmpty(settings.getInstallationFolder())) {
-      File folder = new File(settings.getInstallationFolder());
-      if (folder.exists()) {
-        openFolder(folder);
-        return;
-      }
-    }
-
-    WidgetFactory.showAlert(Studio.stage, "Error", "Invalid or no DOFLinx installation folder set.");
-  }
-
-  @FXML
   private void onConfigTool() {
-    DOFLinxSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
-    if (!StringUtils.isEmpty(settings.getInstallationFolder())) {
-      File exe = new File(settings.getInstallationFolder(), "DOFLinxConfig.exe");
+    String installFolder = component.getTargetFolder();
+    if (!StringUtils.isEmpty(installFolder)) {
+      File exe = new File(installFolder, "DOFLinxConfig.exe");
       if (exe.exists()) {
         openFile(exe);
         return;
@@ -137,9 +121,10 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
       restartBtn.setDisable(true);
       configBtn.setDisable(true);
       iniBtn.setDisable(true);
-      DOFLinxSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
-      if (!StringUtils.isEmpty(settings.getInstallationFolder())) {
-        File folder = new File(settings.getInstallationFolder());
+
+      String installFolder = component.getTargetFolder();
+      if (!StringUtils.isEmpty(installFolder)) {
+        File folder = new File(installFolder);
         openFolderButton.setDisable(!folder.exists());
         iniBtn.setDisable(!folder.exists());
 
@@ -147,7 +132,7 @@ public class TabDOFLinxController extends AbstractComponentTab implements Initia
         stopBtn.setDisable(!running);
         restartBtn.setDisable(!folder.exists());
 
-        File exe = new File(settings.getInstallationFolder(), "DOFLinxConfig.exe");
+        File exe = new File(installFolder, "DOFLinxConfig.exe");
         configBtn.setDisable(!exe.exists());
       }
 

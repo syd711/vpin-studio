@@ -46,9 +46,9 @@ public class DMDResource {
     return dmdService.clearCache();
   }
 
-  @GetMapping("/freezy/{emulatorId}")
-  public ComponentSummary getFreezySummary(@PathVariable("emulatorId") int emulatorId) {
-    return dmdService.getFreezySummary(emulatorId);
+  @GetMapping("/freezy")
+  public ComponentSummary getFreezySummary() {
+    return dmdService.getFreezySummary();
   }
 
   @PostMapping("/upload")

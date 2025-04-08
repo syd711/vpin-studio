@@ -89,9 +89,8 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private void onDmdDevice() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    if (client.getSystemService().isLocal() && defaultGameEmulator.getMameDirectory() != null) {
-      File folder = new File(defaultGameEmulator.getMameDirectory());
+    File folder = client.getMameService().getMameFolder();
+    if (client.getSystemService().isLocal() && folder != null && folder.exists()) {
       File ini = new File(folder, "DmdDevice.ini");
       Dialogs.editFile(ini);
     }

@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -14,7 +13,6 @@ import javafx.scene.control.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -35,13 +33,6 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
       LOG.error("Failed to open file: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open file: " + e.getMessage());
     }
-  }
-
-  @FXML
-  private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getInstallationDirectory());
-    openFolder(folder);
   }
 
   @Override

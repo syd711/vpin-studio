@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
@@ -33,11 +32,6 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @FXML
   private Button dmdDeviceBtn;
 
-  @FXML
-  private void onFolder() {
-    File folder = client.getMameService().getMameFolder();
-    openFolder(folder);
-  }
 
   @FXML
   private void onReload() {
@@ -88,13 +82,10 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   private void refreshCustomValues() {
     clearCustomValues();
 
-    GameEmulatorRepresentation defaultGameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    if (defaultGameEmulator!=null) {
-      ComponentSummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
-      List<ComponentSummaryEntry> entries = freezySummary.getEntries();
-      for (ComponentSummaryEntry entry : entries) {
-        super.addCustomValue(entry);
-      }
+    ComponentSummary freezySummary = client.getDmdService().getFreezySummary();
+    List<ComponentSummaryEntry> entries = freezySummary.getEntries();
+    for (ComponentSummaryEntry entry : entries) {
+      super.addCustomValue(entry);
     }
   }
 
