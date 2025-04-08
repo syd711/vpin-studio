@@ -264,6 +264,10 @@ public class BackglassServiceClient extends VPinStudioClientService {
   //--------------------------------
   // screen res management
 
+  public DirectB2sScreenRes getGlobalScreenRes() {
+    return getRestClient().get(API + "directb2s/screenRes",DirectB2sScreenRes.class);
+  }
+
   public DirectB2sScreenRes getScreenRes(int emulatorId, String fileName, boolean tableOnly) {
     Map<String, Object> params = new HashMap<>();
     params.put("emulatorId", emulatorId);
@@ -288,15 +292,15 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "directb2s/screenRes/save", screenres, ReturnMessage.class);
   }
 
-  public String uploadScreenResFrame(DirectB2sScreenRes screenres, File file) {
-    return uploadFile(screenres.getEmulatorId(), screenres.getB2SFileName(),
+  public String uploadScreenResFrame(int emulatorId, String filename, File file) {
+    return uploadFile(emulatorId, filename,
         "directb2s/screenRes/uploadFrame", file, String.class);
   }
 
-  public boolean removeScreenResFrame(DirectB2sScreenRes screenres) throws IOException {
+  public boolean removeScreenResFrame(int emulatorId, String filename) throws IOException {
     Map<String, Object> map = new HashMap<>();
-    map.put("emuid", screenres.getEmulatorId());
-    map.put("filename", screenres.getB2SFileName());
+    map.put("emuid", emulatorId);
+    map.put("filename", filename);
     return getRestClient().delete(API + "directb2s/screenRes/removeFrame", map);
   }
 

@@ -368,6 +368,11 @@ public class DirectB2SResource {
   //--------------------------------------------------
   // SCREENRES & FRAME
 
+  @GetMapping("/screenRes")
+  public DirectB2sScreenRes getScreenRes() {
+    return backglassService.getGlobalScreenRes();
+  }
+
   @PostMapping("/screenRes")
   public DirectB2sScreenRes getScreenRes(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName, @RequestParam(required = false) boolean tableOnly) {
     Game game = gameService.getGameByDirectB2S(emulatorId, fileName);

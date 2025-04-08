@@ -758,17 +758,41 @@ public class BackglassService implements InitializingBean {
           }
           else {
             switch (currentLine++) {
+              case 0:
+                writer.write(Integer.toString(screenres.getPlayfieldWidth()));
+                break;
+              case 1:
+                writer.write(Integer.toString(screenres.getPlayfieldHeight()));
+                break;
               case 2:
                 writer.write(Integer.toString(screenres.getBackglassWidth()));
                 break;
               case 3:
                 writer.write(Integer.toString(screenres.getBackglassHeight()));
                 break;
+              case 4:
+                writer.write(screenres.getBackglassDisplay());
+                break;
               case 5:
                 writer.write(Integer.toString(screenres.getBackglassX()));
                 break;
               case 6:
                 writer.write(Integer.toString(screenres.getBackglassY()));
+                break;
+              case 7:
+                writer.write(Integer.toString(screenres.getDmdWidth()));
+                break;
+              case 8:
+                writer.write(Integer.toString(screenres.getDmdHeight()));
+                break;
+              case 9:
+                writer.write(Integer.toString(screenres.getDmdX()));
+                break;
+              case 10:
+                writer.write(Integer.toString(screenres.getDmdY()));
+                break;
+              case 11:
+                writer.write(screenres.getDmdYFlip() ? "1" : "0");
                 break;
               case 12:
                 writer.write(Integer.toString(screenres.getBackgroundX()));

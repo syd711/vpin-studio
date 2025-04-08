@@ -4,8 +4,6 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
@@ -93,7 +91,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   // The dialog frame
   private Stage stage;
 
-  private DirectB2sScreenRes screenres;
+  private int emulatorId;
+  private String b2sFileName;
+  private int gameId = -1;
 
   private BufferedImage frameImg;
 
@@ -101,8 +101,6 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   private int previewWidth = -1;
   private int previewHeight = -1;
-
-  private FrontendPlayerDisplay backglassDisplay;
 
   private File uploadedFrame = null;
 
@@ -116,11 +114,19 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
   @FXML
   private void onGenerateClick(ActionEvent event) {
     JFXFuture.runAsync(() -> {
+
+          DirectB2sScreenRes screenres = client.getBackglassServiceClient().getGlobalScreenRes();
+          // Mind that the case where globalRes has a frame background is not fully tested...
+          int x = screenres.isBackglassCentered() ? screenres.getBackgroundX() : screenres.getBackglassX();
+          int y = screenres.isBackglassCentered() ? screenres.getBackgroundY() : screenres.getBackglassY();
+          int w = screenres.isBackglassCentered() ? screenres.getBackgroundWidth() : screenres.getBackglassWidth();
+          int h = screenres.isBackglassCentered() ? screenres.getBackgroundHeight() : screenres.getBackglassHeight();
+
           if (stretchedBackglass) {
-            screenres.setBackglassX(0);
-            screenres.setBackglassY(0);
-            screenres.setBackglassWidth(backglassDisplay.getWidth());
-            screenres.setBackglassHeight(backglassDisplay.getHeight());
+            screenres.setBackglassX(x);
+            screenres.setBackglassY(y);
+            screenres.setBackglassWidth(w);
+            screenres.setBackglassHeight(h);
 
             screenres.setBackgroundX(0);
             screenres.setBackgroundY(0);
@@ -130,7 +136,7 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
           }
           else {
             if (uploadedFrame != null) {
-              String newFrameName = client.getBackglassServiceClient().uploadScreenResFrame(screenres, uploadedFrame);
+              String newFrameName = client.getBackglassServiceClient().uploadScreenResFrame(emulatorId, b2sFileName, uploadedFrame);
               if (newFrameName != null) {
                 screenres.setBackgroundFilePath(newFrameName);
                 uploadedFrame = null;
@@ -139,9 +145,12 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
                 JFXFuture.throwException("Cannot store frame " + uploadedFrame);
               }
             }
+            else {
+              screenres.setBackgroundFilePath(fileNameField.getText());
+            }
 
-            int backglassFitWidth = backglassDisplay.getWidth();
-            int backglassFitHeight = backglassDisplay.getHeight();
+            int backglassFitWidth = w;
+            int backglassFitHeight = h;
             // If background is centered, fit new backgroundWidth and backgroundHeight within the screen
             // case where height constraint => add horizontal bezels
             if (backglassImg.getWidth() * backglassFitHeight < backglassImg.getHeight() * backglassFitWidth) {
@@ -151,16 +160,24 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
               backglassFitHeight = (int) ((0.0 + backglassFitWidth) * backglassImg.getHeight() / backglassImg.getWidth());
             }
 
-            screenres.setBackglassX((backglassDisplay.getWidth() - backglassFitWidth) / 2);
-            screenres.setBackglassY((backglassDisplay.getHeight() - backglassFitHeight) / 2);
+            screenres.setBackglassX(x + (w - backglassFitWidth) / 2);
+            screenres.setBackglassY(y + (h - backglassFitHeight) / 2);
             screenres.setBackglassWidth(backglassFitWidth);
             screenres.setBackglassHeight(backglassFitHeight);
 
-            screenres.setBackgroundX(0);
-            screenres.setBackgroundY(0);
-            screenres.setBackgroundWidth(backglassDisplay.getWidth());
-            screenres.setBackgroundHeight(backglassDisplay.getHeight());
+            // also move the dmd to compensate the move of backglass
+            screenres.setDmdX(screenres.getDmdX() - (w - backglassFitWidth) / 2);
+            screenres.setDmdY(screenres.getDmdY() - (h - backglassFitHeight) / 2);
+
+            screenres.setBackgroundX(x);
+            screenres.setBackgroundY(y);
+            screenres.setBackgroundWidth(w);
+            screenres.setBackgroundHeight(h);
           }
+
+          screenres.setEmulatorId(emulatorId);
+          screenres.setB2SFileName(b2sFileName);
+          screenres.setGameId(gameId);
 
           screenres.setTurnOnRunAsExe(turnOnRunAsExe.isSelected());
           screenres.setTurnOnBackground(turnOnBackground.isSelected());
@@ -171,8 +188,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
         .thenLater(() -> {
           stage.close();
           // refresh screens
-          if (screenres.getGameId() != -1) {
-            EventManager.getInstance().notifyTableChange(screenres.getGameId(), null);
+          if (gameId != -1) {
+            EventManager.getInstance().notifyTableChange(gameId, null);
           }
         })
         .onErrorLater(ex -> {
@@ -281,15 +298,17 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     tg.selectToggle(radioStretchBackglass);
 
     // load screen dimensions
-    JFXFuture.supplyAsync(() -> client.getFrontendService().getScreenDisplay(VPinScreen.BackGlass))
-        .thenAcceptLater(display -> {
-          if (display != null) {
-            this.backglassDisplay = display;
-            backglassScreenLabel.setText(formatDimension(display.getWidth(), display.getHeight()));
+    JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getGlobalScreenRes())
+        .thenAcceptLater(screenres -> {
+          if (screenres != null) {
+            int w = screenres.isBackglassCentered() ? screenres.getBackgroundWidth() : screenres.getBackglassWidth();
+            int h = screenres.isBackglassCentered() ? screenres.getBackgroundHeight() : screenres.getBackglassHeight();
+
+            backglassScreenLabel.setText(formatDimension(w, h));
 
             // resize the preview proportionnaly
             this.previewHeight = (int) previewImage.getFitHeight();
-            double width = previewImage.getFitHeight() * display.getWidth() / display.getHeight();
+            double width = previewImage.getFitHeight() * w / h;
             previewImage.setFitWidth(width);
             this.previewWidth = (int) width;
             refreshPreview();
@@ -305,7 +324,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     this.stage = stage;
 
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getScreenRes(emulatorId, fileName, false))
-        .thenAcceptLater(res -> setScreenRes(res));
+        .thenAcceptLater(res -> setScreenRes(res))
+        .onErrorLater(ex -> WidgetFactory.showAlert(stage, "Error", "Cannt load .res file :", ex.getMessage()));
 
     JFXFuture.supplyAsync(() -> {
           DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(emulatorId, fileName);
@@ -338,15 +358,18 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
         });
   }
 
-  private void setScreenRes(DirectB2sScreenRes res) {
-    this.screenres = res;
+  private void setScreenRes(DirectB2sScreenRes screenres) {
 
     if (screenres != null) {
+      this.emulatorId = screenres.getEmulatorId();
+      this.b2sFileName = screenres.getB2SFileName();
+      this.gameId = screenres.getGameId();
+
       screenResLabel.setText(screenres.getScreenresFilePath());
       backglassPositionLabel.setText(formatLocation(screenres.getBackglassX(), screenres.getBackglassY()));
       backglassDimensionLabel.setText(formatDimension(screenres.getBackglassWidth(), screenres.getBackglassHeight()));
 
-      if (res.isBackglassCentered()) {
+      if (screenres.isBackglassCentered()) {
         radioCenterBackglass.setSelected(true);
       }
       else {
