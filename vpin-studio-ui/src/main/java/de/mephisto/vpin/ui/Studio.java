@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
@@ -21,12 +22,12 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -41,6 +42,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import net.sf.sevenzipjbinding.SevenZip;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -54,8 +56,8 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -134,17 +136,17 @@ public class Studio extends Application {
   }
 
   private void runOperatingSystemChecks() {
-    if(OSUtil.isMac()) {
+    if (OSUtil.isMac()) {
       //Get location where JAR was launched from
-      System.setProperty("MAC_JAR_PATH",this.getClass().getProtectionDomain().getCodeSource().getLocation().toString());
+      System.setProperty("MAC_JAR_PATH", this.getClass().getProtectionDomain().getCodeSource().getLocation().toString());
       int endOfPath = System.getProperty("MAC_JAR_PATH").toLowerCase().indexOf(MACOS_APP_NAME) + MACOS_APP_NAME.length();
-      String APP_Substring = System.getProperty("MAC_JAR_PATH").substring(5,endOfPath);
+      String APP_Substring = System.getProperty("MAC_JAR_PATH").substring(5, endOfPath);
 
       //Get Application Paths
-      System.setProperty("MAC_APP_PATH",APP_Substring);
+      System.setProperty("MAC_APP_PATH", APP_Substring);
 
       //Update to where jar is actually from and for updating
-      System.setProperty("MAC_JAR_PATH",System.getProperty("MAC_APP_PATH")+ "/Contents/app");
+      System.setProperty("MAC_JAR_PATH", System.getProperty("MAC_APP_PATH") + "/Contents/app");
 
       //Set path for writing stuff
       System.setProperty("MAC_WRITE_PATH", System.getProperty("user.home") + "/Library/Application Support/VPin-Studio/");
@@ -202,6 +204,15 @@ public class Studio extends Application {
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
       ServerFX.client = Studio.client;
+
+      stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+          if (!exit()) {
+            event.consume();
+          }
+        }
+      });
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
@@ -422,13 +433,7 @@ public class Studio extends Application {
     return false;
   }
 
-  @Override
-  public void stop() throws Exception {
-    super.stop();
-    exit();
-  }
-
-  public static void exit() {
+  public static boolean exit() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
@@ -437,7 +442,7 @@ public class Studio extends Application {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
       if (confirmationResult.isCancelClicked()) {
-        return;
+        return false;
       }
 
       if (confirmationResult.isOkClicked()) {
@@ -476,5 +481,6 @@ public class Studio extends Application {
     else {
       System.exit(0);
     }
+    return true;
   }
 }
