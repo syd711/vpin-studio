@@ -6,6 +6,8 @@
 - **Tables / Media Recorder**: Instead of moving the Studio window to the back, it is minimized now during recordings.
 - **Tables / Media Recorder**: The VPX emulator recording option is disabled when a non-VPX game is part of the recording session now. You need to go through the frontend for now.
 - **Tables / Play Button**: Fixed resolving of the game's emulator, so that additional menu entries can be added.
+- **Backglass Manager / res generator**: Fixed positioning of Full DMD B2S that was offset when using background
+- **Backglass Manager / preferences**: To ease understanding where backglass options are stored, the backglass preferences screen now displays the location of the used B2STableSettings.xml 
 - **Pause Menu / Auto-Shutdown**: The automatic shutdown check if the pause menu or overlay is opened now. In that case, the shutdown is not executed, so you can pause as long as you want.
 - **Pause Menu** Added option to mute the system on pause.
 - **Competitions / iScores**: Fixed reading highscores from the iScored dashboard, leading to an empty list in the competitions overview.
@@ -13,6 +15,7 @@
 - **Default Emulator Resolving**: There are some situations, e.g. for the component manager, where just the first emulator is picked to see calculate VPX related summaries. This may not hold up when the Popper defaults have changed. For now, at least the first VPX emulator with the lowest id is picked. This is yet subject to change since may need to provide more emulator selections in these situations.
 - **Remote Monitor**: The button for toggling the remote monitor screens is now only shown when connected from remote.
 - **Studio Window Closing**: Fixed properly closing the Studio window when closed via shortcut and the action was cancelled.
+- **System Manager / Freezy**: Fixed folder of freezy for generating summary. Was using first VPX emulator instead of using the Mame installation folder 
 
 ---
 
