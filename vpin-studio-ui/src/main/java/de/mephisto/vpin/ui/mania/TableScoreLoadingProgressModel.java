@@ -54,13 +54,13 @@ public class TableScoreLoadingProgressModel extends ProgressModel<Account> {
 
   @Override
   public String nextToString(Account acc) {
-    return "Fetching data for " + acc.getDisplayName();
+    return "";
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, Account account) {
     try {
-      List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+      List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getUuid()));
       List<ManiaWidgetPlayerStatsController.TableScoreModel> models = new ArrayList<>();
       for (TableScore tableScore : highscoresByAccount) {
         models.add(new ManiaWidgetPlayerStatsController.TableScoreModel(tableScore));
