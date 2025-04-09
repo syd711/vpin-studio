@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
@@ -47,6 +48,9 @@ public class TextEditService {
   private GameService gameService;
 
   @Autowired
+  private MameService mameService;
+
+  @Autowired
   private MameRomAliasService mameRomAliasService;
 
   @Autowired
@@ -65,8 +69,7 @@ public class TextEditService {
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
-          File mameFolder = defaultGameEmulator.getMameFolder();
+          File mameFolder = mameService.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
@@ -146,8 +149,7 @@ public class TextEditService {
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
-          File mameFolder = defaultGameEmulator.getMameFolder();
+          File mameFolder = mameService.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
           File backup = new File(mameFolder, "DmdDevice.ini.bak");
           if (!backup.exists()) {
