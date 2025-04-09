@@ -48,6 +48,9 @@ public class BackglassPreferencesController implements Initializable {
   private Label backglassServerFolder;
 
   @FXML
+  private Label b2STableSettingsFile;
+
+  @FXML
   private Label noMatchFound;
 
   private DirectB2ServerSettings backglassServerSettings;
@@ -61,6 +64,7 @@ public class BackglassPreferencesController implements Initializable {
       boolean serverInstalled = backglassServerSettings != null;
 
       backglassServerFolder.setVisible(serverInstalled);
+      b2STableSettingsFile.setVisible(serverInstalled);
       noMatchFound.setVisible(!serverInstalled);
       pluginsCheckbox.setDisable(!serverInstalled);
       backglassMissingCheckbox.setDisable(!serverInstalled);
@@ -74,6 +78,7 @@ public class BackglassPreferencesController implements Initializable {
       if (serverInstalled) {
 
         backglassServerFolder.setText(backglassServerSettings.getBackglassServerFolder());
+        b2STableSettingsFile.setText(backglassServerSettings.getB2STableSettingsFile());
 
         pluginsCheckbox.setSelected(backglassServerSettings.isPluginsOn());
         pluginsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {

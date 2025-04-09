@@ -41,6 +41,8 @@ public class B2STableSettingsParser extends DefaultHandler {
 
       serverSettings = new DirectB2ServerSettings();
       serverSettings.setBackglassServerFolder(backglassServerFolder.getAbsolutePath());
+      serverSettings.setB2STableSettingsFile(xmlFile.getAbsolutePath());
+
       parse(root, serverSettings, (s, name, value) -> setServerValue(s, name, value));
 
       NodeList list = root.getChildNodes();

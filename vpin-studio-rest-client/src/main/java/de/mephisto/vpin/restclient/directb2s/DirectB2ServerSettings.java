@@ -8,6 +8,8 @@ public class DirectB2ServerSettings extends DirectB2STableSettings {
 
   private String backglassServerFolder;
 
+  private String b2STableSettingsFile;
+
   private boolean pluginsOn;
   private boolean showStartupError;
   /**
@@ -46,5 +48,13 @@ public class DirectB2ServerSettings extends DirectB2STableSettings {
 
   public void setBackglassServerFolder(String backglassServerFolder) {
     this.backglassServerFolder = backglassServerFolder;
+  }
+
+  public String getB2STableSettingsFile() {
+    return b2STableSettingsFile;
+  }
+
+  public void setB2STableSettingsFile(String b2sTableSettingsFile) {
+    b2STableSettingsFile = b2sTableSettingsFile;
   }
 }
