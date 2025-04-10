@@ -1,3 +1,11 @@
+## Release Notes 3.14.3
+
+## Changes
+
+- **Tables / Drag and Drop**: Fixed UI freezing for file drops when no table was selecting.
+
+---
+
 ## Release Notes 3.14.2
 
 ## Changes

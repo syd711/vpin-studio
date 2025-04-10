@@ -32,9 +32,9 @@ public abstract class BaseDragDropHandler {
   protected DnDOverlayController overlayController;
 
   /**
-   * @param tableView The Table that is the drop zone
+   * @param tableView   The Table that is the drop zone
    * @param loaderStack The Stack onto which adding the DndOverlay
-   * @param isInDialog Whether this helper is used in a dialog like Backglass Manager or not
+   * @param isInDialog  Whether this helper is used in a dialog like Backglass Manager or not
    */
   public BaseDragDropHandler(TableView<?> tableView, StackPane loaderStack, boolean isInDialog) {
     this.tableView = tableView;
@@ -45,37 +45,42 @@ public abstract class BaseDragDropHandler {
     tableView.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
-        List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).filter(s -> s instanceof ContextMenu).collect(Collectors.toList());
-        if (open.size() > (isInDialog? 2 : 1)) {
-          return;
-        }
-
-        List<File> files = event.getDragboard().getFiles();
-        if (files == null || files.size() > 1) {
-          return;
-        }
-
-        for (File file : files) {
-          //zipped files
-          if (file.length() == 0) {
-            continue;
+        try {
+          List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).filter(s -> s instanceof ContextMenu).collect(Collectors.toList());
+          if (open.size() > (isInDialog ? 2 : 1)) {
+            return;
           }
 
-          if (file.isFile()) {
-            if (!acceptFile(file)) {
-              return;
+          List<File> files = event.getDragboard().getFiles();
+          if (files == null || files.size() > 1) {
+            return;
+          }
+
+          for (File file : files) {
+            //zipped files
+            if (file.length() == 0) {
+              continue;
+            }
+
+            if (file.isFile()) {
+              if (!acceptFile(file)) {
+                return;
+              }
             }
           }
-        }
 
-        if (event.getDragboard().hasFiles()) {
-          event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-        }
-        else {
-          event.consume();
-        }
+          if (event.getDragboard().hasFiles()) {
+            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+          }
+          else {
+            event.consume();
+          }
 
-        overlayController.showOverlay();
+          overlayController.showOverlay();
+        }
+        catch (Exception e) {
+          LOG.info("Dragging failed: {}", e.getMessage(), e);
+        }
       }
     });
 
