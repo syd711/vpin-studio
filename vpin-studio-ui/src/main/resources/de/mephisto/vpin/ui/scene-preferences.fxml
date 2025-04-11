@@ -60,20 +60,6 @@
                                  </VBox.margin>
                               </Label>
                               <Button fx:id="systemBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onSystemSettings" styleClass="preference-button" text="System Settings" />
-                              <VBox fx:id="maniaGroup">
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="VPIN MANIA PREFERENCES">
-                                       <font>
-                                          <Font size="13.0" />
-                                       </font>
-                                    </Label>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
-                                    <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="10.0" layoutY="32.0" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
-                                 </children>
-                              </VBox>
                               <VBox fx:id="frontendPreferences">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRONTEND PREFERENCES">

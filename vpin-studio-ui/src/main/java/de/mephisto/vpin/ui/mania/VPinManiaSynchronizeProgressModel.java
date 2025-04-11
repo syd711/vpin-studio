@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -48,6 +49,7 @@ public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
   public void finalizeModel(ProgressResultModel progressResultModel) {
     super.finalizeModel(progressResultModel);
     client.getManiaService().clearCache();
+    client.getPreferenceService().notifyPreferenceChange(PreferenceNames.MANIA_SETTINGS, null);
   }
 
   @Override
@@ -55,7 +57,8 @@ public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
     try {
       ManiaTableSyncResult result = client.getManiaService().synchronize(next.getId());
       progressResultModel.getResults().add(result);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to synchronize the highscore for \"" + next.getDisplayName() + "\": " + e.getMessage(), e);
     }
   }

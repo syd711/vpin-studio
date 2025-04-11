@@ -91,6 +91,10 @@ public class ManiaRegistrationDialogController implements DialogController, Init
         synchronizeRatingsCheckbox.setDisable(!newValue);
         synchronizePlayCountCheckbox.setDisable(!newValue);
         okButton.setDisable(!newValue);
+
+        for (CheckBox playerCheckbox : playerCheckboxes) {
+          playerCheckbox.setDisable(!newValue);
+        }
       }
     });
 
@@ -102,6 +106,7 @@ public class ManiaRegistrationDialogController implements DialogController, Init
       checkBox.setUserData(player);
       checkBox.getStyleClass().add("default-text");
       checkBox.setSelected(true);
+      checkBox.setDisable(true);
 
       playerList.getChildren().add(checkBox);
       playerCheckboxes.add(checkBox);

@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -143,8 +144,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private void onManiaTable() {
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(selection.getExtTableId()));
+    if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
+      Studio.browse(ManiaUrlFactory.createTableUrl(selection.getExtTableId()));
     }
   }
 

@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
+import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
 import de.mephisto.vpin.ui.players.WidgetPlayerScoreController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;

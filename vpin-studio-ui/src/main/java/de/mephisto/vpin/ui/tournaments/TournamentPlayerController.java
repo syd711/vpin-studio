@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentMember;
-import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
+import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;

@@ -1,5 +1,5 @@
 package de.mephisto.vpin.ui;
 
 public enum NavigationItem {
-  Tables, Dashboard, Players, Competitions, HighscoreCards, SystemManager, Tournaments, Mania
+  Tables, Dashboard, Players, Competitions, HighscoreCards, SystemManager, Tournaments
 }

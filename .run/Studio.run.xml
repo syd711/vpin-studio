@@ -4,7 +4,7 @@
     <module name="vpin-studio-ui" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="de.mephisto.vpin.ui.*" />
+        <option name="PATTERN" value="de.mephisto.vpin.ui.mania.util.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

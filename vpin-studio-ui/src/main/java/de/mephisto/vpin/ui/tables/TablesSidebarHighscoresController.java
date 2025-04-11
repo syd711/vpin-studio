@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -144,7 +145,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private void onManiaTable() {
     if (this.game.isPresent() && !StringUtils.isEmpty(this.game.get().getExtTableId())) {
-      NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(this.game.get().getExtTableId()));
+      Studio.browse(ManiaUrlFactory.createTableUrl(this.game.get().getExtTableId()));
     }
   }
 

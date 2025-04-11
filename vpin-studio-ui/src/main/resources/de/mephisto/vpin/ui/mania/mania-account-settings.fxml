@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.ManiaAccountSettingsController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox>
+               <children>
+                  <Label styleClass="preference-title" text="ACCOUNT SETTINGS" textFill="WHITE" />
+                  <VBox fx:id="registrationPanel">
+                     <children>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Register for the VPin Mania online service to access various online features and tournaments." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Note that only your cabinet is registered and the VPin Mania account is bound to your cabinet." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-description" text="No additional personal data is stored for this." textFill="WHITE" />
+                        <Button mnemonicParsing="false" onAction="#onRegister" text="Register Cabinet">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Copy VPS Table Version URL" />
+                           </tooltip>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox fx:id="preferencesPanel">
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="Account Data" />
+                        <Label styleClass="preference-description" text="The given account data is needed to login into the VPin Mania app." textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="319.199951171875" minWidth="10.0" prefWidth="110.4" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="538.4" minWidth="10.0" prefWidth="383.99992065429694" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="538.4" minWidth="10.0" prefWidth="153.60007934570308" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label styleClass="default-text" text="Cabinet Id:" />
+                              <HBox alignment="CENTER_LEFT" spacing="12.0" GridPane.columnIndex="2">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#onIdCopy">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Copy VPS Table Version URL" />
+                                       </tooltip>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="System Id:" GridPane.rowIndex="1" />
+                              <HBox alignment="CENTER_LEFT" layoutX="120.0" layoutY="10.0" spacing="12.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#onSystemIdCopy">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Copy VPS Table Version URL" />
+                                       </tooltip>
+                                    </Button>
+                                    <Label fx:id="idLabel11" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="(do not share)" />
+                                 </children>
+                              </HBox>
+                              <Label fx:id="systemIdLabel" styleClass="default-text" text="-id-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="idLabel" styleClass="default-text" text="-id-" GridPane.columnIndex="1" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-subtitle" text="Account Deletion" />
+                        <Label layoutX="10.0" layoutY="213.0" styleClass="preference-description" text="This will delete your all you cabinet data, including highscores and registered players" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="49.0" styleClass="preference-description" text="on vpin-mania.net." textFill="WHITE" />
+                        <Button mnemonicParsing="false" onAction="#onAccountDelete" styleClass="error-title" text="Delete Account" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

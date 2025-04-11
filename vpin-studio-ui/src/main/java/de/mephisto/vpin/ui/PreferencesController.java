@@ -93,9 +93,6 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button pinballXSettingsBtn;
 
   @FXML
-  private Button tournamentsBtn;
-
-  @FXML
   private Button vpbmBtn;
 
   @FXML
@@ -124,9 +121,6 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private VBox navigationBox;
-
-  @FXML
-  private VBox maniaGroup;
 
   @FXML
   private VBox frontendPreferences;
@@ -224,17 +218,6 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onSystemSettings(ActionEvent event) throws IOException {
     load("preference-system-settings.fxml", event);
-  }
-
-  @FXML
-  private void onAccount(ActionEvent event) throws IOException {
-    load("preference-mania.fxml", event);
-  }
-
-
-  @FXML
-  private void onTournaments(ActionEvent event) throws IOException {
-    load("preference-tournaments.fxml", event);
   }
 
   @FXML
@@ -448,7 +431,6 @@ public class PreferencesController extends SettingsSceneController implements In
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
     validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
-    tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
@@ -469,9 +451,6 @@ public class PreferencesController extends SettingsSceneController implements In
     pauseMenuBtn.setVisible(frontendType.supportControls());
     highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
     validators_screensBtn.setVisible(frontendType.isNotStandalone());
-
-    maniaGroup.managedProperty().bindBidirectional(maniaGroup.visibleProperty());
-    maniaGroup.setVisible(Features.MANIA_ENABLED);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);

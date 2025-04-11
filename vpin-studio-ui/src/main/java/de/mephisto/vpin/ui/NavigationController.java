@@ -8,15 +8,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tournaments.TournamentsController;
@@ -80,9 +79,6 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane systemManagerBtn;
 
   @FXML
-  private Pane maniaBtn;
-
-  @FXML
   private Pane cardsBtn;
 
   @FXML
@@ -130,19 +126,6 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private void onDashboardClick() {
     navigateTo(NavigationItem.Dashboard);
-  }
-
-  @FXML
-  private void onManiaClick() {
-    if (ToolbarController.newVersion != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Dialogs.openUpdateDialog();
-      }
-    }
-    else {
-      navigateTo(NavigationItem.Mania);
-    }
   }
 
   @FXML
@@ -292,7 +275,6 @@ public class NavigationController implements Initializable, StudioEventListener,
       if (!tournamentsBtn.isVisible()) {
         navigateTo(NavigationItem.Tables);
       }
-      maniaBtn.setVisible(settings.isEnabled());
     }
   }
 
@@ -300,7 +282,6 @@ public class NavigationController implements Initializable, StudioEventListener,
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
     cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
-    maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
 
     staticAvatarPane = this.avatarPane;
     refreshAvatar();
@@ -314,14 +295,10 @@ public class NavigationController implements Initializable, StudioEventListener,
     cardsBtn.setVisible(frontendType.supportMedias());
 
     tournamentsBtn.setVisible(false);
-    maniaBtn.setVisible(false);
     try {
       ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null && settings.isTournamentsEnabled()) {
         tournamentsBtn.setVisible(settings.isEnabled());
-      }
-      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
-        maniaBtn.setVisible(true);
       }
     }
     catch (Exception e) {
@@ -337,7 +314,6 @@ public class NavigationController implements Initializable, StudioEventListener,
     this.buttons.add(tournamentsBtn);
 
     this.buttons.add(systemManagerBtn);
-    this.buttons.add(maniaBtn);
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
     navigationItemMap.put(NavigationItem.Dashboard, new NavigationView(NavigationItem.Dashboard, DashboardController.class, dashboardBtn, "scene-dashboard.fxml"));
@@ -348,7 +324,6 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigationItemMap.put(NavigationItem.Tournaments, new NavigationView(NavigationItem.Tournaments, TournamentsController.class, tournamentsBtn, "scene-tournaments.fxml"));
 
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
-    navigationItemMap.put(NavigationItem.Mania, new NavigationView(NavigationItem.Mania, ManiaController.class, maniaBtn, "scene-mania.fxml"));
 
     Studio.stage.heightProperty().addListener(new ChangeListener<Number>() {
       @Override
