@@ -302,17 +302,6 @@
                   <Tooltip text="Open Highscore Card Editor" />
                </tooltip>
                 </Button>
-            <Button fx:id="eventLogBtn" layoutX="124.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Open the event log window with the latest server processing information" />
-               </tooltip>
-            </Button>
             <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />

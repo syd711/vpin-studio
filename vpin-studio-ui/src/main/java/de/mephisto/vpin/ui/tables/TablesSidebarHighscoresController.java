@@ -119,9 +119,6 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button vpSaveEditBtn;
 
   @FXML
-  private Button eventLogBtn;
-
-  @FXML
   private ImageView cardImage;
 
   @FXML
@@ -146,14 +143,6 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onManiaTable() {
     if (this.game.isPresent() && !StringUtils.isEmpty(this.game.get().getExtTableId())) {
       Studio.browse(ManiaUrlFactory.createTableUrl(this.game.get().getExtTableId()));
-    }
-  }
-
-
-  @FXML
-  private void onEventLog() {
-    if (this.game.isPresent()) {
-      TableDialogs.openEventLogDialog(this.game.get());
     }
   }
 
@@ -286,12 +275,11 @@ public class TablesSidebarHighscoresController implements Initializable {
     cardBtn.setDisable(true);
     resetBtn.setDisable(games.size() != 1);
 
-    backupBtn.setDisable(games.size() != 1);
+    backupBtn.setDisable(games.isEmpty());
     restoreBtn.setDisable(games.size() != 1);
     restoreBtn.setText("Restore");
 
     cardsEnabledCheckbox.setDisable(true);
-    eventLogBtn.setDisable(true);
 
     this.multiSelectionPane.setVisible(games.size() > 1);
     this.statusPane.setVisible(games.size() == 1);
@@ -306,11 +294,6 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       cardsEnabledCheckbox.setDisable(false);
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
-
-
-      HighscoreEventLog eventLog = client.getGameService().getEventLog(game.getId());
-      eventLogBtn.setDisable(eventLog == null);
-
       List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
       Long templateId = g.get().getTemplateId();
       Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(templateId)).findFirst();
@@ -442,8 +425,6 @@ public class TablesSidebarHighscoresController implements Initializable {
     iconMania.setFitWidth(18);
     iconMania.setFitHeight(18);
     maniaBtn.setGraphic(iconMania);
-
-    eventLogBtn.setDisable(true);
 
     cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
