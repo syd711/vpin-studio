@@ -37,7 +37,11 @@
       <VBox BorderPane.alignment="CENTER">
          <children>
             <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Click the &quot;Bind Key&quot; button and then press the corresponding button on your cabinet." textFill="WHITE" />
-            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="Note that only single key inputs are supported (no SHIFT or CTRL key combinations)." textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="44.0" styleClass="preference-description" text="Note that only single key inputs are supported (no SHIFT or CTRL key combinations)." textFill="WHITE" />
+            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="Avoid using emulator key bindings, e.g. &quot;P&quot; for &quot;Pause&quot; from VPX." textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin></Label>
             <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="137.7999755859375" />
