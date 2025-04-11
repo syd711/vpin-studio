@@ -123,7 +123,7 @@ public class TableOverviewContextMenu {
     icon.setIconSize(16);
     KeyCombination notesItemKey = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
     notesItem.setAccelerator(notesItemKey);
-    notesItem.setOnAction(actionEvent -> TableDialogs.openCommentDialog(game));
+    notesItem.setOnAction(actionEvent -> TableDialogs.openCommentDialog(tableOverviewController, game));
     notesItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
     notesItem.setGraphic(icon);
     ctxMenu.getItems().add(notesItem);

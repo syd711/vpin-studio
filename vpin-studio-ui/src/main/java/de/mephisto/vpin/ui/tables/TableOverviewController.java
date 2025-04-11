@@ -1280,7 +1280,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         tableView.getSelectionModel().clearSelection();
         tableView.getSelectionModel().select(model);
         Platform.runLater(() -> {
-          TableDialogs.openCommentDialog(value);
+          TableDialogs.openCommentDialog(this, value);
         });
       });
 

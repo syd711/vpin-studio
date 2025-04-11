@@ -14,13 +14,12 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
-import de.mephisto.vpin.ui.backglassmanager.DirectB2SModel;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -461,7 +460,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL)) {
+    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL) && repositoryController != null) {
       Platform.runLater(() -> {
         repositoryController.doReload();
       });

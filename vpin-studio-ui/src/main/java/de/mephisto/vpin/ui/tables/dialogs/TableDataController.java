@@ -248,6 +248,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
 
   @FXML
+  private Tab commentsTab;
+  @FXML
+  private Tab playlistsTab;
+  @FXML
   private Tab metaDataTab;
   @FXML
   private Tab extrasTab;
@@ -294,6 +298,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TableDataTabStatisticsController tableStatisticsController;
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
+  private TableDataTabCommentsController tableDataTabCommentsController;
   private PropperRenamingController propperRenamingController;
   private Pane propertRenamingRoot;
   private PinVolSettingsController pinVolController;
@@ -594,6 +599,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     pinVolController.save();
     tableScreensController.save();
+    tableDataTabCommentsController.save();
     tableDataTabScoreDataController.save();
 
     try {
@@ -710,6 +716,16 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     try {
+      FXMLLoader loader = new FXMLLoader(TableDataTabCommentsController.class.getResource("dialog-table-data-tab-comments.fxml"));
+      Parent commentsRoot = loader.load();
+      tableDataTabCommentsController = loader.getController();
+      commentsTab.setContent(commentsRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load dialog-table-data-tab-comments.fxml: " + e.getMessage(), e);
+    }
+
+    try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
@@ -736,12 +752,12 @@ public class TableDataController implements Initializable, DialogController, Aut
       tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
       boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
-    patchVersion.setDisable(!patchVersionEnabled);
-    patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
+      patchVersion.setDisable(!patchVersionEnabled);
+      patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
 
-    nextButton.setVisible(overviewController != null);
-    prevButton.setVisible(overviewController != null);
-    openAssetMgrBtn.setVisible(overviewController != null);
+      nextButton.setVisible(overviewController != null);
+      prevButton.setVisible(overviewController != null);
+      openAssetMgrBtn.setVisible(overviewController != null);
 
       FrontendType frontendType = client.getFrontendService().getFrontendType();
       Frontend frontend = client.getFrontendService().getFrontendCached();
@@ -804,13 +820,13 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       patchVersion.setText(game.getPatchVersion());
-    setPatchVersionValue(game.getPatchVersion());
-    patchVersion.textProperty().addListener((observable, oldValue, newValue) -> {
-      setPatchVersionValue(newValue);
-    });
+      setPatchVersionValue(game.getPatchVersion());
+      patchVersion.textProperty().addListener((observable, oldValue, newValue) -> {
+        setPatchVersionValue(newValue);
+      });
 
-    //---------------------------------------------------------
-    if (tableDetails != null) {
+      //---------------------------------------------------------
+      if (tableDetails != null) {
 
         //---------------
         // TAB Details
@@ -1085,6 +1101,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       if (pinVolController != null) {
         pinVolController.setData(stage, Arrays.asList(game), false);
+      }
+
+      if (tableDataTabCommentsController != null) {
+        tableDataTabCommentsController.setGame(game);
       }
     }
     catch (Exception e) {

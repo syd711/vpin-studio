@@ -3,6 +3,7 @@
 ## Changes
 
 - **System Manager**: The overall update check is not blocking the UI anymore. This way, you can immediately switch to the other tabs now.
+- **Table Comments**: The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
 
 ## Bugfixes
 

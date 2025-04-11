@@ -700,7 +700,6 @@
 }
 
 .tab-pane {
-    -fx-tab-min-width:90px;
     -fx-tab-min-height:30px;
 }
 
@@ -731,7 +730,6 @@
 }
 
 .tab-pane .sub-tab {
-    -fx-tab-min-width:90px;
     -fx-tab-min-height:30px;
     -fx-background-color: -fx-base-6;
 }
