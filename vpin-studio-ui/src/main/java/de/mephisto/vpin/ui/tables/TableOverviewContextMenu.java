@@ -2,12 +2,15 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -22,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +69,11 @@ public class TableOverviewContextMenu {
     ImageView iconMania = new ImageView(imageMania);
     iconMania.setFitWidth(18);
     iconMania.setFitHeight(18);
+
+    Image imageManiaSync = new Image(Studio.class.getResourceAsStream("logo-m.png"));
+    ImageView iconManiaSync = new ImageView(imageManiaSync);
+    iconManiaSync.setFitWidth(18);
+    iconManiaSync.setFitHeight(18);
 
 
     Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
@@ -152,6 +161,24 @@ public class TableOverviewContextMenu {
       maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
       maniaEntry.setGraphic(iconMania);
       ctxMenu.getItems().add(maniaEntry);
+
+      MenuItem maniaSyncEntry = new MenuItem("Synchronize Scores with VPin Mania");
+      maniaSyncEntry.setDisable(games.stream().anyMatch(gameRepresentation -> StringUtils.isEmpty(gameRepresentation.getExtTableId())));
+      maniaSyncEntry.setOnAction(actionEvent -> {
+        List<VpsTable> tables = new ArrayList<>();
+        for (GameRepresentation gameRepresentation : tableOverviewController.getSelections()) {
+          VpsTable vpsTable = client.getVpsService().getTableById(gameRepresentation.getExtTableId());
+          if (vpsTable != null) {
+            tables.add(vpsTable);
+          }
+        }
+        if (!tables.isEmpty()) {
+          ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(tables));
+        }
+      });
+      maniaSyncEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaSyncEntry.setGraphic(iconManiaSync);
+      ctxMenu.getItems().add(maniaSyncEntry);
     }
 
 

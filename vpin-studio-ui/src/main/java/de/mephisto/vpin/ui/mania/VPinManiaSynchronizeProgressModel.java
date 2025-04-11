@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.mania;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -16,8 +17,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
   private final static Logger LOG = LoggerFactory.getLogger(VPinManiaSynchronizeProgressModel.class);
 
-  private final Iterator<VpsTable> iterator;
-  private final List<VpsTable> vpsTableList;
+  private Iterator<VpsTable> iterator;
+  private List<VpsTable> vpsTableList;
+
+  public VPinManiaSynchronizeProgressModel() {
+    super("VPin Mania Synchronization");
+  }
 
   public VPinManiaSynchronizeProgressModel(List<VpsTable> vpsTableList) {
     super("VPin Mania Synchronization");
@@ -65,6 +70,10 @@ public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
 
   @Override
   public boolean hasNext() {
+    if (this.vpsTableList == null) {
+      this.vpsTableList = Studio.client.getGameService().getInstalledVpsTables();
+      this.iterator = vpsTableList.iterator();
+    }
     return iterator.hasNext();
   }
 }

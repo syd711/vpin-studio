@@ -62,6 +62,11 @@ public class ManiaPrivacySettingsController implements Initializable {
     }
   }
 
+  @FXML
+  private void onHighscoreSync() {
+    ManiaHelper.runSynchronization(false);
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
@@ -115,7 +120,6 @@ public class ManiaPrivacySettingsController implements Initializable {
         }
       }
     });
-
 
 
     submitAllRatingsCheckbox.setSelected(settings.isSubmitRatings());

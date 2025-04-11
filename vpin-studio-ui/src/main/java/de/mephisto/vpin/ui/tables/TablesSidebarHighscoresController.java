@@ -3,16 +3,17 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
-import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -75,6 +76,9 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private Button maniaBtn;
+
+  @FXML
+  private Button maniaSyncBtn;
 
   @FXML
   private SplitMenuButton scanHighscoreBtn;
@@ -143,6 +147,22 @@ public class TablesSidebarHighscoresController implements Initializable {
   private void onManiaTable() {
     if (this.game.isPresent() && !StringUtils.isEmpty(this.game.get().getExtTableId())) {
       Studio.browse(ManiaUrlFactory.createTableUrl(this.game.get().getExtTableId()));
+    }
+  }
+
+  @FXML
+  private void onManiaTableSync() {
+    if (!this.games.isEmpty()) {
+      List<VpsTable> tables = new ArrayList<>();
+      for (GameRepresentation gameRepresentation : this.games) {
+        VpsTable vpsTable = client.getVpsService().getTableById(gameRepresentation.getExtTableId());
+        if (vpsTable != null) {
+          tables.add(vpsTable);
+        }
+      }
+      if (!tables.isEmpty()) {
+        ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(tables));
+      }
     }
   }
 
@@ -419,12 +439,20 @@ public class TablesSidebarHighscoresController implements Initializable {
     vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_ENABLED);
+    maniaSyncBtn.managedProperty().bindBidirectional(maniaSyncBtn.visibleProperty());
+    maniaSyncBtn.setVisible(Features.MANIA_ENABLED);
 
     Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMania = new ImageView(imageMania);
     iconMania.setFitWidth(18);
     iconMania.setFitHeight(18);
     maniaBtn.setGraphic(iconMania);
+
+    Image imageManiaSync = new Image(Studio.class.getResourceAsStream("logo-m.png"));
+    ImageView iconManiasync = new ImageView(imageManiaSync);
+    iconManiasync.setFitWidth(18);
+    iconManiasync.setFitHeight(18);
+    maniaSyncBtn.setGraphic(iconManiasync);
 
     cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override

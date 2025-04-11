@@ -104,22 +104,18 @@ public class ManiaHelper {
   }
 
   public static void runSynchronization(boolean showScoreSummary) {
-    JFXFuture.supplyAsync(() -> {
-      return Studio.client.getGameService().getInstalledVpsTables();
-    }).thenAcceptLater(vpsTables -> {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(vpsTables));
-      if (showScoreSummary) {
-        List<Object> results = progressDialog.getResults();
-        int count = 0;
-        String msg = null;
-        for (Object result : results) {
-          ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
-          count += syncResult.getTableScores().size();
-          msg = syncResult.getResult();
-        }
-        WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel());
+    if (showScoreSummary) {
+      List<Object> results = progressDialog.getResults();
+      int count = 0;
+      String msg = null;
+      for (Object result : results) {
+        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
+        count += syncResult.getTableScores().size();
+        msg = syncResult.getResult();
       }
-    });
+      WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
+    }
   }
 
 }
