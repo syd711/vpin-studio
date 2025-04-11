@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.PinVolSettingsController;
 import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
@@ -283,7 +284,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private ComboBox<VpsTableVersion> tableVersionsCombo;
   private AutoCompleteTextField autoCompleteNameField;
 
-  private TableOverviewController overviewController;
+  private TableOverviewController tableOverviewController;
 
   private GameRepresentation game;
   private TableDetails tableDetails;
@@ -299,6 +300,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
   private TableDataTabCommentsController tableDataTabCommentsController;
+  private TablesSidebarPlaylistsController tablesSidebarPlaylistsController;
   private PropperRenamingController propperRenamingController;
   private Pane propertRenamingRoot;
   private PinVolSettingsController pinVolController;
@@ -307,7 +309,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAssetManager(ActionEvent e) {
     this.onCancelClick(e);
     Platform.runLater(() -> {
-      TableDialogs.openTableAssetsDialog(overviewController, this.game, VPinScreen.BackGlass);
+      TableDialogs.openTableAssetsDialog(tableOverviewController, this.game, VPinScreen.BackGlass);
     });
   }
 
@@ -491,8 +493,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onNext(ActionEvent e) {
-    overviewController.selectNext();
-    GameRepresentation selection = overviewController.getSelection();
+    tableOverviewController.selectNext();
+    GameRepresentation selection = tableOverviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       TableDataController.lastTab = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
@@ -500,15 +502,15 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, TableDataController.lastTab);
+        TableDialogs.openTableDataDialog(this.tableOverviewController, selection, TableDataController.lastTab);
       });
     }
   }
 
   @FXML
   private void onPrevious(ActionEvent e) {
-    overviewController.selectPrevious();
-    GameRepresentation selection = overviewController.getSelection();
+    tableOverviewController.selectPrevious();
+    GameRepresentation selection = tableOverviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       int index = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
@@ -516,7 +518,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, index);
+        TableDialogs.openTableDataDialog(this.tableOverviewController, selection, index);
       });
     }
   }
@@ -638,6 +640,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   public void initialize(URL url, ResourceBundle resourceBundle) {
     openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
     patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
+    patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
 
     FrontendType frontendType = null;
     try {
@@ -646,6 +649,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (!frontendType.supportStandardFields()) {
         tabPane.getTabs().remove(metaDataTab);
       }
+
       if (!frontendType.supportExtendedFields()) {
         tabPane.getTabs().remove(customizationTab);
         tabPane.getTabs().remove(extrasTab);
@@ -653,6 +657,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       if (!frontendType.supportMedias()) {
         buttonsBar.getChildren().remove(openAssetMgrBtn);
+      }
+
+      if (!frontendType.supportPlaylists()) {
+        tabPane.getTabs().remove(playlistsTab);
       }
 
       hintCustom2.setVisible(false);
@@ -683,7 +691,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     else {
       tabPane.getTabs().remove(statisticsTab);
     }
+  }
 
+  private void loadTabs() {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
@@ -726,6 +737,20 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     try {
+      if (frontendType.supportPlaylists()) {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarPlaylistsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        Parent playlistsRoot = loader.load();
+        tablesSidebarPlaylistsController = loader.getController();
+        tablesSidebarPlaylistsController.setTableOverviewController(this.tableOverviewController);
+        tablesSidebarPlaylistsController.setDialogMode();
+        playlistsTab.setContent(playlistsRoot);
+      }
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load dialog-table-data-tab-comments.fxml: " + e.getMessage(), e);
+    }
+
+    try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
@@ -746,10 +771,14 @@ public class TableDataController implements Initializable, DialogController, Aut
     try {
       this.stage = stage;
       this.game = game;
+      this.tableOverviewController = overviewController;
+
       this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
       this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       scoringDB = client.getSystemService().getScoringDatabase();
       tableDetails = client.getFrontendService().getTableDetails(game.getId());
+
+      loadTabs();
 
       boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
       patchVersion.setDisable(!patchVersionEnabled);
@@ -809,8 +838,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       TableDataController.lastTab = tab;
       tabPane.getSelectionModel().select(tab);
-
-      this.overviewController = overviewController;
       this.initialVpxFileName = game.getGameFileName();
 
       this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(game.getVersion()));
@@ -1105,6 +1132,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       if (tableDataTabCommentsController != null) {
         tableDataTabCommentsController.setGame(game);
+      }
+
+      if (tablesSidebarPlaylistsController != null) {
+        tablesSidebarPlaylistsController.setGames(Arrays.asList(game));
       }
     }
     catch (Exception e) {

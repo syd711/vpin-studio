@@ -572,7 +572,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
         Parent tablesRoot = loader.load();
         tablesSidebarPlaylistsController = loader.getController();
-        tablesSidebarPlaylistsController.setSidebarController(this);
+        tablesSidebarPlaylistsController.setTableOverviewController(this.getTableOverviewController());
         titledPanePlaylists.setContent(tablesRoot);
       }
       catch (IOException e) {
