@@ -36,13 +36,14 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <top>
-            <VBox spacing="6.0" BorderPane.alignment="CENTER_LEFT">
+            <VBox BorderPane.alignment="CENTER_LEFT">
                <children>
                   <Label styleClass="preference-description" text="Select the screen and media conversion operation.">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The operation will be executed for all eligible files of the selected screen." />
                </children>
             </VBox>
          </top>
@@ -50,7 +51,7 @@
             <GridPane hgap="3.0" vgap="3.0" BorderPane.alignment="CENTER">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="152.2000732421875" minWidth="10.0" prefWidth="94.60009002685547" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.39990997314453" minWidth="10.0" prefWidth="600.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -61,7 +62,7 @@
                   <ComboBox fx:id="screensCombo" GridPane.columnIndex="1" />
                   <Label styleClass="default-text" text="Screen:" />
                   <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Conversion:" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="conversionsCombo" layoutX="105.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="conversionsCombo" layoutX="105.0" layoutY="10.0" prefWidth="350.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <BorderPane.margin>
                   <Insets top="12.0" />
