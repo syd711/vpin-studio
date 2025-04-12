@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.mania.ManiaSettingsController;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -70,6 +71,14 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onMania() {
+    if (ToolbarController.newVersion != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Dialogs.openUpdateDialog();
+      }
+      return;
+    }
+
     Cabinet cabinet = null;
     try {
       cabinet = maniaClient.getCabinetClient().getCabinet();
