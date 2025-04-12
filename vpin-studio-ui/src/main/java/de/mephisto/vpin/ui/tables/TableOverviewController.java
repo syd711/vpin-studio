@@ -12,7 +12,9 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
@@ -212,6 +214,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button emulatorBtn;
 
   @FXML
+  private Button converterBtn;
+
+  @FXML
   private Separator importSeparator;
 
   @FXML
@@ -351,6 +356,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @FXML
+  private void onConvert() {
+    TableDialogs.openConverterDialog(getSelections());
+  }
+
+  @FXML
   public void onAssetView() {
     tablesController.setSidebarVisible(true);
 
@@ -359,6 +369,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     assetManagerMode = !assetManagerMode;
     tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
     tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
+    converterBtn.setVisible(assetManagerMode);
 
     Platform.runLater(() -> {
       if (assetManagerMode) {
@@ -1692,6 +1703,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     if (assetManagerMode) {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
+      this.converterBtn.setDisable(getSelections().isEmpty());
     }
     else {
       List<GameRepresentation> games = this.tableView.getSelectionModel().getSelectedItems().stream().map(GameRepresentationModel::getGame).collect(Collectors.toList());
@@ -1865,6 +1877,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
     playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
+    converterBtn.managedProperty().bindBidirectional(converterBtn.visibleProperty());
+    converterBtn.setVisible(false);
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();

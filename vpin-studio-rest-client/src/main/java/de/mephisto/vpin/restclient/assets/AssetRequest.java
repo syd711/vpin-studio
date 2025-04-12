@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.assets;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 
 public class AssetRequest {
   private int gameId;

@@ -489,6 +489,13 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openConverterDialog(List<GameRepresentation> selectedGames) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaConverterDialogController.class, "dialog-media-converter.fxml", "Media Conversion");
+    MediaConverterDialogController controller = (MediaConverterDialogController) stage.getUserData();
+    controller.setGames(selectedGames);
+    stage.showAndWait();
+  }
+
 
   public static TableDetails openAutoFillSettingsDialog(Stage stage, List<GameRepresentation> games, TableDetails tableDetails) {
     return openAutoFillSettingsDialog(stage, games, tableDetails, null, null);

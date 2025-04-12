@@ -17,7 +17,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
-import de.mephisto.vpin.restclient.video.VideoConversionCommand;
+import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
@@ -26,7 +26,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.video.VideoConverterService;
+import de.mephisto.vpin.server.converter.MediaConverterService;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
@@ -58,7 +58,7 @@ public class DMDPositionService {
   @Autowired
   private FrontendService frontendService;
   @Autowired
-  private VideoConverterService videoConverterService;
+  private MediaConverterService mediaConverterService;
   @Autowired
   private VPinScreenService screenService;
   @Autowired
@@ -655,11 +655,11 @@ public class DMDPositionService {
    * @param file the video file
    */
   private byte[] extractFrame(File file) {
-    VideoConversionCommand cmd = new VideoConversionCommand("Extract Frame").setFFmpegArgs("-ss 00:00:01 -vframes 1");
+    MediaConversionCommand cmd = new MediaConversionCommand("Extract Frame").setFFmpegArgs("-ss 00:00:01 -vframes 1");
     File targetFile = null;
     try {
       targetFile = File.createTempFile("ef_", ".png");
-      videoConverterService.convertWithFfmpeg(cmd, file, targetFile);
+      mediaConverterService.convertWithFfmpeg(cmd, file, targetFile);
       return Files.toByteArray(targetFile);
     }
     catch (Exception e) {

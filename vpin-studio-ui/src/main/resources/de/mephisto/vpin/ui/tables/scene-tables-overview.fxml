@@ -302,6 +302,17 @@
                   <Tooltip text="Edit Table Data (Ctrl+O)" />
                </tooltip>
             </Button>
+            <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Edit Table Data (Ctrl+O)" />
+               </tooltip>
+            </Button>
             <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
                <children>
                   <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
