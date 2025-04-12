@@ -268,6 +268,12 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         customLauncherCheckbox.setDisable(true);
         break;
       }
+      else {
+        GameEmulatorRepresentation gameEmulator= client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
+        launcherCombo.setItems(FXCollections.observableList(altExeNames));
+        break;
+      }
     }
 
 
@@ -334,10 +340,6 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         client.getPreferenceService().setJsonPreference(settings);
       }
     });
-
-    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
-    launcherCombo.setItems(FXCollections.observableList(altExeNames));
 
     if (!StringUtils.isEmpty(settings.getCustomLauncher())) {
       launcherCombo.setValue(settings.getCustomLauncher());

@@ -15,6 +15,8 @@
 
 - **Drop-In Menu** Limited the amount of items to 100 to avoid a client crash when a folder with thousands of entries is added.
 - **Drop-In Menu** Removed the system tray notification. It was ugly anyway.
+- **Media Recorder**: Fixed issue that the selection was kept when the emulator selection was switched. Because of the possible emulator recording mode, only recording from one emulator type are allowed. 
+- **Media Recorder**: Fixed issue that the "default" VPX emulator was used for emulator recordings instead of the actual VPX emulator selection. 
 
 
 ## VPin Mania

@@ -541,9 +541,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //--------------------------
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
-    GameEmulator emu = emulatorService.getDefaultGameEmulator();
+    List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+    if(vpxGameEmulators.isEmpty()) {
+      return getFrontendInstallationFolder();
+    }
+    GameEmulator emulator = vpxGameEmulators.get(0);
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emu, screen) : null;
+    return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emulator, screen) : null;
   }
 
   public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {

@@ -161,6 +161,9 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnVpsStatus;
 
+  @FXML
+  private VBox networkSettings;
+
   public static Debouncer debouncer = new Debouncer();
   private String networkShareTestPath;
   private UISettings uiSettings;
@@ -207,6 +210,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
     sectionAssets.managedProperty().bindBidirectional(sectionAssets.visibleProperty());
     columnRating.managedProperty().bindBidirectional(columnRating.visibleProperty());
+    networkSettings.managedProperty().bindBidirectional(networkSettings.visibleProperty());
 
     dropIns.managedProperty().bindBidirectional(dropIns.visibleProperty());
 
@@ -237,8 +241,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     sectionAssets.setVisible(frontendType.supportMedias());
     dropIns.setVisible(Features.DROP_IN_FOLDER);
 
-    GameEmulatorRepresentation defaultEmu = client.getEmulatorService().getDefaultGameEmulator();
-    networkShareTestPath = defaultEmu != null ? defaultEmu.getInstallationDirectory() : null;
+    networkShareTestPath = client.getFrontendService().getFrontend().getInstallationDirectory();
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 

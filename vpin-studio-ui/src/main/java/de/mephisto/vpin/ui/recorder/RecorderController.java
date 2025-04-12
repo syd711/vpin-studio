@@ -722,6 +722,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      selection.clear();
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {
         // just reload from cache
