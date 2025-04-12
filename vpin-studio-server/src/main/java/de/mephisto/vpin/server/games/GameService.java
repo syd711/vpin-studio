@@ -415,10 +415,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
       if (game.isVpxGame()) {
         ScanResult scanResult = romService.scanGameFile(game);
-        //always prefer PinUP Popper ROM name over the scanned value
         String scannedRomName = scanResult.getRom();
         String scannedTableName = scanResult.getTableName();
 
+        //always prefer PinUP Popper ROM name over the scanned value
         if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
           scannedRomName = tableDetails.getRomName();
         }
