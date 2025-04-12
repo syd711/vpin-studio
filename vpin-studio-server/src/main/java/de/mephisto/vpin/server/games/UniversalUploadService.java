@@ -197,9 +197,16 @@ public class UniversalUploadService {
           if (game != null) {
             rom = game.getRom();
           }
-          //TODO better music bundle handling based on emulators
-          File musicFolder = emulatorService.getDefaultGameEmulator().getMusicFolder();
-          vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+          GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
+          if (gameEmulator != null) {
+            File musicFolder = gameEmulator.getMusicFolder();
+            if (musicFolder.exists()) {
+              vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+            }
+            else {
+              LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder.getAbsolutePath());
+            }
+          }
         }
         break;
       }
