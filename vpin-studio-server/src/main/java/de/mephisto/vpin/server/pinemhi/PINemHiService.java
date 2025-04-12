@@ -233,9 +233,9 @@ public class PINemHiService implements InitializingBean {
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
-    GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
-    if (defaultGameEmulator != null) {
-      adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
+    File nvramFolder = new File(MameUtil.getNvRamFolder());
+    if (nvramFolder.exists()) {
+      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
