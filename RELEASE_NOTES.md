@@ -3,6 +3,7 @@
 ## Changes
 
 - **Tables / Drag and Drop**: Fixed UI freezing for file drops when no table was selecting.
+- **PinballY**: Improved error handling for emulators where not games folder was found.
 
 ---
 

@@ -309,7 +309,7 @@ public class GameEmulator {
   @Nullable
   @JsonIgnore
   public File getInstallationFolder() {
-    if(!StringUtils.isEmpty(installationDirectory)) {
+    if (!StringUtils.isEmpty(installationDirectory)) {
       return new File(installationDirectory);
     }
     return new File("./");
@@ -318,7 +318,10 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getGamesFolder() {
-    return new File(getGamesDirectory());
+    if (getGamesDirectory() != null) {
+      return new File(getGamesDirectory());
+    }
+    return new File("./");
   }
 
   @Nullable
