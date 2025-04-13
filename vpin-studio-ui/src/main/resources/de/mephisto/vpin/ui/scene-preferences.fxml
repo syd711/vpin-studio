@@ -128,6 +128,7 @@
                               <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
                               <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="Direct Output Framework (DOF)" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1049.0" mnemonicParsing="false" onAction="#onDOFLinx" styleClass="preference-button" text="DOFLinx" />
+                              <Button fx:id="iScoredBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1116.0" mnemonicParsing="false" onAction="#onIScored" styleClass="preference-button" text="iScored Game Rooms" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol &amp; Volume" />
                               <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />

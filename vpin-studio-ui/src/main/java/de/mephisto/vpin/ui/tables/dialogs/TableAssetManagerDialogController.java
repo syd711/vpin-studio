@@ -1024,14 +1024,32 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         this.serverAudioMediaPlayer.getMediaPlayer().stop();
         this.serverAudioMediaPlayer.getMediaPlayer().dispose();
       }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage());
+    }
+
+    try {
       if (this.serverVideoMediaPlayer != null && this.serverVideoMediaPlayer.getMediaPlayer() != null) {
         this.serverVideoMediaPlayer.getMediaPlayer().stop();
         this.serverVideoMediaPlayer.getMediaPlayer().dispose();
       }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage());
+    }
+
+    try {
       if (this.assetVideoMediaPlayer != null && this.assetVideoMediaPlayer.getMediaPlayer() != null) {
         this.assetVideoMediaPlayer.getMediaPlayer().stop();
         this.assetVideoMediaPlayer.getMediaPlayer().dispose();
       }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage());
+    }
+
+    try {
       if (this.assetAudioMediaPlayer != null && this.assetAudioMediaPlayer.getMediaPlayer() != null) {
         this.assetAudioMediaPlayer.getMediaPlayer().stop();
         this.assetAudioMediaPlayer.getMediaPlayer().dispose();

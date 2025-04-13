@@ -81,6 +81,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button vpfBtn;
 
   @FXML
+  private Button iScoredBtn;
+
+  @FXML
   private Button validators_screensBtn;
 
   @FXML
@@ -223,6 +226,12 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
     load("preference-validators_screens.fxml", event);
+  }
+
+
+  @FXML
+  private void onIScored(ActionEvent event) throws IOException {
+    load("preference-iscored.fxml", event);
   }
 
   @FXML

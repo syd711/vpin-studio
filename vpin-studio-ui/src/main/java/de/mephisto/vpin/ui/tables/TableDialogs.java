@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.altsound.AltSound;
@@ -25,6 +27,7 @@ import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomDialogController;
 import de.mephisto.vpin.ui.preferences.dialogs.WebhooksDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
@@ -619,11 +622,17 @@ public class TableDialogs {
     return controller.getArchiveSource();
   }
 
-
   public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
     Stage stage = Dialogs.createStudioDialogStage(WebhooksDialogController.class, "dialog-webhook-set.fxml", "Webhook Set");
     WebhooksDialogController controller = (WebhooksDialogController) stage.getUserData();
     controller.setData(settings, set);
+    stage.showAndWait();
+  }
+
+  public static void openIScoredGameRoomDialog(@NonNull IScoredSettings settings, @Nullable IScoredGameRoom gameRoom) {
+    Stage stage = Dialogs.createStudioDialogStage(IScoredGameRoomDialogController.class, "dialog-iscored-gameroom.fxml", "iScored Game Room");
+    IScoredGameRoomDialogController controller = (IScoredGameRoomDialogController) stage.getUserData();
+    controller.setData(settings, gameRoom);
     stage.showAndWait();
   }
 

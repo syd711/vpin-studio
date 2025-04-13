@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
@@ -216,6 +217,9 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
         }
         case PreferenceNames.WEBHOOK_SETTINGS: {
           return (T) getJsonPreference(key, WebhookSettings.class);
+        }
+        case PreferenceNames.ISCORED_SETTINGS: {
+          return (T) getJsonPreference(key, IScoredSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

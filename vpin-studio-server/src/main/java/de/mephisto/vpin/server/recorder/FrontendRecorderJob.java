@@ -110,6 +110,7 @@ public class FrontendRecorderJob implements Job {
       }
       finally {
         frontend.endFrontendRecording();
+        gameRecorder.finalizeRecordings();
       }
     }
     LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");

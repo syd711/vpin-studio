@@ -75,6 +75,8 @@ public class Preferences {
 
   private String webhookSettings;
 
+  private String iScoredSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -100,6 +102,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getIScoredSettings() {
+    return iScoredSettings;
+  }
+
+  public void setIScoredSettings(String iScoredSettings) {
+    this.iScoredSettings = iScoredSettings;
+  }
 
   public String getWebhookSettings() {
     return webhookSettings;

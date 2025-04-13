@@ -41,6 +41,7 @@ public interface PreferenceNames {
 
   String RECORDER_SETTINGS = "recorderSettings";
   String WEBHOOK_SETTINGS = "webhookSettings";
+  String ISCORED_SETTINGS = "iScoredSettings";
 
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";

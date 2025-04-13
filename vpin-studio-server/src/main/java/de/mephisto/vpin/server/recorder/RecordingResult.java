@@ -1,6 +1,11 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.server.games.Game;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+
+import java.io.File;
 
 public class RecordingResult {
   private long duration = 0;
@@ -8,6 +13,43 @@ public class RecordingResult {
   private String command;
   private String infoLog;
   private String errorLog;
+
+  private Game game;
+  private File recordingTempFile;
+  private VPinScreen screen;
+  private RecordingScreenOptions recordingScreenOptions;
+
+  public Game getGame() {
+    return game;
+  }
+
+  public void setGame(Game game) {
+    this.game = game;
+  }
+
+  public File getRecordingTempFile() {
+    return recordingTempFile;
+  }
+
+  public void setRecordingTempFile(File recordingTempFile) {
+    this.recordingTempFile = recordingTempFile;
+  }
+
+  public VPinScreen getScreen() {
+    return screen;
+  }
+
+  public void setScreen(VPinScreen screen) {
+    this.screen = screen;
+  }
+
+  public RecordingScreenOptions getRecordingScreenOptions() {
+    return recordingScreenOptions;
+  }
+
+  public void setRecordingScreenOptions(RecordingScreenOptions recordingScreenOptions) {
+    this.recordingScreenOptions = recordingScreenOptions;
+  }
 
   public String getInfoLog() {
     return infoLog;

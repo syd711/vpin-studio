@@ -186,11 +186,16 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     if (emulatorId == -1) {
       List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
-        games.addAll(frontendService.getGamesByEmulator(gameEmulator.getId()));
+        if (gameEmulator.isEnabled()) {
+          games.addAll(frontendService.getGamesByEmulator(gameEmulator.getId()));
+        }
       }
     }
     else {
-      games.addAll(frontendService.getGamesByEmulator(emulatorId));
+      GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+      if (emulator != null && emulator.isEnabled()) {
+        games.addAll(frontendService.getGamesByEmulator(emulatorId));
+      }
     }
 
     games = games.stream().filter(g -> g.getEmulator() != null).collect(Collectors.toList());
