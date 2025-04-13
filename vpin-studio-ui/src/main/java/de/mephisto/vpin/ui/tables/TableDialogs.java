@@ -451,7 +451,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, @Nullable AssetType filterMode) {
+  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, @Nullable AssetType filterMode, int emulatorId) {
     String title = "Media Pack";
     if (game != null) {
       title = "Media for \"" + game.getGameDisplayName() + "\"";
@@ -461,7 +461,7 @@ public class TableDialogs {
     }
     Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
-    controller.setData(game, analysis, file, stage, filterMode);
+    controller.setData(game, analysis, file, stage, filterMode, emulatorId);
     stage.showAndWait();
 
     return controller.uploadFinished();

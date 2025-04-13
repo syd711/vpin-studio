@@ -68,7 +68,7 @@ public class AssetFilterPanelController implements Initializable {
 
   @FXML
   private void onAssetFilter() {
-    TableDialogs.openMediaUploadDialog(parentStage, this.game, file, uploaderAnalysis, filteringMode);
+    TableDialogs.openMediaUploadDialog(parentStage, this.game, file, uploaderAnalysis, filteringMode, -1);
     updateAnalysis();
   }
 

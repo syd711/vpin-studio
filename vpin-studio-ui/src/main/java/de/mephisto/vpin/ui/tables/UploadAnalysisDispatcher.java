@@ -139,7 +139,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case FRONTEND_MEDIA: {
-        TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null);
+        TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);
         break;
       }
       default: {
@@ -212,7 +212,7 @@ public class UploadAnalysisDispatcher {
           dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
         }
         else {
-          TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null);
+          TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);
         }
       }
       else {

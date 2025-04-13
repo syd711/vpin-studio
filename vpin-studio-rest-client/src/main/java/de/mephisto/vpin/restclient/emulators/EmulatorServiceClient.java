@@ -25,12 +25,6 @@ public class EmulatorServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public GameEmulatorRepresentation getDefaultGameEmulator() {
-    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(getGameEmulatorsByType(EmulatorType.VisualPinball));
-    gameEmulators.sort((o1, o2) -> o2.getId() - o1.getId());
-    return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
-  }
-
   public List<String> getAltExeNames(int emulatorId) {
     String[] emus = getRestClient().getCached(API + API_SEGMENT_EMULATORS + "/altExeNames/" + emulatorId, String[].class);
     return emus != null ? Arrays.asList(emus) : Collections.emptyList();

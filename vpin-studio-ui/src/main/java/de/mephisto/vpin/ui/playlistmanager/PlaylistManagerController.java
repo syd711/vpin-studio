@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -248,7 +250,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           parentId = treeView.getRoot().getValue().getId();
         }
 
-        createPlaylist(value, parentId, client.getEmulatorService().getDefaultGameEmulator().getId());
+        createPlaylist(value, parentId, getDefaultGameEmulator().getId());
       }
     }
     else {
@@ -269,7 +271,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
       //workaround for PinballX
       if (!client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists()) {
-        newPlayList.setEmulatorId(client.getEmulatorService().getDefaultGameEmulator().getId());
+        newPlayList.setEmulatorId(getDefaultGameEmulator().getId());
       }
 
       JFXFuture
@@ -502,7 +504,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
             TreeItem<PlaylistRepresentation> selectedItem = treeView.getSelectionModel().getSelectedItem();
             PlaylistRepresentation pl = selectedItem.getValue();
 
-            int emuId = client.getEmulatorService().getDefaultGameEmulator().getId();
+            int emuId = getDefaultGameEmulator().getId();
             value = value.replaceAll("\\[EMULATOR_ID\\]", String.valueOf(emuId));
             return value;
           }
@@ -909,6 +911,12 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       order.getPlaylistToOrderId().put(child.getValue().getId(), child.getValue().getDisplayOrder());
       collectPlaylistOrder(order, child);
     }
+  }
+
+  private GameEmulatorRepresentation getDefaultGameEmulator() {
+    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
+    gameEmulators.sort((o1, o2) -> o2.getId() - o1.getId());
+    return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
 
