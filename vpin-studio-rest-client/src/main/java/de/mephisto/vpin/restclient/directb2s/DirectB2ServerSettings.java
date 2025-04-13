@@ -12,6 +12,7 @@ public class DirectB2ServerSettings extends DirectB2STableSettings {
 
   private boolean pluginsOn;
   private boolean showStartupError;
+
   /**
    * 2 = exe
    * 1 = Standard

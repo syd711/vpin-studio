@@ -6,6 +6,7 @@
 - **Table Data Manager**: The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
 - **Table Data Manager**: The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
 - **Highscore Backups**: Added bulk-operation support for highscore backups.
+- **Backglass Server**: Added option to set "Simple LEDs" as default in the backglass server preferences.
 - **Table Asset Management** Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
  
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="400" />
@@ -16,7 +17,8 @@
 - **Drop-In Menu** Limited the amount of items to 100 to avoid a client crash when a folder with thousands of entries is added.
 - **Drop-In Menu** Removed the system tray notification. It was ugly anyway.
 - **Media Recorder**: Fixed issue that the selection was kept when the emulator selection was switched. Because of the possible emulator recording mode, only recording from one emulator type are allowed. 
-- **Media Recorder**: Fixed issue that the "default" VPX emulator was used for emulator recordings instead of the actual VPX emulator selection. 
+- **Media Recorder**: Fixed issue that the "default" VPX emulator was used for emulator recordings instead of the actual VPX emulator selection.
+- **Default Emulator Resolving**: More of a technical detail. On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues. 
 
 
 ## VPin Mania

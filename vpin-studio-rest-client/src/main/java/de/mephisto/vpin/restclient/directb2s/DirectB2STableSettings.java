@@ -18,6 +18,7 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private Boolean startAsEXE = null;
   private int startBackground = 2; // standard
   private boolean disableFuzzyMatching = true;
+
   /**
    * 0 => FormToBack = 1
    * 1 => FormToFront = 1

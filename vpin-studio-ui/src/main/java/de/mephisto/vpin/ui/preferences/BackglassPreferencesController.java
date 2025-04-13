@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
+import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class BackglassPreferencesController implements Initializable {
@@ -51,6 +54,9 @@ public class BackglassPreferencesController implements Initializable {
   private Label b2STableSettingsFile;
 
   @FXML
+  private ComboBox<B2SLedType> usedLEDType;
+
+  @FXML
   private Label noMatchFound;
 
   private DirectB2ServerSettings backglassServerSettings;
@@ -74,6 +80,7 @@ public class BackglassPreferencesController implements Initializable {
       hideB2SDMDCheckbox.setDisable(!serverInstalled);
       hideDMDCheckbox.setDisable(!serverInstalled);
       formToPosition.setDisable(!serverInstalled);
+      usedLEDType.setDisable(!serverInstalled);
 
       if (serverInstalled) {
 
@@ -129,11 +136,35 @@ public class BackglassPreferencesController implements Initializable {
         formToPosition.valueProperty().addListener((observable, oldValue, newValue) -> {
           backglassServerSettings.setFormToPosition(newValue.getId());
           saveSettings();
-        });    
+        });
+
+        List<B2SLedType> ledTypeList = new ArrayList<>(TablesSidebarDirectB2SController.LED_TYPES);
+        ledTypeList.add(0, null);
+        usedLEDType.setItems(FXCollections.observableList(ledTypeList));
+        if (backglassServerSettings.getUsedLEDType() != -1) {
+          for (B2SLedType ledType : TablesSidebarDirectB2SController.LED_TYPES) {
+            if (ledType.getId() == backglassServerSettings.getUsedLEDType()) {
+              usedLEDType.setValue(ledType);
+              break;
+            }
+          }
+        }
+
+        usedLEDType.valueProperty().addListener((observableValue, aBoolean, t1) -> {
+          if (t1 == null) {
+            backglassServerSettings.setUsedLEDType(-1);
+          }
+          else {
+            backglassServerSettings.setUsedLEDType(t1.getId());
+          }
+          saveSettings();
+        });
+
 
         saveEnabled = true;
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.info("Failed to initialize backglass setting preferences: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize backglass setting preferences: " + e.getMessage());
     }
@@ -144,7 +175,8 @@ public class BackglassPreferencesController implements Initializable {
       if (saveEnabled) {
         Studio.client.getBackglassServiceClient().saveServerSettings(backglassServerSettings);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save backglass server settings: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save backglass server settings: " + e.getMessage());
     }
