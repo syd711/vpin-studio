@@ -35,20 +35,20 @@ public class ScreenRecorder {
   private final FrontendPlayerDisplay recordingScreen;
 
   @NonNull
-  private final File target;
+  private final File temporaryTarget;
 
   private SystemCommandExecutor executor;
   private boolean cancelled = false;
 
-  public ScreenRecorder(@NonNull FrontendPlayerDisplay recordingScreen, @NonNull File target) {
+  public ScreenRecorder(@NonNull FrontendPlayerDisplay recordingScreen, @NonNull File temporaryTarget) {
     this.recordingScreen = recordingScreen;
-    this.target = target;
+    this.temporaryTarget = temporaryTarget;
   }
 
   public RecordingResult record(@NonNull RecordingScreenOptions options) {
     long start = System.currentTimeMillis();
     RecordingResult result = new RecordingResult();
-    result.setFileName(target.getAbsolutePath());
+    result.setFileName(temporaryTarget.getAbsolutePath());
 
     try {
       if (options.getInitialDelay() > 0) {
@@ -118,7 +118,7 @@ public class ScreenRecorder {
 
   private void executeCommand(@NonNull String command, @NonNull RecordingResult result, long start) throws Exception {
     List<String> commandList = new ArrayList<>(Arrays.asList(command.split(" ")));
-    commandList.add("\"" + target.getAbsolutePath() + "\"");
+    commandList.add("\"" + temporaryTarget.getAbsolutePath() + "\"");
 
     File resources = new File(SystemInfo.RESOURCES);
     if (!resources.exists()) {
@@ -152,8 +152,8 @@ public class ScreenRecorder {
   public void cancel() {
     this.cancelled = true;
     stop();
-    if (target.exists()) {
-      target.delete();
+    if (temporaryTarget.exists()) {
+      temporaryTarget.delete();
     }
     LOG.info("Finished cancellation of " + this);
   }
