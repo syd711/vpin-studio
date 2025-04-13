@@ -113,7 +113,9 @@ public class IScored {
   private static List<Score> getScoresFor(int id, GameScoreModel[] allScores) {
     for (GameScoreModel allScore : allScores) {
       if (allScore.getGameID() == id) {
-        return allScore.getScores();
+        if (allScore.getScores() != null) {
+          return allScore.getScores();
+        }
       }
     }
     return Collections.emptyList();
@@ -196,33 +198,37 @@ public class IScored {
   public static IScoredResult submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
     IScoredResult result = new IScoredResult();
     List<Score> scores = game.getScores();
-    for (Score score : scores) {
-      if (score.getName() != null && (score.getName().equals(playerName) || score.getName().equals(playerInitials))) {
-        try {
-          if (game.isSingleScore()) {
-            LOG.info("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
-            result.setMessage("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
-            result.setReturnCode(200);
-            return result;
-          }
+    if (scores != null) {
+      for (Score score : scores) {
+        if (score.getName() != null && (score.getName().equals(playerName) || score.getName().equals(playerInitials))) {
+          try {
+            if (game.isSingleScore()) {
+              LOG.info("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
+              result.setMessage("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
+              result.setReturnCode(200);
+              return result;
+            }
 
-          long l = score.getScore();
-          if (l > highscore) {
-            LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
-            result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
-            result.setReturnCode(200);
+            long l = score.getScore();
+            if (l > highscore) {
+              LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+              result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+              result.setReturnCode(200);
+              return result;
+            }
+          }
+          catch (NumberFormatException e) {
+            LOG.error("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
+            result.setMessage("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
+            result.setReturnCode(500);
             return result;
           }
-        }
-        catch (NumberFormatException e) {
-          LOG.error("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
-          result.setMessage("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
-          result.setReturnCode(500);
-          return result;
         }
       }
     }
-
+    else {
+      LOG.info("No existing scores found for game \"" + game.getName() + "\", skipped checks.");
+    }
 
     LOG.info("Submitting iScored score \"" + playerName + "/" + playerInitials + " [" + highscore + "]\" to game \"" + game.getName() + "\" of game room \"" + gameRoom.getName() + "\"");
     HttpURLConnection conn = null;

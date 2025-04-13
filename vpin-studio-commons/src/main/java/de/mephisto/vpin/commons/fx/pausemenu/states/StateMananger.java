@@ -76,7 +76,7 @@ public class StateMananger implements GameControllerInputListener {
   }
 
   public void handle(String button) {
-    LOG.info("Pause Menu Input Event: " + button);
+//    LOG.info("Pause Menu Input Event: " + button);
     if (button == null) {
       return;
     }

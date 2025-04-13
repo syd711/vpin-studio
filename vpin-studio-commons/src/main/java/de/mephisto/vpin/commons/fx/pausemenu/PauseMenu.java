@@ -12,6 +12,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -230,6 +231,7 @@ public class PauseMenu extends Application {
           }
           return true;
         }).thenAcceptLater((result) -> {
+          long start = System.currentTimeMillis();
           try {
             screenAssets.clear();
             PauseMenuStyle style = pauseMenuSettings.getStyle();
@@ -255,13 +257,17 @@ public class PauseMenu extends Application {
             LOG.error("Failed to prepare pause menu screens: " + e.getMessage(), e);
           }
 
-          ServerFX.toFront(stage, visible);
-          ServerFX.toFront(stage, visible);
-          ServerFX.toFront(stage, visible);
-          ServerFX.toFront(stage, visible);
-        });
+          LOG.info("Asset fetch for pause menu took {}ms", (System.currentTimeMillis() - start));
 
-        ServerFX.forceShow(stage);
+          ServerFX.forceShow(stage);
+          GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+          if (emulator != null && isVPXGlEmulator(emulator)) {
+            ServerFX.toFront(stage, visible);
+            ServerFX.toFront(stage, visible);
+            ServerFX.toFront(stage, visible);
+            ServerFX.toFront(stage, visible);
+          }
+        });
       }
       catch (Exception e) {
         LOG.error("Failed to init pause menu: " + e.getMessage(), e);
@@ -270,6 +276,12 @@ public class PauseMenu extends Application {
     else {
       exitPauseMenu();
     }
+  }
+
+  private static boolean isVPXGlEmulator(GameEmulatorRepresentation emulator) {
+    String name = String.valueOf(emulator.getName());
+    String desc = String.valueOf(emulator.getDescription());
+    return name.contains("GL") || desc.contains("GL");
   }
 
   public static void exitPauseMenu() {

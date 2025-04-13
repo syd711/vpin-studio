@@ -248,10 +248,8 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     if (dirGames != null) {
       e.setGamesDirectory(dirGames.getAbsolutePath());
     }
-    //else { 
-    //  LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
-    //  return null;
-    //}
+
+    //always return the emulator, otherwise it can't be managed.
     return e;
   }
 

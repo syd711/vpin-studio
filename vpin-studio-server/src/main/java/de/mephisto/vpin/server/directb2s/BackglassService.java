@@ -331,8 +331,13 @@ public class BackglassService implements InitializingBean {
       if (!gameEmulator.isEnabled()) {
         continue;
       }
-      File tablesFolder = gameEmulator.getGamesFolder();
 
+      if (StringUtils.isEmpty(gameEmulator.getGamesDirectory())) {
+        LOG.info("Skipping backglass scan for: {}, no games directory found.", gameEmulator);
+        continue;
+      }
+
+      File tablesFolder = gameEmulator.getGamesFolder();
       if (!tablesFolder.exists()) {
         LOG.info("Skipping backglass scan for: {}", tablesFolder.getAbsolutePath());
         continue;
