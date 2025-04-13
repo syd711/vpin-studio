@@ -112,6 +112,9 @@ public class TablesSidebarMameController implements Initializable {
   private Button mameBtn;
 
   @FXML
+  private Button aliasBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -175,7 +178,9 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onVPMAlias() {
     try {
-      boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.VPMAliasTxt), "VPMAlias.txt");
+      TextFile textFile = new TextFile(VPinFile.VPMAliasTxt);
+      textFile.setEmulatorId(game.get().getEmulatorId());
+      boolean b = Dialogs.openTextEditor(textFile, "VPMAlias.txt");
       if (b) {
         client.getMameService().clearCache();
         EventManager.getInstance().notifyTablesChanged();
@@ -303,6 +308,7 @@ public class TablesSidebarMameController implements Initializable {
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
     copyRomBtn.setDisable(true);
+    aliasBtn.setDisable(g.isEmpty());
 
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);

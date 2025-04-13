@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -25,7 +24,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   private final static Logger LOG = LoggerFactory.getLogger(MediaUploadArchiveItem.class);
 
   private AssetType assetType;
-  private String target;
+  private String targetDisplayName;
   private String name;
   private final GameEmulatorRepresentation emulator;
   private boolean folder;
@@ -83,7 +82,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the PUP pack folder here
       if (pupPackDir.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
         assetType = AssetType.PUP_PACK;
-        target = client.getFrontendService().getFrontendCached().getInstallationDirectory() + "\\PUPVideos";
+        targetDisplayName = client.getFrontendService().getFrontendCached().getInstallationDirectory() + "\\PUPVideos";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -98,7 +97,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the DMD bundle here
       if (dmdDir.equals(this.getName())) {
         assetType = AssetType.DMD_PACK;
-        target = emulator.getGamesDirectory();
+        targetDisplayName = emulator.getGamesDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -111,7 +110,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     if (altSoundFolder != null) {
       if (altSoundFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
         assetType = AssetType.ALT_SOUND;
-        target = emulator.getMameDirectory();
+        targetDisplayName = emulator.getMameDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -125,7 +124,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        target = emulator.getGamesDirectory();
+        targetDisplayName = emulator.getGamesDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
@@ -144,7 +143,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       List<String> popperMediaFiles = uploaderAnalysis.getPopperMediaFiles(screen);
       if (popperMediaFiles.contains(fileNameWithPath)) {
         assetType = AssetType.FRONTEND_MEDIA;
-        target = "Screen \"" + screen.name() + "\"";
+        targetDisplayName = "Screen \"" + screen.name() + "\"";
         LOG.info(fileNameWithPath + ": " + assetType.name());
         return;
       }
@@ -164,32 +163,32 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
 
       if (asset.equals(AssetType.BAM_CFG) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
         this.assetType = asset;
-        this.target = emulator.getInstallationDirectory() + "BAM/cfg/";
+        this.targetDisplayName = emulator.getInstallationDirectory() + "BAM/cfg/";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null) {
         this.assetType = asset;
-        this.target = client.getEmulatorService().getDefaultGameEmulator().getNvramDirectory();
+        this.targetDisplayName = "VPin MAME \"nvram\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = asset;
-        this.target = client.getEmulatorService().getDefaultGameEmulator().getRomDirectory();
+        this.targetDisplayName = "VPin MAME \"roms\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.VNI))) {
         this.assetType = asset;
-        this.target = client.getEmulatorService().getDefaultGameEmulator().getAltColorDirectory();
+        this.targetDisplayName = "VPin MAME \"altcolor\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = AssetType.ROM;
-        this.target = client.getEmulatorService().getDefaultGameEmulator().getRomDirectory();
+        this.targetDisplayName = "VPin MAME \"roms\" folder";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
       else if (asset.equals(AssetType.DIF) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIF) == null) {
         this.assetType = AssetType.DIF;
-        this.target = "-";
+        this.targetDisplayName = "-";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
     }
@@ -202,8 +201,8 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     return bean;
   }
 
-  public String getTarget() {
-    return target;
+  public String getTargetDisplayName() {
+    return targetDisplayName;
   }
 
   public String getAssetType() {
@@ -243,7 +242,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     String extension = FilenameUtils.getExtension(getName());
     for (AssetType tableAssetType : tableAssetTypes) {
       if (extension.equalsIgnoreCase(tableAssetType.name())) {
-        target = emulator.getGamesDirectory();
+        targetDisplayName = emulator.getGamesDirectory();
         assetType = tableAssetType;
         return true;
       }

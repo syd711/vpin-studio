@@ -2,10 +2,8 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -110,27 +108,6 @@ public class VPXCommandLineService implements ApplicationContextAware {
     }
 
     return target;
-  }
-
-  public boolean launch() {
-    EmulatorService emulatorService = applicationContext.getBean(EmulatorService.class);
-    GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
-    File vpxExe = defaultGameEmulator.getExe();
-    try {
-      List<String> strings = Arrays.asList(vpxExe.getName());
-      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
-      executor.setDir(vpxExe.getParentFile());
-      executor.executeCommandAsync();
-
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Error executing VPX command: " + e.getMessage(), e);
-    }
-    return false;
   }
 
   @Override

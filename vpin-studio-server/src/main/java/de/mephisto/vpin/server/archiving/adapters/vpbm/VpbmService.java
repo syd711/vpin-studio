@@ -77,8 +77,15 @@ public class VpbmService implements InitializingBean {
   public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
     // use the default emulator, VpbmService, does not support multiple emulator
-    GameEmulator defaultEmu = emulatorService.getDefaultGameEmulator();
-    Game game = frontendService.getGameByFilename(defaultEmu.getId(), vpxName);
+    List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+    Game game = null;
+    for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
+      game = frontendService.getGameByFilename(vpxGameEmulator.getId(), vpxName);
+      if (game != null) {
+        break;
+      }
+    }
+
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
       if (!backupFile.exists()) {

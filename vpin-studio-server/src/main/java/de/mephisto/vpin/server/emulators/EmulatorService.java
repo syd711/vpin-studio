@@ -78,38 +78,39 @@ public class EmulatorService {
     }).collect(Collectors.toList());
   }
 
-  public GameEmulator getDefaultGameEmulator() {
-    Collection<GameEmulator> emulators = this.emulators.values();
-
-    // when there is only one VPX emulator, it is forcibly the default one
-    if (emulators.size() == 1) {
-      GameEmulator value = emulators.iterator().next();
-      return value.isVpxEmulator() ? value : null;
-    }
-
-    for (GameEmulator emulator : emulators) {
-      if (emulator.isValid() && emulator.getDescription() != null && emulator.isVpxEmulator() && emulator.getDescription().contains("default")) {
-        return emulator;
-      }
-    }
-
-    for (GameEmulator value : emulators) {
-      if (value.isValid() && value.isVpxEmulator() && value.getNvramFolder().exists()) {
-        return value;
-      }
-      else {
-        // avoid NPE when installationFolder is null like in test
-        if (value.isValid()) {
-          LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
-        }
-        else {
-          LOG.error(value + " has no valid nvram folder");
-        }
-      }
-    }
-    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + this.emulators.size() + " VPX emulators found).");
-    return null;
-  }
+  //@deprecated, always determine emulator
+//  public GameEmulator getDefaultGameEmulator() {
+//    Collection<GameEmulator> emulators = this.emulators.values();
+//
+//    // when there is only one VPX emulator, it is forcibly the default one
+//    if (emulators.size() == 1) {
+//      GameEmulator value = emulators.iterator().next();
+//      return value.isVpxEmulator() ? value : null;
+//    }
+//
+//    for (GameEmulator emulator : emulators) {
+//      if (emulator.isValid() && emulator.getDescription() != null && emulator.isVpxEmulator() && emulator.getDescription().contains("default")) {
+//        return emulator;
+//      }
+//    }
+//
+//    for (GameEmulator value : emulators) {
+//      if (value.isValid() && value.isVpxEmulator() && value.getNvramFolder().exists()) {
+//        return value;
+//      }
+//      else {
+//        // avoid NPE when installationFolder is null like in test
+//        if (value.isValid()) {
+//          LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
+//        }
+//        else {
+//          LOG.error(value + " has no valid nvram folder");
+//        }
+//      }
+//    }
+//    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + this.emulators.size() + " VPX emulators found).");
+//    return null;
+//  }
 
   public boolean isValidVPXEmulator(GameEmulator emulator) {
     if (!emulator.getType().isVpxEmulator()) {

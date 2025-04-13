@@ -58,7 +58,6 @@ public class ComponentsResource {
                                                 @PathVariable("tag") String tag,
                                                 @PathVariable("artifact") String artifact,
                                                 @PathVariable("forceDownload") boolean forceDownload) {
-    //GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     ReleaseArtifactActionLog log = componentService.check(type, tag, artifact, forceDownload);
     return toActionLog(log);
   }
@@ -67,7 +66,6 @@ public class ComponentsResource {
   public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type,
                                                   @PathVariable("tag") String tag,
                                                   @PathVariable("artifact") String artifact) {
-    //GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     ReleaseArtifactActionLog log = componentService.install(type, tag, artifact, false);
     return toActionLog(log);
   }
@@ -76,7 +74,6 @@ public class ComponentsResource {
   public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type,
                                                    @PathVariable("tag") String tag,
                                                    @PathVariable("artifact") String artifact) {
-    //GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     ReleaseArtifactActionLog log = componentService.install(type, tag, artifact, true);
     return toActionLog(log);
   }
