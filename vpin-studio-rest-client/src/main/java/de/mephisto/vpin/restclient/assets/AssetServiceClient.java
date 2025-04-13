@@ -58,6 +58,7 @@ public class AssetServiceClient extends VPinStudioClientService {
         return null;
       }
 
+      //goes to the GameMediaResource, 404 is not a bug
       String url = API + "media/" + id + "/" + screen.name();
       if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
         byte[] bytes = getRestClient().readBinary(url);

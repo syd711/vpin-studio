@@ -155,7 +155,7 @@ public class ServerFX extends Application {
       stages.forEach(s -> s.getScene().setCursor(Cursor.NONE));
     }
     catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      //ignore
     }
     Platform.runLater(() -> {
       if (visible) {

@@ -2,8 +2,10 @@
 
 ## Changes
 
+- **iScored**: Fixed critical error that skipped the highscore submission for game room games without existing highscores.
 - **Tables / Drag and Drop**: Fixed UI freezing for file drops when no table was selecting.
 - **PinballY**: Improved error handling for emulators where not games folder was found.
+- **Pause Menu**: Fixed accidental delay when shown, introduced with the latest mute option.
 
 ---
 
