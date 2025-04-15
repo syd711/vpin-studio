@@ -1,3 +1,11 @@
+## Release Notes 3.14.4
+
+## Changes
+
+- **iScored**: Added support for multi-score submissions. You have to add the tag **vps:multiscore** for all tables where this should be enabled. See also: https://github.com/syd711/vpin-studio/wiki/iScored#multi-score-submissions
+
+---
+
 ## Release Notes 3.14.3
 
 ## Changes
