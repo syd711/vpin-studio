@@ -486,6 +486,24 @@ public class Game {
     return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
 
+  @Nullable
+  @JsonIgnore
+  public File getHighscoreIniFile() {
+    File iniFile = null;
+    if (!StringUtils.isEmpty(getRom())) {
+      String iniScoreName = FilenameUtils.getBaseName(getRom()) + "_glf.ini";
+      iniFile = new File(getGameFile().getParentFile(), iniScoreName);
+    }
+
+    if (iniFile == null || !iniFile.exists()) {
+      if (!StringUtils.isEmpty(getTableName())) {
+        String iniScoreName = FilenameUtils.getBaseName(getTableName()) + "_glf.ini";
+        iniFile = new File(getGameFile().getParentFile(), iniScoreName);
+      }
+    }
+    return iniFile;
+  }
+
   @NonNull
   @JsonIgnore
   public File getVBSFile() {

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
+import de.mephisto.vpin.server.highscores.parsing.ini.IniHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamOutputToScoreTextConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
@@ -35,6 +36,9 @@ public class HighscoreResolver implements InitializingBean {
   @Autowired
   private TextHighscoreAdapters textHighscoreAdapters;
 
+  @Autowired
+  private IniHighscoreAdapters initHighscoreAdapters;
+
   public boolean deleteTextScore(Game game, long score) {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
@@ -52,6 +56,14 @@ public class HighscoreResolver implements InitializingBean {
 
     if (hsFile != null && hsFile.exists()) {
       return textHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), hsFile, score);
+    }
+    return false;
+  }
+
+  public boolean deleteIniScore(Game game, long score) {
+    File iniFile = game.getHighscoreIniFile();
+    if (iniFile != null && iniFile.exists()) {
+      return initHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), iniFile, score);
     }
     return false;
   }
@@ -82,6 +94,9 @@ public class HighscoreResolver implements InitializingBean {
       String rawScore = readNvHighscore(game, metadata);
       if (rawScore == null) {
         rawScore = readVPRegHighscore(game, metadata);
+      }
+      if (rawScore == null) {
+        rawScore = readIniHighscore(game, metadata);
       }
       if (rawScore == null) {
         rawScore = readHSFileHighscore(game, metadata);
@@ -126,6 +141,19 @@ public class HighscoreResolver implements InitializingBean {
       metadata.setStatus(null);
 
       return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
+    }
+    return null;
+  }
+
+  private String readIniHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
+    File iniFile = game.getHighscoreIniFile();
+    if (iniFile != null && iniFile.exists()) {
+      metadata.setType(HighscoreType.Ini);
+      metadata.setFilename(iniFile.getCanonicalPath());
+      metadata.setModified(new Date(iniFile.lastModified()));
+      metadata.setStatus(null);
+
+      return initHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), iniFile);
     }
     return null;
   }

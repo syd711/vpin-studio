@@ -122,6 +122,10 @@ public class HighscoreService implements InitializingBean {
             result = !game.getNvRamFile().exists() || game.getNvRamFile().delete();
             break;
           }
+          case Ini: {
+            result = highscoreResolver.deleteIniScore(game, score);
+            break;
+          }
           case VPReg: {
             VPReg reg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
             result = reg.resetHighscores(score);
