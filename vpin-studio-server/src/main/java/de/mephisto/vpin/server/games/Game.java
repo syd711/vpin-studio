@@ -504,6 +504,14 @@ public class Game {
     return iniFile;
   }
 
+  public String getHighscoreIniFilename() {
+    File iniFile = getHighscoreIniFile();
+    if (iniFile != null && iniFile.exists()) {
+      return iniFile.getAbsolutePath();
+    }
+    return null;
+  }
+
   @NonNull
   @JsonIgnore
   public File getVBSFile() {

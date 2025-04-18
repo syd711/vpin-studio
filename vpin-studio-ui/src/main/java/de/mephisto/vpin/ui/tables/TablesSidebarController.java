@@ -226,6 +226,14 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
             SystemUtil.openFolder(userFolder);
             return;
           }
+          else if (hsType.equals(HighscoreType.Ini)) {
+            String hsName = gameRepresentation.getHighscoreIniFilename();
+            if (hsName != null) {
+              File hsFile = new File(hsName);
+              SystemUtil.openFile(hsFile);
+              return;
+            }
+          }
         }
 
         GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
