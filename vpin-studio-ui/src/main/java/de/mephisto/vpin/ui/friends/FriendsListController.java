@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.friends;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.CabinetContact;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.friends.panels.FriendCabinetRowPanelController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -86,9 +87,9 @@ public class FriendsListController implements Initializable {
     loadingBox.setVisible(true);
 
     JFXFuture.supplyAsync(() -> {
-          List<Cabinet> contacts = getFilteredContacts();
+          List<CabinetContact> contacts = getFilteredContacts();
           List<Node> friendPanels = new ArrayList<>();
-          for (Cabinet contact : contacts) {
+          for (CabinetContact contact : contacts) {
             try {
               FXMLLoader loader = new FXMLLoader(FriendCabinetRowPanelController.class.getResource("friend-cabinet-row-panel.fxml"));
               Pane node = loader.load();
@@ -133,8 +134,8 @@ public class FriendsListController implements Initializable {
         });
   }
 
-  private List<Cabinet> getFilteredContacts() {
-    List<Cabinet> contacts = maniaClient.getContactClient().getContacts();
+  private List<CabinetContact> getFilteredContacts() {
+    List<CabinetContact> contacts = maniaClient.getContactClient().getContacts();
     String term = textfieldSearch.getText();
     if (!StringUtils.isEmpty(term)) {
       return contacts.stream().filter(c -> c.getDisplayName().toLowerCase().contains(term.toLowerCase())).collect(Collectors.toList());
