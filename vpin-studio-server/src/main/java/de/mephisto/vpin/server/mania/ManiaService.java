@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
@@ -47,7 +48,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener {
+public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
 
   @Value("${vpinmania.server.host}")
@@ -75,6 +76,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   private List<CabinetContact> contacts;
 
@@ -415,6 +419,68 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     return registration;
   }
 
+  /**
+   * Pushes the list of all local VPX tables to VPin Mania
+   */
+  public boolean synchronizeTables() {
+    try {
+      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+      if (maniaSettings.isSubmitTables()) {
+        if (cabinet != null) {
+          long start = System.currentTimeMillis();
+          List<Game> knownGames = gameService.getKnownGames(-1);
+          List<InstalledTable> installedTables = new ArrayList<>();
+          for (Game game : knownGames) {
+            if (!StringUtils.isEmpty(game.getExtTableVersionId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+              InstalledTable installedTable = new InstalledTable();
+              installedTable.setVpsTableId(game.getExtTableId());
+              installedTable.setVpsVersionId(game.getExtTableVersionId());
+              installedTables.add(installedTable);
+            }
+          }
+
+          cabinet.getSettings().setInstalledTables(installedTables);
+          new Thread(() -> {
+            try {
+              maniaClient.getCabinetClient().update(cabinet);
+            }
+            catch (Exception e) {
+              LOG.error("Cabinet update for sync failed: {}", e.getMessage(), e);
+            }
+          }).start();
+
+          long duration = System.currentTimeMillis() - start;
+          LOG.info("VPin Mania table synchronization finished, {} tables synchronized in {}ms.", installedTables.size(), duration);
+          return true;
+        }
+      }
+      else {
+        if (cabinet != null && !cabinet.getSettings().getInstalledTables().isEmpty()) {
+          cabinet.getSettings().setInstalledTables(new ArrayList<>());
+          new Thread(() -> {
+            try {
+              maniaClient.getCabinetClient().update(cabinet);
+            }
+            catch (Exception e) {
+              LOG.error("Cabinet update for sync failed: {}", e.getMessage(), e);
+            }
+          }).start();
+
+          LOG.info("VPin Mania table synchronization has been resetted.");
+        }
+
+        LOG.info("VPin Mania table synchronization not enabled.");
+      }
+    }
+    catch (Exception e) {
+      LOG.error("VPin Mania table synchronization failed: {}", e.getMessage(), e);
+    }
+    return false;
+  }
+
+  //-------------------- FrontendStatusChangeListener ------------------------------------------------------------------
+
   @Override
   public void frontendLaunched() {
     this.setOnline();
@@ -430,10 +496,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     this.setOffline();
   }
 
-  @PreDestroy
-  public void onShutdown() {
-    this.setOffline();
-  }
+  //-------------------- PreferenceChangedListener ---------------------------------------------------------------------
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
@@ -441,6 +504,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     }
   }
+
+  //-------------------- TableStatusChangeListener ---------------------------------------------------------------------
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
@@ -464,25 +529,54 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     //ignore
   }
 
+  //-------------------- GameDataChangedListener -----------------------------------------------------------------------
+
   @Override
   public void gameDataChanged(@NotNull GameDataChangedEvent event) {
     if (Features.MANIA_ENABLED) {
-      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      Game game = event.getGame();
-      if (maniaSettings.isSubmitRatings() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-        if (cabinet != null) {
-          int oldRating = event.getOldData().getGameRating() != null ? event.getOldData().getGameRating() : 0;
-          int newRating = event.getNewData().getGameRating() != null ? event.getNewData().getGameRating() : 1;
+      updateTableRating(event);
+    }
+  }
 
-          LOG.info("Updating mania rating for \"{}\" from {} to {}", game.getGameDisplayName(), oldRating, newRating);
-          if (oldRating != newRating) {
-            new Thread(() -> {
-              maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), oldRating, newRating);
-            }).start();
-          }
+  private void updateTableRating(@NotNull GameDataChangedEvent event) {
+    ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+    Game game = event.getGame();
+    if (maniaSettings.isSubmitRatings() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+      if (cabinet != null) {
+        int oldRating = event.getOldData().getGameRating() != null ? event.getOldData().getGameRating() : 0;
+        int newRating = event.getNewData().getGameRating() != null ? event.getNewData().getGameRating() : 1;
+
+        LOG.info("Updating mania rating for \"{}\" from {} to {}", game.getGameDisplayName(), oldRating, newRating);
+        if (oldRating != newRating) {
+          new Thread(() -> {
+            maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), oldRating, newRating);
+          }).start();
         }
       }
+    }
+  }
+
+
+  //------------------------ GameLifecycleListener ---------------------------------------------------------------------
+  @Override
+  public void gameCreated(@NotNull Game game) {
+    if (Features.MANIA_ENABLED) {
+      synchronizeTables();
+    }
+  }
+
+  @Override
+  public void gameUpdated(@NotNull Game game) {
+    if (Features.MANIA_ENABLED) {
+      synchronizeTables();
+    }
+  }
+
+  @Override
+  public void gameDeleted(@NotNull Game game) {
+    if (Features.MANIA_ENABLED) {
+      synchronizeTables();
     }
   }
 
@@ -497,6 +591,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         frontendStatusService.addFrontendStatusChangeListener(this);
         frontendStatusService.addTableStatusChangeListener(this);
         gameService.addGameDataChangedListener(this);
+        gameService.addGameLifecycleListener(this);
 
 
         ManiaConfig config = getConfig();
@@ -507,6 +602,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
         if (cabinet != null) {
           LOG.info("Cabinet is registered on VPin-Mania");
+          new Thread(() -> {
+            Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+            synchronizeTables();
+          }).start();
         }
         else {
           LOG.info("Cabinet is not registered on VPin-Mania");
@@ -520,5 +619,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
     highscoreService.setManiaService(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @PreDestroy
+  public void onShutdown() {
+    this.setOffline();
   }
 }

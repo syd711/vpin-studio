@@ -20,11 +20,28 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>
    <children>
-      <Label styleClass="default-title" text="Score Data" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
+      <BorderPane>
+         <left>
+            <Label styleClass="default-title" text="Score Data" textFill="WHITE" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+         </left>
+         <right>
+            <Button fx:id="resetBtn" mnemonicParsing="false" onAction="#onScoreReset" text="Reset Highscore" textFill="#ff3333" BorderPane.alignment="CENTER">
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-reload-alert" iconSize="18" text="󱄋" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Reset Highscores" />
+               </tooltip>
+            </Button>
+         </right>
+      </BorderPane>
       <Label styleClass="preference-description" text="The given fields are used to read the highscore from the table." />
       <GridPane hgap="3.0" vgap="3.0">
          <columnConstraints>

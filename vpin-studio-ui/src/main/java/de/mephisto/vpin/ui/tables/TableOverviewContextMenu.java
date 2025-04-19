@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -173,7 +172,7 @@ public class TableOverviewContextMenu {
           }
         }
         if (!tables.isEmpty()) {
-          ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(tables));
+          ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
         }
       });
       maniaSyncEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));

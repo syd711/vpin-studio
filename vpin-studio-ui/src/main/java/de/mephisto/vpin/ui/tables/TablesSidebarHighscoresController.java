@@ -13,7 +13,7 @@ import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -161,7 +161,7 @@ public class TablesSidebarHighscoresController implements Initializable {
         }
       }
       if (!tables.isEmpty()) {
-        ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel(tables));
+        ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
       }
     }
   }

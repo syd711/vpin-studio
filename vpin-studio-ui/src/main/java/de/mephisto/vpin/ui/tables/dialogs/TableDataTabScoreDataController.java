@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.value.ChangeListener;
@@ -85,12 +86,20 @@ public class TableDataTabScoreDataController implements Initializable {
   private Button applyHsBtn;
 
   @FXML
+  private Button resetBtn;
+
+  @FXML
   private Label hsMappingLabel;
 
   private TableDataController tableDataController;
 
   private GameRepresentation game;
   private TableDetails tableDetails;
+
+  @FXML
+  private void onScoreReset() {
+    TableDialogs.openHighscoresResetDialog(Arrays.asList(game));
+  }
 
   @FXML
   private void onTableScan() {
@@ -105,13 +114,14 @@ public class TableDataTabScoreDataController implements Initializable {
     GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.getEmulatorId());
     File installationFolder = new File(emulatorRepresentation.getInstallationDirectory());
     File userFolder = new File(installationFolder, "User");
-    if(!userFolder.exists()) {
+    if (!userFolder.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file, \"User\" folder not found.");
       return;
     }
     try {
       Desktop.getDesktop().open(userFolder);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file: " + e.getMessage());
     }
@@ -160,7 +170,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
 
     applyRomBtn.setDisable(true);
-    String tableRomName = tableDetails!=null? tableDetails.getRomName(): null;
+    String tableRomName = tableDetails != null ? tableDetails.getRomName() : null;
     romName.setValue(tableRomName);
     romName.valueProperty().addListener((observable, oldValue, newValue) -> {
       onRomNameUpdate(newValue);
@@ -190,7 +200,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
 
     applyAltRomBtn.setDisable(true);
-    String tableRomAlt = tableDetails!=null? tableDetails.getRomAlt(): null;
+    String tableRomAlt = tableDetails != null ? tableDetails.getRomAlt() : null;
     altRomName.setText(tableRomAlt);
     altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
       onAltRomNameUpdate(newValue);
@@ -202,6 +212,7 @@ public class TableDataTabScoreDataController implements Initializable {
       applyAltRomBtn.setDisable(false);
     }
 
+    resetBtn.setVisible(game.isVpxGame());
 
     scannedRomName.setText(game.getScannedRom());
     applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
@@ -247,6 +258,8 @@ public class TableDataTabScoreDataController implements Initializable {
 
     scannedHighscoreFileName.setText(game.getScannedHsFileName());
     scannedHighscoreFileName.setPromptText("");
+
+    resetBtn.setDisable(game.getHighscoreType() == null);
 
     if (!StringUtils.isEmpty(game.getScannedHsFileName()) && !StringUtils.isEmpty(highscoreFileName.getValue())) {
       highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
