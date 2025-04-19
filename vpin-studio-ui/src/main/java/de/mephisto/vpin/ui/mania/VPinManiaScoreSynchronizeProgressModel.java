@@ -14,17 +14,17 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
-  private final static Logger LOG = LoggerFactory.getLogger(VPinManiaSynchronizeProgressModel.class);
+public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTable> {
+  private final static Logger LOG = LoggerFactory.getLogger(VPinManiaScoreSynchronizeProgressModel.class);
 
   private Iterator<VpsTable> iterator;
   private List<VpsTable> vpsTableList;
 
-  public VPinManiaSynchronizeProgressModel() {
+  public VPinManiaScoreSynchronizeProgressModel() {
     super("VPin Mania Synchronization");
   }
 
-  public VPinManiaSynchronizeProgressModel(List<VpsTable> vpsTableList) {
+  public VPinManiaScoreSynchronizeProgressModel(List<VpsTable> vpsTableList) {
     super("VPin Mania Synchronization");
     this.iterator = vpsTableList.iterator();
     this.vpsTableList = vpsTableList;
@@ -60,7 +60,7 @@ public class VPinManiaSynchronizeProgressModel extends ProgressModel<VpsTable> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, VpsTable next) {
     try {
-      ManiaTableSyncResult result = client.getManiaService().synchronize(next.getId());
+      ManiaTableSyncResult result = client.getManiaService().synchronizeTable(next.getId());
       progressResultModel.getResults().add(result);
     }
     catch (Exception e) {

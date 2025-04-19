@@ -53,7 +53,7 @@ public class TableRatingHelper {
             }
             return true;
           }).thenAcceptLater((result) -> {
-            ManiaHelper.runSynchronization(false);
+            ManiaHelper.runScoreSynchronization(false);
           });
         }
       }

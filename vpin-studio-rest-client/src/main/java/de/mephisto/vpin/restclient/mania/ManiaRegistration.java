@@ -7,10 +7,19 @@ public class ManiaRegistration {
   private List<Long> playerIds = new ArrayList<>();
   private boolean submitRatings = false;
   private boolean submitPlayCount = false;
+  private boolean submitTables = false;
   private String result;
 
   public boolean isSubmitPlayCount() {
     return submitPlayCount;
+  }
+
+  public boolean isSubmitTables() {
+    return submitTables;
+  }
+
+  public void setSubmitTables(boolean submitTables) {
+    this.submitTables = submitTables;
   }
 
   public void setSubmitPlayCount(boolean submitPlayCount) {

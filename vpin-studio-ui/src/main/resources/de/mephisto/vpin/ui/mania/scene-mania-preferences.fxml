@@ -23,10 +23,13 @@
                            <children>
                               <VBox fx:id="maniaGroup">
                                  <children>
-                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="ACCOUNT">
+                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="ACCOUNT">
                                        <font>
                                           <Font size="13.0" />
                                        </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
                                     </Label>
                                     <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
                                  </children>
@@ -34,6 +37,15 @@
                               <VBox fx:id="menuItemsPanel">
                                  <children>
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Privacy Settings" />
+                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="CABINET">
+                                       <font>
+                                          <Font size="13.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button fx:id="cabinetBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCabinet" styleClass="preference-button" text="Cabinet Settings" />
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRIENDS">
                                        <font>
                                           <Font size="13.0" />

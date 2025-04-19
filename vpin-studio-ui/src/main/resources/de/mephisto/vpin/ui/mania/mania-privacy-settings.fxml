@@ -27,7 +27,29 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="Submit your highscores to rank them on vpin-mania.net." textFill="WHITE" />
                         <Label styleClass="checkbox-description" text="The highscore submission to vpin-mania.net is mandatory for tournaments." textFill="WHITE" />
-                        <Button mnemonicParsing="false" onAction="#onHighscoreSync" text="Synchronize Highscores" textFill="WHITE">
+                        <Button fx:id="syncScoresBtn" mnemonicParsing="false" onAction="#onHighscoreSync" text="Synchronize Highscores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="25.0" top="4.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="submitTablesCheckbox" mnemonicParsing="false" text="Submit Installed Tables">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="The will push the list of all your installed VPX tables to VPin Mania." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="It allows you a quicker access to the corresponding highscores of yours." textFill="WHITE" />
+                        <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="Synchronize Tables" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

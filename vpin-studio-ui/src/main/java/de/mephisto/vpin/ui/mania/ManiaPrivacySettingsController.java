@@ -14,9 +14,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -45,10 +45,19 @@ public class ManiaPrivacySettingsController implements Initializable {
   private CheckBox submitAllCheckbox;
 
   @FXML
+  private CheckBox submitTablesCheckbox;
+
+  @FXML
   private CheckBox submitAllRatingsCheckbox;
 
   @FXML
   private CheckBox submitPlayedCountCheckbox;
+
+  @FXML
+  private Button syncTablesBtn;
+
+  @FXML
+  private Button syncScoresBtn;
 
   @FXML
   private VBox playersBox;
@@ -58,19 +67,32 @@ public class ManiaPrivacySettingsController implements Initializable {
   private void showSyncPrompt() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize Cabinet", "You privacy settings have been changed. Do you wish to synchronize you cabinet data with the VPin Mania services?", "The data is send anonymously and will help to rank table by popularity.", "Synchronize Data");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ManiaHelper.runSynchronization(false);
+      ManiaHelper.runScoreSynchronization(false);
     }
   }
 
   @FXML
   private void onHighscoreSync() {
-    ManiaHelper.runSynchronization(false);
+    ManiaHelper.runScoreSynchronization(false);
+  }
+
+  @FXML
+  private void onTablesSync() {
+    ManiaHelper.runTablesSynchronization();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+
+    syncTablesBtn.setDisable(true);
+    syncScoresBtn.setDisable(true);
+
+    if (cabinet == null) {
+      return;
+    }
+
     CabinetSettings cabinetSettings = cabinet.getSettings();
 
     showActiveGameCheckbox.setDisable(!settings.isShowOnlineStatus());
@@ -107,6 +129,22 @@ public class ManiaPrivacySettingsController implements Initializable {
       }
     });
 
+    syncTablesBtn.setDisable(!settings.isSubmitTables());
+    submitTablesCheckbox.setSelected(settings.isSubmitTables());
+    submitTablesCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        try {
+          syncTablesBtn.setDisable(!newValue);
+          settings.setSubmitTables(newValue);
+          client.getPreferenceService().setJsonPreference(settings);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to save mania settings: " + e.getMessage(), e);
+        }
+      }
+    });
+
     searchableCheckbox.setSelected(cabinetSettings.isSearchable());
     searchableCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
@@ -126,11 +164,12 @@ public class ManiaPrivacySettingsController implements Initializable {
     submitPlayedCountCheckbox.setSelected(settings.isSubmitPlayed());
     submitAllCheckbox.setSelected(settings.isSubmitAllScores());
 
-
+    syncScoresBtn.setDisable(!settings.isSubmitAllScores());
     submitAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
+          syncScoresBtn.setDisable(!newValue);
           ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
           settings.setSubmitAllScores(newValue);
           client.getPreferenceService().setJsonPreference(settings);

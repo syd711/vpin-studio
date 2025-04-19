@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.mania.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -11,7 +10,8 @@ import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.VPinManiaSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.VPinManiaTablesSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.dialogs.ManiaDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -61,8 +61,12 @@ public class ManiaHelper {
           client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
 
           if (!registration.getPlayerIds().isEmpty()) {
-            runSynchronization(false);
+            runScoreSynchronization(false);
           }
+          if (registration.isSubmitTables()) {
+            runTablesSynchronization();
+          }
+
           client.getPreferenceService().notifyPreferenceChange(PreferenceNames.MANIA_SETTINGS, null);
           return true;
         }
@@ -103,8 +107,8 @@ public class ManiaHelper {
     return false;
   }
 
-  public static void runSynchronization(boolean showScoreSummary) {
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaSynchronizeProgressModel());
+  public static void runScoreSynchronization(boolean showScoreSummary) {
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel());
     if (showScoreSummary) {
       List<Object> results = progressDialog.getResults();
       int count = 0;
@@ -116,6 +120,10 @@ public class ManiaHelper {
       }
       WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
     }
+  }
+
+  public static void runTablesSynchronization() {
+    ProgressDialog.createProgressDialog(new VPinManiaTablesSynchronizeProgressModel());
   }
 
 }

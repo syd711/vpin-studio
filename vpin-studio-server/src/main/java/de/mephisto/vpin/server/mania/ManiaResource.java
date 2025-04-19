@@ -30,6 +30,11 @@ public class ManiaResource {
     return maniaService.synchronize(vpsTableId);
   }
 
+  @GetMapping("/synchronize/tables")
+  public boolean synchronizeTables() {
+    return maniaService.synchronizeTables();
+  }
+
   @PostMapping("/register")
   public ManiaRegistration register(@RequestBody ManiaRegistration registration) throws Exception {
     return maniaService.register(registration);

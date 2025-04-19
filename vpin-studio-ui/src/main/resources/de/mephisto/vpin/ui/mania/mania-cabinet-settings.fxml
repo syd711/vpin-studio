@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CabinetSettingsPreferencesController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+               <children>
+                  <Label styleClass="preference-title" text="CABINET SETTINGS" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Name &amp; Avatar" />
+                  <Label styleClass="preference-description" text="Set the name and that should be shown for your cabinet." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="117.0" styleClass="preference-description" text="They will be used locally and for VPin Mania." textFill="WHITE" />
+                  <GridPane alignment="BASELINE_RIGHT" hgap="3.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="349.0" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.9999923706055" minWidth="10.0" prefWidth="450.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="570.0" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label prefHeight="26.0" styleClass="preference-label" text="Cabinet Name:  " textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="vpinNameLabel" layoutX="212.0" layoutY="43.0" prefHeight="20.0" styleClass="preference-label" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="vpinNameText" prefHeight="30.0" prefWidth="430.0" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <Label styleClass="preference-description" text="You can upload an avatar for the active VPin here." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <BorderPane prefHeight="200.0" prefWidth="400.0">
+                     <top>
+                        <HBox alignment="CENTER_LEFT" BorderPane.alignment="TOP_LEFT">
+                           <children>
+                              <Label prefHeight="18.0" styleClass="preference-label" text="Avatar:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Button mnemonicParsing="false" onAction="#onFileSelect" text="Select Image...">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="24.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </top>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                     <left>
+                        <BorderPane fx:id="avatarBorderPane" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <BorderPane.margin>
+                              <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                           </BorderPane.margin>
+                        </BorderPane>
+                     </left>
+                  </BorderPane>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
