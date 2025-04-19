@@ -267,6 +267,9 @@ public class VPXService implements InitializingBean {
       if ("cameraMode".equals(option)) {
         return vpxCommandLineService.execute(game, altExe, "-Minimized", "-PovEdit");
       }
+      else if ("primary".equals(option)) {
+        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Primary", "-Play");
+      }
       else {
         return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
       }

@@ -33,9 +33,6 @@ public class IScoredPreferencesController implements Initializable {
   private TableColumn<IScoredGameRoomModel, String> nameColumn;
 
   @FXML
-  private TableColumn<IScoredGameRoomModel, String> enabledColumn;
-
-  @FXML
   private TableColumn<IScoredGameRoomModel, String> syncColumn;
 
   @FXML
@@ -118,7 +115,7 @@ public class IScoredPreferencesController implements Initializable {
       return new SimpleObjectProperty(value.iScoredGameRoom.getUrl());
     });
 
-    enabledColumn.setCellValueFactory(cellData -> {
+    syncColumn.setCellValueFactory(cellData -> {
       IScoredGameRoomModel value = cellData.getValue();
       if (value.iScoredGameRoom.isSynchronize()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());

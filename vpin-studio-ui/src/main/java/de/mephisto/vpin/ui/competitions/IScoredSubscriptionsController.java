@@ -124,7 +124,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       try {
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscriptions", result));
         Platform.runLater(() -> {
-          onReload();
+          doReload();
           if (!resultModel.getResults().isEmpty()) {
             CompetitionRepresentation competitionRepresentation = (CompetitionRepresentation) resultModel.results.get(0);
             tableView.getSelectionModel().select(competitionRepresentation);
@@ -136,7 +136,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         LOG.error("Failed to create iScored subscription: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
-      onReload();
+      doReload();
     }
   }
 
@@ -172,7 +172,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
             "Deleting iScored Subscription",
             () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-        onReload();
+        doReload();
       }
     }
 
@@ -188,7 +188,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
               client.getCompetitionService().deleteCompetition(selection);
             }));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-        onReload();
+        doReload();
       }
     }
   }
@@ -197,7 +197,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   public void onReload() {
     IScored.invalidate();
     client.clearWheelCache();
-
+    doReload();
+  }
+  private void doReload() {
     tableView.setVisible(false);
 
     if (!tableStack.getChildren().contains(loadingOverlay)) {
@@ -467,7 +469,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   @Override
   public void onViewActivated(NavigationOptions options) {
     if (this.competitionsController != null) {
-      onReload();
+      doReload();
     }
   }
 

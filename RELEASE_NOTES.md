@@ -7,6 +7,8 @@
 - **Table Data Manager**: The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
 - **Highscore Backups**: Added bulk-operation support for highscore backups.
 - **Backglass Server**: Added option to set "Simple LEDs" as default in the backglass server preferences.
+- **Media Recorder**: Added option to set the VPX parameter "-Primary" for the recording.
+- **Table Asset Management** Added highscore reset button to "Scores" tab.
 - **Table Asset Management** Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
  
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="400" />

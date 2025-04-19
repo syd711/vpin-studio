@@ -83,6 +83,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private CheckBox customLauncherCheckbox;
 
   @FXML
+  private CheckBox primaryCheckbox;
+
+  @FXML
   private ComboBox<String> launcherCombo;
 
 
@@ -137,6 +140,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     emulatorRecordingRadio.setDisable(true);
     launcherCombo.setDisable(true);
     customLauncherCheckbox.setDisable(true);
+    primaryCheckbox.setDisable(true);
 
     recordingProgressPanel.getStyleClass().add("selection-panel-selected");
     emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
@@ -266,6 +270,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         emulatorRecordingRadio.setDisable(true);
         launcherCombo.setDisable(true);
         customLauncherCheckbox.setDisable(true);
+        primaryCheckbox.setDisable(true);
         break;
       }
       else {
@@ -351,11 +356,22 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         settings.setCustomLauncherEnabled(newValue);
         launcherCombo.setDisable(!newValue);
+        primaryCheckbox.setDisable(!newValue);
         client.getPreferenceService().setJsonPreference(settings);
       }
     });
-    launcherCombo.setDisable(!settings.isCustomLauncherEnabled());
 
+    primaryCheckbox.setSelected(settings.isPrimaryParam());
+    primaryCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        settings.setPrimaryParam(newValue);
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
+
+
+    launcherCombo.setDisable(!settings.isCustomLauncherEnabled());
     launcherCombo.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

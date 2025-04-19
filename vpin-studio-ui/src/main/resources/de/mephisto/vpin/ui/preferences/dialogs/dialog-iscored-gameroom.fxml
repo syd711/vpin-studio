@@ -65,7 +65,7 @@
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="36.0" valignment="TOP" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
@@ -77,7 +77,22 @@
                                  </font>
                               </TextField>
                               <Label styleClass="default-text" text="Game Room URL:" />
-                              <CheckBox fx:id="synchronizationCheckbox" disable="true" layoutX="162.0" layoutY="83.0" mnemonicParsing="false" selected="true" styleClass="default-text" text="Synchronization Enabled" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <CheckBox fx:id="synchronizationCheckbox" disable="true" mnemonicParsing="false" selected="true" styleClass="default-text" text="Synchronization Enabled" />
+                                    <Label fx:id="publicReadAPIHint11" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="This will automatically create and delete iScored competitions by synchronizing them with the iScored Game Room." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <children>
                                     <CheckBox fx:id="scoreApiCheckbox" disable="true" mnemonicParsing="false" text="Score submissions enabled" textFill="WHITE">

@@ -16,6 +16,15 @@ public class RecorderSettings extends JsonSettings {
   private RecordingMode recordingMode = RecordingMode.emulator;
   private boolean customLauncherEnabled;
   private String customLauncher;
+  private boolean primaryParam;
+
+  public boolean isPrimaryParam() {
+    return primaryParam;
+  }
+
+  public void setPrimaryParam(boolean primaryParam) {
+    this.primaryParam = primaryParam;
+  }
 
   public String getCustomLauncher() {
     return customLauncher;

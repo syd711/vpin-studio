@@ -117,7 +117,9 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       saveBtn.setDisable(false);
     }
     else {
-      setDisabled(true);
+      errorPane.setVisible(true);
+      urlField.setDisable(false);
+      validateBtn.setDisable(false);
       errorTitle.setText("Invalid Game Room URL");
       errorMessage.setText("No game room could be read for the given URL.");
       saveBtn.setDisable(true);

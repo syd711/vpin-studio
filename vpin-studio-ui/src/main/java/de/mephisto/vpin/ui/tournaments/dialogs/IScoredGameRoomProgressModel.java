@@ -65,8 +65,11 @@ public class IScoredGameRoomProgressModel extends ProgressModel<String> {
   public void processNext(ProgressResultModel progressResultModel, String dashboardUrl) {
     try {
       GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
-      progressResultModel.getResults().add(gameRoom);
-    } catch (Exception e) {
+      if (gameRoom != null) {
+        progressResultModel.getResults().add(gameRoom);
+      }
+    }
+    catch (Exception e) {
       LOG.warn("Failed to load iscored dashboard: " + e.getMessage());
     }
   }

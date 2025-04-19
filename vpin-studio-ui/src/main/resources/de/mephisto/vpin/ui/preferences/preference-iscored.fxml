@@ -70,10 +70,9 @@
             </ToolBar>
             <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
-                  <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Enabled" />
-                  <TableColumn fx:id="syncColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Sync" />
-                <TableColumn fx:id="nameColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Game Room URL" />
-                  <TableColumn fx:id="readApiColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_CENTER;" text="Read API" />
+                  <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="Sync. Enabled" />
+                <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="Game Room URL" />
+                  <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Read API" />
                   <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Scoring API" />
               </columns>
             </TableView>
