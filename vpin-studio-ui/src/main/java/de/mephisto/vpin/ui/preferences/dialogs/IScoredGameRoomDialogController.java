@@ -1,22 +1,23 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
-import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController;
+import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -63,6 +64,9 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private Button validateBtn;
 
   @FXML
+  private ComboBox<String> badgeCombo;
+
+  @FXML
   private Pane errorPane;
 
   private IScoredSettings iScoredSettings;
@@ -80,46 +84,39 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     urlField.setDisable(true);
     validateBtn.setDisable(true);
     errorPane.setVisible(false);
+    badgeCombo.setDisable(true);
     setDisabled(true);
 
-    try {
-      JFXFuture.supplyAsync(() -> {
-        return IScored.loadGameRoom(url);
-      }).thenAcceptLater((gr) -> {
-        urlField.setDisable(false);
-        validateBtn.setDisable(false);
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(url));
+    if (!progressDialog.getResults().isEmpty()) {
+      GameRoom gr = (GameRoom) progressDialog.getResults().get(0);
+      urlField.setDisable(false);
+      validateBtn.setDisable(false);
 
-        if(gr == null) {
-          errorPane.setVisible(true);
-          errorTitle.setText("Invalid Game Room URL");
-          errorMessage.setText("No game room could be read for the given URL.");
-          return;
-        }
+      if (!gr.getSettings().isApiReadingEnabled()) {
+        errorPane.setVisible(true);
+        errorTitle.setText("Read API Not Enabled");
+        errorMessage.setText("The game room must have the read API enabled in the iScored settings.");
+        return;
+      }
+      if (!gr.getSettings().isPublicScoresReadingEnabled()) {
+        errorPane.setVisible(true);
+        errorTitle.setText("Public Score Reading Not Enabled");
+        errorMessage.setText("The game room must have the public score reading API enabled in the iScored settings.");
+        return;
+      }
 
-        if (!gr.getSettings().isApiReadingEnabled()) {
-          errorPane.setVisible(true);
-          errorTitle.setText("Read API Not Enabled");
-          errorMessage.setText("The game room must have the read API enabled in the iScored settings.");
-          return;
-        }
-        if (!gr.getSettings().isPublicScoresReadingEnabled()) {
-          errorPane.setVisible(true);
-          errorTitle.setText("Public Score Reading Not Enabled");
-          errorMessage.setText("The game room must have the public score reading API enabled in the iScored settings.");
-          return;
-        }
+      scoreApiCheckbox.setSelected(true);
+      readApiCheckbox.setSelected(true);
 
-        scoreApiCheckbox.setSelected(true);
-        readApiCheckbox.setSelected(true);
-
-        errorPane.setVisible(false);
-        urlField.setDisable(false);
-        validateBtn.setDisable(false);
-        setDisabled(false);
-        saveBtn.setDisable(false);
-      });
+      badgeCombo.setDisable(false);
+      errorPane.setVisible(false);
+      urlField.setDisable(false);
+      validateBtn.setDisable(false);
+      setDisabled(false);
+      saveBtn.setDisable(false);
     }
-    catch (Exception e) {
+    else {
       setDisabled(true);
       errorTitle.setText("Invalid Game Room URL");
       errorMessage.setText("No game room could be read for the given URL.");
@@ -166,11 +163,18 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       this.gameRoom = new IScoredGameRoom();
       this.gameRoom.setUuid(UUID.randomUUID().toString());
     }
+    else {
+      this.urlField.setText(gr.getUrl());
+    }
 
     this.resetCheckbox.setSelected(gameRoom.isScoreReset());
     this.synchronizationCheckbox.setSelected(gameRoom.isSynchronize());
 
     saveBtn.setDisable(StringUtils.isEmpty(gameRoom.getUrl()));
+
+    if (!StringUtils.isEmpty(gameRoom.getUrl())) {
+      onValidate();
+    }
   }
 
 
@@ -180,6 +184,14 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     errorPane.setVisible(false);
 
     saveBtn.setDisable(true);
+
+    List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
+    badges.add(0, null);
+    ObservableList<String> imageList = FXCollections.observableList(badges);
+    badgeCombo.setItems(imageList);
+    badgeCombo.setCellFactory(c -> new CompetitionOfflineDialogController.CompetitionImageListCell(client));
+    badgeCombo.setButtonCell(new CompetitionOfflineDialogController.CompetitionImageListCell(client));
+    badgeCombo.setDisable(true);
 
     urlField.textProperty().addListener(new ChangeListener<String>() {
       @Override

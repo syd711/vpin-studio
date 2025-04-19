@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tournaments.dialogs;
 
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class IScoredGameRoomProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredGameRoomProgressModel.class);
@@ -20,6 +22,12 @@ public class IScoredGameRoomProgressModel extends ProgressModel<String> {
   public IScoredGameRoomProgressModel(String dashboardUrl) {
     super("Loading iScored Game Room");
     this.urls = new ArrayList<>(Arrays.asList(dashboardUrl));
+    this.iterator = this.urls.iterator();
+  }
+
+  public IScoredGameRoomProgressModel(List<IScoredGameRoom> dashboardUrls) {
+    super("Loading iScored Game Rooms");
+    this.urls = new ArrayList<>(dashboardUrls.stream().map(gr -> gr.getUrl()).collect(Collectors.toList()));
     this.iterator = this.urls.iterator();
   }
 
