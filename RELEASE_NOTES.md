@@ -1,3 +1,8 @@
+## Release Notes 3.14.5
+
+- **Highscore Resolving**: Fixed highscore resetting with values for .ini highscores.
+
+
 ## Release Notes 3.14.4
 
 ## Changes
