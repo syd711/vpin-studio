@@ -70,8 +70,8 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
             }
           }
 
-          LOG.info("No iScored update sent, because there is no iScored subscription for table \"" + game.getGameDisplayName() + "\". " + iScoredSubscriptions.size() + " competitions have been checked.");
-          SLOG.info("No iScored update sent, because there is no iScored subscription for table \"" + game.getGameDisplayName() + "\". " + iScoredSubscriptions.size() + " competitions have been checked.");
+          LOG.info("No iScored update sent, because there is no iScored subscription for table \"" + game.getGameDisplayName() + "\"/ (ID: " + game.getId() + "). " + iScoredSubscriptions.size() + " competitions have been checked.");
+          SLOG.info("No iScored update sent, because there is no iScored subscription for table \"" + game.getGameDisplayName() + "\"/ (ID: " + game.getId() + "). " + iScoredSubscriptions.size() + " competitions have been checked.");
         }
       }
     }
