@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
-import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.CabinetContact;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.FriendsListController;
 import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
@@ -46,14 +46,12 @@ public class FriendAccountRowPanelController implements Initializable {
   private ImageView avatarView;
 
   private FriendsListController friendsListController;
-  private Cabinet cabinet;
   private Account account;
 
-  public void setData(FriendsListController friendsListController, Cabinet cabinet, Account account) {
+  public void setData(FriendsListController friendsListController, String cabinetUuid, Account account) {
     this.friendsListController = friendsListController;
-    this.cabinet = cabinet;
     this.account = account;
-    this.toolbar.setVisible(cabinet.getId() == maniaClient.getCabinetClient().getCabinetCached().getId());
+    this.toolbar.setVisible(String.valueOf(cabinetUuid).equals(maniaClient.getCabinetClient().getCabinetCached().getUuid()));
 
     visibilityCheckbox.setSelected(AccountVisibility.searchable.equals(account.getVisibility()));
     visibilityCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {

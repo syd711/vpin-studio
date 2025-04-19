@@ -15,11 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -209,12 +205,14 @@ public class IScored {
               return result;
             }
 
-            long l = score.getScore();
-            if (l > highscore) {
-              LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
-              result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
-              result.setReturnCode(200);
-              return result;
+            if (!game.isMultiScore()) {
+              long l = score.getScore();
+              if (l > highscore) {
+                LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+                result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+                result.setReturnCode(200);
+                return result;
+              }
             }
           }
           catch (NumberFormatException e) {

@@ -18,7 +18,7 @@ public class CompetitionsDialogHelper {
       nvramLabel.setGraphic(WidgetFactory.createExclamationIcon());
       nvramLabel.setTooltip(new Tooltip("Unknown Highscore Format"));
     }
-    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.EM.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.VPReg.name())) {
+    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.EM.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.VPReg.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.Ini.name())) {
       nvramLabel.setGraphic(WidgetFactory.createCheckIcon());
       nvramLabel.setTooltip(new Tooltip("The highscore can be resetted."));
     }

@@ -3,9 +3,7 @@ package de.mephisto.vpin.ui.mania.panels;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.CabinetOnlineStatus;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.ui.mania.FriendsListController;
 import de.mephisto.vpin.ui.mania.FriendsPendingInvitesController;
 import de.mephisto.vpin.ui.mania.ManiaPrivacySettingsController;
@@ -69,13 +67,16 @@ public class FriendCabinetRowPanelController implements Initializable {
   private FriendsPendingInvitesController invitesController;
   private ManiaPrivacySettingsController privacySettingsController;
   private FriendsListController friendsListController;
-  private Cabinet contact;
+
+  private String cabinetUuid;
+  private String displayName;
+  private CabinetStatus status;
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete friendship to \"" + contact.getDisplayName() + "\"?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete friendship to \"" + displayName + "\"?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      maniaClient.getContactClient().deleteContact(contact.getUuid());
+      maniaClient.getContactClient().deleteContact(cabinetUuid);
       if (invitesController != null) {
         invitesController.reload();
       }
@@ -87,40 +88,48 @@ public class FriendCabinetRowPanelController implements Initializable {
 
   @FXML
   private void onAccept() {
-    maniaClient.getContactClient().acceptInvite(contact.getUuid());
+    maniaClient.getContactClient().acceptInvite(cabinetUuid);
     invitesController.reload();
     ManiaSettingsController.navigateTo("mania-friends-list");
   }
 
-  public void setData(FriendsPendingInvitesController invitesController, Cabinet contact) {
+  public void setData(FriendsPendingInvitesController invitesController, CabinetContact contact) {
+    this.cabinetUuid = contact.getUuid();
+    this.status = contact.getStatus();
+    this.displayName = contact.getDisplayName();
+
     this.invitesController = invitesController;
-    this.contact = contact;
     acceptBtn.setVisible(true);
-    refresh(contact);
+    refresh(contact.getUuid());
   }
 
 
-  public void setData(ManiaPrivacySettingsController privacySettingsController, Cabinet contact) {
+  public void setData(ManiaPrivacySettingsController privacySettingsController, Cabinet cabinet) {
+    this.cabinetUuid = cabinet.getUuid();
+    this.status = cabinet.getStatus();
+    this.displayName = cabinet.getDisplayName();
     this.privacySettingsController = privacySettingsController;
-    this.contact = contact;
     acceptBtn.setVisible(false);
     deleteBtn.setVisible(false);
     toolbar.setVisible(false);
-    refresh(contact);
+    refresh(cabinet.getUuid());
   }
 
-  public void setData(FriendsListController friendsListController, Cabinet contact) {
+  public void setData(FriendsListController friendsListController, CabinetContact contact) {
+    this.cabinetUuid = contact.getUuid();
+    this.status = contact.getStatus();
+    this.displayName = contact.getDisplayName();
+
     this.friendsListController = friendsListController;
-    this.contact = contact;
     acceptBtn.setVisible(false);
-    refresh(contact);
+    refresh(contact.getUuid());
   }
 
-  private void refresh(Cabinet contact) {
+  private void refresh(String cUuid) {
     playerList.setVisible(false);
     new Thread(() -> {
       Platform.runLater(() -> {
-        InputStream in = client.getCachedUrlImage(maniaClient.getCabinetClient().getAvatarUrl(contact.getUuid()));
+        InputStream in = client.getCachedUrlImage(maniaClient.getCabinetClient().getAvatarUrl(cUuid));
         if (in == null) {
           in = ServerFX.class.getResourceAsStream("avatar-blank.png");
         }
@@ -128,15 +137,15 @@ public class FriendCabinetRowPanelController implements Initializable {
         avatarView.setImage(image);
         CommonImageUtil.setClippedImage(avatarView, (int) (image.getWidth() / 2));
 
-        if (contact.getStatus().getStatus() != null && contact.getStatus().getStatus().equals(CabinetOnlineStatus.online)) {
+        if (status.getStatus() != null && status.getStatus().equals(CabinetOnlineStatus.online)) {
           statusLabel.setText("Online");
           FontIcon icon = WidgetFactory.createIcon("mdi2c-checkbox-blank-circle");
           icon.setIconColor(Paint.valueOf(WidgetFactory.OK_COLOR));
           statusLabel.setGraphic(icon);
           statusLabel.setStyle(WidgetFactory.OK_STYLE);
           activeGameLabel.setVisible(true);
-          if (contact.getStatus().getActiveGame() != null) {
-            activeGameLabel.setText("Playing \"" + contact.getStatus().getActiveGame() + "\"");
+          if (status.getActiveGame() != null) {
+            activeGameLabel.setText("Playing \"" + status.getActiveGame() + "\"");
           }
           else {
             activeGameLabel.setVisible(false);
@@ -151,8 +160,8 @@ public class FriendCabinetRowPanelController implements Initializable {
           activeGameLabel.setVisible(false);
         }
 
-        nameLabel.setText(contact.getDisplayName());
-        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contact.getUuid());
+        nameLabel.setText(displayName);
+        List<Account> accounts = maniaClient.getCabinetClient().getAccounts(cabinetUuid);
         playerList.setVisible(!accounts.isEmpty());
 
         for (Account account : accounts) {
@@ -160,7 +169,7 @@ public class FriendCabinetRowPanelController implements Initializable {
             FXMLLoader loader = new FXMLLoader(FriendAccountRowPanelController.class.getResource("friend-account-row-panel.fxml"));
             Pane node = loader.load();
             FriendAccountRowPanelController friendController = loader.getController();
-            friendController.setData(friendsListController, contact, account);
+            friendController.setData(friendsListController, cabinetUuid, account);
             playerList.getChildren().add(node);
           }
           catch (Exception e) {

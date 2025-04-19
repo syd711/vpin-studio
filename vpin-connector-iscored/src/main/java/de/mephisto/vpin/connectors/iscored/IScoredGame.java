@@ -37,6 +37,10 @@ public class IScoredGame {
     return tags.contains("vps:singlescore");
   }
 
+  public boolean isMultiScore() {
+    return tags.contains("vps:multiscore");
+  }
+
   public List<String> getTags() {
     return tags;
   }

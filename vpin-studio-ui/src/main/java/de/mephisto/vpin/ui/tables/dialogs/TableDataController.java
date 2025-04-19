@@ -219,9 +219,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Button openVpsTableVersionBtn;
 
   @FXML
-  private Button copyTableBtn;
-
-  @FXML
   private Button copyTableVersionBtn;
 
   @FXML
@@ -329,7 +326,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     propperRenamingController.setVpsTable(null);
 
     openVpsTableBtn.setDisable(true);
-    copyTableBtn.setDisable(true);
     openVpsTableVersionBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     fixVersionBtn.setDisable(true);
@@ -358,7 +354,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       game.setExtTableId(mappedTableId);
 
       openVpsTableBtn.setDisable(false);
-      copyTableBtn.setDisable(false);
 
       VpsTable vpsTable = client.getVpsService().getTableById(mappedTableId);
       if (vpsTable != null) {
@@ -443,16 +438,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAutoFillAll() {
     List<GameRepresentation> vpxGamesCached = client.getGameService().getVpxGamesCached();
     TableDialogs.openAutoFillSettingsDialog(Studio.stage, vpxGamesCached, null);
-  }
-
-
-  @FXML
-  private void onCopyTableId() {
-    Clipboard clipboard = Clipboard.getSystemClipboard();
-    ClipboardContent content = new ClipboardContent();
-    String vpsTableUrl = VPS.getVpsTableUrl(game.getExtTableId());
-    content.putString(vpsTableUrl);
-    clipboard.setContent(content);
   }
 
   @FXML
@@ -1211,7 +1196,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void initVpsStatus() {
     openVpsTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
     openVpsTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
-    copyTableBtn.setDisable(StringUtils.isEmpty(game.getExtTableId()));
     copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
     List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));

@@ -76,7 +76,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   @Autowired
   private PreferencesService preferencesService;
 
-  private List<Cabinet> contacts;
+  private List<CabinetContact> contacts;
 
   private ManiaSettings maniaSettings;
 
@@ -250,9 +250,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
     if (cabinet != null) {
-      List<Cabinet> contacts = getContacts();
+      List<CabinetContact> contacts = getContacts();
 
-      for (Cabinet contact : contacts) {
+      for (CabinetContact contact : contacts) {
         List<Account> accounts = maniaClient.getCabinetClient().getAccounts(contact.getUuid());
         for (Account account : accounts) {
           List<TableScore> highscoresByAccount = maniaClient.getHighscoreClient().getHighscoresByAccountAndTable(account.getUuid(), vpsTableId, vpsVersionId);
@@ -264,7 +264,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     return result;
   }
 
-  private List<Cabinet> getContacts() {
+  private List<CabinetContact> getContacts() {
     if (this.contacts == null) {
       contacts = maniaClient.getContactClient().getContacts();
     }

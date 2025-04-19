@@ -47,6 +47,7 @@ public class GameRepresentation {
   private int gameStatus;
 
   private String hsFileName;
+  private String highscoreIniFilename;
   private String scannedHsFileName;
   private boolean romExists;
   private List<Integer> ignoredValidations;
@@ -83,6 +84,14 @@ public class GameRepresentation {
   private boolean altSoundAvailable;
 
   private int nbDirectB2S = -1;
+
+  public String getHighscoreIniFilename() {
+    return highscoreIniFilename;
+  }
+
+  public void setHighscoreIniFilename(String highscoreIniFilename) {
+    this.highscoreIniFilename = highscoreIniFilename;
+  }
 
   public String getPatchVersion() {
     return patchVersion;

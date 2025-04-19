@@ -82,12 +82,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private CheckBox filterCheckbox;
 
   @FXML
-  private Button openTableBtn;
-
-  @FXML
-  private Button copyTableBtn;
-
-  @FXML
   private Button copyTableVersionBtn;
 
   @FXML
@@ -152,17 +146,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       catch (Exception e) {
         LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
       }
-    }
-  }
-
-  @FXML
-  private void onCopyTable() {
-    if (!games.isEmpty()) {
-      Clipboard clipboard = Clipboard.getSystemClipboard();
-      ClipboardContent content = new ClipboardContent();
-      String vpsTableUrl = VPS.getVpsTableUrl(this.games.get(0).getExtTableId());
-      content.putString(vpsTableUrl);
-      clipboard.setContent(content);
     }
   }
 
@@ -291,7 +274,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText("-");
     ipdbLink.setText("");
     openTableVersionBtn.setDisable(true);
-    copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     autoFillBtn.setDisable(games.isEmpty());
     vpsResetUpdatesBtn.setDisable(true);
@@ -318,7 +300,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
       openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableId));
       openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
-      copyTableBtn.setDisable(StringUtils.isEmpty(vpsTableId));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
       VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
@@ -619,7 +600,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     vpsResetUpdatesBtn.setDisable(true);
     openTableVersionBtn.setDisable(true);
-    copyTableBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
 
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());

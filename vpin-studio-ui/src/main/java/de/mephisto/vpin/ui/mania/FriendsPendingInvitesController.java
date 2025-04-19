@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
+import de.mephisto.vpin.connectors.mania.model.CabinetContact;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -68,9 +69,9 @@ public class FriendsPendingInvitesController implements Initializable {
     }
 
     JFXFuture.supplyAsync(() -> {
-          List<Cabinet> contacts = Studio.maniaClient.getContactClient().getInvites();
+          List<CabinetContact> contacts = Studio.maniaClient.getContactClient().getInvites();
           List<Node> friendPanels = new ArrayList<>();
-          for (Cabinet contact : contacts) {
+          for (CabinetContact contact : contacts) {
             try {
               FXMLLoader loader = new FXMLLoader(FriendCabinetRowPanelController.class.getResource("friend-cabinet-row-panel.fxml"));
               Pane node = loader.load();

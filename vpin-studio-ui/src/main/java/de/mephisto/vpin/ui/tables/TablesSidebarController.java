@@ -205,6 +205,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         GameRepresentation gameRepresentation = this.game.get();
         if (gameRepresentation.getHighscoreType() != null) {
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
+
+          //try to open the actual highscore file
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
             GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
             String hsName = gameRepresentation.getHsFileName();
@@ -223,6 +225,14 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
             }
             SystemUtil.openFolder(userFolder);
             return;
+          }
+          else if (hsType.equals(HighscoreType.Ini)) {
+            String hsName = gameRepresentation.getHighscoreIniFilename();
+            if (hsName != null) {
+              File hsFile = new File(hsName);
+              SystemUtil.openFile(hsFile);
+              return;
+            }
           }
         }
 

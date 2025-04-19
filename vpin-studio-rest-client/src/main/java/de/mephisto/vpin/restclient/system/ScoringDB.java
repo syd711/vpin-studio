@@ -112,6 +112,8 @@ public class ScoringDB {
 
   private List<Map<String, Object>> highscoreTextParsers = new ArrayList<>();
 
+  private List<Map<String, Object>> highscoreIniParsers = new ArrayList<>();
+
   private List<Map<String, Object>> highscoreVPRegParsers = new ArrayList<>();
 
   public List<Map<String, Object>> getHighscoreVPRegParsers() {
@@ -120,6 +122,14 @@ public class ScoringDB {
 
   public void setHighscoreVPRegParsers(List<Map<String, Object>> highscoreVPRegParsers) {
     this.highscoreVPRegParsers = highscoreVPRegParsers;
+  }
+
+  public List<Map<String, Object>> getHighscoreIniParsers() {
+    return highscoreIniParsers;
+  }
+
+  public void setHighscoreIniParsers(List<Map<String, Object>> highscoreIniParsers) {
+    this.highscoreIniParsers = highscoreIniParsers;
   }
 
   private List<ScoringDBMapping> highscoreMappings = new ArrayList<>();

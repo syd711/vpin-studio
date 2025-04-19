@@ -358,17 +358,6 @@
                                                                   <Insets />
                                                                </HBox.margin>
                                                             </Button>
-                                                            <Button fx:id="copyTableBtn" mnemonicParsing="false" onAction="#onCopyTableId">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
-                                                               </graphic>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <tooltip>
-                                                                  <Tooltip text="Copy VPS Table URL" />
-                                                               </tooltip>
-                                                            </Button>
                                                          </children>
                                                       </HBox>
                                                       <HBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
@@ -398,6 +399,18 @@ public class CompetitionService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
+
+    try {
+      List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
+      LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
+      for (Competition s : iScoredSubscriptions) {
+        LOG.info(s.toString() + " (" + gameService.getGame(s.getGameId()) + ") [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "]");
+      }
+      LOG.info("--------------------------------- /iScored Competitions -----------------------------------------------");
+    }
+    catch (Exception e) {
+      LOG.error("iScored summary failed: {}", e.getMessage(), e);
+    }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

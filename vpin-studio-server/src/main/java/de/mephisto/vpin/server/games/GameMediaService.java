@@ -591,6 +591,11 @@ public class GameMediaService {
           if (!FileUtils.delete(game.getGameFile())) {
             success = false;
           }
+
+          File highscoreIniFile = game.getHighscoreIniFile();
+          if (highscoreIniFile != null && highscoreIniFile.exists()) {
+            highscoreIniFile.delete();
+          }
         }
 
         if (descriptor.isDeleteDirectB2s()) {
