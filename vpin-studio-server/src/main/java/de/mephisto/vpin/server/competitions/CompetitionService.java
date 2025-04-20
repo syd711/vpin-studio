@@ -404,7 +404,7 @@ public class CompetitionService implements InitializingBean {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
       for (Competition s : iScoredSubscriptions) {
-        LOG.info(s.toString() + " (" + gameService.getGame(s.getGameId()) + ") [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "]");
+        LOG.info(s.toString() + " (" + gameService.getGame(s.getGameId()) + ") [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
       }
       LOG.info("--------------------------------- /iScored Competitions -----------------------------------------------");
     }

@@ -129,7 +129,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public GameRepresentation getFirstGameByRom(String rom) {
-    List<GameRepresentation> gamesCached = this.getGamesCached(-1);
+    List<GameRepresentation> gamesCached = this.getVpxGamesCached();
     for (GameRepresentation gameRepresentation : gamesCached) {
       String gameRom = gameRepresentation.getRom();
       if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
@@ -151,12 +151,20 @@ public class GamesServiceClient extends VPinStudioClientService {
     return result;
   }
 
+  /**
+   * Return the list of games matching the given game name.
+   * Note that we do not need to load games from emulators that have not been loaded yet.
+   *
+   * @param gameName the gameName which identifies the media assets base name.
+   */
   public List<GameRepresentation> getGamesByGameName(String gameName) {
-    List<GameRepresentation> gameList = this.getGamesCached(-1);
+    Collection<List<GameRepresentation>> values = allGames.values();
     List<GameRepresentation> result = new ArrayList<>();
-    for (GameRepresentation gameRepresentation : gameList) {
-      if (gameRepresentation.getGameName().equalsIgnoreCase(gameName)) {
-        result.add(gameRepresentation);
+    for (List<GameRepresentation> value : values) {
+      for (GameRepresentation gameRepresentation : value) {
+        if (gameRepresentation.getGameName() != null && gameRepresentation.getGameName().equals(gameName)) {
+          result.add(gameRepresentation);
+        }
       }
     }
     return result;
@@ -175,7 +183,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     Collection<List<GameRepresentation>> values = allGames.values();
     for (List<GameRepresentation> value : values) {
       for (GameRepresentation gameRepresentation : value) {
-        if(gameRepresentation.getId() == id) {
+        if (gameRepresentation.getId() == id) {
           return gameRepresentation;
         }
       }
@@ -236,7 +244,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<VpsTable> getInstalledVpsTables() {
     List<VpsTable> vpsTables = new ArrayList<>();
-    List<GameRepresentation> gamesCached = getGamesCached(-1);
+    List<GameRepresentation> gamesCached = getVpxGamesCached();
     for (GameRepresentation game : gamesCached) {
       if (!StringUtils.isEmpty(game.getExtTableId())) {
         VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
@@ -255,7 +263,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
-    List<GameRepresentation> gamesCached = getGamesCached(-1);
+    List<GameRepresentation> gamesCached = getVpxGamesCached();
     GameRepresentation hit = null;
     for (GameRepresentation game : gamesCached) {
       if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
@@ -365,7 +373,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   private List<GameRepresentation> getGamesCached(int emulatorId) {
+    //TODO try to avoid this! We should never fetch games for ALL emulators at once
     if (emulatorId == -1) {
+      LOG.warn("******************************** Bulk Game Refresh Call *********************************************");
       List<GameRepresentation> games = new ArrayList<>();
       List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
       for (GameEmulatorRepresentation gameEmulator : gameEmulators) {

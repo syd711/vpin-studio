@@ -84,14 +84,14 @@ public class DefaultIniHighscoreFileAdapter implements IniScoreFileAdapter {
           line = key + "=???";
         }
         else if (key.endsWith("_value")) {
-          line = key + "=0";
+          line = key + "=" + score;
         }
       }
       else if (line.startsWith("player") && line.contains("=")) {
         String[] split = line.split("=");
         String key = split[0].trim();
 
-        line = key + "=0";
+        line = key + "=" + score;
       }
       newScoreText.add(line);
     }

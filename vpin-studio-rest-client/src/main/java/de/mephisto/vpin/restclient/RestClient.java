@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.ResourceAccessException;
@@ -65,7 +68,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
 //    httpRequestFactory.setConnectTimeout(TIMEOUT);
 //    httpRequestFactory.setReadTimeout(TIMEOUT);
 //    restTemplate = new RestTemplate(httpRequestFactory);
-    restTemplate = new RestTemplate();
+    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
+        HttpClientBuilder.create().build());
+    restTemplate = new RestTemplate(clientHttpRequestFactory);
     restTemplate.setInterceptors(interceptors);
 
     List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
@@ -136,15 +141,13 @@ public class RestClient implements ClientHttpRequestInterceptor {
       }
       LOG.info("HTTP GET " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
       return forObject;
-    } catch (ResourceAccessException e) {
+    }
+    catch (ResourceAccessException e) {
       LOG.error("GET request failed: " + e.getMessage());
-      if(errorHandler != null) {
+      if (errorHandler != null) {
         errorHandler.onError(e);
       }
     }
-
-
-
 
 
     return null;
@@ -161,7 +164,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     long start = System.currentTimeMillis();
     String url = baseUrl + path;
     restTemplate.delete(url, values);
-    LOG.info("HTTP DELETE " + path + " (" + (System.currentTimeMillis()-start) + "ms)");
+    LOG.info("HTTP DELETE " + path + " (" + (System.currentTimeMillis() - start) + "ms)");
     return true;
   }
 
@@ -171,7 +174,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity entity = new HttpEntity<>(model, headers);
     T exchange = exchange(path, HttpMethod.POST, entity, entityType);
-    LOG.info("HTTP POST " + path + " (" + (System.currentTimeMillis()-start) + "ms)");
+    LOG.info("HTTP POST " + path + " (" + (System.currentTimeMillis() - start) + "ms)");
     return exchange;
   }
 
@@ -181,7 +184,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);
     Boolean exchange = exchange(url, HttpMethod.PUT, entity, Boolean.class);
-    LOG.info("HTTP PUT " + url + " (" + (System.currentTimeMillis()-start) + "ms)");
+    LOG.info("HTTP PUT " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
     return exchange;
   }
 
@@ -191,7 +194,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<Map> entity = new HttpEntity<>(model, headers);
     T exchange = exchange(url, HttpMethod.PUT, entity, entityType);
-    LOG.info("HTTP PUT " + url + " (" + (System.currentTimeMillis()-start) + "ms)");
+    LOG.info("HTTP PUT " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
     return exchange;
   }
 
@@ -204,7 +207,31 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-    return execution.execute(request, body);
+    request.getHeaders().add(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br");
+
+//    if (request.getURI().toString().contains("knowns")) {
+//      logRequest(request);
+//    }
+    ClientHttpResponse response = execution.execute(request, body);
+//    if (request.getURI().toString().contains("knowns")) {
+//      logResponse(response);
+//    }
+    return response;
+  }
+
+  private static void logResponse(ClientHttpResponse response) {
+    System.out.println("--------- Response ---------------");
+    Set<Map.Entry<String, List<String>>> entries = response.getHeaders().entrySet();
+    for (Map.Entry<String, List<String>> entry : entries) {
+      System.out.println(entry.getKey() + " => " + entry.getValue());
+    }
+  }
+
+  private static void logRequest(HttpRequest request) {
+    System.out.println("--------- Request ---------------");
+    for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
+      System.out.println(entry.getKey() + " => " + entry.getValue());
+    }
   }
 
   public byte[] readBinary(String resource) {
@@ -239,7 +266,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
       LOG.info("HTTP GET Binary: " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
       return baos.toByteArray();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed while reading bytes from %s: %s", resource, e.getMessage(), e);
     }
     return null;

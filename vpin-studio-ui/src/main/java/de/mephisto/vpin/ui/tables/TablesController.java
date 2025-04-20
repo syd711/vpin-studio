@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -503,35 +504,39 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
+    List<Integer> refreshList = new ArrayList<>();
     if (!StringUtils.isEmpty(rom)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
-        GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reloadItem(game);
-        this.recorderController.reloadItem(game);
+        refreshList.add(g.getId());
       }
     }
 
     if (!StringUtils.isEmpty(gameName)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
-        GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reloadItem(game);
-        this.recorderController.reloadItem(game);
+        if (!refreshList.contains(g.getId())) {
+          refreshList.add(g.getId());
+        }
       }
     }
 
     if (id > 0) {
-      GameRepresentation refreshedGame = client.getGameService().getGame(id);
-      this.tableOverviewController.reloadItem(refreshedGame);
-      this.recorderController.reloadItem(refreshedGame);
+      if (!refreshList.contains(id)) {
+        refreshList.add(id);
+      }
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
-      if (selection != null) {
-        this.tableOverviewController.reloadItem(selection);
-        this.recorderController.reloadItem(selection);
+      if (selection != null && !refreshList.contains(selection)) {
+        refreshList.add(selection.getId());
       }
+    }
+
+    for (Integer gameId : refreshList) {
+      GameRepresentation game = client.getGameService().getGame(gameId);
+      this.tableOverviewController.reloadItem(game);
+      this.recorderController.reloadItem(game);
     }
 
     // also refresh playlists as the addition/modification of tables may impact them
