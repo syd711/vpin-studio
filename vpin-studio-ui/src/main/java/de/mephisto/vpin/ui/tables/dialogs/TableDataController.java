@@ -858,8 +858,9 @@ public class TableDataController implements Initializable, DialogController, Aut
         // TAB Meta Data
 
         List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+        statusCombo.setDisable(statuses.isEmpty());
         statusCombo.setItems(FXCollections.observableList(statuses));
-        if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3) {
+        if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3 && !statuses.isEmpty()) {
           TableStatus tableStatus = statuses.get(tableDetails.getStatus());
           statusCombo.setValue(tableStatus);
         }

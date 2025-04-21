@@ -5,8 +5,8 @@
 - **Highscore Resolving**: Fixed highscore resetting with values for .ini highscores.
 - **Performance Updates and Fixes:**
   - Enabled gzip compression for requests: Unfortunately this was not enabled yet and will improve the response times when working remote.
-  - Fixed and improved table refreshes: Fixed several situations where all games from all emulators were loaded (e.g. after editing assets).
-  - Fixed and improved table refreshes: Fixed duplicated table refreshes.
+  - Fixed several situations where all games from all emulators were loaded (e.g. after editing assets).
+  - Removed duplicated table refreshes.
 
 ---
 

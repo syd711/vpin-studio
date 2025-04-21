@@ -5,7 +5,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>3.14.4</version>
+        <version>3.14.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-rest-client</artifactId>
-            <version>3.14.4</version>
+            <version>3.14.5</version>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
