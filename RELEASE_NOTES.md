@@ -1,3 +1,15 @@
+## Release Notes 3.14.6
+
+## Changes
+
+- **Launcher**: Added auto-connect for remote clients so that the latest known connection is used.
+- **Table Asset Manager**: Fixed dialog size calculation. Instead of trying to calculate the monitor resolution, the size of the main Studio window is used to determine which (more compact) dialog version of the asset manager dialog should be used.
+- **Drop-In Menu** Limited the amount of items to 100 to avoid a client crash when a folder with thousands of entries is added.
+- **Drop-In Menu** Removed the system tray notification. It was ugly anyway.
+- **Drop-In Menu** Added filtering for hidden files.
+
+
+---
 ## Release Notes 3.14.5
 
 ## Changes
