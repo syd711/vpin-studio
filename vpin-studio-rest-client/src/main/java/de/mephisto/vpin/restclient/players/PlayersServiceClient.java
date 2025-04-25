@@ -9,6 +9,10 @@ import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,7 +66,7 @@ public class PlayersServiceClient extends VPinStudioClientService {
   }
 
   public ScoreSummaryRepresentation getPlayerScores(String initials) {
-    return getRestClient().get(API + "players/highscores/" + initials, ScoreSummaryRepresentation.class);
+    return getRestClient().get(API + "players/highscores/" + URLEncoder.encode(initials, StandardCharsets.UTF_8), ScoreSummaryRepresentation.class);
   }
 
   public PlayerRepresentation getDefaultPlayer() {
