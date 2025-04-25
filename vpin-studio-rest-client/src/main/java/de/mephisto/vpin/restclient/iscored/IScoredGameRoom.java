@@ -7,6 +7,15 @@ public class IScoredGameRoom {
   private String url;
   private boolean synchronize = true;
   private boolean scoreReset = true;
+  private String badge;
+
+  public String getBadge() {
+    return badge;
+  }
+
+  public void setBadge(String badge) {
+    this.badge = badge;
+  }
 
   public boolean isScoreReset() {
     return scoreReset;

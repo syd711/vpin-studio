@@ -4,17 +4,22 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -42,7 +47,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionsController implements Initializable, StudioFXController {
+public class CompetitionsController implements Initializable, StudioFXController, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
 
   @FXML
@@ -181,8 +186,8 @@ public class CompetitionsController implements Initializable, StudioFXController
     else if (t1.intValue() == 3) {
       if (iScoredSubscriptionsTab != null) {
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-        Optional<CompetitionRepresentation> selection = iScoredSubscriptionsController.getSelection();
-        updateSelection(selection);
+        Optional<IScoredSubscriptionsController.IScoredGameRoomGameModel> selection = iScoredSubscriptionsController.getSelection();
+        updateSelection(Optional.empty());
         checkTitledPanes(CompetitionType.ISCORED);
         iScoredSubscriptionsController.onReload();
       }
@@ -487,6 +492,11 @@ public class CompetitionsController implements Initializable, StudioFXController
       catch (IOException e) {
         LOG.error("failed to load subscriptions: " + e.getMessage(), e);
       }
+
+      IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      if (!iScoredSettings.isEnabled()) {
+        tabPane.getTabs().remove(iScoredSubscriptionsTab);
+      }
     }
     else {
       tabPane.getTabs().remove(iScoredSubscriptionsTab);
@@ -503,6 +513,8 @@ public class CompetitionsController implements Initializable, StudioFXController
     });
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
     checkTitledPanes(CompetitionType.OFFLINE);
+
+    client.getPreferenceService().addListener(this);
   }
 
 
@@ -530,6 +542,31 @@ public class CompetitionsController implements Initializable, StudioFXController
     StudioFXController activeController = getActiveController();
     if (activeController != null) {
       activeController.onKeyEvent(event);
+    }
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.ISCORED_SETTINGS.equals(key)) {
+      int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+      if (selectedIndex == 3) {
+        tabPane.getSelectionModel().select(0);
+      }
+
+      IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      if (iScoredSettings.isEnabled()) {
+        if (!tabPane.getTabs().contains(iScoredSubscriptionsTab)) {
+          tabPane.getTabs().add(iScoredSubscriptionsTab);
+        }
+
+        Platform.runLater(() -> {
+          ProgressDialog.createProgressDialog(new IScoredSynchronizationProgressModel());
+        });
+      }
+      else {
+        tabPane.getTabs().remove(iScoredSubscriptionsTab);
+      }
+
     }
   }
 }

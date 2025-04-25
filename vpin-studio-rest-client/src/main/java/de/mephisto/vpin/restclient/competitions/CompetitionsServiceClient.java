@@ -132,6 +132,16 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return null;
   }
 
+  public List<CompetitionRepresentation> synchronizeIScored() {
+    try {
+      return Arrays.asList(getRestClient().get(API + "competitions/synchronizeIScored", CompetitionRepresentation[].class));
+    }
+    catch (Exception e) {
+      LOG.error("Failed to sync competition scores: {}", e.getMessage(), e);
+    }
+    return null;
+  }
+
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
     String name = "competition-bg-game-" + gameId;
 

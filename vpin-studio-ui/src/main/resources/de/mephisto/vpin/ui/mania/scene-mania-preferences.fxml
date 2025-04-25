@@ -36,7 +36,7 @@
                               </VBox>
                               <VBox fx:id="menuItemsPanel">
                                  <children>
-                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Privacy Settings" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Data &amp; Privacy Settings" />
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="CABINET">
                                        <font>
                                           <Font size="13.0" />

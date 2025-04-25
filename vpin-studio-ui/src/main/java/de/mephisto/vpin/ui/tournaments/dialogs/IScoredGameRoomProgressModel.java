@@ -17,17 +17,20 @@ import java.util.stream.Collectors;
 public class IScoredGameRoomProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredGameRoomProgressModel.class);
   private final List<String> urls;
+  private boolean forceReload = false;
   private final Iterator<String> iterator;
 
-  public IScoredGameRoomProgressModel(String dashboardUrl) {
+  public IScoredGameRoomProgressModel(String dashboardUrl, boolean reload) {
     super("Loading iScored Game Room");
+    this.forceReload = reload;
     this.urls = new ArrayList<>(Arrays.asList(dashboardUrl));
     this.iterator = this.urls.iterator();
   }
 
-  public IScoredGameRoomProgressModel(List<IScoredGameRoom> dashboardUrls) {
+  public IScoredGameRoomProgressModel(List<IScoredGameRoom> dashboardUrls, boolean reload) {
     super("Loading iScored Game Rooms");
     this.urls = new ArrayList<>(dashboardUrls.stream().map(gr -> gr.getUrl()).collect(Collectors.toList()));
+    this.forceReload = reload;
     this.iterator = this.urls.iterator();
   }
 
@@ -64,7 +67,7 @@ public class IScoredGameRoomProgressModel extends ProgressModel<String> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, String dashboardUrl) {
     try {
-      GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+      GameRoom gameRoom = IScored.getGameRoom(dashboardUrl, forceReload);
       if (gameRoom != null) {
         progressResultModel.getResults().add(gameRoom);
       }

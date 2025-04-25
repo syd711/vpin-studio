@@ -20,7 +20,6 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.competitions.CompetitionDialogs;
 import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
@@ -91,9 +90,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private Button iscoredReloadBtn;
-
-  @FXML
-  private Button iscoredDetailsBtn;
 
   @FXML
   private Button addTableBtn;
@@ -213,14 +209,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       GameRepresentation game = client.getGameService().getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
       tableSelection.add(new TournamentTreeModel(null, game, tournamentTable, vpsTable, vpsTableVersion));
       reloadTables();
-    }
-  }
-
-  @FXML
-  private void onIScoredInfo(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    if (this.gameRoom != null) {
-      CompetitionDialogs.openIScoredInfoDialog(stage, this.gameRoom);
     }
   }
 
@@ -448,8 +436,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     this.gameRoom = null;
     if (!StringUtils.isEmpty(tournament.getDashboardUrl())) {
-      IScored.invalidate();
-      gameRoom = IScored.getGameRoom(tournament.getDashboardUrl());
+      gameRoom = IScored.getGameRoom(tournament.getDashboardUrl(), false);
       iscoredScoresEnabled.setSelected(gameRoom != null && gameRoom.getSettings() != null && gameRoom.getSettings().isPublicScoreEnteringEnabled());
     }
 
@@ -472,12 +459,12 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.tableView.refresh();
 
     if (!StringUtils.isEmpty(dashboardUrl)) {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl, false));
       if (!progressDialog.getResults().isEmpty()) {
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoreEnteringEnabled());
 
-        List<IScoredGame> games = gameRoom.getGames();
+        List<IScoredGame> games = gameRoom.getTaggedGames();
         for (IScoredGame game : games) {
           List<String> tags = game.getTags();
           Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();

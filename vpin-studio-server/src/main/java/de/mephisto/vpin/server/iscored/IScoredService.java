@@ -51,13 +51,13 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       return;
     }
     String dashboardUrl = tournament.getDashboardUrl();
-    if (!IScored.isIscoredGameRoomUrl(dashboardUrl)) {
+    if (!IScored.isIScoredGameRoomUrl(dashboardUrl)) {
       LOG.info("Not a tournament url for iScored: {}", dashboardUrl);
       return;
     }
 
     try {
-      GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+      GameRoom gameRoom = IScored.getGameRoom(dashboardUrl, true);
       if (gameRoom != null) {
         if (!gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
           LOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
@@ -92,7 +92,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
 
   public void submitScore(Competition iScoredSubscription, Score newScore) {
     String url = iScoredSubscription.getUrl();
-    if (!IScored.isIscoredGameRoomUrl(url)) {
+    if (!IScored.isIScoredGameRoomUrl(url)) {
       LOG.warn("The URL of " + iScoredSubscription + " (" + url + ") is not a valid iScored URL.");
       SLOG.warn("The URL of " + iScoredSubscription + " (" + url + ") is not a valid iScored URL.");
       return;
@@ -101,8 +101,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
     LOG.info("Emitting iScored game score to " + url);
     SLOG.info("Emitting iScored game score to " + url);
 
-    IScored.invalidate();
-    GameRoom gameRoom = IScored.getGameRoom(url);
+    GameRoom gameRoom = IScored.getGameRoom(url, true);
     if (gameRoom != null) {
       String vpsTableId = iScoredSubscription.getVpsTableId();
       String vpsVersionId = iScoredSubscription.getVpsTableVersionId();

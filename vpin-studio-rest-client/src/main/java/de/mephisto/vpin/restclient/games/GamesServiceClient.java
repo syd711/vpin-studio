@@ -281,6 +281,25 @@ public class GamesServiceClient extends VPinStudioClientService {
     return hit;
   }
 
+  @NonNull
+  public List<GameRepresentation> getGamesByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
+    List<GameRepresentation> gamesCached = getVpxGamesCached();
+    List<GameRepresentation> hits = new ArrayList<>();
+    for (GameRepresentation game : gamesCached) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
+        if (vpsTableVersionId == null) {
+          hits.add(game);
+          continue;
+        }
+
+        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersionId)) {
+          hits.add(game);
+        }
+      }
+    }
+    return hits;
+  }
+
   public List<Integer> getGameIds() {
     try {
       final RestTemplate restTemplate = new RestTemplate();

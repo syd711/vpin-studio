@@ -1,10 +1,11 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -12,14 +13,6 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class CompetitionDialogs {
-
-  public static void openIScoredInfoDialog(Stage s, GameRoom gameRoom) {
-    FXMLLoader fxmlLoader = new FXMLLoader(IScoredInfoDialogController.class.getResource("dialog-iscored-info.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Game Room Info");
-    IScoredInfoDialogController controller = (IScoredInfoDialogController) stage.getUserData();
-    controller.setData(s, gameRoom);
-    stage.showAndWait();
-  }
 
   public static CompetitionRepresentation openDiscordJoinCompetitionDialog() {
     String title = "Join Competition";
@@ -71,12 +64,12 @@ public class CompetitionDialogs {
     return controller.getCompetition();
   }
 
-  public static List<CompetitionRepresentation> openIScoredSubscriptionDialog(List<CompetitionRepresentation> existingCompetitions) {
+  public static List<CompetitionRepresentation> openIScoredSubscriptionDialog(@NonNull IScoredGameRoom iScoredGameRoom, @NonNull List<CompetitionRepresentation> existingCompetitions) {
     String title = "Game Room Subscriptions";
     FXMLLoader fxmlLoader = new FXMLLoader(IScoredSubscriptionDialogController.class.getResource("dialog-iscored-subscription.fxml"));
     Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
     IScoredSubscriptionDialogController controller = (IScoredSubscriptionDialogController) stage.getUserData();
-    controller.setData(existingCompetitions);
+    controller.setData(iScoredGameRoom, existingCompetitions);
     stage.showAndWait();
 
     return controller.getTableList();

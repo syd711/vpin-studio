@@ -217,7 +217,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     JFXFuture.supplyAsync(() -> {
       ScoreSummaryRepresentation scoreSummary = null;
       if (competitionType.equals(CompetitionType.ISCORED)) {
-        GameRoom gameRoom = IScored.getGameRoom(competition.getUrl());
+        GameRoom gameRoom = IScored.getGameRoom(competition.getUrl(), false);
         if (gameRoom != null) {
           scoreSummary = ScoreSummaryRepresentation.forGameRoom(gameRoom, competition.getVpsTableId(), competition.getVpsTableVersionId());
         }

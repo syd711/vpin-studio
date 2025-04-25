@@ -11,10 +11,13 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.List;
@@ -45,14 +48,19 @@ public class IScoredPreferencesController implements Initializable {
   private Button deleteBtn;
 
   @FXML
+  private CheckBox enabledCheckbox;
+
+  @FXML
   private Button editBtn;
 
+  @FXML
+  private Pane enabledBox;
 
   private IScoredSettings iScoredSettings;
 
   @FXML
   private void onReload() {
-    reload();
+    reload(true);
   }
 
   @FXML
@@ -60,14 +68,14 @@ public class IScoredPreferencesController implements Initializable {
     IScoredGameRoomModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       TableDialogs.openIScoredGameRoomDialog(iScoredSettings, selectedItem.iScoredGameRoom);
-      reload();
+      reload(false);
     }
   }
 
   @FXML
   private void onAdd() {
     TableDialogs.openIScoredGameRoomDialog(iScoredSettings, null);
-    reload();
+    reload(false);
   }
 
   @FXML
@@ -85,19 +93,19 @@ public class IScoredPreferencesController implements Initializable {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting game room \"" + selectedItem.gameRoom.getUrl() + "\": " + e.getMessage());
         }
         finally {
-          reload();
+          reload(false);
         }
       }
     }
   }
 
-  private void reload() {
+  private void reload(boolean forceReload) {
     client.getPreferenceService().clearCache(PreferenceNames.ISCORED_SETTINGS);
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     List<IScoredGameRoom> sets = iScoredSettings.getGameRooms();
-    ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(sets));
+    ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(sets, forceReload));
 
-    List<IScoredGameRoomModel> models = sets.stream().map(gr -> new IScoredGameRoomModel(gr, IScored.getGameRoom(gr.getUrl()))).collect(Collectors.toList());
+    List<IScoredGameRoomModel> models = sets.stream().map(gr -> new IScoredGameRoomModel(gr, IScored.getGameRoom(gr.getUrl(), false))).collect(Collectors.toList());
     tableView.setItems(FXCollections.observableList(models));
     tableView.refresh();
   }
@@ -105,6 +113,23 @@ public class IScoredPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+
+    enabledBox.managedProperty().bindBidirectional(enabledBox.visibleProperty());
+    enabledBox.setVisible(iScoredSettings.isEnabled());
+
+    enabledCheckbox.setSelected(iScoredSettings.isEnabled());
+    enabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        iScoredSettings.setEnabled(newValue);
+        client.getPreferenceService().setJsonPreference(iScoredSettings);
+
+        enabledBox.setVisible(iScoredSettings.isEnabled());
+        if(iScoredSettings.isEnabled()) {
+          reload(false);
+        }
+      }
+    });
 
     tableView.setPlaceholder(new Label("              No game rooms found.\nCreate an iScored game room to submit highscores to."));
     deleteBtn.setDisable(true);
@@ -155,7 +180,9 @@ public class IScoredPreferencesController implements Initializable {
       return row;
     });
 
-    reload();
+    if(iScoredSettings.isEnabled()) {
+      reload(false);
+    }
   }
 
   class IScoredGameRoomModel {

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -10,6 +11,7 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -23,9 +25,27 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                        <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Status" />
-                        <TableColumn fx:id="visibilityColumn" sortable="false" style="-fx-alignment: CENTER;" text="Visibility" />
-                        <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: CENTER;" text="Your Table" />
+                        <TableColumn fx:id="syncColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Synchronized" />
+                        <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Game Settings" />
+                        <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: CENTER;">
+                           <graphic>
+                              <HBox alignment="CENTER" spacing="6.0">
+                                 <children>
+                                    <Label text="Your Table" />
+                                    <Label fx:id="publicReadAPIHint1" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only the first table match is shown here. Multiple tables might be applicable for the game room game. Check the table overview for details." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </graphic></TableColumn>
                         <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="GameRoom" />
                         <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="Virtual Pinball Spreadsheet Table" />
                         <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
@@ -48,7 +68,7 @@
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                              <TextField fx:id="textfieldSearch" prefWidth="200.0" promptText="Subscription Search...">
+                              <TextField fx:id="textfieldSearch" prefWidth="180.0" promptText="Subscription Search...">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -64,7 +84,35 @@
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                  <Label styleClass="default-text" text="Game Room: " />
+                  <ComboBox fx:id="gameRoomsCombo" prefWidth="280.0" />
+                  <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Button fx:id="editBtn" layoutX="640.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" text="Game Rooms" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -72,20 +120,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="eventLogBtn" layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" text="Event Log" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-clock-alert-outline" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Shows the recorded events of the last play session." />
-                     </tooltip>
-                  </Button>
-                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                             <font>
                                 <Font size="14.0" />
                             </font>

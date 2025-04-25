@@ -2,6 +2,11 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.connectors.iscored.Score;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController;
@@ -18,17 +23,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -46,18 +47,6 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private CheckBox resetCheckbox;
 
   @FXML
-  private CheckBox scoreApiCheckbox;
-
-  @FXML
-  private CheckBox readApiCheckbox;
-
-  @FXML
-  private Label errorTitle;
-
-  @FXML
-  private Label errorMessage;
-
-  @FXML
   private TextField urlField;
 
   @FXML
@@ -66,62 +55,150 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   @FXML
   private ComboBox<String> badgeCombo;
 
+
   @FXML
-  private Pane errorPane;
+  private Label nameLabel;
+
+  @FXML
+  private Label tableCountLabel;
+
+  @FXML
+  private Label vpsTableCountLabel;
+
+  @FXML
+  private Label scoresCountLabel;
+
+  @FXML
+  private Label publicReadHint;
+
+  @FXML
+  private Label readAPIHint;
+
+  @FXML
+  private Label publicWriteHint;
+
+  @FXML
+  private CheckBox adminApprovalCheckbox;
+  @FXML
+  private CheckBox readOnlyCheckbox;
+  @FXML
+  private CheckBox scoreEntriesCheckbox;
+  @FXML
+  private CheckBox readAPICheckbox;
+  @FXML
+  private CheckBox longNamesCheckbox;
+  @FXML
+  private CheckBox datesCheckbox;
+  @FXML
+  private CheckBox tournamentColumnCheckbox;
 
   private IScoredSettings iScoredSettings;
   private IScoredGameRoom gameRoom;
 
+  private boolean result = false;
+
   @FXML
   private void onValidate() {
+    refresh(true);
+  }
+
+  private void refresh(boolean force) {
     String url = urlField.getText().trim();
     if (StringUtils.isEmpty(url)) {
       return;
     }
 
-    scoreApiCheckbox.setSelected(false);
-    readApiCheckbox.setSelected(false);
+    if (!url.startsWith("https://www.iScored.info/")) {
+      return;
+    }
+
     urlField.setDisable(true);
     validateBtn.setDisable(true);
-    errorPane.setVisible(false);
     badgeCombo.setDisable(true);
     setDisabled(true);
+    nameLabel.setText("-");
 
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(url));
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(url, force));
     if (!progressDialog.getResults().isEmpty()) {
       GameRoom gr = (GameRoom) progressDialog.getResults().get(0);
+      nameLabel.setText(gr.getName());
+
       urlField.setDisable(false);
       validateBtn.setDisable(false);
 
-      if (!gr.getSettings().isApiReadingEnabled()) {
-        errorPane.setVisible(true);
-        errorTitle.setText("Read API Not Enabled");
-        errorMessage.setText("The game room must have the read API enabled in the iScored settings.");
-        return;
-      }
-      if (!gr.getSettings().isPublicScoresReadingEnabled()) {
-        errorPane.setVisible(true);
-        errorTitle.setText("Public Score Reading Not Enabled");
-        errorMessage.setText("The game room must have the public score reading API enabled in the iScored settings.");
-        return;
-      }
-
-      scoreApiCheckbox.setSelected(true);
-      readApiCheckbox.setSelected(true);
-
       badgeCombo.setDisable(false);
-      errorPane.setVisible(false);
       urlField.setDisable(false);
       validateBtn.setDisable(false);
       setDisabled(false);
       saveBtn.setDisable(false);
+
+      nameLabel.setText(gr.getName());
+
+      readOnlyCheckbox.setSelected(gr.getSettings().isPublicScoresReadingEnabled());
+      publicReadHint.setVisible(!readOnlyCheckbox.isSelected());
+      scoreEntriesCheckbox.setSelected(gr.getSettings().isPublicScoreEnteringEnabled());
+      publicWriteHint.setVisible(!scoreEntriesCheckbox.isSelected());
+      readAPICheckbox.setSelected(gr.getSettings().isApiReadingEnabled());
+      readAPIHint.setVisible(!readAPICheckbox.isSelected());
+      adminApprovalCheckbox.setSelected(gr.getSettings().isAdminApprovalEnabled());
+      longNamesCheckbox.setSelected(gr.getSettings().isLongNameInputEnabled());
+      datesCheckbox.setSelected(gr.getSettings().isDateFieldEnabled());
+      tournamentColumnCheckbox.setSelected(gr.getSettings().isCompetitionColumnEnabled());
+      tableCountLabel.setText(String.valueOf(gr.getTaggedGames().size()));
+
+      int count = 0;
+      List<IScoredGame> games = gr.getGames();
+      for (IScoredGame game : games) {
+        List<String> tags = game.getTags();
+        Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
+        if (first.isPresent()) {
+          try {
+            String vpsUrlString = first.get();
+            URL urlUrl = new URL(vpsUrlString);
+            String idSegment = urlUrl.getQuery();
+
+            String tableId = idSegment.substring(idSegment.indexOf("=") + 1);
+            if (tableId.contains("&")) {
+              tableId = tableId.substring(0, tableId.indexOf("&"));
+            }
+            else if (tableId.contains("#")) {
+              tableId = tableId.substring(0, tableId.indexOf("#"));
+            }
+
+            VpsTable vpsTable = client.getVpsService().getTableById(tableId);
+            if (vpsTable == null) {
+              continue;
+            }
+
+            String[] split = vpsUrlString.split("#");
+            VpsTableVersion vpsVersion = null;
+            if (split.length > 1) {
+              vpsVersion = vpsTable.getTableVersionById(split[1]);
+            }
+
+            if (vpsVersion == null) {
+              continue;
+            }
+
+            count++;
+          }
+          catch (Exception e) {
+            LOG.error("Failed to parse table entry: " + e.getMessage(), e);
+          }
+        }
+      }
+      vpsTableCountLabel.setText(String.valueOf(count));
+
+      int scoreCount = 0;
+      for (IScoredGame game : games) {
+        List<Score> scores = game.getScores();
+        scoreCount += scores.size();
+      }
+      scoresCountLabel.setText(String.valueOf(scoreCount));
     }
     else {
-      errorPane.setVisible(true);
       urlField.setDisable(false);
       validateBtn.setDisable(false);
-      errorTitle.setText("Invalid Game Room URL");
-      errorMessage.setText("No game room could be read for the given URL.");
       saveBtn.setDisable(true);
     }
   }
@@ -139,6 +216,8 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
 
   @FXML
   private void onSaveClick(ActionEvent e) {
+    result = true;
+
     gameRoom.setUrl(urlField.getText());
     gameRoom.setScoreReset(resetCheckbox.isSelected());
     gameRoom.setSynchronize(synchronizationCheckbox.isSelected());
@@ -175,17 +254,16 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     saveBtn.setDisable(StringUtils.isEmpty(gameRoom.getUrl()));
 
     if (!StringUtils.isEmpty(gameRoom.getUrl())) {
-      onValidate();
+      refresh(false);
     }
   }
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    errorPane.managedProperty().bindBidirectional(errorPane.visibleProperty());
-    errorPane.setVisible(false);
-
     saveBtn.setDisable(true);
+
+    setDisabled(true);
 
     List<String> badges = new ArrayList<>(client.getCompetitionService().getCompetitionBadges());
     badges.add(0, null);
@@ -202,12 +280,9 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
         setDisabled(true);
       }
     });
+  }
 
-    synchronizationCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-
-      }
-    });
+  public boolean getResult() {
+    return result;
   }
 }

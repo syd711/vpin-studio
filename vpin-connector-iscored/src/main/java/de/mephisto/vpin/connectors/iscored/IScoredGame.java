@@ -2,6 +2,8 @@ package de.mephisto.vpin.connectors.iscored;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,17 @@ public class IScoredGame {
   @JsonProperty("Hidden")
   private String hidden;
 
+  @JsonProperty("Locked")
+  private String locked;
+
+  public String getLocked() {
+    return locked;
+  }
+
+  public void setLocked(String locked) {
+    this.locked = locked;
+  }
+
   public String getHidden() {
     return hidden;
   }
@@ -27,6 +40,50 @@ public class IScoredGame {
   @JsonIgnore
   public boolean isGameHidden() {
     return hidden != null && hidden.equalsIgnoreCase("TRUE");
+  }
+
+  @JsonIgnore
+  public boolean isGameLocked() {
+    return locked != null && locked.equalsIgnoreCase("TRUE");
+  }
+
+  public boolean isVpsTagged() {
+    List<String> tags = getTags();
+    for (String tag : tags) {
+      if (tag.startsWith("https://virtualpinballspreadsheet")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isVpsVersionTagged() {
+    List<String> tags = getTags();
+    for (String tag : tags) {
+      if (tag.contains("#") && tag.startsWith("https://virtualpinballspreadsheet")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isAllVersionsEnabled() {
+    if (!isVpsTagged()) {
+      return false;
+    }
+
+    if (!isVpsVersionTagged()) {
+      return true;
+    }
+
+    List<String> tags = getTags();
+    for (String tag : tags) {
+      if (tag.equals("vps:allVersions")) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   public boolean isDisabled() {
@@ -73,14 +130,39 @@ public class IScoredGame {
     this.scores = scores;
   }
 
-  public boolean matches(String vpsTableId, String vpsVersionId) {
+  public boolean matches(@NonNull String vpsTableId, @Nullable String vpsVersionId) {
     List<String> tags = getTags();
     for (String tag : tags) {
-      if (tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {
+      if (tag.contains(vpsTableId) && vpsVersionId == null) {
+        return true;
+      }
+
+      if (tag.contains(vpsTableId) && vpsVersionId != null && tag.contains(vpsVersionId)) {
         return true;
       }
     }
     return false;
+  }
+
+  public String getVpsTableId() {
+    List<String> tags = getTags();
+    for (String tag : tags) {
+      String vpsTableId = IScoredUtil.getQueryParams(tag, "game");
+      if (vpsTableId != null && vpsTableId.length() > 0) {
+        return vpsTableId;
+      }
+    }
+    return null;
+  }
+
+  public String getVpsTableVersionId() {
+    List<String> tags = getTags();
+    for (String tag : tags) {
+      if (tag.contains("#")) {
+        return tag.substring(tag.lastIndexOf("#") + +1);
+      }
+    }
+    return null;
   }
 
   @Override

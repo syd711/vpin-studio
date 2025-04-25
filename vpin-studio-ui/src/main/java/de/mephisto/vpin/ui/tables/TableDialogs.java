@@ -629,11 +629,12 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openIScoredGameRoomDialog(@NonNull IScoredSettings settings, @Nullable IScoredGameRoom gameRoom) {
+  public static boolean openIScoredGameRoomDialog(@NonNull IScoredSettings settings, @Nullable IScoredGameRoom gameRoom) {
     Stage stage = Dialogs.createStudioDialogStage(IScoredGameRoomDialogController.class, "dialog-iscored-gameroom.fxml", "iScored Game Room");
     IScoredGameRoomDialogController controller = (IScoredGameRoomDialogController) stage.getUserData();
     controller.setData(settings, gameRoom);
     stage.showAndWait();
+    return controller.getResult();
   }
 
   public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {

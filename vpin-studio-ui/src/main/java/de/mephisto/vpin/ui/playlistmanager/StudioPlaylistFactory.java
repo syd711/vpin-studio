@@ -31,7 +31,7 @@ public class StudioPlaylistFactory {
       case 0: {
         List<CompetitionRepresentation> iScoredSubscriptions = client.getCompetitionService().getIScoredSubscriptions();
         for (CompetitionRepresentation value : iScoredSubscriptions) {
-          GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
+          GameRoom gameRoom = IScored.getGameRoom(value.getUrl(), false);
           IScoredGame gameByVps = gameRoom.getGameByVps(value.getVpsTableId(), value.getVpsTableVersionId());
           if (gameByVps != null && !gameByVps.isGameHidden()) {
             int gameId = value.getGameId();

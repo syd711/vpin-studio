@@ -353,6 +353,7 @@ public class CompetitionService implements InitializingBean {
 
   private List<Competition> autoFixCompetitionGames(List<Competition> collect) {
     List<Competition> validatedCompetitions = new ArrayList<>();
+    List<Game> knownGames = gameService.getKnownGames(-1);
     for (Competition competition : collect) {
       int gameId = competition.getGameId();
       if (gameId > 0) {
@@ -381,7 +382,7 @@ public class CompetitionService implements InitializingBean {
         }
       }
       else {
-        Game game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
+        Game game = gameService.getGameByVpsTable(knownGames, competition.getVpsTableId(), competition.getVpsTableVersionId());
         if (game != null) {
           competition.setGameId(game.getId());
           Competition save = save(competition);

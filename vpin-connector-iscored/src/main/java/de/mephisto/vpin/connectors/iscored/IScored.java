@@ -17,12 +17,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IScored {
   private final static Logger LOG = LoggerFactory.getLogger(IScored.class);
 
-  private static ObjectMapper objectMapper;
+  private final static ObjectMapper objectMapper;
 
   static {
     objectMapper = new ObjectMapper();
@@ -31,31 +35,23 @@ public class IScored {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  private static Map<String, GameRoom> cache = new HashMap<>();
+  private final static Map<String, GameRoom> cache = new ConcurrentHashMap<>();
 
-  //fixme implement proper check
-  public static boolean isIscoredGameRoomUrl(String dashboardUrl) {
-    return true; //dashboardUrl != null && dashboardUrl.toLowerCase().contains("iscored.info");
+  public static boolean isIScoredGameRoomUrl(String dashboardUrl) {
+    return dashboardUrl.toLowerCase().startsWith("https://www.iScored.info/".toLowerCase());
   }
 
-  public static GameRoom getGameRoom(@NonNull String url) {
-    if (!cache.containsKey(url)) {
-      cache.put(url, loadGameRoom(url));
+  public static GameRoom getGameRoom(@NonNull String url, boolean forceReload) {
+    if (!cache.containsKey(url) || forceReload) {
+      GameRoom gameRoom = loadGameRoom(url);
+      cache.put(url, gameRoom);
     }
     return cache.get(url);
   }
 
-  public static void invalidate() {
-    cache.clear();
-  }
-
-  public static GameRoom loadGameRoom(@NonNull String url) {
+  private static GameRoom loadGameRoom(@NonNull String url) {
     try {
-
       long start = System.currentTimeMillis();
-      if (!isIscoredGameRoomUrl(url)) {
-        throw new UnsupportedOperationException("Invalid gameroom URL \"" + url + "\"");
-      }
 
       // parse and align room URL 
       URL roomurl = new URL(url);
@@ -193,6 +189,14 @@ public class IScored {
 
   public static IScoredResult submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
     IScoredResult result = new IScoredResult();
+
+    if (game.isGameLocked()) {
+      LOG.info("The submission for this table is locked on iScored.");
+      result.setMessage("The submission for this table is locked on iScored.");
+      result.setReturnCode(200);
+      return result;
+    }
+
     List<Score> scores = game.getScores();
     if (scores != null) {
       for (Score score : scores) {

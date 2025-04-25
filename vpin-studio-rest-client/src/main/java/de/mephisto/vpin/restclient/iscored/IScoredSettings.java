@@ -10,6 +10,15 @@ import java.util.List;
 
 public class IScoredSettings extends JsonSettings {
   private List<IScoredGameRoom> gameRooms = new ArrayList<>();
+  private boolean enabled = false;
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
   public List<IScoredGameRoom> getGameRooms() {
     return gameRooms;

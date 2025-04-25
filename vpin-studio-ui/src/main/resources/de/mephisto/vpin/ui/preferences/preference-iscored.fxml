@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -21,61 +22,75 @@
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="iScored Game Rooms" />
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="iScored game rooms used for competitions can be preconfigured here." textFill="WHITE">
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets bottom="24.0" top="12.0" />
                </VBox.margin>
             </Label>
-            <ToolBar>
-              <items>
-                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
-                      <font>
-                          <Font size="14.0" />
-                      </font>
-                      <graphic>
-                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                      </graphic>
-                      <tooltip>
-                          <Tooltip text="Reload all webhook sets" />
-                      </tooltip>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="Add" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-                <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                     </graphic>
-                  </Button>
-                  <Separator orientation="VERTICAL" prefWidth="12.0" />
-                  <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
-              </items>
+            <VBox>
+               <children>
+                  <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" styleClass="default-text" text="iScored Integration Enabled">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Enable the iScored integration to subscribe to game room games." textFill="WHITE" />
+               </children>
+            </VBox>
+            <VBox fx:id="enabledBox">
+               <children>
+                  <ToolBar>
+                    <items>
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Reload all webhook sets" />
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAdd" text="Add" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
+                           </graphic>
+                        </Button>
+                      <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" text="Edit" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                           </graphic>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefWidth="12.0" />
+                        <Button fx:id="deleteBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                           </graphic>
+                        </Button>
+                    </items>
+                  </ToolBar>
+                  <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                    <columns>
+                        <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="Sync. Enabled" />
+                      <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="Game Room URL" />
+                        <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Read API" />
+                        <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Scoring API" />
+                    </columns>
+                  </TableView>
+               </children>
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
-            </ToolBar>
-            <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-              <columns>
-                  <TableColumn fx:id="syncColumn" prefWidth="118.40002059936523" style="-fx-alignment: BASELINE_CENTER;" text="Sync. Enabled" />
-                <TableColumn fx:id="nameColumn" prefWidth="390.0" style="-fx-alignment: BASELINE_LEFT;" text="Game Room URL" />
-                  <TableColumn fx:id="readApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Read API" />
-                  <TableColumn fx:id="scoreApiColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Scoring API" />
-              </columns>
-            </TableView>
+            </VBox>
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
