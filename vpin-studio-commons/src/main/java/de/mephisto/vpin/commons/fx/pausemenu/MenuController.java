@@ -31,9 +31,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.net.URL;
@@ -232,6 +235,7 @@ public class MenuController implements Initializable {
     if (oldNode != null) {
       PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
       if (activeSelection.getYouTubeUrl() != null) {
+        //TODO webview
 //        webView.setVisible(true);
 //        WebEngine engine = webView.getEngine();
 //        engine.loadContent("");
@@ -258,7 +262,7 @@ public class MenuController implements Initializable {
     if (activeSelection.getItemType().equals(PauseMenuItemTypes.exit)) {
       customView.setVisible(true);
     }
-    else if(activeSelection.getItemType().equals(PauseMenuItemTypes.iScored)) {
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.iScored)) {
       try {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png"));
         String resource = "menu-score-view.fxml";
@@ -274,7 +278,7 @@ public class MenuController implements Initializable {
         LOG.error("Failed to init pause component: " + e.getMessage(), e);
       }
     }
-    else if(activeSelection.getItemType().equals(PauseMenuItemTypes.maniaScores)) {
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.maniaScores)) {
       try {
         Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("mania-wheel.png"));
         String resource = "menu-score-view.fxml";
@@ -306,6 +310,24 @@ public class MenuController implements Initializable {
       screenImageView.setVisible(true);
       screenImageView.setImage(activeSelection.getDataImage());
       LOG.info("Loading YT video: " + activeSelection.getYouTubeUrl());
+
+      //TODO webview
+//      webView.setVisible(true);
+//      WebEngine engine = webView.getEngine();
+//      try {
+//        byte[] byteArray = IOUtils.toByteArray(PauseMenu.class.getResourceAsStream("video.html"));
+//        String html = new String(byteArray);
+//        engine.loadContent(html);
+//
+//        Document document = engine.getDocument();
+//        org.w3c.dom.Node iframe = document.getElementsByTagName("iframe").item(0);
+//        System.out.println(iframe.getOwnerDocument());
+//      }
+//      catch (IOException e) {
+//        throw new RuntimeException(e);
+//      }
+//      engine.load(activeSelection.getYouTubeUrl());
+
     }
     else if (activeSelection.getDataImage() != null) {
       screenImageView.setVisible(true);

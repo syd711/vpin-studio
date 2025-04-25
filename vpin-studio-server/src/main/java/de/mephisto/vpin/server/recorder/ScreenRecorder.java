@@ -75,7 +75,7 @@ public class ScreenRecorder {
       long duration = options.getRecordingDuration();
 
       String command = getDefaultCommand(options);
-      if (options.isExpertSettingsEnabled()) {
+      if (options.isExpertSettingsEnabled() && options.getCustomFfmpegCommand() != null) {
         command = options.getCustomFfmpegCommand();
       }
       String formattedCommand = formatCommand(command, width, height, x, y, duration);

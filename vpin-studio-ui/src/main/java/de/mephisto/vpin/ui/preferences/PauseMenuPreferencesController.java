@@ -12,9 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +53,9 @@ public class PauseMenuPreferencesController implements Initializable {
 
   @FXML
   private TextField videoAuthorsAllowList;
+
+  @FXML
+  private Spinner<Integer> delaySpinner;
 
   @FXML
   private ComboBox<MonitorInfo> screenInfoComboBox;
@@ -130,6 +131,13 @@ public class PauseMenuPreferencesController implements Initializable {
     videoAuthorsAllowList.setText(pauseMenuSettings.getAuthorAllowList());
     videoAuthorsAllowList.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.PAUSE_MENU_SETTINGS, () -> {
       pauseMenuSettings.setAuthorAllowList(t1);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    }, 300));
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 10000, pauseMenuSettings.getUnpauseDelay());
+    delaySpinner.setValueFactory(factory1);
+    factory1.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("delaySpinner", () -> {
+      pauseMenuSettings.setUnpauseDelay(t1);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     }, 300));
   }

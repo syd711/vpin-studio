@@ -2,11 +2,17 @@
 
 ## Changes
 
+- **Table Overview / Table Media Outliner**: Added "Open DMD Positioner" for Apron, DMD and Backglass screen. They are enabled when a backglass is available.
 - **Launcher**: Added auto-connect for remote clients so that the latest known connection is used.
 - **Table Asset Manager**: Fixed dialog size calculation. Instead of trying to calculate the monitor resolution, the size of the main Studio window is used to determine which (more compact) dialog version of the asset manager dialog should be used.
 - **Drop-In Menu** Limited the amount of items to 100 to avoid a client crash when a folder with thousands of entries is added.
 - **Drop-In Menu** Removed the system tray notification. It was ugly anyway.
 - **Drop-In Menu** Added filtering for hidden files.
+- **Backglass Manager**: Skipping serialization of empty XML elements instead of writing them with an empty value. (This is a blind-fix, and should make the backglass defaults work, but is not confirmed yet.)
+- **Screen Recorder**: Fixed recording error when "expert mode" has been selected but the command has not been re-confirmed.
+- **Pause Menu**:
+  - Removed initial focus forcing for VPX GL emulators. This lead to stuttering, but was necessary to "win" the focus over the emulator to show the pause menu on top. (I could not reproduce this with the latest GL version anymore, but this may need to be revisited).
+  - Added "Resume Delay" configuration option. This is 1 second by default. But when VPX is run in "force fullscreen" mode, it can take longer for VPX to regain the focus. An additional help tooltip has been added.
 
 
 ---
