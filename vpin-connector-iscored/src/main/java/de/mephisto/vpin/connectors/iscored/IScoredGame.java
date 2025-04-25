@@ -148,7 +148,10 @@ public class IScoredGame {
     List<String> tags = getTags();
     for (String tag : tags) {
       String vpsTableId = IScoredUtil.getQueryParams(tag, "game");
-      if (vpsTableId != null && vpsTableId.length() > 0) {
+      if (vpsTableId != null && !vpsTableId.isEmpty()) {
+        if (vpsTableId.contains("#")) {
+          vpsTableId = vpsTableId.substring(0, vpsTableId.indexOf("#"));
+        }
         return vpsTableId;
       }
     }

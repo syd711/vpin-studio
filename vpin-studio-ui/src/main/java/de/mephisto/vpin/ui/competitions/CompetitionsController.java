@@ -189,7 +189,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         Optional<IScoredSubscriptionsController.IScoredGameRoomGameModel> selection = iScoredSubscriptionsController.getSelection();
         updateSelection(Optional.empty());
         checkTitledPanes(CompetitionType.ISCORED);
-        iScoredSubscriptionsController.onReload();
+        iScoredSubscriptionsController.onViewActivated(NavigationOptions.empty());
       }
     }
     else {

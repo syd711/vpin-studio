@@ -44,7 +44,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +130,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private void onSync() {
-
+    doReload(false);
   }
 
 
@@ -314,11 +316,25 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     syncColumn.setCellValueFactory(cellData -> {
       IScoredGameRoomGameModel value = cellData.getValue();
       boolean synchronize = value.iScoredGameRoom.isSynchronize();
+
       Label label = new Label();
       if (synchronize) {
-        label.setTooltip(new Tooltip("The competition for this game is automatically created and destroyed."));
-        label.setGraphic(WidgetFactory.createCheckIcon(null));
+        if (value.getMatches().isEmpty()) {
+          label.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
+          label.setGraphic(WidgetFactory.createExclamationIcon());
+        }
+        else if (value.competition != null) {
+          label.setTooltip(new Tooltip("The competition for this game has been created."));
+          label.setGraphic(WidgetFactory.createCheckIcon(null));
+        }
+        else {
+          label.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
+          FontIcon icon = WidgetFactory.createExclamationIcon();
+          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+          label.setGraphic(icon);
+        }
       }
+
       return new SimpleObjectProperty<>(label);
     });
 
@@ -351,7 +367,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       }
       else {
         Label label = new Label();
-        label.setTooltip(new Tooltip("This game is a public game room game and not hidden."));
+        label.setTooltip(new Tooltip("This game is a public and visible on the game room dashboard."));
         label.setGraphic(WidgetFactory.createIcon("mdi2e-eye-outline"));
         result.getChildren().add(label);
       }
@@ -383,6 +399,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       IScoredGameRoomGameModel value = cellData.getValue();
 
       Label fallbackLabel = new Label();
+      fallbackLabel.getStyleClass().add("default-text");
       fallbackLabel.setStyle(getLabelCss(value));
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
@@ -390,20 +407,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      List<GameRepresentation> matches = new ArrayList<>();
-      if (value.game.isAllVersionsEnabled()) {
-        matches.addAll(client.getGameService().getGamesByVpsTable(value.getVpsTableId(), value.getVpsTableVersionId()));
-      }
-      else {
-        matches.addAll(client.getGameService().getGamesByVpsTable(value.getVpsTableId(), null));
-      }
-
-      if (matches.isEmpty()) {
+      if (value.getMatches().isEmpty()) {
         fallbackLabel.setText("No matching table found.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
-      return new SimpleObjectProperty(new IScoredGameCellContainer(matches, vpsTable, getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
@@ -583,9 +592,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-    deleteBtn.setDisable(defaultPlayer == null || this.gameRoomsCombo.isDisabled() || model.isEmpty());
+    deleteBtn.setDisable(defaultPlayer == null || this.gameRoomsCombo.isDisabled() || model.isEmpty() || newSelection.competition == null);
     reloadBtn.setDisable(defaultPlayer == null);
-    addBtn.setDisable(defaultPlayer == null || this.gameRoomsCombo.isDisabled() || model.isEmpty());
+    addBtn.setDisable(defaultPlayer == null || this.gameRoomsCombo.isDisabled() || model.isEmpty() || newSelection.competition != null || newSelection.getMatches().isEmpty());
 
 
     if (defaultPlayer == null) {
@@ -642,18 +651,18 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   public static String getLabelCss(IScoredGameRoomGameModel model) {
     String status = "";
-    if (model.competition != null && model.competition.getValidationState().getCode() > 0) {
+//    if (model.competition != null && model.competition.getValidationState().getCode() > 0) {
+//      status = ERROR_STYLE;
+//    }
+//    else {
+    IScoredGame gameByVps = model.game;
+    if (gameByVps == null) {
       status = ERROR_STYLE;
     }
-    else {
-      IScoredGame gameByVps = model.game;
-      if (gameByVps == null) {
-        status = ERROR_STYLE;
-      }
-      else if (gameByVps.isDisabled() || gameByVps.isGameLocked()) {
-        status = WidgetFactory.DISABLED_TEXT_STYLE;
-      }
+    else if (gameByVps.isDisabled() || gameByVps.isGameLocked()) {
+      status = WidgetFactory.DISABLED_TEXT_STYLE;
     }
+//    }
     return status;
   }
 
@@ -662,12 +671,24 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     private final GameRoom gameRoom;
     private final IScoredGame game;
     private final CompetitionRepresentation competition;
+    private final List<GameRepresentation> matches = new ArrayList<>();
 
-    public IScoredGameRoomGameModel(IScoredGameRoom iScoredGameRoom, GameRoom gameRoom, IScoredGame game, CompetitionRepresentation competition) {
+    public IScoredGameRoomGameModel(IScoredGameRoom iScoredGameRoom, GameRoom gameRoom, IScoredGame iScoredGame, CompetitionRepresentation competition) {
       this.iScoredGameRoom = iScoredGameRoom;
       this.gameRoom = gameRoom;
-      this.game = game;
+      this.game = iScoredGame;
       this.competition = competition;
+
+      if (iScoredGame.isAllVersionsEnabled()) {
+        matches.addAll(client.getGameService().getGamesByVpsTable(iScoredGame.getVpsTableId(), null));
+      }
+      else {
+        matches.addAll(client.getGameService().getGamesByVpsTable(iScoredGame.getVpsTableId(), iScoredGame.getVpsTableVersionId()));
+      }
+    }
+
+    public List<GameRepresentation> getMatches() {
+      return matches;
     }
 
     public String getVpsTableId() {

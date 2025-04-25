@@ -161,7 +161,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle" iconSize="18" />
+                                                <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="This flag must be enabled for your Game Room" />
@@ -181,7 +181,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle" iconSize="18" />
+                                                <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="This flag must be enabled for your Game Room" />
@@ -226,7 +226,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <graphic>
-                                                <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle" iconSize="18" />
+                                                <FontIcon iconColor="#ff3333" iconLiteral="bi-exclamation-circle-fill" iconSize="18" />
                                              </graphic>
                                              <tooltip>
                                                 <Tooltip text="This flag must be enabled to post highscores for hidden tables too." />

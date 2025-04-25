@@ -5,6 +5,7 @@
 - **iScored V2**: 
   - game lock
   - game multiscore
+  - added badge
 
 - **System Manager**: The overall update check is not blocking the UI anymore. This way, you can immediately switch to other system manager tabs now.
 - **Table Data Manager**: The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.

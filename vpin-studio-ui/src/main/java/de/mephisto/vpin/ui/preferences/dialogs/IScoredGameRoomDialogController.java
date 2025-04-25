@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.Score;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -108,7 +109,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       return;
     }
 
-    if (!url.startsWith("https://www.iScored.info/")) {
+    if (!IScored.isIScoredGameRoomUrl(url)) {
       return;
     }
 
@@ -145,6 +146,8 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       datesCheckbox.setSelected(gr.getSettings().isDateFieldEnabled());
       tournamentColumnCheckbox.setSelected(gr.getSettings().isCompetitionColumnEnabled());
       tableCountLabel.setText(String.valueOf(gr.getTaggedGames().size()));
+
+      badgeCombo.setValue(gameRoom.getBadge());
 
       int count = 0;
       List<IScoredGame> games = gr.getGames();
@@ -221,6 +224,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     gameRoom.setUrl(urlField.getText());
     gameRoom.setScoreReset(resetCheckbox.isSelected());
     gameRoom.setSynchronize(synchronizationCheckbox.isSelected());
+    gameRoom.setBadge(badgeCombo.getValue());
 
     List<IScoredGameRoom> collect = new ArrayList<>(iScoredSettings.getGameRooms().stream().filter(s -> !s.getUuid().equals(gameRoom.getUuid())).collect(Collectors.toList()));
     collect.add(gameRoom);

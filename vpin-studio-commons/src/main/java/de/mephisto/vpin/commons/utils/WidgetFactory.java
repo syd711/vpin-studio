@@ -269,7 +269,7 @@ public class WidgetFactory {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
     fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
-    fontIcon.setIconLiteral("bi-exclamation-circle");
+    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
     return fontIcon;
   }
 
@@ -284,7 +284,7 @@ public class WidgetFactory {
   public static FontIcon createExclamationIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconLiteral("bi-exclamation-circle");
+    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
     fontIcon.setIconColor(Paint.valueOf("#FF3333"));
     if (color != null) {
       fontIcon.setIconColor(Paint.valueOf(color));
