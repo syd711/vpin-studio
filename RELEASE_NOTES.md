@@ -11,8 +11,9 @@
 - **Backglass Manager**: Skipping serialization of empty XML elements instead of writing them with an empty value. (This is a blind-fix, and should make the backglass defaults work, but is not confirmed yet.)
 - **Screen Recorder**: Fixed recording error when "expert mode" has been selected but the command has not been re-confirmed.
 - **VB Script Editing**: Fixed error handling so that when the extraction of the VBS fails a proper error message is shown.
+- **VB Script Editing**: Updated to vpxtools version v0.23.5. Once again a big thank you to @francisdb for this tool: https://github.com/francisdb/vpxtool
 - **Highscore Parsing:** Added support for the table "Hot Line".
-- **Pause Menu**:
+- **Pause Menu**: After revisiting the Pause Menu, only minor fixes have been made for this patch release. **A bigger change tackling the issues with tutorials will follow soon.**
   - Removed initial focus forcing for VPX GL emulators. This lead to stuttering, but was necessary to "win" the focus over the emulator to show the pause menu on top. (I could not reproduce this with the latest GL version anymore, but this may need to be revisited).
   - Added "Resume Delay" configuration option. This is 1 second by default. But when VPX is run in "force fullscreen" mode, it can take longer for VPX to regain the focus. An additional help tooltip has been added.
 
