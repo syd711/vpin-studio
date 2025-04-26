@@ -903,7 +903,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
     index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
 
-    tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+    tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isTablesSidebarVisible());
   }
 
   private int refreshSection(TitledPane section, boolean sectionAssets, int index) {

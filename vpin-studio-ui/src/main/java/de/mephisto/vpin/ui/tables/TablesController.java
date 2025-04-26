@@ -180,7 +180,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     sidebarVisible = !sidebarVisible;
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    uiSettings.setSidebarVisible(sidebarVisible);
+    uiSettings.setTablesSidebarVisible(sidebarVisible);
     client.getPreferenceService().setJsonPreference(uiSettings, true);
 
     setSidebarVisible(sidebarVisible);
@@ -341,11 +341,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
       t.play();
     }
     else {
+      sidePanelRoot.setVisible(true);
       TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, -612);
       t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-          sidePanelRoot.setVisible(true);
           FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
           toggleSidebarBtn.setGraphic(icon);
         }

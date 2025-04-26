@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -10,29 +12,36 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +58,14 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class CompetitionsController implements Initializable, StudioFXController, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsController.class);
+
+  private static final int TAB_OFFLINE = 0;
+  private static final int TAB_ONLINE = 1;
+  private static final int TAB_TABLE_SUBS = 2;
+  private static final int TAB_ISCORED = 3;
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private TabPane tabPane;
@@ -110,6 +127,14 @@ public class CompetitionsController implements Initializable, StudioFXController
   @FXML
   private Button dashboardBtn;
 
+  @FXML
+  private Button toggleSidebarBtn;
+
+  @FXML
+  private Button competitionSettingsBtn;
+
+  @FXML
+  private StackPane editorRootStack;
 
   @FXML
   private VBox membersBox;
@@ -125,6 +150,9 @@ public class CompetitionsController implements Initializable, StudioFXController
   private String lastDashboardUrl;
 
   private Optional<CompetitionRepresentation> competition = Optional.empty();
+
+  private boolean sidebarVisible = true;
+  private Node sidePanelRoot;
 
   // Add a public no-args constructor
   public CompetitionsController() {
@@ -144,6 +172,44 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   @FXML
+  private void toggleSidebar() {
+    sidebarVisible = !sidebarVisible;
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings.setCompetitionsSidebarVisible(sidebarVisible);
+    client.getPreferenceService().setJsonPreference(uiSettings, true);
+
+    setSidebarVisible(sidebarVisible);
+  }
+
+
+  @FXML
+  private void onCompetitionSettings() {
+    int selectedTab = getSelectedTab();
+    switch (selectedTab) {
+      case TAB_OFFLINE: {
+        PreferencesController.open("player_rankings");
+        break;
+      }
+      case TAB_ONLINE: {
+        PreferencesController.open("discord_bot");
+        break;
+      }
+      case TAB_TABLE_SUBS: {
+        PreferencesController.open("discord_bot");
+        break;
+      }
+      case TAB_ISCORED: {
+        PreferencesController.open("iscored");
+        break;
+      }
+      default: {
+        PreferencesController.open("settings_client");
+      }
+    }
+  }
+
+  @FXML
   private void onDashboardOpen() {
     if (this.competition.isPresent()) {
       String dashboardUrl = competition.get().getUrl();
@@ -155,6 +221,68 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onDashboardReload() {
     WebEngine webEngine = dashboardWebView.getEngine();
     webEngine.reload();
+  }
+
+  public void setSidebarVisible(boolean b) {
+    if (b && sidePanelRoot.isVisible()) {
+      return;
+    }
+    if (!b && !sidePanelRoot.isVisible()) {
+      return;
+    }
+
+    sidebarVisible = b;
+    if (!sidebarVisible) {
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, 612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          sidePanelRoot.setVisible(false);
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-left");
+          toggleSidebarBtn.setGraphic(icon);
+        }
+      });
+      t.play();
+    }
+    else {
+      sidePanelRoot.setVisible(true);
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, -612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
+          toggleSidebarBtn.setGraphic(icon);
+        }
+      });
+      t.play();
+    }
+  }
+
+  private int getSelectedTab() {
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    return getSelectedTab(selectedIndex);
+  }
+
+
+  /**
+   * Convert the selected tab index into TAB id, managing invisible tabs
+   */
+  private int getSelectedTab(int index) {
+    int cnt = 0;
+    if (tabPane.getTabs().contains(offlineTab) && cnt++ == index) {
+      return TAB_OFFLINE;
+    }
+    if (tabPane.getTabs().contains(onlineTab) && cnt++ == index) {
+      return TAB_ONLINE;
+    }
+    if (tabPane.getTabs().contains(tableSubscriptionsTab) && cnt++ == index) {
+      return TAB_TABLE_SUBS;
+    }
+    if (tabPane.getTabs().contains(iScoredSubscriptionsTab) && cnt++ == index) {
+      return TAB_ISCORED;
+    }
+    // should not happen
+    return -1;
   }
 
   private void refreshView(Number t1) {
@@ -507,12 +635,25 @@ public class CompetitionsController implements Initializable, StudioFXController
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     loadTabs();
+    sidePanelRoot = root.getRight();
+    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
+
     updateSelection(Optional.empty());
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       refreshView(t1);
     });
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
     checkTitledPanes(CompetitionType.OFFLINE);
+
+    Platform.runLater(() -> {
+      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.F3) {
+            toggleSidebar();
+          }
+        }
+      });
+    });
 
     client.getPreferenceService().addListener(this);
   }
@@ -560,7 +701,8 @@ public class CompetitionsController implements Initializable, StudioFXController
         }
 
         Platform.runLater(() -> {
-          ProgressDialog.createProgressDialog(new IScoredSynchronizationProgressModel());
+          List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
+          ProgressDialog.createProgressDialog(new IScoredGameRoomSynchronizationProgressModel(gameRooms));
         });
       }
       else {

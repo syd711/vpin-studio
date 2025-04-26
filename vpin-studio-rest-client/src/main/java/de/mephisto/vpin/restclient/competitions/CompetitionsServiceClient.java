@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.competitions;
 
+import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
@@ -132,9 +134,19 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public List<CompetitionRepresentation> synchronizeIScored() {
+  public List<CompetitionRepresentation> synchronizeIScoredGameRoom(GameRoom gameRoom) {
     try {
       return Arrays.asList(getRestClient().get(API + "competitions/synchronizeIScored", CompetitionRepresentation[].class));
+    }
+    catch (Exception e) {
+      LOG.error("Failed to sync competition scores: {}", e.getMessage(), e);
+    }
+    return null;
+  }
+
+  public CompetitionRepresentation synchronizeIScoredGameRoomGame(GameRoom gameRoom, IScoredGame next) {
+    try {
+      return getRestClient().get(API + "competitions/synchronizeIScored", CompetitionRepresentation.class);
     }
     catch (Exception e) {
       LOG.error("Failed to sync competition scores: {}", e.getMessage(), e);

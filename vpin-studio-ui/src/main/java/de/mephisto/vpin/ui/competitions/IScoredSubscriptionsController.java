@@ -23,10 +23,7 @@ import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.WaitNProgressModel;
-import de.mephisto.vpin.ui.util.WaitProgressModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -130,7 +127,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private void onSync() {
-    doReload(false);
+    IScoredGameRoom value = gameRoomsCombo.getValue();
+    if (value != null) {
+      GameRoom gameRoom = IScored.getGameRoom(value.getUrl(), false);
+      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(gameRoom));
+      this.iScoredSubscriptions = null;
+      doReload(false);
+    }
   }
 
 
@@ -148,30 +151,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private void onCompetitionCreate() {
-//    IScoredGameRoom iScoredGameRoom = gameRoomsCombo.getValue();
-//    if (iScoredGameRoom == null) {
-//      return;
-//    }
-//
-//    List<CompetitionRepresentation> result = CompetitionDialogs.openIScoredSubscriptionDialog(iScoredGameRoom, this.data);
-//    if (!result.isEmpty()) {
-//      try {
-//        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscriptions", result));
-//        Platform.runLater(() -> {
-//          doReload();
-//          if (!resultModel.getResults().isEmpty()) {
-//            IScoredGameRoomGameModel competitionRepresentation = (IScoredGameRoomGameModel) resultModel.results.get(0);
-//            tableView.getSelectionModel().select(competitionRepresentation);
-//            tableView.scrollTo(competitionRepresentation);
-//          }
-//        });
-//      }
-//      catch (Exception e) {
-//        LOG.error("Failed to create iScored subscription: " + e.getMessage(), e);
-//        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-//      }
-//      doReload();
-//    }
+    IScoredGameRoomGameModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      GameRoom gameRoom = selectedItem.gameRoom;
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(gameRoom, selectedItem.game));
+      this.iScoredSubscriptions = null;
+      doReload(false);
+    }
   }
 
   @FXML
@@ -234,10 +220,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(iScoredSettings.getGameRooms(), true));
     }
 
-
     List<IScoredGameRoom> validGameRooms = new ArrayList<>();
     JFXFuture.supplyAsync(() -> {
-      iScoredSubscriptions = client.getCompetitionService().getIScoredSubscriptions();
+      if (this.iScoredSubscriptions == null || forceReload) {
+        iScoredSubscriptions = client.getCompetitionService().getIScoredSubscriptions();
+      }
 
       List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
       for (IScoredGameRoom gameRoom : gameRooms) {
@@ -372,9 +359,15 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         result.getChildren().add(label);
       }
 
-      if (value.game.isGameLocked() || value.game.isDisabled()) {
+      if (value.game.isGameLocked()) {
         Label label = new Label();
-        label.setTooltip(new Tooltip("This game is currently locked/disabled. No highscores will be accepted."));
+        label.setTooltip(new Tooltip("This game is currently locked. No highscores will be accepted."));
+        label.setGraphic(WidgetFactory.createIcon("mdi2l-lock"));
+        result.getChildren().add(label);
+      }
+      else if (value.game.isDisabled()) {
+        Label label = new Label();
+        label.setTooltip(new Tooltip("This game is currently disabled. No highscores will be accepted."));
         label.setGraphic(WidgetFactory.createIcon("mdi2l-lock"));
         result.getChildren().add(label);
       }

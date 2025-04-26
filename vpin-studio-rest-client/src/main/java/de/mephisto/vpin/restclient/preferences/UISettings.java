@@ -65,7 +65,8 @@ public class UISettings extends JsonSettings {
   private boolean sectionVps = true;
   private boolean sectionVPinMAME = true;
 
-  private boolean sidebarVisible = true;
+  private boolean tableSidebarVisible = true;
+  private boolean competitionsSidebarVisible = true;
 
   //columns
   private boolean columnAltColor = true;
@@ -195,12 +196,20 @@ public class UISettings extends JsonSettings {
     this.columnPatchVersion = columnPatchVersion;
   }
 
-  public boolean isSidebarVisible() {
-    return sidebarVisible;
+  public boolean isTablesSidebarVisible() {
+    return tableSidebarVisible;
   }
 
-  public void setSidebarVisible(boolean sidebarVisible) {
-    this.sidebarVisible = sidebarVisible;
+  public void setTablesSidebarVisible(boolean sidebarVisible) {
+    this.tableSidebarVisible = sidebarVisible;
+  }
+
+  public boolean isCompetitionsSidebarVisible() {
+    return competitionsSidebarVisible;
+  }
+
+  public void setCompetitionsSidebarVisible(boolean competitionsSidebarVisible) {
+    this.competitionsSidebarVisible = competitionsSidebarVisible;
   }
 
   public boolean isSectionScriptDetails() {
