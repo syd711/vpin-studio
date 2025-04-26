@@ -31,6 +31,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -102,6 +103,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private ComboBox<IScoredGameRoom> gameRoomsCombo;
 
   @FXML
+  private Button tableNavigateBtn;
+
+  @FXML
+  private Button dataManagerBtn;
+
+  @FXML
   private StackPane tableStack;
 
   private Parent loadingOverlay;
@@ -113,6 +120,28 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   // Add a public no-args constructor
   public IScoredSubscriptionsController() {
+  }
+
+  @FXML
+  private void onOpenTable(ActionEvent e) {
+    IScoredGameRoomGameModel value = tableView.getSelectionModel().getSelectedItem();
+    if (value != null) {
+      List<GameRepresentation> matches = value.getMatches();
+      if (!matches.isEmpty()) {
+        NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(matches.get(0).getId()));
+      }
+    }
+  }
+
+  @FXML
+  private void onTableDataManager(ActionEvent e) {
+    IScoredGameRoomGameModel value = tableView.getSelectionModel().getSelectedItem();
+    if (value != null) {
+      List<GameRepresentation> matches = value.getMatches();
+      if (!matches.isEmpty()) {
+        TableDialogs.openTableDataDialog(null, matches.get(0));
+      }
+    }
   }
 
   @FXML
@@ -477,7 +506,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
-
+      competitionWidget.setTop(competitionWidgetRoot);
+      competitionWidgetRoot.setVisible(false);
       competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
     }
     catch (IOException e) {
@@ -597,6 +627,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       newSelection = model.get();
     }
 
+    tableNavigateBtn.setDisable(model.isEmpty() || model.get().getMatches().isEmpty());
+    dataManagerBtn.setDisable(model.isEmpty() || model.get().getMatches().isEmpty());
+
     competitionsController.setCompetition(model.isPresent() ? model.get().competition : null);
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
@@ -613,25 +646,25 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       tableView.setPlaceholder(new Label("            No iScored subscription found.\nClick the '+' button to create a new one."));
     }
 
-
-//    if (model.isPresent()) {
-//      if (competitionWidget.getTop() != null) {
-//        competitionWidget.getTop().setVisible(true);
-//      }
-//      competitionWidgetController.setCompetition(CompetitionType.ISCORED, newSelection.competition);
-//    }
-//    else {
-//      if (competitionWidget.getTop() != null) {
-//        competitionWidget.getTop().setVisible(false);
-//      }
-//      competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
-//      competitionsController.setCompetition(null);
-//    }
+    if (model.isPresent() && model.get().competition != null) {
+      competitionWidget.setTop(competitionWidgetRoot);
+      competitionWidgetRoot.setVisible(true);
+      competitionWidgetController.setCompetition(CompetitionType.ISCORED, newSelection.competition);
+      competitionsController.setCompetition(newSelection.competition);
+    }
+    else {
+      competitionWidget.setTop(null);
+      competitionWidgetRoot.setVisible(false);
+      competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
+      competitionsController.setCompetition(null);
+    }
   }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
     if (this.competitionsController != null) {
+      competitionWidget.setTop(null);
+      competitionWidgetRoot.setVisible(false);
       doReload(false);
     }
   }

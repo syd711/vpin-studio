@@ -296,6 +296,7 @@
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-text-fill: #FFFFFF;
+    -fx-padding: 3px;
 }
 
 .table-media-button:hover {

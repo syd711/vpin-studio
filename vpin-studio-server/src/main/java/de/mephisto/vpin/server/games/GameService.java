@@ -142,6 +142,26 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return getGameByVpsTable(knownGames, vpsTableId, vpsTableVersionId);
   }
 
+
+  public List<Game> getGamesByVpsTableId(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
+    List<Game> knownGames = getKnownGames(-1);
+    List<Game> matches = new ArrayList<>();
+    for (Game game : knownGames) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
+        if (vpsTableVersionId == null) {
+          matches.add(game);
+          continue;
+        }
+
+        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersionId)) {
+          matches.add(game);
+          continue;
+        }
+      }
+    }
+    return matches;
+  }
+
   public Game getGameByVpsTable(@NonNull List<Game> knownGames, @NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
     Game hit = null;
     for (Game game : knownGames) {

@@ -167,10 +167,17 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     emptylabel.setVisible(false);
 
-    GameRepresentation game = client.getGame(competition.getGameId());
-    if (game != null) {
+    GameRepresentation competedGame = null;
+    if (competitionType.equals(CompetitionType.ISCORED)) {
+      competedGame = client.getGameByVpsId(competition.getVpsTableId(), competition.getVpsTableVersionId());
+    }
+    else {
+      competedGame = client.getGame(competition.getGameId());
+    }
+
+    if (competedGame != null) {
       durationLabel.setText("Duration: " + DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()));
-      tableNameLabel.setText(game.getGameDisplayName());
+      tableNameLabel.setText(competedGame.getGameDisplayName());
     }
     else {
       LOG.error("No game found for " + competition);
@@ -179,6 +186,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       emptyPanel.setVisible(true);
       return;
     }
+
 
     competitionLabel.setText(competition.getName());
 
@@ -210,10 +218,11 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     name4.setVisible(isActive);
     name5.setVisible(isActive);
 
-    if (!competition.isActive() || game == null) {
+    if (!competition.isActive()) {
       return;
     }
 
+    final GameRepresentation game = competedGame;
     JFXFuture.supplyAsync(() -> {
       ScoreSummaryRepresentation scoreSummary = null;
       if (competitionType.equals(CompetitionType.ISCORED)) {
@@ -231,6 +240,9 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       }
       return scoreSummary;
     }).thenAcceptLater((latestCompetitionScore) -> {
+      Image wheel = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+      competitionWheelImage.setImage(wheel);
+
       LOG.info("Loaded score summary: {}", latestCompetitionScore);
       if (latestCompetitionScore != null && !latestCompetitionScore.getScores().isEmpty()) {
         emptyPanel.setVisible(false);
@@ -285,14 +297,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
               competitionWheelImage.setImage(image);
             }
             else {
-              ByteArrayInputStream gameMediaItem = client.getGameMediaItem(competition.getGameId(), VPinScreen.Wheel);
+              ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
               Image image = new Image(gameMediaItem);
               competitionWheelImage.setImage(image);
             }
-          }
-          else {
-            Image wheel = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
-            competitionWheelImage.setImage(wheel);
           }
 
           if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
@@ -315,7 +323,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         loadingPane.setVisible(false);
       }
 
-      InputStream competitionBackground = client.getCompetitionBackground(competition.getGameId());
+      InputStream competitionBackground = client.getCompetitionBackground(game.getId());
       if (competitionBackground != null) {
         Image image = new Image(competitionBackground);
         BackgroundImage myBI = new BackgroundImage(image,

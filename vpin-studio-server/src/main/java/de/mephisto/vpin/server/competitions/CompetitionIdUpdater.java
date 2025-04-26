@@ -24,9 +24,6 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionIdUpdater.class);
 
   @Autowired
-  private FrontendStatusService frontendStatusService;
-
-  @Autowired
   private CompetitionService competitionService;
 
   @Autowired

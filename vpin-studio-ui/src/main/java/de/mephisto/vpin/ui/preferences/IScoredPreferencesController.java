@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
@@ -68,6 +69,7 @@ public class IScoredPreferencesController implements Initializable {
     IScoredGameRoomModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       TableDialogs.openIScoredGameRoomDialog(iScoredSettings, selectedItem.iScoredGameRoom);
+      PreferencesController.markDirty(PreferenceType.competitionSettings);
       reload(false);
     }
   }
@@ -75,6 +77,7 @@ public class IScoredPreferencesController implements Initializable {
   @FXML
   private void onAdd() {
     TableDialogs.openIScoredGameRoomDialog(iScoredSettings, null);
+    PreferencesController.markDirty(PreferenceType.competitionSettings);
     reload(false);
   }
 
@@ -82,6 +85,7 @@ public class IScoredPreferencesController implements Initializable {
   private void onDelete() {
     IScoredGameRoomModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
+      PreferencesController.markDirty(PreferenceType.competitionSettings);
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored game room \"" + selectedItem.iScoredGameRoom.getUrl() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
@@ -124,6 +128,7 @@ public class IScoredPreferencesController implements Initializable {
         iScoredSettings.setEnabled(newValue);
         client.getPreferenceService().setJsonPreference(iScoredSettings);
 
+        PreferencesController.markDirty(PreferenceType.competitionSettings);
         enabledBox.setVisible(iScoredSettings.isEnabled());
         if(iScoredSettings.isEnabled()) {
           reload(false);

@@ -139,7 +139,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
     competition.setHighscoreReset(iScoredGameRoom.isScoreReset());
     competition.setBadge(iScoredGameRoom.getBadge());
     competition.setVpsTableId(game.getVpsTableId());
-    competition.setVpsTableVersionId(game.getVpsTableVersionId());
+    competition.setVpsTableVersionId(game.isAllVersionsEnabled() ? null : game.getVpsTableVersionId());
     competition.setUrl(syncModel.getiScoredGameRoom().getUrl());
     competition.setUuid(UUID.randomUUID().toString());
     competitionService.save(competition);

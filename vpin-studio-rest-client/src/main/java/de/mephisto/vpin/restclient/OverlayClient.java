@@ -56,4 +56,6 @@ public interface OverlayClient {
   List<RankedPlayerRepresentation> getRankedPlayers();
 
   VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId);
+
+  GameRepresentation getGameByVpsId(@Nullable String vpsTableId, @Nullable String vpsTableVersionId);
 }

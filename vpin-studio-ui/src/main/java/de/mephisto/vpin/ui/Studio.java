@@ -434,27 +434,32 @@ public class Studio extends Application {
   }
 
   public static boolean exit() {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
+    try {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+      boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
 
-    if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
-      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
-      if (confirmationResult.isCancelClicked()) {
-        return false;
-      }
+      if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
+        Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
+        if (confirmationResult.isCancelClicked()) {
+          return false;
+        }
 
-      if (confirmationResult.isOkClicked()) {
-        new Thread(() -> {
-          client.getFrontendService().restartFrontend();
-        }).start();
-      }
+        if (confirmationResult.isOkClicked()) {
+          new Thread(() -> {
+            client.getFrontendService().restartFrontend();
+          }).start();
+        }
 
-      if (confirmationResult.isChecked()) {
-        uiSettings.setHideFrontendLaunchQuestion(true);
-        client.getPreferenceService().setJsonPreference(uiSettings);
+        if (confirmationResult.isChecked()) {
+          uiSettings.setHideFrontendLaunchQuestion(true);
+          client.getPreferenceService().setJsonPreference(uiSettings);
+        }
       }
+    }
+    catch (Exception e) {
+      LOG.error("Shutdown failed, continue to exit... {}", e.getMessage());
     }
 
     AtomicBoolean polling = new AtomicBoolean(false);

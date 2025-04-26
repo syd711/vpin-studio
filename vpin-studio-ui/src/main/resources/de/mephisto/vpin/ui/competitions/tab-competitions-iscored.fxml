@@ -146,6 +146,29 @@
                         <Tooltip text="Delete the selected competition. Note that it might get re-created during the next game room synchronization." />
                      </tooltip>
                         </Button>
+                  <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit table data" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Show table in table overview" />
+                     </tooltip>
+                  </Button>
                     </items>
                 </ToolBar>
             </top>

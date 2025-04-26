@@ -43,6 +43,9 @@ public class TableOverviewPredicateFactory {
           if (filterSettings.isWithPov() && game.getPovPath() == null) {
             return false;
           }
+          if (filterSettings.isIScored() && game.getCompetitionTypes().isEmpty()) {
+            return false;
+          }
         }
 
         if (filterSettings.isWithBackglass() && game.getDirectB2SPath() == null) {
