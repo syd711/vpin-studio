@@ -1,11 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -112,13 +109,11 @@ public class CompetitionService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
-
   public List<Competition> getIScoredSubscriptions() {
-    List<Competition> collect = competitionsRepository
+    return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name())
         .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
-    return autoFixCompetitionGames(collect);
   }
 
   public List<Competition> getSubscriptions(String rom) {
@@ -321,6 +316,7 @@ public class CompetitionService implements InitializingBean {
     if (c.isPresent()) {
       competitionsRepository.deleteById(id);
       notifyCompetitionDeleted(c.get());
+      LOG.error("Deleted competition " + c.get().getName());
       return true;
     }
     else {
@@ -349,52 +345,6 @@ public class CompetitionService implements InitializingBean {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
     return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
-  }
-
-  private List<Competition> autoFixCompetitionGames(List<Competition> collect) {
-    List<Competition> validatedCompetitions = new ArrayList<>();
-    List<Game> knownGames = gameService.getKnownGames(-1);
-    for (Competition competition : collect) {
-      int gameId = competition.getGameId();
-      if (gameId > 0) {
-        Game game = gameService.getGame(gameId);
-        if (game != null) {
-          String extTableId = game.getExtTableId();
-          String extTableVersionId = game.getExtTableVersionId();
-          VpsTable tableById = vpsService.getTableById(extTableId);
-          if (tableById != null && !StringUtils.isEmpty(extTableVersionId)) {
-            VpsTableVersion tableVersionById = tableById.getTableVersionById(extTableVersionId);
-            if (tableVersionById == null) {
-              competition.setGameId(-1);
-              Competition save = save(competition);
-              LOG.info("Resetted game of " + competition + ", because no matching VPS table version was found");
-              validatedCompetitions.add(save);
-              continue;
-            }
-          }
-          else {
-            competition.setGameId(-1);
-            Competition save = save(competition);
-            LOG.info("Resetted game of " + competition + ", because no matching VPS table was found");
-            validatedCompetitions.add(save);
-            continue;
-          }
-        }
-      }
-      else {
-        Game game = gameService.getGameByVpsTable(knownGames, competition.getVpsTableId(), competition.getVpsTableVersionId());
-        if (game != null) {
-          competition.setGameId(game.getId());
-          Competition save = save(competition);
-          validatedCompetitions.add(save);
-          LOG.info("Auto-applied game of " + competition);
-          continue;
-        }
-      }
-
-      validatedCompetitions.add(competition);
-    }
-    return validatedCompetitions;
   }
 
   @Override

@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
@@ -80,6 +81,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private TableColumn<IScoredGameRoomGameModel, String> gameRoomColumn;
 
   @FXML
+  private TableColumn<IScoredGameRoomGameModel, String> creationDateColumn;
+
+  @FXML
   private Button deleteBtn;
 
   @FXML
@@ -99,15 +103,6 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private StackPane tableStack;
-
-  @FXML
-  private Label validationErrorLabel;
-
-  @FXML
-  private Label validationErrorText;
-
-  @FXML
-  private Node validationError;
 
   private Parent loadingOverlay;
   private WidgetCompetitionSummaryController competitionWidgetController;
@@ -130,7 +125,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     IScoredGameRoom value = gameRoomsCombo.getValue();
     if (value != null) {
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl(), false);
-      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(gameRoom));
+      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(value, gameRoom.getGames()));
       this.iScoredSubscriptions = null;
       doReload(false);
     }
@@ -153,8 +148,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private void onCompetitionCreate() {
     IScoredGameRoomGameModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      GameRoom gameRoom = selectedItem.gameRoom;
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(gameRoom, selectedItem.game));
+      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(selectedItem.iScoredGameRoom, Arrays.asList(selectedItem.game)));
       this.iScoredSubscriptions = null;
       doReload(false);
     }
@@ -170,15 +164,21 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     if (selections.size() == 1) {
       IScoredGameRoomGameModel selection = selections.get(0);
+      String help2 = null;
+      if (selection.iScoredGameRoom.isSynchronize()) {
+        help2 = "IMPORTANT: The synchronization for this game room is enabled. So the competition will be re-created during the next synchronization!";
+      }
+
       String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored subscription '" + selection.competition.getName() + "'?",
-          help, null, "Delete iScored Subscription");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + selection.competition.getName() + "\"?",
+          help, help2, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
             "Deleting iScored Subscription",
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        this.iScoredSubscriptions = null;
         doReload(false);
       }
     }
@@ -222,7 +222,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     List<IScoredGameRoom> validGameRooms = new ArrayList<>();
     JFXFuture.supplyAsync(() -> {
-      if (this.iScoredSubscriptions == null || forceReload) {
+      if (this.iScoredSubscriptions == null) {
         iScoredSubscriptions = client.getCompetitionService().getIScoredSubscriptions();
       }
 
@@ -238,22 +238,10 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
       refreshGameRoomsCombo(validGameRooms);
 
-      syncBtn.setDisable(validGameRooms.isEmpty());
-
       PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
       addBtn.setDisable(validGameRooms.isEmpty() || defaultPlayer == null);
 
       filterCompetitions(iScoredSubscriptions);
-
-      competitionWidget.setVisible(true);
-      if (tableView.getItems().isEmpty()) {
-        competitionWidget.setTop(null);
-      }
-      else {
-        if (competitionWidget.getTop() == null && selection != null && selection.competition != null) {
-          competitionWidget.setTop(competitionWidgetRoot);
-        }
-      }
 
       if (selection != null && tableView.getItems().contains(selection)) {
         tableView.getSelectionModel().select(selection);
@@ -279,6 +267,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     gameRoomsCombo.setItems(FXCollections.observableList(gameRoomsComboValues));
     gameRoomsCombo.setValue(value);
     gameRoomsCombo.setDisable(validGameRooms.isEmpty());
+
+    syncBtn.setDisable(gameRoomsCombo.getValue() == null);
 
     gameRoomsCombo.valueProperty().addListener(this);
   }
@@ -405,6 +395,17 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
+      if (value.competition == null) {
+        if (value.iScoredGameRoom.isSynchronize()) {
+          fallbackLabel.setText("This game is not synchronized yet.");
+        }
+        else {
+          fallbackLabel.setText("Not subscribed.");
+        }
+
+        return new SimpleObjectProperty<>(fallbackLabel);
+      }
+
       return new SimpleObjectProperty(new IScoredGameCellContainer(value.getMatches(), vpsTable, getLabelCss(cellData.getValue())));
     });
 
@@ -451,8 +452,21 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom, getLabelCss(cellData.getValue())));
     });
 
-    tableView.setPlaceholder(new Label("                      Try iScored subscriptions!\n" +
-        "Create a new subscription by pressing the '+' button."));
+    creationDateColumn.setCellValueFactory(cellData -> {
+      IScoredGameRoomGameModel value = cellData.getValue();
+      Label fallbackLabel = new Label();
+      fallbackLabel.getStyleClass().add("default-text");
+      fallbackLabel.setStyle(getLabelCss(value));
+
+      if (value.competition == null) {
+        return new SimpleObjectProperty<>("-");
+      }
+      fallbackLabel.setText(DateUtil.formatDateTime(value.competition.getCreatedAt()));
+      return new SimpleObjectProperty(fallbackLabel);
+    });
+
+    tableView.setPlaceholder(new Label("                          Try iScored subscriptions!\n" +
+        "Create new subscriptions adding game rooms in the iScored preferences."));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
@@ -512,8 +526,6 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     });
 
     gameRoomsCombo.valueProperty().addListener(this);
-
-    validationError.setVisible(false);
     bindSearchField();
     onViewActivated(null);
   }
@@ -566,11 +578,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     List<IScoredGameRoomGameModel> gameModels = new ArrayList<>();
     for (IScoredGameRoom gameRoom : gameRooms) {
       GameRoom gr = IScored.getGameRoom(gameRoom.getUrl(), false);
-      List<IScoredGame> gameRoomGames = gr.getTaggedGames();
-      for (IScoredGame gameRoomGame : gameRoomGames) {
-        Optional<CompetitionRepresentation> comp = iScoredSubscriptions.stream().filter(c -> gameRoomGame.matches(c.getVpsTableId(), c.getVpsTableVersionId())).findFirst();
-        IScoredGameRoomGameModel model = new IScoredGameRoomGameModel(gameRoom, gr, gameRoomGame, comp.orElse(null));
-        gameModels.add(model);
+      if (gr != null) {
+        List<IScoredGame> gameRoomGames = gr.getTaggedGames();
+        for (IScoredGame gameRoomGame : gameRoomGames) {
+          Optional<CompetitionRepresentation> comp = iScoredSubscriptions.stream().filter(c -> gameRoomGame.matches(c.getVpsTableId(), c.getVpsTableVersionId())).findFirst();
+          IScoredGameRoomGameModel model = new IScoredGameRoomGameModel(gameRoom, gr, gameRoomGame, comp.orElse(null));
+          gameModels.add(model);
+        }
       }
     }
 
@@ -578,11 +592,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   }
 
   private void refreshView(Optional<IScoredGameRoomGameModel> model) {
-    validationError.setVisible(false);
     IScoredGameRoomGameModel newSelection = null;
     if (model.isPresent()) {
       newSelection = model.get();
     }
+
+    competitionsController.setCompetition(model.isPresent() ? model.get().competition : null);
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
     deleteBtn.setDisable(defaultPlayer == null || this.gameRoomsCombo.isDisabled() || model.isEmpty() || newSelection.competition == null);
@@ -599,28 +614,19 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
 
 
-    if (model.isPresent()) {
-      validationError.setVisible(newSelection.competition != null && newSelection.competition.getValidationState().getCode() > 0);
-
-      if (newSelection.competition != null && newSelection.competition.getValidationState().getCode() > 0) {
-        LocalizedValidation validationResult = CompetitionValidationTexts.getValidationResult(newSelection.competition);
-        validationErrorLabel.setText(validationResult.getLabel());
-        validationErrorText.setText(validationResult.getText());
-      }
-
-      if (competitionWidget.getTop() != null) {
-        competitionWidget.getTop().setVisible(true);
-      }
-      competitionWidgetController.setCompetition(CompetitionType.ISCORED, newSelection.competition);
-    }
-    else {
-      if (competitionWidget.getTop() != null) {
-        competitionWidget.getTop().setVisible(false);
-      }
-      competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
-      competitionsController.setCompetition(null);
-    }
-
+//    if (model.isPresent()) {
+//      if (competitionWidget.getTop() != null) {
+//        competitionWidget.getTop().setVisible(true);
+//      }
+//      competitionWidgetController.setCompetition(CompetitionType.ISCORED, newSelection.competition);
+//    }
+//    else {
+//      if (competitionWidget.getTop() != null) {
+//        competitionWidget.getTop().setVisible(false);
+//      }
+//      competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
+//      competitionsController.setCompetition(null);
+//    }
   }
 
   @Override

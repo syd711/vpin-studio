@@ -130,7 +130,11 @@ public class IScoredGame {
     this.scores = scores;
   }
 
-  public boolean matches(@NonNull String vpsTableId, @Nullable String vpsVersionId) {
+  public boolean matches(@Nullable String vpsTableId, @Nullable String vpsVersionId) {
+    if (vpsTableId == null) {
+      return false;
+    }
+
     List<String> tags = getTags();
     for (String tag : tags) {
       if (tag.contains(vpsTableId) && vpsVersionId == null) {

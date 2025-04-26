@@ -632,33 +632,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    loadTabs();
-    sidePanelRoot = root.getRight();
-    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
-
-    updateSelection(Optional.empty());
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshView(t1);
-    });
-    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
-    checkTitledPanes(CompetitionType.OFFLINE);
-
-    Platform.runLater(() -> {
-      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-        public void handle(KeyEvent ke) {
-          if (ke.getCode() == KeyCode.F3) {
-            toggleSidebar();
-          }
-        }
-      });
-    });
-
-    client.getPreferenceService().addListener(this);
-  }
-
-
   private StudioFXController getActiveController() {
     int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
     switch (selectedIndex) {
@@ -708,7 +681,37 @@ public class CompetitionsController implements Initializable, StudioFXController
       else {
         tabPane.getTabs().remove(iScoredSubscriptionsTab);
       }
-
     }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    loadTabs();
+    sidePanelRoot = root.getRight();
+    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
+
+    updateSelection(Optional.empty());
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      refreshView(t1);
+    });
+    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+    checkTitledPanes(CompetitionType.OFFLINE);
+
+    Platform.runLater(() -> {
+      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.F3) {
+            toggleSidebar();
+          }
+        }
+      });
+    });
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (!uiSettings.isCompetitionsSidebarVisible()) {
+      toggleSidebar();
+    }
+
+    client.getPreferenceService().addListener(this);
   }
 }

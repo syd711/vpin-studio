@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.iscored.models.GameModel;
 import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +42,24 @@ public class IScored {
     return dashboardUrl.toLowerCase().startsWith("https://www.iScored.info/".toLowerCase());
   }
 
-  public static GameRoom getGameRoom(@NonNull String url, boolean forceReload) {
+  @Nullable
+  public static GameRoom getGameRoom(@Nullable String url, boolean forceReload) {
+    if (url == null) {
+      return null;
+    }
+
     if (!cache.containsKey(url) || forceReload) {
       GameRoom gameRoom = loadGameRoom(url);
-      cache.put(url, gameRoom);
+      if (gameRoom != null) {
+        cache.put(url, gameRoom);
+      }
     }
-    return cache.get(url);
+
+    if (cache.containsKey(url)) {
+      return cache.get(url);
+    }
+
+    return null;
   }
 
   private static GameRoom loadGameRoom(@NonNull String url) {

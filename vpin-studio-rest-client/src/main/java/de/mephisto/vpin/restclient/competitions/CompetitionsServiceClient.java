@@ -1,12 +1,13 @@
 package de.mephisto.vpin.restclient.competitions;
 
-import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,24 +135,30 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public List<CompetitionRepresentation> synchronizeIScoredGameRoom(GameRoom gameRoom) {
+  public boolean synchronizeIScoredGameRoom(@NonNull IScoredGameRoom gameRoom) {
     try {
-      return Arrays.asList(getRestClient().get(API + "competitions/synchronizeIScored", CompetitionRepresentation[].class));
+      IScoredSyncModel sync = new IScoredSyncModel();
+      sync.setiScoredGameRoom(gameRoom);
+      return getRestClient().post(API + "competitions/iscored/synchronize", sync, Boolean.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to sync competition scores: {}", e.getMessage(), e);
+      LOG.error("Failed to save competition: " + e.getMessage(), e);
+      throw e;
     }
-    return null;
   }
 
-  public CompetitionRepresentation synchronizeIScoredGameRoomGame(GameRoom gameRoom, IScoredGame next) {
+  public boolean synchronizeIScoredGameRoomGame(@NonNull IScoredGameRoom gameRoom, @NonNull IScoredGame next, boolean invalidate) {
     try {
-      return getRestClient().get(API + "competitions/synchronizeIScored", CompetitionRepresentation.class);
+      IScoredSyncModel sync = new IScoredSyncModel();
+      sync.setGame(next);
+      sync.setiScoredGameRoom(gameRoom);
+      sync.setInvalidate(invalidate);
+      return getRestClient().post(API + "competitions/iscored/synchronize", sync, Boolean.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to sync competition scores: {}", e.getMessage(), e);
+      LOG.error("Failed to save competition: " + e.getMessage(), e);
+      throw e;
     }
-    return null;
   }
 
   public ByteArrayInputStream getCompetitionBackground(long gameId) {

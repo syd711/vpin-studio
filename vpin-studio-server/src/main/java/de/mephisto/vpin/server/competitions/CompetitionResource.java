@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
+import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class CompetitionResource {
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private IScoredCompetitionSynchronizer competitionSynchronizer;
 
   @GetMapping("/offline")
   public List<Competition> getOfflineCompetitions() {
@@ -37,6 +42,11 @@ public class CompetitionResource {
   @GetMapping("/iscored")
   public List<Competition> getIScoredSubscriptions() {
     return competitionService.getIScoredSubscriptions();
+  }
+
+  @PostMapping("/iscored/synchronize")
+  public boolean synchronize(@RequestBody IScoredSyncModel syncModel) {
+    return competitionSynchronizer.synchronize(syncModel);
   }
 
   @GetMapping("/{id}")
