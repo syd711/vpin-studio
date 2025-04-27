@@ -171,6 +171,10 @@ public class VPinStudioClient implements OverlayClient {
     this.tournamentsServiceClient = new TournamentsServiceClient(this);
   }
 
+  public String getHost() {
+    return restClient.getHost();
+  }
+
   public FpServiceClient getFpService() {
     return fpServiceClient;
   }

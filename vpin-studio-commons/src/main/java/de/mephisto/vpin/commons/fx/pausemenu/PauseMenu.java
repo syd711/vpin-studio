@@ -60,6 +60,7 @@ public class PauseMenu extends Application {
   private static boolean test = false;
 
   private static List<FrontendScreenAsset> screenAssets = new ArrayList<>();
+  private static GameEmulatorRepresentation emulator;
 
   static {
     try {
@@ -201,6 +202,9 @@ public class PauseMenu extends Application {
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
+        GameRepresentation game = client.getGameService().getGame(status.getGameId());
+        emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
         VPinScreen cardScreen = null;
@@ -216,7 +220,6 @@ public class PauseMenu extends Application {
         FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
 
         visible = true;
-        GameRepresentation game = client.getGameService().getGame(status.getGameId());
         FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
 
         String extTableId = game.getExtTableId();
@@ -260,12 +263,11 @@ public class PauseMenu extends Application {
           LOG.info("Asset fetch for pause menu took {}ms", (System.currentTimeMillis() - start));
 
           ServerFX.forceShow(stage);
-          GameEmulatorRepresentation emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
           if (emulator != null && isVPXGlEmulator(emulator)) {
-            ServerFX.toFront(stage, visible);
-            ServerFX.toFront(stage, visible);
-            ServerFX.toFront(stage, visible);
-            ServerFX.toFront(stage, visible);
+//            ServerFX.toFront(stage, visible);
+//            ServerFX.toFront(stage, visible);
+//            ServerFX.toFront(stage, visible);
+//            ServerFX.toFront(stage, visible);
           }
         });
       }
@@ -286,6 +288,7 @@ public class PauseMenu extends Application {
 
   public static void exitPauseMenu() {
     StateMananger.getInstance().exit();
+    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
     if (!PRODUCTION_USE) {
       Platform.runLater(() -> {
         System.exit(0);
@@ -312,7 +315,6 @@ public class PauseMenu extends Application {
 
       try {
         NirCmd.focusWindow("Visual Pinball Player");
-        PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
         if (pauseMenuSettings.isMuteOnPause()) {
           NirCmd.muteSystem(false);
         }
@@ -324,7 +326,11 @@ public class PauseMenu extends Application {
 
     if (visible) {
       new Thread(() -> {
-        togglePauseKey(1000);
+        long delay = 1000;
+        if (pauseMenuSettings.getUnpauseDelay() > 0) {
+          delay = pauseMenuSettings.getUnpauseDelay();
+        }
+        togglePauseKey(delay);
       }).start();
     }
     visible = false;

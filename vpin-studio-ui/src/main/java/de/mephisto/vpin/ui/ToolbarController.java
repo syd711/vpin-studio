@@ -2,12 +2,10 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.Updater;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.hooks.HookCommand;
@@ -25,6 +23,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -41,6 +40,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -182,15 +182,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onDisconnect() {
-    try {
-      client.getSystemService().setMaintenanceMode(false);
-    }
-    catch (Exception e) {
-      LOG.error("Exception ignored, Cannot set maintenance mode, system may be done", e);
-    }
-    Studio.stage.close();
-    NavigationController.refreshControllerCache();
-    NavigationController.refreshViewCache();
+    doDisconnect();
     Studio.loadLauncher(new Stage());
   }
 
@@ -268,6 +260,27 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     catch (Exception e) {
       LOG.error("Failed to run update check: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+      DOFSettings settings = client.getDofService().getSettings();
+      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
+      dofSyncEntry.setDisable(!valid);
+    }
+  }
+
+  private static void doDisconnect() {
+    try {
+      client.getSystemService().setMaintenanceMode(false);
+    }
+    catch (Exception e) {
+      LOG.error("Exception ignored, Cannot set maintenance mode, system may be done", e);
+    }
+    Studio.stage.close();
+    NavigationController.refreshControllerCache();
+    NavigationController.refreshViewCache();
   }
 
   @Override
@@ -369,14 +382,40 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
         }
       }
     });
+
+    if (!client.getSystemService().isLocal()) {
+      ConnectionProperties properties = new ConnectionProperties();
+      List<ConnectionEntry> connections = properties.getConnections();
+      if (!connections.isEmpty()) {
+        List<ConnectionEntry> filteredConnections = connections.stream().filter(c -> !c.getIp().equals(client.getHost())).collect(Collectors.toList());
+        if (!filteredConnections.isEmpty()) {
+          preferencesBtn.getItems().add(new SeparatorMenuItem());
+          for (ConnectionEntry connection : filteredConnections) {
+            MenuItem item = new MenuItem(connection.getName() + " (" + connection.getIp() + ")");
+            item.setUserData(connection);
+            item.setGraphic(WidgetFactory.createIcon("mdi2l-logout"));
+            item.setOnAction(new EventHandler<ActionEvent>() {
+              @Override
+              public void handle(ActionEvent event) {
+                onCabSwitch(connection);
+              }
+            });
+            preferencesBtn.getItems().add(item);
+          }
+        }
+      }
+    }
   }
 
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
-      DOFSettings settings = client.getDofService().getSettings();
-      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
-      dofSyncEntry.setDisable(!valid);
+  private void onCabSwitch(ConnectionEntry connection) {
+    VPinStudioClient client = new VPinStudioClient(connection.getIp());
+    String version = client.getSystemService().getVersion();
+    if (version != null) {
+      doDisconnect();
+      Studio.loadStudio(new Stage(), client);
+    }
+    else {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Connection failed to " + connection.getName() + "/" + connection.getIp());
     }
   }
 }

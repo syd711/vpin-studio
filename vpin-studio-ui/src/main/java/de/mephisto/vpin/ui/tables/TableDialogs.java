@@ -44,6 +44,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -306,19 +307,7 @@ public class TableDialogs {
       return true;
     }
 
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
-    GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
-    boolean hd = defaultConfiguration.getBounds().getHeight() <= 1024;
-    boolean fullhd = defaultConfiguration.getBounds().getHeight() <= 1080;
-
-    String fxml = "dialog-table-asset-manager.fxml";
-    if (hd) {
-      fxml = "dialog-table-asset-manager-hd.fxml";
-    }
-    if (fullhd) {
-      fxml = "dialog-table-asset-manager-fullhd.fxml";
-    }
+    String fxml = getDataManagerFxml();
     Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
@@ -333,15 +322,7 @@ public class TableDialogs {
       return true;
     }
 
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
-    GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
-    boolean hd = defaultConfiguration.getBounds().getHeight() <= 1080;
-
-    String fxml = "dialog-table-asset-manager.fxml";
-    if (hd) {
-      fxml = "dialog-table-asset-manager-hd.fxml";
-    }
+    String fxml = getDataManagerFxml();
     Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game != null ? game.getEmulatorId() : -1);
@@ -351,6 +332,19 @@ public class TableDialogs {
 
     stage.showAndWait();
     return true;
+  }
+
+  @NotNull
+  private static String getDataManagerFxml() {
+    double width = Studio.stage.getWidth();
+    String fxml = "dialog-table-asset-manager.fxml";
+    if (width <= 1300) {
+      fxml = "dialog-table-asset-manager-hd.fxml";
+    }
+    else  if (width < 1900) {
+      fxml = "dialog-table-asset-manager-fullhd.fxml";
+    }
+    return fxml;
   }
 
   public static boolean openHighscoresAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {

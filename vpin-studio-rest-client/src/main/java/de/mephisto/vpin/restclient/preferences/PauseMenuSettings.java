@@ -13,6 +13,7 @@ public class PauseMenuSettings extends JsonSettings {
 
   private int testDuration = 5;
   private int testGameId = -1;
+  private int unpauseDelay = 1000;
 
   private boolean showIscoredScores = true;
   private boolean showManiaScores = true;
@@ -26,6 +27,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public int getUnpauseDelay() {
+    return unpauseDelay;
+  }
+
+  public void setUnpauseDelay(int unpauseDelay) {
+    this.unpauseDelay = unpauseDelay;
+  }
 
   private boolean muteOnPause = false;
 

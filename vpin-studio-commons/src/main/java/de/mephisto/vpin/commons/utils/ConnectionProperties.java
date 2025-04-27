@@ -1,13 +1,13 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.restclient.util.OSUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import de.mephisto.vpin.restclient.util.OSUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ConnectionProperties {
   private static final Logger LOG = LoggerFactory.getLogger(ConnectionProperties.class);
@@ -83,13 +83,18 @@ public class ConnectionProperties {
   public List<ConnectionEntry> getConnections() {
     List<ConnectionEntry> connections = new ArrayList<>();
 
-    for (String key : store.getProperties().stringPropertyNames()) {
-      if (key.matches(ID_PREFIX + "\\d+\\.ip")) {
-        String idString = key.split("\\.")[0].replace(ID_PREFIX, "");
-        int id = Integer.parseInt(idString);
-        ConnectionEntry entry = createConnectionEntry(id);
-        connections.add(entry);
+    try {
+      for (String key : store.getProperties().stringPropertyNames()) {
+        if (key.matches(ID_PREFIX + "\\d+\\.ip")) {
+          String idString = key.split("\\.")[0].replace(ID_PREFIX, "");
+          int id = Integer.parseInt(idString);
+          ConnectionEntry entry = createConnectionEntry(id);
+          connections.add(entry);
+        }
       }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load connection properties: {}", e.getMessage(), e);
     }
 
     return connections;

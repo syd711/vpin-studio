@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -188,6 +189,14 @@
                                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
                                     </Button>
+                                    <Button fx:id="btn_dmdPos_DMD" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Adjust DMD position" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
                               </HBox>
                                     </left>
@@ -276,6 +285,14 @@
                                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
                                     </Button>
+                                    <Button fx:id="btn_dmdPos_Backglass" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Adjust DMD position" />
+                                       </tooltip>
+                                    </Button>
                                  </children>
                               </HBox>
                                     </left>
@@ -347,7 +364,7 @@
                                         </HBox>
                                     </right>
                                     <left>
-                              <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                              <HBox spacing="1.0" BorderPane.alignment="CENTER">
                                  <children>
                                                 <Button fx:id="btn_edit_Menu" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
                                                     <graphic>
@@ -363,6 +380,14 @@
                                        <graphic>
                                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="btn_dmdPos_Apron" mnemonicParsing="false" onAction="#onDMDPosition" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2t-target-variant" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Adjust DMD position" />
+                                       </tooltip>
                                     </Button>
                                  </children>
                               </HBox>

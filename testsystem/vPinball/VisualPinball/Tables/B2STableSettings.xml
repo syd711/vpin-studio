@@ -33,7 +33,6 @@
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
     <FormToBack>0</FormToBack>
-    <Animations/>
     <HideB2SBackglass>0</HideB2SBackglass>
   </avr_200>
   <apollo13>
@@ -50,7 +49,6 @@
     <StartAsEXE>1</StartAsEXE>
     <StartBackground>0</StartBackground>
     <FormToFront>0</FormToFront>
-    <Animations/>
   </apollo13>
   <PUPafm_113b>
     <HideGrill>2</HideGrill>

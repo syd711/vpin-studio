@@ -47,6 +47,13 @@
       "scoreLine": 3
     },
     {
+      "parser": "SinglePlayer",
+      "fileNames": [
+        "HotLine.txt"
+      ],
+      "scoreLine": 2
+    },
+    {
       "parser": "TwoPlayers",
       "fileNames": [
         "Strip_JP_EM_1978.txt", "The_Fog_1979.txt"

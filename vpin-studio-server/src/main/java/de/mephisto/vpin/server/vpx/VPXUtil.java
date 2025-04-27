@@ -11,6 +11,7 @@ import org.apache.poi.poifs.filesystem.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -189,7 +190,8 @@ public class VPXUtil {
     }
   }
 
-  public static String exportVBS(@NonNull File vpxFile, String vps, boolean keepVbsFile) throws IOException {
+  public static String exportVBS(@NonNull File vpxFile, boolean keepVbsFile) throws Exception {
+    String error = null;
     try {
       File vbsFile = new File(vpxFile.getParentFile(), FilenameUtils.getBaseName(vpxFile.getName()) + ".vbs");
       if (vbsFile.exists()) {
@@ -202,6 +204,11 @@ public class VPXUtil {
       executor.setDir(new File("./resources"));
       executor.executeCommand();
 
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (standardErrorFromCommand != null) {
+        error = standardErrorFromCommand.toString();
+      }
+
       String script = org.apache.commons.io.FileUtils.readFileToString(vbsFile, Charset.defaultCharset());
       if (!keepVbsFile && !vbsFile.delete()) {
         LOG.error("Failed to delete VBS export file " + vbsFile.getAbsolutePath());
@@ -209,9 +216,9 @@ public class VPXUtil {
       return script;
     }
     catch (Exception e) {
-      LOG.error("Exporting VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
+      LOG.error("Exporting VBS failed for {}: {} - {}", vpxFile.getAbsolutePath(), error,  e.getMessage(), e);
+      throw new Exception("Exporting VBS failed for \"" + vpxFile.getAbsolutePath() + "\": " + error);
     }
-    return vps;
   }
 
   public static String getChecksum(File gameFile) {

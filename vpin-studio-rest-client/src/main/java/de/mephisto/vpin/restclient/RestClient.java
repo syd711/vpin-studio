@@ -36,6 +36,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
 
   public static final int TIMEOUT = 15000;
 
+  private String host;
   private String baseUrl;
   private RestTemplate restTemplate;
   private ObjectCache cache = new ObjectCache();
@@ -55,7 +56,8 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   private RestClient(String scheme, String host, int port) {
-    baseUrl = scheme + "://" + host + ":" + port + "/";
+    this.host = host;
+    this.baseUrl = scheme + "://" + host + ":" + port + "/";
     initRestClient();
   }
 
@@ -271,5 +273,9 @@ public class RestClient implements ClientHttpRequestInterceptor {
       LOG.error("Failed while reading bytes from %s: %s", resource, e.getMessage(), e);
     }
     return null;
+  }
+
+  public String getHost() {
+    return this.host;
   }
 }
