@@ -110,10 +110,7 @@ public class CompetitionService implements InitializingBean {
   }
 
   public List<Competition> getIScoredSubscriptions() {
-    return competitionsRepository
-        .findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name())
-        .stream().map(c -> competitionValidator.validate(c))
-        .collect(Collectors.toList());
+    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name());
   }
 
   public List<Competition> getSubscriptions(String rom) {

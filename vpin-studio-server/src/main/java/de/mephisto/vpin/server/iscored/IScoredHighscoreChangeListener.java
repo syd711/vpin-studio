@@ -72,6 +72,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
           if (iScoredGame.isGameLocked() || iScoredGame.isDisabled()) {
             LOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but it is disabled or locked.");
             SLOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but it is disabled or locked.");
+            continue;
           }
           gameRoomGamesForTable.add(iScoredGame);
         }
@@ -90,8 +91,8 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
       for (IScoredGame iScoredGame : gameRoomGamesForTable) {
         boolean isCompetitionAvailable = filterForMatchingCompetitions(iScoredSubscriptions, iScoredGame);
         if (!isCompetitionAvailable) {
-          LOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but no matching competition entry was created for them.");
-          SLOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but no matching competition entry was created for them.");
+          LOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but no matching iScored competition was created for them.");
+          SLOG.info("Found matching game room game \"" + iScoredGame.getName() + "\", but no matching iScored competition was created for them.");
           continue;
         }
 

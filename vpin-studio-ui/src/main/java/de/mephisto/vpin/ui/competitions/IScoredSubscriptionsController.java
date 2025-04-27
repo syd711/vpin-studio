@@ -263,7 +263,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
     List<IScoredGameRoom> validGameRooms = new ArrayList<>();
     JFXFuture.supplyAsync(() -> {
-      if (this.iScoredSubscriptions == null) {
+      if (this.iScoredSubscriptions == null || forceReload) {
         iScoredSubscriptions = client.getCompetitionService().getIScoredSubscriptions();
       }
 
