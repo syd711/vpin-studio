@@ -1,15 +1,19 @@
 package de.mephisto.vpin.server.competitions.iscored;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class IScoredCompetitionSynchronizer implements InitializingBean {
@@ -31,11 +36,20 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
   @Autowired
   private CompetitionService competitionService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   private List<Game> knownGames = null;
 
+  public IScoredSyncModel synchronize(IScoredSyncModel syncModel) {
+    if (syncModel.getGame() != null) {
+      LOG.info("--- ------- iScored Sync (" + syncModel.getGame().getName() + ")-----------------");
+    }
+    else {
+      LOG.info("--- ------- iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
+    }
 
-  public boolean synchronize(IScoredSyncModel syncModel) {
-    LOG.info("----------------------------- iScored Sync ------------------------------------------------------------");
+
     GameRoom gameRoom = IScored.getGameRoom(syncModel.getiScoredGameRoom().getUrl(), syncModel.isInvalidate());
     List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
 
@@ -45,11 +59,8 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
     }
 
     //clean up invalid competitions
-    if (syncModel.getiScoredGameRoom().
-
-        isSynchronize()) {
-      List<Competition> updated = synchronizeExistingCompetitions(iScoredSubscriptions, knownGames);
-
+    if (syncModel.getiScoredGameRoom().isSynchronize() || (syncModel.getGame() != null && syncModel.isManualSubscription())) {
+      List<Competition> updated = synchronizeExistingCompetitions(syncModel, iScoredSubscriptions, knownGames);
       if (syncModel.getGame() != null) {
         synchronizeGame(syncModel, syncModel.getGame(), updated, knownGames);
       }
@@ -59,21 +70,21 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
           synchronizeGame(syncModel, game, updated, knownGames);
         }
       }
-      return true;
     }
 
-    LOG.info("----------------------------- /iScored Sync -----------------------------------------------------------");
-    return false;
+    LOG.info("--- ------- /iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
+    return syncModel;
   }
 
   /**
    * Checks if the existing iScored subscriptions are still valid.
    * If no game is found, the subscription is deleted too.
    *
+   * @param syncModel
    * @param iScoredSubscriptions
    * @param knownGames
    */
-  private List<Competition> synchronizeExistingCompetitions(List<Competition> iScoredSubscriptions, List<Game> knownGames) {
+  private List<Competition> synchronizeExistingCompetitions(IScoredSyncModel syncModel, List<Competition> iScoredSubscriptions, List<Game> knownGames) {
     long start = System.currentTimeMillis();
     List<Competition> subs = new ArrayList<>(iScoredSubscriptions);
     for (Competition iScoredSubscription : subs) {
@@ -125,11 +136,20 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
       return;
     }
 
-    Game gameByVpsTable = gameService.getGameByVpsTable(knownGames, game.getVpsTableId(), game.getVpsTableVersionId());
-    if (gameByVpsTable == null) {
+    List<Game> matches = null;
+    if (game.isAllVersionsEnabled()) {
+      matches = gameService.getGamesByVpsTableId(knownGames, game.getVpsTableId(), null);
+    }
+    else {
+      matches = gameService.getGamesByVpsTableId(knownGames, game.getVpsTableId(), game.getVpsTableVersionId());
+    }
+
+    if (matches.isEmpty()) {
       //no matching table available.
       return;
     }
+
+    syncModel.getUpdatedGameIds().addAll(matches.stream().map(g -> g.getId()).collect(Collectors.toList()));
 
     IScoredGameRoom iScoredGameRoom = syncModel.getiScoredGameRoom();
 
@@ -150,6 +170,28 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    if (Features.ISCORED_ENABLED && iScoredSettings.isEnabled()) {
+      new Thread(() -> {
+        long start = System.currentTimeMillis();
+        Thread.currentThread().setName("IScored Initial Sync");
+        LOG.info("----------------------------- Initial iScored Sync --------------------------------------------------");
+        List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
+        for (IScoredGameRoom gameRoom : gameRooms) {
+          if (!gameRoom.isSynchronize()) {
+            LOG.info("Skipped initial sync of Game Room " + gameRoom.getUrl() + ", sync is not enabled.");
+            continue;
+          }
+
+          IScoredSyncModel syncModel = new IScoredSyncModel();
+          syncModel.setiScoredGameRoom(gameRoom);
+          synchronize(syncModel);
+        }
+
+        LOG.info("----------------------------- /Initial iScored Sync -------------------------------------------------");
+        LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
+      }).start();
+    }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

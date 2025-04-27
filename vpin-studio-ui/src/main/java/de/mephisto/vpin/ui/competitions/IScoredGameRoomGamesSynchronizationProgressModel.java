@@ -19,14 +19,16 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
   private final static Logger LOG = LoggerFactory.getLogger(IScoredGameRoomGamesSynchronizationProgressModel.class);
 
   private final Iterator<IScoredGame> iterator;
+  private final boolean manualSubscription;
   private final IScoredGameRoom gameRoom;
   private final List<IScoredGame> games;
 
-  public IScoredGameRoomGamesSynchronizationProgressModel(IScoredGameRoom gameRoom, List<IScoredGame> games) {
+  public IScoredGameRoomGamesSynchronizationProgressModel(IScoredGameRoom gameRoom, List<IScoredGame> games, boolean manualSubscription) {
     super("iScored Synchronization");
     this.gameRoom = gameRoom;
     this.games = games;
     this.iterator = games.iterator();
+    this.manualSubscription = manualSubscription;
   }
 
   @Override
@@ -57,7 +59,7 @@ public class IScoredGameRoomGamesSynchronizationProgressModel extends ProgressMo
   @Override
   public void processNext(ProgressResultModel progressResultModel, IScoredGame next) {
     try {
-      client.getCompetitionService().synchronizeIScoredGameRoomGame(gameRoom, next, this.games.indexOf(next) == 0);
+      client.getCompetitionService().synchronizeIScoredGameRoomGame(gameRoom, next, this.games.indexOf(next) == 0, manualSubscription);
     }
     catch (Exception e) {
       LOG.error("Failed to sync competitions data: " + e.getMessage(), e);

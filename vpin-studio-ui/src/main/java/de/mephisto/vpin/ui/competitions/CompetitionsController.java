@@ -163,12 +163,27 @@ public class CompetitionsController implements Initializable, StudioFXController
     refreshUsers(competition);
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     refreshView(tabPane.getSelectionModel().selectedIndexProperty().get());
-//    discordController.onReload();
-//    tableSubscriptionsController.onReload();
-
-//    offlineController.onViewActivated();
     discordController.onViewActivated(options);
     tableSubscriptionsController.onViewActivated(options);
+
+    if (options != null && options.getModel() != null) {
+      if (options.getModel() instanceof CompetitionType) {
+        CompetitionType competitionType = (CompetitionType) options.getModel();
+
+        if (competitionType.equals(CompetitionType.OFFLINE)) {
+          tabPane.getSelectionModel().select(TAB_OFFLINE);
+        }
+        else if (competitionType.equals(CompetitionType.DISCORD)) {
+          tabPane.getSelectionModel().select(TAB_ONLINE);
+        }
+        else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+          tabPane.getSelectionModel().select(TAB_TABLE_SUBS);
+        }
+        else if (competitionType.equals(CompetitionType.ISCORED)) {
+          tabPane.getSelectionModel().select(TAB_ISCORED);
+        }
+      }
+    }
   }
 
   @FXML

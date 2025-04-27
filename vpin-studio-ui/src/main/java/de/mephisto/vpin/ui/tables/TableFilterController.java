@@ -3,7 +3,9 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.CommentType;
+import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -332,7 +334,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.ISCORED_SETTINGS.equalsIgnoreCase(key)) {
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-      iScoredCompetitionCheckBox.setVisible(iScoredSettings.isEnabled());
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+      iScoredCompetitionCheckBox.setVisible(iScoredSettings.isEnabled() && frontendType.supportCompetitions());
     }
   }
 }

@@ -19,12 +19,14 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
-import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.WaitNProgressModel;
+import de.mephisto.vpin.ui.util.WaitProgressModel;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -36,7 +38,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -62,9 +63,6 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private TableView<IScoredGameRoomGameModel> tableView;
-
-  @FXML
-  private TableColumn<IScoredGameRoomGameModel, Label> syncColumn;
 
   @FXML
   private TableColumn<IScoredGameRoomGameModel, Object> settingsColumn;
@@ -154,7 +152,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     IScoredGameRoom value = gameRoomsCombo.getValue();
     if (value != null) {
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl(), false);
-      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(value, gameRoom.getGames()));
+      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(value, gameRoom.getGames(), false));
       this.iScoredSubscriptions = null;
       doReload(false);
     }
@@ -177,9 +175,14 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   private void onCompetitionCreate() {
     IScoredGameRoomGameModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(selectedItem.iScoredGameRoom, Arrays.asList(selectedItem.game)));
+      ProgressDialog.createProgressDialog(new IScoredGameRoomGamesSynchronizationProgressModel(selectedItem.iScoredGameRoom, Arrays.asList(selectedItem.game), true));
       this.iScoredSubscriptions = null;
       doReload(false);
+
+      List<GameRepresentation> matches = selectedItem.getMatches();
+      for (GameRepresentation match : matches) {
+        EventManager.getInstance().notifyTableChange(match.getId(), null);
+      }
     }
   }
 
@@ -202,6 +205,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + selection.competition.getName() + "\"?",
           help, help2, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        List<Integer> gameIds = new ArrayList<>();
+        for (IScoredGameRoomGameModel gameRoomGameModel : selections) {
+          gameRoomGameModel.getMatches().stream().forEach(g -> gameIds.add(g.getId()));
+        }
+
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
             "Deleting iScored Subscription",
@@ -209,6 +217,10 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         this.iScoredSubscriptions = null;
         doReload(false);
+
+        for (Integer gameId : gameIds) {
+          EventManager.getInstance().notifyTableChange(gameId, null);
+        }
       }
     }
 
@@ -318,38 +330,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       LOG.error("Failed to load loading overlay: {}", e.getMessage(), e);
     }
 
-
-    syncColumn.setCellValueFactory(cellData -> {
-      IScoredGameRoomGameModel value = cellData.getValue();
-      boolean synchronize = value.iScoredGameRoom.isSynchronize();
-
-      Label label = new Label();
-      if (synchronize) {
-        if (value.getMatches().isEmpty()) {
-          label.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
-          label.setGraphic(WidgetFactory.createExclamationIcon());
-        }
-        else if (value.competition != null) {
-          label.setTooltip(new Tooltip("The competition for this game has been created."));
-          label.setGraphic(WidgetFactory.createCheckIcon(null));
-        }
-        else {
-          label.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
-          FontIcon icon = WidgetFactory.createExclamationIcon();
-          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
-          label.setGraphic(icon);
-        }
-      }
-
-      return new SimpleObjectProperty<>(label);
-    });
-
     settingsColumn.setCellValueFactory(cellData -> {
       IScoredGameRoomGameModel value = cellData.getValue();
 
       VBox vBox = new VBox();
       vBox.setAlignment(Pos.CENTER);
       HBox result = new HBox(6);
+      result.setAlignment(Pos.CENTER);
       vBox.getChildren().add(result);
 
       if (value.game.isAllVersionsEnabled()) {
@@ -415,21 +402,27 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       fallbackLabel.setStyle(getLabelCss(value));
       VpsTable vpsTable = client.getVpsService().getTableById(value.getVpsTableId());
       if (vpsTable == null) {
+        fallbackLabel.setStyle(ERROR_STYLE);
         fallbackLabel.setText("No matching VPS table found.");
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       if (value.getMatches().isEmpty()) {
+        fallbackLabel.setStyle(ERROR_STYLE);
         fallbackLabel.setText("No matching table found.");
+        fallbackLabel.setTooltip(new Tooltip("No matching table found. Download and install this table using the download link."));
         return new SimpleObjectProperty<>(fallbackLabel);
       }
 
       if (value.competition == null) {
+        fallbackLabel.setStyle(WidgetFactory.OK_STYLE);
         if (value.iScoredGameRoom.isSynchronize()) {
           fallbackLabel.setText("This game is not synchronized yet.");
+          fallbackLabel.setTooltip(new Tooltip("Synchronization is enabled but the competition has not been created yet."));
         }
         else {
-          fallbackLabel.setText("Not subscribed.");
+          fallbackLabel.setText("Table match found, but not subscribed yet.");
+          fallbackLabel.setTooltip(new Tooltip("The subscription can be create by pressing the \"+\" button."));
         }
 
         return new SimpleObjectProperty<>(fallbackLabel);
@@ -478,7 +471,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       if (gameRoom == null) {
         return new SimpleObjectProperty<>("Invalid Game Room URL");
       }
-      return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom, getLabelCss(cellData.getValue())));
+      return new SimpleObjectProperty(new GameRoomCellContainer(gameRoom, value.game, getLabelCss(cellData.getValue())));
     });
 
     creationDateColumn.setCellValueFactory(cellData -> {
@@ -507,8 +500,6 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
       competitionWidget.setTop(competitionWidgetRoot);
-      competitionWidgetRoot.setVisible(false);
-      competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
     }
     catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
@@ -527,11 +518,17 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     tableView.setSortPolicy(new Callback<TableView<IScoredGameRoomGameModel>, Boolean>() {
       @Override
       public Boolean call(TableView<IScoredGameRoomGameModel> gameRepresentationTableView) {
-        IScoredGameRoomGameModel selectedItem = tableView.getSelectionModel().getSelectedItem();
         if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
           TableColumn<IScoredGameRoomGameModel, ?> column = gameRepresentationTableView.getSortOrder().get(0);
           if (column.equals(tableColumn)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.game.getName()));
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getName() : null));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(gameRoomColumn)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.gameRoom.getName()));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -545,6 +542,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
               }
               return "";
             }));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(creationDateColumn)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.competition != null ? o.competition.getCreatedAt() : null));
             if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
               Collections.reverse(tableView.getItems());
             }
@@ -647,14 +651,10 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
 
     if (model.isPresent() && model.get().competition != null) {
-      competitionWidget.setTop(competitionWidgetRoot);
-      competitionWidgetRoot.setVisible(true);
       competitionWidgetController.setCompetition(CompetitionType.ISCORED, newSelection.competition);
       competitionsController.setCompetition(newSelection.competition);
     }
     else {
-      competitionWidget.setTop(null);
-      competitionWidgetRoot.setVisible(false);
       competitionWidgetController.setCompetition(CompetitionType.ISCORED, null);
       competitionsController.setCompetition(null);
     }
@@ -663,8 +663,6 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   @Override
   public void onViewActivated(NavigationOptions options) {
     if (this.competitionsController != null) {
-      competitionWidget.setTop(null);
-      competitionWidgetRoot.setVisible(false);
       doReload(false);
     }
   }

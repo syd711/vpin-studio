@@ -307,10 +307,12 @@ public class ComponentsController implements Initializable, StudioFXController, 
       initialized = true;
     }
 
-    if (options != null && options.getModel() instanceof GameEmulatorRepresentation) {
-      rootTabPane.getSelectionModel().select(TAB_EMULATORS);
-      if (emulatorsController != null) {
-        emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
+    if (options != null) {
+      if (options.getModel() instanceof GameEmulatorRepresentation) {
+        rootTabPane.getSelectionModel().select(TAB_EMULATORS);
+        if (emulatorsController != null) {
+          emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
+        }
       }
     }
   }

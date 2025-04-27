@@ -135,11 +135,11 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public boolean synchronizeIScoredGameRoom(@NonNull IScoredGameRoom gameRoom) {
+  public IScoredSyncModel synchronizeIScoredGameRoom(@NonNull IScoredGameRoom gameRoom) {
     try {
       IScoredSyncModel sync = new IScoredSyncModel();
       sync.setiScoredGameRoom(gameRoom);
-      return getRestClient().post(API + "competitions/iscored/synchronize", sync, Boolean.class);
+      return getRestClient().post(API + "competitions/iscored/synchronize", sync, IScoredSyncModel.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save competition: " + e.getMessage(), e);
@@ -147,13 +147,14 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean synchronizeIScoredGameRoomGame(@NonNull IScoredGameRoom gameRoom, @NonNull IScoredGame next, boolean invalidate) {
+  public IScoredSyncModel synchronizeIScoredGameRoomGame(@NonNull IScoredGameRoom gameRoom, @NonNull IScoredGame next, boolean invalidate, boolean manualSubscription) {
     try {
       IScoredSyncModel sync = new IScoredSyncModel();
       sync.setGame(next);
       sync.setiScoredGameRoom(gameRoom);
+      sync.setManualSubscription(manualSubscription);
       sync.setInvalidate(invalidate);
-      return getRestClient().post(API + "competitions/iscored/synchronize", sync, Boolean.class);
+      return getRestClient().post(API + "competitions/iscored/synchronize", sync, IScoredSyncModel.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save competition: " + e.getMessage(), e);

@@ -1266,7 +1266,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         row.getChildren().add(compBtn);
         compBtn.setOnAction(event -> {
           Platform.runLater(() -> {
-            NavigationController.navigateTo(NavigationItem.Competitions, null);
+            NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(value.getCompetitionTypes().get(0)));
           });
         });
       }
@@ -2104,7 +2104,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else if (key.equals(PreferenceNames.ISCORED_SETTINGS)) {
       iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-      columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
+      if (client.getFrontendService().getFrontendType().supportCompetitions()) {
+        columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
+      }
     }
     else if (key.equals(PreferenceNames.IGNORED_VALIDATION_SETTINGS)) {
       ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);

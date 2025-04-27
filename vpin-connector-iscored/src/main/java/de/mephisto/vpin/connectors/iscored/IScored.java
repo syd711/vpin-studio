@@ -18,10 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IScored {
@@ -102,6 +99,15 @@ public class IScored {
             game.setScores(getScoresFor(game.getId(), allScores));
             gameRoom.getGames().add(game);
           }
+
+          Collections.sort(gameRoom.getGames(), new Comparator<IScoredGame>() {
+            @Override
+            public int compare(IScoredGame o1, IScoredGame o2) {
+              return o1.getName().compareTo(o2.getName());
+            }
+          });
+
+
 
           LOG.info("Loaded game room from URL '" + url + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
           return gameRoom;

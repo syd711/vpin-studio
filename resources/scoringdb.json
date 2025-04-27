@@ -327,6 +327,11 @@
       "textFile": ""
     },
     {
+      "rom": "hh7",
+      "tableName": "hh",
+      "textFile": ""
+    },
+    {
       "rom": "pizzatime",
       "tableName": "",
       "textFile": ""

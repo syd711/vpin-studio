@@ -45,7 +45,7 @@ public class CompetitionResource {
   }
 
   @PostMapping("/iscored/synchronize")
-  public boolean synchronize(@RequestBody IScoredSyncModel syncModel) {
+  public IScoredSyncModel synchronize(@RequestBody IScoredSyncModel syncModel) {
     return competitionSynchronizer.synchronize(syncModel);
   }
 

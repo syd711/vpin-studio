@@ -351,11 +351,13 @@ public class CompetitionService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
 
+
+
     try {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
       for (Competition s : iScoredSubscriptions) {
-        LOG.info(s.toString() + " (" + gameService.getGame(s.getGameId()) + ") [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
+        LOG.info(s.toString() + " [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
       }
       LOG.info("--------------------------------- /iScored Competitions -----------------------------------------------");
     }

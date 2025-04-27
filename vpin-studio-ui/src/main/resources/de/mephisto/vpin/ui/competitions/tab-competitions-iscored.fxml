@@ -24,7 +24,6 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                        <TableColumn fx:id="syncColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Synchronized" />
                         <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Game Settings" />
                         <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">
                            <graphic>
@@ -45,10 +44,10 @@
                                  </children>
                               </HBox>
                            </graphic></TableColumn>
-                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="GameRoom" />
+                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="Game Room" />
                         <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="Virtual Pinball Spreadsheet Table" />
-                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
-                        <TableColumn fx:id="creationDateColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Creation Date" />
+                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="Table Version" />
+                        <TableColumn fx:id="creationDateColumn" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Creation Date" />
                             </columns>
                         </TableView>
                     </children>
