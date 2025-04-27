@@ -10,10 +10,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class IScoredGame {
+  private String gameRoomUrl;
   private int id;
   private String name;
   private List<Score> scores = new ArrayList<>();
   private List<String> tags = new ArrayList<>();
+
+  public String getGameRoomUrl() {
+    return gameRoomUrl;
+  }
+
+  public void setGameRoomUrl(String gameRoomUrl) {
+    this.gameRoomUrl = gameRoomUrl;
+  }
 
   @JsonProperty("Hidden")
   private String hidden;
@@ -137,7 +146,7 @@ public class IScoredGame {
 
     List<String> tags = getTags();
     for (String tag : tags) {
-      if (tag.contains(vpsTableId) && vpsVersionId == null) {
+      if (tag.contains(vpsTableId) && (vpsVersionId == null || isAllVersionsEnabled())) {
         return true;
       }
 

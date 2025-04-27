@@ -92,6 +92,7 @@ public class IScored {
 
           for (GameModel gameModel : games) {
             IScoredGame game = new IScoredGame();
+            game.setGameRoomUrl(gameRoom.getUrl());
             game.setId(gameModel.getGameID());
             game.setName(gameModel.getGameName());
             game.setTags(gameModel.getTags());

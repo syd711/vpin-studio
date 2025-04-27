@@ -11,23 +11,27 @@ import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class IScoredCompetitionSynchronizer implements InitializingBean {
+public class IScoredCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredCompetitionSynchronizer.class);
 
   @Autowired
@@ -35,6 +39,9 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -63,11 +70,13 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
       List<Competition> updated = synchronizeExistingCompetitions(syncModel, iScoredSubscriptions, knownGames);
       if (syncModel.getGame() != null) {
         synchronizeGame(syncModel, syncModel.getGame(), updated, knownGames);
+        LOG.info("Synchronization finished: {} ({})", syncModel.getGame().getName(), gameRoom.getUrl());
       }
       else {
         List<IScoredGame> games = gameRoom.getGames();
         for (IScoredGame game : games) {
           synchronizeGame(syncModel, game, updated, knownGames);
+          LOG.info("Synchronization finished: {} ({})", game.getName(), gameRoom.getUrl());
         }
       }
     }
@@ -127,13 +136,15 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
   }
 
   private void synchronizeGame(IScoredSyncModel syncModel, IScoredGame game, List<Competition> iScoredSubscriptions, List<Game> knownGames) {
-    Optional<Competition> matchingCompetition = iScoredSubscriptions.stream().filter(c -> c.getVpsTableId().equals(game.getVpsTableId()) && c.getVpsTableVersionId().equals(game.getVpsTableVersionId())).findFirst();
-    if (matchingCompetition.isPresent()) {
+    if (!game.isVpsTagged()) {
       return;
     }
 
-    if (!game.isVpsTagged()) {
-      return;
+    //check if there is an existing competition
+    for (Competition c : iScoredSubscriptions) {
+      if (game.matches(c.getVpsTableId(), c.getVpsTableVersionId())) {
+        return;
+      }
     }
 
     List<Game> matches = null;
@@ -169,7 +180,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
 
 
   @Override
-  public void afterPropertiesSet() throws Exception {
+  public void onApplicationEvent(ApplicationReadyEvent event) {
     IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     if (Features.ISCORED_ENABLED && iScoredSettings.isEnabled()) {
       new Thread(() -> {
@@ -192,6 +203,39 @@ public class IScoredCompetitionSynchronizer implements InitializingBean {
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
       }).start();
     }
+  }
+
+
+  // ----------------------------- Table Status Changes ----------------------------------------------------------------
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    if (iScoredSettings.isEnabled()) {
+      LOG.info("Running iScored game room sync after table exit.");
+      List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
+      for (IScoredGameRoom gameRoom : gameRooms) {
+        IScoredSyncModel model = new IScoredSyncModel();
+        model.setInvalidate(true);
+        model.setiScoredGameRoom(gameRoom);
+        synchronize(model);
+      }
+    }
+  }
+
+  @Override
+  public int getPriority() {
+    //we need a higher priority here since we need to run the sync before the highscore change event firing.
+    return 100;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    frontendStatusService.addTableStatusChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }
