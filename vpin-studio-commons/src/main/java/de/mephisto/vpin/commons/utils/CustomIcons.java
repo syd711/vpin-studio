@@ -3,6 +3,8 @@ package de.mephisto.vpin.commons.utils;
 import org.kordamp.ikonli.Ikon;
 
 public enum CustomIcons implements Ikon {
+    //If the font (VpinStudio.ttf) is updated, these values may need to change.
+    //Font was created at https://icomoon.io/app/
     VPX_ICON('\ue904'),
     FX_ICON('\ue901'),
     FX3_ICON('\ue900'),
