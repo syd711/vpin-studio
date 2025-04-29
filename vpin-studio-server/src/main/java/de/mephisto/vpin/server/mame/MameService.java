@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.mame;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -160,24 +160,25 @@ public class MameService implements InitializingBean {
     return true;
   }
 
-  public boolean fillDmdPosition(DMDInfo dmdinfo) {
+  /**
+   * Fill the zone with infor form registry
+   * @return true if the DmdPosition is rom specific or false if this is default
+   */
+  public boolean fillDmdPosition(String rom, DMDInfoZone dmdinfo) {
     List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
-    String rom = dmdinfo.getGameRom();
     boolean existInRegistry = romFolders.contains(rom.toLowerCase());
 
     Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY +
         (existInRegistry ? rom : MameOptions.DEFAULT_KEY));
-    dmdinfo.setLocallySaved(existInRegistry);
     dmdinfo.setX(getInteger(values, "dmd_pos_x"));
     dmdinfo.setY(getInteger(values, "dmd_pos_y"));
     dmdinfo.setWidth(getInteger(values, "dmd_width"));
     dmdinfo.setHeight(getInteger(values, "dmd_height"));
-    return true;
+    return existInRegistry;
   }
 
-  public boolean saveDmdPosition(DMDInfo dmdinfo) {
+  public boolean saveDmdPosition(String rom, DMDInfoZone dmdinfo) {
     List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
-    String rom = dmdinfo.getGameRom();
     if (!romFolders.contains(rom.toLowerCase())) {
       WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
     }
@@ -201,12 +202,12 @@ public class MameService implements InitializingBean {
     return 0;
   }
 
-  public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
+  public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis) throws IOException {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
   }
 
-  public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
+  public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis) throws IOException {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
   }
@@ -287,14 +288,14 @@ public class MameService implements InitializingBean {
     }
   }
 
-  public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
+  public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis) throws IOException {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
   }
 
-  public void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {
+  public void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis, AssetType assetType, File folder) throws IOException {
     if (analysis == null) {
-      analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
+      analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
       analysis.analyze();
     }
 

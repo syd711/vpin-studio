@@ -1,7 +1,11 @@
 package de.mephisto.vpin.restclient.directb2s;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DirectB2SData {
   private String filename;
@@ -31,7 +35,7 @@ public class DirectB2SData {
 
   private int illuminations;
 
-  private int scores;
+  private List<DirectB2SDataScore> scores;
 
   public static String getTableType(int type) {
     switch (type) {
@@ -127,12 +131,25 @@ public class DirectB2SData {
     return artwork;
   }
   
-  public int getScores() {
+  public List<DirectB2SDataScore> getScores() {
     return scores;
   }
-  public void setScores(int scores) {
+  public void setScores(List<DirectB2SDataScore> scores) {
     this.scores = scores;
   }
+
+  @JsonIgnore
+  public int getNbScores() {
+    return scores != null ? scores.size() : 0;
+  }
+
+  public void addScore(DirectB2SDataScore score) {
+    if (scores == null) {
+      scores = new ArrayList<>();
+    }
+    scores.add(score);
+  }
+
 
   public void setArtwork(String artwork) {
     this.artwork = artwork;

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SDataScore;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -104,7 +105,19 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         break;
       }
       case "Score": {
-        data.setScores(data.getScores()+1);
+        //<Score Parent="DMD" ID="1" ReelType="Dream7LED8" ReelLitColor="255.0.0" ReelDarkColor="15.15.15" 
+        //    Glow="1500" Thickness="1000" Shear="6" Digits="7" Spacing="25" DisplayState="0" 
+        //    LocX="58" LocY="568" Width="585" Height="70" />
+        DirectB2SDataScore score = new DirectB2SDataScore();
+        score.setId(attr.getValue("ID"));
+        score.setParent(attr.getValue("Parent"));
+        score.setX(safeGetInt(attr, "LocX", -1));
+        score.setY(safeGetInt(attr, "LocY", -1));
+        score.setWidth(safeGetInt(attr, "Width", 0));
+        score.setHeight(safeGetInt(attr, "Height", 0));
+        score.setNbDigits(safeGetInt(attr, "Digits", 0));
+        score.setDisplayState(safeGetInt(attr, "DisplayState", 1));
+        data.addScore(score);
         break;
       }
       case "Bulb": {
@@ -144,4 +157,16 @@ Other elements in XML :  path / from / top (interesting attributes)
 */
     }
   }
+
+  private int safeGetInt(Attributes attr, String name, int defaultValue) {
+    String v = attr.getValue(name);
+    try {
+      return StringUtils.isNotEmpty(v) ? Integer.parseInt(v) : defaultValue;
+    } 
+    catch (Exception e) {
+      LOG.warn("Cannot parse integer attribute " + name + ", value " + v + ", ignored error " + e.getMessage());
+      return defaultValue;
+    }
+  }
+
 }

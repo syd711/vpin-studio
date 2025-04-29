@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import javafx.application.*;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -77,6 +79,7 @@ public class DMDPositionResizerDemo2 extends Application {
     // add a selector in the pane
     ObjectProperty<Bounds> area = new SimpleObjectProperty<>(new BoundingBox(15, 15, 500-15*2, 300-15*2));
     ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
+    DoubleProperty zoom = new SimpleDoubleProperty(1.0);
 
     addAreaBorder(pane, area.get());
     
@@ -88,7 +91,7 @@ public class DMDPositionResizerDemo2 extends Application {
         }  
       }, 
       rect -> {
-        resizer = new DMDPositionResizer(area, aspectRatioProperty, color);
+        resizer = new DMDPositionResizer(area, zoom, aspectRatioProperty, color);
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());

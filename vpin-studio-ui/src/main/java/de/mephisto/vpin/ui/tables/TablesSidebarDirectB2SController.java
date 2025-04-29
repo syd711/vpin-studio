@@ -209,7 +209,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onDMDPosition() {
     if (game.isPresent()) {
-      TableDialogs.openDMDPositionDialog(game.get());
+      TableDialogs.openDMDPositionDialog(game.get(), null);
     }
   }
 

@@ -639,7 +639,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         });
 
     // deactivate all elements in the right sections
-    setGame(null);
+    resetGame();
     setData(null);
   }
 
@@ -744,26 +744,27 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
                 null;
   }
 
-  protected void setGame(@Nullable GameRepresentation game) {
+  protected void resetGame() {
+      // set emulator name
+      emulatorNameLabel.setText("-");
+      gameLabel.setText("-");
+      gameFilenameLabel.setText("-");
+  
+      emulatorNameLabel.setText("?");
+      gameLabel.setText("?");
+      gameFilenameLabel.setText("?");
+  
+      // depend on the game selection
+      useAsMediaBackglassBtn.setDisable(true);
+      useAsMediaDMDBtn.setDisable(true);
+  
+      this.dataManagerBtn.setDisable(true);
+      this.tableNavigateBtn.setDisable(true);
+      this.deleteBtn.setDisable(model == null);    
+  }
+
+  protected void setGame(@Nullable GameRepresentation game, boolean gameAvailable) {
     this.game = game;
-
-    // set emulator name
-    emulatorNameLabel.setText("-");
-    gameLabel.setText("-");
-    gameFilenameLabel.setText("-");
-
-    emulatorNameLabel.setText("?");
-    gameLabel.setText("?");
-    gameFilenameLabel.setText("(Available, but not installed)");
-
-    // depend on the game selection
-    useAsMediaBackglassBtn.setDisable(true);
-    useAsMediaDMDBtn.setDisable(true);
-
-    this.dataManagerBtn.setDisable(true);
-    this.tableNavigateBtn.setDisable(true);
-    this.deleteBtn.setDisable(model == null);
-
     if (game != null) {
       JFXFuture.supplyAsync(() -> {
             return client.getEmulatorService().getGameEmulator(game.getEmulatorId());
@@ -782,6 +783,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       dataManagerBtn.setDisable(false);
       tableNavigateBtn.setDisable(false);
+    }
+    else if (gameAvailable) {
+      gameFilenameLabel.setText("(Available, but not installed)");
     }
   }
 

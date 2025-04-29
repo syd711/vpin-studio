@@ -16,6 +16,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -37,6 +39,11 @@
                   <Insets />
                </HBox.margin>
             </Button>
+            <Button fx:id="saveCloseLocallyBtn" mnemonicParsing="false" onAction="#onSaveCloseLocallyClick" styleClass="submit-button" text="Save &amp; Close Position Locally">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -44,10 +51,61 @@
       </HBox>
    </bottom>
    <center>
-      <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
+         <top>
+            <BorderPane BorderPane.alignment="TOP_LEFT">
+               <left>
+                  <Label fx:id="titleLabel" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </left>
+               <right>
+                  <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+               </right>
+            </BorderPane>
+         </top>
+         <center>
+            <VBox>
+               <children>
+                  <TabPane fx:id="tabPane">
+                     <tabs>
+                        <Tab fx:id="playfieldTab" closable="false" text="Playfield" />
+                        <Tab fx:id="backglassTab" closable="false" text="Backglass" />
+                        <Tab fx:id="dmdTab" closable="false" text="DMD" />
+                     </tabs>
+                  </TabPane>
+
+      <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
          <center>
             <Pane fx:id="imagepane" styleClass="media-parent">
                <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
@@ -65,12 +123,12 @@
                            <children>
                               <VBox spacing="3.0">
                                  <children>
-                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="Turn off in VpinMAME" textFill="WHITE">
+                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="Turn DMD off in VpinMAME" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="Disable in dmddevice.ini" textFill="WHITE">
+                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="Disable DMD in dmddevice.ini" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -98,7 +156,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox>
+                        <HBox fx:id="romPane" spacing="3.0">
                            <children>
                               <Label styleClass="default-text" text="ROM (or alias):" />
                               <Label fx:id="romLabel" text="--" >
@@ -247,6 +305,11 @@
                      </VBox.margin>
                   </GridPane>
 
+                  <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="Reset to Scores Positions" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
 
                </children>
 
@@ -255,6 +318,11 @@
                </BorderPane.margin>
             </VBox>
          </right>
+      </BorderPane>
+
+               </children>
+            </VBox>
+         </center>
       </BorderPane>
    </center>
 </BorderPane>
