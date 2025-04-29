@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>studio</artifactId>
-    <version>3.14.4</version>
+    <version>3.14.6</version>
     <packaging>pom</packaging>
 
     <properties>

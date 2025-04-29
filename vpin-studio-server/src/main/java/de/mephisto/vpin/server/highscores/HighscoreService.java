@@ -281,7 +281,9 @@ public class HighscoreService implements InitializingBean {
 
       List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), serverId);
       for (Score score : scores) {
-        if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
+        String playerInitials = score.getPlayerInitials();
+        String altPlayerInitials = playerInitials.replaceAll(" ", "@");
+        if (playerInitials.equalsIgnoreCase(initials) || altPlayerInitials.equalsIgnoreCase(initials)) {
           Game game = frontendService.getOriginalGame(score.getGameId());
           if (game == null && score.getGameId() > 0) {
             deleteScores(score.getGameId(), true);

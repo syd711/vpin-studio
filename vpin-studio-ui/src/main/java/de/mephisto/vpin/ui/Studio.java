@@ -3,9 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -131,6 +129,18 @@ public class Studio extends Application {
       loadStudio(stage, Studio.client);
     }
     else {
+      ConnectionProperties connectionProperties = new ConnectionProperties();
+      List<ConnectionEntry> connections = connectionProperties.getConnections();
+      if (!connections.isEmpty()) {
+        for (ConnectionEntry connection : connections) {
+          Studio.client = new VPinStudioClient(connection.getIp());
+          version = client.getSystemService().getVersion();
+          if (!StringUtils.isEmpty(version)) {
+            loadStudio(stage, Studio.client);
+            return;
+          }
+        }
+      }
       loadLauncher(stage);
     }
   }

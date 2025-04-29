@@ -235,6 +235,15 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private Button btn_view_Wheel;
 
+  @FXML
+  private Button btn_dmdPos_DMD;
+
+  @FXML
+  private Button btn_dmdPos_Backglass;
+
+  @FXML
+  private Button btn_dmdPos_Apron;
+
 
   @FXML
   private Node top_Audio;
@@ -316,6 +325,13 @@ public class TablesSidebarMediaController implements Initializable {
 
   // Add a public no-args constructor
   public TablesSidebarMediaController() {
+  }
+
+  @FXML
+  private void onDMDPosition() {
+    if (game.isPresent()) {
+      TableDialogs.openDMDPositionDialog(game.get());
+    }
   }
 
   @FXML
@@ -436,12 +452,17 @@ public class TablesSidebarMediaController implements Initializable {
           btn_delete_Other2.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Other2).isEmpty());
           btn_delete_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
           btn_delete_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
-          btn_delete_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());      
+          btn_delete_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
+
+          boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null;
+          btn_dmdPos_DMD.setDisable(g.isEmpty() || !directb2sAvailable);
+          btn_dmdPos_Apron.setDisable(g.isEmpty() || !directb2sAvailable);
+          btn_dmdPos_Backglass.setDisable(g.isEmpty() || !directb2sAvailable);
 
           btn_edit_Audio.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Audio).size()));
           btn_edit_AudioLaunch.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.AudioLaunch).size()));
           btn_edit_Topper.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Topper).size()));
-          btn_edit_Menu.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Menu).size()));
+//          btn_edit_Menu.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Menu).size()));//TODO mpf
           btn_edit_BackGlass.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.BackGlass).size()));
           btn_edit_Loading.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.Loading).size()));
           btn_edit_GameInfo.setText(String.valueOf(frontendMedia.getMediaItems(VPinScreen.GameInfo).size()));

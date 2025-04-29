@@ -62,7 +62,7 @@ public class TextEditService {
   @Autowired
   private VPXService vpxService;
 
-  public TextFile getText(TextFile textFile) {
+  public TextFile getText(TextFile textFile) throws Exception {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
@@ -110,7 +110,7 @@ public class TextEditService {
         case VBScript: {
           Game game = frontendService.getOriginalGame(textFile.getFileId());
           File gameFile = game.getGameFile();
-          String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());
+          String vbs = VPXUtil.exportVBS(gameFile, serverSettings.isKeepVbsFiles());
           textFile.setLastModified(new Date(gameFile.lastModified()));
           textFile.setPath(gameFile.getAbsolutePath());
           textFile.setSize(vbs.getBytes().length);
@@ -138,6 +138,7 @@ public class TextEditService {
     }
     catch (Exception e) {
       LOG.error("Error reading text file: " + e.getMessage(), e);
+      throw e;
     }
     return textFile;
   }

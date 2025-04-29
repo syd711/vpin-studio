@@ -90,6 +90,10 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     itemLimit = 100;
 
     //TODO skipped a "Load More Item..." button for now and simply limit the items
+    itemCount = 0;
+    itemLimit = 100;
+
+    //TODO skipped a "Load More Item..." button for now and simply limit the items
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {
       continueReading();
     }

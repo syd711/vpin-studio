@@ -160,6 +160,7 @@ public class ServerFX extends Application {
     Platform.runLater(() -> {
       if (visible) {
         stages.stream().forEach(Stage::toFront);
+        LOG.info("Forcing to front for stage.");
       }
     });
   }

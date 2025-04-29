@@ -36,6 +36,7 @@ public class ServerUpdatePreProcessing {
         runDeletionChecks();
         runResourcesCheck();
         runPinVolUpdateCheck();
+        runVpxToolsUpdateCheck();
 
         new Thread(() -> {
           Thread.currentThread().setName("ServerUpdate Async Preprocessor");
@@ -72,6 +73,18 @@ public class ServerUpdatePreProcessing {
       if (expectedSize != size) {
         LOG.info("Outdated PinVol.exe found, updating...");
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check);
+      }
+    }
+  }
+
+  private static void runVpxToolsUpdateCheck() {
+    long expectedSize = 16038912;
+    File check = new File(RESOURCES, "vpxtool.exe");
+    if (check.exists()) {
+      long size = check.length();
+      if (expectedSize != size) {
+        LOG.info("Outdated vpxtool.exe found, updating...");
+        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/vpxtool.exe", check);
       }
     }
   }

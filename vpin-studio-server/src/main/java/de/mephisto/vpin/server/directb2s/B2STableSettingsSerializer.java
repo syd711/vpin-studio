@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.util.XMLUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -95,7 +96,7 @@ public class B2STableSettingsSerializer {
         for (String tableEntry : tableEntries) {
           String newValue = getter.getValue(settings, tableEntry);
           Node settingsNode = findChild(rootNodeByRom, tableEntry);
-          if (newValue != null && !(newValue.equals("-1") && skippedWhenMinusOne.contains(tableEntry))) {
+          if (!StringUtils.isEmpty(newValue) && !(newValue.equals("-1") && skippedWhenMinusOne.contains(tableEntry))) {
             if (settingsNode == null) {
               settingsNode = doc.createElement(tableEntry);
               rootNodeByRom.insertBefore(settingsNode, insertionPoint);

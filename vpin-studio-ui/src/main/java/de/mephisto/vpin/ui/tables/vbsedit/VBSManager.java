@@ -64,7 +64,11 @@ public class VBSManager {
     }
     catch (Exception e) {
       LOG.error("Failed to open table VPS: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPS file: " + e.getMessage());
+      String msg = e.getMessage();
+      if(msg != null) {
+        msg = msg.replaceAll("\\\\n", "\n");
+      }
+      WidgetFactory.showOutputDialog(Studio.stage, "Error",  "The extraction of the .vbs file failed.", "Please report this issue to: https://github.com/syd711/vpin-studio/issues", msg);
     }
   }
 

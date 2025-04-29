@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -35,6 +37,7 @@ public class PlayersResource {
 
   @GetMapping("/highscores/{initials}")
   public ScoreSummary getHighscores(@PathVariable("initials") String initials) {
+    initials = URLDecoder.decode(initials, StandardCharsets.UTF_8);
     return highscoreService.getAllHighscoresForPlayer(initials);
   }
 
