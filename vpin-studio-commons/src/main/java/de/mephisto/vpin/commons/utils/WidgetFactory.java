@@ -420,11 +420,25 @@ public class WidgetFactory {
     else if (playlist.getName().contains("Most Played")) {
       fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
     }
+    else if (playlist.getName().contains("Recently Played")) {
+      try {
+        fontIcon.setIconLiteral("customicon-recentlyplayed_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-recentlyplayed_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
     else if (playlist.getName().contains("Home")) {
       fontIcon.setIconLiteral("mdi2h-home-circle");
     }
     else if (playlist.getName().contains("VPW")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+     // fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-vpw_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-vpw_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().endsWith(" M")) {
      // fontIcon.setIconLiteral("mdi2a-alpha-m-circle");

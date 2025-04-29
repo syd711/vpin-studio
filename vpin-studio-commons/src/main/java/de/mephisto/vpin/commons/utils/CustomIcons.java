@@ -9,7 +9,9 @@ public enum CustomIcons implements Ikon {
     FX_ICON('\ue901'),
     FX3_ICON('\ue900'),
     FUTUREPINBALL_ICON('\ue903'),
-    PINBALLM_ICON('\ue902');
+    PINBALLM_ICON('\ue902'),
+    RECENTLYPLAYED_ICON('\ue906'),
+    VPW_ICON('\ue905');
 
     private final char code;
 
