@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -363,7 +364,7 @@ public class VPinScreenService {
 
   //----------------------------------------------------------------- SCREENRES.TXT ---
 
-  public List<FrontendPlayerDisplay> getScreenResDisplays(Game game) {
+  public List<FrontendPlayerDisplay> getScreenResDisplays(@Nullable Game game) {
     DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
     return screenResToDisplays(screenres);
   }
@@ -373,7 +374,7 @@ public class VPinScreenService {
     return screenResToDisplays(screenres);
   }
 
-  private List<FrontendPlayerDisplay> screenResToDisplays(DirectB2sScreenRes screenres) {
+  private List<FrontendPlayerDisplay> screenResToDisplays(@Nullable DirectB2sScreenRes screenres) {
     List<FrontendPlayerDisplay> displays = new ArrayList<>();
     List<MonitorInfo> monitors = systemService.getMonitorInfos();
 
@@ -411,10 +412,10 @@ public class VPinScreenService {
       displays.add(playfield);
 
       FrontendPlayerDisplay backglass = new FrontendPlayerDisplay(VPinScreen.BackGlass);
-      backglass.setX(screenres.getBackglassX());
-      backglass.setY(screenres.getBackglassY());
-      backglass.setWidth(screenres.getBackgroundWidth() > 0 ? screenres.getBackgroundWidth() : screenres.getBackglassWidth());
-      backglass.setHeight(screenres.getBackgroundHeight() > 0 ? screenres.getBackgroundHeight() : screenres.getBackglassHeight());
+      backglass.setX(screenres.getFullBackglassX());
+      backglass.setY(screenres.getFullBackglassY());
+      backglass.setWidth(screenres.getFullBackglassWidth());
+      backglass.setHeight(screenres.getFullBackglassHeight());
       displays.add(backglass);
       if (monitor != null) {
         backglass.setX((int) monitor.getX() + backglass.getX());

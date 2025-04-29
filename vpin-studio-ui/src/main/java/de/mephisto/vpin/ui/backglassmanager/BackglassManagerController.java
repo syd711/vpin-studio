@@ -116,7 +116,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     GameRepresentation game = getGameFromSelection();
     if (game != null) {
       LOG.info("open DMD Position dialog for game " + game.getId());
-      TableDialogs.openDMDPositionDialog(game);
+      TableDialogs.openDMDPositionDialog(game, this);
     }
   }
 
@@ -437,7 +437,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     if (model != null) {
       // empty game sidebar section while loading game
-      backglassManagerSideBarController.setGame(null);
+      backglassManagerSideBarController.resetGame();
       JFXFuture
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {
@@ -450,7 +450,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
             }
             // Pass Game to sidebar so that it also updates the Game section
-            backglassManagerSideBarController.setGame(game);
+            backglassManagerSideBarController.setGame(game, model.isGameAvailable());
           });
     }
   }
@@ -543,5 +543,44 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       return client.getGame(selection.getGameId());
     }
     return null;
+  }
+
+  public int selectNextGame() {
+    DirectB2SModel selection = getSelectedModel();
+    if (selection != null) {
+      int nbCheck = 0;
+      do {
+        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() + 1;
+        if (selectedIndex >= tableView.getItems().size()) {
+          selectedIndex = 0;
+        }
+        tableView.getSelectionModel().select(selectedIndex);
+        selection = getSelectedModel();
+        nbCheck ++;
+      } 
+      while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
+      return selection.getGameId();
+    }
+    return -1;
+  }
+
+  public int selectPreviousGame() {
+    DirectB2SModel selection = getSelectedModel();
+    if (selection != null) {
+      int nbCheck = 0;
+      do {
+        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() - 1;
+        if (selectedIndex < 0) {
+          selectedIndex = tableView.getItems().size() - 1;
+        }
+        tableView.getSelectionModel().select(selectedIndex);
+        selection = getSelectedModel();
+        //this.
+        nbCheck ++;
+      } 
+      while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
+      return selection.getGameId();
+    }
+    return -1;
   }
 }

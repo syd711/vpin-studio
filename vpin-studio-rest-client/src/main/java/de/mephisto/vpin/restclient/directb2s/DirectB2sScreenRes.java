@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+
 public class DirectB2sScreenRes {
 
   private int emulatorId;
@@ -26,7 +28,7 @@ public class DirectB2sScreenRes {
   private int backglassWidth;
   private int backglassHeight;
 
-  /** Define Backglass screen using Display Devicename screen number (\\.\DISPLAY)x or screen coordinates (@x) or screen index (=x) */
+  /** Define Backglass screen using Display Devicename screen number (\.\DISPLAY)x or screen coordinates (@x) or screen index (=x) */
   private String backglassDisplay;
 
   // the offset of the backlass display relative to playfield
@@ -122,6 +124,23 @@ public class DirectB2sScreenRes {
   @JsonIgnore
   public boolean hasFrame() {
     return StringUtils.isNotEmpty(backgroundFilePath) && isBackglassCentered();
+  }
+
+  @JsonIgnore
+  public int getFullBackglassX() {
+    return isBackglassCentered() ? getBackgroundX() : getBackglassX();
+  }
+  @JsonIgnore
+  public int getFullBackglassY() {
+    return isBackglassCentered() ? getBackgroundY() : getBackglassY();
+  }
+  @JsonIgnore
+  public int getFullBackglassWidth() {
+    return isBackglassCentered() ? getBackgroundWidth() : getBackglassWidth();
+  }
+  @JsonIgnore
+  public int getFullBackglassHeight() {
+    return isBackglassCentered() ? getBackgroundHeight() : getBackglassHeight();
   }
 
   //-------------------------------------------
@@ -345,5 +364,33 @@ public class DirectB2sScreenRes {
 
   public boolean hasFullDmd() {
     return (dmdWidth > 0) && (dmdHeight > 0); 
+  }
+
+  //-----------------------------------
+
+  public double getScreenWidth(VPinScreen onScreen) {
+    switch (onScreen) {
+      case BackGlass:
+        return this.getFullBackglassWidth();
+      case Menu:
+        return this.getDmdWidth();
+      case PlayField:
+        return this.getPlayfieldWidth();
+      default:
+        return -1;
+    }
+  }
+
+  public double getScreenHeight(VPinScreen onScreen) {
+    switch (onScreen) {
+      case BackGlass:
+        return this.getFullBackglassHeight();
+      case Menu:
+        return this.getDmdHeight();
+      case PlayField:
+        return this.getPlayfieldHeight();
+      default:
+        return -1;
+    }
   }
 }

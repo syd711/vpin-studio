@@ -2,10 +2,10 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.restclient.directb2s.*;
-import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
@@ -45,6 +45,8 @@ public class BackglassService implements InitializingBean {
 
   @Autowired
   private EmulatorService emulatorService;
+  @Autowired
+  private FrontendService frontendService;
 
   /**
    * The default filename ScreenRes.txt can be altered by setting the registry key
@@ -358,8 +360,8 @@ public class BackglassService implements InitializingBean {
         if (currentDirectB2S == null || !currentDirectB2S.getFileName().equals(mainName)) {
           currentDirectB2S = new DirectB2SAndVersions();
           currentDirectB2S.setEmulatorId(gameEmulator.getId());
-          String gameFilename = FilenameUtils.removeExtension(mainName) + "." + gameEmulator.getGameExt();
-          currentDirectB2S.setGameAvailable(new File(tablesPath.toFile(), gameFilename).exists());
+          addGameInfo(currentDirectB2S, gameEmulator, FilenameUtils.removeExtension(mainName));
+          
           result.add(currentDirectB2S);
           // add in cache
           setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
@@ -370,6 +372,13 @@ public class BackglassService implements InitializingBean {
 
     long duration = System.currentTimeMillis() - start;
     LOG.info("Backglass scan finished, scanned {} files in {}ms", cacheDirectB2SVersion.size(), duration);
+  }
+
+  private void addGameInfo(DirectB2SAndVersions currentDirectB2S, GameEmulator gameEmulator, String mainBaseName) {
+    String gameFilename = mainBaseName + "." + gameEmulator.getGameExt();
+    Game g = frontendService.getGameByFilename(gameEmulator.getId(), gameFilename);
+    currentDirectB2S.setGameAvailable(new File(gameEmulator.getGamesDirectory(), gameFilename).exists());
+    currentDirectB2S.setGameId(g != null ? g.getId() : -1);
   }
 
   public DirectB2SAndVersions getDirectB2SAndVersions(Game game) {
@@ -445,8 +454,8 @@ public class BackglassService implements InitializingBean {
         }
       }
     }
-    String gameFilename = mainBaseName + "." + emulator.getGameExt();
-    b2s.setGameAvailable(new File(emulator.getGamesDirectory(), gameFilename).exists());
+
+    addGameInfo(b2s, emulator, mainBaseName);
 
     // update cache
     if (b2s.getNbVersions() > 0) {
@@ -490,8 +499,8 @@ public class BackglassService implements InitializingBean {
           LOG.error("Cannot rename \"" + b2sFile + "\" to \"" + b2sNewFile + "\"");
         }
       }
-      String gameFilename = FilenameUtils.removeExtension(b2s.getFileName()) + "." + emulator.getGameExt();
-      b2s.setGameAvailable(new File(emulator.getGamesDirectory(), gameFilename).exists());
+
+      addGameInfo(b2s, emulator, FilenameUtils.removeExtension(b2s.getFileName()));
     }
     return b2s;
   }

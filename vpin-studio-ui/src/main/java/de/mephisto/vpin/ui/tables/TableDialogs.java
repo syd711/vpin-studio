@@ -26,6 +26,7 @@ import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomDialogController;
 import de.mephisto.vpin.ui.preferences.dialogs.WebhooksDialogController;
@@ -394,10 +395,10 @@ public class TableDialogs {
     return true;
   }
 
-  public static void openDMDPositionDialog(GameRepresentation game) {
+  public static void openDMDPositionDialog(GameRepresentation game, @Nullable BackglassManagerController backglassMgrController) {
     Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position");
     DMDPositionController controller = (DMDPositionController) stage.getUserData();
-    controller.setGame(game);
+    controller.setGame(game, backglassMgrController);
     stage.showAndWait();
   }
 

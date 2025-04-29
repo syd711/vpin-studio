@@ -74,6 +74,22 @@ public class JFXFuture<T> {
 
   //-----------
 
+  public static JFXFuture<Object[]> supplyAllAsync(Supplier<?>... suppliers) {
+    CompletableFuture<?>[] futures = new CompletableFuture[suppliers.length];
+    for (int i = 0, n = suppliers.length; i < n; i++) {
+      futures[i] = CompletableFuture.supplyAsync(suppliers[i]);
+    }
+    CompletableFuture<Void> allFutures = CompletableFuture.allOf(futures);
+
+    return new JFXFuture<Object[]>(allFutures.thenApply(v -> {
+      Object[] rets = new Object[suppliers.length];
+      for (int i = 0, n = suppliers.length; i < n; i++) {
+        rets[i] = futures[i].join();
+      }
+      return rets;
+    }));
+  }
+
   public static <U> JFXFuture<U> supplyAsync(Supplier<U> u) {
     return new JFXFuture<U>(CompletableFuture.supplyAsync(u));
   }

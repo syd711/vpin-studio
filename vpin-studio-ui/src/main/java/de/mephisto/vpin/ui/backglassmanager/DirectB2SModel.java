@@ -20,9 +20,6 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
   // not null when loaded
   private DirectB2SData backglassData;
 
-  // associated game if any
-  private int gameId;
-
   private int hideGrill;
   private boolean hideB2SDMD;
   private boolean hideBackglass;
@@ -38,33 +35,27 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
 
   @Override
   public void load() {
-    gameId = client.getBackglassServiceClient().getGameId(bean.getEmulatorId(), bean.getFileName());
-    setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean.getEmulatorId(), bean.getVersion(0)));
-  }
-
-  public DirectB2SData getBackglassData() {
-    return backglassData;
-  }
-
-  private void setDirectB2SData(DirectB2SData b2sdata) {
-    this.backglassData = b2sdata;
+    this.backglassData = client.getBackglassServiceClient().getDirectB2SData(bean.getEmulatorId(), bean.getVersion(0));
     if (backglassData != null) {
-      DirectB2sScreenRes screenres = client.getBackglassServiceClient().getScreenRes(b2sdata.getEmulatorId(), b2sdata.getFilename(), true);
+      DirectB2sScreenRes screenres = client.getBackglassServiceClient().getScreenRes(backglassData.getEmulatorId(), backglassData.getFilename(), true);
       if (screenres != null) {
         this.resPath = screenres.getScreenresFilePath();
         this.framePath = screenres.getBackgroundFilePath();
       }
-
-      if (gameId > 0) {
-        DirectB2STableSettings tmpTableSettings = client.getBackglassServiceClient().getTableSettings(gameId);
-        if (tmpTableSettings != null) {
-          this.hideGrill = tmpTableSettings.getHideGrill();
-          this.hideB2SDMD = tmpTableSettings.isHideB2SDMD();
-          this.hideBackglass = tmpTableSettings.isHideB2SBackglass();
-          this.hideDMD = tmpTableSettings.getHideDMD();
-        }
+    }
+    if (getGameId() > 0) {
+      DirectB2STableSettings tmpTableSettings = client.getBackglassServiceClient().getTableSettings(getGameId());
+      if (tmpTableSettings != null) {
+        this.hideGrill = tmpTableSettings.getHideGrill();
+        this.hideB2SDMD = tmpTableSettings.isHideB2SDMD();
+        this.hideBackglass = tmpTableSettings.isHideB2SBackglass();
+        this.hideDMD = tmpTableSettings.getHideDMD();
       }
     }
+  }
+
+  public DirectB2SData getBackglassData() {
+    return backglassData;
   }
 
   public DirectB2SAndVersions getBacklass() {
@@ -90,7 +81,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
   }
 
   public int getGameId() {
-    return gameId;
+    return bean.getGameId();
   }
 
   public String getFileName() {
@@ -138,7 +129,7 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2SAndVersions, Direc
   }
 
   public int getNbScores() {
-    return backglassData != null ? backglassData.getScores() : 0;
+    return backglassData != null ? backglassData.getNbScores() : 0;
   }
 
   public String getResPath() {

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.dmd;
 
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
+import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
+import de.mephisto.vpin.restclient.dmd.DMDType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import org.slf4j.Logger;
@@ -41,19 +43,24 @@ public class DMDPositionResource {
     return download(dmdPositionService.getPicture(gameId, VPinScreen.valueOf(onScreen)), onScreen + ".png", false);
   }
 
-  // @PostMapping("/disable")
-  // public DMDInfo disableDMD(@RequestBody DMDInfo dmdInfo) {
-  //   return dmdPositionService.moveDMDInfo(dmdInfo, null);
-  // }
-
-  @PostMapping("/move")
-  public DMDInfo moveDMD(@RequestBody DMDInfo dmdInfo, @RequestParam VPinScreen target) {
-    return dmdPositionService.moveDMDInfo(dmdInfo, target);
+  @PostMapping("/switch")
+  public DMDInfo switchDMD(@RequestBody DMDInfo dmdInfo, @RequestParam DMDType type) {
+    return dmdPositionService.switchDMDInfo(dmdInfo, type);
   }
 
-  @PostMapping("/autoPosition")
-  public DMDInfo autoPosition(@RequestBody DMDInfo dmdInfo) {
-    return dmdPositionService.autoPositionDMDInfo(dmdInfo);
+  @PostMapping("/resetToScores")
+  public DMDInfo resetToScores(@RequestBody DMDInfo dmdInfo) {
+    return dmdPositionService.resetToScores(dmdInfo);
+  }
+
+  @PostMapping("/{gameId}/move")
+  public DMDInfoZone moveDMD(@PathVariable("gameId") int gameId, @RequestBody DMDInfoZone dmdInfo, @RequestParam VPinScreen target) {
+    return dmdPositionService.moveDMDInfo(gameId, dmdInfo, target);
+  }
+
+  @PostMapping("/{gameId}/autoPosition")
+  public DMDInfoZone autoPosition(@PathVariable("gameId") int gameId, @RequestBody DMDInfoZone dmdInfo) {
+    return dmdPositionService.autoPositionDMDInfo(gameId, dmdInfo);
   }
 
   @PostMapping("/save")
@@ -79,6 +86,7 @@ public class DMDPositionResource {
     if (forceDownload) {
       headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
     }
+
     headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");

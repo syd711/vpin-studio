@@ -1,21 +1,38 @@
 package de.mephisto.vpin.restclient.dmd;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+
 public class DMDInfoZone {
 
+  /** The screen where the DMD is displayed */  
+  private VPinScreen onScreen;
+  
   protected double x;
   protected double y;
   protected double width;
   protected double height;
 
+  /** additional marging used to autoposition the dmd */
+  private int margin;
+
   public DMDInfoZone() {
   }
 
-  public DMDInfoZone(double x, double y, double width, double height) {
+  public DMDInfoZone(VPinScreen onScreen, double x, double y, double width, double height) {
+    this.onScreen = onScreen;
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
   }
+
+  public VPinScreen getOnScreen() {
+    return onScreen;
+  }
+
+  public void setOnScreen(VPinScreen onScreen) {
+		this.onScreen = onScreen;
+	}
 
   public double getX() {
     return x;
@@ -49,12 +66,23 @@ public class DMDInfoZone {
     this.height = height;
   }
 
+  public int getMargin() {
+    return margin;
+  }
+
+  public void setMargin(int margin) {
+    this.margin = margin;
+  }
+
+  //-----------------------
+
   public double getCenterX() {
     return x + width / 2;
   }
   public double getCenterY() {
     return y + height / 2;
   }
+
 
   public void adjustAspectRatio(DMDAspectRatio aspectRatio) {
     if (aspectRatio != null && aspectRatio.isKeepRatio()) {
@@ -69,6 +97,23 @@ public class DMDInfoZone {
         height = width / aspectRatio.getValue();
       }
     }
+  }
+
+  public boolean isOnPlayfield() {
+    return onScreen != null && VPinScreen.PlayField.equals(onScreen);
+  }
+
+  public boolean isOnBackglass() {
+    return onScreen != null && VPinScreen.BackGlass.equals(onScreen);
+  }
+
+  public boolean isOnFullDmd() {
+    return onScreen != null && VPinScreen.Menu.equals(onScreen);
+  }
+
+  @Override
+  public String toString() {
+    return "[" + x + "/" + y + " - " + width + "x" + height + " @ " + onScreen + "]";
   }
 
 }

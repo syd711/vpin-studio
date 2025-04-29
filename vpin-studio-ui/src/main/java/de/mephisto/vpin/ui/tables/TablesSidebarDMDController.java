@@ -132,7 +132,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onDMDPosition() {
     GameRepresentation g = game.get();
-    TableDialogs.openDMDPositionDialog(g);
+    TableDialogs.openDMDPositionDialog(g, null);
   }
 
   @FXML
