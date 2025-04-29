@@ -7,7 +7,7 @@ public enum DMDType {
   public String toString() {
     switch (this) {
       case NoDMD: {
-        return "Use Backglass Scores (No DMD)";
+        return "Use Backglass Scores";
       }
       case VirtualDMD: {
         return "Virtual Ext. DMD";

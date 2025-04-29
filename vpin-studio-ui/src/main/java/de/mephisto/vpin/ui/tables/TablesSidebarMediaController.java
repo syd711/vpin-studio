@@ -330,7 +330,7 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private void onDMDPosition() {
     if (game.isPresent()) {
-      TableDialogs.openDMDPositionDialog(game.get());
+      TableDialogs.openDMDPositionDialog(game.get(), null);
     }
   }
 
