@@ -1,5 +1,8 @@
 package de.mephisto.vpin.ui.tournaments;
 
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
+import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -10,6 +13,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -22,10 +26,13 @@ import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -33,9 +40,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +63,7 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentsManiaController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsManiaController.class);
+
 
   @FXML
   private TreeTableView<TournamentTreeModel> treeTableView;
@@ -415,29 +425,29 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         return;
       }
 
-      new Thread(() -> {
-        TreeItem<TournamentTreeModel> root = loadTreeModel();
+      JFXFuture.supplyAsync(() -> {
+        return loadTreeModel();
+      }).thenAcceptLater((root) -> {
+        tableStack.getChildren().remove(loadingOverlay);
+        treeTableView.setVisible(true);
 
-        Platform.runLater(() -> {
-          tableStack.getChildren().remove(loadingOverlay);
-          treeTableView.setVisible(true);
 
-          client.getTournamentsService().synchronize();
+        client.getTournamentsService().synchronize();
 
-          treeTableView.setRoot(root);
-          treeTableView.refresh();
-          TournamentTreeModel.expandTreeView(root);
+        treeTableView.setRoot(root);
+        treeTableView.refresh();
+        TournamentTreeModel.expandTreeView(root);
 
-          if (selection.isPresent()) {
-            treeTableView.getSelectionModel().select(selection.get());
-          }
-          else if (!root.getChildren().isEmpty()) {
-            treeTableView.getSelectionModel().select(0);
-          }
-        });
-      }).start();
+        if (selection.isPresent()) {
+          treeTableView.getSelectionModel().select(selection.get());
+        }
+        else if (!root.getChildren().isEmpty()) {
+          treeTableView.getSelectionModel().select(0);
+        }
+      });
     }
-    catch (Exception e) {
+    catch (
+        Exception e) {
       LOG.error("Tournament reload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", "Tournament refresh failed: " + e.getMessage());

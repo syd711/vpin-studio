@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
@@ -16,19 +17,23 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -61,6 +66,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -89,9 +95,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Button saveBtn;
 
   @FXML
-  private Button iscoredReloadBtn;
-
-  @FXML
   private Button addTableBtn;
 
   @FXML
@@ -104,7 +107,10 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private CheckBox visibilityCheckbox;
 
   @FXML
-  private CheckBox iscoredScoresEnabled;
+  private Button editBtn;
+
+  @FXML
+  private ComboBox<IScoredGameRoom> gameRoomsCombo;
 
   @FXML
   private TextField nameField;
@@ -117,9 +123,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private TextArea descriptionText;
-
-  @FXML
-  private TextField dashboardUrlField;
 
   @FXML
   private Label durationLabel;
@@ -168,7 +171,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Node loadingOverlay;
   private Cabinet cabinet;
   private TreeItem<TournamentTreeModel> result;
-  private GameRoom gameRoom;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -231,6 +233,18 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     TournamentTreeModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       doTableEdit(stage, selectedItem);
+    }
+  }
+
+  @FXML
+  private void onEdit() {
+    IScoredGameRoom value = gameRoomsCombo.getValue();
+    if (value != null) {
+      IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      boolean result = TableDialogs.openIScoredGameRoomDialog(iScoredSettings, value);
+      if (result) {
+        loadIScoredTables();
+      }
     }
   }
 
@@ -302,6 +316,19 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.validate();
   }
 
+  private void refreshGameRoomsCombo(List<IScoredGameRoom> validGameRooms) {
+    editBtn.setDisable(true);
+
+    IScoredGameRoom value = gameRoomsCombo.getValue();
+    List<IScoredGameRoom> gameRoomsComboValues = new ArrayList<>(validGameRooms);
+    gameRoomsComboValues.add(0, null);
+    gameRoomsCombo.setItems(FXCollections.observableList(gameRoomsComboValues));
+    gameRoomsCombo.setValue(value);
+    gameRoomsCombo.setDisable(validGameRooms.isEmpty());
+
+    editBtn.setDisable(gameRoomsCombo.getValue() == null);
+  }
+
   private void validate() {
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
@@ -358,8 +385,21 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     boolean isOwner = TournamentHelper.isOwner(selectedTournament, cabinet);
     boolean editable = isOwner && !selectedTournament.isActive();
-    InputStream in = null;
 
+
+    this.gameRoomsCombo.setDisable(tournament.getUuid() != null);
+    editBtn.setDisable(true);
+    List<IScoredGameRoom> items = gameRoomsCombo.getItems();
+    for (IScoredGameRoom item : items) {
+      if (item != null && item.getUrl().equalsIgnoreCase(selectedTournament.getDashboardUrl())) {
+        gameRoomsCombo.setValue(item);
+        editBtn.setDisable(tournament.getUuid() != null);
+        break;
+      }
+    }
+
+
+    InputStream in = null;
     PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     if (tournament.getUuid() == null) {
       editable = true;
@@ -387,7 +427,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     avatarPane.getChildren().add(avatar);
 
-    this.iscoredReloadBtn.setDisable(!isOwner);
     this.addTableBtn.setDisable(!isOwner);
     this.deleteTableBtn.setDisable(!isOwner || selectedTournament.getId() > 0);
 
@@ -398,8 +437,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.descriptionText.setDisable(!isOwner);
     this.discordLinkText.setText(selectedTournament.getDiscordLink());
     this.discordLinkText.setDisable(!isOwner);
-    this.dashboardUrlField.setText(selectedTournament.getDashboardUrl());
-    this.dashboardUrlField.setDisable(!isOwner);
     this.websiteLinkText.setText(selectedTournament.getWebsite());
     this.websiteLinkText.setDisable(!isOwner);
 
@@ -434,12 +471,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       this.saveBtn.setText("Update Tournament");
     }
 
-    this.gameRoom = null;
-    if (!StringUtils.isEmpty(tournament.getDashboardUrl())) {
-      gameRoom = IScored.getGameRoom(tournament.getDashboardUrl(), false);
-      iscoredScoresEnabled.setSelected(gameRoom != null && gameRoom.getSettings() != null && gameRoom.getSettings().isPublicScoreEnteringEnabled());
-    }
-
     Platform.runLater(() -> {
       if (isOwner && this.tableSelection.isEmpty()) {
         loadIScoredTables();
@@ -453,61 +484,56 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private void loadIScoredTables() {
-    String dashboardUrl = this.dashboardUrlField.getText();
-    iscoredScoresEnabled.setSelected(false);
     this.tableSelection.clear();
     this.tableView.refresh();
 
-    if (!StringUtils.isEmpty(dashboardUrl)) {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl, false));
-      if (!progressDialog.getResults().isEmpty()) {
-        GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
-        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoreEnteringEnabled());
+    IScoredGameRoom iScoredGameRoom = gameRoomsCombo.getValue();
+    if (iScoredGameRoom != null) {
+      GameRoom gameRoom = IScored.getGameRoom(iScoredGameRoom.getUrl(), false);
+      List<IScoredGame> games = gameRoom.getTaggedGames();
+      for (IScoredGame game : games) {
+        List<String> tags = game.getTags();
+        Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
+        if (first.isPresent()) {
+          try {
+            String vpsUrl = first.get();
+            URL url = new URL(vpsUrl);
+            String idSegment = url.getQuery();
 
-        List<IScoredGame> games = gameRoom.getTaggedGames();
-        for (IScoredGame game : games) {
-          List<String> tags = game.getTags();
-          Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
-          if (first.isPresent()) {
-            try {
-              String vpsUrl = first.get();
-              URL url = new URL(vpsUrl);
-              String idSegment = url.getQuery();
-
-              String tableId = idSegment.substring(idSegment.indexOf("=") + 1);
-              if (tableId.contains("&")) {
-                tableId = tableId.substring(0, tableId.indexOf("&"));
-              }
-              else if (tableId.contains("#")) {
-                tableId = tableId.substring(0, tableId.indexOf("#"));
-              }
-
-              VpsTable vpsTable = client.getVpsService().getTableById(tableId);
-
-              String[] split = vpsUrl.split("#");
-              VpsTableVersion vpsVersion = null;
-              if (vpsTable != null && split.length > 1) {
-                vpsVersion = vpsTable.getTableVersionById(split[1]);
-              }
-              GameRepresentation gameRep = null;
-              if (vpsTable != null) {
-                gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-              }
-
-              TournamentTable tournamentTable = new TournamentTable();
-              tournamentTable.setEnabled(!game.isDisabled());
-              tournamentTable.setVpsTableId(vpsTable.getId());
-              tournamentTable.setVpsVersionId(vpsVersion.getId());
-              tournamentTable.setTournamentId(this.tournament.getId());
-              tournamentTable.setDisplayName(vpsTable.getDisplayName());
-
-              this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
-              this.tableView.refresh();
+            String tableId = idSegment.substring(idSegment.indexOf("=") + 1);
+            if (tableId.contains("&")) {
+              tableId = tableId.substring(0, tableId.indexOf("&"));
             }
-            catch (Exception e) {
-              LOG.error("Failed to parse table list: " + e.getMessage(), e);
-              WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
+            else if (tableId.contains("#")) {
+              tableId = tableId.substring(0, tableId.indexOf("#"));
             }
+
+            VpsTable vpsTable = client.getVpsService().getTableById(tableId);
+
+            String[] split = vpsUrl.split("#");
+            VpsTableVersion vpsVersion = null;
+            if (vpsTable != null && split.length > 1) {
+              vpsVersion = vpsTable.getTableVersionById(split[1]);
+            }
+            GameRepresentation gameRep = null;
+            if (vpsTable != null) {
+              gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+            }
+
+            TournamentTable tournamentTable = new TournamentTable();
+            tournamentTable.setEnabled(!game.isDisabled());
+            tournamentTable.setVpsTableId(vpsTable.getId());
+            tournamentTable.setVpsVersionId(vpsVersion.getId());
+            tournamentTable.setTournamentId(this.tournament.getId());
+            tournamentTable.setDisplayName(vpsTable.getDisplayName());
+
+            TournamentTreeModel tournamentTreeModel = new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion);
+            this.tableSelection.add(tournamentTreeModel);
+            this.tableView.refresh();
+          }
+          catch (Exception e) {
+            LOG.error("Failed to parse table list: " + e.getMessage(), e);
+            WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
           }
         }
       }
@@ -522,6 +548,26 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     editTableBtn.setDisable(true);
     validationContainer.setVisible(false);
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
+
+    IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+
+    ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(iScoredSettings.getGameRooms(), false));
+    List<IScoredGameRoom> validGameRooms = new ArrayList<>();
+    List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
+    for (IScoredGameRoom gameRoom : gameRooms) {
+      GameRoom gr = IScored.getGameRoom(gameRoom.getUrl(), false);
+      if (gr != null) {
+        validGameRooms.add(gameRoom);
+      }
+    }
+    refreshGameRoomsCombo(validGameRooms);
+
+    gameRoomsCombo.valueProperty().addListener(new ChangeListener<IScoredGameRoom>() {
+      @Override
+      public void changed(ObservableValue<? extends IScoredGameRoom> observable, IScoredGameRoom oldValue, IScoredGameRoom newValue) {
+        loadIScoredTables();
+      }
+    });
 
 
     deleteTableBtn.setDisable(true);
@@ -602,9 +648,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       tournament.setVisibility(newValue ? TournamentVisibility.privateTournament : TournamentVisibility.publicTournament);
       validate();
     });
-
-    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> tournament.setDashboardUrl(newValue));
-
 
     statusColumn.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue();

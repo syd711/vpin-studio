@@ -67,6 +67,7 @@ public class UISettings extends JsonSettings {
 
   private boolean tableSidebarVisible = true;
   private boolean competitionsSidebarVisible = true;
+  private boolean tournamentsSidebarVisible = true;
 
   //columns
   private boolean columnAltColor = true;
@@ -89,6 +90,14 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
   private boolean columnPatchVersion = false;
+
+  public boolean isTournamentsSidebarVisible() {
+    return tournamentsSidebarVisible;
+  }
+
+  public void setTournamentsSidebarVisible(boolean tournamentsSidebarVisible) {
+    this.tournamentsSidebarVisible = tournamentsSidebarVisible;
+  }
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
 

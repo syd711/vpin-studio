@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -28,7 +29,7 @@ public class DateUtil {
   }
 
   public static String formatTimeString(Date date) {
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
+    SimpleDateFormat df = new SimpleDateFormat("HH-mm");
     return df.format(date);
   }
 
@@ -42,16 +43,26 @@ public class DateUtil {
   }
 
   public static Date formatDate(LocalDate value, String time) {
-    if (value == null) {
-      return null;
+    try {
+      if (value == null) {
+        return null;
+      }
+
+      if (time.contains("--")) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss");
+        return df.parse(time);
+      }
+
+      String[] split = time.replaceAll("-", ":").split(":");
+      int hours = Integer.parseInt(split[0]);
+      int minutes = Integer.parseInt(split[1]);
+      Date date = Date.from(value.atStartOfDay(ZoneId.systemDefault()).toInstant());
+      return DateUtil.toDate(date, hours, minutes);
     }
-
-    String[] split = time.split(":");
-    int hours = Integer.parseInt(split[0]);
-    int minutes = Integer.parseInt(split[1]);
-    Date date = Date.from(value.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    return DateUtil.toDate(date, hours, minutes);
-
+    catch (ParseException e) {
+      LOG.error("Date format failed: {}", e.getMessage(), e);
+    }
+    return new Date();
   }
 
   public static String formatDuration(Date start, Date end) {

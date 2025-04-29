@@ -87,7 +87,7 @@ public class IScoredGame {
 
     List<String> tags = getTags();
     for (String tag : tags) {
-      if (tag.equals("vps:allVersions")) {
+      if (tag.equalsIgnoreCase("vps:allversions")) {
         return true;
       }
     }
@@ -100,11 +100,21 @@ public class IScoredGame {
   }
 
   public boolean isSingleScore() {
-    return tags.contains("vps:singlescore");
+    for (String tag : tags) {
+      if (tag.equalsIgnoreCase("vps:singlescore")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean isMultiScore() {
-    return tags.contains("vps:multiscore");
+    for (String tag : tags) {
+      if (tag.equalsIgnoreCase("vps:multiscore")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public List<String> getTags() {

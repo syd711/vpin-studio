@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -13,6 +14,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.util.ManiaHelper;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -83,6 +85,17 @@ public class ManiaSettingsController extends SettingsSceneController implements 
   private String lastScreen = "mania-account-settings.fxml";
   private static boolean open = false;
   private static ManiaSettingsController INSTANCE = null;
+
+  public static void open(String preferenceType) {
+    if(!open) {
+      toggle();
+    }
+
+    Platform.runLater(() -> {
+      //TODO btn
+      instance.load("mania-" + preferenceType + ".fxml", null, "tournamentsBtn");
+    });
+  }
 
   public static void navigateTo(String id) {
     try {
@@ -213,9 +226,9 @@ public class ManiaSettingsController extends SettingsSceneController implements 
       lastSelection.getStyleClass().add("preference-button-selected");
     }
     else if (btnId != null) {
-      Optional<Node> first = navigationBox.getChildren().stream().filter(b -> btnId.equals(b.getId())).findFirst();
-      if (first.isPresent()) {
-        lastSelection = (Button) first.get();
+      Node first = FXUtil.findChildByID(navigationBox, btnId);
+      if (first != null) {
+        lastSelection = (Button) first;
         lastSelection.getStyleClass().add("preference-button-selected");
       }
     }
@@ -227,7 +240,7 @@ public class ManiaSettingsController extends SettingsSceneController implements 
     lastScreen = screen;
 
     try {
-      FXMLLoader loader = new FXMLLoader(FriendsListController.class.getResource(screen));
+      FXMLLoader loader = new FXMLLoader(ManiaSettingsController.class.getResource(screen));
       Node node = loader.load();
       preferencesMain.setCenter(node);
     }
