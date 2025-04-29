@@ -17,6 +17,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -316,6 +317,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private UISettings uiSettings;
   private ServerSettings serverSettings;
   private ValidationSettings validationSettings;
+  private IScoredSettings iScoredSettings;
 
   private final List<Consumer<GameRepresentation>> reloadConsumers = new ArrayList<>();
 
@@ -1250,30 +1252,35 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
-      ValidationState validationState = value.getValidationState();
-      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
-      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
-        if (validationState != null && validationState.getCode() > 0) {
-          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
-        }
+      HBox row = new HBox(2);
+      row.setAlignment(Pos.CENTER_RIGHT);
+      row.setMinWidth(34);
+
+      if (iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("This table is competed."));
+        FontIcon cmpIcon = WidgetFactory.createIcon("mdi2t-trophy-variant");
+        cmpIcon.setIconColor(Paint.valueOf("#00c4ec"));
+        compBtn.setGraphic(cmpIcon);
+        row.getChildren().add(compBtn);
+        compBtn.setOnAction(event -> {
+          Platform.runLater(() -> {
+            NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(value.getCompetitionTypes().get(0)));
+          });
+        });
       }
 
-      Button btn = new Button();
-      btn.getStyleClass().add("table-media-button");
-      HBox graphics = new HBox(3);
-      graphics.setAlignment(Pos.CENTER_RIGHT);
-      graphics.setMinWidth(34);
-      graphics.getChildren().add(statusIcon);
-
       if (!StringUtils.isEmpty(value.getComment())) {
+        Button commentBtn = new Button();
+        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+        icon.setIconSize(16);
+        commentBtn.setGraphic(icon);
+        commentBtn.getStyleClass().add("table-media-button");
         String notes = value.getComment();
         Tooltip tooltip = new Tooltip(value.getComment());
         tooltip.setWrapText(true);
-        btn.setTooltip(tooltip);
-
-        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
-        icon.setIconSize(16);
-        graphics.getChildren().add(0, icon);
+        commentBtn.setTooltip(tooltip);
 
         if (notes.toLowerCase().contains("//error")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
@@ -1284,18 +1291,31 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         else if (notes.toLowerCase().contains("//outdated")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
         }
+
+        row.getChildren().add(commentBtn);
+        commentBtn.setOnAction(event -> {
+          tableView.getSelectionModel().clearSelection();
+          tableView.getSelectionModel().select(model);
+          Platform.runLater(() -> {
+            TableDialogs.openCommentDialog(this, value);
+          });
+        });
       }
 
-      btn.setGraphic(graphics);
-      btn.setOnAction(event -> {
-        tableView.getSelectionModel().clearSelection();
-        tableView.getSelectionModel().select(model);
-        Platform.runLater(() -> {
-          TableDialogs.openCommentDialog(this, value);
-        });
-      });
 
-      return btn;
+      ValidationState validationState = value.getValidationState();
+      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+      Label statusLabel = new Label();
+      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
+        if (validationState != null && validationState.getCode() > 0) {
+          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
+          statusLabel.setTooltip(new Tooltip("This table has configuration issues."));
+        }
+      }
+      statusLabel.setGraphic(statusIcon);
+      row.getChildren().add(statusLabel);
+
+      return row;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
@@ -1872,6 +1892,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().add(tableView.getColumns().indexOf(columnPlaylists), columnRating);
     }
 
+    iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
+
 
 //    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
@@ -2078,6 +2101,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else if (key.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
+    }
+    else if (key.equals(PreferenceNames.ISCORED_SETTINGS)) {
+      iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      if (client.getFrontendService().getFrontendType().supportCompetitions()) {
+        columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
+      }
     }
     else if (key.equals(PreferenceNames.IGNORED_VALIDATION_SETTINGS)) {
       ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);

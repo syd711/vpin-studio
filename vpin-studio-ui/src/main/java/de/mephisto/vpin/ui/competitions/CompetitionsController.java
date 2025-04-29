@@ -163,12 +163,27 @@ public class CompetitionsController implements Initializable, StudioFXController
     refreshUsers(competition);
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     refreshView(tabPane.getSelectionModel().selectedIndexProperty().get());
-//    discordController.onReload();
-//    tableSubscriptionsController.onReload();
-
-//    offlineController.onViewActivated();
     discordController.onViewActivated(options);
     tableSubscriptionsController.onViewActivated(options);
+
+    if (options != null && options.getModel() != null) {
+      if (options.getModel() instanceof CompetitionType) {
+        CompetitionType competitionType = (CompetitionType) options.getModel();
+
+        if (competitionType.equals(CompetitionType.OFFLINE)) {
+          tabPane.getSelectionModel().select(TAB_OFFLINE);
+        }
+        else if (competitionType.equals(CompetitionType.DISCORD)) {
+          tabPane.getSelectionModel().select(TAB_ONLINE);
+        }
+        else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
+          tabPane.getSelectionModel().select(TAB_TABLE_SUBS);
+        }
+        else if (competitionType.equals(CompetitionType.ISCORED)) {
+          tabPane.getSelectionModel().select(TAB_ISCORED);
+        }
+      }
+    }
   }
 
   @FXML
@@ -632,33 +647,6 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    loadTabs();
-    sidePanelRoot = root.getRight();
-    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
-
-    updateSelection(Optional.empty());
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshView(t1);
-    });
-    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
-    checkTitledPanes(CompetitionType.OFFLINE);
-
-    Platform.runLater(() -> {
-      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-        public void handle(KeyEvent ke) {
-          if (ke.getCode() == KeyCode.F3) {
-            toggleSidebar();
-          }
-        }
-      });
-    });
-
-    client.getPreferenceService().addListener(this);
-  }
-
-
   private StudioFXController getActiveController() {
     int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
     switch (selectedIndex) {
@@ -708,7 +696,37 @@ public class CompetitionsController implements Initializable, StudioFXController
       else {
         tabPane.getTabs().remove(iScoredSubscriptionsTab);
       }
-
     }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    loadTabs();
+    sidePanelRoot = root.getRight();
+    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
+
+    updateSelection(Optional.empty());
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      refreshView(t1);
+    });
+    dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+    checkTitledPanes(CompetitionType.OFFLINE);
+
+    Platform.runLater(() -> {
+      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.F3) {
+            toggleSidebar();
+          }
+        }
+      });
+    });
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    if (!uiSettings.isCompetitionsSidebarVisible()) {
+      toggleSidebar();
+    }
+
+    client.getPreferenceService().addListener(this);
   }
 }

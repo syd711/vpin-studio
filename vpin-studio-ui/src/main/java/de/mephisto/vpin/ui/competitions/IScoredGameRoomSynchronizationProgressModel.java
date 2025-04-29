@@ -1,10 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.GameRoom;
-import de.mephisto.vpin.connectors.iscored.IScored;
-import de.mephisto.vpin.connectors.iscored.IScoredGame;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -14,7 +10,6 @@ import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,12 +19,12 @@ public class IScoredGameRoomSynchronizationProgressModel extends ProgressModel<I
   private final static Logger LOG = LoggerFactory.getLogger(IScoredGameRoomSynchronizationProgressModel.class);
 
   private final Iterator<IScoredGameRoom> iterator;
-  private final List<IScoredGameRoom> games;
+  private final List<IScoredGameRoom> gameRooms;
 
   public IScoredGameRoomSynchronizationProgressModel(@NonNull List<IScoredGameRoom> gameRooms) {
     super("iScored Synchronization");
-    this.games = gameRooms;
-    this.iterator = games.iterator();
+    this.gameRooms = gameRooms;
+    this.iterator = this.gameRooms.iterator();
   }
 
   @Override
@@ -49,15 +44,13 @@ public class IScoredGameRoomSynchronizationProgressModel extends ProgressModel<I
 
   @Override
   public int getMax() {
-    return games.size();
+    return gameRooms.size();
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, IScoredGameRoom next) {
     try {
-      GameRoom gameRoom = IScored.getGameRoom(next.getUrl(), false);
-      List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().synchronizeIScoredGameRoom(gameRoom);
-      progressResultModel.getResults().add(competitionRepresentations);
+      client.getCompetitionService().synchronizeIScoredGameRoom(next);
     }
     catch (Exception e) {
       LOG.error("Failed to sync competitions data: " + e.getMessage(), e);

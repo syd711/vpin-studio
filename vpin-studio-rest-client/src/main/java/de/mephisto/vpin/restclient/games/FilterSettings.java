@@ -10,6 +10,7 @@ public class FilterSettings extends JsonSettings {
   private boolean vpsUpdates;
   private boolean noVpsTableMapping;
   private boolean noVpsVersionMapping;
+  private boolean iScored;
   private boolean versionUpdates;
   private boolean notPlayed;
   private boolean noHighscoreSettings;
@@ -25,6 +26,14 @@ public class FilterSettings extends JsonSettings {
   private boolean withAlias;
   private int gameStatus = -1;
   private CommentType noteType;
+
+  public boolean isIScored() {
+    return iScored;
+  }
+
+  public void setIScored(boolean iScored) {
+    this.iScored = iScored;
+  }
 
   public boolean isWithRes() {
     return withRes;
@@ -214,6 +223,7 @@ public class FilterSettings extends JsonSettings {
         && !this.withPupPack
         && !this.withNVOffset
         && !this.withAlias
+        && !this.iScored
         && this.noteType == null
         && this.gameStatus == -1;
     }

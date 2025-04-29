@@ -3,8 +3,12 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.CommentType;
+import de.mephisto.vpin.restclient.games.FilterSettings;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
@@ -25,8 +29,7 @@ import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel>
-    implements Initializable {
+public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable, PreferenceChangeListener {
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -54,6 +57,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   @FXML
   private CheckBox noVpsMappingTableCheckBox;
+
+  @FXML
+  private CheckBox iScoredCompetitionCheckBox;
 
   @FXML
   private CheckBox noVpsMappingVersionCheckBox;
@@ -150,6 +156,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
       noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
       noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
+      iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());
       noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
       withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
       withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
@@ -165,6 +172,8 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    iScoredCompetitionCheckBox.managedProperty().bindBidirectional(iScoredCompetitionCheckBox.visibleProperty());
+
     configurationFilters.managedProperty().bindBidirectional(configurationFilters.visibleProperty());
     tableAssetFilters.managedProperty().bindBidirectional(tableAssetFilters.visibleProperty());
     vpsFilters.managedProperty().bindBidirectional(vpsFilters.visibleProperty());
@@ -204,6 +213,11 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
     notPlayedCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNotPlayed(newValue);
+      applyFilters();
+    });
+    iScoredCompetitionCheckBox.setSelected(filterSettings.isIScored());
+    iScoredCompetitionCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setIScored(newValue);
       applyFilters();
     });
     noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
@@ -301,6 +315,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       }
       applyFilters();
     });
+
+    client.getPreferenceService().addListener(this);
+    preferencesChanged(PreferenceNames.ISCORED_SETTINGS, null);
   }
 
   public void setEmulator(GameEmulatorRepresentation value) {
@@ -313,4 +330,13 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     configurationIssuesFilter.setVisible(vpxMode);
   }
 
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.ISCORED_SETTINGS.equalsIgnoreCase(key)) {
+      IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+      iScoredCompetitionCheckBox.setVisible(iScoredSettings.isEnabled() && frontendType.supportCompetitions());
+    }
+  }
 }

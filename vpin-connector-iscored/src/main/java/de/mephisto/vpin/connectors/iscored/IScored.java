@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.iscored.models.GameModel;
 import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IScored {
@@ -41,12 +39,24 @@ public class IScored {
     return dashboardUrl.toLowerCase().startsWith("https://www.iScored.info/".toLowerCase());
   }
 
-  public static GameRoom getGameRoom(@NonNull String url, boolean forceReload) {
+  @Nullable
+  public static GameRoom getGameRoom(@Nullable String url, boolean forceReload) {
+    if (url == null) {
+      return null;
+    }
+
     if (!cache.containsKey(url) || forceReload) {
       GameRoom gameRoom = loadGameRoom(url);
-      cache.put(url, gameRoom);
+      if (gameRoom != null) {
+        cache.put(url, gameRoom);
+      }
     }
-    return cache.get(url);
+
+    if (cache.containsKey(url)) {
+      return cache.get(url);
+    }
+
+    return null;
   }
 
   private static GameRoom loadGameRoom(@NonNull String url) {
@@ -82,6 +92,7 @@ public class IScored {
 
           for (GameModel gameModel : games) {
             IScoredGame game = new IScoredGame();
+            game.setGameRoomUrl(gameRoom.getUrl());
             game.setId(gameModel.getGameID());
             game.setName(gameModel.getGameName());
             game.setTags(gameModel.getTags());
@@ -89,6 +100,15 @@ public class IScored {
             game.setScores(getScoresFor(game.getId(), allScores));
             gameRoom.getGames().add(game);
           }
+
+          Collections.sort(gameRoom.getGames(), new Comparator<IScoredGame>() {
+            @Override
+            public int compare(IScoredGame o1, IScoredGame o2) {
+              return o1.getName().compareTo(o2.getName());
+            }
+          });
+
+
 
           LOG.info("Loaded game room from URL '" + url + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
           return gameRoom;

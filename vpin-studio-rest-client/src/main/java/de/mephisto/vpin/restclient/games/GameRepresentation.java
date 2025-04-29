@@ -2,8 +2,10 @@ package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +47,7 @@ public class GameRepresentation {
 
   private boolean played;
   private int gameStatus;
+  private List<CompetitionType> competitionTypes = new ArrayList<>();
 
   private String hsFileName;
   private String highscoreIniFilename;
@@ -84,6 +87,14 @@ public class GameRepresentation {
   private boolean altSoundAvailable;
 
   private int nbDirectB2S = -1;
+
+  public List<CompetitionType> getCompetitionTypes() {
+    return competitionTypes;
+  }
+
+  public void setCompetitionTypes(List<CompetitionType> competitionTypes) {
+    this.competitionTypes = competitionTypes;
+  }
 
   public String getHighscoreIniFilename() {
     return highscoreIniFilename;

@@ -101,7 +101,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   private void continueReading() {
     try (Stream<Path> stream = Files.walk(dropinsFolder.toPath())) {
-      stream.filter((p) -> Files.isRegularFile(p) && !FileUtils.isTempFile(p.toFile()))
+      stream.filter((p) -> Files.isRegularFile(p) && !p.toFile().isHidden() && !FileUtils.isTempFile(p.toFile()))
           .forEach((p) -> {
             if (itemCount > itemLimit) {
               return;
@@ -119,7 +119,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
               root.getStyleClass().add("dropin-menu-item");
               DropInContainerController containerController = loader.getController();
               containerController.setData(dropInsBtn, p.toFile());
-              CustomMenuItem item = new CustomMenuItem();
+              CustomMenuItem item = new CustomMenuItem();item.setUserData(p.toFile());
               item.setUserData(p.toFile());
               item.setContent(root);
               dropInsBtn.getItems().add(item);

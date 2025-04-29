@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -25,9 +24,8 @@
                     <children>
                         <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                        <TableColumn fx:id="syncColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Synchronized" />
                         <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Game Settings" />
-                        <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: CENTER;">
+                        <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">
                            <graphic>
                               <HBox alignment="CENTER" spacing="6.0">
                                  <children>
@@ -46,9 +44,10 @@
                                  </children>
                               </HBox>
                            </graphic></TableColumn>
-                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="GameRoom" />
+                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="Game Room" />
                         <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="Virtual Pinball Spreadsheet Table" />
-                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
+                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="Table Version" />
+                        <TableColumn fx:id="creationDateColumn" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Creation Date" />
                             </columns>
                         </TableView>
                     </children>
@@ -97,7 +96,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Synchronize the competitions of the selected game room." />
+                        <Tooltip text="Synchronize the iScored game room games with the ones of your cabinet." />
                      </tooltip>
                   </Button>
                   <Button fx:id="editBtn" layoutX="640.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" textFill="WHITE">
@@ -146,6 +145,29 @@
                         <Tooltip text="Delete the selected competition. Note that it might get re-created during the next game room synchronization." />
                      </tooltip>
                         </Button>
+                  <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit table data" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Show table in table overview" />
+                     </tooltip>
+                  </Button>
                     </items>
                 </ToolBar>
             </top>
@@ -154,42 +176,6 @@
                     <BorderPane.margin>
                         <Insets bottom="6.0" />
                     </BorderPane.margin>
-                    <center>
-                        <BorderPane fx:id="validationError">
-                            <left>
-                                <VBox BorderPane.alignment="CENTER">
-                                    <BorderPane.margin>
-                                        <Insets bottom="3.0" left="12.0" top="3.0" />
-                                    </BorderPane.margin>
-                                    <children>
-                                        <Label fx:id="validationErrorLabel" text="Loading IScored Subscriptions..." textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="validationErrorText" textFill="WHITE">
-                                            <font>
-                                                <Font name="System" size="14.0" />
-                                            </font>
-                                        </Label>
-                                    </children>
-                                </VBox>
-                            </left>
-                            <right>
-                                <VBox BorderPane.alignment="TOP_RIGHT">
-                                    <BorderPane.margin>
-                                        <Insets right="6.0" />
-                                    </BorderPane.margin>
-                                    <children>
-
-                                    </children>
-                                </VBox>
-                            </right>
-                     <BorderPane.margin>
-                        <Insets top="6.0" />
-                     </BorderPane.margin>
-                        </BorderPane>
-                    </center>
                 </BorderPane>
             </bottom>
         </BorderPane>

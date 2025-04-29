@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -18,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FrontendStatusService implements InitializingBean {
+public class FrontendStatusService implements InitializingBean, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
 
   private final List<TableStatusChangeListener> tableStatusChangeListeners = new ArrayList<>();
@@ -287,5 +288,13 @@ public class FrontendStatusService implements InitializingBean {
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+//    LOG.info("-----------------------------TableStatusChangeListener Summary ----------------------------------------");
+//    for (TableStatusChangeListener listener : tableStatusChangeListeners) {
+//      LOG.info("TableStatusChangeListener: {}", listener.getClass().getSimpleName() + "/" + listener.getPriority());
+//    }
   }
 }

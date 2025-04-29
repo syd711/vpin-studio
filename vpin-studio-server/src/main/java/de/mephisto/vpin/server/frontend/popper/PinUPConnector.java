@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.competitions.CompetitionIdFactory;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
@@ -2136,6 +2137,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     if (!StringUtils.isEmpty(serverSettings.getMappingPatchVersion())) {
       game.setPatchVersion(rs.getString(serverSettings.getMappingPatchVersion()));
     }
+
+    String tourneyId = rs.getString("TourneyID");
+    game.setCompetitionTypes(CompetitionIdFactory.getCompetitionTypes(tourneyId));
 
     return game;
   }

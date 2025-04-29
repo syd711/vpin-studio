@@ -200,6 +200,15 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
+  public GameRepresentation getGameByVpsId(@Nullable String vpsTableId, @Nullable String vpsTableVersionId) {
+    Game game = gameService.getGameByVpsTable(vpsTableId, vpsTableVersionId);
+    if (game == null) {
+      return null;
+    }
+    return getGame(game.getId());
+  }
+
+  @Override
   public GameRepresentation getGame(int id) {
     try {
       Game game = gameService.getGame(id);
