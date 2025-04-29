@@ -78,7 +78,7 @@
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT">
                                        <children>
-                                          <TextField fx:id="nameField" prefWidth="300.0">
+                                          <TextField fx:id="nameField" prefWidth="300.0" promptText="Enter the name of the tournament here...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -134,6 +134,9 @@
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="You can tag the iscored.info game room games with VPS urls so that they are automaically added here." wrapText="true" />
                                              </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
                                           </Label>
                                        </children>
                                     </HBox>
@@ -177,12 +180,15 @@
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="This invite link is visible to users that joined your tournament or in the tournament browser, if the tournament is public." wrapText="true" />
                                              </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
                                           </Label>
                                        </children>
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <TextField fx:id="discordLinkText" prefWidth="258.0">
+                                          <TextField fx:id="discordLinkText" prefWidth="258.0" promptText="Add an invite link to your server here...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -225,14 +231,14 @@
                                                 <Tooltip prefWidth="300.0" text="The website that contains additional information about the tournament." wrapText="true" />
                                              </tooltip>
                                              <HBox.margin>
-                                                <Insets top="6.0" />
+                                                <Insets />
                                              </HBox.margin>
                                           </Label>
                                        </children>
                                     </HBox>
                                     <HBox spacing="6.0">
                                        <children>
-                                          <TextField fx:id="websiteLinkText" prefWidth="258.0">
+                                          <TextField fx:id="websiteLinkText" prefWidth="258.0" promptText="Enter the URL of your website here...">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -270,6 +276,9 @@
                                              <tooltip>
                                                 <Tooltip prefWidth="300.0" text="The description text will be shown to players that joined the competiiton and in the tournament browser, if the tournament is public." wrapText="true" />
                                              </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
                                           </Label>
                                        </children>
                                     </HBox>
@@ -278,7 +287,7 @@
                                           <Insets top="4.0" />
                                        </VBox.margin>
                                        <children>
-                                          <TextArea fx:id="descriptionText" prefHeight="151.0" wrapText="true">
+                                          <TextArea fx:id="descriptionText" prefHeight="180.0" promptText="Enter a description for your tournament here..." wrapText="true">
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>
@@ -430,7 +439,7 @@
                               <Insets />
                            </VBox.margin>
                         </Label>
-                        <BorderPane prefHeight="420.0">
+                        <BorderPane prefHeight="440.0">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
@@ -468,10 +477,6 @@
                            <center>
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                                 <columns>
-                                    <TableColumn fx:id="statusColumn" prefWidth="47.19995307922363" style="-fx-alignment: CENTER;">
-                                       <graphic>
-                                          <CheckBox mnemonicParsing="false" />
-                                       </graphic></TableColumn>
                                   <TableColumn fx:id="tableColumn" prefWidth="458.4000473022461" style="-fx-alignment: CENTER;" text="Your Table" />
                                   <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
                                     <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />

@@ -425,26 +425,24 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         return;
       }
 
-      JFXFuture.supplyAsync(() -> {
-        return loadTreeModel();
-      }).thenAcceptLater((root) -> {
-        tableStack.getChildren().remove(loadingOverlay);
-        treeTableView.setVisible(true);
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentsSynchronizeProgressModel());
+      if (progressDialog.getResults().isEmpty()) {
+        return;
+      }
+      TreeItem<TournamentTreeModel> root = (TreeItem<TournamentTreeModel>) progressDialog.getResults().get(0);
+      tableStack.getChildren().remove(loadingOverlay);
+      treeTableView.setVisible(true);
 
+      treeTableView.setRoot(root);
+      treeTableView.refresh();
+      TournamentTreeModel.expandTreeView(root);
 
-        client.getTournamentsService().synchronize();
-
-        treeTableView.setRoot(root);
-        treeTableView.refresh();
-        TournamentTreeModel.expandTreeView(root);
-
-        if (selection.isPresent()) {
-          treeTableView.getSelectionModel().select(selection.get());
-        }
-        else if (!root.getChildren().isEmpty()) {
-          treeTableView.getSelectionModel().select(0);
-        }
-      });
+      if (selection.isPresent()) {
+        treeTableView.getSelectionModel().select(selection.get());
+      }
+      else if (!root.getChildren().isEmpty()) {
+        treeTableView.getSelectionModel().select(0);
+      }
     }
     catch (
         Exception e) {
@@ -554,23 +552,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       return Optional.of(selectedItem);
     }
     return Optional.empty();
-  }
-
-  private TreeItem<TournamentTreeModel> loadTreeModel() {
-    List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-    LOG.info("Loaded " + tournaments.size() + " tournaments.");
-    TreeItem<TournamentTreeModel> root = new TreeItem<>(new TournamentTreeModel(null, null, null, null, null));
-    for (Tournament tournament : tournaments) {
-      if (!tournament.getDisplayName().toLowerCase().contains(textfieldSearch.getText().toLowerCase())) {
-        continue;
-      }
-      List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
-      TreeItem<TournamentTreeModel> treeModel = TournamentTreeModel.create(tournament, tournamentTables);
-
-      root.getChildren().add(treeModel);
-    }
-    root.setExpanded(true);
-    return root;
   }
 
   @Override
@@ -740,7 +721,6 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     bindSearchField();
 
     EventManager.getInstance().addListener(this);
-    onReload(Optional.empty());
   }
 
   private List<TournamentTable> getCachedTournamentTables(long id) {

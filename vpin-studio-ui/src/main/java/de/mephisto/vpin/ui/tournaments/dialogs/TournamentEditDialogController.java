@@ -209,8 +209,11 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       }
 
       GameRepresentation game = client.getGameService().getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
-      tableSelection.add(new TournamentTreeModel(null, game, tournamentTable, vpsTable, vpsTableVersion));
-      reloadTables();
+      TournamentTreeModel tournamentTreeModel = new TournamentTreeModel(null, game, tournamentTable, vpsTable, vpsTableVersion);
+      if (!tableSelection.contains(tournamentTreeModel)) {
+        tableSelection.add(tournamentTreeModel);
+        reloadTables();
+      }
     }
   }
 
@@ -647,25 +650,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.visibilityCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tournament.setVisibility(newValue ? TournamentVisibility.privateTournament : TournamentVisibility.publicTournament);
       validate();
-    });
-
-    statusColumn.setCellValueFactory(cellData -> {
-      TournamentTreeModel value = cellData.getValue();
-      TournamentTable tournamentTable = cellData.getValue().getTournamentTable();
-
-      Label label = new Label();
-      if (value.getGame() == null) {
-        label.setGraphic(WidgetFactory.createExclamationIcon());
-      }
-      else {
-        label.setGraphic(WidgetFactory.createCheckIcon(null));
-      }
-
-      if (!tournamentTable.isEnabled()) {
-        ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf("#B0ABAB"));
-      }
-
-      return new SimpleObjectProperty<>(label);
     });
 
     tableColumn.setCellValueFactory(cellData -> {
