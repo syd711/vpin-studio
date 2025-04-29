@@ -9,6 +9,8 @@
 - competition sidebar
 - new error icon
 - **System Manager**: The overall update check is not blocking the UI anymore. This way, you can immediately switch to other system manager tabs now.
+- **Table Overview / ContextMenu**: De-cluttered context menu and removed less used function with focus on support more bulk actions there.
+- **Table Overview**: Added context menu option to bulk reset table ratings.
 - **Table Data Manager**: The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
 - **Table Data Manager**: The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
 - **Highscore Backups**: Added bulk-operation support for highscore backups.

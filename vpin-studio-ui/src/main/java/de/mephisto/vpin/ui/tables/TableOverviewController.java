@@ -565,6 +565,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     onVpsResetUpdates(selectedItems);
   }
 
+  @FXML
+  public void onResetRatings() {
+    List<GameRepresentation> selectedItems = getSelections();
+    for (GameRepresentation selectedItem : selectedItems) {
+      setGameRating(selectedItem, -1);
+    }
+  }
+
   public static void onVpsResetUpdates(List<GameRepresentation> selectedItems) {
     List<GameRepresentation> collect = selectedItems.stream().filter(g -> !g.getVpsUpdates().isEmpty()).collect(Collectors.toList());
     ProgressDialog.createProgressDialog(new VPSResetProgressModel(collect));
@@ -1547,15 +1555,23 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           final TableRow<GameRepresentationModel> row = new TableRow<>();
           final ContextMenu menu = new ContextMenu();
 
-          //ListChangeListener<GameRepresentation> changeListener = (ListChangeListener.Change<? extends GameRepresentation> c) ->
-          //    contextMenuController.refreshContextMenu(tableView, menu, this.getSelection());
+
+          row.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+              if(tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+                return;
+              }
+              contextMenuController.refreshContextMenu(tableView, menu, tableView.getSelectionModel().getSelectedItems());
+            }
+          });
 
           row.itemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem == null) {
 //              menu.getItems().clear();
             }
             else {
-              contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
+//              contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
             }
           });
 
