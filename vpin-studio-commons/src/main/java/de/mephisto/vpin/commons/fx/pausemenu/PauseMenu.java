@@ -2,13 +2,11 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -20,7 +18,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -237,23 +234,7 @@ public class PauseMenu extends Application {
           long start = System.currentTimeMillis();
           try {
             screenAssets.clear();
-            PauseMenuStyle style = pauseMenuSettings.getStyle();
-            if (style == null) {
-              style = PauseMenuStyle.embedded;
-            }
-
-            if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
-              screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
-
-              List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
-              if (!videoTutorials.isEmpty()) {
-                VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
-                String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-                if (visible) {
-                  Browser.getInstance().showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
-                }
-              }
-            }
+            screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
             LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
           }
           catch (Exception e) {

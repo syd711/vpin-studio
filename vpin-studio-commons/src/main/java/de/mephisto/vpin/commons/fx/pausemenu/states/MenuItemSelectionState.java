@@ -31,9 +31,6 @@ public class MenuItemSelectionState extends MenuState {
     if (item.getItemType().equals(PauseMenuItemTypes.exit)) {
       PauseMenu.exitPauseMenu();
     }
-    else if (item.getYouTubeUrl() != null) {
-      menuController.showYouTubeVideo(item);
-    }
     return this;
   }
 
