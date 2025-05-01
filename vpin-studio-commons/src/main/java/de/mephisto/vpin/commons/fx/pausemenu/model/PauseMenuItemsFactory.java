@@ -23,8 +23,6 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
@@ -91,9 +89,9 @@ public class PauseMenuItemsFactory {
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
       item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("rules.png")));
-      String ytUrl = "file:///C:/Users/mfaust/Downloads/drop-ins/Spider-Man%20Vault%20(Stern%202016).mp4";
-      item.setVideoUrl(ytUrl);
-      LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
+      String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
+      item.setVideoUrl(videoUrl);
+      LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
       String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
       Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
       item.setDataImage(scoreImage);
