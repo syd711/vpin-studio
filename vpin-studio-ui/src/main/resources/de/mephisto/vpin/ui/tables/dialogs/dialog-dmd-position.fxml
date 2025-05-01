@@ -2,11 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -16,8 +18,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -115,7 +115,10 @@
          <right>
             <VBox BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="default-headline" text="DMD Type" />
+                  <Label styleClass="default-headline" text="DMD Type">
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin></Label>
                   <VBox spacing="3.0">
                      <children>
                         <ComboBox fx:id="DMDTypeCombo" />
@@ -151,7 +154,7 @@
                               <Insets bottom="12.0" top="6.0" />
                            </VBox.margin>
                         </HBox>
-                        <Label fx:id="tablePositionLabel" text="--" >
+                        <Label fx:id="tablePositionLabel" text="--">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -159,7 +162,7 @@
                         <HBox fx:id="romPane" spacing="3.0">
                            <children>
                               <Label styleClass="default-text" text="ROM (or alias):" />
-                              <Label fx:id="romLabel" text="--" >
+                              <Label fx:id="romLabel" text="--">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -177,7 +180,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox spacing="3.0" fx:id="radioOnPane" >
+                  <VBox fx:id="radioOnPane" spacing="3.0">
                      <children>
                         <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="On Backglass" textFill="WHITE">
                            <font>
@@ -288,8 +291,7 @@
                      </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="Margin:" GridPane.rowIndex="0" />
-                        <Spinner GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="marginSpinner" 
-                           min="0" initialValue="0" max="20" amountToStepBy="1" />
+                        <Spinner fx:id="marginSpinner" amountToStepBy="1" initialValue="0" max="20" min="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                         <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="Auto Position" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
@@ -321,6 +323,9 @@
       </BorderPane>
 
                </children>
+               <BorderPane.margin>
+                  <Insets top="6.0" />
+               </BorderPane.margin>
             </VBox>
          </center>
       </BorderPane>
