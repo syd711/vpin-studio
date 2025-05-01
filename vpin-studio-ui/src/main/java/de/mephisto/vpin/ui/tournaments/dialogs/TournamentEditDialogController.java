@@ -464,7 +464,10 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
       VpsTableVersion vpsVersion = vpsTable.getTableVersionById(tournamentTable.getVpsVersionId());
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-      this.tableSelection.add(new TournamentTreeModel(tournament, game, tournamentTable, vpsTable, vpsVersion));
+      TournamentTreeModel tournamentTreeModel = new TournamentTreeModel(tournament, game, tournamentTable, vpsTable, vpsVersion);
+      if (!this.tableSelection.contains(tournamentTreeModel)) {
+        this.tableSelection.add(tournamentTreeModel);
+      }
     }
 
     if (!isOwner) {
@@ -475,17 +478,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
 
     Platform.runLater(() -> {
-      if (isOwner && this.tableSelection.isEmpty()) {
+      rootStack.getChildren().add(loadingOverlay);
+      if (isOwner) {
         loadIScoredTables();
       }
-      else {
-        rootStack.getChildren().add(loadingOverlay);
-        reloadTables();
-      }
+      reloadTables();
+      rootStack.getChildren().remove(loadingOverlay);
     });
   }
 
-  @FXML
   private void loadIScoredTables() {
     this.tableSelection.clear();
     this.tableView.refresh();
@@ -531,8 +532,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
             tournamentTable.setDisplayName(vpsTable.getDisplayName());
 
             TournamentTreeModel tournamentTreeModel = new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion);
-            this.tableSelection.add(tournamentTreeModel);
-            this.tableView.refresh();
+            if (!this.tableSelection.contains(tournamentTreeModel)) {
+              this.tableSelection.add(tournamentTreeModel);
+            }
           }
           catch (Exception e) {
             LOG.error("Failed to parse table list: " + e.getMessage(), e);
@@ -541,7 +543,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
         }
       }
     }
-    reloadTables();
+    this.tableView.refresh();
   }
 
   @Override
