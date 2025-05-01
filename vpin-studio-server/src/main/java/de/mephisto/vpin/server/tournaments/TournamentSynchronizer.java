@@ -99,11 +99,11 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
 
   public void synchronizeTournaments() {
     try {
-      VPinManiaClient maniaClient = maniaService.getClient();
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-      if (cabinet != null) {
-        ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-        if (maniaSettings.isTournamentsEnabled()) {
+      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      if (maniaSettings.isTournamentsEnabled()) {
+        VPinManiaClient maniaClient = maniaService.getClient();
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+        if (cabinet != null) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           synchronize(tournaments);
         }
@@ -114,31 +114,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
     }
   }
 
-  public void synchronize(Game game) {
-    VPinManiaClient maniaClient = maniaService.getClient();
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-    if (cabinet != null) {
-      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      if (maniaSettings.isTournamentsEnabled()) {
-        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-        List<TournamentTableInfo> byGameId = tournamentTablesRepository.findByGameId(game.getId());
-        List<Tournament> filtered = new ArrayList<>();
-        for (TournamentTableInfo tournamentTableInfo : byGameId) {
-          Optional<Tournament> first = tournaments.stream().filter(t -> t.getId() == tournamentTableInfo.getTournamentId()).findFirst();
-          if (first.isPresent()) {
-            Tournament tournament = first.get();
-            if (!filtered.contains(tournament)) {
-              filtered.add(tournament);
-            }
-          }
-        }
-
-        synchronize(filtered);
-      }
-    }
-  }
-
-  public void synchronize(List<Tournament> tournaments) {
+  private void synchronize(List<Tournament> tournaments) {
     try {
       VPinManiaClient maniaClient = maniaService.getClient();
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
