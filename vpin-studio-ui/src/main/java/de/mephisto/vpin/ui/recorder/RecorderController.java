@@ -1,11 +1,13 @@
 package de.mephisto.vpin.ui.recorder;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -13,12 +15,12 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -27,7 +29,6 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -542,30 +543,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       }
     });
 
-    for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
-      VPinScreen screen = recordingScreen.getScreen();
-      CustomMenuItem item = new CustomMenuItem();
-      CheckBox checkBox = new CheckBox();
-      checkBox.setText(recordingScreen.getName());
-      checkBox.getStyleClass().add("default-text");
-      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
-      checkBox.setPrefHeight(30);
-      checkBox.setSelected(recorderSettings.isEnabled(screen));
-      item.setContent(checkBox);
-      item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
-      item.setOnAction(actionEvent -> {
-        RecorderSettings r = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        r.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
-        client.getPreferenceService().setJsonPreference(r);
-
-        TableColumn<?, ?> column = screenColumns.get(screen);
-        if (column != null) {
-          column.setVisible(checkBox.isSelected());
-        }
-        refreshSelection();
-      });
-      screenMenuButton.getItems().add(item);
-    }
+    refreshScreenMenu();
 
     this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
@@ -583,6 +561,43 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
 
     EventManager.getInstance().addListener(this);
+  }
+
+  private void refreshScreenMenu() {
+    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
+
+    screenMenuButton.getItems().clear();
+    for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
+      VPinScreen screen = recordingScreen.getScreen();
+      CustomMenuItem item = new CustomMenuItem();
+      CheckBox checkBox = new CheckBox();
+      checkBox.setText(recordingScreen.getName());
+      checkBox.getStyleClass().add("default-text");
+      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
+      checkBox.setPrefHeight(30);
+      checkBox.setSelected(recorderSettings.isEnabled(screen));
+      item.setContent(checkBox);
+      item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
+      item.setOnAction(actionEvent -> {
+        RecorderSettings rSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        rSettings.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
+        client.getPreferenceService().setJsonPreference(rSettings);
+
+        TableColumn<?, ?> column = screenColumns.get(screen);
+        if (column != null) {
+          column.setVisible(checkBox.isSelected());
+        }
+        refreshSelection();
+      });
+
+      TableColumn<?, ?> column = screenColumns.get(screen);
+      if (column != null) {
+        column.setVisible(recorderSettings.getRecordingScreenOption(recordingScreen).isEnabled());
+      }
+
+      screenMenuButton.getItems().add(item);
+    }
   }
 
   @NotNull
@@ -713,6 +728,16 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
       // force refresh the view for elements not observed by the table
       tableView.refresh();
+    }
+  }
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (PreferenceType.validationSettings.equals(preferenceType)) {
+      Platform.runLater(() -> {
+        refreshSelection();
+        refreshScreenMenu();
+      });
     }
   }
 

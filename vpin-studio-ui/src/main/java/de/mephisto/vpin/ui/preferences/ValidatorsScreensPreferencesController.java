@@ -2,6 +2,9 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -17,6 +20,7 @@ import javafx.scene.control.ComboBox;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ValidatorsScreensPreferencesController implements Initializable {
@@ -30,6 +34,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
+  private RecorderSettings recorderSettings;
 
   @FXML
   private void onPreferenceChange(ActionEvent event) {
@@ -37,7 +42,15 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     String id = checkBox.getId();
     boolean checked = checkBox.isSelected();
     int code = getValidationCode(id);
+    VPinScreen screen = getScreenForCode(code);
 
+    if (screen != null) {
+      RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(screen);
+      if(recordingScreenOption != null) {
+        recordingScreenOption.setEnabled(checked);
+        client.getPreferenceService().setJsonPreference(recorderSettings);
+      }
+    }
 
     ComboBox optionCombo = optionsCombos.get(id + OPTIONS);
     optionCombo.setDisable(!checked);
@@ -48,6 +61,48 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     client.getPreferenceService().setJsonPreference(ignoredValidationSettings);
 
     PreferencesController.markDirty(PreferenceType.validationSettings);
+  }
+
+  private VPinScreen getScreenForCode(int code) {
+    switch (code) {
+      case CODE_NO_AUDIO: {
+        return VPinScreen.Audio;
+      }
+      case CODE_NO_AUDIO_LAUNCH: {
+        return VPinScreen.Audio;
+      }
+      case CODE_NO_APRON: {
+        return VPinScreen.Menu;
+      }
+      case CODE_NO_INFO: {
+        return VPinScreen.GameInfo;
+      }
+      case CODE_NO_HELP: {
+        return VPinScreen.GameHelp;
+      }
+      case CODE_NO_TOPPER: {
+        return VPinScreen.Topper;
+      }
+      case CODE_NO_BACKGLASS: {
+        return VPinScreen.BackGlass;
+      }
+      case CODE_NO_DMD: {
+        return VPinScreen.DMD;
+      }
+      case CODE_NO_PLAYFIELD: {
+        return VPinScreen.PlayField;
+      }
+      case CODE_NO_LOADING: {
+        return VPinScreen.Loading;
+      }
+      case CODE_NO_OTHER2: {
+        return VPinScreen.Other2;
+      }
+      case CODE_NO_WHEEL_IMAGE: {
+        return VPinScreen.Wheel;
+      }
+    }
+    return null;
   }
 
   @FXML
@@ -71,6 +126,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
+    recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
@@ -83,7 +139,6 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     findAllMediaCombos(parent, mediaCombos);
     findAllOptionsCombos(parent, optionsCombos);
 
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS);
     validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
 
