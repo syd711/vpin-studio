@@ -37,14 +37,6 @@ public class PauseMenuItem {
     this.videoUrl = videoUrl;
   }
 
-  public String getYouTubeUrl() {
-    return youTubeUrl;
-  }
-
-  public void setYouTubeUrl(String youTubeUrl) {
-    this.youTubeUrl = youTubeUrl;
-  }
-
   public PauseMenuItemTypes getItemType() {
     return itemType;
   }

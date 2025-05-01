@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.TablePauseTestDialogController">
+<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.TablePauseTestDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -51,7 +51,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="250.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="380.0" GridPane.columnIndex="1" />
                   <Label fx:id="usersLabel" text="Display for" textFill="WHITE" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
