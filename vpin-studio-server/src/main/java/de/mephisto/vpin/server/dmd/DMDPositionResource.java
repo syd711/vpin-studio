@@ -53,6 +53,11 @@ public class DMDPositionResource {
     return dmdPositionService.resetToScores(dmdInfo);
   }
 
+  @PostMapping("/useFrontendFullDMDMedia")
+  public DMDInfo useFrontendFullDMDMedia(@RequestBody DMDInfo dmdInfo) {
+    return dmdPositionService.useFrontendFullDMDMedia(dmdInfo);
+  }
+
   @PostMapping("/{gameId}/move")
   public DMDInfoZone moveDMD(@PathVariable("gameId") int gameId, @RequestBody DMDInfoZone dmdInfo, @RequestParam VPinScreen target) {
     return dmdPositionService.moveDMDInfo(gameId, dmdInfo, target);

@@ -70,6 +70,14 @@ public class EventManager {
     });
   }
 
+  public void notifyBackglassChange(int emulatorId, String b2sFileName) {
+    Platform.runLater(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.backglassChanged(emulatorId, b2sFileName);
+      }
+    });
+  }
+
   public void notifyJobFinished(JobDescriptor descriptor) {
     JobType type = descriptor.getJobType();
     notifyJobFinished(type, descriptor.getGameId());

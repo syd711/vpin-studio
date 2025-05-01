@@ -85,6 +85,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public FrontendMediaRepresentation getFrontendMedia(int gameId) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class);
   }
+  public FrontendMediaItemRepresentation getDefaultFrontendMediaItem(int gameId, VPinScreen screen) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen.name(), 
+      FrontendMediaItemRepresentation.class);
+  }
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
