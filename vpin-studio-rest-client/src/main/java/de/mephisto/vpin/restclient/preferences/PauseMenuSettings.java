@@ -6,17 +6,16 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class PauseMenuSettings extends JsonSettings {
   private boolean useOverlayKey;
-  private String authorAllowList;
   private int inputDebounceMs = 0;
   private VPinScreen videoScreen = VPinScreen.Topper;
-  private PauseMenuStyle style = PauseMenuStyle.embedded;
 
-  private int testDuration = 5;
+  private int testDuration = 8;
   private int testGameId = -1;
   private int unpauseDelay = 1000;
 
   private boolean showIscoredScores = true;
   private boolean showManiaScores = true;
+  private boolean showTutorials = true;
 
   private String pauseButton;
   private String startButton;
@@ -27,6 +26,14 @@ public class PauseMenuSettings extends JsonSettings {
   private String resetButton;
   private String recordingButton;
   private String inputFilterList;
+
+  public boolean isShowTutorials() {
+    return showTutorials;
+  }
+
+  public void setShowTutorials(boolean showTutorials) {
+    this.showTutorials = showTutorials;
+  }
 
   public int getUnpauseDelay() {
     return unpauseDelay;
@@ -160,13 +167,6 @@ public class PauseMenuSettings extends JsonSettings {
     this.resetButton = resetButton;
   }
 
-  public PauseMenuStyle getStyle() {
-    if(style == null) {
-      style = PauseMenuStyle.embedded;
-    }
-    return style;
-  }
-
   public int getInputDebounceMs() {
     return inputDebounceMs;
   }
@@ -175,24 +175,12 @@ public class PauseMenuSettings extends JsonSettings {
     this.inputDebounceMs = inputDebounceMs;
   }
 
-  public void setStyle(PauseMenuStyle style) {
-    this.style = style;
-  }
-
   public VPinScreen getVideoScreen() {
     return videoScreen;
   }
 
   public void setVideoScreen(VPinScreen videoScreen) {
     this.videoScreen = videoScreen;
-  }
-
-  public String getAuthorAllowList() {
-    return authorAllowList;
-  }
-
-  public void setAuthorAllowList(String authorAllowList) {
-    this.authorAllowList = authorAllowList;
   }
 
   public boolean isUseOverlayKey() {

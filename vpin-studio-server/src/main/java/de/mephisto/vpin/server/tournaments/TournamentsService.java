@@ -128,8 +128,6 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
         }
 
         highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
-        tournamentSynchronizer.synchronizeTournaments();
-
         frontendStatusService.addTableStatusChangeListener(this);
       }
       catch (Exception e) {

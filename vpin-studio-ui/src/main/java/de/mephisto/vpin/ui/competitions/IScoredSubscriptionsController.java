@@ -44,9 +44,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import javafx.util.Callback;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +103,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   @FXML
   private Button dataManagerBtn;
+
+  @FXML
+  private Button editBtn;
 
   @FXML
   private StackPane tableStack;
@@ -301,6 +302,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   private void refreshGameRoomsCombo(List<IScoredGameRoom> validGameRooms) {
     gameRoomsCombo.valueProperty().removeListener(this);
+    editBtn.setDisable(true);
 
     IScoredGameRoom value = gameRoomsCombo.getValue();
     List<IScoredGameRoom> gameRoomsComboValues = new ArrayList<>(validGameRooms);
@@ -310,6 +312,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     gameRoomsCombo.setDisable(validGameRooms.isEmpty());
 
     syncBtn.setDisable(gameRoomsCombo.getValue() == null);
+    editBtn.setDisable(gameRoomsCombo.getValue() == null);
 
     gameRoomsCombo.valueProperty().addListener(this);
   }
@@ -319,6 +322,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     super.initialize();
     NavigationController.setBreadCrumb(List.of("Competitions"));
     tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
+
+    this.editBtn.setDisable(true);
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -568,6 +573,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   public void changed(ObservableValue<? extends IScoredGameRoom> observable, IScoredGameRoom oldValue, IScoredGameRoom newValue) {
     filterCompetitions(iScoredSubscriptions);
     syncBtn.setDisable(newValue == null);
+    editBtn.setDisable(newValue == null);
   }
 
   private void bindSearchField() {

@@ -5,8 +5,8 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
+import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.games.Game;
@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -29,7 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class TournamentSynchronizer {
+public class TournamentSynchronizer implements ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentSynchronizer.class);
 
   @Autowired
@@ -55,11 +57,12 @@ public class TournamentSynchronizer {
     if (maniaClient.getCabinetClient().getCabinet() != null) {
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (maniaSettings.isTournamentsEnabled()) {
+        List<Game> knownGames = gameService.getKnownGames(-1);
         Tournament tournament = maniaClient.getTournamentClient().getTournament(metaData.getTournamentId());
         if (tournament != null) {
           List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
           for (TournamentTable tournamentTable : tournamentTables) {
-            TournamentTableInfo info = createTournamentTableInfo(metaData, tournamentTable);
+            TournamentTableInfo info = createTournamentTableInfo(knownGames, metaData, tournamentTable);
             if (info.getGameId() != 0) {
               TournamentTableInfo tournamentTableInfo = tournamentTablesRepository.saveAndFlush(info);
               LOG.info("\tWritten " + tournamentTableInfo);
@@ -77,7 +80,7 @@ public class TournamentSynchronizer {
   }
 
   @NonNull
-  private TournamentTableInfo createTournamentTableInfo(TournamentMetaData metaData, TournamentTable tournamentTable) {
+  private TournamentTableInfo createTournamentTableInfo(List<Game> knownGames, TournamentMetaData metaData, TournamentTable tournamentTable) {
     TournamentTableInfo info = new TournamentTableInfo();
     info.setTournamentId(metaData.getTournamentId());
     info.setBadge(metaData.getBadge());
@@ -87,7 +90,7 @@ public class TournamentSynchronizer {
     info.setVpsTableId(tournamentTable.getVpsTableId());
     info.setVpsTableVersionId(tournamentTable.getVpsVersionId());
 
-    Game game = gameService.getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
+    Game game = gameService.getGameByVpsTable(knownGames, tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
     if (game != null) {
       info.setGameId(game.getId());
     }
@@ -96,11 +99,11 @@ public class TournamentSynchronizer {
 
   public void synchronizeTournaments() {
     try {
-      VPinManiaClient maniaClient = maniaService.getClient();
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-      if (cabinet != null) {
-        ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-        if (maniaSettings.isTournamentsEnabled()) {
+      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      if (maniaSettings.isTournamentsEnabled()) {
+        VPinManiaClient maniaClient = maniaService.getClient();
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+        if (cabinet != null) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           synchronize(tournaments);
         }
@@ -111,31 +114,7 @@ public class TournamentSynchronizer {
     }
   }
 
-  public void synchronize(Game game) {
-    VPinManiaClient maniaClient = maniaService.getClient();
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-    if (cabinet != null) {
-      ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      if (maniaSettings.isTournamentsEnabled()) {
-        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-        List<TournamentTableInfo> byGameId = tournamentTablesRepository.findByGameId(game.getId());
-        List<Tournament> filtered = new ArrayList<>();
-        for (TournamentTableInfo tournamentTableInfo : byGameId) {
-          Optional<Tournament> first = tournaments.stream().filter(t -> t.getId() == tournamentTableInfo.getTournamentId()).findFirst();
-          if (first.isPresent()) {
-            Tournament tournament = first.get();
-            if (!filtered.contains(tournament)) {
-              filtered.add(tournament);
-            }
-          }
-        }
-
-        synchronize(filtered);
-      }
-    }
-  }
-
-  public void synchronize(List<Tournament> tournaments) {
+  private void synchronize(List<Tournament> tournaments) {
     try {
       VPinManiaClient maniaClient = maniaService.getClient();
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
@@ -145,6 +124,8 @@ public class TournamentSynchronizer {
 
       LOG.info("-----------------------Synchronization of Tournaments-----------------------------");
       //this returns only my tournaments since the cabinet id is passed
+      List<Game> knownGames = gameService.getKnownGames(-1);
+
       for (Tournament tournament : tournaments) {
         LOG.info("  Synchronization of " + tournament);
         TournamentMetaData metaData = getMetaData(tournament.getId());
@@ -152,7 +133,7 @@ public class TournamentSynchronizer {
 
         //delete all finished tournaments
         if (tournament.isFinished()) {
-          finishTables(tournament, maniaTournamentTables);
+          finishTables(knownGames, tournament, maniaTournamentTables);
         }
 
         //delete all finished tables
@@ -160,7 +141,7 @@ public class TournamentSynchronizer {
           if (maniaTournamentTable.isFinished()) {
             List<TournamentTableInfo> tableInfos = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), maniaTournamentTable.getVpsTableId(), maniaTournamentTable.getVpsVersionId());
             for (TournamentTableInfo tableInfo : tableInfos) {
-              finishTable(tableInfo);
+              finishTable(knownGames, tableInfo);
             }
           }
         }
@@ -170,7 +151,7 @@ public class TournamentSynchronizer {
         for (TournamentTableInfo tournamentTableInfo : tournamentTableInfos) {
           Game game = gameService.getGame(tournamentTableInfo.getGameId());
           if (game == null) {
-            finishTable(tournamentTableInfo);
+            finishTable(knownGames, tournamentTableInfo);
           }
         }
 
@@ -180,7 +161,7 @@ public class TournamentSynchronizer {
           for (TournamentTable maniaTournamentTable : maniaTournamentTables) {
             List<TournamentTableInfo> tableInfos = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), maniaTournamentTable.getVpsTableId(), maniaTournamentTable.getVpsVersionId());
             if (tableInfos.isEmpty()) {
-              TournamentTableInfo tournamentTableInfo = createTournamentTableInfo(metaData, maniaTournamentTable);
+              TournamentTableInfo tournamentTableInfo = createTournamentTableInfo(knownGames, metaData, maniaTournamentTable);
               if (tournamentTableInfo.getGameId() != 0) {
                 TournamentTableInfo newInfo = tournamentTablesRepository.saveAndFlush(tournamentTableInfo);
                 LOG.info("\tAdded missing " + newInfo + " for " + tournament);
@@ -192,7 +173,7 @@ public class TournamentSynchronizer {
           }
 
           List<TournamentTableInfo> unstartedTables = tournamentTablesRepository.findByTournamentIdAndStarted(tournament.getId(), false);
-          startTables(tournament, unstartedTables, metaData);
+          startTables(knownGames, tournament, unstartedTables, metaData);
         }
       }
 
@@ -201,7 +182,7 @@ public class TournamentSynchronizer {
       List<TournamentTableInfo> all = tournamentTablesRepository.findAll();
       List<TournamentTableInfo> corpses = all.stream().filter(t -> !tournamentIds.contains(t.getTournamentId())).collect(Collectors.toList());
       for (TournamentTableInfo corps : corpses) {
-        finishTable(corps);
+        finishTable(knownGames, corps);
       }
       LOG.info("----------------------------/end of sync -------------------------------------------");
     }
@@ -210,23 +191,23 @@ public class TournamentSynchronizer {
     }
   }
 
-  private void finishTables(Tournament tournament, List<TournamentTable> tournamentTables) {
+  private void finishTables(List<Game> knownGames, Tournament tournament, List<TournamentTable> tournamentTables) {
     for (TournamentTable tournamentTable : tournamentTables) {
       List<TournamentTableInfo> tableInfos = tournamentTablesRepository.findByTournamentIdAndVpsTableIdAndVpsTableVersionId(tournament.getId(), tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
       for (TournamentTableInfo tableInfo : tableInfos) {
-        finishTable(tableInfo);
+        finishTable(knownGames, tableInfo);
       }
     }
   }
 
-  private void startTables(Tournament tournament, List<TournamentTableInfo> tournamentTables, TournamentMetaData metaData) {
+  private void startTables(List<Game> knownGames, Tournament tournament, List<TournamentTableInfo> tournamentTables, TournamentMetaData metaData) {
     for (TournamentTableInfo tournamentTable : tournamentTables) {
-      startTable(tournament, tournamentTable, metaData);
+      startTable(knownGames, tournament, tournamentTable, metaData);
     }
   }
 
-  private void finishTable(TournamentTableInfo tournamentTableInfo) {
-    Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
+  private void finishTable(List<Game> knownGames, TournamentTableInfo tournamentTableInfo) {
+    Game game = gameService.getGameByVpsTable(knownGames, tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
       File wheelFile = game.getWheelImage();
       if (wheelFile != null && wheelFile.exists()) {
@@ -239,8 +220,8 @@ public class TournamentSynchronizer {
   }
 
 
-  private void startTable(Tournament tournament, TournamentTableInfo tournamentTableInfo, TournamentMetaData metaData) {
-    Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
+  private void startTable(List<Game> knownGames, Tournament tournament, TournamentTableInfo tournamentTableInfo, TournamentMetaData metaData) {
+    Game game = gameService.getGameByVpsTable(knownGames, tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
       File wheelFile = game.getWheelImage();
       if (wheelFile != null && wheelFile.exists()) {
@@ -278,5 +259,10 @@ public class TournamentSynchronizer {
       metaData.setResetHighscores(tournamentTableInfo.isHighscoreReset());
     }
     return metaData;
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+    synchronizeTournaments();
   }
 }

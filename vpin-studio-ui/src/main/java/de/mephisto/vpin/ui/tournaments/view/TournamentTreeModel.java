@@ -12,6 +12,7 @@ import javafx.scene.control.TreeItem;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -117,6 +118,18 @@ public class TournamentTreeModel {
 
   public VpsTableVersion getVpsTableVersion() {
     return vpsTableVersion;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    TournamentTreeModel that = (TournamentTreeModel) o;
+    return Objects.equals(vpsTableVersion, that.vpsTableVersion) && Objects.equals(vpsTable, that.vpsTable);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(vpsTableVersion, vpsTable);
   }
 }
 

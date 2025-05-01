@@ -1,12 +1,10 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
-import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -14,7 +12,6 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
@@ -26,8 +23,6 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
@@ -64,30 +59,28 @@ public class PauseMenuItemsFactory {
         maniaItem.setCompetition(competition);
       }
     }
-
-    if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
-      item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-      InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
-      if (imageStream != null) {
-        Image scoreImage = new Image(imageStream);
-        item.setDataImage(scoreImage);
-        pauseMenuItems.add(item);
-      }
-
-      if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "infovideo.png");
-      }
-      if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "infovideo.png");
-      }
-      if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
-      }
+    item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
+    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
+    if (imageStream != null) {
+      Image scoreImage = new Image(imageStream);
+      item.setDataImage(scoreImage);
+      pauseMenuItems.add(item);
     }
 
-    if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
+    if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
+      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+    }
+    if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
+      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "infovideo.png");
+    }
+    if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
+      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
+    }
+
+    if (pauseMenuSettings.isShowTutorials()) {
       createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
     }
+
     return pauseMenuItems;
   }
 
@@ -95,19 +88,15 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item;
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
-      item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
-      String ytUrl = createYouTubeUrl(videoTutorial);
-      item.setYouTubeUrl(ytUrl);
-      LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
+      item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("rules.png")));
+      String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
+      item.setVideoUrl(videoUrl);
+      LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
       String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
       Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
       item.setDataImage(scoreImage);
       pauseMenuItems.add(item);
     }
-  }
-
-  public static String createYouTubeUrl(VpsTutorialUrls tutorialUrl) {
-    return "https://www.youtube.com/embed/" + tutorialUrl.getYoutubeId() + "?autoplay=1&controls=1";
   }
 
   public static List<VpsTutorialUrls> getVideoTutorials(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings) {
@@ -118,15 +107,8 @@ public class PauseMenuItemsFactory {
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
-          String authorAllowList = pauseMenuSettings.getAuthorAllowList() == null ? "" : pauseMenuSettings.getAuthorAllowList();
-          List<String> authorNames = Collections.emptyList();
-          if (!StringUtils.isEmpty(authorAllowList)) {
-            authorNames = Arrays.asList(authorAllowList.toLowerCase().split(","));
-          }
-
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
-            boolean excludeTutorial = excludeTutorial(authorNames, tutorialFile);
-            if (!excludeTutorial && !StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
+            if (!StringUtils.isEmpty(tutorialFile.getYoutubeId()) && tutorialFile.getAuthors().contains("Kongedam")) {
               tutorials.add(tutorialFile);
             }
           }

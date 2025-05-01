@@ -174,7 +174,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" layoutX="160.0" layoutY="10.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Visible for Friends" textFill="WHITE">
+                              <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Public Player" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -184,7 +184,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="If checked, the highscores of the player are visible for friends." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="If checked, the highscores of the player are visible for on vpin-mania and the player will be ranked." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

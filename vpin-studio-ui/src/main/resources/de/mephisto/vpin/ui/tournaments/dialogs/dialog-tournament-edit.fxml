@@ -63,370 +63,363 @@
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                      </VBox.margin>
                      <center>
-                        <VBox>
+                        <HBox spacing="36.0" BorderPane.alignment="TOP_LEFT">
                            <children>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <children>
-                                    <Label styleClass="default-title" text="Tournament Name" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="18.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT">
-                                 <children>
-                                    <TextField fx:id="nameField" prefWidth="450.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </TextField>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <VBox.margin>
-                                    <Insets top="6.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Private Tournament" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Private tournaments can only be joined via token. Only public tournaments are searchable via the tournament browser." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <Label styleClass="default-title" text="iscored.info Game Room URL" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="You can tag the iscored.info game room games with VPS urls so that they are automaically added here." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <HBox spacing="6.0">
-                                 <children>
-                                    <TextField fx:id="dashboardUrlField" prefWidth="365.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <Button fx:id="iscoredReloadBtn" mnemonicParsing="false" onAction="#loadIScoredTables">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Reload table with data fetched from iscored.info" />
-                                       </tooltip>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="73.0" spacing="6.0">
-                                 <children>
-                                    <CheckBox fx:id="iscoredScoresEnabled" disable="true" mnemonicParsing="false" text="Score submissions enabled" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="Private tournaments can only be joined via token. Public tournaments can are searchable via the tournament browser." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="6.0" />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                                 <children>
-                                    <Label text="Discord Invite Link" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="18.0" />
-                                       </font>
-                                    </Label>
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="This invite link is visible to users that joined your tournament or in the tournament browser, if the tournament is public." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <HBox spacing="6.0">
-                                 <children>
-                                    <TextField fx:id="discordLinkText" prefWidth="410.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <Button fx:id="openDiscordBtn" mnemonicParsing="false" onAction="#onDiscordOpen" styleClass="external-component">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Reload table with data fetched from iscored.info" />
-                                       </tooltip>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <Label text="Duration" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <GridPane vgap="3.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label text="Start Date:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label text="End Date:" textFill="WHITE" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                                       <children>
-                                          <DatePicker fx:id="startDatePicker" />
-                                          <ComboBox fx:id="startTime" prefWidth="100.0" />
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                       <children>
-                                          <DatePicker fx:id="endDatePicker" />
-                                          <ComboBox fx:id="endTime" prefWidth="100.0" />
-                                       </children>
-                                    </HBox>
-                                    <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="durationLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </GridPane>
-                           </children>
-                        </VBox>
-                     </center>
-                     <right>
-                        <VBox prefHeight="200.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-                           <children>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <children>
-                                    <Label text="Website" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="18.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </Label>
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The website that contains additional information about the tournament." wrapText="true" />
-                                       </tooltip>
-                                       <HBox.margin>
-                                          <Insets top="6.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                 </children>
-                              </HBox>
-                              <HBox spacing="6.0">
-                                 <children>
-                                    <TextField fx:id="websiteLinkText" prefWidth="410.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <Button fx:id="openWesiteBtn" mnemonicParsing="false" onAction="#onWebsiteOpen" styleClass="external-component">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Reload table with data fetched from iscored.info" />
-                                       </tooltip>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0">
-                                 <children>
-                                    <Label text="Description" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="18.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets top="12.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The description text will be shown to players that joined the competiiton and in the tournament browser, if the tournament is public." wrapText="true" />
-                                       </tooltip>
-                                    </Label>
-                                 </children>
-                              </HBox>
                               <VBox>
-                                 <VBox.margin>
-                                    <Insets top="4.0" />
-                                 </VBox.margin>
                                  <children>
-                                    <TextArea fx:id="descriptionText" prefHeight="151.0" wrapText="true">
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label styleClass="default-title" text="Tournament Name" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <TextField fx:id="nameField" prefWidth="300.0" promptText="Enter the name of the tournament here...">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <CheckBox fx:id="visibilityCheckbox" mnemonicParsing="false" text="Private Tournament" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="Private tournaments can only be joined via token. Only public tournaments are searchable via the tournament browser." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <Label styleClass="default-title" text="iscored.info Game Room" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets top="12.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="You can tag the iscored.info game room games with VPS urls so that they are automaically added here." wrapText="true" />
+                                             </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <ComboBox fx:id="gameRoomsCombo" prefWidth="258.0" />
+                                          <Button fx:id="editBtn" mnemonicParsing="false" onAction="#onEdit" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Edit game room settings." />
+                                             </tooltip>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="6.0" />
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <Label text="Discord Invite Link" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets top="12.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="This invite link is visible to users that joined your tournament or in the tournament browser, if the tournament is public." wrapText="true" />
+                                             </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <TextField fx:id="discordLinkText" prefWidth="258.0" promptText="Add an invite link to your server here...">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button fx:id="openDiscordBtn" mnemonicParsing="false" onAction="#onDiscordOpen" styleClass="external-component">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Reload table with data fetched from iscored.info" />
+                                             </tooltip>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <VBox prefWidth="350.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label text="Website" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The website that contains additional information about the tournament." wrapText="true" />
+                                             </tooltip>
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <TextField fx:id="websiteLinkText" prefWidth="258.0" promptText="Enter the URL of your website here...">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button fx:id="openWesiteBtn" mnemonicParsing="false" onAction="#onWebsiteOpen" styleClass="external-component">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Reload table with data fetched from iscored.info" />
+                                             </tooltip>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <Label text="Description" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets top="12.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The description text will be shown to players that joined the competiiton and in the tournament browser, if the tournament is public." wrapText="true" />
+                                             </tooltip>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox>
+                                       <VBox.margin>
+                                          <Insets top="4.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <TextArea fx:id="descriptionText" prefHeight="180.0" promptText="Enter a description for your tournament here..." wrapText="true">
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                          </TextArea>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label text="Duration" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="18.0" />
+                                       </font>
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin>
-                                    </TextArea>
+                                    </Label>
+                                    <GridPane vgap="3.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="77.59992828369141" prefWidth="77.59992828369141" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Start Date:" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="End Date:" textFill="WHITE" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                                             <children>
+                                                <DatePicker fx:id="startDatePicker" />
+                                                <ComboBox fx:id="startTime" prefWidth="100.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <children>
+                                                <DatePicker fx:id="endDatePicker" />
+                                                <ComboBox fx:id="endTime" prefWidth="100.0" />
+                                             </children>
+                                          </HBox>
+                                          <Label text="Duration:" textFill="WHITE" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="durationLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </GridPane>
+                                    <VBox>
+                                       <children>
+                                          <Label text="Your VPin Settings" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="3.0" top="12.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <HBox spacing="6.0">
+                                             <children>
+                                                <Label prefWidth="120.0" text="Highscore Reset:" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores on creation">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" spacing="6.0">
+                                             <children>
+                                                <Label prefWidth="120.0" text="Table Badge:" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                                <ComboBox fx:id="tournamentBadgeCombo" prefWidth="232.0" />
+                                                <Label textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="The tournament badge will be added to the wheel icon. After the tournament is finished, the original icon will be restored." wrapText="true" />
+                                                   </tooltip>
+                                                   <padding>
+                                                      <Insets top="3.0" />
+                                                   </padding>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets right="12.0" />
+                                       </VBox.margin>
+                                    </VBox>
                                  </children>
                               </VBox>
-                              <Label text="Your VPin Settings" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="18.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="3.0" top="12.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <HBox spacing="6.0">
-                                 <children>
-                                    <Label prefWidth="120.0" text="Highscore Reset:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="3.0" />
-                                       </padding>
-                                       <HBox.margin>
-                                          <Insets />
-                                       </HBox.margin>
-                                    </Label>
-                                    <CheckBox fx:id="highscoreReset" mnemonicParsing="false" selected="true" text="Reset highscores on creation">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </HBox>
-                              <HBox prefHeight="150.0" spacing="6.0">
-                                 <children>
-                                    <Label prefWidth="120.0" text="Table Badge:" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets top="3.0" />
-                                       </padding>
-                                    </Label>
-                                    <ComboBox fx:id="tournamentBadgeCombo" prefWidth="310.0" />
-                                    <Label textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip prefWidth="300.0" text="The tournament badge will be added to the wheel icon. After the tournament is finished, the original icon will be restored." wrapText="true" />
-                                       </tooltip>
-                                       <padding>
-                                          <Insets top="3.0" />
-                                       </padding>
-                                    </Label>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="6.0" />
-                                 </VBox.margin>
-                              </HBox>
                            </children>
-                           <BorderPane.margin>
-                              <Insets left="24.0" />
-                           </BorderPane.margin>
-                        </VBox>
-                     </right>
+                        </HBox>
+                     </center>
                      <left>
-                        <VBox fx:id="avatarPane" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                        <VBox fx:id="avatarPane" prefWidth="150.0" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets />
                            </BorderPane.margin>
@@ -443,10 +436,10 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                            <VBox.margin>
-                              <Insets top="12.0" />
+                              <Insets />
                            </VBox.margin>
                         </Label>
-                        <BorderPane prefHeight="400.0">
+                        <BorderPane prefHeight="440.0">
                            <VBox.margin>
                               <Insets top="6.0" />
                            </VBox.margin>
@@ -484,8 +477,7 @@
                            <center>
                               <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
                                 <columns>
-                                    <TableColumn fx:id="statusColumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Status" />
-                                  <TableColumn fx:id="tableColumn" prefWidth="430.0" style="-fx-alignment: CENTER;" text="Your Table" />
+                                  <TableColumn fx:id="tableColumn" prefWidth="458.4000473022461" style="-fx-alignment: CENTER;" text="Your Table" />
                                   <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="308.00011444091797" text="Virtual Pinball Spreadsheet Table" />
                                     <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
                                 </columns>

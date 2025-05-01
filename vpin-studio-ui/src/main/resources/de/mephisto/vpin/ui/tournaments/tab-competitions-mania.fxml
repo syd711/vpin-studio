@@ -31,6 +31,7 @@
                         <TreeTableColumn fx:id="columnVPSVersion" prefWidth="400.0" text="Table Version" />
                     </columns>
                   </TreeTableView>
+
                </children>
                 </StackPane>
             </center>

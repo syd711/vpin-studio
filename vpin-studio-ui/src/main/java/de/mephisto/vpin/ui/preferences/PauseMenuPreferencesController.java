@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import javafx.beans.value.ChangeListener;
@@ -28,12 +27,6 @@ public class PauseMenuPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuPreferencesController.class);
 
   @FXML
-  private ComboBox<VPinScreen> tutorialScreenCombo;
-
-  @FXML
-  private ComboBox<PauseMenuStyle> pauseMenuStyleCombo;
-
-  @FXML
   private CheckBox pauseMenuCheckbox;
 
   @FXML
@@ -52,7 +45,7 @@ public class PauseMenuPreferencesController implements Initializable {
   private CheckBox pauseMenuMuteCheckbox;
 
   @FXML
-  private TextField videoAuthorsAllowList;
+  private CheckBox tutorialsCheckbox;
 
   @FXML
   private Spinner<Integer> delaySpinner;
@@ -68,8 +61,6 @@ public class PauseMenuPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-
-    pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
     maniaScoresBox.managedProperty().bindBidirectional(maniaScoresBox.visibleProperty());
     maniaScoresBox.setVisible(Features.MANIA_ENABLED && pauseMenuSettings.isShowManiaScores());
@@ -103,6 +94,12 @@ public class PauseMenuPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
 
+    tutorialsCheckbox.setSelected(pauseMenuSettings.isShowTutorials());
+    tutorialsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setShowTutorials(newValue);
+      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
+    });
+
     pauseMenuCheckbox.setSelected(pauseMenuSettings.isUseOverlayKey());
     pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setUseOverlayKey(newValue);
@@ -114,25 +111,6 @@ public class PauseMenuPreferencesController implements Initializable {
       pauseMenuSettings.setMuteOnPause(newValue);
       client.getPreferenceService().setJsonPreference(pauseMenuSettings);
     });
-
-    pauseMenuStyleCombo.setValue(pauseMenuSettings.getStyle());
-    pauseMenuStyleCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setStyle(newValue);
-      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    });
-
-    tutorialScreenCombo.setItems(FXCollections.observableList(Arrays.asList(VPinScreen.Audio, VPinScreen.DMD, VPinScreen.GameHelp, VPinScreen.GameInfo, VPinScreen.Menu, VPinScreen.Other2, VPinScreen.Topper)));
-    tutorialScreenCombo.setValue(pauseMenuSettings.getVideoScreen());
-    tutorialScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setVideoScreen(newValue);
-      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    });
-
-    videoAuthorsAllowList.setText(pauseMenuSettings.getAuthorAllowList());
-    videoAuthorsAllowList.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.PAUSE_MENU_SETTINGS, () -> {
-      pauseMenuSettings.setAuthorAllowList(t1);
-      client.getPreferenceService().setJsonPreference(pauseMenuSettings);
-    }, 300));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(500, 10000, pauseMenuSettings.getUnpauseDelay());
     delaySpinner.setValueFactory(factory1);
