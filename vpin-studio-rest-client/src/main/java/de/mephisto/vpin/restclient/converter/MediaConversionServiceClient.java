@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MediaConversionServiceClient extends VPinStudioClientService {
@@ -33,7 +34,13 @@ public class MediaConversionServiceClient extends VPinStudioClientService {
   }
 
   public List<MediaConversionCommand> getCommandList() {
-    return new ArrayList<>(Arrays.asList(getRestClient().get(API + "convertmedia/commands", MediaConversionCommand[].class)));
+    try {
+      return new ArrayList<>(Arrays.asList(getRestClient().get(API + "convertmedia/commands", MediaConversionCommand[].class))); 
+    }
+    catch (Exception e) {
+      LOG.error("Failed to load commands, return empty command list", e);
+      return Collections.emptyList();
+    }
   }
 
 }

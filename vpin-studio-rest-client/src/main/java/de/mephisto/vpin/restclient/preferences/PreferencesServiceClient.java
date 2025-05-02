@@ -40,12 +40,17 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
 
+  @SuppressWarnings("unchecked")
   public <T> T getJsonPreference(String key, Class<T> clazz) {
     if (!jsonSettingsCache.containsKey(key)) {
-      T settings = getRestClient().get(API + "preferences/json/" + key, clazz);
-      jsonSettingsCache.put(key, settings);
+      try {
+        T settings = getRestClient().get(API + "preferences/json/" + key, clazz);
+        jsonSettingsCache.put(key, settings);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to load json preferences " + key, e);
+      }
     }
-
     return (T) jsonSettingsCache.get(key);
   }
 
