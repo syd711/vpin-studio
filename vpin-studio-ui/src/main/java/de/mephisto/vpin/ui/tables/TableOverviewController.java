@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -18,6 +19,7 @@ import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -1274,7 +1276,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         row.getChildren().add(compBtn);
         compBtn.setOnAction(event -> {
           Platform.runLater(() -> {
-            NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(value.getCompetitionTypes().get(0)));
+            CompetitionType competitionType = value.getCompetitionTypes().get(0);
+            if (competitionType.equals(CompetitionType.MANIA)) {
+              ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+              if (maniaSettings.isTournamentsEnabled()) {
+                NavigationController.navigateTo(NavigationItem.Tournaments, new NavigationOptions(-1));
+              }
+              else {
+                WidgetFactory.showInformation(stage, "Tournaments not enabled!", "You must enable the Mania Tournaments view to navigate there.");
+              }
+            }
+            else {
+              NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
+            }
           });
         });
       }
@@ -1559,7 +1573,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           row.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-              if(tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+              if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
                 return;
               }
               contextMenuController.refreshContextMenu(tableView, menu, tableView.getSelectionModel().getSelectedItems());

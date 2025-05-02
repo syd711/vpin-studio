@@ -1,35 +1,51 @@
-## Release Notes 3.15
+## Release Notes 4.0
 
 ## Changes
 
-- **iScored V2**: 
-  - game lock
-  - game multiscore
-  - added badge
-  - iscored playlists
-- competition sidebar
-- new error icon
+- **iScored**: Large parts of the iScored integration have been re-implemented. The concept has changed so that you don't have to manually subscribe to tables anymore. A complete instruction about the new mechanism can be read here: https://github.com/syd711/vpin-studio/wiki/iScored or on YouTube (https://www.youtube.com/@vpin-studio). The changes in short are:
+  - Added preferences section where iScored Game Rooms can be setup and selected for synchronization.
+  - Added option to disable the complete iScored integration for users who don't need it.
+  - Added iScored badge for wheels (only available for fresh installations, these are not updated automatically).
+  - Added iScored playlist to the list of SQL playlist templates.
+  - Added marker image button to the table overview to see if a table is competed.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/iscored.png?raw=true" width="650" />
+- **Competitions**: Added quick-settings for every tab and collapsible button for the sidebar. So this matches with the tables view now.
 - **System Manager**: The overall update check is not blocking the UI anymore. This way, you can immediately switch to other system manager tabs now.
-- **Table Overview / ContextMenu**: De-cluttered context menu and removed less used function with focus on support more bulk actions there.
-- **Table Overview**: Added context menu option to bulk reset table ratings.
-- **Table Data Manager**: The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
-- **Table Data Manager**: The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
+- **Table Overview**: 
+  - De-cluttered context menu and removed less used function with focus on support more bulk actions there.
+  - Added context menu option to bulk reset table ratings.
+  - Replace error status icon for better contrast.
+  - Added competition button to the status column, shown when the table is used in any competition or tournament. The button takes you to the corresponding competition view.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/competition-button.png?raw=true" width="250" />
+  
 - **Highscore Backups**: Added bulk-operation support for highscore backups.
 - **Backglass Server**: Added option to set "Simple LEDs" as default in the backglass server preferences.
-- **DMD Position Tool**: No more excuse for having an emtpy full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the video.
-- **DMD Position Tool**: Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
-- **DMD Position Tool**: Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number of default position). The zones can then be modified and saved. A reset button permits to restore the default positions of zones if modified.
-- **DMD Position Tool**: With the new support of alphanumeric, disconnected the display of a screen from the move of a zone in that screen. The different screens with assoicted zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
-- **DMD Position Tool**: Added possibility to disconnect DMD and use backglass scores only. When chosing this option, ability to disconnect DMD by turning off ext dmd in VPinMame and/or disabling DMD in dmdevice.ini.
-- **DMD Position Tool**:
-- **DMD Position Tool**:
-- **Media Recorder**: Added option to set the VPX parameter "-Primary" for the recording.
-- **Media Recorder**: sync with screen validators
-- **Table Asset Management** Added highscore reset button to "Scores" tab.
-- **Table Asset Management** Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
+- **Pause Menu**:
+  - The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here. 
+- **DMD Position Tool**: 
+  - No more excuse for having an emtpy full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the video.
+  - Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
+  - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number of default position). The zones can then be modified and saved. A reset button permits to restore the default positions of zones if modified.
+  - With the new support of alphanumeric, disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
+  - Added possibility to disconnect DMD and use backglass scores only. When choosing this option, ability to disconnect DMD by turning off ext dmd in VPinMame and/or disabling DMD in dmdevice.ini.
+- **Media Recorder**: 
+  - Added option to set the VPX parameter "-Primary" for the recording.
+  - For convenience, the screen validators are sychronized with the media recording screens now. So if validations for a screen are disabled, the screen will also be hidden from the Media Recorder. Of course, they can be enabled there again.
+- **Table Data Manager**: 
+  - The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
+  - The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
+- **Table Asset Management** 
+  - Added highscore reset button to "Scores" tab.
+  - Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
  
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="400" />
-
+  
+- **VPin Mania**
+  - - Tournaments toggle + quick prefs button
+- Tournaments dialog revamp + performance fixes
+- Tournaments playlist 
 
 ## Bugfixes
 
@@ -41,7 +57,9 @@
 
 ## VPin Mania
 
-- Tournaments toggle + quick prefs button
-- Tournaments dialog revamp + performance fixes
-- Tournaments playlist
-- 
+https://app.vpin-mania.net/ has been launched! You can now browse all your highscores online.
+The website replaces the old VPin Mania view from the Studio and has the same feature set the older view and even more!
+Check out the YouTube video (https://www.youtube.com/@vpin-studio) for more details.
+
+Note for the highscore admins von vpin-mania: The website comes with an additional admin interface to put highscores on the deny list.
+

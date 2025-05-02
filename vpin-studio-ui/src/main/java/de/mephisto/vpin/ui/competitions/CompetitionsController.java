@@ -166,6 +166,9 @@ public class CompetitionsController implements Initializable, StudioFXController
     discordController.onViewActivated(options);
     tableSubscriptionsController.onViewActivated(options);
 
+
+    IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+
     if (options != null && options.getModel() != null) {
       if (options.getModel() instanceof CompetitionType) {
         CompetitionType competitionType = (CompetitionType) options.getModel();
@@ -179,7 +182,7 @@ public class CompetitionsController implements Initializable, StudioFXController
         else if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
           tabPane.getSelectionModel().select(TAB_TABLE_SUBS);
         }
-        else if (competitionType.equals(CompetitionType.ISCORED)) {
+        else if (competitionType.equals(CompetitionType.ISCORED) && iScoredSettings.isEnabled()) {
           tabPane.getSelectionModel().select(TAB_ISCORED);
         }
       }

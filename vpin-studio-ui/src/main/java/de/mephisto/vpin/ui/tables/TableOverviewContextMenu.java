@@ -180,7 +180,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(new SeparatorMenuItem());
       MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
       maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()) || multiSelection);
-      maniaEntry.setOnAction(actionEvent -> Studio.browse(ManiaUrlFactory.createTableUrl(game.getExtTableId())));
+      maniaEntry.setOnAction(actionEvent -> Studio.browse(ManiaUrlFactory.createTableUrl(game.getExtTableId(), game.getExtTableVersionId())));
       maniaEntry.setGraphic(iconMania);
       ctxMenu.getItems().add(maniaEntry);
 
