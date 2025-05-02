@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
@@ -91,7 +92,7 @@
                         </Button>
                      </children>
                   </HBox>
-               </right>
+                  </right>
             </BorderPane>
          </top>
          <center>
@@ -110,6 +111,39 @@
             <Pane fx:id="imagepane" styleClass="media-parent">
                <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
                </ImageView>
+               <VBox fx:id="noFullDMDPane">
+                  <children>
+                     <VBox spacing="3">
+                        <children>
+                           <Label fx:id="noFullDMDLabel" styleClass="default-text" textFill="WHITE" text="No Full DMD Image present in the backglass !" />
+                           <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="You can upload or drop a Full DMD image here. Please note the backglass will be modified and will be enhanced with the uploaded image." />
+                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets top="36.0" left="12.0" right="12.0" bottom="12.0" />
+                        </VBox.margin>
+                     </VBox>
+
+                     <VBox fx:id="useFullDMDMediaPane" spacing="3">
+                        <children>
+                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" textFill="WHITE" text="... or Use Full DMD Media :" />
+                           <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description" text="Full DMD Media is present. You can keep the full DMD/Apron frontend screen on to use it." textFill="WHITE" />
+                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse"  prefHeight="26.0" prefWidth="200.0" text="Keep Frontend Full DMD On">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets left="12.0" right="12.0" bottom="12.0" />
+                        </VBox.margin>
+                     </VBox>
+                  </children>
+               </VBox>
             </Pane>
          </center>
          <right>

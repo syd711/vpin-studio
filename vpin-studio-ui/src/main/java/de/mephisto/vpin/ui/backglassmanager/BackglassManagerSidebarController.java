@@ -308,7 +308,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
-      updateDMDImage(selection);
+      BackglassManagerControllerUtils.updateDMDImage(this.model.getEmulatorId(), getSelectedVersion(), game, selection);
     }
   }
 
@@ -396,7 +396,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image",
         "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      deleteDMDImage();
+      BackglassManagerControllerUtils.deleteDMDImage(this.model.getEmulatorId(), getSelectedVersion(), game);
     }
   }
 
@@ -425,32 +425,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + selectedVersion + " as default", e.getMessage()));
     }
   }
-
-  private void updateDMDImage(File selection) {
-    String selectedVersion = getSelectedVersion();
-    int emulatorId = this.model.getEmulatorId();
-    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", emulatorId, selectedVersion, selection));
-    // then refresh images and table
-    getBackglassManagerController().reloadSelection();
-
-    if (game != null) {
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    }
-  }
-
-  private void deleteDMDImage() {
-    String selectedVersion = getSelectedVersion();
-    int emulatorId = this.model.getEmulatorId();
-    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", emulatorId, selectedVersion, null));
-
-    // then refresh images and table
-    getBackglassManagerController().reloadSelection();
-
-    if (game != null) {
-      EventManager.getInstance().notifyTableChange(game.getId(), null);
-    }
-  }
-
 
   private void export(InputStream in) {
     if (in != null) {
@@ -633,7 +607,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           if (files != null && files.size() == 1) {
             File selection = files.get(0);
             Platform.runLater(() -> {
-              updateDMDImage(selection);
+              BackglassManagerControllerUtils.updateDMDImage(this.model.getEmulatorId(), getSelectedVersion(), game, selection);
             });
           }
         });

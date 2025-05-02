@@ -25,6 +25,7 @@
 - **Pause Menu**:
   - The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here. 
 - **DMD Position Tool**: 
+  - No more excuse for having an emtpy full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the video.
   - Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
   - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number of default position). The zones can then be modified and saved. A reset button permits to restore the default positions of zones if modified.
   - With the new support of alphanumeric, disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.

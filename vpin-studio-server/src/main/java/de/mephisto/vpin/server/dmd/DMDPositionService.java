@@ -28,6 +28,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import javafx.scene.control.CheckBox;
 import de.mephisto.vpin.server.converter.MediaConverterService;
 
 import org.apache.commons.configuration2.INIConfiguration;
@@ -717,6 +718,16 @@ public class DMDPositionService {
 
   private boolean safeGetBoolean(SubnodeConfiguration conf, String key, boolean defValue) {
     return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getBoolean(key) : defValue;
+  }
+
+  public DMDInfo useFrontendFullDMDMedia(DMDInfo dmdInfo) {
+    TableDetails tableDetails = frontendService.getTableDetails(dmdInfo.getGameId());
+    if (tableDetails != null) {
+      String keepDisplays = VPinScreen.keepDisplaysAddScreen(tableDetails.getKeepDisplays(), VPinScreen.Menu);
+      tableDetails.setKeepDisplays(keepDisplays);
+      frontendService.saveTableDetails(dmdInfo.getGameId(), tableDetails);
+    }
+    return dmdInfo;
   }
 
   public byte[] getPicture(int gameId, VPinScreen onScreen) {

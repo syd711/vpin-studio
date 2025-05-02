@@ -7,9 +7,12 @@ import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.dmd.DMDType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -33,13 +36,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -150,6 +157,11 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private ImageView fullDMDImage;
+
+  @FXML
+  private VBox noFullDMDPane;
+  @FXML
+  private VBox useFullDMDMediaPane;
 
   @FXML
   private Rectangle emptyImage;
@@ -289,6 +301,37 @@ public class DMDPositionController implements Initializable, DialogController {
       }
     }
   }
+
+  @FXML
+  private void onFullDMDFileSelect(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select DMD Image");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+
+    File selection = fileChooser.showOpenDialog(stage);
+    if (selection != null) {
+      String baseName = FilenameUtils.getBaseName(game.getGameFileName());
+      File folder = new File(game.getGameFileName()).getParentFile();
+      String directB2SFilename = new File(folder, baseName + ".directb2s").toString();
+      BackglassManagerControllerUtils.updateDMDImage(game.getEmulatorId(), directB2SFilename, game, selection);
+      loadImage(loadedVpinScreen, true);
+    }
+  }
+
+  @FXML
+  private void onFullDMDMediaUse() {
+    DMDInfo movedDmdinfo = fillDmdInfo();
+    resetAll();
+    JFXFuture.supplyAsync(() -> client.getDmdPositionService().useFrontendFullDMDMedia(movedDmdinfo))
+        .thenAcceptLater(dmd -> {
+          setDmdInfo(dmd, false);
+          loadImage(loadedVpinScreen, true);
+        });
+  }
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -602,18 +645,23 @@ public class DMDPositionController implements Initializable, DialogController {
     final double fitWidth = adjustWidth ? 768.0 * screenWidth / screenHeight : 1024.0;
     final double fitHeight = adjustWidth ? 768.0 : 1024.0 * screenHeight / screenWidth;
 
+    noFullDMDPane.setVisible(false);
+
     if (onScreen == null) {
       fullDMDImage.setImage(null);
-
+      // add an empty background to simulate an image 
       imagepane.getChildren().remove(emptyImage);
       emptyImage.setWidth(fitWidth);
       emptyImage.setHeight(fitHeight);
       imagepane.getChildren().add(0, emptyImage);
 
-       loadedVpinScreen = null;
+      parentpane.setCenter(imagepane);
+      loadedVpinScreen = null;
     }
     else if (forceRefresh || !onScreen.equals(loadedVpinScreen)) {
       parentpane.setCenter(progressIndicator);
+
+
       JFXFuture.supplyAsync(() -> {
         ByteArrayInputStream is =  client.getDmdPositionService().getPicture(dmdinfo.getGameId(), onScreen);
         return is != null ? new Image(is) : null;
@@ -625,22 +673,35 @@ public class DMDPositionController implements Initializable, DialogController {
         //  return;
         //}
 
-        fullDMDImage.setFitWidth(fitWidth);
-        fullDMDImage.setFitHeight(fitHeight);
-        fullDMDImage.setImage(image);
-        //FIXME  fullDMDImage.setPreserveRatio(zone.isImageCentered());
-        LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
+        // stop spinning and display th image back
+        parentpane.setCenter(imagepane);
 
-        imagepane.getChildren().remove(emptyImage);
         if (image == null || image.isError()) {
+          fullDMDImage.setImage(null);
+
+          // add an empty background to simulate an image 
+          imagepane.getChildren().remove(emptyImage);
           emptyImage.setWidth(fitWidth);
           emptyImage.setHeight(fitHeight);
           imagepane.getChildren().add(0, emptyImage);
-        }
-        parentpane.setCenter(imagepane);
 
-        // allow direct interraction by key on dragboxes
-        imagepane.requestFocus();
+          if (VPinScreen.Menu.equals(onScreen)) {
+            noFullDMDPane.setVisible(true);
+            // check presence of media asset
+            FrontendMediaItemRepresentation item = client.getFrontendService().getDefaultFrontendMediaItem(dmdinfo.getGameId(), VPinScreen.Menu);
+            useFullDMDMediaPane.setVisible(item != null);
+          }
+        }
+        else {
+          fullDMDImage.setFitWidth(fitWidth);
+          fullDMDImage.setFitHeight(fitHeight);
+          fullDMDImage.setImage(image);
+          //FIXME  fullDMDImage.setPreserveRatio(zone.isImageCentered());
+          LOG.info("Image resized to {} x {}", fitWidth, fitHeight);
+
+          // allow direct interraction by key on dragboxes
+          imagepane.requestFocus();
+        }
 
         // memorize loaded image
         loadedVpinScreen = onScreen;

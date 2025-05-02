@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient.dmd;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DMDInfo {//extends DMDInfoZone {
+public class DMDInfo {
 
   private int gameId;
   private String gameRom;

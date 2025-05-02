@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -509,6 +510,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
     if (selection != null && selection.getGameId() == id) {
       refreshView(selection);
+    }
+  }
+
+  @Override
+  public void backglassChanged(int emulatorId, String b2sFileName) {
+    Optional<DirectB2SModel> model = models.stream().filter(m -> m.getEmulatorId() == emulatorId && StringUtils.equals(m.getFileName(), b2sFileName)).findFirst();
+    if (model.isPresent()) {
+      reloadItem(model.get().getBean());
     }
   }
 

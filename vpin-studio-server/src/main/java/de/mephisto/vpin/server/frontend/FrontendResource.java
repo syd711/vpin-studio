@@ -68,6 +68,11 @@ public class FrontendResource {
   public FrontendMedia getGameMedia(@PathVariable("gameId") int gameId) {
     return frontendService.getGameMedia(gameId);
   }
+  @GetMapping("/media/{gameId}/{screen}")
+  public FrontendMediaItem getDefaultMediaItem(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen) {
+    FrontendMedia media = frontendService.getGameMedia(gameId);
+    return media.getDefaultMediaItem(screen);
+  }
 
   @GetMapping("/version")
   public int getVersion() {
