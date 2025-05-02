@@ -640,6 +640,13 @@ public class DMDPositionController implements Initializable, DialogController {
     radioOnB2sDMD.setManaged(hasDMD);
     radioOnB2sDMD.setVisible(hasDMD);
 
+    if (hasDMD && !tabPane.getTabs().contains(dmdTab)) {
+      tabPane.getTabs().add(dmdTab);
+    }
+    else if (!hasDMD && tabPane.getTabs().contains(dmdTab)) {
+      tabPane.getTabs().remove(dmdTab);
+    }
+
     // select first zone
     VPinScreen selectedScreen = loadedVpinScreen;
     if (forceRefresh || selectedScreen == null) {
