@@ -146,7 +146,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private void onManiaTable() {
     if (this.game.isPresent() && !StringUtils.isEmpty(this.game.get().getExtTableId())) {
-      Studio.browse(ManiaUrlFactory.createTableUrl(this.game.get().getExtTableId()));
+      Studio.browse(ManiaUrlFactory.createTableUrl(this.game.get().getExtTableId(), this.game.get().getExtTableVersionId()));
     }
   }
 

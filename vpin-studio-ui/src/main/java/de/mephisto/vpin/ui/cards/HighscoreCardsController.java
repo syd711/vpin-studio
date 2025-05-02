@@ -145,7 +145,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private void onManiaTable() {
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
-      Studio.browse(ManiaUrlFactory.createTableUrl(selection.getExtTableId()));
+      Studio.browse(ManiaUrlFactory.createTableUrl(selection.getExtTableId(), selection.getExtTableVersionId()));
     }
   }
 
