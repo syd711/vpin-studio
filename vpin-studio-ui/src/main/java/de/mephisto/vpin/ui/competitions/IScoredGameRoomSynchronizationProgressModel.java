@@ -33,6 +33,11 @@ public class IScoredGameRoomSynchronizationProgressModel extends ProgressModel<I
   }
 
   @Override
+  public boolean isShowSummary() {
+    return false;
+  }
+
+  @Override
   public boolean isIndeterminate() {
     return true;
   }

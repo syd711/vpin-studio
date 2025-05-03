@@ -5,7 +5,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
@@ -115,7 +114,7 @@
                   <children>
                      <VBox spacing="3">
                         <children>
-                           <Label fx:id="noFullDMDLabel" styleClass="default-text" textFill="WHITE" text="No Full DMD Image present in the backglass !" />
+                           <Label fx:id="noFullDMDLabel" styleClass="default-text" text="No Full DMD Image present in the backglass !" textFill="WHITE" />
                            <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="You can upload or drop a Full DMD image here. Please note the backglass will be modified and will be enhanced with the uploaded image." />
                            <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
                               <font>
@@ -124,22 +123,22 @@
                            </Button>
                         </children>
                         <VBox.margin>
-                           <Insets top="36.0" left="12.0" right="12.0" bottom="12.0" />
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
                         </VBox.margin>
                      </VBox>
 
                      <VBox fx:id="useFullDMDMediaPane" spacing="3">
                         <children>
-                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" textFill="WHITE" text="... or Use Full DMD Media :" />
+                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" text="... or Use Full DMD Media :" textFill="WHITE" />
                            <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description" text="Full DMD Media is present. You can keep the full DMD/Apron frontend screen on to use it." textFill="WHITE" />
-                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse"  prefHeight="26.0" prefWidth="200.0" text="Keep Frontend Full DMD On">
+                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="Keep Frontend Full DMD On">
                               <font>
                                  <Font size="14.0" />
                               </font>
                            </Button>
                         </children>
                         <VBox.margin>
-                           <Insets left="12.0" right="12.0" bottom="12.0" />
+                           <Insets bottom="12.0" left="12.0" right="12.0" />
                         </VBox.margin>
                      </VBox>
                   </children>
@@ -147,7 +146,7 @@
             </Pane>
          </center>
          <right>
-            <VBox BorderPane.alignment="TOP_LEFT">
+            <VBox prefWidth="280.0" BorderPane.alignment="TOP_LEFT">
                <children>
                   <Label styleClass="default-headline" text="DMD Type">
                                  <VBox.margin>
@@ -239,8 +238,8 @@
 
                   <GridPane fx:id="spinnersPane" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95" minWidth="10.0" prefWidth="60" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="64.5999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="221.39999999999998" minWidth="190.20004882812498" prefWidth="215.80002441406248" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />

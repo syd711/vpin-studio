@@ -189,6 +189,7 @@ public class GameEmulator {
     return installationDirectory;
   }
 
+  @Nullable
   public String getGamesDirectory() {
     return gamesDirectory;
   }

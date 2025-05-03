@@ -22,7 +22,7 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
                         <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Game Settings" />
                         <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">
@@ -104,7 +104,7 @@
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
                         <Tooltip text="Edit game room settings." />

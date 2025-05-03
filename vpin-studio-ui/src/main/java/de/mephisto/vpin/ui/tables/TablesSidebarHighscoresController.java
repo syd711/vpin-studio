@@ -448,12 +448,6 @@ public class TablesSidebarHighscoresController implements Initializable {
     iconMania.setFitHeight(18);
     maniaBtn.setGraphic(iconMania);
 
-    Image imageManiaSync = new Image(Studio.class.getResourceAsStream("logo-m.png"));
-    ImageView iconManiasync = new ImageView(imageManiaSync);
-    iconManiasync.setFitWidth(18);
-    iconManiasync.setFitHeight(18);
-    maniaSyncBtn.setGraphic(iconManiasync);
-
     cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

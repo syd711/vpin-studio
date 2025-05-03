@@ -79,6 +79,9 @@ public class BackglassService implements InitializingBean {
 
   public DirectB2SData getDirectB2SData(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
+    if (b2sFile == null) {
+      return null;
+    }
     return getDirectB2SData(b2sFile, emuId, filename);
   }
 
@@ -93,7 +96,7 @@ public class BackglassService implements InitializingBean {
     }
   }
 
-  private DirectB2SData getDirectB2SData(File directB2SFile, int emulatorId, String filename) {
+  private DirectB2SData getDirectB2SData(@NonNull File directB2SFile, int emulatorId, String filename) {
     if (cacheDirectB2SData.containsKey(directB2SFile.getPath())) {
       return cacheDirectB2SData.get(directB2SFile.getPath());
     }
@@ -150,15 +153,18 @@ public class BackglassService implements InitializingBean {
     }
   }
 
+  @Nullable
   private File getB2sFile(int emuId, String filename) {
     GameEmulator emulator = emulatorService.getGameEmulator(emuId);
-    File b2sFile = new File(emulator.getGamesDirectory(), filename);
-    return b2sFile;
+    if (emulator.getGamesDirectory() != null) {
+      return new File(emulator.getGamesDirectory(), filename);
+    }
+    return null;
   }
 
   public String getBackgroundBase64(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
-    if (b2sFile.exists()) {
+    if (b2sFile != null && b2sFile.exists()) {
       DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
       extractor.extractData(b2sFile, emuId, filename);
       return extractor.getBackgroundBase64();
@@ -418,7 +424,7 @@ public class BackglassService implements InitializingBean {
           currentDirectB2S = new DirectB2S();
           currentDirectB2S.setEmulatorId(gameEmulator.getId());
           addGameInfo(currentDirectB2S, gameEmulator, FilenameUtils.removeExtension(mainName));
-          
+
           result.add(currentDirectB2S);
           // add in cache
           setDirectB2SAndVersions(gameEmulator.getId(), mainName, currentDirectB2S);
@@ -958,8 +964,11 @@ public class BackglassService implements InitializingBean {
   // need an enriched game with rom
   public byte[] getPreviewBackground(int emuId, String filename, @Nullable Game game, boolean includeFrame) {
     File b2sFile = getB2sFile(emuId, filename);
-    DirectB2SData tableData = getDirectB2SData(b2sFile, emuId, filename);
-    return getPreviewBackground(tableData, game, includeFrame);
+    if (b2sFile != null) {
+      DirectB2SData tableData = getDirectB2SData(b2sFile, emuId, filename);
+      return getPreviewBackground(tableData, game, includeFrame);
+    }
+    return new byte[]{};
   }
 
   public byte[] getPreviewBackground(DirectB2SData tableData, @Nullable Game game, boolean includeFrame) {
