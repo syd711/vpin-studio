@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -286,10 +287,15 @@ public class ComponentsController implements Initializable, StudioFXController, 
       componentLoader.setVisible(true);
       List<ComponentType> list = Arrays.asList(ComponentType.getValues());
 
-      JFXFuture.supplyAsync(() -> {
+      JFXFuture.runAsync(() -> {
         try {
           for (ComponentType componentType : list) {
-            ComponentActionLogRepresentation check = client.getComponentService().check(componentType, "-latest-", "-latest-", false);
+            ComponentInstallation install = new ComponentInstallation();
+            install.setComponent(componentType);
+            install.setReleaseTag("-latest-");
+            install.setArtifactName("-latest-");
+            install.setTargetFolder("-any-");
+            ComponentActionLogRepresentation check = client.getComponentService().check(install, false);
             if (!StringUtils.isEmpty(check.getStatus())) {
               LOG.error("Failed to check component " + componentType + ": " + check.getStatus());
             }
@@ -299,7 +305,6 @@ public class ComponentsController implements Initializable, StudioFXController, 
         catch (Exception e) {
           LOG.error("Component update check failed: {}", e.getMessage(), e);
         }
-        return null;
       }).thenLater(() -> {
         componentLoader.setVisible(false);
         tabPane.setVisible(true);

@@ -44,7 +44,7 @@ public class ComponentSummaryController implements Initializable {
   private Label latestVersionLabel;
 
   @FXML
-    private Label folderLabel;
+  private Label folderLabel;
 
   @FXML
   private Button folderBtn;

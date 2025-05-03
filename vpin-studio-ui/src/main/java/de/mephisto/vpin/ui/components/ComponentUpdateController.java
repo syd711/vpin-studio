@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
@@ -58,7 +59,13 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
   @FXML
   private void onFetch() {
     ComponentType type = component.getType();
-    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, type, "-latest-", "-latest-");
+    ComponentInstallation install = new ComponentInstallation();
+    install.setComponent(type);
+    install.setReleaseTag("-latest-");
+    install.setArtifactName("-latest-");
+    install.setTargetFolder(component.getTargetFolder());
+
+    ComponentCheckProgressModel model = new ComponentCheckProgressModel("Checking Status for " + type, install);
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
     if (!resultModel.getResults().isEmpty()) {
       ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
@@ -94,7 +101,13 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         ComponentType type = component.getType();
         GithubReleaseRepresentation release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
-        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, release.getTag(), artifact);
+
+        ComponentInstallation install = new ComponentInstallation();
+        install.setReleaseTag(release.getTag());
+        install.setArtifactName(artifact);
+        install.setTargetFolder(component.getTargetFolder());
+  
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, install);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
@@ -130,7 +143,14 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         ComponentType type = component.getType();
         GithubReleaseRepresentation release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
-        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release.getTag(), artifact);
+
+        ComponentInstallation install = new ComponentInstallation();
+        install.setComponent(type);
+        install.setReleaseTag(release.getTag());
+        install.setArtifactName(artifact);
+        install.setTargetFolder(component.getTargetFolder());
+
+        ComponentInstallProgressModel model = new ComponentInstallProgressModel(install, simulate);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (resultModel.getResults().size() > 0) {
