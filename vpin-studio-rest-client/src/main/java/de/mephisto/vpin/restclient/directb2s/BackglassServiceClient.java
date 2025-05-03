@@ -15,7 +15,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.URL;
@@ -63,19 +62,27 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "directb2s/get", params, DirectB2SData.class);
   }
 
-  public DirectB2SAndVersions getDirectB2S(int gameId) {
-    return getRestClient().get(API + "directb2s/" + gameId + "/versions", DirectB2SAndVersions.class);
-  }
-
-  public List<DirectB2SAndVersions> getBackglasses() {
-    return Arrays.asList(getRestClient().get(API + "directb2s", DirectB2SAndVersions[].class));
-  }
-
-  public DirectB2SAndVersions reloadDirectB2S(int emulatorId, String fileName) {
+  public DirectB2SDetail getDirectB2SDetail(int emulatorId, String fileName, int gameId) {
     Map<String, Object> params = new HashMap<>();
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
-    return getRestClient().post(API + "directb2s/versions", params, DirectB2SAndVersions.class);
+    params.put("gameId", gameId);
+    return getRestClient().post(API + "directb2s/detail", params, DirectB2SDetail.class);
+  }
+
+  public DirectB2S getDirectB2S(int gameId) {
+    return getRestClient().get(API + "directb2s/" + gameId + "/versions", DirectB2S.class);
+  }
+
+  public List<DirectB2S> getBackglasses() {
+    return Arrays.asList(getRestClient().get(API + "directb2s", DirectB2S[].class));
+  }
+
+  public DirectB2S reloadDirectB2S(int emulatorId, String fileName) {
+    Map<String, Object> params = new HashMap<>();
+    params.put("emulatorId", emulatorId);
+    params.put("fileName", fileName);
+    return getRestClient().post(API + "directb2s/versions", params, DirectB2S.class);
   }
 
   public boolean clearCache() {
@@ -137,47 +144,47 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "directb2s/delete", params, Boolean.class);
   }
 
-  public DirectB2SAndVersions renameBackglass(int emulatorId, String fileName, String newName) throws Exception {
+  public DirectB2S renameBackglass(int emulatorId, String fileName, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("newName", newName);
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
-    return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+    return getRestClient().put(API + "directb2s", params, DirectB2S.class);
   }
 
-  public DirectB2SAndVersions setBackglassAsDefault(int emulatorId, String fileName) {
+  public DirectB2S setBackglassAsDefault(int emulatorId, String fileName) {
     Map<String, Object> params = new HashMap<>();
     params.put("setVersionAsDefault", fileName);
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
     try {
-      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+      return getRestClient().put(API + "directb2s", params, DirectB2S.class);
     }
     catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
   }
 
-  public DirectB2SAndVersions disableBackglass(int emulatorId, String fileName) {
+  public DirectB2S disableBackglass(int emulatorId, String fileName) {
     Map<String, Object> params = new HashMap<>();
     params.put("disable", true);
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
     try {
-      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+      return getRestClient().put(API + "directb2s", params, DirectB2S.class);
     }
     catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
   }
 
-  public DirectB2SAndVersions deleteBackglassVersion(int emulatorId, String fileName) {
+  public DirectB2S deleteBackglassVersion(int emulatorId, String fileName) {
     Map<String, Object> params = new HashMap<>();
     params.put("deleteVersion", true);
     params.put("emulatorId", emulatorId);
     params.put("fileName", fileName);
     try {
-      return getRestClient().put(API + "directb2s", params, DirectB2SAndVersions.class);
+      return getRestClient().put(API + "directb2s", params, DirectB2S.class);
     } catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }

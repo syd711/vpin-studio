@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -575,7 +575,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
     game.setDefaultBackgroundAvailable(rawDefaultPicture.exists());
 
-    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(game);
+    DirectB2S b2s = backglassService.getDirectB2SAndVersions(game);
     game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);
 
     String updates = gameDetails.getUpdates();

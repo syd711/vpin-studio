@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
@@ -27,7 +27,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 
-public class BackglassManagerFilterController extends BaseFilterController<DirectB2SAndVersions, DirectB2SModel> implements Initializable {
+public class BackglassManagerFilterController extends BaseFilterController<DirectB2S, DirectB2SModel> implements Initializable {
 
   @FXML
   private VBox filterPanel;

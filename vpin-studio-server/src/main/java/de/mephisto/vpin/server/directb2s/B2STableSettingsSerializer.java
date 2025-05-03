@@ -196,8 +196,8 @@ public class B2STableSettingsSerializer {
         return String.valueOf(settings.getGlowIndex());
       }
       case "StartAsEXE": {
-        Boolean startAsEXE = settings.getStartAsEXE();
-        return startAsEXE != null ? intValue(startAsEXE.booleanValue()) : "";
+        int startAsEXE = settings.getStartAsEXE();
+        return startAsEXE == 2 ? null : String.valueOf(startAsEXE);
       }
       case "StartBackground": {
         // absence of settings means standard, else a boolean encoded as 0/1n which is invers from visibility (0=visible)

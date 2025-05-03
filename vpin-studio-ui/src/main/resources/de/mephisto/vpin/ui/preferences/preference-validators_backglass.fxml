@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ValidatorsBackglassPreferencesController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+               <children>
+                  <Label styleClass="preference-title" text="VALIDATORS" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backglass Validators" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="If enabled, the validation is executed for every backglass." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <CheckBox fx:id="pref_1001" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="No Game installed" />
+                  <Label styleClass="checkbox-description" text="Checks if a game is installed for the backglass." textFill="WHITE" />
+
+                  <CheckBox fx:id="pref_1002" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Run as EXE" />
+                  <Label styleClass="checkbox-description" text="Checks if the backglass runs as EXE." textFill="WHITE" />
+
+                  <CheckBox fx:id="pref_1010" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="No Full DMD" />
+                  <Label styleClass="checkbox-description" text="Checks if the backglass has a full DMD B2S." textFill="WHITE" />
+
+                  <CheckBox fx:id="pref_1011" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Full DMD Aspect ratio" />
+                  <Label styleClass="checkbox-description" text="Checks if the full DMD B2S has an appropriate ratio." textFill="WHITE" />
+
+
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
