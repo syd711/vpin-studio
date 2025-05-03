@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
@@ -40,6 +42,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -56,7 +59,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom> {
+public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom>, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionsController.class);
 
   @FXML
@@ -116,6 +119,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
 
   private CompetitionsController competitionsController;
   private List<CompetitionRepresentation> iScoredSubscriptions;
+
+  private boolean active = false;
+  private boolean markDirty = false;
 
   // Add a public no-args constructor
   public IScoredSubscriptionsController() {
@@ -195,6 +201,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       return;
     }
 
+    List<Integer> gameIds = new ArrayList<>();
+    for (IScoredGameRoomGameModel gameRoomGameModel : selections) {
+      gameRoomGameModel.getMatches().stream().forEach(g -> gameIds.add(g.getId()));
+    }
+
     if (selections.size() == 1) {
       IScoredGameRoomGameModel selection = selections.get(0);
       String help2 = null;
@@ -206,18 +217,13 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete \"" + selection.competition.getName() + "\"?",
           help, help2, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        List<Integer> gameIds = new ArrayList<>();
-        for (IScoredGameRoomGameModel gameRoomGameModel : selections) {
-          gameRoomGameModel.getMatches().stream().forEach(g -> gameIds.add(g.getId()));
-        }
-
         tableView.getSelectionModel().clearSelection();
         ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Subscription",
             "Deleting iScored Subscription",
             () -> client.getCompetitionService().deleteCompetition(selection.competition)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         this.iScoredSubscriptions = null;
-        doReload(false);
+        doReload(true);
 
         for (Integer gameId : gameIds) {
           EventManager.getInstance().notifyTableChange(gameId, null);
@@ -237,7 +243,11 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
               client.getCompetitionService().deleteCompetition(selection.competition);
             }));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
-        doReload(false);
+        doReload(true);
+
+        for (Integer gameId : gameIds) {
+          EventManager.getInstance().notifyTableChange(gameId, null);
+        }
       }
     }
   }
@@ -249,6 +259,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   }
 
   private void doReload(boolean forceReload) {
+    markDirty = false;
     tableView.setVisible(false);
 
     if (!tableStack.getChildren().contains(loadingOverlay)) {
@@ -310,6 +321,9 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     gameRoomsCombo.setItems(FXCollections.observableList(gameRoomsComboValues));
     gameRoomsCombo.setValue(value);
     gameRoomsCombo.setDisable(validGameRooms.isEmpty());
+    if (gameRoomsComboValues.size() > 1) {
+      gameRoomsCombo.setValue(validGameRooms.get(0));
+    }
 
     syncBtn.setDisable(gameRoomsCombo.getValue() == null);
     editBtn.setDisable(gameRoomsCombo.getValue() == null);
@@ -567,6 +581,8 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     gameRoomsCombo.valueProperty().addListener(this);
     bindSearchField();
     onViewActivated(null);
+
+    client.getPreferenceService().addListener(this);
   }
 
   @Override
@@ -666,11 +682,30 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
   }
 
+  @FXML
+  private void onMouseClick(MouseEvent e) {
+    if (e.getClickCount() == 2) {
+      if (getSelection().isPresent()) {
+        IScoredGameRoomGameModel gameRoomGameModel = getSelection().get();
+        if (!gameRoomGameModel.getMatches().isEmpty()) {
+          TableDialogs.openTableDataDialog(null, gameRoomGameModel.getMatches().get(0));
+        }
+      }
+    }
+  }
+
   @Override
   public void onViewActivated(NavigationOptions options) {
+    this.active = true;
     if (this.competitionsController != null) {
-      doReload(false);
+      doReload(markDirty);
     }
+  }
+
+  @Override
+  public void onViewDeactivated() {
+    super.onViewDeactivated();
+    this.active = false;
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {
@@ -700,6 +735,18 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     }
 //    }
     return status;
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (PreferenceNames.ISCORED_SETTINGS.equalsIgnoreCase(key)) {
+      if (active) {
+        doReload(true);
+      }
+      else {
+        markDirty = true;
+      }
+    }
   }
 
   static class IScoredGameRoomGameModel {

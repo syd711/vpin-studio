@@ -316,7 +316,7 @@
             </Button>
             <Button fx:id="maniaSyncBtn" layoutX="314.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTableSync" textFill="WHITE">
                <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-right" iconSize="18" />
                </graphic>
                <font>
                   <Font size="14.0" />

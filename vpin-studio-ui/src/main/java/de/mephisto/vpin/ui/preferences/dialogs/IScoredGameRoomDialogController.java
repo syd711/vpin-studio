@@ -213,6 +213,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    result = false;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }

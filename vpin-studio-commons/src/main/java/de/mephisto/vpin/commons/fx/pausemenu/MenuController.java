@@ -195,7 +195,7 @@ public class MenuController implements Initializable {
   private boolean animating = false;
 
   private void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
-    if(animating) {
+    if (animating) {
       return;
     }
 
@@ -301,6 +301,7 @@ public class MenuController implements Initializable {
         mediaPlayer.setCycleCount(-1);
         mediaPlayer.setMute(false);
         mediaView.setMediaPlayer(mediaPlayer);
+        LOG.info("Started streaming of {}", activeSelection.getVideoUrl());
       }
     }
     else if (activeSelection.getDataImage() != null) {

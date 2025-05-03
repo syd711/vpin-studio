@@ -97,7 +97,8 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   private void unsetGamesTournamentId(@NonNull Competition competition) {
     CompetitionType competitionType = CompetitionType.valueOf(competition.getType().toUpperCase());
     if (competitionType.equals(CompetitionType.ISCORED)) {
-      for (Game game : gameService.getGamesByVpsTableId(competition.getVpsTableId(), competition.getVpsTableVersionId())) {
+      List<Game> matches = gameService.getGamesByVpsTableId(competition.getVpsTableId(), competition.getVpsTableVersionId());
+      for (Game game : matches) {
         TableDetails tableDetails = gameMediaService.getTableDetails(game.getId());
         unsetTourneyId(competition, tableDetails, game.getId());
       }
@@ -127,7 +128,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         }
         tableDetails.setTourneyId(String.join(",", updated));
         gameMediaService.saveTableDetails(tableDetails, gameId, false);
-        LOG.info("Removed competition id from game " + gameId + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+        LOG.info("Removed competition id from game " + tableDetails.getGameFileName() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
       }
     }
   }
@@ -154,7 +155,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       }
 
       gameMediaService.saveTableDetails(tableDetails, gameId, false);
-      LOG.info("Written competition id of game " + competition.getGameId() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+      LOG.info("Written competition id of game " + tableDetails.getGameFileName() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
   }
 
