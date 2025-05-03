@@ -15,7 +15,7 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private int usedLEDType = 0;
   private boolean isGlowBulbOn = false;
   private int glowIndex = -1;
-  private Boolean startAsEXE = null;
+  private int startAsEXE = 2; // standard
   private int startBackground = 2; // standard
   private boolean disableFuzzyMatching = true;
 
@@ -34,11 +34,11 @@ public class DirectB2STableSettings implements DirectB2sConstants {
     this.hideB2SBackglass = hideB2SBackglass;
   }
 
-  public Boolean getStartAsEXE() {
+  public int getStartAsEXE() {
     return startAsEXE;
   }
 
-  public void setStartAsEXE(Boolean startAsEXE) {
+  public void setStartAsEXE(int startAsEXE) {
     this.startAsEXE = startAsEXE;
   }
 

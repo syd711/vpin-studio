@@ -163,7 +163,7 @@ public class B2STableSettingsParser extends DefaultHandler {
       }
       case "StartAsEXE": {
         try {
-          boolean startAsExe = !StringUtils.isEmpty(value) &&Integer.parseInt(value) == 1;
+          int startAsExe = StringUtils.isEmpty(value) ? 2 : Integer.parseInt(value);
           settings.setStartAsEXE(startAsExe);
         }
         catch (Exception e) {

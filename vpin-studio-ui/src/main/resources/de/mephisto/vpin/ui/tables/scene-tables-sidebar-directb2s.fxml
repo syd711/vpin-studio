@@ -251,7 +251,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <CheckBox fx:id="startAsExe" layoutX="176.0" layoutY="386.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                    <ComboBox fx:id="startAsExe" layoutX="176.0" layoutY="386.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                                     <Label layoutX="10.0" layoutY="49.0" text="Backglass Hidden:" textFill="WHITE" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />

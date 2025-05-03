@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.backglassmanager;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
+import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
@@ -70,7 +71,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
 /**
  *
  */
-public class BackglassManagerSidebarController extends BaseSideBarController<DirectB2SAndVersions> implements Initializable {
+public class BackglassManagerSidebarController extends BaseSideBarController<DirectB2S> implements Initializable {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
 
@@ -193,7 +194,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private CheckBox lightBulbOn;
 
   @FXML
-  private CheckBox startAsExe;
+  private ComboBox<B2SStartAsExe> startAsExe;
 
   @FXML
   private CheckBox startAsExeServer;
@@ -234,7 +235,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   //-------------
   private GameRepresentation game;
 
-  private DirectB2SModel model;
+  private DirectB2S directb2s;
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
   private int refreshingCounter;
@@ -308,7 +309,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
-      BackglassManagerControllerUtils.updateDMDImage(this.model.getEmulatorId(), getSelectedVersion(), game, selection);
+      BackglassManagerControllerUtils.updateDMDImage(getEmulatorId(), getSelectedVersion(), game, selection);
     }
   }
 
@@ -396,12 +397,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image",
         "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      BackglassManagerControllerUtils.deleteDMDImage(this.model.getEmulatorId(), getSelectedVersion(), game);
+      BackglassManagerControllerUtils.deleteDMDImage(getEmulatorId(), getSelectedVersion(), game);
     }
   }
 
   private void setDirectB2SDefault() {
-    DirectB2SAndVersions selectedItem = backglassManagerController.getSelection();
+    DirectB2S selectedItem = backglassManagerController.getSelection();
     String selectedVersion = getSelectedVersion();
     if (selectedItem != null && selectedVersion != null) {
       JFXFuture
@@ -414,7 +415,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   }
 
   private void setDirectB2SDisabled() {
-    DirectB2SAndVersions selectedItem = backglassManagerController.getSelection();
+    DirectB2S selectedItem = backglassManagerController.getSelection();
     String selectedVersion = getSelectedVersion();
     if (selectedItem != null && selectedVersion != null) {
       JFXFuture
@@ -491,7 +492,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       latestSelection = n;
       DirectB2SModel selection = backglassManagerController.getSelectedModel();
       if (selection != null) {
-        tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
+        tableData = client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion());
         refreshTableData(tableData);
       }
       refreshStatusCheckbox();
@@ -562,9 +563,10 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       }
     });
 
-    startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    startAsExe.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.START_AS_EXE));
+    startAsExe.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (refreshingCounter == 0 && tableSettings != null) {
-        save(() -> tableSettings.setStartAsEXE(newValue ? newValue : null));
+        save(() -> tableSettings.setStartAsEXE(newValue.getId()));
       }
     });
 
@@ -607,7 +609,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           if (files != null && files.size() == 1) {
             File selection = files.get(0);
             Platform.runLater(() -> {
-              BackglassManagerControllerUtils.updateDMDImage(this.model.getEmulatorId(), getSelectedVersion(), game, selection);
+              BackglassManagerControllerUtils.updateDMDImage(getEmulatorId(), getSelectedVersion(), game, selection);
             });
           }
         });
@@ -621,8 +623,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     activateCheckbox.selectedProperty().removeListener(activationChangeListener);
     activateCheckbox.setSelected(false);
     String selectedVersion = directB2SCombo.getValue();
-    if (selectedVersion != null && model != null) {
-      boolean selected = FileUtils.baseNameMatches(selectedVersion, model.getBean().getFileName());
+    if (selectedVersion != null && directb2s != null) {
+      boolean selected = FileUtils.baseNameMatches(selectedVersion, directb2s.getFileName());
       activateCheckbox.setSelected(selected);
     }
     activateCheckbox.selectedProperty().addListener(activationChangeListener);
@@ -710,8 +712,12 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
   }
 
+  public int getEmulatorId() {
+    return directb2s.getEmulatorId();
+  }
+
   public String getSelectedVersion() {
-    DirectB2SAndVersions selection = backglassManagerController.getSelection();
+    DirectB2S selection = backglassManagerController.getSelection();
     return selection == null ? null :
         selection.getNbVersions() > 1 ? directB2SCombo.getValue() :   // alternative check:  versionSelector.isVisible()
             selection.getNbVersions() > 0 ? selection.getVersion(0) :
@@ -734,7 +740,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   
       this.dataManagerBtn.setDisable(true);
       this.tableNavigateBtn.setDisable(true);
-      this.deleteBtn.setDisable(model == null);    
+      this.deleteBtn.setDisable(directb2s == null);    
   }
 
   protected void setGame(@Nullable GameRepresentation game, boolean gameAvailable) {
@@ -763,10 +769,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
   }
 
-  protected void setData(@Nullable DirectB2SModel model) {
-    refreshingCounter = 1;
-    this.model = model;
-    this.tableData = model != null ? model.getBackglassData() : null;
+  protected void setData(@Nullable DirectB2S model) {
+    this.directb2s = model;
 
     // maintain current selection if possible
     directB2SCombo.getItems().clear();
@@ -775,7 +779,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       // TODO why is this required? The versions of the model that is passed here are always "0" on second select
       //DirectB2SAndVersions directB2SVersions = client.getBackglassServiceClient().getDirectB2S(model.getEmulatorId(), model.getFileName());
       //List<String> versions = directB2SVersions.getVersions();
-      List<String> versions = model.getBean().getVersions();
+      List<String> versions = model.getVersions();
 
       versionSelector.setVisible(versions.size() > 1);
 
@@ -789,20 +793,26 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           directB2SCombo.getSelectionModel().selectFirst();
         }
       }
-      noneActiveInfo.setVisible(!model.getBean().isEnabled());
+      noneActiveInfo.setVisible(!model.isEnabled());
     }
     else {
       versionSelector.setVisible(false);
     }
 
-    if (model != null && getSelectedVersion() != null) {
-      tableData = client.getBackglassServiceClient().getDirectB2SData(model.getEmulatorId(), getSelectedVersion());
-    }
-    refreshTableSettings(model != null ? model.getGameId() : -1);
-    refreshTableData(tableData);
-    refreshStatusCheckbox();
 
-    refreshingCounter--;
+    if (directb2s != null && getSelectedVersion() != null) {
+
+      refreshingCounter = 1;
+      JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion()))
+        .thenAcceptLater(data -> {
+          this.tableData = data;
+          refreshTableData(tableData);
+          refreshingCounter--;
+        });
+
+      refreshTableSettings(model != null ? model.getGameId() : -1);
+      refreshStatusCheckbox();
+    }  
   }
 
   protected void refreshTableSettings(int gameId) {
@@ -841,11 +851,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
             DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
             boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
-            boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
-            startAsExe.setDisable(false);
-            startAsExe.setSelected(tableLaunchAsExe);
             startAsExeServer.setSelected(serverLaunchAsExe);
             startAsExeServer.setDisable(true);
+
+            startAsExe.setDisable(false);
+            startAsExe.setValue(TablesSidebarDirectB2SController.START_AS_EXE.stream().filter(v -> v.getId() == tableSettings.getStartAsEXE()).findFirst().get());
 
             hideB2SBackglass.setDisable(false);
             hideB2SBackglass.setSelected(tableSettings.isHideB2SBackglass());

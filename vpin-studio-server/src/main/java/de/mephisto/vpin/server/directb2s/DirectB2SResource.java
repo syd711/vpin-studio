@@ -3,8 +3,9 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.JsonArg;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
@@ -95,19 +96,25 @@ public class DirectB2SResource {
     return backglassService.getDirectB2SData(emulatorId, fileName);
   }
 
+  @PostMapping("/detail")
+  public DirectB2SDetail getDetail(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName, @JsonArg("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    return backglassService.getBackglassDetail(emulatorId, fileName, game);
+  }
+
   @GetMapping
-  public List<DirectB2SAndVersions> getBackglasses() {
+  public List<DirectB2S> getBackglasses() {
     return backglassService.getBackglasses();
   }
 
   @GetMapping("/{gameId}/versions")
-  public DirectB2SAndVersions getVersionsByGame(@PathVariable("gameId") int gameId) {
+  public DirectB2S getVersionsByGame(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     return backglassService.getDirectB2SAndVersions(game);
   }
 
   @PostMapping("/versions")
-  public DirectB2SAndVersions getVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
+  public DirectB2S getVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
     return backglassService.getDirectB2SAndVersions(emulatorId, fileName);
   }
 
@@ -248,7 +255,7 @@ public class DirectB2SResource {
   }
 
   @PutMapping
-  public DirectB2SAndVersions updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
+  public DirectB2S updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
     int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");

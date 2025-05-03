@@ -26,7 +26,7 @@ public class BackglassManagerColumnSorter implements BaseColumnSorter<DirectB2SM
         comp = Comparator.comparing(o -> o.getName());
       }
       else if (column.equals(backglassManagerController.statusColumn)) {
-        comp = Comparator.comparing(o -> o.isGameAvailable());
+        comp = Comparator.comparing(o -> String.valueOf(o.getValidationCode()));
       }
       else if (column.equals(backglassManagerController.fullDmdColumn)) {
         comp = Comparator.comparing(o -> o.hasDmd());

@@ -87,6 +87,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button validators_screensBtn;
 
   @FXML
+  private Button validators_backglassBtn;
+
+  @FXML
   private Button repositoriesBtn;
 
   @FXML
@@ -226,6 +229,11 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
     load("preference-validators_screens.fxml", event);
+  }
+
+  @FXML
+  private void onBackglassValidation(ActionEvent event) throws IOException {
+    load("preference-validators_backglass.fxml", event);
   }
 
 
@@ -440,6 +448,7 @@ public class PreferencesController extends SettingsSceneController implements In
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
     validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
+    validators_backglassBtn.managedProperty().bindBidirectional(validators_backglassBtn.visibleProperty());
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
@@ -460,6 +469,7 @@ public class PreferencesController extends SettingsSceneController implements In
     pauseMenuBtn.setVisible(frontendType.supportControls());
     highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
     validators_screensBtn.setVisible(frontendType.isNotStandalone());
+    validators_backglassBtn.setVisible(frontendType.isNotStandalone());
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);
