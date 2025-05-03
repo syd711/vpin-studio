@@ -51,6 +51,11 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
   }
 
   @Override
+  public boolean isIndeterminate() {
+    return vpsTableList.size() == 1;
+  }
+
+  @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
     super.finalizeModel(progressResultModel);
     client.getManiaService().clearCache();

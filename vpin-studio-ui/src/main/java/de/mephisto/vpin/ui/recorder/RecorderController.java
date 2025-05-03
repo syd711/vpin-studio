@@ -741,8 +741,16 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
   }
 
+  @Override
+  public void tablesChanged() {
+    Platform.runLater(() -> {
+      tableView.refresh();
+    });
+  }
 
-  //----------------------- Model classes ------------------------------------------------------------------------------
+
+
+//----------------------- Model classes ------------------------------------------------------------------------------
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override

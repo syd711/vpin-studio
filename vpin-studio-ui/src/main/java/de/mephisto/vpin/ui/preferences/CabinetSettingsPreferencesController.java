@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -95,5 +96,6 @@ public class CabinetSettingsPreferencesController implements Initializable {
 
     avatarBorderPane.setCenter(null);
     avatarBorderPane.setCenter(avatar);
+    NavigationController.refreshAvatar();
   }
 }

@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.recorder.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -30,10 +28,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -226,6 +227,13 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       Platform.runLater(() -> {
         stage.close();
         if (game != null) {
+          //give the server some time to detect the new media files
+          try {
+            Thread.sleep(2000);
+          }
+          catch (InterruptedException e) {
+            //ignore
+          }
           EventManager.getInstance().notifyTableChange(game.getId(), null);
         }
       });
