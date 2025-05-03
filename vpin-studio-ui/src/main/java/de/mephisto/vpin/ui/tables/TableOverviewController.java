@@ -1266,7 +1266,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       row.setAlignment(Pos.CENTER_RIGHT);
       row.setMinWidth(34);
 
-      if (iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
+      if (iScoredSettings != null && iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
         Button compBtn = new Button();
         compBtn.getStyleClass().add("table-media-button");
         compBtn.setTooltip(new Tooltip("This table is competed."));
@@ -1923,7 +1923,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
 
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-    columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
+    columnStatus.setPrefWidth(iScoredSettings != null && iScoredSettings.isEnabled() ? 75 : 55);
 
 
 //    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());

@@ -38,7 +38,7 @@ public class MediaConversionServiceClient extends VPinStudioClientService {
       return new ArrayList<>(Arrays.asList(getRestClient().get(API + "convertmedia/commands", MediaConversionCommand[].class))); 
     }
     catch (Exception e) {
-      LOG.error("Failed to load commands, return empty command list", e);
+      LOG.error("Failed to load commands, return empty command list: " + e.getMessage());
       return Collections.emptyList();
     }
   }

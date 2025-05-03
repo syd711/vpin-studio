@@ -336,7 +336,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
       FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-      iScoredCompetitionCheckBox.setVisible(iScoredSettings.isEnabled() && frontendType.supportCompetitions());
+      iScoredCompetitionCheckBox.setVisible(iScoredSettings != null && iScoredSettings.isEnabled() && frontendType.supportCompetitions());
     }
   }
 }
