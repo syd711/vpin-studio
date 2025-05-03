@@ -508,7 +508,7 @@ public class DMDPositionService {
     if (iniConfiguration != null && rom != null) {
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
       SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-      SubnodeConfiguration conf = iniConfiguration.getSection(rom);
+      SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
 
       // if the global virtualconf is enabled, force enable=false
       if (safeGetBoolean(virtualdmdConf, "enabled", false)) {
@@ -536,7 +536,7 @@ public class DMDPositionService {
 
     // mind that iniConfiguration can be null if externalDMD is not used
     if (iniConfiguration != null) {
-      SubnodeConfiguration conf = iniConfiguration.getSection(rom);
+      SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
       conf.clear();
 
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
@@ -552,9 +552,10 @@ public class DMDPositionService {
 
   private boolean saveVirtualDMDInfoInIni(Game game, DMDInfoZone dmdinfo, INIConfiguration iniConfiguration, boolean locallySaved) {
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom);
+    SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
 
     // if the global virtualDMD is not enabled, force enable=true
     if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
@@ -593,9 +594,10 @@ public class DMDPositionService {
 
   private boolean saveAlphaNumericDMDInfoInIni(Game game, DMDInfo dmdinfo, INIConfiguration iniConfiguration) {
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom);
+    SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
 
     // if the global virtualDMD is enabled, force enable=false
     if (safeGetBoolean(virtualdmdConf, "enabled", false)) {
