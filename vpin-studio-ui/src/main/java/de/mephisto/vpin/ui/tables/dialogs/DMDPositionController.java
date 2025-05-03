@@ -12,10 +12,12 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -313,12 +315,16 @@ public class DMDPositionController implements Initializable, DialogController {
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
-      String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-      File folder = new File(game.getGameFileName()).getParentFile();
-      String directB2SFilename = new File(folder, baseName + ".directb2s").toString();
-      BackglassManagerControllerUtils.updateDMDImage(game.getEmulatorId(), directB2SFilename, game, selection);
-      loadImage(loadedVpinScreen, true);
+      updateDMDImage(selection);
     }
+  }
+
+  private void updateDMDImage(File selection) {
+    String baseName = FilenameUtils.getBaseName(game.getGameFileName());
+    File folder = new File(game.getGameFileName()).getParentFile();
+    String directB2SFilename = new File(folder, baseName + ".directb2s").toString();
+    BackglassManagerControllerUtils.updateDMDImage(game.getEmulatorId(), directB2SFilename, game, selection);
+    loadImage(loadedVpinScreen, true);
   }
 
   @FXML
@@ -456,6 +462,19 @@ public class DMDPositionController implements Initializable, DialogController {
         disableViaMameCheckbox.setSelected(true);
       }
     });
+
+    // add the overlay for DMD image drag    
+    FileDragEventHandler.install(imagepane, fullDMDImage, true, "png", "jpg", "jpeg")
+        .setOnDragFilter(files -> {
+          return VPinScreen.Menu.equals(this.loadedVpinScreen);
+        })
+        .setOnDragDropped(e -> {
+          List<File> files = e.getDragboard().getFiles();
+          if (files != null && files.size() == 1) {
+            File selection = files.get(0);
+            Platform.runLater(() -> updateDMDImage(selection));
+          }
+        });
   }
 
   private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property,
@@ -620,6 +639,13 @@ public class DMDPositionController implements Initializable, DialogController {
     boolean hasDMD = dmdinfo.isSupportFullDmd();
     radioOnB2sDMD.setManaged(hasDMD);
     radioOnB2sDMD.setVisible(hasDMD);
+
+    if (hasDMD && !tabPane.getTabs().contains(dmdTab)) {
+      tabPane.getTabs().add(dmdTab);
+    }
+    else if (!hasDMD && tabPane.getTabs().contains(dmdTab)) {
+      tabPane.getTabs().remove(dmdTab);
+    }
 
     // select first zone
     VPinScreen selectedScreen = loadedVpinScreen;
