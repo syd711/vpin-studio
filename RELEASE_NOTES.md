@@ -22,6 +22,8 @@
   
 - **Highscore Backups**: Added bulk-operation support for highscore backups.
 - **Backglass Server**: Added option to set "Simple LEDs" as default in the backglass server preferences.
+- **Backglass Manager**: Backglass validators have been added, reusing the status column. 4 validatirs are supported, and can be activated / deactivated in the new Backglass validator preference page
+- **Backglass Manager**: Added possiblity to remove the table specific 'Run as Exe' value and use the server default 
 - **Pause Menu**:
   - The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here. 
 - **DMD Position Tool**: 
@@ -61,5 +63,5 @@ https://app.vpin-mania.net/ has been launched! You can now browse all your highs
 The website replaces the old VPin Mania view from the Studio and has the same feature set the older view and even more!
 Check out the YouTube video (https://www.youtube.com/@vpin-studio) for more details.
 
-Note for the highscore admins von vpin-mania: The website comes with an additional admin interface to put highscores on the deny list.
+Note for the highscore admins of vpin-mania: The website comes with an additional admin interface to put highscores on the deny list.
 
