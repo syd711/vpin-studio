@@ -536,6 +536,7 @@ public class DMDPositionController implements Initializable, DialogController {
     this.backglassMgrController = backglassMgrController;
     this.titleLabel.setText(game.getGameDisplayName());
 
+    saveLocallyBtn.setVisible(backglassMgrController != null);
     prevButton.setVisible(backglassMgrController != null);
     nextButton.setVisible(backglassMgrController != null);
 
@@ -620,11 +621,17 @@ public class DMDPositionController implements Initializable, DialogController {
 
     // no local save if no rom
     if (dmdinfo.getGameRom() != null) {
-      saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
-      saveLocallyBtn.setDisable(false);
-      saveLocallyBtn.setVisible(true);
 
-      saveCloseLocallyBtn.setText("Save & Close for " + dmdinfo.getGameRom());
+      if (backglassMgrController != null) {
+        saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+        saveLocallyBtn.setDisable(false);
+        saveLocallyBtn.setVisible(true);
+
+        saveCloseLocallyBtn.setText("Save & Close for " + dmdinfo.getGameRom());
+      }
+      else {
+        saveCloseLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+      }
       saveCloseLocallyBtn.setDisable(false);
       saveCloseLocallyBtn.setVisible(true);
     }
