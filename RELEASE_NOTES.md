@@ -7,7 +7,6 @@
   - Added option to disable the complete iScored integration for users who don't need it.
   - Added iScored badge for wheels (only available for fresh installations, these are not updated automatically).
   - Added iScored playlist to the list of SQL playlist templates.
-  - Added marker image button to the table overview to see if a table is competed.
   
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/iscored.png?raw=true" width="650" />
 - **Competitions**: Added quick-settings for every tab and collapsible button for the sidebar. So this matches with the tables view now.
@@ -63,7 +62,7 @@ The VPin Mania integration has undergone a complete overhaul. The whole "VPin Ma
 
 ## VPin Mania Webapp
 
-https://app.vpin-mania.net/ has been launched! You can now browse all your highscores online.
+**https://app.vpin-mania.net/ has been launched!** You can now browse all your highscores online.
 The website replaces the old VPin Mania view from the Studio and has the same feature set the older view and even more!
 Check out the YouTube video (https://www.youtube.com/@vpin-studio) for more details.
 
