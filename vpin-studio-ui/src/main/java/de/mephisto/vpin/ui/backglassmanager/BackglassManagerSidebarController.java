@@ -23,6 +23,7 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -232,6 +233,10 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private Button tableNavigateBtn;
 
+  @FXML
+  private Button gameLaunchBtn;
+
+
   //-------------
   private GameRepresentation game;
 
@@ -401,6 +406,13 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     }
   }
 
+  @FXML
+  private void onGameLaunch() {
+    if (game != null) {
+      PlayButtonController.onPlay(game, null, null);
+    }
+  }
+
   private void setDirectB2SDefault() {
     DirectB2S selectedItem = backglassManagerController.getSelection();
     String selectedVersion = getSelectedVersion();
@@ -490,9 +502,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         return;
       }
       latestSelection = n;
-      DirectB2SModel selection = backglassManagerController.getSelectedModel();
-      if (selection != null) {
-        tableData = client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion());
+      String selectedVersion = getSelectedVersion();
+      if (selectedVersion != null) {
+        tableData = client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), selectedVersion);
         refreshTableData(tableData);
       }
       refreshStatusCheckbox();
@@ -673,7 +685,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     skipSolenoidFrames.setDisable(true);
     skipLEDFrames.setDisable(true);
 
-    this.reloadBtn.setDisable(true);
     downloadBackglassBtn.setDisable(true);
     uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
@@ -685,21 +696,24 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
 
+    reloadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+
     if (directB2SData != null) {
       thumbnailImagePane.setCenter(new ProgressIndicator());
       dmdThumbnailImagePane.setCenter(new ProgressIndicator());
 
       loadImages(directB2SData.getEmulatorId(), directB2SData.getFilename());
 
-      filenameLabel.setText(directB2SData.getFilename());
-      nameLabel.setText(directB2SData.getName());
+      setLabelandTooltip(filenameLabel, directB2SData.getFilename());
+      setLabelandTooltip(nameLabel, directB2SData.getName());
       typeLabel.setText(DirectB2SData.getTableType(directB2SData.getTableType()));
       authorLabel.setText(directB2SData.getAuthor());
       artworkLabel.setText(directB2SData.getArtwork());
       grillLabel.setText(String.valueOf(directB2SData.getGrillHeight()));
       b2sElementsLabel.setText(String.valueOf(directB2SData.getB2sElements()));
       b2sElementsLabel.setTooltip(new Tooltip(directB2SData.getB2sElements() + " variants exist for this backglass"));
-      scoresLabel.setText(String.valueOf(directB2SData.getScores()));
+      scoresLabel.setText(String.valueOf(directB2SData.getNbScores()));
       playersLabel.setText(String.valueOf(directB2SData.getNumberOfPlayers()));
       filesizeLabel.setText(FileUtils.readableFileSize(directB2SData.getFilesize()));
       bulbsLabel.setText(String.valueOf(directB2SData.getIlluminations()));
@@ -708,7 +722,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(directB2SData.getModificationDate()));
 
-      this.reloadBtn.setDisable(false);
+      reloadBtn.setDisable(false);
+      deleteBtn.setDisable(false);
     }
   }
 
@@ -718,10 +733,14 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   public String getSelectedVersion() {
     DirectB2S selection = backglassManagerController.getSelection();
-    return selection == null ? null :
-        selection.getNbVersions() > 1 ? directB2SCombo.getValue() :   // alternative check:  versionSelector.isVisible()
-            selection.getNbVersions() > 0 ? selection.getVersion(0) :
-                null;
+    String selectedVersion = null;
+    if (selection != null && selection.getNbVersions() > 1) {
+      selectedVersion = directB2SCombo.getValue();   // alternative check:  versionSelector.isVisible()
+    }
+    if (selectedVersion == null && selection != null && selection.getNbVersions() > 0) {
+      selectedVersion = selection.getVersion(0);
+    }
+    return selectedVersion;
   }
 
   protected void resetGame() {
@@ -729,18 +748,14 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       emulatorNameLabel.setText("-");
       gameLabel.setText("-");
       gameFilenameLabel.setText("-");
-  
-      emulatorNameLabel.setText("?");
-      gameLabel.setText("?");
-      gameFilenameLabel.setText("?");
-  
+    
       // depend on the game selection
       useAsMediaBackglassBtn.setDisable(true);
       useAsMediaDMDBtn.setDisable(true);
   
       this.dataManagerBtn.setDisable(true);
       this.tableNavigateBtn.setDisable(true);
-      this.deleteBtn.setDisable(directb2s == null);    
+      gameLaunchBtn.setDisable(true);
   }
 
   protected void setGame(@Nullable GameRepresentation game, boolean gameAvailable) {
@@ -755,18 +770,24 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             }
           });
 
-      gameLabel.setText(game.getGameDisplayName());
-      gameFilenameLabel.setText(game.getGameFileName());
+      setLabelandTooltip(gameLabel, game.getGameDisplayName());
+      setLabelandTooltip(gameFilenameLabel, game.getGameFileName());
 
       useAsMediaBackglassBtn.setDisable(false);
       useAsMediaDMDBtn.setDisable(false);
 
       dataManagerBtn.setDisable(false);
       tableNavigateBtn.setDisable(false);
+      gameLaunchBtn.setDisable(false);
     }
     else if (gameAvailable) {
       gameFilenameLabel.setText("(Available, but not installed)");
     }
+  }
+
+  protected void setLabelandTooltip(Label lbl, String txt) {
+    lbl.setText(txt);
+    lbl.setTooltip(new Tooltip(txt));
   }
 
   protected void setData(@Nullable DirectB2S model) {
@@ -799,9 +820,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       versionSelector.setVisible(false);
     }
 
+    refreshTableData(null);
 
     if (directb2s != null && getSelectedVersion() != null) {
-
       refreshingCounter = 1;
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion()))
         .thenAcceptLater(data -> {
@@ -810,9 +831,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           refreshingCounter--;
         });
 
-      refreshTableSettings(model != null ? model.getGameId() : -1);
       refreshStatusCheckbox();
     }  
+    refreshTableSettings(model != null ? model.getGameId() : -1);
   }
 
   protected void refreshTableSettings(int gameId) {
