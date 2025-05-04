@@ -199,6 +199,24 @@ public class BackglassService implements InitializingBean {
     return false;
   }
 
+
+  public void upddateScoresDisplayState(Game game, boolean state) {
+    if (game != null && game.getDirectB2SPath() != null) {
+      File directB2SFile = game.getDirectB2SFile();
+      String directB2SFileName = game.getDirectB2SFilename();
+      DirectB2SData data = getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+      if (data !=  null && data.getNbScores() > 0) {
+        try {
+          DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
+          updater.upddateScoresDisplayState(directB2SFile, state, false);
+        }
+        catch (Exception e) {
+          LOG.error("Error while updating " + directB2SFileName, e);
+        }
+      }
+    }
+  }
+
   //--------------------------------------
 
   public DirectB2SDetail getBackglassDetail(int emuId, String filename, Game game) {
@@ -1075,4 +1093,5 @@ public class BackglassService implements InitializingBean {
     reloadDirectB2SAndVersions();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
+
 }

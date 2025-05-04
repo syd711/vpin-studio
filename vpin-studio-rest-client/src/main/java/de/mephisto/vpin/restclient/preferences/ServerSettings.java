@@ -24,7 +24,8 @@ public class ServerSettings extends JsonSettings {
   private boolean disableDmdViaIni = false;
   /** When virtual DMD is disabled, turn external dmd off in VpinMame */
   private boolean disableDmdInMame = true;
-
+  /** For alphanumeric DMD, turn off backglass scores rendering */
+  private boolean disableBackglassScore = true;
 
   public boolean isInitialMute() {
     return initialMute;
@@ -160,6 +161,14 @@ public class ServerSettings extends JsonSettings {
 
   public void setDisableDmdInMame(boolean disableDmdInMame) {
     this.disableDmdInMame = disableDmdInMame;
+  }
+
+  public boolean isDisableBackglassScore() {
+    return disableBackglassScore;
+  }
+
+  public void setDisableBackglassScore(boolean disableBackglassScore) {
+    this.disableBackglassScore = disableBackglassScore;
   }
 
   @Override

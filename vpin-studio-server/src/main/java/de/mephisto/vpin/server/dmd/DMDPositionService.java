@@ -205,6 +205,7 @@ public class DMDPositionService {
     ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS);
     dmdinfo.setDisableViaIni(serverSettings.isDisableDmdViaIni());
     dmdinfo.setDisableInVpinMame(serverSettings.isDisableDmdInMame());
+    dmdinfo.setDisableBackglassScores(serverSettings.isDisableBackglassScore());
 
     return dmdinfo;
   }
@@ -485,6 +486,20 @@ public class DMDPositionService {
     //----------
     // case of AlphaNumericDMD
     else if (dmdinfo.getDMDType().equals(DMDType.AlphaNumericDMD)) {
+
+      // update scores in backglass
+      backglassService.upddateScoresDisplayState(game, dmdinfo.isDisableBackglassScores());
+
+      // also persist preference for next dmd
+      try {
+        ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS);
+        serverSettings.setDisableBackglassScore(dmdinfo.isDisableBackglassScores());
+        preferenceService.savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      }
+      catch (Exception e) {
+        LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());
+      }
+
       setMameOptions(rom, false, true);
       INIConfiguration iniConfiguration = loadDmdDeviceIni(game.getEmulator());
       if (iniConfiguration != null) {
