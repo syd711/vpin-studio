@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.IScoredSyncModel;
 import de.mephisto.vpin.server.competitions.iscored.IScoredCompetitionSynchronizer;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.players.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +46,13 @@ public class CompetitionResource {
     return competitionService.getIScoredSubscriptions();
   }
 
-  @PostMapping("/iscored/synchronize")
+  @PostMapping("/iscored/synchronizeGameRoom")
   public IScoredSyncModel synchronize(@RequestBody IScoredSyncModel syncModel) {
     return competitionSynchronizer.synchronize(syncModel);
+  }
+  @PostMapping("/iscored/synchronize")
+  public boolean synchronize() {
+    return competitionSynchronizer.synchronizeGameRooms();
   }
 
   @GetMapping("/{id}")

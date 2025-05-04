@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +28,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
-public class IScoredCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, TableStatusChangeListener {
+public class IScoredCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, TableStatusChangeListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredCompetitionSynchronizer.class);
 
   @Autowired
@@ -46,9 +47,34 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   @Autowired
   private PreferencesService preferencesService;
 
-  private List<Game> knownGames = null;
+  public boolean synchronizeGameRooms() {
+    LOG.info("---------- Starting iScored Sync -----------------");
+    List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
+    IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    List<Game> knownGames = gameService.getKnownGames(-1);
+
+    synchronizeExistingCompetitions(iScoredSubscriptions, knownGames, iScoredSettings);
+
+    if (iScoredSettings.isEnabled()) {
+      List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
+      for (IScoredGameRoom gameRoom : gameRooms) {
+        if (gameRoom.isSynchronize()) {
+          IScoredSyncModel model = new IScoredSyncModel();
+          model.setiScoredGameRoom(gameRoom);
+          model.setInvalidate(true);
+          synchronize(model, knownGames);
+        }
+      }
+    }
+    return true;
+  }
 
   public IScoredSyncModel synchronize(IScoredSyncModel syncModel) {
+    List<Game> knownGames = gameService.getKnownGames(-1);
+    return synchronize(syncModel, knownGames);
+  }
+
+  private IScoredSyncModel synchronize(IScoredSyncModel syncModel, List<Game> knownGames) {
     if (syncModel.getGame() != null) {
       LOG.info("--- ------- iScored Sync (" + syncModel.getGame().getName() + ")-----------------");
     }
@@ -56,26 +82,19 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       LOG.info("--- ------- iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");
     }
 
-
     GameRoom gameRoom = IScored.getGameRoom(syncModel.getiScoredGameRoom().getUrl(), syncModel.isInvalidate());
     List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
 
-    //cache the known games for the next sync
-    if (syncModel.isInvalidate() || knownGames == null) {
-      knownGames = gameService.getKnownGames(-1);
-    }
-
     //clean up invalid competitions
     if (syncModel.getiScoredGameRoom().isSynchronize() || (syncModel.getGame() != null && syncModel.isManualSubscription())) {
-      List<Competition> updated = synchronizeExistingCompetitions(syncModel, iScoredSubscriptions, knownGames);
       if (syncModel.getGame() != null) {
-        synchronizeGame(syncModel, syncModel.getGame(), updated, knownGames);
+        synchronizeGame(syncModel, syncModel.getGame(), iScoredSubscriptions, knownGames);
         LOG.info("Synchronization finished: {} ({})", syncModel.getGame().getName(), gameRoom.getUrl());
       }
       else {
         List<IScoredGame> games = gameRoom.getGames();
         for (IScoredGame game : games) {
-          synchronizeGame(syncModel, game, updated, knownGames);
+          synchronizeGame(syncModel, game, iScoredSubscriptions, knownGames);
           LOG.info("Synchronization finished: {} ({})", game.getName(), gameRoom.getUrl());
         }
       }
@@ -89,18 +108,33 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
    * Checks if the existing iScored subscriptions are still valid.
    * If no game is found, the subscription is deleted too.
    *
-   * @param syncModel
    * @param iScoredSubscriptions
    * @param knownGames
+   * @param iScoredSettings
    */
-  private List<Competition> synchronizeExistingCompetitions(IScoredSyncModel syncModel, List<Competition> iScoredSubscriptions, List<Game> knownGames) {
+  private void synchronizeExistingCompetitions(List<Competition> iScoredSubscriptions, List<Game> knownGames, IScoredSettings iScoredSettings) {
     long start = System.currentTimeMillis();
     List<Competition> subs = new ArrayList<>(iScoredSubscriptions);
     for (Competition iScoredSubscription : subs) {
+      if (!iScoredSettings.isEnabled()) {
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
+        LOG.info("Deleted competition {} because iScored is not enabled.", iScoredSubscription);
+        continue;
+      }
+
+      Optional<IScoredGameRoom> anyGameRoomMatch = iScoredSettings.getGameRooms().stream().filter(g -> g.getUrl().equals(iScoredSubscription.getUrl())).findAny();
+
+      //delete if the game room does not exists anymore
+      if (anyGameRoomMatch.isEmpty()) {
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
+        LOG.info("Deleted competition {} because no matching iScored Game Room found for URL {}", iScoredSubscription, iScoredSubscription.getUrl());
+        continue;
+      }
+
+      //delete if the game room could not be loaded
       GameRoom gameRoom = IScored.getGameRoom(iScoredSubscription.getUrl(), false);
       if (gameRoom == null) {
-        competitionService.delete(iScoredSubscription.getId());
-        iScoredSubscriptions.remove(iScoredSubscription);
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because no matching iScored Game Room found for URL {}", iScoredSubscription, iScoredSubscription.getUrl());
         continue;
       }
@@ -109,8 +143,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
 
       //no matching game found in the game room, so it has been removed
       if (game == null) {
-        competitionService.delete(iScoredSubscription.getId());
-        iScoredSubscriptions.remove(iScoredSubscription);
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because no matching Game Room game found for VPS table/version: {}/{}", iScoredSubscription, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
         continue;
       }
@@ -126,15 +159,27 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
 
       //no matching game exists anymore
       if (gameByVpsTable == null) {
-        competitionService.delete(iScoredSubscription.getId());
-        iScoredSubscriptions.remove(iScoredSubscription);
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
         LOG.info("Deleted competition {} because no matching table found for VPS table/version: {}/{}", iScoredSubscription, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
       }
     }
     LOG.info("Existing competitions sync took {}ms", (System.currentTimeMillis() - start));
-    return iScoredSubscriptions;
   }
 
+  private void deleteSubscription(List<Competition> iScoredSubscriptions, Competition iScoredSubscription) {
+    competitionService.delete(iScoredSubscription.getId());
+    iScoredSubscriptions.remove(iScoredSubscription);
+  }
+
+  /**
+   * Checks if a competition exists for the given game.
+   * Invalid competitions have been cleaned up already at this point.
+   *
+   * @param syncModel
+   * @param game
+   * @param iScoredSubscriptions
+   * @param knownGames
+   */
   private void synchronizeGame(IScoredSyncModel syncModel, IScoredGame game, List<Competition> iScoredSubscriptions, List<Game> knownGames) {
     if (!game.isVpsTagged()) {
       return;
@@ -159,8 +204,6 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
       //no matching table available.
       return;
     }
-
-    syncModel.getUpdatedGameIds().addAll(matches.stream().map(g -> g.getId()).collect(Collectors.toList()));
 
     IScoredGameRoom iScoredGameRoom = syncModel.getiScoredGameRoom();
 
@@ -187,18 +230,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         long start = System.currentTimeMillis();
         Thread.currentThread().setName("IScored Initial Sync");
         LOG.info("----------------------------- Initial iScored Sync --------------------------------------------------");
-        List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
-        for (IScoredGameRoom gameRoom : gameRooms) {
-          if (!gameRoom.isSynchronize()) {
-            LOG.info("Skipped initial sync of Game Room " + gameRoom.getUrl() + ", sync is not enabled.");
-            continue;
-          }
-
-          IScoredSyncModel syncModel = new IScoredSyncModel();
-          syncModel.setiScoredGameRoom(gameRoom);
-          synchronize(syncModel);
-        }
-
+        synchronizeGameRooms();
         LOG.info("----------------------------- /Initial iScored Sync -------------------------------------------------");
         LOG.info("Initial sync finished, took {}ms", (System.currentTimeMillis() - start));
       }).start();
@@ -217,13 +249,7 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     if (iScoredSettings.isEnabled()) {
       LOG.info("Running iScored game room sync after table exit.");
-      List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
-      for (IScoredGameRoom gameRoom : gameRooms) {
-        IScoredSyncModel model = new IScoredSyncModel();
-        model.setInvalidate(true);
-        model.setiScoredGameRoom(gameRoom);
-        synchronize(model);
-      }
+      synchronizeGameRooms();
     }
   }
 
@@ -236,6 +262,14 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
   @Override
   public void afterPropertiesSet() throws Exception {
     frontendStatusService.addTableStatusChangeListener(this);
+    preferencesService.addChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (PreferenceNames.ISCORED_SETTINGS.equals(propertyName)) {
+      synchronizeGameRooms();
+    }
   }
 }

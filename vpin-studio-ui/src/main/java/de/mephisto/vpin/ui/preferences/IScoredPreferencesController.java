@@ -8,9 +8,11 @@ import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
-import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
+import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomLoadingProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -88,17 +90,14 @@ public class IScoredPreferencesController implements Initializable {
       PreferencesController.markDirty(PreferenceType.competitionSettings);
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored game room \"" + selectedItem.iScoredGameRoom.getUrl() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        try {
-          IScoredSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-          settings.remove(selectedItem.iScoredGameRoom);
-          client.getPreferenceService().setJsonPreference(settings);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting game room \"" + selectedItem.gameRoom.getUrl() + "\": " + e.getMessage());
-        }
-        finally {
-          reload(false);
-        }
+        IScoredSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+        settings.remove(selectedItem.iScoredGameRoom);
+        Platform.runLater(() -> {
+          ProgressDialog.createProgressDialog(new PreferencesSavingModel("Synchronizing iScored", settings));
+          reload(true);
+          EventManager.getInstance().notifyPreferenceChanged(PreferenceType.competitionSettings);
+        });
+
       }
     }
   }
@@ -107,7 +106,7 @@ public class IScoredPreferencesController implements Initializable {
     client.getPreferenceService().clearCache(PreferenceNames.ISCORED_SETTINGS);
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     List<IScoredGameRoom> sets = iScoredSettings.getGameRooms();
-    ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(sets, forceReload));
+    ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(sets, forceReload));
 
     List<IScoredGameRoomModel> models = sets.stream().map(gr -> new IScoredGameRoomModel(gr, IScored.getGameRoom(gr.getUrl(), false))).collect(Collectors.toList());
     tableView.setItems(FXCollections.observableList(models));
@@ -126,13 +125,16 @@ public class IScoredPreferencesController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         iScoredSettings.setEnabled(newValue);
-        client.getPreferenceService().setJsonPreference(iScoredSettings);
 
-        PreferencesController.markDirty(PreferenceType.competitionSettings);
-        enabledBox.setVisible(iScoredSettings.isEnabled());
-        if(iScoredSettings.isEnabled()) {
-          reload(false);
-        }
+        Platform.runLater(() -> {
+          ProgressDialog.createProgressDialog(new PreferencesSavingModel("Synchronizing iScored", iScoredSettings));
+
+          PreferencesController.markDirty(PreferenceType.competitionSettings);
+          enabledBox.setVisible(iScoredSettings.isEnabled());
+          if (iScoredSettings.isEnabled()) {
+            reload(false);
+          }
+        });
       }
     });
 
@@ -185,7 +187,7 @@ public class IScoredPreferencesController implements Initializable {
       return row;
     });
 
-    if(iScoredSettings.isEnabled()) {
+    if (iScoredSettings.isEnabled()) {
       reload(false);
     }
   }

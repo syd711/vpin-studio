@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
-import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
@@ -22,13 +21,16 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
-import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
+import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomLoadingProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.WaitNProgressModel;
 import de.mephisto.vpin.ui.util.WaitProgressModel;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -59,7 +61,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom>, PreferenceChangeListener {
+public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable, ChangeListener<IScoredGameRoom>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionsController.class);
 
   @FXML
@@ -270,7 +272,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
 
     if (forceReload) {
-      ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(iScoredSettings.getGameRooms(), true));
+      ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(iScoredSettings.getGameRooms(), true));
     }
 
     List<IScoredGameRoom> validGameRooms = new ArrayList<>();
@@ -582,7 +584,7 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
     bindSearchField();
     onViewActivated(null);
 
-    client.getPreferenceService().addListener(this);
+    EventManager.getInstance().addListener(this);
   }
 
   @Override
@@ -738,10 +740,12 @@ public class IScoredSubscriptionsController extends BaseCompetitionController im
   }
 
   @Override
-  public void preferencesChanged(String key, Object value) {
-    if (PreferenceNames.ISCORED_SETTINGS.equalsIgnoreCase(key)) {
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (PreferenceType.competitionSettings.equals(preferenceType)) {
       if (active) {
-        doReload(true);
+        Platform.runLater(() -> {
+          doReload(true);
+        });
       }
       else {
         markDirty = true;
