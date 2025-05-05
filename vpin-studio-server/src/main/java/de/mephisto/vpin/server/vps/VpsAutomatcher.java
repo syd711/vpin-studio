@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.vps;
 
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,10 +17,13 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 @Service
 public class VpsAutomatcher {
   private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcher.class);
+
+  final static boolean LOG_DEBUG = false;
 
   private static VpsAutomatcher instance = new VpsAutomatcher();
 
@@ -44,15 +47,40 @@ public class VpsAutomatcher {
   /**
    * pattern : Table Year info
    */
-  static Pattern filePattern3 = Pattern.compile("(.*)(\\d\\d\\d\\d)(.*)");
+  static Pattern filePattern3 = Pattern.compile("(.+)(\\d\\d\\d\\d)(.+)");
   /**
    * Pattern for version number
    */
   static Pattern versionPattern = Pattern.compile("([rv]?[_.]?\\d+([_.]\\d+)+([r-]\\d+([_.]\\d+)*)?[abcde]?)(.*)");
 
+  private static DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
   private TableMatcher tableMatcher = new TableMatcher();
 
   private TableVersionMatcher tableVersionMatcher = new TableVersionMatcher();
+
+
+  /**
+   * Match filename against VPS Database mapping and return the VpsTable
+   */
+  public VpsTable autoMatchTable(VPS vpsDatabase, String filename) {
+    TableNameParts parts = parseFilename(filename);
+    String _cleanTableName = cleanTable(parts.tableName);
+    return tableMatcher.findClosest(parts.displayName, null, true, _cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+  }
+
+
+  public GameVpsMatch autoMatch(VPS vpsDatabase, String gameBaseName) {
+    return autoMatch(vpsDatabase, gameBaseName, null, null, null);
+  }
+
+  public GameVpsMatch autoMatch(VPS vpsDatabase, String gameBaseName, @Nullable String rom, @Nullable String author, @Nullable String version) {
+    // first run a match with findClosest
+    GameVpsMatch vpsMatch = new GameVpsMatch();
+    // overwrite is forcibly true as GameVpsMatch is empty
+    autoMatch(vpsMatch, vpsDatabase, gameBaseName, rom, StringUtils.isEmpty(rom), null, author, version, true);
+    return vpsMatch;
+  }
 
   /**
    * Match game and return a GameVpsMatch with the VPS Database mapping
@@ -72,7 +100,11 @@ public class VpsAutomatcher {
     }
     gameFileName = cleanFilename(FilenameUtils.getBaseName(gameFileName));
 
-    autoMatch(vpsMatch, vpsDatabase, gameFileName, game.getRom(), checkall, tableInfo, overwrite);
+    autoMatch(vpsMatch, vpsDatabase, gameFileName, game.getRom(), checkall, 
+      tableInfo!=null? tableInfo.getTableName(): null, 
+      tableInfo!=null? tableInfo.getAuthorName(): null,
+      tableInfo!=null? tableInfo.getTableVersion(): null,
+      overwrite);
     return vpsMatch;
   }
 
@@ -91,7 +123,8 @@ public class VpsAutomatcher {
   /**
    * Match filename and fill the GameVpsMatch with VPS Database mapping
    */
-  public void autoMatch(GameVpsMatch vpsMatch, VPS vpsDatabase, String gameFileName, String rom, boolean checkall, TableInfo tableInfo, boolean overwrite) {
+  protected void autoMatch(GameVpsMatch vpsMatch, VPS vpsDatabase, String gameFileName, String rom, boolean checkall, 
+      String tableInfoName, String tableInfoAuthor, String tableInfoVersion, boolean overwrite) {
     try {
       LOG.info("Find closest table for " + gameFileName);
 
@@ -109,7 +142,7 @@ public class VpsAutomatcher {
         if (match.find()) {
           _version = match.group(1);
           if (StringUtils.isNotEmpty(_version)) {
-            parts.extra = StringUtils.remove(parts.extra, _version);
+            parts.extra = StringUtils.remove(parts.extra, _version).trim();
           }
         }
       }
@@ -124,9 +157,9 @@ public class VpsAutomatcher {
         }
       }
       // still not found, try from tableInfo
-      if (_version == null && tableInfo != null && StringUtils.isNotEmpty(tableInfo.getTableVersion())) {
-        if (!StringUtils.containsIgnoreCase(tableInfo.getTableVersion(), "VP")) {
-          match = versionPattern.matcher(tableInfo.getTableVersion());
+      if (_version == null && StringUtils.isNotEmpty(tableInfoVersion)) {
+        if (!StringUtils.containsIgnoreCase(tableInfoVersion, "VP")) {
+          match = versionPattern.matcher(tableInfoVersion);
           if (match.find()) {
             _version = match.group(1);
           }
@@ -208,13 +241,51 @@ public class VpsAutomatcher {
           parts.extra = cleanChars(parts.extra);
         }
 
-        VpsTableVersion vpsVersion = tableVersionMatcher.findVersion(vpsTable, parts.extra, _version, tableInfo);
+        // the name in VPX File takes precedence over the extra information form filename
+        tableInfoName = StringUtils.defaultString(tableInfoName, parts.extra);
+    
+        // the version in filename takes precedence over the version in the VPX file
+        tableInfoVersion = StringUtils.defaultIfEmpty(_version, tableInfoVersion);
+    
+        // Parse and clean the authors
+        // flag to tell this is not forcibly author as it is taken from extra so if author is not matched, 
+        // bad score should be lowered as this may be caused by the fqct it is not author
+        boolean authorFromTable = true;
+        if (tableInfoAuthor==null) {
+          // make sure it is not null
+          String authorFromFile = StringUtils.defaultString(cleanWords(parts.extra));
+          tableInfoAuthor = authorFromFile;
+          authorFromTable = false;
+        }
+
+        LOG.info("parsed : Name=" + tableInfoName + " | Authors=" + tableInfoAuthor + " | version=" + tableInfoVersion);
+
+        // capture debug information
+        StringBuilder debug = new StringBuilder();
+        if (LOG_DEBUG) {
+          VpsAutomatcher.startDebug(debug);
+          VpsAutomatcher.appendDebug(debug, " SCORE", 6);
+          VpsAutomatcher.appendDebug(debug, "NAME", 30);
+          VpsAutomatcher.appendDebug(debug, " dNAME", 6);
+          VpsAutomatcher.appendDebug(debug, "AUTHORS", 50);
+          VpsAutomatcher.appendDebug(debug, " dAUTH", 6);
+          VpsAutomatcher.appendDebug(debug, "VERSION", 10);
+          VpsAutomatcher.appendDebug(debug, " dVERS", 6);
+          VpsAutomatcher.endDebug(debug);
+        }
+
+        VpsTableVersion vpsVersion = tableVersionMatcher.findVersion(vpsTable, tableInfoName, tableInfoAuthor, authorFromTable, tableInfoVersion, debug);
+
+        if (LOG_DEBUG) {
+          LOG.info(debug.toString());
+        }
+
         if (vpsVersion != null) {
           LOG.info(gameFileName + ": matched to VPS table version \"" + vpsVersion + "\"");
           vpsMatch.setExtTableVersionId(vpsVersion.getId());
         }
         else {
-          LOG.info(gameFileName + ": Emptied table version");
+          LOG.info(gameFileName + ": No table version matched");
           vpsMatch.setExtTableVersionId(null);
         }
       }
@@ -230,17 +301,6 @@ public class VpsAutomatcher {
     catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);
     }
-  }
-
-  /**
-   * Match filename against VPS Database mapping and return the VpsTable
-   */
-  public VpsTable autoMatch(VPS vpsDatabase, String filename) {
-    TableNameParts parts = parseFilename(filename);
-
-    String _cleanTableName = cleanTable(parts.tableName);
-
-    return tableMatcher.findClosest(parts.displayName, null, true, _cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
   }
 
   //-------------------------------------------------
@@ -295,14 +355,45 @@ public class VpsAutomatcher {
     return tableName;
   }
 
-  private String cleanChars(String filename) {
+  // all lower case !
+  private static String[] exludedWords = {
+    "mod", "vpx", "vr", "dt", "fss", "fs", "4k", "alt", "alt2", "(1)", "(2)", "edition", "version"
+  };
+
+  private String cleanWords(String filename) {
+    if (filename==null) {
+        return null;
+    }
+    // remove exluded words
+    for (String w : exludedWords) {
+      filename = filename.replace(w, "");
+    }
+    return cleanChars(filename).trim();
+  }
+
+  static String cleanChars(String filename) {
     // replace underscore, ., -, ....
-    filename = StringUtils.replaceChars(filename, "_.,+-'[]()", " ");
+    filename = StringUtils.replaceChars(filename, "_.,+-'[]()", "          ");
     // remove double spaces
     while (filename.contains("  ")) {
       filename = filename.replace("  ", " ");
     }
     return filename.trim();
+  }
+
+  public static void startDebug(StringBuilder debug) {
+    debug.append("\n | ");
+  }
+  public static void appendDebug(StringBuilder bld, double d, int size) {
+    bld.append(StringUtils.leftPad(decimalFormat.format(d), size))
+      .append(" | ");
+  }
+  
+  public static void appendDebug(StringBuilder bld, String txt, int size) {
+    bld.append(StringUtils.rightPad(txt != null ? StringUtils.abbreviate(txt, size): "", size))
+      .append(" | ");
+  }
+  public static void endDebug(StringBuilder debug) {
   }
 
   /**
@@ -315,5 +406,4 @@ public class VpsAutomatcher {
     int year = -1;
     String extra = null;
   }
-
 }

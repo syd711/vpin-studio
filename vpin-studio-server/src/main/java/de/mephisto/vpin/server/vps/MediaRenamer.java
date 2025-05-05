@@ -42,7 +42,7 @@ public class MediaRenamer {
 				.filter(p -> !Files.isDirectory(p) )
 				.forEach(p -> {
 					String filename = FilenameUtils.getBaseName(p.getFileName().toString());
-					VpsTable table = automatcher.autoMatch(vpsDatabase, filename);
+					VpsTable table = automatcher.autoMatchTable(vpsDatabase, filename);
 					if (table != null) {				
 						renameToTable(p, table);
 					}

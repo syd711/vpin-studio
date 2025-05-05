@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.EditDistance;
-import org.apache.commons.text.similarity.JaroWinklerDistance;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
 
 public class TableVersionMatcher {
 
-  JaroWinklerDistance jwd = new JaroWinklerDistance();
+  private double THRESHOLD_NOTFOUND = 4.0;
 
-  public VpsTableVersion findVersion(VpsTable table, String _extra, String _version, TableInfo tableInfo) {
+  EditDistance<Double> ed = new CosineDistance();
+
+  public VpsTableVersion findVersion(VpsTable table, String tableInfoName, String tableInfoAuthor, boolean authorFromTable, String tableInfoVersion, StringBuilder debug) {
 
     // one single file, returns it
     List<VpsTableVersion> tableFiles = table.getTableFiles();
@@ -23,36 +24,20 @@ public class TableVersionMatcher {
         return tableFiles.get(0);
     }
 
-    String tableInfoName = tableInfo!=null? tableInfo.getTableName(): null;
-    tableInfoName = StringUtils.defaultString(tableInfoName, _extra);
+    // Clean version
+    tableInfoVersion = cleanVersion(tableInfoVersion);
 
-    // the version in filename takes precedence over the version in the VPX file
-    String tableInfoVersion = StringUtils.defaultIfEmpty(_version, tableInfo!=null? cleanVersion(tableInfo.getTableVersion()) : null);
-
-    String tableInfoAuthor = tableInfo!=null? tableInfo.getAuthorName(): null;
- 
     // if nothing is there to determine a version, returns null
     if (StringUtils.isEmpty(tableInfoName) 
             && StringUtils.isEmpty(tableInfoVersion) 
             && StringUtils.isEmpty(tableInfoAuthor)) {
       return null;
     }
-  
-    // Parse and clean the authors
-    String authorFromFile = StringUtils.defaultString(cleanWords(_extra));
-    // flag to tell this is not forcibly author as it is taken from extra so if author is not matched, 
-    // bad score should be lowered as this may be caused by the fqct it is not author
-    boolean authorFromTable = true;
-    if (tableInfoAuthor==null) {
-      // make sure it is not null
-      tableInfoAuthor = authorFromFile;
-      authorFromTable = false;
-    }
-    
+      
     // clean tableInfo author field and parse it
     String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
     for (int i = 0, m = tableInfoAuthors.length; i < m; i++) {
-    tableInfoAuthors[i] = tableInfoAuthors[i].trim();
+      tableInfoAuthors[i] = tableInfoAuthors[i].trim();
     }
 
     //------------------------------------
@@ -66,12 +51,14 @@ public class TableVersionMatcher {
         continue;
       }
 
-      
       // distance on name
       String name = tableVersion.getComment();
-      double dName = 0.5;
+      if (StringUtils.containsIgnoreCase(name, "Reupload")) {
+        name = StringUtils.substringBefore(name, "Reupload");
+      }
+      double dName = 1;
       if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName)) {
-        dName = Math.min(distance(name, tableInfoName), dName);
+        dName = distance(name, tableInfoName);
       }
       
       // distance on version
@@ -93,7 +80,7 @@ public class TableVersionMatcher {
         if (tableInfoAuthors.length > 0 && tableVersionAuthors != null && tableVersionAuthors.size() > 0) {
           double D = tableInfoAuthors.length * tableVersionAuthors.size();
           ArrayList<String> clone = new ArrayList<>(tableVersionAuthors);
-          dAuthor = authorDistance(jwd, tableInfoAuthors, 0, clone, clone.size()) / D; 
+          dAuthor = authorDistance(tableInfoAuthors, 0, clone, clone.size()) / D; 
           // reduce importance of dVersion if good rate of authors in exact same position as the VPS table 
           if (dAuthor == 0) {
             dVersion /= 3;
@@ -106,30 +93,45 @@ public class TableVersionMatcher {
       }
 
       // now calculate the distance
-      double d = (1 + dName) * (1 + dVersion / 2) * (1 + dAuthor) - 1;
+      double d = (1 + dName) * (1 + dAuthor) * (1 + dVersion / 2)  - 1;
+
+      if (VpsAutomatcher.LOG_DEBUG) {
+        VpsAutomatcher.startDebug(debug);
+        VpsAutomatcher.appendDebug(debug, d, 6);
+        VpsAutomatcher.appendDebug(debug, tableVersion.getComment(), 30);
+        VpsAutomatcher.appendDebug(debug, dName, 6);
+        VpsAutomatcher.appendDebug(debug, StringUtils.join(tableVersionAuthors, ", "), 50);
+        VpsAutomatcher.appendDebug(debug, dAuthor, 6);
+        VpsAutomatcher.appendDebug(debug, tableVersion.getVersion(), 10);
+        VpsAutomatcher.appendDebug(debug, dVersion, 6);
+        VpsAutomatcher.endDebug(debug);
+      }
+
       if (d < distance) {
         distance = d;
         foundVersion = tableVersion;
       }
     }
 
-    return distance <= 2.0 ? foundVersion : null;
+    return distance <= THRESHOLD_NOTFOUND ? foundVersion : null;
   }
 
-  private double authorDistance(EditDistance<Double> ed, String[] tableInfoAuthors, int i, List<String> tableVersionAuthors, int max) {
+  private double authorDistance(String[] tableInfoAuthors, int i, List<String> tableVersionAuthors, int max) {
     if (i < tableInfoAuthors.length) {
       for (int j = 0, n = tableVersionAuthors.size(); j < n; j++) {
-        double r = ed.apply(tableInfoAuthors[i], tableVersionAuthors.get(j).toLowerCase());
-        if (r > 0.85) {
+        String auth1 = tableInfoAuthors[i];
+        String auth2 = tableVersionAuthors.get(j).toLowerCase();
+        double r = ed.apply(auth1, auth2);
+        if (r < 0.3) {
           // author found, remove it and continue
           tableVersionAuthors.remove(j);
           // distance is the delta in position between the two authors 
           // + distance of the arrays without this author 
-          return j + authorDistance(ed, tableInfoAuthors, i + 1, tableVersionAuthors, max);
+          return j + authorDistance(tableInfoAuthors, i + 1, tableVersionAuthors, max);
         }
       }
       // author not found in the array
-      return max + authorDistance(ed, tableInfoAuthors, i + 1, tableVersionAuthors, max);
+      return max + authorDistance(tableInfoAuthors, i + 1, tableVersionAuthors, max);
     }
     // end of iteration
     return 0;
@@ -208,8 +210,9 @@ public class TableVersionMatcher {
       return 5;
     }
 
-    double ratio = jwd.apply(str1.toLowerCase(), str2.toLowerCase());
-    return ratio > 0 ? (1.0 / ratio - 1) : 100;
+    double ratioCosine = ed.apply(str1.toLowerCase(), str2.toLowerCase());
+    double ratio = ratioCosine;
+    return ratio;
 
     //int ratio = FuzzySearch.weightedRatio(str1, str2);
     //return ratio > 0 ? (100.0 / ratio - 1) : 100;
@@ -230,33 +233,6 @@ public class TableVersionMatcher {
       version = version.substring(p);
     }
     return version.trim();
-  }
-
-  
-  // all lower case !
-  private static String[] exludedWords = {
-    "mod", "vpx", "vr", "dt", "fss", "fs", "4k", "alt", "alt2", "(1)", "(2)", "edition", "version"
-  };
-
-  private String cleanWords(String filename) {
-    if (filename==null) {
-        return null;
-    }
-    // remove exluded words
-    for (String w : exludedWords) {
-      filename = filename.replace(w, "");
-    }
-    return cleanChars(filename).trim();
-  }
-
-  private String cleanChars(String filename) {
-    // replace underscore, ., -, ....
-    filename = StringUtils.replaceChars(filename, "_.,+-'[]()", " ");
-    // remove double spaces
-    while (filename.contains("  ")) {
-      filename = filename.replace("  ", " ");
-    }
-    return filename.trim();
   }
 
   public static class VersionTokenizer {
