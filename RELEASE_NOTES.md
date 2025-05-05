@@ -57,7 +57,8 @@
   - Fixed issue that the "default" VPX emulator was used for emulator recordings instead of the actual VPX emulator selection.
   - Fixed issue existing recordings couldn't be overwritten by new ones. To avoid the file lock, the copy process for the recordings is executed after the emulator/frontend has been closed now.
   - Fixed issue that the media overview was not properly refreshed after a recording was finished.
-  - Fixed issue when rom contains a dot like PiratesLife, positions were not properly saved. The rom name in the dmddevice.ini has to be ecsaped.
+  - Fixed issue when rom contains a dot like "PiratesLife", positions were not properly saved. The rom name in the **dmddevice.ini** has to be escaped.
+  - Changed the Media Recorder view to a split view, so that the vertical splitter can be resized.
 - **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
 
 ## VPin Mania
