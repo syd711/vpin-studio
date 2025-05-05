@@ -57,7 +57,7 @@ public class DMDPositionResizer {
 
   private ObservableValue<DMDAspectRatio> aspectRatioProperty;
 
-  DMDPositionResizer(ObjectProperty<Bounds> areaProperty, DoubleProperty zoomProperty, ObservableValue<DMDAspectRatio> aspectRatio, ObjectProperty<Color> colorProperty) {
+  public DMDPositionResizer(ObjectProperty<Bounds> areaProperty, DoubleProperty zoomProperty, ObservableValue<DMDAspectRatio> aspectRatio, ObjectProperty<Color> colorProperty) {
     this.areaProperty = areaProperty;
     this.zoomProperty = zoomProperty;
     this.aspectRatioProperty = aspectRatio;

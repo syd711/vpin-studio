@@ -116,7 +116,8 @@ public class DirectB2SDataExtractor extends DefaultHandler {
         score.setWidth(safeGetInt(attr, "Width", 0));
         score.setHeight(safeGetInt(attr, "Height", 0));
         score.setNbDigits(safeGetInt(attr, "Digits", 0));
-        score.setDisplayState(safeGetInt(attr, "DisplayState", 1));
+        // O means ON, 1 means OFF
+        score.setDisplayState(safeGetInt(attr, "DisplayState", 0));
         data.addScore(score);
         break;
       }

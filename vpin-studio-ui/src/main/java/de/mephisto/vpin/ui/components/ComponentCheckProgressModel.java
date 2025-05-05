@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -15,18 +15,14 @@ import java.util.Iterator;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
+public class ComponentCheckProgressModel extends ProgressModel<ComponentInstallation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentCheckProgressModel.class);
 
-  private final Iterator<ComponentType> iterator;
-  private final String releaseTag;
-  private final String releaseArtifact;
+  private final Iterator<ComponentInstallation> iterator;
 
-  public ComponentCheckProgressModel(String title, ComponentType componentType, String releaseTag, String releaseArtifact) {
+  public ComponentCheckProgressModel(String title, ComponentInstallation installation) {
     super(title);
-    this.releaseTag = releaseTag;
-    this.releaseArtifact = releaseArtifact;
-    this.iterator = Arrays.asList(componentType).iterator();
+    this.iterator = Arrays.asList(installation).iterator();
   }
 
   @Override
@@ -35,7 +31,7 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
   }
 
   @Override
-  public ComponentType getNext() {
+  public ComponentInstallation getNext() {
     return iterator.next();
   }
 
@@ -45,8 +41,8 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
   }
 
   @Override
-  public String nextToString(ComponentType c) {
-    return "Checking \"" + c.toString() + "\"";
+  public String nextToString(ComponentInstallation c) {
+    return "Checking \"" + c.getComponent() + "\"";
   }
 
   @Override
@@ -55,9 +51,9 @@ public class ComponentCheckProgressModel extends ProgressModel<ComponentType> {
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, ComponentType next) {
+  public void processNext(ProgressResultModel progressResultModel, ComponentInstallation next) {
     try {
-      ComponentActionLogRepresentation check = client.getComponentService().check(next, releaseTag, releaseArtifact, true);
+      ComponentActionLogRepresentation check = client.getComponentService().check(next, true);
       progressResultModel.getResults().add(check);
     } catch (Exception e) {
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);

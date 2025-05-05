@@ -51,15 +51,14 @@
                     </Label>
                     <GridPane hgap="3.0" vgap="3.0">
                         <columnConstraints>
-                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="430.2000732421875" minWidth="10.0" prefWidth="152.799951171875" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="733.599951171875" minWidth="10.0" prefWidth="718.400048828125" />
+                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" prefWidth="155" />
+                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="460.0" />
                         </columnConstraints>
                         <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <children>
-                            <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="450.0" GridPane.columnIndex="1" />
                             <Label fx:id="directB2SLabel" text="Version:" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
@@ -68,7 +67,9 @@
                                 <Insets left="6.0" right="6.0" />
                             </padding>
                             </Label>
-                            <Label fx:id="directB2SLabel1" layoutX="10.0" layoutY="15.0" text="Status:" textFill="WHITE" GridPane.rowIndex="1">
+                            <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="450.0" GridPane.columnIndex="1" />
+
+                            <Label fx:id="directB2SLabel1" text="Status:" textFill="WHITE" GridPane.rowIndex="1">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -212,8 +213,8 @@
     
                  <HBox spacing="48.0">
                     <children>
-                  <VBox>
-                     <children>
+                        <VBox>
+                            <children>
                               <GridPane hgap="3.0" vgap="3.0">
                                   <columnConstraints>
                                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -381,8 +382,8 @@
                                       <CheckBox fx:id="startAsExeServer" disable="true" layoutX="196.0" layoutY="453.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                                   </children>
                               </GridPane>
-                     </children>
-                  </VBox>
+                            </children>
+                        </VBox>
                         <VBox>
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
@@ -429,6 +430,17 @@
                                                 <Tooltip text="Show table in table overview" />
                                             </tooltip>
                                         </Button>
+                                        <Button fx:id="gameLaunchBtn" mnemonicParsing="false" onAction="#onGameLaunch" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                            <graphic>
+                                                <FontIcon iconColor="#66FF66" iconLiteral="mdi2p-play" iconSize="18" />
+                                            </graphic>
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                            <tooltip>
+                                                <Tooltip text="Launch Game" />
+                                            </tooltip>
+                                        </Button>
                                     </items>
                                     <VBox.margin>
                                         <Insets right="12.0" top="12.0" />
@@ -436,9 +448,8 @@
                                 </ToolBar>
                                 <GridPane>
                                     <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="152.80005645751953" minWidth="135.20009765625" prefWidth="140.000146484375" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="759.2000732421875" minWidth="10.0" prefWidth="298.999853515625" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="759.2000732421875" minWidth="10.0" prefWidth="15.800146484374977" />
+                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="130.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="220.0" />
                                     </columnConstraints>
                                     <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -458,6 +469,7 @@
                                             </font>
                                         </Label>
                                         <Label fx:id="gameFilenameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
                                         <Label text="Emulator Name:" textFill="WHITE" GridPane.rowIndex="2">
                                             <font>
                                                 <Font size="14.0" />
@@ -469,6 +481,7 @@
                                         <Insets top="6.0" />
                                     </VBox.margin>
                                 </GridPane>
+
                                 <Label text="DirectB2S File" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
@@ -493,21 +506,20 @@
                                                 <Tooltip text="Reload the backglass" />
                                             </tooltip>
                                         </Button>
-                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onBackglassDelete" textFill="WHITE">
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                 </graphic>
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
+                                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onBackglassDelete" textFill="WHITE">
+                                            <graphic>
+                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                            </graphic>
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Button>
                                     </items>
                                 </ToolBar>
                                 <GridPane vgap="3.0">
                                     <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="240.2001953125" minWidth="139.20009765625" prefWidth="140.799951171875" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="310.39990234375" minWidth="10.0" prefWidth="297.99990234375" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="310.39990234375" minWidth="10.0" prefWidth="13.200097656250023" />
+                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="130.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="220.0" />
                                     </columnConstraints>
                                     <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -613,7 +625,7 @@
                                             </font>
                                         </Label>
       
-                                                    <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
+                                        <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -624,7 +636,7 @@
                                             </font>
                                         </Label>
       
-                                                    <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
+                                        <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -635,7 +647,7 @@
                                             </font>
                                         </Label>
       
-                                                    <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
+                                        <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -646,7 +658,7 @@
                                             </font>
                                         </Label>
       
-                                                    <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
+                                        <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>

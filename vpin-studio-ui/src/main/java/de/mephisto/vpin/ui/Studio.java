@@ -73,7 +73,7 @@ public class Studio extends Application {
   public static VPinStudioClient client;
   public static VPinManiaClient maniaClient;
 
-  private static HostServices hostServices;
+  public static HostServices hostServices;
 
   private ServerSocket ss;
 

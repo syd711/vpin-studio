@@ -37,4 +37,8 @@ public class HeaderController implements Initializable {
       stage.setY(event.getScreenY() + yOffset);
     });
   }
+
+  public void setTitle(String title) {
+    titleLabel.setText(title);
+  }
 }

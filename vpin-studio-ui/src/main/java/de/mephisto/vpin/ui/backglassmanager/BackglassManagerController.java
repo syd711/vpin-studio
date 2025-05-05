@@ -476,9 +476,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     // load the sidebar
     backglassManagerSideBarController.setData(model != null ? model.getBean() : null);
 
+    // empty game sidebar section while loading game
+    backglassManagerSideBarController.resetGame();
+
     if (model != null) {
-      // empty game sidebar section while loading game
-      backglassManagerSideBarController.resetGame();
       JFXFuture
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {

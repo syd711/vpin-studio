@@ -21,6 +21,9 @@ public class DMDInfo {
   /** Whether external DMD is used for that table or VpinMame */
   private DMDType dmdType;
 
+  /** Whether backglass scores should be disabled (for alphanumeric) */
+  private boolean disableBackglassScores;
+
   /** When disabled, whether use virtualdmd enabled = false or turn external dmd off in VpinMame settings */
   private boolean disableInVpinMame;
   private boolean disableViaIni;
@@ -126,6 +129,14 @@ public class DMDInfo {
 
   public void setDisableViaIni(boolean disableViaIni) {
     this.disableViaIni = disableViaIni;
+  }
+
+  public boolean isDisableBackglassScores() {
+    return disableBackglassScores;
+  }
+
+  public void setDisableBackglassScores(boolean disableBackglassScore) {
+    this.disableBackglassScores = disableBackglassScore;
   }
 
   //-----------------------

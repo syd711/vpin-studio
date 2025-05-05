@@ -149,9 +149,9 @@
             <VBox prefWidth="280.0" BorderPane.alignment="TOP_LEFT">
                <children>
                   <Label styleClass="default-headline" text="DMD Type">
-                                 <VBox.margin>
-                                    <Insets top="12.0" />
-                                 </VBox.margin></Label>
+                  <VBox.margin>
+                     <Insets top="12.0" />
+                  </VBox.margin></Label>
                   <VBox spacing="3.0">
                      <children>
                         <ComboBox fx:id="DMDTypeCombo" />
@@ -181,6 +181,32 @@
                                  <tooltip>
                                     <Tooltip prefWidth="300.0" text="Deactivate External DMD in VPinMame settings and/or disable DMD in DmdDevice.ini. At least one option must be selected" wrapText="true" />
                                  </tooltip>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="12.0" top="6.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox fx:id="disableScorePane">
+                           <children>
+                              <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="Turn Backglass Scores off" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="When disable, tell the backglass not to render scores that are behind the alphanumeric scores and could be seen. Mind this setting modifies the backglass. IMPORTANT : When not checked, it re-enables only the scores turned off by studio !" wrapText="true" />
+                                 </tooltip>
+                                 <HBox.margin>
+                                    <Insets left="12.0" />
+                                 </HBox.margin>
                               </Label>
                            </children>
                            <VBox.margin>

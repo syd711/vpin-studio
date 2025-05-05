@@ -126,6 +126,10 @@ public class PlayButtonController implements Initializable {
   }
 
   public void onPlay(String altExe, String option) {
+    onPlay(game, altExe, option);
+  }
+
+  public static void onPlay(GameRepresentation game, String altExe, String option) {
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isHideVPXStartInfo()) {

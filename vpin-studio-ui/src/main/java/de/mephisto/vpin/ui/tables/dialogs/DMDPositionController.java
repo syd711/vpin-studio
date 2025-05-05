@@ -103,14 +103,18 @@ public class DMDPositionController implements Initializable, DialogController {
   @FXML
   private RadioButton radioOnPlayfield;
 
-
+  @FXML
+  private HBox disablePane;
   @FXML
   private CheckBox disableViaMameCheckbox;
   @FXML
   private CheckBox disableViaIniCheckbox;
 
   @FXML
-  private HBox disablePane;
+  private HBox disableScorePane;
+  @FXML
+  private CheckBox disableBGScoreCheckbox;
+
   @FXML
   private HBox romPane;
   @FXML
@@ -527,6 +531,7 @@ public class DMDPositionController implements Initializable, DialogController {
     disablePanes(true);
     DMDTypeCombo.setDisable(true);
     disablePane.setDisable(true);
+    disableScorePane.setDisable(true);
     romPane.setDisable(true);
     //loadedVpinScreen = null;
   }
@@ -619,6 +624,10 @@ public class DMDPositionController implements Initializable, DialogController {
     resetToScoresBtn.setManaged(isAlpha);
     resetToScoresBtn.setDisable(false);
 
+    disableScorePane.setManaged(isAlpha);
+    disableScorePane.setVisible(isAlpha);
+    disableScorePane.setDisable(false);
+
     // no local save if no rom
     if (dmdinfo.getGameRom() != null) {
 
@@ -664,6 +673,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
     disableViaIniCheckbox.setSelected(dmdinfo.isDisableViaIni());
     disableViaMameCheckbox.setSelected(dmdinfo.isDisableInVpinMame());
+    disableBGScoreCheckbox.setSelected(dmdinfo.isDisableBackglassScores());
 
     loadDmdInfo(dmdinfo);
   }
@@ -861,6 +871,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
     dmdinfo.setDisableViaIni(disableViaIniCheckbox.isSelected());
     dmdinfo.setDisableInVpinMame(disableViaMameCheckbox.isSelected());
+    dmdinfo.setDisableBackglassScores(disableBGScoreCheckbox.isSelected());
 
     return dmdinfo;
   }

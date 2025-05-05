@@ -4,14 +4,15 @@ import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.similarity.JaroWinklerSimilarity;
+import org.apache.commons.text.similarity.CosineDistance;
+import org.apache.commons.text.similarity.EditDistance;
 
 import java.util.List;
 
 public class TableMatcher {
 
-  private JaroWinklerSimilarity jwd = new JaroWinklerSimilarity();
-  
+  private EditDistance<Double> ed = new CosineDistance();
+
   private double THRESHOLD_NOTFOUND = 5.5;
 
   //--------------------------------------
@@ -29,6 +30,12 @@ public class TableMatcher {
     tables.stream()
         .filter(table -> checkRom(romForFilter, table, checkall))
         .forEach(table -> {
+
+          // for debugging purpose and check the matching of a particular table, change id here and add breakpoint
+          //if ("32OBVwzC".equals(table.getId())) {
+          //  boolean stop = true;
+          //}
+
           double dist = getTableDistance(table, _fileName, _tableName, _manuf, _year);
           if (dist < minDistance[0]) {
             found[0] = table;
@@ -56,7 +63,7 @@ public class TableMatcher {
   }
 
   private double getTableDistance(VpsTable table, String _fileName, String _tableName, String _manuf, int _year) {
-    String tableName = cleanChars(table.getName());
+    String tableName = VpsAutomatcher.cleanChars(table.getName());
     String manuf = table.getManufacturer();
     String[] altmanufs = getAlternateManuf(manuf);
     int year = table.getYear();
@@ -98,42 +105,46 @@ public class TableMatcher {
 
   private double tableDistance(String _tableName, String _manuf, int _year,
                                String tableName, String manuf, int year) {
-    double dist = 10000;
-
     double dTable = distance(tableName, _tableName) * 1;
-    double dManuf = distance(_manuf, manuf);
-    double dYear = _year == year ? 0 : Math.abs(_year - year) == 1 ? 1 : 5;
+    double dManuf = _manuf != null ? distance(_manuf, manuf) : 5;
+    double dYear = _year > 1900 ? (_year == year ? 0 : Math.abs(_year - year) == 1 ? 1 : 5) : 5;
 
-    dist = (1 + dTable)
+    double dist = (1 + dTable)
         * (1 + dManuf / 35)
         * (1 + dYear / 5.0);
     return dist;
   }
 
   public double distance(String str1, String str2) {
-
     if (StringUtils.isEmpty(str1) && StringUtils.isEmpty(str2)) {
+      return 0;
+    }
+    else if (StringUtils.equalsIgnoreCase(str1, str2)) {
       return 0;
     }
     else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
       return 5;
     }
-    else if (StringUtils.containsIgnoreCase(str1, str2)) {
-      return Math.min((str1.length()-str2.length())/(0.0 + str2.length()), 1.0);
-    }
-    else if (StringUtils.containsIgnoreCase(str2, str1)) {
-      return Math.min((str2.length()-str1.length())/(0.0 + str1.length()), 1.0);
-    }
+    //else if (StringUtils.containsIgnoreCase(str1, str2)) {
+    //  return Math.min((0.0 + str1.length() - str2.length()) / (0.0 + str2.length()), 1.0);
+    //}
+    //else if (StringUtils.containsIgnoreCase(str2, str1)) {
+    //  return Math.min((str2.length()-str1.length())/(0.0 + str1.length()), 1.0);
+    //}
     // else
 
-    //int ratio = FuzzySearch.weightedRatio(str1, str2);
-    //double d = ratio > 0 ? 10 * (100.0 / ratio - 1) : 10000;
+    double ratio = ed.apply(
+        str1.toLowerCase(), 
+        str2.toLowerCase());
 
-    double ratio = jwd.apply(str1.toLowerCase(), str2.toLowerCase());
-    return ratio > 0 ? 10 * (1.0 / ratio - 1) : 10000;
+    // worst ratio, try without spaces
+    if (ratio == 1.0) {
+      ratio = ed.apply(
+        str1.replace(" ", "").toLowerCase(), 
+        str2.toLowerCase());
+    }
 
-    // Score 100 => distance = 0
-    // Score 75 => distance = 3
+    return ratio;
   }
 
   // ------------------------------------------------------
@@ -190,18 +201,5 @@ public class TableMatcher {
     }
 
     return new String[]{manuf};
-  }
-
-  private String cleanChars(String filename) {
-
-    // replace underscore, ., -, ....
-    filename = StringUtils.replaceChars(filename, "_.,-'", " ");
-
-    // remove double spaces
-    while (filename.contains("  ")) {
-      filename = filename.replace("  ", " ");
-    }
-
-    return filename.trim();
   }
 }

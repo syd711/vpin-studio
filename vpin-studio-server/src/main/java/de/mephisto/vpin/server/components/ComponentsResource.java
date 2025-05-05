@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.components;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
@@ -53,28 +54,25 @@ public class ComponentsResource {
     return componentService.ignoreVersion(type, version);
   }
 
-  @PostMapping("/check/{type}/{tag}/{artifact}/{forceDownload}")
-  public ComponentActionLogRepresentation check(@PathVariable("type") ComponentType type,
-                                                @PathVariable("tag") String tag,
-                                                @PathVariable("artifact") String artifact,
+  @PostMapping("/check/{forceDownload}")
+  public ComponentActionLogRepresentation check(@RequestBody ComponentInstallation installation,
                                                 @PathVariable("forceDownload") boolean forceDownload) {
-    ReleaseArtifactActionLog log = componentService.check(type, tag, artifact, forceDownload);
+    ReleaseArtifactActionLog log = componentService.check(installation.getComponent(), installation.getReleaseTag(), 
+        installation.getArtifactName(), installation.getTargetFolder(), forceDownload);
     return toActionLog(log);
   }
 
-  @PostMapping("/install/{type}/{tag}/{artifact}")
-  public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type,
-                                                  @PathVariable("tag") String tag,
-                                                  @PathVariable("artifact") String artifact) {
-    ReleaseArtifactActionLog log = componentService.install(type, tag, artifact, false);
+  @PostMapping("/install")
+  public ComponentActionLogRepresentation install(@RequestBody ComponentInstallation installation) {
+    ReleaseArtifactActionLog log = componentService.install(installation.getComponent(), installation.getReleaseTag(), 
+        installation.getArtifactName(), installation.getTargetFolder(), false);
     return toActionLog(log);
   }
 
-  @PostMapping("/simulate/{type}/{tag}/{artifact}")
-  public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type,
-                                                   @PathVariable("tag") String tag,
-                                                   @PathVariable("artifact") String artifact) {
-    ReleaseArtifactActionLog log = componentService.install(type, tag, artifact, true);
+  @PostMapping("/simulate")
+  public ComponentActionLogRepresentation simulate(@RequestBody ComponentInstallation installation) {
+    ReleaseArtifactActionLog log = componentService.install(installation.getComponent(), installation.getReleaseTag(), 
+        installation.getArtifactName(), installation.getTargetFolder(), true);
     return toActionLog(log);
   }
 
