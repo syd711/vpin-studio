@@ -8,7 +8,7 @@ public class TableVersionMatcherTests {
   @Test
   public void testVersionDistance() {
 
-    TableVersionMatcher matcher = new TableVersionMatcher();
+    TableVersionMatcher matcher = new TableVersionMatcher(null);
 
     // check versions ignoring prefixes
     doTest(matcher, "1.0.1", "1.0.1", 0);

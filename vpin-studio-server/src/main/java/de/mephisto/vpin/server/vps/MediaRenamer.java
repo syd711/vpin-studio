@@ -36,7 +36,7 @@ public class MediaRenamer {
 
   public void renameAll(Path path, VPS vpsDatabase) {
 
-		VpsAutomatcher automatcher = VpsAutomatcher.getInstance();
+		VpsAutomatcher automatcher = new VpsAutomatcher(null);
 
 		try {
 			Files.list(path)

@@ -60,6 +60,8 @@ public class VpsService implements InitializingBean {
    */
   private VPS vpsDatabase;
 
+  private VpsAutomatcher automatcher = new VpsAutomatcher(null);
+
   /**
    * Match game and fill associated TableDetail with VPS Database mapping
    *
@@ -91,7 +93,7 @@ public class VpsService implements InitializingBean {
     File gamefile = game.getGameFile();
     long lastmodified = gamefile != null && gamefile.exists() ? gamefile.lastModified() : null;
 
-    VpsAutomatcher.getInstance().autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, game.getRom(), 
+    automatcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, game.getRom(), 
       tableInfo!=null? tableInfo.getTableName(): null, 
       tableInfo!=null? tableInfo.getAuthorName(): null,
       tableInfo!=null? tableInfo.getTableVersion(): null,

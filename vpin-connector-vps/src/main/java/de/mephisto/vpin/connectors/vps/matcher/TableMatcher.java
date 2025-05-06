@@ -1,110 +1,191 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
-import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.CosineDistance;
 import org.apache.commons.text.similarity.EditDistance;
-import org.apache.commons.text.similarity.JaroWinklerDistance;
+import org.apache.commons.text.similarity.JaccardDistance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableMatcher {
+  /** for debugging */
+  private VpsDebug debug;
 
   private EditDistance<Double> cd = new CosineDistance();
-  private EditDistance<Double> jwd = new JaroWinklerDistance();
+  //private EditDistance<Double> jwd = new JaroWinklerDistance();
+  private EditDistance<Double> jd = new JaccardDistance();
 
-  private double THRESHOLD_NOTFOUND = 4.5;
+  private double THRESHOLD_NOTFOUND = 2;
   private double THRESHOLD_CONFIRM = 0.3;
 
   //--------------------------------------
 
-  public VpsTable findClosest(String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+  public TableMatcher(VpsDebug debug) {
+    this.debug = debug;
+  }
 
-    final double[] minDistance = new double[] {10000};
-    final VpsTable[] found = new VpsTable[1];
+  public VpsTable findClosest(String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+    List<VpsTable> matches = findAllClosest(fileName, rom, tableName, manuf, year, tables);
+    return matches.size() > 0 ? matches.get(0) : null;
+  }
+
+  public List<VpsTable> findAllClosest(String fileName, String rom, String tableName, String manuf, int year, List<VpsTable> tables) {
+    // clean table name
+    String cleanTableName = StringUtils.isEmpty(tableName) ? null : cleanTable(tableName);
+
+    final List<Double> distances = new ArrayList<>();
+    final List<VpsTable> found = new ArrayList<>();
+    final double[] minDist = new double[] { 10000 };
 
     tables.stream()
-        .forEach(table -> {
+        .forEach(table -> { 
 
           // for debugging purpose and check the matching of a particular table, change id here and add breakpoint
-          if ("0shM2rcl".equals(table.getId()) || "GNXfb2HW".equals(table.getId())) {
-            boolean stop = true;
+          //if ("uP4_P2lE".equals(table.getId())) {
+          //  boolean stop = true;
+          //}
+
+          double dist = getTableDistance(table, fileName, cleanTableName, manuf, year, rom, minDist[0]);
+          // record new min
+          if (dist < minDist[0]) {
+            // The table(s) in the found list must be replaced 
+            if (minDist[0] > THRESHOLD_NOTFOUND) {
+              distances.clear();
+              found.clear();
+            }
+            // now keep the new min
+            minDist[0] = dist;
           }
 
-          double dist = getTableDistance(table, fileName, tableName, manuf, year, rom);
-          if (dist < minDistance[0]) {
-            found[0] = table;
-            minDistance[0] = dist;
+          // NO table yet, keep it even if above threshold
+          if (found.isEmpty()) {
+            distances.add(dist);
+            found.add(table);
+          }
+          else if (dist < THRESHOLD_NOTFOUND) {
+            int idx = 0;
+            while (idx < distances.size() && distances.get(idx) < dist) {
+              idx++;
+            }
+            distances.add(idx, dist);
+            found.add(idx, table);
           }
         });
 
-    // return the closest table if the distance is not too high
-    return minDistance[0] < THRESHOLD_NOTFOUND ? found[0] : null;
+    // return the matching tables, sorted by distance if the distance is not too high
+    return found;
   }
+
 
   /**
    * Take a table display name and a rom and compare it to the given VpsTable
    */
   public boolean isClose(String fileName, String rom, String tableName, String manuf, int year, VpsTable table) {
-    double dist = getTableDistance(table, fileName, tableName, manuf, year, rom);
+    // clean table name
+    String cleanTableName = StringUtils.isEmpty(tableName) ? null : cleanTable(tableName);
+
+    double dist = getTableDistance(table, fileName, cleanTableName, manuf, year, rom, 10000);
     return dist <= THRESHOLD_CONFIRM;
   }
 
-  private double getTableDistance(VpsTable table, String _fileName, String _tableName, String _manuf, int _year, String rom) {
-    String tableName = VpsAutomatcher.cleanTable(table.getName().toLowerCase());
+  private double getTableDistance(VpsTable table, String _fileName, String _tableName, String _manuf, int _year, String rom, double minDist) {
+    String tableName = cleanTable(table.getName().toLowerCase());
     String manuf = table.getManufacturer();
-    String[] altmanufs = getAlternateManuf(manuf);
     int year = table.getYear();
 
-    double minDistance = 10000;
     if (checkRom(rom, table)) {
       // return the minimal distance considering alternative manufacturer
-      for (String altmanuf : altmanufs) {
-        double dist = _tableName != null ? tableDistance(_tableName, _manuf, _year, tableName, altmanuf.toLowerCase(), year)
-            : tableDistance(_fileName, tableName, altmanuf.toLowerCase(), year);
-        if (dist < minDistance) {
-          minDistance = dist;
+      return _tableName != null ? tableDistance(_tableName, _manuf, _year, tableName, manuf, year, debug, table.getId(), minDist)
+          : tableDistance(_fileName, tableName, manuf, year, debug, table.getId(), minDist);
+    }
+    return 10000;
+  }
+
+  private double tableDistance(String _displayName, 
+                              String tableName, String manuf, int year,
+                              VpsDebug debug, String tableId, double minDist) {
+    String clean = _displayName;
+
+    double dManuf = 0.2;
+    String[] altmanufs = getAlternateManuf(manuf);
+    for (String altmanuf : altmanufs) {
+      if (StringUtils.containsIgnoreCase(clean, altmanuf)) {
+        clean = StringUtils.removeIgnoreCase(clean, altmanuf);
+        dManuf = 0;
+        if (!StringUtils.equalsIgnoreCase(manuf, altmanuf)) {
+          manuf += " (" + altmanuf + ")";
         }
       }
     }
-    return minDistance;
-  }
 
-  private double tableDistance(String _displayName, String tableName, String manuf, int year) {
-    double dist = 10000;
-
-    String clean = _displayName;
-
-    boolean confirmManuf = false;
-    if (clean.contains(manuf.toLowerCase())) {
-      clean = StringUtils.removeIgnoreCase(clean, manuf);
-      confirmManuf = true;
-    }
-
-    boolean confirmYear = false;
+    double dYear = 0.2;
     if (clean.contains(Integer.toString(year))) {
       clean = StringUtils.removeIgnoreCase(clean, Integer.toString(year));
-      confirmYear = true;
+      dYear = 0;
     }
 
+    clean = cleanTable(clean);
     double dTable = distance(clean, tableName);
 
-    dist = (1 + dTable) * (confirmManuf ? 1 : 1.2) * (confirmYear ? 1 : 1.2);
+    double dist = calculateDistance(dTable, dManuf, dYear);
+   
+    if ((dist < minDist || dist < THRESHOLD_NOTFOUND) && debug != null) {
+      appendDebugScores(tableId, dist, tableName, dTable, manuf, dManuf, year, dYear);
+    }
+    
     return dist;
   }
 
   private double tableDistance(String _tableName, String _manuf, int _year,
-                               String tableName, String manuf, int year) {
+                               String tableName, String manuf, int year, 
+                               VpsDebug debug, String tableId, double minDist) {
     double dTable = distance(tableName, _tableName) * 1;
-    double dManuf = _manuf != null ? distance(_manuf, manuf) : 5;
-    double dYear = _year > 1900 ? Math.min(Math.abs(_year - year), 5): 5;
 
-    double dist = (1 + dTable)
-        * (1 + dManuf / 35.0)
-        * (1 + dYear / 20.0) - 1;
+    double dManuf = 0.2;
+    if (_manuf != null) {
+      String[] altmanufs = getAlternateManuf(manuf);
+      String altmanuf = null;
+      dManuf = 10000;
+      for (String m : altmanufs) {
+        double d = distance(_manuf, m);
+        if (d < dManuf) {
+          dManuf = d;
+          altmanuf = m;
+        }
+      }
+      if (!StringUtils.equalsIgnoreCase(manuf, altmanuf)) {
+        manuf += " (" + altmanuf + ")";
+      }
+    }
+
+    double dYear = _year > 1900 ? Math.min(Math.abs(_year - year), 5.0) / 5.0: 0.2;
+
+    double dist = calculateDistance(dTable, dManuf, dYear);
+
+    if ((dist < minDist || dist < THRESHOLD_NOTFOUND) && debug != null) {
+      appendDebugScores(tableId, dist, tableName, dTable, manuf, dManuf, year, dYear);
+    }
     return dist;
+  }
+
+  private double calculateDistance(double dTable, double dManuf, double dYear) {
+    return (1 + dTable * 9) * (1 + dManuf * 3) * (1 + dYear * 1.5) - 1;
+  }
+
+  private void appendDebugScores(String tableId, double dist, String tableName, double dTable, String manuf, double dManuf, int year, double dYear) {
+    debug.startDebug();
+    debug.appendDebug(tableId, 12);
+    debug.appendDebug(dist, 8);
+    debug.appendDebug(tableName, 40);
+    debug.appendDebug(dTable, 6);
+    debug.appendDebug(manuf, 20);
+    debug.appendDebug(dManuf, 6);
+    debug.appendDebug(Integer.toString(year), 5);
+    debug.appendDebug(dYear, 6);
+    debug.endDebug();
   }
 
   public double distance(String str1, String str2) {
@@ -115,33 +196,29 @@ public class TableMatcher {
       return 0;
     }
     else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
-      return 5;
-    }
-    //else if (StringUtils.containsIgnoreCase(str1, str2)) {
-    //  return Math.min((0.0 + str1.length() - str2.length()) / (0.0 + str2.length()), 1.0);
-    //}
-    //else if (StringUtils.containsIgnoreCase(str2, str1)) {
-    //  return Math.min((str2.length()-str1.length())/(0.0 + str1.length()), 1.0);
-    //}
-    // else
-
-    double ratio = cd.apply(str1, str2);
-
-    double jw = jwd.apply(str1, str2);
-
-    if (true) return ratio * jw; 
-
-    // worst ratio, try without spaces
-    if (ratio == 1.0) {
-      ratio = cd.apply(
-        str1.replace(" ", "").toLowerCase(), 
-        str2.toLowerCase());
+      return 1;
     }
 
-    return ratio;
+    double ratioCD = cd.apply(str1.toLowerCase(), str2.toLowerCase());
+    //double ratioJWD = jwd.apply(str1.toLowerCase(), str2.toLowerCase());
+    double ratioJD = jd.apply(str1.toLowerCase(), str2.toLowerCase());
+
+    return ratioCD * ratioJD; 
   }
 
   // ------------------------------------------------------
+
+  public String cleanTable(String tableName) {
+    tableName = VpsAutomatcher.cleanChars(tableName);
+    tableName = tableName.replaceAll("the ", "");
+    tableName = tableName.replaceAll(", the", "");
+
+    // Remove obvious file hints not related to the actual name.
+    //tableName = tableName.replace("VR Room", "");
+    //tableName = tableName.replace("VRRoom", "");
+
+    return tableName;
+  }
 
   /**
    * Take a rom and compare it with the one of the table
@@ -174,21 +251,22 @@ public class TableMatcher {
 
   private String[] getAlternateManuf(String manuf) {
     if (manuf.equalsIgnoreCase("Bally") || manuf.equalsIgnoreCase("Midway")) {
-      return new String[]{"Bally", "Midway"};
+      return new String[] {"Bally", "Midway"};
     }
     else if (manuf.equalsIgnoreCase("Original") || manuf.equalsIgnoreCase("TBA")) {
-      return new String[]{"Original", "TBA"};
+      return new String[] {"Original", "TBA"};
     }
     else if (manuf.equalsIgnoreCase("Mylstar") || manuf.equalsIgnoreCase("Gottlieb")) {
-      return new String[]{"Gottlieb", "Mylstar"};
+      return new String[] {"Gottlieb", "Mylstar"};
     }
-    else if (manuf.toLowerCase().startsWith("Taito")) {
-      return new String[]{"Taito", "Taito do Brasil"};
+    else if (manuf.toLowerCase().startsWith("taito")) {
+      return new String[] {"Taito do Brasil", "Taito"};
     }
-    else if (manuf.toLowerCase().startsWith("Spooky")) {
-      return new String[]{"Spooky", "Spooky Pinball"};
+    else if (manuf.toLowerCase().startsWith("spooky")) {
+      return new String[] {"Spooky Pinball", "Spooky"};
     }
 
     return new String[]{manuf};
   }
+
 }
