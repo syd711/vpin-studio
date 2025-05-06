@@ -12,14 +12,12 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -680,25 +678,24 @@ public class CompetitionsController implements Initializable, StudioFXController
   @Override
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.ISCORED_SETTINGS.equals(key)) {
-      int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-      if (selectedIndex == 3) {
-        tabPane.getSelectionModel().select(0);
-      }
-
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-      if (iScoredSettings.isEnabled()) {
-        if (!tabPane.getTabs().contains(iScoredSubscriptionsTab)) {
-          tabPane.getTabs().add(iScoredSubscriptionsTab);
+
+      Platform.runLater(() -> {
+        int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+
+        if (iScoredSettings.isEnabled()) {
+          if (!tabPane.getTabs().contains(iScoredSubscriptionsTab)) {
+            tabPane.getTabs().add(iScoredSubscriptionsTab);
+          }
+        }
+        else {
+          tabPane.getTabs().remove(iScoredSubscriptionsTab);
         }
 
-        Platform.runLater(() -> {
-          List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
-          ProgressDialog.createProgressDialog(new IScoredGameRoomSynchronizationProgressModel(gameRooms));
-        });
-      }
-      else {
-        tabPane.getTabs().remove(iScoredSubscriptionsTab);
-      }
+        if (selectedIndex == 3 && !iScoredSettings.isEnabled()) {
+          tabPane.getSelectionModel().select(0);
+        }
+      });
     }
   }
 

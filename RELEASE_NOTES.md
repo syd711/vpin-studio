@@ -35,8 +35,9 @@
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/playlist-icons.png?raw=true" width="150" />
   
 - **DMD Position Tool**: 
+  - No more excuse for having an empty full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the video.
   - Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
-  - Important change: Disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
+  - **Important change:** Disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
   - When there is no B2S full DMD or it is not active, and when the frontend has a full DMD video that is flagged to be kept displayed when game is launched, then a random frame of that video is picked to position the DMD onto it. 
   - No more excuse for not having a full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active (also see previous change).
   - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number and default positions). The zones can then be modified and saved. Also a reset button permits to restore the default positions of zones taken from backglass if modified.
@@ -63,6 +64,7 @@
   - Fixed issue that the "default" VPX emulator was used for emulator recordings instead of the actual VPX emulator selection.
   - Fixed issue existing recordings couldn't be overwritten by new ones. To avoid the file lock, the copy process for the recordings is executed after the emulator/frontend has been closed now.
   - Fixed issue that the media overview was not properly refreshed after a recording was finished.
+  - Changed the Media Recorder view to a split view, so that the vertical splitter can be resized. 
 - **DMD Position Tool**: Fixed issue when rom contains a dot like PiratesLife, positions were not properly saved. The rom name in the dmddevice.ini has to be ecsaped.
 - **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
 

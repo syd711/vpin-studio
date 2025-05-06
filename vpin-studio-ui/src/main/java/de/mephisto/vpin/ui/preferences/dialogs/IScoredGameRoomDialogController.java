@@ -11,11 +11,13 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionOfflineDialogController;
-import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
+import de.mephisto.vpin.ui.preferences.PreferencesSavingModel;
+import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomLoadingProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -119,7 +121,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     setDisabled(true);
     nameLabel.setText("-");
 
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(url, force));
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(url, force));
     if (!progressDialog.getResults().isEmpty()) {
       GameRoom gr = (GameRoom) progressDialog.getResults().get(0);
       nameLabel.setText(gr.getName());
@@ -231,15 +233,17 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     collect.add(gameRoom);
 
     iScoredSettings.setGameRooms(collect);
-    client.getPreferenceService().setJsonPreference(iScoredSettings);
 
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
+    Platform.runLater(() -> {
+      ProgressDialog.createProgressDialog(new PreferencesSavingModel("Synchronizing iScored", iScoredSettings));
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      stage.close();
+    });
   }
 
   @Override
   public void onDialogCancel() {
-
+    result = false;
   }
 
   public void setData(@NonNull IScoredSettings iScoredSettings, @Nullable IScoredGameRoom gr) {

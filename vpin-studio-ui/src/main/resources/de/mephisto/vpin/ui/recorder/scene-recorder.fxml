@@ -9,6 +9,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -21,8 +22,61 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.RecorderController">
-    <top>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.RecorderController">
+   <center>
+      <SplitPane dividerPositions="0.5">
+         <items>
+            <BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;">
+                <center>
+                    <BorderPane BorderPane.alignment="CENTER">
+                        <BorderPane.margin>
+                            <Insets bottom="6.0" />
+                        </BorderPane.margin>
+                        <center>
+                            <StackPane fx:id="loaderStack">
+                                <children>
+                                    <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                                        <children>
+                                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                                <columns>
+                                                    <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="40.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;">
+                                                        <graphic>
+                                                            <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
+                                                        </graphic>
+                                                    </TableColumn>
+                                                    <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                                    <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
+                                                </columns>
+                                            </TableView>
+                                        </children>
+                                    </StackPane>
+                                </children>
+                            </StackPane>
+                        </center>
+                        <bottom>
+                            <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                                <BorderPane.margin>
+                                    <Insets bottom="3.0" right="3.0" />
+                                </BorderPane.margin>
+                            </Label>
+                        </bottom>
+                    </BorderPane>
+                </center>
+            </BorderPane>
+                <ScrollPane style="-fx-background-color: #222222;">
+                    <content>
+                        <VBox fx:id="recordingOptions" styleClass="base-component">
+                        <padding>
+                            <Insets bottom="12.0" right="12.0" />
+                        </padding>
+                     </VBox>
+                    </content>
+                </ScrollPane>
+         </items>
+      </SplitPane>
+   </center>
+   <top>
         <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
             <items>
                 <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
@@ -134,55 +188,5 @@
                 </HBox>
             </items>
         </ToolBar>
-    </top>
-    <center>
-        <BorderPane BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets bottom="6.0" />
-            </BorderPane.margin>
-            <center>
-                <StackPane fx:id="loaderStack">
-                    <children>
-                        <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
-                            <children>
-                                <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                                    <columns>
-                                        <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="40.0" sortable="false" style="-fx-alignment: BASELINE_CENTER;">
-                                            <graphic>
-                                                <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
-                                            </graphic>
-                                        </TableColumn>
-                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                        <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
-                                    </columns>
-                                </TableView>
-                            </children>
-                        </StackPane>
-                    </children>
-                </StackPane>
-            </center>
-            <bottom>
-                <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
-                    <BorderPane.margin>
-                        <Insets bottom="3.0" right="3.0" />
-                    </BorderPane.margin>
-                </Label>
-            </bottom>
-        </BorderPane>
-    </center>
-    <right>
-       <BorderPane BorderPane.alignment="CENTER">
-            <center>
-                <ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #222222;">
-                    <content>
-                        <VBox fx:id="recordingOptions" styleClass="base-component">
-                        <padding>
-                            <Insets right="12.0" bottom="12.0" />
-                        </padding>
-                     </VBox>
-                    </content>
-                </ScrollPane>
-            </center>
-        </BorderPane>
-   </right>
+   </top>
 </BorderPane>

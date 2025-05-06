@@ -3,7 +3,6 @@ package de.mephisto.vpin.restclient.competitions;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class IScoredSyncModel {
@@ -11,7 +10,6 @@ public class IScoredSyncModel {
   private boolean manualSubscription = false;
   private IScoredGameRoom iScoredGameRoom;
   private IScoredGame game;
-  private List<Integer> updatedGameIds = new ArrayList<>();
 
   public boolean isManualSubscription() {
     return manualSubscription;
@@ -19,14 +17,6 @@ public class IScoredSyncModel {
 
   public void setManualSubscription(boolean manualSubscription) {
     this.manualSubscription = manualSubscription;
-  }
-
-  public List<Integer> getUpdatedGameIds() {
-    return updatedGameIds;
-  }
-
-  public void setUpdatedGameIds(List<Integer> updatedGameIds) {
-    this.updatedGameIds = updatedGameIds;
   }
 
   public boolean isInvalidate() {

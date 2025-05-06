@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -135,11 +136,9 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public IScoredSyncModel synchronizeIScoredGameRoom(@NonNull IScoredGameRoom gameRoom) {
+  public boolean synchronizeGameRooms() {
     try {
-      IScoredSyncModel sync = new IScoredSyncModel();
-      sync.setiScoredGameRoom(gameRoom);
-      return getRestClient().post(API + "competitions/iscored/synchronize", sync, IScoredSyncModel.class);
+      return getRestClient().post(API + "competitions/iscored/synchronize", new HashMap<>(), Boolean.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save competition: " + e.getMessage(), e);
@@ -154,7 +153,7 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
       sync.setiScoredGameRoom(gameRoom);
       sync.setManualSubscription(manualSubscription);
       sync.setInvalidate(invalidate);
-      return getRestClient().post(API + "competitions/iscored/synchronize", sync, IScoredSyncModel.class);
+      return getRestClient().post(API + "competitions/iscored/synchronizeGameRoom", sync, IScoredSyncModel.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save competition: " + e.getMessage(), e);

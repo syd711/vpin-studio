@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
@@ -51,11 +50,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +63,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -556,7 +552,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
 
-    ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(iScoredSettings.getGameRooms(), false));
+    ProgressDialog.createProgressDialog(new IScoredGameRoomLoadingProgressModel(iScoredSettings.getGameRooms(), false));
     List<IScoredGameRoom> validGameRooms = new ArrayList<>();
     List<IScoredGameRoom> gameRooms = iScoredSettings.getGameRooms();
     for (IScoredGameRoom gameRoom : gameRooms) {

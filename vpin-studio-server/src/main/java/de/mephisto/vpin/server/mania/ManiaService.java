@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
@@ -48,7 +50,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener {
+public class ManiaService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, TableStatusChangeListener, GameDataChangedListener, GameLifecycleListener, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaService.class);
 
   @Value("${vpinmania.server.host}")
@@ -598,18 +600,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
         maniaServiceCache.setManiaService(this);
         ServerFX.maniaClient = maniaClient;
-
-        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-        if (cabinet != null) {
-          LOG.info("Cabinet is registered on VPin-Mania");
-          new Thread(() -> {
-            Thread.currentThread().setName("VPin Mania Tables Synchronizer");
-            synchronizeTables();
-          }).start();
-        }
-        else {
-          LOG.info("Cabinet is not registered on VPin-Mania");
-        }
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
@@ -619,6 +609,19 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
     highscoreService.setManiaService(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+    if (cabinet != null) {
+      LOG.info("Cabinet is registered on VPin-Mania");
+      Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+      synchronizeTables();
+    }
+    else {
+      LOG.info("Cabinet is not registered on VPin-Mania");
+    }
   }
 
   @PreDestroy
