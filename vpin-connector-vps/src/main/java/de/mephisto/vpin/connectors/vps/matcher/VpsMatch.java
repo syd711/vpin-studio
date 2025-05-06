@@ -1,6 +1,6 @@
-package de.mephisto.vpin.restclient.games;
+package de.mephisto.vpin.connectors.vps.matcher;
 
-public class GameVpsMatch {
+public class VpsMatch {
 
   private int gameId = -1;
 

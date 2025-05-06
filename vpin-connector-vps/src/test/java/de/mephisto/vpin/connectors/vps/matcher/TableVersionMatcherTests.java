@@ -1,8 +1,7 @@
-package de.mephisto.vpin.server.vps;
-
-import static org.junit.Assert.assertEquals;
+package de.mephisto.vpin.connectors.vps.matcher;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TableVersionMatcherTests {
 
@@ -82,10 +81,10 @@ public class TableVersionMatcherTests {
   }
   public void doTest(TableVersionMatcher matcher, String s1, String s2, double expected1, double expected2) {
     double res = matcher.versionDistance(s2, s1);
-    assertEquals(s1 + "<>" + s2 + " = " + res, expected1, res, 0.000001);
+    assertEquals(expected1, res, 0.000001);
 
     res = matcher.versionDistance(s1, s2);
-    assertEquals(s2 + "<>" + s1 + " = " + res, expected2, res, 0.000001);
+    assertEquals(expected2, res, 0.000001);
   }
 
 }

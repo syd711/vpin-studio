@@ -1,25 +1,20 @@
-package de.mephisto.vpin.server.vps;
+package de.mephisto.vpin.connectors.vps.matcher;
 
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
-import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-@Service
 public class VpsAutomatcher {
   private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcher.class);
 
@@ -35,17 +30,14 @@ public class VpsAutomatcher {
   }
 
   //-------------------------------
+  // run tests in https://regex101.com/
 
   /**
-   * pattern : Table (ManufacturerYear) info
+   * pattern : Table (Manufacturer Year) extra | Table (Year Manufacturer) extra
    */
-  static Pattern filePattern1 = Pattern.compile("([^(]+)\\((.*)(\\d\\d\\d\\d)\\)(.*)");
+  static Pattern filePattern1 = Pattern.compile("\\(((([\\w ]+)[() ]*(\\d\\d\\d\\d))|((\\d\\d\\d\\d)[() ]*)([\\w ]+))\\)(.*)");
   /**
-   * pattern : Table (Year Manufacturer) info
-   */
-  static Pattern filePattern2 = Pattern.compile("([^(]+)\\((\\d\\d\\d\\d)(.*)\\)(.*)");
-  /**
-   * pattern : Table Year info
+   * pattern : Table Year extra
    */
   static Pattern filePattern3 = Pattern.compile("(.+)(\\d\\d\\d\\d)(.+)");
   /**
@@ -59,72 +51,38 @@ public class VpsAutomatcher {
 
   private TableVersionMatcher tableVersionMatcher = new TableVersionMatcher();
 
-
+  //------------------------------------
   /**
    * Match filename against VPS Database mapping and return the VpsTable
    */
   public VpsTable autoMatchTable(VPS vpsDatabase, String filename) {
+    return autoMatchTable(vpsDatabase, filename, null);
+  }
+
+  public VpsTable autoMatchTable(VPS vpsDatabase, String filename, String rom) {
     TableNameParts parts = parseFilename(filename);
-    String _cleanTableName = cleanTable(parts.tableName);
-    return tableMatcher.findClosest(parts.displayName, null, true, _cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+    String cleanTableName = cleanTable(parts.tableName);
+    return tableMatcher.findClosest(parts.displayName, rom, cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
   }
 
-
-  public GameVpsMatch autoMatch(VPS vpsDatabase, String gameBaseName) {
-    return autoMatch(vpsDatabase, gameBaseName, null, null, null);
+  //------------------------------------
+  public VpsMatch autoMatch(VPS vpsDatabase, String[] tableFormats, String gameFileName) {
+    return autoMatch(vpsDatabase, tableFormats, gameFileName, null, null, null);
   }
 
-  public GameVpsMatch autoMatch(VPS vpsDatabase, String gameBaseName, @Nullable String rom, @Nullable String author, @Nullable String version) {
+  public VpsMatch autoMatch(VPS vpsDatabase, String[] tableFormats, String gameFileName, @Nullable String rom, @Nullable String author, @Nullable String version) {
     // first run a match with findClosest
-    GameVpsMatch vpsMatch = new GameVpsMatch();
+    VpsMatch vpsMatch = new VpsMatch();
     // overwrite is forcibly true as GameVpsMatch is empty
-    autoMatch(vpsMatch, vpsDatabase, gameBaseName, rom, StringUtils.isEmpty(rom), null, author, version, true);
+    autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
     return vpsMatch;
-  }
-
-  /**
-   * Match game and return a GameVpsMatch with the VPS Database mapping
-   *
-   * @return GameVpsMatch of ids
-   */
-  public GameVpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
-    GameVpsMatch vpsMatch = new GameVpsMatch();
-    vpsMatch.setGameId(game.getId());
-    vpsMatch.setExtTableId(game.getExtTableId());
-    vpsMatch.setExtTableVersionId(game.getExtTableVersionId());
-    vpsMatch.setVersion(game.getVersion());
-
-    String gameFileName = game.getGameFileName();
-    if (useDisplayName) {
-      gameFileName = game.getGameDisplayName();
-    }
-    gameFileName = cleanFilename(FilenameUtils.getBaseName(gameFileName));
-
-    autoMatch(vpsMatch, vpsDatabase, gameFileName, game.getRom(), checkall, 
-      tableInfo!=null? tableInfo.getTableName(): null, 
-      tableInfo!=null? tableInfo.getAuthorName(): null,
-      tableInfo!=null? tableInfo.getTableVersion(): null,
-      overwrite);
-    return vpsMatch;
-  }
-
-  /**
-   * Remove obvious file hints not related to the actual name.
-   * @param baseName the file base name
-   * @return
-   */
-  private String cleanFilename(String baseName) {
-    String name = baseName;
-    name = name.replace("VR Room", "");
-    name = name.replace("VRRoom", "");
-    return name;
   }
 
   /**
    * Match filename and fill the GameVpsMatch with VPS Database mapping
    */
-  protected void autoMatch(GameVpsMatch vpsMatch, VPS vpsDatabase, String gameFileName, String rom, boolean checkall, 
-      String tableInfoName, String tableInfoAuthor, String tableInfoVersion, boolean overwrite) {
+  public void autoMatch(VpsMatch vpsMatch, VPS vpsDatabase, String[] tableFormats, String gameFileName, String rom, 
+      String tableInfoName, String tableInfoAuthor, String tableInfoVersion, Long lastUpdate, boolean overwrite) {
     try {
       LOG.info("Find closest table for " + gameFileName);
 
@@ -133,51 +91,9 @@ public class VpsAutomatcher {
       // tablename (manuf year) author version extra
       TableNameParts parts = parseFilename(gameFileName);
 
-      String _version = null;
-
-      Matcher match = null;
-      // check version in extra
-      if (StringUtils.isNotEmpty(parts.extra)) {
-        match = versionPattern.matcher(parts.extra);
-        if (match.find()) {
-          _version = match.group(1);
-          if (StringUtils.isNotEmpty(_version)) {
-            parts.extra = StringUtils.remove(parts.extra, _version).trim();
-          }
-        }
-      }
-      // when not found in extra, check in table name
-      if (_version == null) {
-        match = versionPattern.matcher(parts.tableName);
-        if (match.find()) {
-          _version = match.group(1);
-          if (StringUtils.isNotEmpty(_version)) {
-            parts.tableName = StringUtils.remove(parts.tableName, _version);
-          }
-        }
-      }
-      // still not found, try from tableInfo
-      if (_version == null && StringUtils.isNotEmpty(tableInfoVersion)) {
-        if (!StringUtils.containsIgnoreCase(tableInfoVersion, "VP")) {
-          match = versionPattern.matcher(tableInfoVersion);
-          if (match.find()) {
-            _version = match.group(1);
-          }
-        }
-      }
-
-      // clean the version if found
-      if (_version != null) {
-        _version = _version.replace('_', '.').trim();
-        _version = StringUtils.removeStart(_version, "v");
-        _version = StringUtils.removeStart(_version, "r");
-        _version = StringUtils.removeStart(_version, ".");
-      }
-
       String _cleanTableName = cleanTable(parts.tableName);
 
-      LOG.info("parsed : Table=" + _cleanTableName + " | Manuf=" + parts.manufacturer + " | year=" + parts.year
-          + " | version=" + _version + " | extra=" + parts.extra);
+      LOG.info("parsed : Table=" + _cleanTableName + " | Manuf=" + parts.manufacturer + " | year=" + parts.year + " | extra=" + parts.extra);
 
       //------------------------------------------------------
       // Step 2, match the table elements with VPS database
@@ -188,13 +104,13 @@ public class VpsAutomatcher {
         // first check already mapped table and confirm mapping
         if (StringUtils.isNotEmpty(vpsMatch.getExtTableId())) {
           VpsTable vpsTableById = vpsDatabase.getTableById(vpsMatch.getExtTableId());
-          if (tableMatcher.isClose(parts.displayName, rom, checkall, _cleanTableName, parts.manufacturer, parts.year, vpsTableById)) {
+          if (tableMatcher.isClose(parts.displayName, rom, _cleanTableName, parts.manufacturer, parts.year, vpsTableById)) {
             vpsTable = vpsTableById;
           }
         }
         // if not found, find closest
         if (vpsTable == null) {
-          vpsTable = tableMatcher.findClosest(parts.displayName, rom, checkall, _cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+          vpsTable = tableMatcher.findClosest(parts.displayName, rom, _cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
         }
 
         if (vpsTable == null) {
@@ -229,7 +145,9 @@ public class VpsAutomatcher {
       }
 
       //------------------------------------------------------
-      // Step 3, match the elements with VPS database
+      // Step 3, match the table version with VPS database
+
+      String _version = parts.version;
 
       if (vpsTable != null && (StringUtils.isEmpty(vpsMatch.getExtTableVersionId()) || overwrite)) {
 
@@ -243,7 +161,25 @@ public class VpsAutomatcher {
 
         // the name in VPX File takes precedence over the extra information form filename
         tableInfoName = StringUtils.defaultString(tableInfoName, parts.extra);
-    
+
+        // still no version found, try from tableInfo
+        if (_version == null && StringUtils.isNotEmpty(tableInfoVersion)) {
+          if (!StringUtils.containsIgnoreCase(tableInfoVersion, "VP")) {
+            Matcher match = versionPattern.matcher(tableInfoVersion);
+            if (match.find()) {
+              _version = match.group(1);
+            }
+          }
+        }
+
+        // clean the version if found
+        if (_version != null) {
+          _version = _version.replace('_', '.').trim();
+          _version = StringUtils.removeStart(_version, "v");
+          _version = StringUtils.removeStart(_version, "r");
+          _version = StringUtils.removeStart(_version, ".");
+        }
+  
         // the version in filename takes precedence over the version in the VPX file
         tableInfoVersion = StringUtils.defaultIfEmpty(_version, tableInfoVersion);
     
@@ -274,7 +210,7 @@ public class VpsAutomatcher {
           VpsAutomatcher.endDebug(debug);
         }
 
-        VpsTableVersion vpsVersion = tableVersionMatcher.findVersion(vpsTable, tableInfoName, tableInfoAuthor, authorFromTable, tableInfoVersion, debug);
+        VpsTableVersion vpsVersion = tableVersionMatcher.findVersion(vpsTable, tableFormats, tableInfoName, tableInfoAuthor, authorFromTable, tableInfoVersion, lastUpdate, debug);
 
         if (LOG_DEBUG) {
           LOG.info(debug.toString());
@@ -318,26 +254,19 @@ public class VpsAutomatcher {
 
     Matcher match = filePattern1.matcher(parts.displayName);
     if (match.find()) {
-      parts.tableName = match.group(1).trim();
-      parts.manufacturer = cleanChars(match.group(2)).trim();
-      parts.year = Integer.parseInt(match.group(3));
-      parts.extra = match.group(4).trim();
+      parts.tableName = parts.displayName.substring(0, match.start());
+      String manuf = ObjectUtils.firstNonNull(match.group(3), match.group(7));
+      parts.manufacturer = cleanChars(manuf).trim();
+      String year = ObjectUtils.firstNonNull(match.group(4), match.group(6));
+      parts.year = Integer.parseInt(year);
+      parts.extra = match.group(8).trim();
     }
     else {
-      match = filePattern2.matcher(parts.displayName);
+      match = filePattern3.matcher(parts.displayName);
       if (match.find()) {
         parts.tableName = match.group(1).trim();
-        parts.manufacturer = cleanChars(match.group(3)).trim();
         parts.year = Integer.parseInt(match.group(2));
-        parts.extra = match.group(4).trim();
-      }
-      else {
-        match = filePattern3.matcher(parts.displayName);
-        if (match.find()) {
-          parts.tableName = match.group(1).trim();
-          parts.year = Integer.parseInt(match.group(2));
-          parts.extra = match.group(3).trim();
-        }
+        parts.extra = match.group(3).trim();
       }
     }
     // if parts._tableName and _extra are null at that stage, cancel the match and put _displayName in _tableName 
@@ -345,19 +274,44 @@ public class VpsAutomatcher {
       parts.tableName = parts.displayName;
     }
 
+    // check version in extra
+    if (StringUtils.isNotEmpty(parts.extra)) {
+      match = versionPattern.matcher(parts.extra);
+      if (match.find()) {
+        parts.version = match.group(1);
+        if (StringUtils.isNotEmpty(parts.version)) {
+          parts.extra = StringUtils.remove(parts.extra, parts.version).trim();
+        }
+      }
+    }
+    // when not found in extra, check in table name
+    if (parts.version == null) {
+      match = versionPattern.matcher(parts.tableName);
+      if (match.find()) {
+        parts.version = match.group(1);
+        if (StringUtils.isNotEmpty(parts.version)) {
+          parts.tableName = StringUtils.remove(parts.tableName, parts.version);
+        }
+      }
+    }
     return parts;
   }
 
-  private String cleanTable(String tableName) {
+  public static String cleanTable(String tableName) {
     tableName = cleanChars(tableName);
     tableName = tableName.replaceAll("the ", "");
     tableName = tableName.replaceAll(", the", "");
+
+    // Remove obvious file hints not related to the actual name.
+    //tableName = tableName.replace("VR Room", "");
+    //tableName = tableName.replace("VRRoom", "");
+
     return tableName;
   }
 
   // all lower case !
   private static String[] exludedWords = {
-    "mod", "vpx", "vr", "dt", "fss", "fs", "4k", "alt", "alt2", "(1)", "(2)", "edition", "version"
+    "mod", "vpx", "vr", "dt", "fss", "fs", "4k", "alt", "alt2", "(1)", "(2)", "edition", "version", "vrroom"
   };
 
   private String cleanWords(String filename) {
@@ -405,5 +359,6 @@ public class VpsAutomatcher {
     String manufacturer = null;
     int year = -1;
     String extra = null;
+    String version = null;
   }
 }

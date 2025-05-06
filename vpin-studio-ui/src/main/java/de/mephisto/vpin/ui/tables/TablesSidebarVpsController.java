@@ -305,7 +305,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
       if (tableById != null) {
         GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-        List<String> tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
+        String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
         refreshTableView(tableById, tableFormats);
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
           VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
@@ -315,7 +315,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
   }
 
-  private void refreshTableView(VpsTable vpsTable, List<String> tableFormats) {
+  private void refreshTableView(VpsTable vpsTable, String[] tableFormats) {
     versionAuthorsLabel.setText("-");
     versionAuthorsLabel.setTooltip(new Tooltip(null));
 
@@ -458,7 +458,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     List<VpsTableVersion> tableVersions;
     if (game != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      List<String> tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
+      String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
       tableVersions = vpsTable.getTableFilesForFormat(tableFormats);
     }
     else {

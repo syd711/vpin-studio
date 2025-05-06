@@ -1,8 +1,7 @@
-package de.mephisto.vpin.server.vps;
-
-import static org.junit.Assert.assertTrue;
+package de.mephisto.vpin.connectors.vps.matcher;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TableMatcherTest {
 
@@ -36,10 +35,10 @@ public class TableMatcherTest {
    */
   private void doTest(TableMatcher matcher, String s1, String s2) {
     double d = matcher.distance(s1, s2);
-    assertTrue("error, distance " + d + " greater 2", d < 2);
+    assertTrue(d < 2);
 
     d = matcher.distance(s2, s1);
-    assertTrue("error, distance " + d + " greater 2", d < 2);
+    assertTrue(d < 2);
   }
 
   /**
@@ -48,12 +47,10 @@ public class TableMatcherTest {
   private void doTest(TableMatcher matcher, String s1, String s2, String s3) {
     double d12 = matcher.distance(s1, s2);
     double d13 = matcher.distance(s1, s3);
-    assertTrue("error, distance " + d12 + " greater " + d13, d12 < d13);
+    assertTrue(d12 < d13);
 
     double d21 = matcher.distance(s2, s1);
     double d31 = matcher.distance(s3, s1);
-    assertTrue("error, distance " + d21 + " greater " + d31, d21 < d31);
+    assertTrue(d21 < d31);
   }
-
-
 }

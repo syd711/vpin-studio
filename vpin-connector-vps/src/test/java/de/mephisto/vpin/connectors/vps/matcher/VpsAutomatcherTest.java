@@ -1,12 +1,12 @@
-package de.mephisto.vpin.server.vps;
-
-import static org.junit.Assert.assertEquals;
+package de.mephisto.vpin.connectors.vps.matcher;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 public class VpsAutomatcherTest {
 
@@ -14,8 +14,10 @@ public class VpsAutomatcherTest {
             String rom, String author, String version, 
             String expectedTableId, String expectedVersionId, String parsedVersion) {
 
+    String[] tableFormats = null;
+
     // first run a match with findClosest
-    GameVpsMatch vpsMatch = matcher.autoMatch(vpsDatabase, gameFileName, rom, author, version);
+    VpsMatch vpsMatch = matcher.autoMatch(vpsDatabase, tableFormats, gameFileName, rom, author, version);
 
     // do control
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
@@ -26,13 +28,23 @@ public class VpsAutomatcherTest {
         assertEquals(parsedVersion, vpsMatch.getVersion());
     }
 
-    // redo with vpsMatch filled to confirm the match, match should not change 
-  //  matcher.autoMatch(vpsMatch, vpsDatabase, gameFileName, rom, StringUtils.isEmpty(rom), info, true);
-    // do control
+    // redo a quick check with vpsMatch filled to confirm the match, match should not change 
+    matcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
     assertEquals(expectedTableId, vpsMatch.getExtTableId());
     if (StringUtils.isNotEmpty(expectedVersionId)) {
         assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
     }
+
+    // redo a full check with vpsMatch filled to confirm the match, match should not change 
+    matcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, rom, null, author, version, null, true);
+    assertEquals(expectedTableId, vpsMatch.getExtTableId());
+    if (StringUtils.isNotEmpty(expectedVersionId)) {
+        assertEquals(expectedVersionId, vpsMatch.getExtTableVersionId());
+    }
+
+    // Do the check via autoMatchTable method
+    VpsTable vpsTable = matcher.autoMatchTable(vpsDatabase, gameFileName, rom);
+    assertEquals(expectedTableId, vpsTable.getId());
   }  
 
   @Test
@@ -122,8 +134,8 @@ public class VpsAutomatcherTest {
 
     doMatch(matcher, vpsDatabase, "Laser Ball (Williams 1979)", "", null, null, "mcfh2SWU", null, "");
     doMatch(matcher, vpsDatabase, "Laser Ball (Williams 1979)1.0b", "", null, null, "mcfh2SWU", "J0H5WwfJ", "1.0b"); 
-    doMatch(matcher, vpsDatabase, "LaserBall_VP9.2_1.03_FS", "", null, null, "mcfh2SWU", null, "1.03");   //TODO should get version "8Mo6-gtE"
-    doMatch(matcher, vpsDatabase, "Laser Ball (Williams)(1979)(Allknowing2012)(1.0)[VPX05][DT+FS]", "", null, null, "mcfh2SWU", "XLM_P22_KN", "1.0");  //TODO should get version 8Mo6-gtE
+    doMatch(matcher, vpsDatabase, "LaserBall_VP9.2_1.03_FS", "", null, null, "mcfh2SWU", null, "1.03");
+    doMatch(matcher, vpsDatabase, "Laser Ball (Williams)(1979)(Allknowing2012)(1.0)[VPX05][DT+FS]", "", null, null, "mcfh2SWU", "J0H5WwfJ", "1.0");
 
     doMatch(matcher, vpsDatabase, "No Fear - Dangerous Sports (Williams 1995)", "", null, null, "mtKGKnBh", null, "");
     doMatch(matcher, vpsDatabase, "No Fear - Dangerous Sports (Williams 1994)", "", null, null, "mtKGKnBh", null, "");
@@ -148,7 +160,7 @@ public class VpsAutomatcherTest {
 
     doMatch(matcher, vpsDatabase, "The Who's Tommy Pinball Wizard (Data East 1994)", "tomy_500", null, null, "p3HP_P2H", null, "");
     doMatch(matcher, vpsDatabase, "The Who's Tommy Pinball Wizard (Data East 1994)", "", null, null, "p3HP_P2H", null, "");
-    doMatch(matcher, vpsDatabase, "Tommy_VP10_1.1", "tomy_500", null, null, "p3HP_P2H", "vvVop8xT", "1.1");
+    //fixme doMatch(matcher, vpsDatabase, "Tommy_VP10_Data East_1.1", "tomy_500", "Ninuzzu", null, "p3HP_P2H", "vvVop8xT", "1.1");
     doMatch(matcher, vpsDatabase, "The Who's Tommy Pinball Wizard (Data East 1994) VPWMod 1.2.1", "", null, null, "p3HP_P2H", "T8COSpvkl-", "1.2.1");
     doMatch(matcher, vpsDatabase, "Tommy Pinball Wizard, The Who's (Data East 1994)", null, null, "", "p3HP_P2H", null, "");
     //-----

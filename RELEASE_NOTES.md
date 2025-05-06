@@ -48,6 +48,7 @@
 - **Table Data Manager**: 
   - The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
   - The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
+  - The auto-matching has been improved for a better accuracy in the match with the VPS database.
 - **Table Asset Management** 
   - Added highscore reset button to "Scores" tab.
   - Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
