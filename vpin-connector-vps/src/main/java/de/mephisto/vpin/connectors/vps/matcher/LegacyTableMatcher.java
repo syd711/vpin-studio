@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vps;
+package de.mephisto.vpin.connectors.vps.matcher;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 

@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -100,8 +100,8 @@ public class GameMediaService {
   /**
    * moved from VpsService to break circular dependency.
    */
-  public GameVpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
-    GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
+  public VpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
+    VpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
     if (vpsMatch != null && !simulate) {
       gameService.vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
       if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vps;
+package de.mephisto.vpin.connectors.vps.matcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +11,24 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 
 public class TableVersionMatcher {
+  /** for debugging */
+  private VpsDebug debug;
 
-  private double THRESHOLD_NOTFOUND = 4.0;
+  private double THRESHOLD_NOTFOUND = 3.5;
 
   EditDistance<Double> ed = new CosineDistance();
 
-  public VpsTableVersion findVersion(VpsTable table, String tableInfoName, String tableInfoAuthor, boolean authorFromTable, String tableInfoVersion, StringBuilder debug) {
+  public TableVersionMatcher(VpsDebug debug) {
+    this.debug = debug;
+  }
 
+  public VpsTableVersion findVersion(VpsTable table, String[] tableFormats, String tableInfoName, String tableInfoAuthor, boolean authorFromTable, String tableInfoVersion, Long lastUpdate) {
+
+    List<VpsTableVersion> tableFiles = tableFormats != null ?
+        table.getTableFilesForFormat(tableFormats):
+        table.getTableFiles(); 
+    
     // one single file, returns it
-    List<VpsTableVersion> tableFiles = table.getTableFiles();
     if (tableFiles.size()==1) {
         return tableFiles.get(0);
     }
@@ -30,7 +39,8 @@ public class TableVersionMatcher {
     // if nothing is there to determine a version, returns null
     if (StringUtils.isEmpty(tableInfoName) 
             && StringUtils.isEmpty(tableInfoVersion) 
-            && StringUtils.isEmpty(tableInfoAuthor)) {
+            && StringUtils.isEmpty(tableInfoAuthor)
+            && lastUpdate == null) {
       return null;
     }
       
@@ -46,28 +56,29 @@ public class TableVersionMatcher {
     VpsTableVersion foundVersion = null;
 
     for (VpsTableVersion tableVersion : tableFiles) {
-      // skip non VPX tables
-      if (tableVersion.getTableFormat() != null && tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
-        continue;
-      }
-
       // distance on name
       String name = tableVersion.getComment();
-      if (StringUtils.containsIgnoreCase(name, "Reupload")) {
-        name = StringUtils.substringBefore(name, "Reupload");
+      int pos = StringUtils.indexOfIgnoreCase(name, "Reupload");
+      if (pos >= 0) {
+        name = name.substring(0, pos);
       }
       double dName = 1;
       if (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName)) {
         dName = distance(name, tableInfoName);
       }
-      
+
+      // distance on lastUpdate (nb days between the lastupdate of the Game and the date in VPS)
+      double dLastUpdate = 10000;
+      if (lastUpdate != null) {
+        dLastUpdate = Math.abs(tableVersion.getUpdatedAt() - lastUpdate) / 1000.0 / 60.0 / 60.0 / 24.0;
+      }
+
       // distance on version
       double dVersion = 1;
       double dAuthor = 0.5d;
 
-      List<String> tableVersionAuthors = tableVersion.getAuthors();
-      // if strong match via name, disconnect other  match
-      if (dName < 0.3) {
+      // if strong match via name OR file last update on same day as VPS last update, disconnect other match
+      if (dName < 0.3 || dLastUpdate < 1) {
         dVersion = 0;
         dAuthor = 0;
       } 
@@ -77,6 +88,7 @@ public class TableVersionMatcher {
         }
 
         // check match of authors 
+        List<String> tableVersionAuthors = tableVersion.getAuthors();
         if (tableInfoAuthors.length > 0 && tableVersionAuthors != null && tableVersionAuthors.size() > 0) {
           double D = tableInfoAuthors.length * tableVersionAuthors.size();
           ArrayList<String> clone = new ArrayList<>(tableVersionAuthors);
@@ -93,18 +105,18 @@ public class TableVersionMatcher {
       }
 
       // now calculate the distance
-      double d = (1 + dName) * (1 + dAuthor) * (1 + dVersion / 2)  - 1;
+      double d = (1 + dName) * (1 + dAuthor) * (1 + dVersion / 3.0)  - 1;
 
-      if (VpsAutomatcher.LOG_DEBUG) {
-        VpsAutomatcher.startDebug(debug);
-        VpsAutomatcher.appendDebug(debug, d, 6);
-        VpsAutomatcher.appendDebug(debug, tableVersion.getComment(), 30);
-        VpsAutomatcher.appendDebug(debug, dName, 6);
-        VpsAutomatcher.appendDebug(debug, StringUtils.join(tableVersionAuthors, ", "), 50);
-        VpsAutomatcher.appendDebug(debug, dAuthor, 6);
-        VpsAutomatcher.appendDebug(debug, tableVersion.getVersion(), 10);
-        VpsAutomatcher.appendDebug(debug, dVersion, 6);
-        VpsAutomatcher.endDebug(debug);
+      if (debug != null) {
+        debug.startDebug();
+        debug.appendDebug(d, 6);
+        debug.appendDebug(tableVersion.getComment(), 30);
+        debug.appendDebug(dName, 6);
+        debug.appendDebug(StringUtils.join(tableVersion.getAuthors(), ", "), 50);
+        debug.appendDebug(dAuthor, 6);
+        debug.appendDebug(tableVersion.getVersion(), 10);
+        debug.appendDebug(dVersion, 6);
+        debug.endDebug();
       }
 
       if (d < distance) {
@@ -113,7 +125,7 @@ public class TableVersionMatcher {
       }
     }
 
-    return distance <= THRESHOLD_NOTFOUND ? foundVersion : null;
+    return distance < THRESHOLD_NOTFOUND ? foundVersion : null;
   }
 
   private double authorDistance(String[] tableInfoAuthors, int i, List<String> tableVersionAuthors, int max) {
@@ -232,7 +244,7 @@ public class TableVersionMatcher {
       }
       version = version.substring(p);
     }
-    return version.trim();
+    return version.toLowerCase().trim();
   }
 
   public static class VersionTokenizer {

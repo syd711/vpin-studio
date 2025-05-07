@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.games.Game;
@@ -165,7 +165,7 @@ public class FrontendResource {
 
 
   @PostMapping("/tabledetails/vpsLink/{gameId}")
-  public boolean vpsLink(@PathVariable("gameId") int gameId, @RequestBody GameVpsMatch vpsmatch) throws Exception {
+  public boolean vpsLink(@PathVariable("gameId") int gameId, @RequestBody VpsMatch vpsmatch) throws Exception {
     gameService.vpsLink(gameId, vpsmatch.getExtTableId(), vpsmatch.getExtTableVersionId());
     return true;
   }
@@ -202,12 +202,12 @@ public class FrontendResource {
   }
 
   @GetMapping("/tabledetails/automatch/{gameId}/{overwrite}")
-  public GameVpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+  public VpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
     return gameMediaService.autoMatch(gameService.getGame(gameId), overwrite, false);
   }
 
   @GetMapping("/tabledetails/automatchsimulate/{gameId}/{overwrite}")
-  public GameVpsMatch autoMatchSimulate(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+  public VpsMatch autoMatchSimulate(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
     return gameMediaService.autoMatch(gameService.getGame(gameId), overwrite, true);
   }
 

@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
@@ -11,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GameEmulator {
@@ -341,6 +344,31 @@ public class GameEmulator {
     }
     return null;
   }
+
+
+  public String[] getVpsEmulatorFeatures() {
+    if (this.type != null) {
+      switch (this.type) {
+        case VisualPinball: {
+          return new String[] { VpsFeatures.VPX };
+        }
+        case FuturePinball: {
+          return new String[] { VpsFeatures.FP };
+        }
+        case ZenFX: {
+          return new String[] { VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3 };
+        }
+        case ZenFX2: {
+          return new String[] { VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3 };
+        }
+        case ZenFX3: {
+          return new String[] { VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3 };
+        }
+      }
+    }
+    return new String[] { VpsFeatures.VPX };
+  }
+
 
   @Override
   public boolean equals(Object o) {

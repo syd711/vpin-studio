@@ -179,22 +179,11 @@ public class VpsTable implements VPSEntity {
     return tableFiles;
   }
 
-  public List<VpsTableVersion> getTableFilesForFormat(String tableFormat) {
+  public List<VpsTableVersion> getTableFilesForFormat(String... tableFormat) {
     return tableFiles.stream().filter(t -> isValidTableVersion(t, tableFormat)).collect(Collectors.toList());
   }
 
-  public List<VpsTableVersion> getTableFilesForFormat(List<String> tableFormat) {
-    return tableFiles.stream().filter(t -> isValidTableVersion(t, tableFormat)).collect(Collectors.toList());
-  }
-
-  private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
-    if (t.getTableFormat() == null || t.getTableFormat().length() == 0) {
-      return true;
-    }
-    return t.getTableFormat().equals(tableFormat);
-  }
-
-  private boolean isValidTableVersion(VpsTableVersion t, List<String> tableFormats) {
+  private boolean isValidTableVersion(VpsTableVersion t, String... tableFormats) {
     for (String tableFormat : tableFormats) {
       if (t.getTableFormat() == null || t.getTableFormat().length() == 0) {
         return true;

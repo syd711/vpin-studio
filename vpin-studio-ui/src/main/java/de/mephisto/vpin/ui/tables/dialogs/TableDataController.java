@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
@@ -340,7 +341,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       this.tableVersionsCombo.valueProperty().removeListener(this);
     }
 
-    GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
+    VpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
     if (vpsMatch != null) {
       String mappedTableId = vpsMatch.getExtTableId();
       String mappedVersion = vpsMatch.getExtTableVersionId();
@@ -1238,7 +1239,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void refreshVersionsCombo(VpsTable tableById) {
     if (tableById != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      List<String> tableFormat = emulatorRepresentation.getVpsEmulatorFeatures();
+      String[] tableFormat = emulatorRepresentation.getVpsEmulatorFeatures();
       List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
 
       if (!tableFiles.isEmpty()) {
