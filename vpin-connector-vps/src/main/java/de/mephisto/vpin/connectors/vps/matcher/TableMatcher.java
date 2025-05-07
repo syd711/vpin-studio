@@ -18,8 +18,8 @@ public class TableMatcher {
   //private EditDistance<Double> jwd = new JaroWinklerDistance();
   private EditDistance<Double> jd = new JaccardDistance();
 
-  private double THRESHOLD_NOTFOUND = 2;
-  private double THRESHOLD_CONFIRM = 0.3;
+  private double THRESHOLD_NOTFOUND = 10;
+  private double THRESHOLD_CONFIRM = 2;
 
   //--------------------------------------
 
@@ -49,29 +49,41 @@ public class TableMatcher {
           //}
 
           double dist = getTableDistance(table, fileName, cleanTableName, manuf, year, rom, minDist[0]);
-          // record new min
+          // new min detected
           if (dist < minDist[0]) {
-            // The table(s) in the found list must be replaced 
-            if (minDist[0] > THRESHOLD_NOTFOUND) {
+            if (dist <= THRESHOLD_CONFIRM) {
+              if (THRESHOLD_CONFIRM < minDist[0]) {
+                distances.clear();
+                found.clear();
+                minDist[0] = THRESHOLD_CONFIRM;
+              }
+            }
+            else if (dist <= THRESHOLD_NOTFOUND) {
+              if (THRESHOLD_NOTFOUND < minDist[0]) {
+                distances.clear();
+                found.clear();
+                minDist[0] = THRESHOLD_NOTFOUND;
+              }
+            }
+            else  {
               distances.clear();
               found.clear();
+              minDist[0] = dist;
             }
-            // now keep the new min
-            minDist[0] = dist;
-          }
 
-          // NO table yet, keep it even if above threshold
-          if (found.isEmpty()) {
-            distances.add(dist);
-            found.add(table);
-          }
-          else if (dist < THRESHOLD_NOTFOUND) {
-            int idx = 0;
-            while (idx < distances.size() && distances.get(idx) < dist) {
-              idx++;
+            // No table yet, keep it even if above threshold
+            if (found.isEmpty()) {
+              distances.add(dist);
+              found.add(table);
             }
-            distances.add(idx, dist);
-            found.add(idx, table);
+            else {
+              int idx = 0;
+              while (idx < distances.size() && distances.get(idx) < dist) {
+                idx++;
+              }
+              distances.add(idx, dist);
+              found.add(idx, table);
+            }
           }
         });
 
@@ -192,18 +204,32 @@ public class TableMatcher {
     if (StringUtils.isEmpty(str1) && StringUtils.isEmpty(str2)) {
       return 0;
     }
-    else if (StringUtils.equals(str1, str2)) {
-      return 0;
-    }
     else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
       return 1;
     }
 
-    double ratioCD = cd.apply(str1.toLowerCase(), str2.toLowerCase());
-    //double ratioJWD = jwd.apply(str1.toLowerCase(), str2.toLowerCase());
-    double ratioJD = jd.apply(str1.toLowerCase(), str2.toLowerCase());
+    // continue ignoring the case
+    str1 = str1.toLowerCase();
+    str2 = str2.toLowerCase();
+    if (StringUtils.equals(str1, str2)) {
+      return 0;
+    }
 
-    return ratioCD * ratioJD; 
+    double distance = 10000;
+    if (str1.contains(str2)) {
+      distance = Math.min(distance, 1.0 - (0.0 + str2.length()) / str1.length()) / 2;
+    }
+    else if (str2.contains(str1)) {
+      distance = Math.min(distance, 1.0 - (0.0 + str1.length()) / str2.length()) / 2;
+    }
+
+    // check via real distance
+    double ratioCD = cd.apply(str1, str2);
+    //double ratioJWD = jwd.apply(str1, str2);
+    double ratioJD = jd.apply(str1, str2);
+    distance = Math.min(distance, ratioCD * ratioJD);
+
+    return distance; 
   }
 
   // ------------------------------------------------------

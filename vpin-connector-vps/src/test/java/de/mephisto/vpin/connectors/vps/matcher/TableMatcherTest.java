@@ -18,32 +18,41 @@ public class TableMatcherTest {
   public void testDistance() {
     TableMatcher matcher = new TableMatcher(null);
 
-    doTest(matcher, "Cactus Canyon", "cactus canyon");
-    doTest(matcher, "CactusCanyon", "Cactus Canyon");
-    doTest(matcher, "CactusCanyon", "the Cactus  Canyon");
-    doTest(matcher, "Cactus Canion", "Cactus Canyon");
+    doTest(matcher, "Cactus Canyon", "cactus canyon", 0);
+    doTest(matcher, "CactusCanyon", "Cactus Canyon", 0.15);
+    doTest(matcher, "CactusCanyon", "the Cactus  Canyon", 0.3);
+    doTest(matcher, "Cactus Canion", "Cactus Canyon", 0.15);
+    doTest(matcher, "Cactus Canyon", "cactus canyon continued", 0.45);
+    doTest(matcher, "Cactus Canyon continued", "Cactus Canyon Cont.", 0.15);
 
-    doTest(matcher, "Cactus Canyon continued", "Cactus Canyon Cont.");
+    doTest(matcher, "cactus canyon", "Cactus Canyon", "cactus canyon continued");
+    doTest(matcher, "cactus canion", "Cactus Canyon", "cactus canyon continued");
+    doTest(matcher, "cactus canyon continued", "cactus canyon continued", "Cactus Canyon");
 
-    doTest(matcher, "cactus canyon", "Cactus Canion", "cactus canyon continued");
-
-    doTest(matcher, "getaway, the - high speed ii v1.1", "The Getaway - High Speed II");
+    doTest(matcher, "getaway, the - high speed ii v1.1", "The Getaway - High Speed II", 0.15);
     doTest(matcher, "getaway, the - high speed ii v1.1", "The Getaway - High Speed II", "v.1");
 
     //-------------
-    doTest(matcher, "Pet Semetary", "Stephen King's Pet Semetary");
+    doTest(matcher, "Pet Semetary", "Stephen King's Pet Semetary", 0.15);
     doTest(matcher, "Stephen King's Pet Semetary", "Pet Sematary of Stephen King", "Met Cimantery");
+
+    //-------------
+    doTest(matcher, "cavalcade", "ava", 0.5);
+    doTest(matcher, "cavalcade", "aval", 0.3);
+    doTest(matcher, "cavalcade", "avalc", 0.25);
+    doTest(matcher, "cavalcade", "avat", 0.75);
+    doTest(matcher, "avalc", "cavalcade", "cavalcade plus long");
   }
 
   /**
    * Check s1 is closed to s2 (distance < 2))
    */
-  private void doTest(TableMatcher matcher, String s1, String s2) {
+  private void doTest(TableMatcher matcher, String s1, String s2, double maxDistance) {
     double d = matcher.distance(s1, s2);
-    assertTrue(d < 2);
+    assertTrue(d <= maxDistance);
 
     d = matcher.distance(s2, s1);
-    assertTrue(d < 2);
+    assertTrue(d <= maxDistance);
   }
 
   /**
@@ -70,6 +79,7 @@ public class TableMatcherTest {
 
     doMatch(matcher, vpsDatabase, 1, "hmDnWj5wzP", "Attack on Titan (Original 2022)", "Attack on Titan", "original", 2022, debug);
     doMatch(matcher, vpsDatabase, 1, "vZDUDUii", "Cactus Canion (Bally 1998)", "Cactus Canion", "Bally", 1998, debug);
+    doMatch(matcher, vpsDatabase, 2, "fYRdzeuYYN", "Bad (Original 2022)", "Bad", "Original", 2021, debug);
   }
 
   private void doMatch(TableMatcher matcher, VPS vpsDatabase, int nbExpectedTables, String tableId, String fileName, String tableName, String manuf, int year, VpsDebug debug) {
