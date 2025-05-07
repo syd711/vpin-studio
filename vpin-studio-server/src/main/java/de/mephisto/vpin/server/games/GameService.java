@@ -434,7 +434,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
-    gameLifecycleService.notifyGameUpdated(game);
+    gameLifecycleService.notifyGameUpdated(game.getId());
     return getGame(game.getId());
   }
 
@@ -455,6 +455,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     gameDetails.setExtTableId(extTableId);
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepository.saveAndFlush(gameDetails);
+    gameLifecycleService.notifyGameUpdated(gameId);
     LOG.info("Linked game " + gameId + " to " + extTableId);
 
     // update the table in the frontend
@@ -468,6 +469,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       gameDetails.setTableVersion(version);
       gameDetailsRepository.saveAndFlush(gameDetails);
       LOG.info("Version saved for " + gameId + " to " + version);
+      gameLifecycleService.notifyGameUpdated(gameId);
       return true;
     }
     return false;
@@ -483,6 +485,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         updates = String.join(",", existingUpdates);
         gameDetails.setUpdates(updates);
         gameDetailsRepository.saveAndFlush(gameDetails);
+        gameLifecycleService.notifyGameUpdated(gameId);
         LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
     }

@@ -747,7 +747,7 @@ public class GameMediaService {
           }
 
           LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
-          gameLifecycleService.notifyGameDeleted(game);
+          gameLifecycleService.notifyGameDeleted(game.getId());
         }
 
         //delete the game folder if it is empty

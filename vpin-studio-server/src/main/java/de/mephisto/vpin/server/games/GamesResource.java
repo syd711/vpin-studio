@@ -105,7 +105,7 @@ public class GamesResource {
       throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
     }
     finally {
-      gameLifecycleService.notifyGameUpdated(game);
+      gameLifecycleService.notifyGameUpdated(game.getId());
     }
   }
 

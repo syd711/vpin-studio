@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.mephisto.vpin.restclient.webhooks.WebhookType.game;
+
 @Service
 public class GameLifecycleService {
   private final static Logger LOG = LoggerFactory.getLogger(GameLifecycleService.class);
@@ -27,21 +29,21 @@ public class GameLifecycleService {
     this.gameDataChangedListeners.add(listener);
   }
 
-  public void notifyGameCreated(@NonNull Game game) {
+  public void notifyGameCreated(int gameId) {
     for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
-      lifecycleListener.gameCreated(game);
+      lifecycleListener.gameCreated(gameId);
     }
   }
 
-  public void notifyGameUpdated(@NonNull Game game) {
+  public void notifyGameUpdated(int gameId) {
     for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
-      lifecycleListener.gameUpdated(game);
+      lifecycleListener.gameUpdated(gameId);
     }
   }
 
-  public void notifyGameDeleted(@NonNull Game game) {
+  public void notifyGameDeleted(int gameId) {
     for (GameLifecycleListener lifecycleListener : lifecycleListeners) {
-      lifecycleListener.gameDeleted(game);
+      lifecycleListener.gameDeleted(gameId);
     }
   }
 

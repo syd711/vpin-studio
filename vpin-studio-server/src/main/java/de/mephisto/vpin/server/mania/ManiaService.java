@@ -569,21 +569,21 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   //------------------------ GameLifecycleListener ---------------------------------------------------------------------
   @Override
-  public void gameCreated(@NonNull Game game) {
+  public void gameCreated(int gameId) {
     if (Features.MANIA_ENABLED) {
       synchronizeTables();
     }
   }
 
   @Override
-  public void gameUpdated(@NonNull Game game) {
+  public void gameUpdated(int gameId) {
     if (Features.MANIA_ENABLED) {
-      synchronizeTables();
+      //TODO synchronizeTables();
     }
   }
 
   @Override
-  public void gameDeleted(@NonNull Game game) {
+  public void gameDeleted(int gameId) {
     if (Features.MANIA_ENABLED) {
       synchronizeTables();
     }

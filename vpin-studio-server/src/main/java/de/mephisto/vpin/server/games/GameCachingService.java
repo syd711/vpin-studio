@@ -113,6 +113,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (game != null) {
       List<Game> games = allGames.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
       games.remove(game);
+      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
     }
     return getGame(gameId);
   }
@@ -226,7 +227,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     for (Game game : gamesByEmulator) {
       boolean newGame = applyGameDetails(game, false, false);
       if (newGame) {
-        gameLifecycleService.notifyGameCreated(game);
+        gameLifecycleService.notifyGameCreated(game.getId());
         highscoreService.scanScore(game, EventOrigin.INITIAL_SCAN);
       }
 
@@ -427,21 +428,22 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   //---------- Game Lifecycle Listener ---------------------
   @Override
-  public void gameCreated(@NonNull Game game) {
-    invalidate(game.getId());
+  public void gameCreated(int gameId) {
+    invalidate(gameId);
   }
 
   @Override
-  public void gameUpdated(@NonNull Game game) {
-    invalidate(game.getId());
+  public void gameUpdated(int gameId) {
+    invalidate(gameId);
   }
 
   @Override
-  public void gameDeleted(@NonNull Game game) {
+  public void gameDeleted(int gameId) {
     Collection<List<Game>> values = allGames.values();
     for (List<Game> value : values) {
-      if (value.contains(game)) {
-        value.remove(game);
+      Optional<Game> first = value.stream().filter(g -> g.getId() == gameId).findFirst();
+      if (first.isPresent()) {
+        value.remove(first.get());
         return;
       }
     }

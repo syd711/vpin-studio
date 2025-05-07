@@ -157,18 +157,18 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   //----------------------------------- Games Listener  ----------------------------------------------------------------
 
   @Override
-  public void gameCreated(@NonNull Game game) {
-    notifyGameHooks(game.getId(), WebhookEventType.create);
+  public void gameCreated(int gameId) {
+    notifyGameHooks(gameId, WebhookEventType.create);
   }
 
   @Override
-  public void gameUpdated(@NonNull Game game) {
-    notifyGameHooks(game.getId(), WebhookEventType.update);
+  public void gameUpdated(int gameId) {
+    notifyGameHooks(gameId, WebhookEventType.update);
   }
 
   @Override
-  public void gameDeleted(@NonNull Game game) {
-    notifyGameHooks(game.getId(), WebhookEventType.delete);
+  public void gameDeleted(int gameId) {
+    notifyGameHooks(gameId, WebhookEventType.delete);
   }
 
   @Override

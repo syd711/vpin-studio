@@ -246,7 +246,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
 
       tournamentTableInfo.setStarted(true);
       tournamentTablesRepository.saveAndFlush(tournamentTableInfo);
-      gameLifecycleService.notifyGameUpdated(game);
+      gameLifecycleService.notifyGameUpdated(game.getId());
     }
   }
 
