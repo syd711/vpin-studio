@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -55,6 +56,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   private FrontendStatusService frontendStatusService;
 
@@ -113,6 +117,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public void saveTableDetails(int id, TableDetails tableDetails) {
     getFrontendConnector().saveTableDetails(id, tableDetails);
+    gameLifecycleService.notifyGameDataChanged(id, tableDetails, tableDetails);
   }
 
   public void updateTableFileUpdated(int id) {

@@ -30,6 +30,8 @@ import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -51,8 +53,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -600,7 +600,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
   }
 
-  @NotNull
+  @NonNull
   private RecordingData createRecordingData(int id) {
     RecordingData recordingData = new RecordingData();
     recordingData.setGameId(id);
@@ -608,7 +608,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     return recordingData;
   }
 
-  @NotNull
+  @NonNull
   private HBox createScreenCell(GameRepresentation value, GameRepresentationModel model, VPinScreen screen) {
     HBox column = new HBox(3);
     column.setAlignment(Pos.CENTER);

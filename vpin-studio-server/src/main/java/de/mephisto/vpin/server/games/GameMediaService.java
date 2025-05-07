@@ -74,6 +74,9 @@ public class GameMediaService {
   private GameService gameService;
 
   @Autowired
+  private GameLifecycleService gameLifecycleService;
+
+  @Autowired
   private DefaultPictureService defaultPictureService;
 
   @Autowired
@@ -207,7 +210,7 @@ public class GameMediaService {
       runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
     }
 
-    gameService.notifyGameDataChanged(game, originalTableDetails, updatedTableDetails);
+    gameLifecycleService.notifyGameDataChanged(game.getId(), originalTableDetails, updatedTableDetails);
 
     return updatedTableDetails;
   }
@@ -744,7 +747,7 @@ public class GameMediaService {
           }
 
           LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
-          gameService.notifyGameDeleted(game);
+          gameLifecycleService.notifyGameDeleted(game);
         }
 
         //delete the game folder if it is empty

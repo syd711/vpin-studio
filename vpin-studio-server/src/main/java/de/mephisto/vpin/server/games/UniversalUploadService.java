@@ -86,6 +86,9 @@ public class UniversalUploadService {
   @Autowired
   private EmulatorService emulatorService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
@@ -111,8 +114,8 @@ public class UniversalUploadService {
 
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
+    Game game = gameService.getGame(uploadDescriptor.getGameId());
     try {
-      Game game = gameService.getGame(uploadDescriptor.getGameId());
       if (game == null) {
         throw new Exception("No game found for id " + uploadDescriptor.getGameId());
       }
@@ -137,6 +140,9 @@ public class UniversalUploadService {
     catch (Exception e) {
       LOG.error("Failed to import " + assetType.name() + " file:" + e.getMessage(), e);
       throw e;
+    }
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, null);
     }
   }
 
@@ -238,6 +244,7 @@ public class UniversalUploadService {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
     }
+    gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, null);
   }
 
   public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {

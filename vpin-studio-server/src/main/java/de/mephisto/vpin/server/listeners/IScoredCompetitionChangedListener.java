@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
@@ -21,16 +22,13 @@ public class IScoredCompetitionChangedListener extends DefaultCompetitionChangeL
   private final static Logger LOG = LoggerFactory.getLogger(IScoredCompetitionChangedListener.class);
 
   @Autowired
-  private CompetitionService competitionService;
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private GameService gameService;
 
   @Autowired
   private FrontendStatusService frontendStatusService;
-
-  @Autowired
-  private HighscoreService highscoreService;
 
   @Override
   public void competitionCreated(@NonNull Competition competition) {
@@ -67,6 +65,6 @@ public class IScoredCompetitionChangedListener extends DefaultCompetitionChangeL
 
   @Override
   public void afterPropertiesSet() {
-    competitionService.addCompetitionChangeListener(this);
+    competitionLifecycleService.addCompetitionChangeListener(this);
   }
 }

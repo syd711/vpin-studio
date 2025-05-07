@@ -50,43 +50,11 @@ public class CompetitionService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private IScoredService iScoredService;
-
-  @Autowired
-  private VpsService vpsService;
-
-  @Autowired
   private CompetitionValidator competitionValidator;
 
-  private final List<CompetitionChangeListener> listeners = new ArrayList<>();
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
-  public void addCompetitionChangeListener(CompetitionChangeListener c) {
-    this.listeners.add(c);
-  }
-
-  public void notifyCompetitionCreation(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionCreated(c);
-    }
-  }
-
-  public void notifyCompetitionStarted(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionStarted(c);
-    }
-  }
-
-  public void notifyCompetitionChanged(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionChanged(c);
-    }
-  }
-
-  public void notifyCompetitionDeleted(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionDeleted(c);
-    }
-  }
 
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
@@ -198,10 +166,10 @@ public class CompetitionService implements InitializingBean {
     Competition updated = competitionsRepository.saveAndFlush(c);
     LOG.info("Saved " + updated);
     if (isNew) {
-      notifyCompetitionCreation(updated);
+      competitionLifecycleService.notifyCompetitionCreation(updated);
     }
     else {
-      notifyCompetitionChanged(updated);
+      competitionLifecycleService.notifyCompetitionChanged(updated);
     }
     return getCompetition(c.getId());
   }
@@ -226,11 +194,11 @@ public class CompetitionService implements InitializingBean {
     for (Competition activeCompetition : activeCompetitions) {
       if (activeCompetition.isActive() && !activeCompetition.isStarted()) {
         LOG.info("Starting " + activeCompetition);
-        notifyCompetitionStarted(activeCompetition);
-
         //update state
         activeCompetition.setStarted(true);
         competitionsRepository.saveAndFlush(activeCompetition);
+
+        competitionLifecycleService.notifyCompetitionStarted(activeCompetition);
       }
 
       if (activeCompetition.isActive() && activeCompetition.isStarted() && activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -284,9 +252,7 @@ public class CompetitionService implements InitializingBean {
       player = discordService.getPlayerByInitials(finishedCompetition.getDiscordServerId(), finishedCompetition.getWinnerInitials());
     }
 
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionFinished(finishedCompetition, player, competitionScore);
-    }
+    competitionLifecycleService.notifyCompetitionFinished(finishedCompetition, player, competitionScore);
     return finishedCompetition;
   }
 
@@ -312,7 +278,7 @@ public class CompetitionService implements InitializingBean {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
       competitionsRepository.deleteById(id);
-      notifyCompetitionDeleted(c.get());
+      competitionLifecycleService.notifyCompetitionDeleted(c.get());
       LOG.error("Deleted competition " + c.get().getName());
       return true;
     }

@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.util.NetworkUtil;
 import de.mephisto.vpin.restclient.webhooks.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleListener;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -15,7 +15,6 @@ import de.mephisto.vpin.server.players.PlayerLifecycleListener;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,7 +36,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   private HighscoreService highscoreService;
 
   @Autowired
-  private GameService gameService;
+  private GameLifecycleService gameLifecycleService;
 
   private WebhooksRestClient webhooksRestClient;
   private WebhookSettings webhookSettings;
@@ -64,7 +63,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     }
   }
 
-  private void handleWebhookSet(@NonNull WebhookSet webhookSet, @NonNull Webhook webhook, @NonNull WebhookType webhookType, @NotNull WebhookEventType eventType, long entityId) {
+  private void handleWebhookSet(@NonNull WebhookSet webhookSet, @NonNull Webhook webhook, @NonNull WebhookType webhookType, @NonNull WebhookEventType eventType, long entityId) {
     if (!NetworkUtil.isValidUrl(webhook.getEndpoint())) {
       LOG.info("{} / {} not fired, no valid endpoint set.", webhookSet.getName(), eventType.name());
       return;
@@ -131,44 +130,44 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
   //----------------------------------- Scores Listener ----------------------------------------------------------------
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     notifyScoreHooks(event.getGame().getId(), WebhookEventType.update);
   }
 
   @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
     //not used
   }
   //----------------------------------- Player Listener ----------------------------------------------------------------
 
   @Override
-  public void playerCreated(@NotNull Player player) {
+  public void playerCreated(@NonNull Player player) {
     notifyPlayerHooks(player.getId(), WebhookEventType.create);
   }
 
   @Override
-  public void playerUpdated(@NotNull Player player) {
+  public void playerUpdated(@NonNull Player player) {
     notifyPlayerHooks(player.getId(), WebhookEventType.update);
   }
 
   @Override
-  public void playerDeleted(@NotNull Player player) {
+  public void playerDeleted(@NonNull Player player) {
     notifyPlayerHooks(player.getId(), WebhookEventType.delete);
   }
   //----------------------------------- Games Listener  ----------------------------------------------------------------
 
   @Override
-  public void gameCreated(@NotNull Game game) {
+  public void gameCreated(@NonNull Game game) {
     notifyGameHooks(game.getId(), WebhookEventType.create);
   }
 
   @Override
-  public void gameUpdated(@NotNull Game game) {
+  public void gameUpdated(@NonNull Game game) {
     notifyGameHooks(game.getId(), WebhookEventType.update);
   }
 
   @Override
-  public void gameDeleted(@NotNull Game game) {
+  public void gameDeleted(@NonNull Game game) {
     notifyGameHooks(game.getId(), WebhookEventType.delete);
   }
 
@@ -177,7 +176,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     webhooksRestClient = new WebhooksRestClient();
 
     preferencesService.addChangeListener(this);
-    gameService.addGameLifecycleListener(this);
+    gameLifecycleService.addGameLifecycleListener(this);
     highscoreService.addHighscoreChangeListener(this);
 
     preferenceChanged(PreferenceNames.WEBHOOK_SETTINGS, null, null);

@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
@@ -40,6 +41,9 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -171,6 +175,6 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    competitionService.addCompetitionChangeListener(this);
+    competitionLifecycleService.addCompetitionChangeListener(this);
   }
 }

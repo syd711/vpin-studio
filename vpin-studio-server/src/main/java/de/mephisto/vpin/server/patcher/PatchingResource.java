@@ -1,14 +1,12 @@
 package de.mephisto.vpin.server.patcher;
 
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameMediaService;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.UniversalUploadService;
+import de.mephisto.vpin.server.games.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +39,9 @@ public class PatchingResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   @PostMapping("/process")
   public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
@@ -100,6 +101,7 @@ public class PatchingResource {
     finally {
       uploadDescriptor.finalizeUpload();
       LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIF, null);
     }
     LOG.info("****************************** /Patcher Finished *************************************");
     return uploadDescriptor;

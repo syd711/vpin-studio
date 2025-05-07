@@ -28,6 +28,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,7 +245,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return result;
   }
 
-  private @NonNull List<ValidationState> validateScreenAssets(@NonNull Game game, boolean findFirst, List<ValidationState> result) {
+  @Nullable
+  private List<ValidationState> validateScreenAssets(@NonNull Game game, boolean findFirst, List<ValidationState> result) {
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
       if (!validScreenAssets(game, VPinScreen.Audio)) {
         result.add(ValidationStateFactory.create(CODE_NO_AUDIO));

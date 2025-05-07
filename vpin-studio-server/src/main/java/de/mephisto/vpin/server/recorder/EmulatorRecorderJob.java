@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.WindowsUtil;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -22,13 +24,15 @@ import java.util.List;
 public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
   public static final int EMULATOR_WAITING_TIMEOUT_SECONDS = 60;
+  private final GameLifecycleService gameLifecycleService;
   private final VPXService vpxService;
   private final FPService fpService;
 
   GameRecorder gameRecorder;
 
-  public EmulatorRecorderJob(DMDPositionService dmdPositionService, GameService gameService, VPXService vpxService, FPService fpService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
-    super(dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
+  public EmulatorRecorderJob(GameLifecycleService gameLifecycleService, DMDPositionService dmdPositionService, GameService gameService, VPXService vpxService, FPService fpService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+    super(gameLifecycleService, dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
+    this.gameLifecycleService = gameLifecycleService;
     this.vpxService = vpxService;
     this.fpService = fpService;
   }
@@ -121,6 +125,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         //this will kill the emulators too
         frontend.killFrontend();
         gameRecorder.finalizeRecordings();
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
     LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");

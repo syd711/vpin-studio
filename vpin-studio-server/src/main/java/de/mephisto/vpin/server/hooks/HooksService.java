@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.hooks.HookCommand;
 import de.mephisto.vpin.restclient.hooks.HookList;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class HooksService {
     return result;
   }
 
-  @NotNull
+  @NonNull
   private static File getHooksFolder() {
     return new File(SystemInfo.RESOURCES, "hooks");
   }

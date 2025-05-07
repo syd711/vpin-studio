@@ -315,7 +315,12 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
           folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
         }
-        if (emulatorRepresentation.getAltColorDirectory() != null) {
+        if (folder.exists()) {
+          SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltSoundDirectory()));
+          return;
+        }
+
+        if (!folder.exists() && emulatorRepresentation.getAltColorDirectory() != null) {
           File file = new File(emulatorRepresentation.getAltColorDirectory());
           if (file.exists()) {
             SystemUtil.openFolder(folder, file);

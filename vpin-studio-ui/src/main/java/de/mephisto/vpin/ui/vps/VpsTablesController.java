@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -27,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -346,7 +346,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   }
 
   @Override
-  public void vpsTableChanged(@NotNull String vpsTableId) {
+  public void vpsTableChanged(@NonNull String vpsTableId) {
     Platform.runLater(() -> {
       VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
       Optional<VpsTableModel> first = tableView.getItems().stream().filter(i -> i.getVpsTable().getId().equals(tableById.getId())).findFirst();

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.WheelIconDelete;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mania.ManiaService;
@@ -48,6 +49,9 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
 
   @Autowired
   private TournamentTablesRepository tournamentTablesRepository;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   @Autowired
   private ManiaService maniaService;
@@ -242,6 +246,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
 
       tournamentTableInfo.setStarted(true);
       tournamentTablesRepository.saveAndFlush(tournamentTableInfo);
+      gameLifecycleService.notifyGameUpdated(game);
     }
   }
 

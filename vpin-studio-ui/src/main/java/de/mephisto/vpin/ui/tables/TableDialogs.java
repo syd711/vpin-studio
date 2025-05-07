@@ -45,7 +45,6 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -335,7 +334,7 @@ public class TableDialogs {
     return true;
   }
 
-  @NotNull
+  @NonNull
   private static String getDataManagerFxml() {
     double width = Studio.stage.getWidth();
     String fxml = "dialog-table-asset-manager.fxml";

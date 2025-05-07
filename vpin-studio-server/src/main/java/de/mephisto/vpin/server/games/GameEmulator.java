@@ -272,10 +272,18 @@ public class GameEmulator {
     return new File(getMameFolder(), "altsound");
   }
 
+  public String getAltSoundDirectory() {
+    return getAltSoundFolder().getAbsolutePath();
+  }
+
   @NonNull
   @JsonIgnore
   public File getAltColorFolder() {
     return new File(getMameFolder(), "altcolor");
+  }
+
+  public String getAltColorDirectory() {
+    return getAltColorFolder().getAbsolutePath();
   }
 
   @NonNull
