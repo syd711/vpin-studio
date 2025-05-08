@@ -4,8 +4,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.ini.IniRepresentation;
-import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
