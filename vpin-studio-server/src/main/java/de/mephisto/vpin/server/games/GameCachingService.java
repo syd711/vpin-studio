@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
@@ -107,6 +106,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   private ServerSettings serverSettings;
 
   private final Map<Integer, List<Game>> allGames = new HashMap<>();
+
+  public void clearCache() {
+    allGames.clear();
+  }
 
   public Game invalidate(int gameId) {
     Game game = getGame(gameId);
@@ -425,8 +428,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
   }
 
-
   //---------- Game Lifecycle Listener ---------------------
+
   @Override
   public void gameCreated(int gameId) {
     invalidate(gameId);
@@ -449,8 +452,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     }
   }
 
-
   //---------- GameDataChange Listener ---------------------
+
   @Override
   public void gameDataChanged(@NonNull GameDataChangedEvent changedEvent) {
     invalidate(changedEvent.getGameId());
@@ -490,8 +493,8 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       }
     }
   }
-
   //---------- Competition Change Listener ---------------------
+
   @Override
   public void competitionStarted(@NonNull Competition competition) {
     invalidate(competition.getGameId());

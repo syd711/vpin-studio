@@ -4,9 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HookCommand {
-  private String hooks;
+  private String name;
   private List<String> commands = new ArrayList<>();
   private String result;
+  private int gameId;
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
+  }
 
   public String getResult() {
     return result;
@@ -16,12 +25,12 @@ public class HookCommand {
     this.result = result;
   }
 
-  public String getHooks() {
-    return hooks;
+  public String getName() {
+    return name;
   }
 
-  public void setHooks(String hooks) {
-    this.hooks = hooks;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public List<String> getCommands() {

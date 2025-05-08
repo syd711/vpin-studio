@@ -1914,6 +1914,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    ToolbarController.INSTANCE.setTableOverviewController(this);
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
 
     //manually fix new columns

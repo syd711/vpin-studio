@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
@@ -98,6 +99,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   public static ToolbarController INSTANCE;
   private Stage monitorStage;
+  private TableOverviewController tableOverviewController;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -374,7 +376,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
           MenuItem item = new MenuItem(hook);
           item.setOnAction(actionEvent -> {
             HookCommand cmd = new HookCommand();
-            cmd.setHooks(hook);
+            cmd.setName(hook);
+            cmd.setGameId(tableOverviewController.getSelectedModel() != null ? tableOverviewController.getSelectedModel().getGameId() : -1);
             client.getHooksService().executeHook(cmd);
           });
           item.setGraphic(WidgetFactory.createIcon("mdi2m-motion-play-outline"));
@@ -417,5 +420,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     else {
       WidgetFactory.showAlert(Studio.stage, "Error", "Connection failed to " + connection.getName() + "/" + connection.getIp());
     }
+  }
+
+  public void setTableOverviewController(TableOverviewController tableOverviewController) {
+    this.tableOverviewController = tableOverviewController;
   }
 }

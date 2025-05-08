@@ -159,6 +159,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     emulatorService.loadEmulators();
     mameRomAliasService.clearCache();
     highscoreService.refreshAvailableScores();
+    gameCachingService.clearCache();
+    getKnownGames(-1);
     return true;
   }
 
