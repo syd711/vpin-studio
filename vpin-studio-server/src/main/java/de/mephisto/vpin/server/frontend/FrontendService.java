@@ -199,7 +199,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  //TODO no more used ?
   public int getVersion() {
     return getFrontendConnector().getVersion();
   }
@@ -503,13 +502,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
     switch (screen) {
       case Other2: {
-        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_OTHER);
+        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
       }
       case GameHelp: {
-        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_HELP);
+        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
       }
       case GameInfo: {
-        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_FLYER);
+        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
       }
       default: {
       }

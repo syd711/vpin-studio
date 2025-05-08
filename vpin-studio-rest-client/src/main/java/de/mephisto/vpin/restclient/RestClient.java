@@ -65,7 +65,6 @@ public class RestClient implements ClientHttpRequestInterceptor {
     List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
     interceptors.add(this);
 
-    //TODO
 //    SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
 //    httpRequestFactory.setConnectTimeout(TIMEOUT);
 //    httpRequestFactory.setReadTimeout(TIMEOUT);
@@ -91,7 +90,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
   }
 
   public void setErrorHandler(VPinStudioClientErrorHandler errorHandler) {
-//    this.errorHandler = errorHandler; //TODO
+//    this.errorHandler = errorHandler;
   }
 
   public String getBaseUrl() {

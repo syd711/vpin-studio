@@ -828,7 +828,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public FrontendControl getFunction(@NonNull String description) {
+  public FrontendControl getFrontendControl(@NonNull String description) {
     FrontendControl f = null;
     return f;
   }
@@ -841,7 +841,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public FrontendControl getPinUPControlFor(VPinScreen screen) {
+  public FrontendControl getFrontendControlFor(VPinScreen screen) {
     return null;
   }
 

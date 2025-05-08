@@ -578,7 +578,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   @Override
   public void gameUpdated(int gameId) {
     if (Features.MANIA_ENABLED) {
-      //TODO synchronizeTables();
+      //do not sync for games updates as this may be an action for all tables
     }
   }
 

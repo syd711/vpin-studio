@@ -122,7 +122,6 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
     return new ByteArrayInputStream(bytes);
   }
 
-  //TODO mpf
   @Override
   public InputStream getPersistentCachedUrlImage(String cache, String url) {
     try {

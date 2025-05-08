@@ -153,10 +153,9 @@ public interface FrontendConnector {
 
   // Pinup control management
 
-  FrontendControl getPinUPControlFor(VPinScreen screen);
-  //TODO rename getControl
+  FrontendControl getFrontendControlFor(VPinScreen screen);
 
-  FrontendControl getFunction(String function);
+  FrontendControl getFrontendControl(String function);
 
   @NonNull
   FrontendControls getControls();
