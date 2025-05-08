@@ -443,6 +443,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       GameDetails gameDetails = gameDetailsRepository.findByPupId(log.getGameId());
       gameDetails.setEventLog(log.toJson());
       gameDetailsRepository.saveAndFlush(gameDetails);
+      gameLifecycleService.notifyGameUpdated(log.getGameId());
       LOG.info("Saved event log for " + log.getGameId());
     }
     catch (Exception e) {
@@ -507,6 +508,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
             gameDetails.setUpdates(updates);
             gameDetailsRepository.saveAndFlush(gameDetails);
             LOG.info("Resetted updates for " + gameDetails.getPupId() + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
+            gameLifecycleService.notifyGameUpdated(gameDetails.getPupId());
           }
         }
       }
