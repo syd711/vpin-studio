@@ -17,7 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service //TODO not a service
+@Service
 public class CompetitionNotificationsListener implements CompetitionChangeListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionNotificationsListener.class);
 
