@@ -483,15 +483,17 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         }
         return;
       }
+      case INI:
+      case POV:
       case DIRECTB2S: {
         Object asset = changedEvent.getAsset();
         if (asset instanceof String) {
           String filename = String.valueOf(asset);
-          String directB2S = FilenameUtils.getBaseName(filename);
+          String fileAssetBaseName = FilenameUtils.getBaseName(filename);
           List<Game> knownGames = getKnownGames(-1);
           for (Game knownGame : knownGames) {
             String gameBaseName = FilenameUtils.getBaseName(knownGame.getGameFileName());
-            if (gameBaseName.equalsIgnoreCase(directB2S)) {
+            if (gameBaseName.equalsIgnoreCase(fileAssetBaseName)) {
               invalidate(knownGame.getId());
             }
           }
