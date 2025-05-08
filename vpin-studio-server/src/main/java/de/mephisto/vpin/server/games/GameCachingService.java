@@ -36,6 +36,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -486,10 +487,18 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         Object asset = changedEvent.getAsset();
         if (asset instanceof String) {
           String filename = String.valueOf(asset);
+          String directB2S = FilenameUtils.getBaseName(filename);
+          List<Game> knownGames = getKnownGames(-1);
+          for (Game knownGame : knownGames) {
+            String gameBaseName = FilenameUtils.getBaseName(knownGame.getGameFileName());
+            if (gameBaseName.equalsIgnoreCase(directB2S)) {
+              invalidate(knownGame.getId());
+            }
+          }
         }
       }
       default: {
-        LOG.warn("Unhandled asset change event found: {}", changedEvent.getAsset());
+//        LOG.warn("Unhandled asset change event found: {}", changedEvent.getAsset());
       }
     }
   }
