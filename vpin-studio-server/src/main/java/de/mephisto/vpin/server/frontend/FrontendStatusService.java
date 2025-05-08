@@ -293,7 +293,7 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
 
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+    LOG.info("{} initialization finished, running frontend version {}", this.getClass().getSimpleName(), frontendService.getVersion());
   }
 
   @Override

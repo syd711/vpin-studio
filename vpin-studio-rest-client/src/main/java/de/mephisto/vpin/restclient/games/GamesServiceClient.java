@@ -178,7 +178,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/eventlog/" + gameId, HighscoreEventLog.class);
   }
 
-  //TODO there is no method to get a single cached game???
   public GameRepresentation getGameCached(int id) {
     Collection<List<GameRepresentation>> values = allGames.values();
     for (List<GameRepresentation> value : values) {
@@ -392,7 +391,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   private List<GameRepresentation> getGamesCached(int emulatorId) {
-    //TODO try to avoid this! We should never fetch games for ALL emulators at once
+    //TRY TO AVOID THIS! WE SHOULD NEVER FETCH GAMES FOR ALL EMULATORS AT ONCE!!!
     if (emulatorId == -1) {
       LOG.warn("******************************** Bulk Game Refresh Call *********************************************");
       List<GameRepresentation> games = new ArrayList<>();

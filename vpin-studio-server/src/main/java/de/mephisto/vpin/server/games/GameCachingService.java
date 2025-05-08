@@ -50,7 +50,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener, FrontendStatusChangeListener {
+public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
 
   @Autowired
@@ -530,12 +530,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   }
 
 
-  //---------- Frontend Status Listener ---------------------
-
-  @Override
-  public void frontendLaunched() {
-    //TODO
-  }
+  //---------- InitializingBean----------------------------------
 
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -544,15 +539,5 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     gameLifecycleService.addGameLifecycleListener(this);
     gameLifecycleService.addGameDataChangedListener(this);
     competitionLifecycleService.addCompetitionChangeListener(this);
-  }
-
-  @Override
-  public void frontendExited() {
-
-  }
-
-  @Override
-  public void frontendRestarted() {
-
   }
 }

@@ -202,7 +202,6 @@ public class GameMediaService {
 
     //rename the game name, which results in renaming all assets
     if (!updatedTableDetails.getGameName().equals(originalTableDetails.getGameName())) {
-      //TODO this smells!
       renameGameMedia(game, originalTableDetails.getGameName(), updatedTableDetails.getGameName());
     }
 

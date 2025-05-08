@@ -326,7 +326,7 @@ public class SystemResource {
       File disabled = new File("./server.vbs.bak");
       File file = new File("./server.vbs");
       if (disabled.exists()) {
-        FileUtils.moveFile(disabled, file);//TODO mpf
+        FileUtils.moveFile(disabled, file);
         return true;
       }
       return ServerInstallationUtil.install();
