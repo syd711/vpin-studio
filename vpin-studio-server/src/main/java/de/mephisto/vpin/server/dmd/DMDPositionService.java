@@ -28,7 +28,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import javafx.scene.control.CheckBox;
 import de.mephisto.vpin.server.converter.MediaConverterService;
 
 import org.apache.commons.configuration2.INIConfiguration;
@@ -240,7 +239,8 @@ public class DMDPositionService {
           double x = dmdDisplay.getX();
           double y = dmdDisplay.getY();
 
-          DMDInfoZone zone = new DMDInfoZone(screen, score.getX() * ratioX + x, score.getY() * ratioY + y, score.getWidth() * ratioX, score.getHeight() * ratioY);
+          DMDInfoZone zone = new DMDInfoZone(screen, (int) (score.getX() * ratioX + x), (int) (score.getY() * ratioY + y), 
+            (int) (score.getWidth() * ratioX), (int) (score.getHeight() * ratioY));
           alphaNumZones.add(zone);
         }
       }
@@ -314,7 +314,7 @@ public class DMDPositionService {
     reposition(dmdinfo, display.getWidth(), display.getHeight());
   }
 
-  private void reposition(DMDInfoZone dmdinfo, double screenWidth, double screenHeight) {
+  private void reposition(DMDInfoZone dmdinfo, int screenWidth, int screenHeight) {
     // optionally reposition the dmd within the bound of the new screen
     // mind dmdinfo coordinates are relatives so no need to consider x,y of the screen 
     if (dmdinfo.getX() < 0) {
@@ -387,10 +387,10 @@ public class DMDPositionService {
             // coordinates are in pixels, transform in screen coordinate
             factorX /= buffered.getWidth();
             factorY /= buffered.getHeight();
-            dmdinfo.setX(position.get(0) * factorX + dmdinfo.getMargin());
-            dmdinfo.setY(position.get(1) * factorY + dmdinfo.getMargin());
-            dmdinfo.setWidth((position.get(2) - position.get(0)) * factorX - 2 * dmdinfo.getMargin());
-            dmdinfo.setHeight((position.get(3) - position.get(1)) * factorY - 2 * dmdinfo.getMargin());
+            dmdinfo.setX((int) (position.get(0) * factorX + dmdinfo.getMargin()));
+            dmdinfo.setY((int) (position.get(1) * factorY + dmdinfo.getMargin()));
+            dmdinfo.setWidth((int) ((position.get(2) - position.get(0)) * factorX - 2 * dmdinfo.getMargin()));
+            dmdinfo.setHeight((int) ((position.get(3) - position.get(1)) * factorY - 2 * dmdinfo.getMargin()));
           }
         }
         catch (IOException ioe) {
@@ -725,12 +725,12 @@ public class DMDPositionService {
     return conf.containsKey("ignorear") ? !conf.getBoolean("ignorear") : true;
   }
 
-  private double safeGet(SubnodeConfiguration conf, String key) {
+  private int safeGet(SubnodeConfiguration conf, String key) {
     return safeGet(conf, key, 0);
   }
 
-  private double safeGet(SubnodeConfiguration conf, String key, double defValue) {
-    return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getDouble(key) : defValue;
+  private int safeGet(SubnodeConfiguration conf, String key, int defValue) {
+    return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getInt(key) : defValue;
   }
 
   private boolean safeGetBoolean(SubnodeConfiguration conf, String key, boolean defValue) {

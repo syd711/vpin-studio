@@ -7,10 +7,10 @@ public class DMDInfoZone {
   /** The screen where the DMD is displayed */  
   private VPinScreen onScreen;
   
-  protected double x;
-  protected double y;
-  protected double width;
-  protected double height;
+  protected int x;
+  protected int y;
+  protected int width;
+  protected int height;
 
   /** additional marging used to autoposition the dmd */
   private int margin;
@@ -18,7 +18,7 @@ public class DMDInfoZone {
   public DMDInfoZone() {
   }
 
-  public DMDInfoZone(VPinScreen onScreen, double x, double y, double width, double height) {
+  public DMDInfoZone(VPinScreen onScreen, int x, int y, int width, int height) {
     this.onScreen = onScreen;
     this.x = x;
     this.y = y;
@@ -34,35 +34,35 @@ public class DMDInfoZone {
 		this.onScreen = onScreen;
 	}
 
-  public double getX() {
+  public int getX() {
     return x;
   }
 
-  public void setX(double x) {
+  public void setX(int x) {
     this.x = x;
   }
 
-  public double getY() {
+  public int getY() {
     return y;
   }
 
-  public void setY(double y) {
+  public void setY(int y) {
     this.y = y;
   }
 
-  public double getWidth() {
+  public int getWidth() {
     return width;
   }
 
-  public void setWidth(double width) {
+  public void setWidth(int width) {
     this.width = width;
   }
 
-  public double getHeight() {
+  public int getHeight() {
     return height;
   }
 
-  public void setHeight(double height) {
+  public void setHeight(int height) {
     this.height = height;
   }
 
@@ -76,25 +76,25 @@ public class DMDInfoZone {
 
   //-----------------------
 
-  public double getCenterX() {
+  public int getCenterX() {
     return x + width / 2;
   }
-  public double getCenterY() {
+  public int getCenterY() {
     return y + height / 2;
   }
 
 
   public void adjustAspectRatio(DMDAspectRatio aspectRatio) {
     if (aspectRatio != null && aspectRatio.isKeepRatio()) {
-      if (width / height > aspectRatio.getValue()) {
+      if (width > height * aspectRatio.getValue()) {
         // adjust width
         x += (width - aspectRatio.getValue() * height) / 2;
-        width = aspectRatio.getValue() * height;
+        width = (int) (aspectRatio.getValue() * height);
       }
       else {
         // adjust height
         y += (height - width / aspectRatio.getValue()) / 2;
-        height = width / aspectRatio.getValue();
+        height = (int) (width / aspectRatio.getValue());
       }
     }
   }

@@ -64,7 +64,7 @@ public class BeanBinder {
     });
   }
 
-  public void bindSpinner(Spinner spinner, Object beanObject, String property, int min, int max) {
+  public void bindSpinner(Spinner<Integer> spinner, Object beanObject, String property, int min, int max) {
     int value = getIntProperty(beanObject, property);
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, value);
     spinner.setValueFactory(factory);
@@ -74,7 +74,7 @@ public class BeanBinder {
     }, MAX_DEBOUNCE));
   }
 
-  public void bindSpinner(Spinner spinner, Object beanObject, String property) {
+  public void bindSpinner(Spinner<Integer> spinner, Object beanObject, String property) {
     bindSpinner(spinner, beanObject, property, 0, 2000);
   }
 

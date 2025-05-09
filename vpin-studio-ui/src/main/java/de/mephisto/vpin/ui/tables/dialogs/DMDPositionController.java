@@ -26,8 +26,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.scene.control.*;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -40,7 +40,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +49,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,13 +124,13 @@ public class DMDPositionController implements Initializable, DialogController {
   private GridPane autoPositionPane;
 
   @FXML
-  private Spinner<Double> xSpinner;
+  private Spinner<Integer> xSpinner;
   @FXML
-  private Spinner<Double> ySpinner;
+  private Spinner<Integer> ySpinner;
   @FXML
-  private Spinner<Double> widthSpinner;
+  private Spinner<Integer> widthSpinner;
   @FXML
-  private Spinner<Double> heightSpinner;
+  private Spinner<Integer> heightSpinner;
 
   @FXML
   private Spinner<Integer> marginSpinner;
@@ -163,6 +160,10 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private ImageView fullDMDImage;
+  /** The zoom factor of the image from screenres to ImageView */
+  private double zoom = 1.0;
+  /** The bounding box of the image */
+  private BoundingBox bounds;
 
   @FXML
   private VBox noFullDMDPane;
@@ -182,26 +183,10 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private DMDInfoZone selectedZone;
 
-  // The image bounds
-  private ObjectProperty<Bounds> area = new SimpleObjectProperty<>();
-
-  private ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
-  
-  private SimpleObjectProperty<DMDAspectRatio> ratioProperty;
-
-  /**
-   * The converter for displaying numbers in spinners
-   */
-  private final DecimalFormat df = new DecimalFormat("#.##");
-
-  /**
-   * The zoom factor : <screen coordinates> x zoom = <resizer pixels>
-   */
-  private DoubleProperty zoom = new SimpleDoubleProperty(1);
-
   private ToggleGroup ratioRadioGroup;
-
-
+  
+  
+  
   @FXML
   private void onNext(ActionEvent e) {
     clearGame();
@@ -358,8 +343,6 @@ public class DMDPositionController implements Initializable, DialogController {
     saveCloseLocallyBtn.setVisible(false);
     saveGloballyBtn.setVisible(false);
 
-    ratioProperty = new SimpleObjectProperty<>(DMDAspectRatio.ratioOff);
-
     // create a toggle group
     ratioRadioGroup = new ToggleGroup();
     ratioOff.setToggleGroup(ratioRadioGroup);
@@ -376,8 +359,10 @@ public class DMDPositionController implements Initializable, DialogController {
       @Override
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         if(newValue != null) {
-          ratioProperty.setValue((DMDAspectRatio) newValue.getUserData());
-
+          DMDAspectRatio aspectRatio = (DMDAspectRatio) newValue.getUserData();
+          for (DMDPositionResizer dragBox : dragBoxes) {
+            dragBox.setAspectRatio(aspectRatio.getValue());
+          }
         }
       }
     });
@@ -398,10 +383,6 @@ public class DMDPositionController implements Initializable, DialogController {
         //dragBox.setWidth(rect.getWidth());
         //dragBox.setHeight(rect.getHeight());
       //});
-
-    // now set the existing bounds, avoid null values
-    Bounds bounds = fullDMDImage.getLayoutBounds();
-    area.set(bounds);
 
     emptyImage = new Rectangle();
     emptyImage.setFill(Color.grayRgb(30));
@@ -467,6 +448,9 @@ public class DMDPositionController implements Initializable, DialogController {
       }
     });
 
+    // by default hide the noFullDMD Pane
+    noFullDMDPane.setVisible(false);
+
     // add the overlay for DMD image drag    
     FileDragEventHandler.install(imagepane, fullDMDImage, true, "png", "jpg", "jpeg")
         .setOnDragFilter(files -> {
@@ -481,41 +465,12 @@ public class DMDPositionController implements Initializable, DialogController {
         });
   }
 
-  private void configureSpinner(Spinner<Double> spinner, ObjectProperty<Double> property,
-                                ReadOnlyObjectProperty<Double> minProperty, ReadOnlyObjectProperty<Double> maxProperty) {
+  private void configureSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
+                                ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {
 
-    SpinnerValueFactory.DoubleSpinnerValueFactory factory =
-        new SpinnerValueFactory.DoubleSpinnerValueFactory(minProperty.get(), maxProperty.get());
-
-    // install a converter that convert pixels into screen coordinates using the zoom factor
-    factory.setConverter(new StringConverter<Double>() {
-      @Override
-      public String toString(Double value) {
-        if (value == null) {
-          return "";
-        }
-        Double screenValue = value / zoom.get();
-        return df.format(screenValue);
-      }
-
-      @Override
-      public Double fromString(String value) {
-        if (StringUtils.isBlank(value)) {
-          return null;
-        }
-        try {
-          double screenValue = df.parse(value).doubleValue();
-          return screenValue * zoom.get();
-        }
-        catch (ParseException ex) {
-          throw new RuntimeException(ex);
-        }
-      }
-    });
-
+    IntegerSpinnerValueFactory factory = new IntegerSpinnerValueFactory(minProperty.get(), maxProperty.get());
     spinner.setValueFactory(factory);
     spinner.setEditable(true);
-
     factory.valueProperty().bindBidirectional(property);
     factory.minProperty().bind(minProperty);
     factory.maxProperty().bind(maxProperty);
@@ -752,10 +707,8 @@ public class DMDPositionController implements Initializable, DialogController {
     }
 
     // calculate our zoom
-    zoom.set(fitWidth / screenWidth);
-    // configure min / max of spinners 
-    Bounds bounds = new BoundingBox(0, 0, fitWidth, fitHeight);
-    area.set(bounds);    
+      this.zoom = fitWidth / screenWidth;
+      this.bounds = new BoundingBox(0.0, 0.0, (fitWidth + 0.0) / zoom, fitHeight / zoom);
   }
 
   private void loadDragBoxes(VPinScreen onScreen, boolean forceRefresh) {
@@ -774,15 +727,21 @@ public class DMDPositionController implements Initializable, DialogController {
         if (zone.getOnScreen().equals(onScreen)) {
 
           // The lime box that is used to position the DMD
-          DMDPositionResizer dragBox = new DMDPositionResizer(area, zoom, ratioProperty, color);
+          DMDPositionResizer dragBox = new DMDPositionResizer();
           dragBox.addToPane(imagepane);
           dragBoxes.add(dragBox);
 
+          dragBox.setZoom(zoom);
           dragBox.setWidth(zone.getWidth());
           dragBox.setHeight(zone.getHeight());
           dragBox.setX(zone.getX());
           dragBox.setY(zone.getY());
-      
+          dragBox.setBounds(bounds);
+
+          Toggle toggleValue = ratioRadioGroup.getSelectedToggle();
+          Double aspectRatio = toggleValue != null ? ((DMDAspectRatio) toggleValue.getUserData()).getValue() : null;
+          dragBox.setAspectRatio(aspectRatio);
+
           dragBox.setUserData(zone);
           if (zone == selectedZone) {
             selectedBox = dragBox;
