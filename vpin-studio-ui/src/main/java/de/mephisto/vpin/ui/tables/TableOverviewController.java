@@ -908,7 +908,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
 
   @FXML
-  private void onReload(ActionEvent e) {
+  public void onReload() {
     ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
     this.doReload();
   }

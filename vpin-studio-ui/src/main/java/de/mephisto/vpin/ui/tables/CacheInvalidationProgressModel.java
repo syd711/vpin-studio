@@ -20,7 +20,7 @@ public class CacheInvalidationProgressModel extends ProgressModel<String> {
   private final Iterator<String> iterator;
 
   public CacheInvalidationProgressModel() {
-    super("Invalidating Server Caches");
+    super("Reloading Games");
     this.msgs = Arrays.asList("game");
     this.iterator = msgs.iterator();
   }

@@ -268,13 +268,8 @@ public class PinVolSettingsController implements Initializable {
       WidgetFactory.showAlert(stage, "Error", "Failed to save PinVol update: " + e.getMessage());
     }
 
-    if (games.size() < 10) {
-      for (GameRepresentation game : games) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
-    }
-    else {
-      EventManager.getInstance().notifyTablesChanged();
+    for (GameRepresentation game : games) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 

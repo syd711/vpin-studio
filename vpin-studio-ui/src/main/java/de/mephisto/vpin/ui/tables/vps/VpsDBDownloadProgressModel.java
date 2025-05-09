@@ -49,10 +49,15 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
+    EventManager.getInstance().notifyTablesChanged();
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       Studio.client.getVpsService().update();
-      EventManager.getInstance().notifyTablesChanged();
     }
     catch (Exception e) {
       LOG.error("VPS database download failed: " + e.getMessage(), e);
