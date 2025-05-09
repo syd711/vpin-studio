@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
@@ -58,13 +59,13 @@ public class GameMediaResource {
   private FrontendService frontendService;
 
   @Autowired
-  private UniversalUploadService universalUploadService;
-
-  @Autowired
   private GameMediaService gameMediaService;
 
   @Autowired
   private TableAssetsService tableAssetsService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   @GetMapping("/{id}")
   public FrontendMedia getGameMedia(@PathVariable("id") int id) {
@@ -99,16 +100,21 @@ public class GameMediaResource {
                                     @PathVariable("screen") String screen,
                                     @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) throws Exception {
-    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
-    Game game = frontendService.getOriginalGame(gameId);
-    File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix());
-    File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
-    if (target.exists() && append) {
-      target = FileUtils.uniqueAsset(target);
+    try {
+      VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
+      LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
+      Game game = frontendService.getOriginalGame(gameId);
+      File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix());
+      File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
+      if (target.exists() && append) {
+        target = FileUtils.uniqueAsset(target);
+      }
+      tableAssetsService.download(asset, target);
+      return true;
     }
-    tableAssetsService.download(asset, target);
-    return true;
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
+    }
   }
 
   @GetMapping("/assets/test")
@@ -207,50 +213,62 @@ public class GameMediaResource {
       File out = GameMediaService.buildMediaAsset(mediaFolder, game, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
-
       return JobDescriptorFactory.empty();
     }
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());
     }
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
+    }
   }
 
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
-    Game game = frontendService.getOriginalGame(gameId);
-    String suffix = FilenameUtils.getExtension(filename);
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
-    File media = new File(mediaFolder, filename);
-    if (media.exists()) {
-      if (screen.equals(VPinScreen.Wheel)) {
-        new WheelAugmenter(media).deAugment();
-        new WheelIconDelete(media).delete();
+    try {
+      Game game = frontendService.getOriginalGame(gameId);
+      String suffix = FilenameUtils.getExtension(filename);
+      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+      File media = new File(mediaFolder, filename);
+      if (media.exists()) {
+        if (screen.equals(VPinScreen.Wheel)) {
+          new WheelAugmenter(media).deAugment();
+          new WheelIconDelete(media).delete();
+        }
+        return media.delete();
       }
-      return media.delete();
+      return false;
     }
-    return false;
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
+    }
   }
 
 
   @DeleteMapping("/media/{gameId}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId) {
-    Game game = frontendService.getOriginalGame(gameId);
-    VPinScreen[] values = VPinScreen.values();
-    for (VPinScreen screen : values) {
-      FrontendMedia gameMedia = frontendService.getGameMedia(game);
-      List<FrontendMediaItem> mediaItems = gameMedia.getMediaItems(screen);
-      for (FrontendMediaItem mediaItem : mediaItems) {
-        File file = mediaItem.getFile();
-        if (screen.equals(VPinScreen.Wheel)) {
-          new WheelAugmenter(file).deAugment();
-          new WheelIconDelete(file).delete();
-        }
-        if (file.delete()) {
-          LOG.info("Deleted game media: {}", file.getAbsolutePath());
+    try {
+      Game game = frontendService.getOriginalGame(gameId);
+      VPinScreen[] values = VPinScreen.values();
+      for (VPinScreen screen : values) {
+        FrontendMedia gameMedia = frontendService.getGameMedia(game);
+        List<FrontendMediaItem> mediaItems = gameMedia.getMediaItems(screen);
+        for (FrontendMediaItem mediaItem : mediaItems) {
+          File file = mediaItem.getFile();
+          if (screen.equals(VPinScreen.Wheel)) {
+            new WheelAugmenter(file).deAugment();
+            new WheelIconDelete(file).delete();
+          }
+          if (file.delete()) {
+            LOG.info("Deleted game media: {}", file.getAbsolutePath());
+          }
         }
       }
+      return true;
     }
-    return true;
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
+    }
   }
 
   @PutMapping("/media/{gameId}/{screen}")
@@ -269,6 +287,9 @@ public class GameMediaResource {
     }
     catch (Exception e) {
       LOG.error("Failed to execute media change request: " + e.getMessage(), e);
+    }
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.FRONTEND_MEDIA, null);
     }
     return false;
   }
