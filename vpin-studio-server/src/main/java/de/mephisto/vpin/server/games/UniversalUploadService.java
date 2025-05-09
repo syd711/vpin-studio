@@ -159,6 +159,8 @@ public class UniversalUploadService {
     }
 
     Game game = gameService.getGame(uploadDescriptor.getGameId());
+    String updatedAssetName = uploadDescriptor.getRom();
+
     switch (assetType) {
       case ALT_SOUND: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
@@ -244,7 +246,7 @@ public class UniversalUploadService {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
     }
-    gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, null);
+    gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
   }
 
   public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
