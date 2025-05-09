@@ -86,7 +86,7 @@ public class DiscordSubscriptionMessageFactory {
     }
 
     if (StringUtils.isEmpty(oldName)) {
-      return "The previous highscore of " + oldScore.getScore() + " has been beaten.";
+      return "The previous highscore of " + oldScore.getFormattedScore() + " has been beaten.";
     }
 
     if (newScore.getPlayerInitials().equals(oldScore.getPlayerInitials())) {
@@ -94,6 +94,6 @@ public class DiscordSubscriptionMessageFactory {
     }
 
     String beatenMessageTemplate = "%s, your highscore of %s points has been beaten.";
-    return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
+    return String.format(beatenMessageTemplate, oldName, oldScore.getFormattedScore());
   }
 }
