@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -25,8 +26,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * See https://www.vpforums.org/index.php?showtopic=37182
@@ -60,6 +65,9 @@ public class MameService implements InitializingBean {
   @Autowired
   private EmulatorService emulatorService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   private GameService gameService;
 
   public boolean clearCache() {
@@ -70,9 +78,12 @@ public class MameService implements InitializingBean {
 
     List<Game> knownGames = gameService.getKnownGames(-1);
     for (String romFolder : romFolders) {
-      Optional<Game> first = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).findFirst();
-      if (first.isPresent()) {
+      List<Game> matches = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).collect(Collectors.toList());
+      if (!matches.isEmpty()) {
         mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
+      }
+      for (Game match : matches) {
+        gameLifecycleService.notifyGameUpdated(match.getId());
       }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
@@ -162,6 +173,7 @@ public class MameService implements InitializingBean {
 
   /**
    * Fill the zone with infor form registry
+   *
    * @return true if the DmdPosition is rom specific or false if this is default
    */
   public boolean fillDmdPosition(String rom, DMDInfoZone dmdinfo) {
