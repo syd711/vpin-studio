@@ -11,8 +11,8 @@ public enum DMDAspectRatio {
     this.height = height;
   }
 
-  public double getValue() {
-    return ((double) width) / height; 
+  public Double getValue() {
+    return isKeepRatio() ? ((double) width) / height : null; 
   }
 
   public boolean isKeepRatio() {

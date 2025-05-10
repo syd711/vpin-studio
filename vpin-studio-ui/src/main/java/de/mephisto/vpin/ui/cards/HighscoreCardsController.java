@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -159,13 +160,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     setBusy(true);
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
-    new Thread(() -> {
+    JFXFuture.supplyAsync(() -> {
       if (force) {
         client.getGameService().clearCache();
       }
-      games = client.getGameService().getVpxGamesCached();
-
-      Platform.runLater(() -> {
+      return client.getGameService().getVpxGamesCached();
+    })
+    .thenAcceptLater(games -> {
+        this.games = games;
         filterGames(games);
         tableView.setItems(data);
         templateEditorPane.setVisible(!data.isEmpty());
@@ -186,7 +188,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           tableView.requestFocus();
         });
       });
-    }).start();
   }
 
   private void setBusy(boolean b) {
@@ -371,7 +372,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     maniaBtn.setGraphic(iconMania);
 
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
-    games = client.getGameService().getVpxGamesCached();
+
     cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
 
     try {
@@ -569,8 +570,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     if (gameRepresentation.isPresent()) {
-      GameRepresentation refreshedGame = client.getGameService().getVpxGameCached(gameRepresentation.get().getId());
-      Platform.runLater(() -> {
+      JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameRepresentation.get().getId()))
+      .thenAcceptLater(refreshedGame -> {
         tableView.getSelectionModel().getSelectedItems().removeListener(this);
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
         tableView.getSelectionModel().clearSelection();

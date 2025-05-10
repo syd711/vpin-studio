@@ -1,12 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import javafx.application.*;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.*;
@@ -27,6 +21,7 @@ import javafx.geometry.*;
 public class DMDPositionResizerDemo2 extends Application {
 
   DMDPositionResizer resizer;
+  DMDPositionSelection selection;
 
   @Override
   public void start(final Stage stage) {
@@ -39,8 +34,34 @@ public class DMDPositionResizerDemo2 extends Application {
     topbar.setPadding(new Insets(15));
     layout.setTop(topbar);
 
+    // add pane
+    Pane pane = new Pane();
+    pane.setPrefWidth(500);
+    pane.setPrefHeight(300);
+    layout.setCenter(pane);
+
+    Bounds area = new BoundingBox(15, 15, 500-15*2, 300-15*2);
+    addAreaBorder(pane, area);
+
     CheckBox aspectRatio = new CheckBox("Keep aspect ratio (4:1)");
     aspectRatio.setSelected(false);
+    aspectRatio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        selection.setAspectRatio(newValue? 4.0 : null);
+        resizer.setAspectRatio(newValue? 4.0 : null);
+      }
+    });
+
+    CheckBox keepInBox = new CheckBox("Keep in Box");
+    keepInBox.setSelected(true);
+    keepInBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        selection.setBounds(newValue? area : null);
+        resizer.setBounds(newValue? area : null);
+      }
+    });
 
     Button snapCenter = new Button("Snap Center");
     snapCenter.setOnAction(e -> {
@@ -49,24 +70,10 @@ public class DMDPositionResizerDemo2 extends Application {
       }
     });
 
-    HBox toolbar = new HBox(aspectRatio, snapCenter);
+    HBox toolbar = new HBox(aspectRatio, snapCenter, keepInBox);
     toolbar.setPadding(new Insets(15));
     toolbar.setSpacing(20);
     layout.setBottom(toolbar);
-
-    SimpleObjectProperty<DMDAspectRatio> aspectRatioProperty = new SimpleObjectProperty<>(DMDAspectRatio.ratioOff);
-    aspectRatio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        aspectRatioProperty.setValue(newValue ? DMDAspectRatio.ratio4x1 : DMDAspectRatio.ratioOff);
-      }
-    });
-
-
-    Pane pane = new Pane();
-    pane.setPrefWidth(500);
-    pane.setPrefHeight(300);
-    layout.setCenter(pane);
 
     stage.show();
 
@@ -77,13 +84,7 @@ public class DMDPositionResizerDemo2 extends Application {
     });
 
     // add a selector in the pane
-    ObjectProperty<Bounds> area = new SimpleObjectProperty<>(new BoundingBox(15, 15, 500-15*2, 300-15*2));
-    ObjectProperty<Color> color = new SimpleObjectProperty<>(Color.LIME);
-    DoubleProperty zoom = new SimpleDoubleProperty(1.0);
-
-    addAreaBorder(pane, area.get());
-    
-    new DMDPositionSelection(pane, area, aspectRatioProperty,  color,
+    selection = new DMDPositionSelection(pane,
       () -> {
         if (resizer != null) {
           resizer.removeFromPane(pane);
@@ -91,13 +92,15 @@ public class DMDPositionResizerDemo2 extends Application {
         }  
       }, 
       rect -> {
-        resizer = new DMDPositionResizer(area, zoom, aspectRatioProperty, color);
+        resizer = new DMDPositionResizer();
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());
         resizer.setHeight((int) rect.getHeight());
+        resizer.setBounds(area);
         resizer.addToPane(pane);
-      });  
+      });
+      selection.setBounds(area);
   }
 
   private void addAreaBorder(Pane pane, Bounds area) {
