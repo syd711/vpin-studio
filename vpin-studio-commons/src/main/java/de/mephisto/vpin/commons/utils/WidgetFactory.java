@@ -524,6 +524,14 @@ public class WidgetFactory {
         throw new RuntimeException(e);
       }
     }
+    else if (playlist.getName().toLowerCase().contains("mame")) {
+      try {
+        fontIcon.setIconLiteral("customicon-mame_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-mame_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
     else if (playlist.getName().toLowerCase().contains(" fx")) {
       //fontIcon.setIconLiteral("mdi2s-steam");
       try {

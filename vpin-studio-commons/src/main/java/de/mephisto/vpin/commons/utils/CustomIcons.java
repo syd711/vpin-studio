@@ -20,7 +20,8 @@ public enum CustomIcons implements Ikon {
     MUSIC_ICON('\ue911'),
     MOVIE_ICON('\ue90c'),
     NFOZZY_ICON('\ue90d'),
-    SUPERHERO_ICON('\ue90e');
+    SUPERHERO_ICON('\ue90e'),
+    MAME_ICON('\ue90f');
     private final char code;
 
     CustomIcons(char code) {
