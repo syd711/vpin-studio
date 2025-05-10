@@ -130,9 +130,12 @@ Scifi Starwars Darth from [Libre Icons](https://github.com/DennisSuitters/LibreI
 
 Soccer Ball and Clapper Board from [Microsoft Fluent UI Emoji Set](https://github.com/microsoft/fluentui-emoji)
 
+Music icon from IcoMoon - Free Pack by [IcoMoon](https://icomoon.io/)
+
 VPW icon created from [Virtual Pinball Workshop](https://www.vpinworkshop.com) logo.
 
 Pinball FX, Pinball FX3, and Pinball M icons created from Zen Studios [Pinball FX](https://www.pinballfx.com), [Pinball FX3](https://zenstudios.com/games/pinball-fx3/), and [Pinball M](https://zenstudios.com/games/pinball-m/) logos.
 
 Visual Pinball X icon created from [Visual Pinball](https://github.com/vpinball/vpinball) logo. 
+
 
