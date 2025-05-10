@@ -11,8 +11,14 @@ public enum CustomIcons implements Ikon {
     FUTUREPINBALL_ICON('\ue903'),
     PINBALLM_ICON('\ue902'),
     RECENTLYPLAYED_ICON('\ue906'),
-    VPW_ICON('\ue905');
-
+    VPW_ICON('\ue905'),
+    TOP_10_ICON('\ue907'),
+    PUP_ICON('\ue908'),
+    ADULT_ICON('\ue909'),
+    SOCCER_ICON('\ue90a'),
+    STAR_WARS_ICON('\ue90b'),
+    MUSIC_ICON('\ue911'),
+    MOVIE_ICON('\ue90c');
     private final char code;
 
     CustomIcons(char code) {
