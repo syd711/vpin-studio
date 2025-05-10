@@ -375,7 +375,7 @@ public class WidgetFactory {
       fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getMostPlayedColor()));
     }
-    else if (playlist.getName().toLowerCase().contains("visual pinball X")) {
+    else if (playlist.getName().toLowerCase().contains("visual pinball x")) {
      // fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
       try {
         fontIcon.setIconLiteral("customicon-vpx_icon");
