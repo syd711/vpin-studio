@@ -28,8 +28,7 @@
   - Added possibility to remove the table specific 'Run as Exe' value and use the server default.
   - Added option to set "Simple LEDs" as default in the backglass server preferences.
   - Added button in the matching table toolbar to launch the game from the backglass.
-- **Pause Menu**:
-  - The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here.
+- **Pause Menu**:The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here.
 - **Playlists Management**:
   - Custom icons depending on the playlists have been re-introduced. (We had to disable the first attempt but came up with a better solution now.)
   
@@ -73,6 +72,7 @@
 - **DMD Position Tool**: Fixed issue when rom contains a dot like PiratesLife, positions were not properly saved. The rom name in the dmddevice.ini has to be ecsaped.
 - **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
 - **MAME Settings**: Fixed missing displaying of MAME related errors in the MAME sidepanel.
+- **Pause Menu**: The navigation glitch that lead to wrong scaled items or selection positioning has been fixed.
 
 ## VPin Mania
 
