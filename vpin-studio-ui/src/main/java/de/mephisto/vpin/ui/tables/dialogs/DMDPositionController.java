@@ -108,9 +108,11 @@ public class DMDPositionController implements Initializable, DialogController {
   private CheckBox disableViaIniCheckbox;
 
   @FXML
-  private HBox disableScorePane;
+  private VBox backglassScorePane;
   @FXML
   private CheckBox disableBGScoreCheckbox;
+  @FXML
+  private Button _resetToScoresBtn;
 
   @FXML
   private HBox romPane;
@@ -139,8 +141,6 @@ public class DMDPositionController implements Initializable, DialogController {
   private Button autoPositionBtn;
   @FXML
   private Button centerXBtn;
-  @FXML
-  private Button resetToScoresBtn;
 
   @FXML
   private Button saveLocallyBtn;
@@ -203,7 +203,8 @@ public class DMDPositionController implements Initializable, DialogController {
     titleLabel.setText("loading...");
     romLabel.setText("--");
     tablePositionLabel.setText("");
-    resetAll();
+    DMDTypeCombo.setValue(null);
+    disableAll();
     loadImage(null, false);
     loadDragBoxes(null, false);
   }
@@ -264,12 +265,12 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private void onAutoPosition() {
-    disableButtons();
     if (selectedZone != null) {
       LOG.info("Autoposition dmdinfo for game {}", game.getGameFileName());
       // set the margin for auto positioning
       selectedZone.setMargin(marginSpinner.getValue());
 
+      disableAll();
       JFXFuture.supplyAsync(() -> client.getDmdPositionService().autoPositionDMDInfo(dmdinfo.getGameId(), selectedZone))
           .thenAcceptLater(newZone -> setDmdInfoZone(selectedZone, newZone));
     }
@@ -279,7 +280,7 @@ public class DMDPositionController implements Initializable, DialogController {
   private void onResetToScores() {
     DMDInfo movedDmdinfo = fillDmdInfo();
     LOG.info("Reseting Zones to Scores positionsfor game {}", game.getGameFileName());
-    resetAll();
+    disableAll();
     JFXFuture.supplyAsync(() -> client.getDmdPositionService().resetToScores(movedDmdinfo))
         .thenAcceptLater(dmd -> setDmdInfo(dmd, false));
   }
@@ -319,7 +320,7 @@ public class DMDPositionController implements Initializable, DialogController {
   @FXML
   private void onFullDMDMediaUse() {
     DMDInfo movedDmdinfo = fillDmdInfo();
-    resetAll();
+    disableAll();
     JFXFuture.supplyAsync(() -> client.getDmdPositionService().useFrontendFullDMDMedia(movedDmdinfo))
         .thenAcceptLater(dmd -> {
           setDmdInfo(dmd, false);
@@ -409,7 +410,7 @@ public class DMDPositionController implements Initializable, DialogController {
           DMDInfo movedDmdinfo = fillDmdInfo();
 
           LOG.info("Moving dmdinfo for game {} : {}", game.getGameFileName(), movedDmdinfo);
-          resetAll();
+          disableAll();
           JFXFuture.supplyAsync(() -> client.getDmdPositionService().moveDMDInfo(movedDmdinfo.getGameId(), selectedZone, selectedScreen))
               .thenAcceptLater(newZone -> setDmdInfoZone(selectedZone, newZone));
         }
@@ -424,14 +425,14 @@ public class DMDPositionController implements Initializable, DialogController {
       }
     });
 
-    // by default do not alphanumeric
+    // by default do not use alphanumeric
     DMDTypeCombo.setItems(FXCollections.observableArrayList(DMDType.NoDMD, DMDType.VirtualDMD, DMDType.VpinMAMEDMD));
     DMDTypeCombo.valueProperty().addListener((observableValue, aBoolean, t1) -> {
       if (t1 != null && !dmdinfo.getDMDType().equals(t1)) {
         DMDInfo movedDmdinfo = fillDmdInfo();
 
         LOG.info("Swicthing dmdinfo for game {} to {}", game.getGameFileName(), t1);
-        resetAll();
+        disableAll();
         JFXFuture.supplyAsync(() -> client.getDmdPositionService().switchDMDInfo(movedDmdinfo, t1))
             .thenAcceptLater(dmd -> setDmdInfo(dmd, false));
       }
@@ -480,17 +481,6 @@ public class DMDPositionController implements Initializable, DialogController {
   public void onDialogCancel() {
   }
 
-  private void resetAll() {
-    DMDTypeCombo.getSelectionModel().clearSelection();
-    disableButtons();
-    disablePanes(true);
-    DMDTypeCombo.setDisable(true);
-    disablePane.setDisable(true);
-    disableScorePane.setDisable(true);
-    romPane.setDisable(true);
-    //loadedVpinScreen = null;
-  }
-
   public void setGame(GameRepresentation gameRepresentation, @Nullable BackglassManagerController backglassMgrController) {
     this.game = gameRepresentation;
     this.backglassMgrController = backglassMgrController;
@@ -500,7 +490,7 @@ public class DMDPositionController implements Initializable, DialogController {
     prevButton.setVisible(backglassMgrController != null);
     nextButton.setVisible(backglassMgrController != null);
 
-    resetAll();
+    disableAll();
     JFXFuture.supplyAllAsync(
       () -> client.getBackglassServiceClient().getScreenRes(game.getEmulatorId(), game.getGameFileName(), false),
       () -> client.getDmdPositionService().getDMDInfo(game.getId()))
@@ -518,33 +508,44 @@ public class DMDPositionController implements Initializable, DialogController {
       "Please check your screenres.txt or <tablename>.res file exists, else check the server logs");
   }
 
-  private void disableButtons() {
-    autoPositionBtn.setDisable(true);
-    resetToScoresBtn.setDisable(true);
-    saveLocallyBtn.setDisable(true);
-    saveCloseLocallyBtn.setDisable(true);
-    saveGloballyBtn.setDisable(true);
+  private void disableAll() {
+    _disableButtons(true);
+    _disableSidebar(true);
+    disableForZone(true);
   }
-
-  private void disablePanes(boolean disabled) {
-    spinnersPane.setDisable(disabled);
-    radioOnPane.setDisable(disabled);
-    ratiosPane.setDisable(disabled);
-    autoPositionPane.setDisable(disabled);
+  private void enableDmd() {
+    _disableButtons(false);
+    _disableSidebar(false);
+  }
+  private void _disableButtons(boolean disabled) {
+    saveLocallyBtn.setDisable(disabled);
+    saveCloseLocallyBtn.setDisable(disabled);
+    saveGloballyBtn.setDisable(disabled);
+  }
+  private void _disableSidebar(boolean disabled) {
+    DMDTypeCombo.setDisable(disabled);
+    disablePane.setDisable(disabled);
+    backglassScorePane.setDisable(disabled);
+    //romPane.setDisable(disabled);
   } 
 
+  private void disableForZone(boolean disabled) {
+    radioOnPane.setDisable(disabled);
+    spinnersPane.setDisable(disabled);
+    ratiosPane.setDisable(disabled);
+    autoPositionPane.setDisable(disabled);
+  }
+
   private void setDmdInfoZone(DMDInfoZone oldZone, DMDInfoZone zone) {
+    // re-enable sidebar, zone elements will be enabled by selectTab
+    enableDmd();
+
     int pos = dmdinfo.getZones().indexOf(oldZone);
     if (pos >= 0) {
       dmdinfo.getZones().remove(pos);
       dmdinfo.getZones().add(pos, zone);
       this.selectedZone = zone;
       selectTab(zone.getOnScreen(), false);
-
-      // re-enable buttons
-      resetToScoresBtn.setDisable(false);
-      saveLocallyBtn.setDisable(dmdinfo.getGameRom() == null);  
-      saveCloseLocallyBtn.setDisable(dmdinfo.getGameRom() == null);  
     }
   }
 
@@ -556,7 +557,9 @@ public class DMDPositionController implements Initializable, DialogController {
     LOG.info("Received dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
     this.dmdinfo = dmdinfo;
 
-    romPane.setDisable(false);
+    // re-enable buttons
+    enableDmd();
+
     romLabel.setText(StringUtils.defaultIfEmpty(dmdinfo.getGameRom(), "--"));
 
     List<DMDType> types = dmdinfo.isSupportAlphaNumericDmd() ? 
@@ -564,31 +567,23 @@ public class DMDPositionController implements Initializable, DialogController {
       Arrays.asList(DMDType.NoDMD, DMDType.VirtualDMD, DMDType.VpinMAMEDMD);
     DMDTypeCombo.setItems(FXCollections.observableArrayList(types));
     DMDTypeCombo.setValue(dmdinfo.getDMDType());
-    DMDTypeCombo.setDisable(false);
 
     boolean canSelectHowToDisable = dmdinfo.isDisabled(); //&& dmdinfo.isUseFreezy()
     disablePane.setManaged(canSelectHowToDisable);
     disablePane.setVisible(canSelectHowToDisable);
-    disablePane.setDisable(false);
 
     tablePositionLabel.setText((dmdinfo.isLocallySaved() ? "Locally" : "Globally") + " in " 
         + (dmdinfo.isUseRegistry() ? "registry" : "dmddevice.ini"));
 
     boolean isAlpha = DMDType.AlphaNumericDMD.equals(dmdinfo.getDMDType());
-    resetToScoresBtn.setVisible(isAlpha);
-    resetToScoresBtn.setManaged(isAlpha);
-    resetToScoresBtn.setDisable(false);
-
-    disableScorePane.setManaged(isAlpha);
-    disableScorePane.setVisible(isAlpha);
-    disableScorePane.setDisable(false);
+    backglassScorePane.setManaged(isAlpha);
+    backglassScorePane.setVisible(isAlpha);
 
     // no local save if no rom
     if (dmdinfo.getGameRom() != null) {
 
       if (backglassMgrController != null) {
         saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
-        saveLocallyBtn.setDisable(false);
         saveLocallyBtn.setVisible(true);
 
         saveCloseLocallyBtn.setText("Save & Close for " + dmdinfo.getGameRom());
@@ -596,13 +591,11 @@ public class DMDPositionController implements Initializable, DialogController {
       else {
         saveCloseLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
       }
-      saveCloseLocallyBtn.setDisable(false);
       saveCloseLocallyBtn.setVisible(true);
     }
 
     // no global save when using registry
     //if (!dmdinfo.isUseRegistry()) {
-    //  saveGloballyBtn.setDisable(false);
     //  saveGloballyBtn.setVisible(true);
     //}
 
@@ -776,8 +769,7 @@ public class DMDPositionController implements Initializable, DialogController {
               dragZone.setWidth(dragBox.getWidth());
               dragZone.setHeight(dragBox.getHeight());
             }
-            autoPositionBtn.setDisable(!newV);
-            disablePanes(!newV);
+            disableForZone(!newV);
           });
         }
       }
@@ -798,9 +790,6 @@ public class DMDPositionController implements Initializable, DialogController {
   }
 
   private void loadDmdInfo(DMDInfo dmdinfo) {
-
-//-----
-
     // aspect ratio forced in dmddevice.ini, force it there too and disable
     DMDAspectRatio aspectRatio = dmdinfo.getAspectRatio();
     aspectRatio = aspectRatio == null ? DMDAspectRatio.ratioOff : aspectRatio;
@@ -840,7 +829,7 @@ public class DMDPositionController implements Initializable, DialogController {
     Tab selectedTab = screenToTab(onScreen);
     if (tabPane.getSelectionModel().getSelectedItem() == selectedTab) {
       // already selected, just refresh images and drag boxes
-      disablePanes(true);
+      //disablePanes(true);
       // forceRefresh is true when a new game is set. 
       // Even if we are already on this tab, the image must be refreshed form the new game
       loadImage(onScreen, forceRefresh);
