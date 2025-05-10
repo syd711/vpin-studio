@@ -18,7 +18,8 @@ public enum CustomIcons implements Ikon {
     SOCCER_ICON('\ue90a'),
     STAR_WARS_ICON('\ue90b'),
     MUSIC_ICON('\ue911'),
-    MOVIE_ICON('\ue90c');
+    MOVIE_ICON('\ue90c'),
+    NFOZZY_ICON('\ue90d');
     private final char code;
 
     CustomIcons(char code) {

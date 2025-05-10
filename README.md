@@ -122,3 +122,17 @@ https://kordamp.org/ikonli/cheat-sheet-materialdesign2.html#_s_materialdesigns
 https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
 
 https://kordamp.org/ikonli/cheat-sheet-simplelineicons.html
+
+##Custom Icons 
+Pinball Flippers by Delapouite from Game Icons- https://game-icons.net/ under Creative Commons 3.0 license.  
+
+Scifi Starwars Darth from [Libre Icons](https://github.com/DennisSuitters/LibreICONS) by Dennis Suitters.  
+
+Soccer Ball and Clapper Board from [Microsoft Fluent UI Emoji Set](https://github.com/microsoft/fluentui-emoji)
+
+VPW icon created from [Virtual Pinball Workshop](https://www.vpinworkshop.com) logo.
+
+Pinball FX, Pinball FX3, and Pinball M icons created from Zen Studios [Pinball FX](https://www.pinballfx.com), [Pinball FX3](https://zenstudios.com/games/pinball-fx3/), and [Pinball M](https://zenstudios.com/games/pinball-m/) logos.
+
+Visual Pinball X icon created from [Visual Pinball](https://github.com/vpinball/vpinball) logo. 
+

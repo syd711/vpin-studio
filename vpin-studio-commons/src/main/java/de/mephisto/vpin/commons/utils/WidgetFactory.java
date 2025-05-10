@@ -508,6 +508,14 @@ public class WidgetFactory {
         throw new RuntimeException(e);
       }
     }
+    else if (playlist.getName().toLowerCase().contains("nfozzy")) {
+      try {
+        fontIcon.setIconLiteral("customicon-nfozzy_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-nfozzy_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
     else if (playlist.getName().toLowerCase().contains(" fx")) {
       //fontIcon.setIconLiteral("mdi2s-steam");
       try {
