@@ -222,26 +222,31 @@ public class DMDPositionService {
       DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
       if (screenres != null) {
         for (DirectB2SDataScore score : data.getScores()) {
-          double ratioX = 0.0, ratioY = 0.0;
-          VPinScreen screen = null;
+          VPinScreen screen = VPinScreen.BackGlass;
+          double imageWidth = data.getBackgroundWidth();
+          double imageHeight = data.getBackgroundHeight();
+
           if ("DMD".equalsIgnoreCase(score.getParent())) {
             screen = VPinScreen.Menu;
-            ratioX = screenres.getDmdWidth()
-                / (double) data.getDmdWidth();
-            ratioY = screenres.getDmdHeight()
-                / (double) data.getDmdHeight();
-          }
-          else {
-            screen = VPinScreen.BackGlass;
-            ratioX = screenres.getFullBackglassWidth()
-                / (double) data.getBackgroundWidth();
-            ratioY = screenres.getFullBackglassHeight()
-                / (double) data.getBackgroundHeight();
+            imageWidth = data.getDmdWidth();
+            imageHeight = data.getDmdHeight();
           }
 
+          // DMD not supported =, bring all scores on backglass
           FrontendPlayerDisplay dmdDisplay = FrontendPlayerDisplay.valueOfScreen(screenResDisplays, screen); 
+          // DMD not supported =, bring all scores on backglass
+          if (dmdDisplay == null) {
+            screen = VPinScreen.BackGlass;
+            dmdDisplay = FrontendPlayerDisplay.valueOfScreen(screenResDisplays, screen);
+          }
+
           double x = dmdDisplay.getX();
           double y = dmdDisplay.getY();
+
+          double ratioX = VPinScreen.Menu.equals(screen)? screenres.getDmdWidth() : screenres.getFullBackglassWidth();
+          ratioX /= imageWidth;
+          double ratioY = VPinScreen.Menu.equals(screen)? screenres.getDmdHeight() : screenres.getFullBackglassHeight();
+          ratioY /= imageHeight;
 
           DMDInfoZone zone = new DMDInfoZone(screen, (int) (score.getX() * ratioX + x), (int) (score.getY() * ratioY + y), 
             (int) (score.getWidth() * ratioX), (int) (score.getHeight() * ratioY));
