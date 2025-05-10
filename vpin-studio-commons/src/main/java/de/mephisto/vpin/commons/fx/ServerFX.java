@@ -248,24 +248,24 @@ public class ServerFX extends Application {
   }
 
   public void testPauseMenu(int gameId, int duration) {
+    GameStatus gameStatus = new GameStatus();
+    gameStatus.setGameId(gameId);
+    gameStatus.setStarted(new Date());
     Platform.runLater(() -> {
       LOG.info("Received pause menu test event for game id " + gameId);
-      GameStatus gameStatus = new GameStatus();
-      gameStatus.setGameId(gameId);
-      gameStatus.setStarted(new Date());
-      PauseMenu.togglePauseMenu(gameStatus, false);
+
+      PauseMenu.togglePauseMenu(gameStatus, true);
     });
 
     try {
       Thread.sleep(duration * 1000);
-
     }
     catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
 
     Platform.runLater(() -> {
-      PauseMenu.togglePauseMenu();
+      PauseMenu.togglePauseMenu(gameStatus, true);
     });
   }
 

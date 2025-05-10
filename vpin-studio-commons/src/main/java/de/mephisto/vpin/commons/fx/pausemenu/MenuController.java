@@ -159,7 +159,7 @@ public class MenuController implements Initializable {
     return selectionIndex == 0;
   }
 
-  private void scroll(boolean left) {
+  private synchronized void scroll(boolean left) {
     if (menuItemsRow.getChildren().isEmpty() || pauseMenuItems.size() == 1) {
       return;
     }
@@ -241,7 +241,7 @@ public class MenuController implements Initializable {
   private void updateSelection(Node oldNode, Node node) {
     if (oldNode != null) {
       PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
-      if (activeSelection.getVideoUrl() != null) {
+      if (activeSelection.getVideoUrl() != null && mediaView != null && mediaView.getMediaPlayer() != null) {
         try {
           mediaView.getMediaPlayer().stop();
           mediaView.getMediaPlayer().dispose();
