@@ -82,9 +82,9 @@ public class MameService implements InitializingBean {
       if (!matches.isEmpty()) {
         mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
       }
-      for (Game match : matches) {
-        gameLifecycleService.notifyGameUpdated(match.getId());
-      }
+//      for (Game match : matches) {
+//        gameLifecycleService.notifyGameUpdated(match.getId());
+//      }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
 
