@@ -48,8 +48,6 @@ public class PauseMenu extends Application {
 
   public static VPinStudioClient client;
 
-  private static boolean PRODUCTION_USE = true;
-
   public static Stage stage;
   public static boolean visible = false;
 
@@ -66,13 +64,6 @@ public class PauseMenu extends Application {
     catch (AWTException e) {
       LOG.error("Failed to create robot: " + e.getMessage());
     }
-  }
-
-  public static void main(String[] args) {
-    ServerFX.client = new VPinStudioClient("localhost");
-    PRODUCTION_USE = false;
-    launch(args);
-    PauseMenu.togglePauseMenu();
   }
 
 
@@ -105,42 +96,34 @@ public class PauseMenu extends Application {
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane root = loader.load();
 
-      int height = 1400;
-      if (PRODUCTION_USE) {
-        if (screenBounds.getWidth() > screenBounds.getHeight()) {
-          LOG.info("Window Mode: Landscape");
-          root.setTranslateY(0);
-          root.setTranslateX(0);
-          root.setRotate(-90);
-          stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
-          stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() / 2 / 2));
-          double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
-          if (max > 2560) {
-            stage.setX(stage.getX() + 600);
-            root.setTranslateX(400);
-          }
-          else if (max > 2000) {
-            root.setTranslateX(400);
-          }
-          scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
+      if (screenBounds.getWidth() > screenBounds.getHeight()) {
+        LOG.info("Window Mode: Landscape");
+        root.setTranslateY(0);
+        root.setTranslateX(0);
+        root.setRotate(-90);
+        stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
+        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() / 2 / 2));
+        double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+        if (max > 2560) {
+          stage.setX(stage.getX() + 600);
+          root.setTranslateX(400);
         }
-        else {
-          LOG.info("Window Mode: Portrait");
-          root.setTranslateY(0);
-          root.setTranslateX(0);
-          stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
-          stage.setY(screenBounds.getHeight() / 2 / 2);
-          double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
-          if (max > 2560) {
-            root.setTranslateY(400);
-          }
-          scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
+        else if (max > 2000) {
+          root.setTranslateX(400);
         }
+        scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
       }
       else {
-        scene = new Scene(root, screenBounds.getWidth(), height);
-        stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() / 2) - (screenBounds.getWidth() / 2)));
-        stage.setY((screenBounds.getHeight() / 2) - (height / 2));
+        LOG.info("Window Mode: Portrait");
+        root.setTranslateY(0);
+        root.setTranslateX(0);
+        stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
+        stage.setY(screenBounds.getHeight() / 2 / 2);
+        double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
+        if (max > 2560) {
+          root.setTranslateY(400);
+        }
+        scene = new Scene(root, root.getPrefWidth(), root.getPrefWidth());
       }
 
       scalePauseMenuStage(root, screenBounds);
@@ -148,10 +131,6 @@ public class PauseMenu extends Application {
       stage.setScene(scene);
 
       StateMananger.getInstance().init(loader.getController());
-
-      if (!PRODUCTION_USE) {
-        togglePauseMenu();
-      }
     }
     catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
@@ -270,39 +249,33 @@ public class PauseMenu extends Application {
   public static void exitPauseMenu() {
     StateMananger.getInstance().exit();
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-    if (!PRODUCTION_USE) {
-      Platform.runLater(() -> {
-        System.exit(0);
-      });
-    }
-    else {
-      LOG.info("Exited pause menu");
-      SLOG.info("Exited pause menu");
-      stage.hide();
 
-      Platform.runLater(() -> {
-        try {
-          Thread.sleep(SELECTION_SCALE_DURATION);
-        }
-        catch (InterruptedException e) {
-          //
-        }
-        screenAssets.stream().forEach(asset -> {
-          asset.getScreenStage().hide();
-          asset.dispose();
-        });
-      });
+    LOG.info("Exited pause menu");
+    SLOG.info("Exited pause menu");
+    stage.hide();
 
-
+    Platform.runLater(() -> {
       try {
-        NirCmd.focusWindow("Visual Pinball Player");
-        if (pauseMenuSettings.isMuteOnPause()) {
-          NirCmd.muteSystem(false);
-        }
+        Thread.sleep(SELECTION_SCALE_DURATION);
       }
-      catch (Exception e) {
-        LOG.error("Failed to execute focus command: " + e.getMessage(), e);
+      catch (InterruptedException e) {
+        //
       }
+      screenAssets.stream().forEach(asset -> {
+        asset.getScreenStage().hide();
+        asset.dispose();
+      });
+    });
+
+
+    try {
+      NirCmd.focusWindow("Visual Pinball Player");
+      if (pauseMenuSettings.isMuteOnPause()) {
+        NirCmd.muteSystem(false);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to execute focus command: " + e.getMessage(), e);
     }
 
     if (visible) {
@@ -319,7 +292,7 @@ public class PauseMenu extends Application {
 
   private static void togglePauseKey(long delay) {
     try {
-      if (!PRODUCTION_USE || test) {
+      if (test) {
         return;
       }
 
