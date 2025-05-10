@@ -151,15 +151,11 @@ public class MenuController implements Initializable {
     scroll(true);
   }
 
-  public boolean isAtEnd() {
-    return selectionIndex == (pauseMenuItems.size() - 1);
-  }
-
-  public boolean isAtStart() {
-    return selectionIndex == 0;
-  }
-
   private synchronized void scroll(boolean left) {
+    if (animating.get()) {
+      return;
+    }
+
     if (menuItemsRow.getChildren().isEmpty() || pauseMenuItems.size() == 1) {
       return;
     }
@@ -189,18 +185,15 @@ public class MenuController implements Initializable {
         selectionIndex++;
       }
     }
-
     animateMenuSteps(left, oldIndex, steps, duration);
   }
 
   private AtomicBoolean animating = new AtomicBoolean(false);
 
-  private void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
-    if (animating.get()) {
-      return;
-    }
-    animating.set(true);
+  private synchronized void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
 
+
+    animating.set(true);
     final Node node = menuItemsRow.getChildren().get(oldIndex);
     Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
     Transition t2 = TransitionUtil.createScaleTransition(node, PauseMenuUIDefaults.SELECTION_SCALE_DEFAULT, duration);
@@ -231,10 +224,8 @@ public class MenuController implements Initializable {
         return;
       }
       updateSelection(oldSelection, currentSelection);
-      System.out.println("ending");
       animating.set(false);
     });
-    System.out.println("Starting");
     parallelTransition.play();
   }
 
