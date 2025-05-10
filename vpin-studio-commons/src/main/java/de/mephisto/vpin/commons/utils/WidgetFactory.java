@@ -393,7 +393,7 @@ public class WidgetFactory {
       throw new RuntimeException(e);
      }
     }
-    else if (playlist.getName().contains("future")) {
+    else if (playlist.getName().toLowerCase().contains("future")) {
    //   fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
       try {
           fontIcon.setIconLiteral("customicon-futurepinball_icon");
