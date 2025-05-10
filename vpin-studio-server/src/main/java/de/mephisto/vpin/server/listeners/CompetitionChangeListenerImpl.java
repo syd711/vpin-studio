@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -18,6 +19,9 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private GameService gameService;
@@ -41,7 +45,7 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    competitionService.addCompetitionChangeListener(this);
+    competitionLifecycleService.addCompetitionChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

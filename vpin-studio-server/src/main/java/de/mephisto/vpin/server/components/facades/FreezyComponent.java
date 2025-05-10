@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +63,7 @@ public class FreezyComponent implements ComponentFacade {
   }
 
   @Override
-  public void postProcess(@NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+  public void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
     for (String deleteFile : INVALID_MAME_FILES) {
       FileUtils.delete(new File(mameService.getMameFolder(), deleteFile));
     }

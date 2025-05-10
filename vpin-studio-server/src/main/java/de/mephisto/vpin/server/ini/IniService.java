@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.ini;
 
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.ini.IniRepresentation;
 import de.mephisto.vpin.restclient.ini.IniSectionRepresentation;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -30,11 +32,17 @@ public class IniService {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   public boolean delete(int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       File iniFile = game.getIniFile();
-      return iniFile.exists() && iniFile.delete();
+      if (iniFile.exists() && iniFile.delete()) {
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.INI, null);
+        return true;
+      }
     }
     return false;
   }
@@ -101,6 +109,7 @@ public class IniService {
       }
 
       saveIniFile(iniFile, iniConfiguration);
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.INI, null);
       return true;
     }
     return false;

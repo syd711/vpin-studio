@@ -1,7 +1,8 @@
-## Release Notes 4.0
+## Release Notes 4.0.0
 
 ## Changes
 
+- **Server Side Caching**: The games are now cached on the server side too. You will notice a general improvement regarding the responsiveness of the Studio. This was a larget backend change, so please let me know if anything does not refresh properly. A manual reload in the table overview triggers a full reset of the client and server and will invalidate all tables.
 - **iScored**: Large parts of the iScored integration have been re-implemented. The concept has changed so that you don't have to manually subscribe to tables anymore. A complete instruction about the new mechanism can be read here: https://github.com/syd711/vpin-studio/wiki/iScored or on YouTube (https://www.youtube.com/@vpin-studio). The changes in short are:
   - Added preferences section where iScored Game Rooms can be setup and selected for synchronization.
   - Added option to disable the complete iScored integration for users who don't need it.
@@ -55,7 +56,11 @@
   - Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
  
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="400" />
-
+- **Preferences Hooks**: Added support for .vbs files. Also, the ROM name and the table filename from the selected table in the table overview are passed as parameters to the script. (https://github.com/syd711/vpin-studio/wiki/Preferences-Hooks)
+- **PINemHi 3.6.6 Update**: 
+  - Comes with new support for the ROMs "robo_a29" and "robo_a30".
+  - robo_a34 (Robocop) Initials not handled correctly  , making PINemHi crash (happened when you put your initials in the hiscore table)  
+  - eballchp, eballch2, ladyluck, motrdome, beatclck, beatclc2  scores not handled correctly after a hiscore reset using vpinmame when hiscore being set is less than 7 digits long
 
 ## Bugfixes
 
@@ -67,6 +72,7 @@
   - Changed the Media Recorder view to a split view, so that the vertical splitter can be resized. 
 - **DMD Position Tool**: Fixed issue when rom contains a dot like PiratesLife, positions were not properly saved. The rom name in the dmddevice.ini has to be ecsaped.
 - **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
+- **MAME Settings**: Fixed missing displaying of MAME related errors in the MAME sidepanel.
 
 ## VPin Mania
 

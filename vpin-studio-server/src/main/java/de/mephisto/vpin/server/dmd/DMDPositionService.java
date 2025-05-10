@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.dmd;
 import com.google.common.io.Files;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDataScore;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -25,6 +26,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -67,6 +69,8 @@ public class DMDPositionService {
   private VPinScreenService screenService;
   @Autowired
   private PreferencesService preferenceService;
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
@@ -712,6 +716,7 @@ public class DMDPositionService {
       options.setShowDmd(showDmd);
       options.setUseExternalDmd(useExternalDmd);
       mameService.saveOptions(options);
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.DMD_PACK, rom);
     }
   }
 

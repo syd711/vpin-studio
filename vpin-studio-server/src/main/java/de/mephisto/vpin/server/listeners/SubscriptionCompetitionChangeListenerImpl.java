@@ -5,9 +5,11 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.discord.DiscordSubscriptionMessageFactory;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -15,7 +17,6 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +34,9 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -194,6 +198,6 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    competitionService.addCompetitionChangeListener(this);
+    competitionLifecycleService.addCompetitionChangeListener(this);
   }
 }

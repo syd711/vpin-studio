@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;

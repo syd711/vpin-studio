@@ -65,16 +65,6 @@ public class MameOptions {
     this.existInRegistry = existInRegistry;
   }
 
-  private List<ValidationState> validationStates;
-
-  public List<ValidationState> getValidationStates() {
-    return validationStates;
-  }
-
-  public void setValidationStates(List<ValidationState> validationStates) {
-    this.validationStates = validationStates;
-  }
-
   public String getRom() {
     return rom;
   }

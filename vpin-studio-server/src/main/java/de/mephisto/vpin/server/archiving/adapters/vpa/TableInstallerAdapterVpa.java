@@ -111,7 +111,6 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   private void unzipArchive() {
-    //TODO fix POPMedia folder lookup
 //    try {
 //      ZipFile zf = new ZipFile(archiveFile);
 //      int totalCount = zf.size();

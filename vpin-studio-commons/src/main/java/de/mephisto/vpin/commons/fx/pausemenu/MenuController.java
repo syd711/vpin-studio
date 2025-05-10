@@ -40,6 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.*;
 
@@ -192,12 +193,13 @@ public class MenuController implements Initializable {
     animateMenuSteps(left, oldIndex, steps, duration);
   }
 
-  private boolean animating = false;
+  private AtomicBoolean animating = new AtomicBoolean(false);
 
   private void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
-    if (animating) {
+    if (animating.get()) {
       return;
     }
+    animating.set(true);
 
     final Node node = menuItemsRow.getChildren().get(oldIndex);
     Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
@@ -221,7 +223,7 @@ public class MenuController implements Initializable {
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.onFinishedProperty().set(event -> {
-      animating = false;
+      animating.set(false);
       int updatedSteps = steps - 1;
       int updatedOldIndex = left ? oldIndex - 1 : oldIndex + 1;
       if (updatedSteps > 0) {
@@ -229,8 +231,10 @@ public class MenuController implements Initializable {
         return;
       }
       updateSelection(oldSelection, currentSelection);
+      System.out.println("ending");
+      animating.set(false);
     });
-    animating = true;
+    System.out.println("Starting");
     parallelTransition.play();
   }
 

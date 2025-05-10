@@ -7,10 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.games.GameValidationService;
-import de.mephisto.vpin.server.games.UniversalUploadService;
+import de.mephisto.vpin.server.games.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -64,7 +61,8 @@ public class AltSoundResource {
 
   @DeleteMapping("{id}")
   public boolean delete(@PathVariable("id") int id) {
-    return altSoundService.delete(gameService.getGame(id));
+    Game game = gameService.getGame(id);
+    return altSoundService.delete(game);
   }
 
   @GetMapping("/clearcache")

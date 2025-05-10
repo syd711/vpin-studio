@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class TableRatingHelper {
     }
   }
 
-  private static void writeLocalTableRating(@NotNull GameRepresentation game, int rating) {
+  private static void writeLocalTableRating(@NonNull GameRepresentation game, int rating) {
     try {
       TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
       if (tableDetails != null) {

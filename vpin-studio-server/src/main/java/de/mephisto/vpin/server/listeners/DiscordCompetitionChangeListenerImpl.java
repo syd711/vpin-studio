@@ -7,17 +7,18 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
+import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.discord.CompetitionDataHelper;
 import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -38,6 +39,9 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -221,6 +225,6 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    competitionService.addCompetitionChangeListener(this);
+    competitionLifecycleService.addCompetitionChangeListener(this);
   }
 }

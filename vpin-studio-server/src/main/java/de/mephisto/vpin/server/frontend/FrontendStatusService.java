@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -47,6 +48,9 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
 
   @Autowired
   private EmulatorService emulatorService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   private boolean eventsEnabled = true;
 
@@ -179,7 +183,7 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
       Thread.currentThread().setName("Game Launch Thread");
       notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
-    return game != null;
+    return true;
   }
 
   public boolean gameExit(@NonNull String table, @Nullable String emuDirOrName) {
@@ -231,6 +235,7 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
       File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
         augmenter.augment(badgeFile);
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
   }
@@ -241,6 +246,7 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
       File wheelIcon = frontendMediaItem.getFile();
       new WheelAugmenter(wheelIcon).deAugment();
       new WheelIconDelete(wheelIcon).delete();
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
     }
   }
 
@@ -287,7 +293,7 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
 
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+    LOG.info("{} initialization finished, running frontend version {}", this.getClass().getSimpleName(), frontendService.getVersion());
   }
 
   @Override

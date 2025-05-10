@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -43,12 +44,16 @@ public class AltColorService implements InitializingBean {
   @Autowired
   private FrontendService frontendService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   public boolean setAltColorEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
       options.setColorizeDmd(b);
       options.setUseExternalDmd(b);
       mameService.saveOptions(options);
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, rom);
     }
     return b;
   }
@@ -68,6 +73,7 @@ public class AltColorService implements InitializingBean {
         File dir = new File(game.getEmulator().getAltColorFolder(), altColor.getName());
         if (dir.exists()) {
           FileUtils.deleteDirectory(dir);
+          gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, altColor.getName());
           return true;
         }
       }

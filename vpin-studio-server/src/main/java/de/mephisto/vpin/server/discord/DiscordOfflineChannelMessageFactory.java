@@ -123,6 +123,6 @@ public class DiscordOfflineChannelMessageFactory {
     }
 
     String beatenMessageTemplate = "%s, your highscore of %s points has been beaten.";
-    return String.format(beatenMessageTemplate, oldName, oldScore.getScore());
+    return String.format(beatenMessageTemplate, oldName, oldScore.getFormattedScore());
   }
 }

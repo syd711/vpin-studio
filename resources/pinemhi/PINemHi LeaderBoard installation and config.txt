@@ -16,7 +16,7 @@ When quitting a game you don't have to rush , just as long as you don't start a 
 The scores are sent to the website http://pinemhi.com/
 Here you can look at your scores and the scores from others and even do challenges.
 
-In the new version of PINemHi Leaderboard it is not necessary to use a plugin for a frontend.
+It is not necessary to use a plugin for a frontend using PINemHi LeaderBoard.
 There is a monitor that you start and that will monitor for activity.
 You can play in a frontend or just by starting visual pinball. 
 The monitor wil register your scores. 
@@ -39,7 +39,7 @@ Copy Paste he values not the entire lines or blocks in pinemhi.ini
 After that you have to adjust pinemhi.ini to your needs:
 ********
 First up is the paths to Visual pinball and Future pinball nvrams and fprams and the Visual Pinball user path
-The user path is for games that use no rom (for pinemhi leaderboard)
+The user path is for games that use no rom 
 Set the paths and remember that the last character must be a \
 ********
 

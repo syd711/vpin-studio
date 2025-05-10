@@ -31,8 +31,6 @@ public class DiscordResource {
   public DiscordBotStatus getStatus(@PathVariable("serverId") long serverId) {
     return discordService.getStatus(serverId);
   }
-
-  //TODO duplicate?
   @GetMapping("/validate")
   public DiscordBotStatus validateSettings() {
     return discordService.validateSettings();

@@ -306,7 +306,7 @@ public class Studio extends Application {
   }
 
   private static Stage createSplash() throws Exception {
-    Image image = new Image(Studio.class.getResourceAsStream("splash.png"));
+    Image image = new Image(Studio.class.getResourceAsStream("splash.jpg"));
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
     SplashScreenController controller = loader.getController();

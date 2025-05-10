@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
@@ -51,6 +52,9 @@ public class VpsService implements InitializingBean {
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   @Autowired
   private VpsEntryService vpsEntryService;
@@ -207,6 +211,7 @@ public class VpsService implements InitializingBean {
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);
+            gameLifecycleService.notifyGameUpdated(game.getId());
           }
         }
       }

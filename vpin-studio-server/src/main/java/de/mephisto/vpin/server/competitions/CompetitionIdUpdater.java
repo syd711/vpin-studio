@@ -28,7 +28,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionIdUpdater.class);
 
   @Autowired
-  private CompetitionService competitionService;
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private DiscordService discordService;
@@ -161,7 +161,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    this.competitionService.addCompetitionChangeListener(this);
+    this.competitionLifecycleService.addCompetitionChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

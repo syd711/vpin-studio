@@ -29,7 +29,6 @@ import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -60,6 +59,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   @Autowired
   private VpsService vpsService;
@@ -534,15 +536,20 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   //-------------------- GameDataChangedListener -----------------------------------------------------------------------
 
   @Override
-  public void gameDataChanged(@NotNull GameDataChangedEvent event) {
+  public void gameDataChanged(@NonNull GameDataChangedEvent event) {
     if (Features.MANIA_ENABLED) {
       updateTableRating(event);
     }
   }
 
-  private void updateTableRating(@NotNull GameDataChangedEvent event) {
+  @Override
+  public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
+    //not of interest
+  }
+
+  private void updateTableRating(@NonNull GameDataChangedEvent event) {
     ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-    Game game = event.getGame();
+    Game game = gameService.getGame(event.getGameId());
     if (maniaSettings.isSubmitRatings() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
       if (cabinet != null) {
@@ -562,21 +569,21 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   //------------------------ GameLifecycleListener ---------------------------------------------------------------------
   @Override
-  public void gameCreated(@NotNull Game game) {
+  public void gameCreated(int gameId) {
     if (Features.MANIA_ENABLED) {
       synchronizeTables();
     }
   }
 
   @Override
-  public void gameUpdated(@NotNull Game game) {
+  public void gameUpdated(int gameId) {
     if (Features.MANIA_ENABLED) {
-      synchronizeTables();
+      //do not sync for games updates as this may be an action for all tables
     }
   }
 
   @Override
-  public void gameDeleted(@NotNull Game game) {
+  public void gameDeleted(int gameId) {
     if (Features.MANIA_ENABLED) {
       synchronizeTables();
     }
@@ -592,8 +599,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
         frontendStatusService.addFrontendStatusChangeListener(this);
         frontendStatusService.addTableStatusChangeListener(this);
-        gameService.addGameDataChangedListener(this);
-        gameService.addGameLifecycleListener(this);
+        gameLifecycleService.addGameDataChangedListener(this);
+        gameLifecycleService.addGameLifecycleListener(this);
 
 
         ManiaConfig config = getConfig();

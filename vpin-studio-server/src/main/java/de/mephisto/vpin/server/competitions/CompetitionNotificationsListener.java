@@ -17,7 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service //TODO not a service
+@Service
 public class CompetitionNotificationsListener implements CompetitionChangeListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionNotificationsListener.class);
 
@@ -25,7 +25,7 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
   private NotificationService notificationService;
 
   @Autowired
-  private CompetitionService competitionService;
+  private CompetitionLifecycleService competitionLifecycleService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -76,7 +76,7 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    competitionService.addCompetitionChangeListener(this);
+    competitionLifecycleService.addCompetitionChangeListener(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

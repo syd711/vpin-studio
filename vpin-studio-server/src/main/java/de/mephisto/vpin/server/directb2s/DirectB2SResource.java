@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 
@@ -75,6 +76,9 @@ public class DirectB2SResource {
 
   @Autowired
   private DefaultPictureService defaultPictureService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   //--------------------------------------------------
 
@@ -251,7 +255,11 @@ public class DirectB2SResource {
 
   @PostMapping("/delete")
   public boolean deleteBackglass(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
-    return backglassService.deleteBackglass(emulatorId, fileName);
+    boolean b = backglassService.deleteBackglass(emulatorId, fileName);
+    if (b) {
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
+    }
+    return b;
   }
 
   @PutMapping
@@ -259,19 +267,24 @@ public class DirectB2SResource {
     int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
-    if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
-      return backglassService.rename(emulatorId, fileName, newName);
+    try {
+      if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
+        return backglassService.rename(emulatorId, fileName, newName);
+      }
+      else if (values.containsKey("setVersionAsDefault")) {
+        return backglassService.setAsDefault(emulatorId, fileName);
+      }
+      else if (values.containsKey("disable")) {
+        return backglassService.disable(emulatorId, fileName);
+      }
+      else if (values.containsKey("deleteVersion")) {
+        return backglassService.deleteVersion(emulatorId, fileName);
+      }
+      return null;
     }
-    else if (values.containsKey("setVersionAsDefault")) {
-      return backglassService.setAsDefault(emulatorId, fileName);
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
     }
-    else if (values.containsKey("disable")) {
-      return backglassService.disable(emulatorId, fileName);
-    }
-    else if (values.containsKey("deleteVersion")) {
-      return backglassService.deleteVersion(emulatorId, fileName);
-    }
-    return null;
   }
 
   //--------------------------------------------------
@@ -290,6 +303,9 @@ public class DirectB2SResource {
     }
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Save error: " + e.getMessage());
+    }
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.DIRECTB2S, null);
     }
   }
 

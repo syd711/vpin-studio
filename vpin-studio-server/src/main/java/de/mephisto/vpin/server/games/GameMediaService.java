@@ -74,6 +74,9 @@ public class GameMediaService {
   private GameService gameService;
 
   @Autowired
+  private GameLifecycleService gameLifecycleService;
+
+  @Autowired
   private DefaultPictureService defaultPictureService;
 
   @Autowired
@@ -199,7 +202,6 @@ public class GameMediaService {
 
     //rename the game name, which results in renaming all assets
     if (!updatedTableDetails.getGameName().equals(originalTableDetails.getGameName())) {
-      //TODO this smells!
       renameGameMedia(game, originalTableDetails.getGameName(), updatedTableDetails.getGameName());
     }
 
@@ -207,7 +209,7 @@ public class GameMediaService {
       runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
     }
 
-    gameService.notifyGameDataChanged(game, originalTableDetails, updatedTableDetails);
+    gameLifecycleService.notifyGameDataChanged(game.getId(), originalTableDetails, updatedTableDetails);
 
     return updatedTableDetails;
   }
@@ -744,7 +746,7 @@ public class GameMediaService {
           }
 
           LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
-          gameService.notifyGameDeleted(game);
+          gameLifecycleService.notifyGameDeleted(game.getId());
         }
 
         //delete the game folder if it is empty

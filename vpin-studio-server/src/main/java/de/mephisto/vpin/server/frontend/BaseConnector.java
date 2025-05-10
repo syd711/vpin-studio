@@ -24,7 +24,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -601,7 +600,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return getPlaylist(id);
   }
 
-  @NotNull
+  @NonNull
   @Override
   public Playlist getPlaylistTree() {
     Playlist artificialRoot = new Playlist();
@@ -829,7 +828,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public FrontendControl getFunction(@NonNull String description) {
+  public FrontendControl getFrontendControl(@NonNull String description) {
     FrontendControl f = null;
     return f;
   }
@@ -842,7 +841,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public FrontendControl getPinUPControlFor(VPinScreen screen) {
+  public FrontendControl getFrontendControlFor(VPinScreen screen) {
     return null;
   }
 

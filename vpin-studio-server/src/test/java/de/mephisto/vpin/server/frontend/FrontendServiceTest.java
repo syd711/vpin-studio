@@ -79,7 +79,6 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
 
     assertNotNull(connector.getStartupScript());
 
-    //TODO move to EmulatorType ?
     assertNotNull(connector.getEmulatorExitScript("Visual Pinball X"));
     assertNotNull(connector.getEmulatorExitScript("Future Pinball"));
     assertNotNull(connector.getEmulatorStartupScript("Visual Pinball X"));
