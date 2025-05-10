@@ -19,7 +19,8 @@ public enum CustomIcons implements Ikon {
     STAR_WARS_ICON('\ue90b'),
     MUSIC_ICON('\ue911'),
     MOVIE_ICON('\ue90c'),
-    NFOZZY_ICON('\ue90d');
+    NFOZZY_ICON('\ue90d'),
+    SUPERHERO_ICON('\ue90e');
     private final char code;
 
     CustomIcons(char code) {
