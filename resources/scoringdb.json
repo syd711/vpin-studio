@@ -158,7 +158,7 @@
     {
       "parser": "AlteringScoreInitialsBlocks",
       "fileNames": [
-        "FarOut_74VPX.txt", "Orbit_71VPX.txt", "RollerCoaster_71VPX.txt", "SuperSoccer_75VPX.txt"
+        "FarOut_74VPX.txt", "Orbit_71VPX.txt", "RollerCoaster_71VPX.txt", "SuperSoccer_75VPX.txt", "JetSpin_77VPX.txt"
       ],
       "start": 5,
       "size": 5
@@ -351,6 +351,12 @@
     {
       "scannedRom": "johnwick",
       "rom": "JPsIT",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "Vulcaniv_1980",
+      "rom": "Vulcan",
       "tableName": "",
       "textFile": ""
     }
