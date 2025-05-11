@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.ConnectionEntry.ConnectionType;
 import de.mephisto.vpin.commons.utils.network.WakeOnLan;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URI;
@@ -527,7 +529,11 @@ public class LauncherController implements Initializable {
         String macAddress = detectMacAddressViaArp(host);
         connection.setMacAddress(macAddress);
 
-        Image image = new Image(client.getAssetService().getAvatar(false));
+        InputStream av = client.getAssetService().getAvatar(false);
+        if (av == null) {
+          av = ServerFX.class.getResourceAsStream("avatar-default.png");
+        }
+        Image image = new Image(av);
         connection.setAvatar(image);
 
         return connection;

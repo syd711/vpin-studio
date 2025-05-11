@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -41,7 +42,9 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -214,7 +217,11 @@ public class NavigationController implements Initializable, StudioEventListener,
   }
 
   public static void refreshAvatar() {
-    Image image = new Image(client.getAssetService().getAvatar(false));
+    InputStream av = client.getAssetService().getAvatar(false);
+    if (av == null) {
+      av = ServerFX.class.getResourceAsStream("avatar-default.png");
+    }
+    Image image = new Image(av);
     ImageView avatar = new ImageView(image);
     avatar.setFitWidth(100);
     avatar.setFitHeight(100);
