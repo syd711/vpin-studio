@@ -524,11 +524,99 @@ public class WidgetFactory {
         throw new RuntimeException(e);
       }
     }
+    else if (playlist.getName().toLowerCase().contains("tv")) {
+      try {
+        fontIcon.setIconLiteral("mdi2t-television-classic");
+      } catch (Exception e) {
+        LOG.error("Error loading mdi2t-television-classic: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("television")) {
+      try {
+        fontIcon.setIconLiteral("mdi2t-television-classic");
+      } catch (Exception e) {
+        LOG.error("Error loading mdi2t-television-classic: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
     else if (playlist.getName().toLowerCase().contains("mame")) {
       try {
         fontIcon.setIconLiteral("customicon-mame_icon");
       } catch (Exception e) {
         LOG.error("Error loading customicon-mame_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("bally")) {
+      try {
+        fontIcon.setIconLiteral("customicon-bally_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-bally_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("atari")) {
+      try {
+        fontIcon.setIconLiteral("customicon-atari_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-atari_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("sega")) {
+      try {
+        fontIcon.setIconLiteral("customicon-sega_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-sega_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("zaccaria")) {
+      try {
+        fontIcon.setIconLiteral("customicon-zaccaria_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-zaccaria_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("east")) {
+      try {
+        fontIcon.setIconLiteral("customicon-dataeast_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-dataeast_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("midway")) {
+      try {
+        fontIcon.setIconLiteral("customicon-midway_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-midway_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("gottlieb")) {
+      try {
+        fontIcon.setIconLiteral("customicon-gottlieb_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-gottlieb_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("williams")) {
+      try {
+        fontIcon.setIconLiteral("customicon-williams_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-williams_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("stern")) {
+      try {
+        fontIcon.setIconLiteral("customicon-stern_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-stern_icon: " + e.getMessage(), e);;
         throw new RuntimeException(e);
       }
     }

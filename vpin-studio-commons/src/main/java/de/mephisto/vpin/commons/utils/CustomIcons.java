@@ -21,7 +21,16 @@ public enum CustomIcons implements Ikon {
     MOVIE_ICON('\ue90c'),
     NFOZZY_ICON('\ue90d'),
     SUPERHERO_ICON('\ue90e'),
-    MAME_ICON('\ue90f');
+    MAME_ICON('\ue90f'),
+    BALLY_ICON('\ue914'),
+    ATARI_ICON('\ue910'),
+    SEGA_ICON('\ue912'),
+    ZACCARIA_ICON('\ue913'),
+    DATAEAST_ICON('\ue915'),
+    MIDWAY_ICON('\ue916'),
+    GOTTLIEB_ICON('\ue917'),
+    WILLIAMS_ICON('\ue918'),
+    STERN_ICON('\ue919');
     private final char code;
 
     CustomIcons(char code) {
