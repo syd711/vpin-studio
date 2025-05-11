@@ -293,6 +293,13 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
     }
     catch (Exception e) {
       LOG.error("Failed to generate avatar image: {}", e.getMessage());
+      try {
+        BufferedImage avatar = ResourceLoader.getResource("avatar-default.png");
+        return ImageUtil.toBytes(avatar);
+      }
+      catch (IOException ex) {
+        LOG.error("Failed to generate alternative avatar image: {}", e.getMessage());
+      }
     }
     return null;
   }
