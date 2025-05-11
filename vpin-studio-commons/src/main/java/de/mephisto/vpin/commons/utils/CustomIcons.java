@@ -30,7 +30,16 @@ public enum CustomIcons implements Ikon {
     MIDWAY_ICON('\ue916'),
     GOTTLIEB_ICON('\ue917'),
     WILLIAMS_ICON('\ue918'),
-    STERN_ICON('\ue919');
+    CHICAGO_ICON('\ue91b'),
+    STERN_ICON('\ue919'),
+    FIFTIES_ICON('\ue921'),
+    SIXTIES_ICON('\ue920'),
+    SEVENTIES_ICON('\ue91f'),
+    EIGHTIES_ICON('\ue91e'),
+    NINETIES_ICON('\ue91d'),
+    AUGHTS_ICON('\ue91a');
+
+
     private final char code;
 
     CustomIcons(char code) {
