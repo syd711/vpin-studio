@@ -124,7 +124,7 @@ https://kordamp.org/ikonli/cheat-sheet-bootstrapicons.html
 https://kordamp.org/ikonli/cheat-sheet-simplelineicons.html
 
 ##Custom Icons 
-Pinball Flippers by Delapouite from Game Icons- https://game-icons.net/ under Creative Commons 3.0 license.  
+Pinball Flippers by [Angelo Troiano](https://thenounproject.com/creator/angelo.troiano28) under Creative Commons 3.0 license.  
 
 Scifi Starwars Darth from [Libre Icons](https://github.com/DennisSuitters/LibreICONS) by Dennis Suitters.  
 
