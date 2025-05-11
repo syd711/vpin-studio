@@ -94,9 +94,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private VBox recordingOptions;
 
   @FXML
-  private Button recordBtn;
-
-  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -329,19 +326,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       doReload(false);
     }
 
-    Platform.runLater(() -> {
-      refreshScreens();
-    });
+    Platform.runLater(this::refreshScreens);
 
     this.active = true;
     Thread screenRefresher = new Thread(() -> {
       try {
         LOG.info("Launched preview refresh thread.");
         while (active) {
-          Platform.runLater(() -> {
-            refreshScreens();
-          });
-
+          Platform.runLater(this::refreshScreens);
           Thread.sleep(1000);
         }
       }
@@ -394,7 +386,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     });
 
     client.getPreferenceService().addListener(this);
-    NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
+    NavigationController.setBreadCrumb(List.of("Media Recorder"));
 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
     super.loadPlaylistCombo();
@@ -430,7 +422,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     client.getPreferenceService().setJsonPreference(recorderSettings);
 
 
-    /**
+    /*
      * Configure columns after creating the screen panels, the settings are only initialized then
      */
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
@@ -538,23 +530,22 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         }
 
         if (newValue != null) {
-          EventManager.getInstance().notifyTableSelectionChanged(Arrays.asList(newValue.getGame()));
+          EventManager.getInstance().notifyTableSelectionChanged(Collections.singletonList(newValue.getGame()));
         }
       }
     });
 
     refreshScreenMenu();
 
-    this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
-      SplitMenuButton playBtn = loader.load();
+      Parent playBtnRoot = loader.load();
       playButtonController = loader.getController();
+      playButtonController.setDisable(true);
       int i = toolbar.getItems().indexOf(stopBtn);
-      toolbar.getItems().add(i, playBtn);
-      playBtn.setDisable(true);
+      toolbar.getItems().add(i, playBtnRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load play button: " + e.getMessage(), e);
@@ -677,7 +668,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
 
-    this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
+    playButtonController.setDisable(selection.isEmpty() || !hasEnabledRecording);
     labelCount.setText("No tables selected");
     if (!this.selection.isEmpty()) {
       if (this.selection.size() == 1) {

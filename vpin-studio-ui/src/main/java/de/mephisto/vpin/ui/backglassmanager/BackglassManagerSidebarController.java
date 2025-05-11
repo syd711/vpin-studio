@@ -17,11 +17,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
-import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
-import de.mephisto.vpin.ui.tables.models.B2SGlowing;
-import de.mephisto.vpin.ui.tables.models.B2SLedType;
-import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
-import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import de.mephisto.vpin.ui.tables.models.*;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
@@ -232,9 +228,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @FXML
   private Button tableNavigateBtn;
-
-  @FXML
-  private Button gameLaunchBtn;
 
 
   //-------------
@@ -755,7 +748,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   
       this.dataManagerBtn.setDisable(true);
       this.tableNavigateBtn.setDisable(true);
-      gameLaunchBtn.setDisable(true);
   }
 
   protected void setGame(@Nullable GameRepresentation game, boolean gameAvailable) {
@@ -778,7 +770,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       dataManagerBtn.setDisable(false);
       tableNavigateBtn.setDisable(false);
-      gameLaunchBtn.setDisable(false);
     }
     else if (gameAvailable) {
       gameFilenameLabel.setText("(Available, but not installed)");

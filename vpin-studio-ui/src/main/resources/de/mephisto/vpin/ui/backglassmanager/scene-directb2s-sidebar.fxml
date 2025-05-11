@@ -430,17 +430,6 @@
                                                 <Tooltip text="Show table in table overview" />
                                             </tooltip>
                                         </Button>
-                                        <Button fx:id="gameLaunchBtn" mnemonicParsing="false" onAction="#onGameLaunch" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                            <graphic>
-                                                <FontIcon iconColor="#66FF66" iconLiteral="mdi2p-play" iconSize="18" />
-                                            </graphic>
-                                            <font>
-                                                <Font size="14.0" />
-                                            </font>
-                                            <tooltip>
-                                                <Tooltip text="Launch Game" />
-                                            </tooltip>
-                                        </Button>
                                     </items>
                                     <VBox.margin>
                                         <Insets right="12.0" top="12.0" />
