@@ -139,3 +139,5 @@ Pinball FX, Pinball FX3, and Pinball M icons created from Zen Studios [Pinball F
 Visual Pinball X icon created from [Visual Pinball](https://github.com/vpinball/vpinball) logo. 
 
 SuperHero icon from [Strong icons](https://www.flaticon.com/free-icons/strong) created by Leremy 
+
+VR icon from [IcoNoir](https://iconoir.com).

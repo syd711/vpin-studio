@@ -397,7 +397,6 @@ public class WidgetFactory {
             Map.entry("visual pinball x", "customicon-vpx_icon"),
             Map.entry("vpx", "customicon-vpx_icon"),
             Map.entry("future", "customicon-futurepinball_icon"),
-            Map.entry("fx3", "customicon-fx3_icon"),
             Map.entry("just added", "mdi2d-database-clock"),
             Map.entry(" added", "mdi2d-database-clock"),
             Map.entry("most played", "mdi2p-play-box-multiple-outline"),
@@ -439,7 +438,10 @@ public class WidgetFactory {
             Map.entry("nine", "customicon-nineties_icon"),
             Map.entry("00", "customicon-aughts_icon"),
             Map.entry("aught", "customicon-aughts_icon"),
-            Map.entry(" fx", "customicon-fx_icon")
+            Map.entry("fx", "customicon-fx_icon"),
+            Map.entry("fx3", "customicon-fx3_icon"),
+            Map.entry("vr", "customicon-vr_icon")
+
     );
 
     for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {

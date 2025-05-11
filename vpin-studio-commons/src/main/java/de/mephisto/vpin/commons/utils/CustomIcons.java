@@ -37,8 +37,8 @@ public enum CustomIcons implements Ikon {
     SEVENTIES_ICON('\ue91f'),
     EIGHTIES_ICON('\ue91e'),
     NINETIES_ICON('\ue91d'),
-    AUGHTS_ICON('\ue91a');
-
+    AUGHTS_ICON('\ue91a'),
+    VR_ICON('\ue922');
 
     private final char code;
 
