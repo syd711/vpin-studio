@@ -28,6 +28,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -47,11 +50,13 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import org.apache.juli.logging.Log;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -363,39 +368,269 @@ public class WidgetFactory {
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+      fontIcon.setIconLiteral("mdi2d-database-clock");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getJustAddedColor()));
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
-      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getMostPlayedColor()));
     }
-    else if (playlist.getName().contains("Visual Pinball X")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+    else if (playlist.getName().toLowerCase().contains("visual pinball x")) {
+     // fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-vpx_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-vpx_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
     }
-    else if (playlist.getName().contains("VPX")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+    else if (playlist.getName().toLowerCase().contains("vpx")) {
+      //fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      try {
+       fontIcon.setIconLiteral("customicon-vpx_icon");
+      } catch (Exception e) {
+       LOG.error("Error loading customicon-vpx_icon: " + e.getMessage(), e);;
+      throw new RuntimeException(e);
+     }
     }
-    else if (playlist.getName().contains("Future")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+    else if (playlist.getName().toLowerCase().contains("future")) {
+   //   fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+      try {
+          fontIcon.setIconLiteral("customicon-futurepinball_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-futurepinball_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
     }
-    else if (playlist.getName().contains("FX3")) {
-      fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
+    else if (playlist.getName().toLowerCase().contains("fx3")) {
+      //fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
+      try {
+      fontIcon.setIconLiteral("customicon-fx3_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-fx3_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
     }
-    else if (playlist.getName().contains("Just Added")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+    else if (playlist.getName().toLowerCase().contains("just added")) {
+      fontIcon.setIconLiteral("mdi2d-database-clock");
     }
-    else if (playlist.getName().contains("Most Played")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+    else if (playlist.getName().toLowerCase().contains(" added")) {
+      fontIcon.setIconLiteral("mdi2d-database-clock");
     }
-    else if (playlist.getName().contains("Home")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-h-circle");
+    else if (playlist.getName().toLowerCase().contains("most played")) {
+      fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
     }
-    else if (playlist.getName().contains("VPW")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+    else if (playlist.getName().toLowerCase().contains("recently played")) {
+      try {
+        fontIcon.setIconLiteral("customicon-recentlyplayed_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-recentlyplayed_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
     }
-    else if (playlist.getName().endsWith(" M")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+    else if (playlist.getName().toLowerCase().contains("home")) {
+      fontIcon.setIconLiteral("mdi2h-home-circle");
+    }
+    else if (playlist.getName().toLowerCase().contains("vpw")) {
+     // fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-vpw_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-vpw_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().endsWith(" m")) {
+     // fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      try {
+      fontIcon.setIconLiteral("customicon-pinballm_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-pinballm_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains(" updated")) {
+      fontIcon.setIconLiteral("mdi2u-update");
+    }
+    else if (playlist.getName().toLowerCase().contains("music")) {
+      try {
+        fontIcon.setIconLiteral("customicon-music_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-music_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("movie")) {
+      try {
+        fontIcon.setIconLiteral("customicon-movie_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-movie_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("star wars")) {
+      try {
+        fontIcon.setIconLiteral("customicon-star_wars_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-star_wars_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("adult")) {
+      try {
+        fontIcon.setIconLiteral("customicon-adult_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-adult_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("top 10")) {
+      try {
+        fontIcon.setIconLiteral("customicon-top_10_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-top_10_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("pup")) {
+      try {
+        fontIcon.setIconLiteral("customicon-pup_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-pup_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("soccer")) {
+      try {
+        fontIcon.setIconLiteral("customicon-soccer_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-soccer_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("nfozzy")) {
+      try {
+        fontIcon.setIconLiteral("customicon-nfozzy_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-nfozzy_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("super")) {
+      try {
+        fontIcon.setIconLiteral("customicon-superhero_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-superhero_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("tv")) {
+      try {
+        fontIcon.setIconLiteral("mdi2t-television-classic");
+      } catch (Exception e) {
+        LOG.error("Error loading mdi2t-television-classic: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("television")) {
+      try {
+        fontIcon.setIconLiteral("mdi2t-television-classic");
+      } catch (Exception e) {
+        LOG.error("Error loading mdi2t-television-classic: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("mame")) {
+      try {
+        fontIcon.setIconLiteral("customicon-mame_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-mame_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("bally")) {
+      try {
+        fontIcon.setIconLiteral("customicon-bally_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-bally_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("atari")) {
+      try {
+        fontIcon.setIconLiteral("customicon-atari_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-atari_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("sega")) {
+      try {
+        fontIcon.setIconLiteral("customicon-sega_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-sega_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("zaccaria")) {
+      try {
+        fontIcon.setIconLiteral("customicon-zaccaria_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-zaccaria_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("east")) {
+      try {
+        fontIcon.setIconLiteral("customicon-dataeast_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-dataeast_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("midway")) {
+      try {
+        fontIcon.setIconLiteral("customicon-midway_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-midway_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("gottlieb")) {
+      try {
+        fontIcon.setIconLiteral("customicon-gottlieb_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-gottlieb_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("williams")) {
+      try {
+        fontIcon.setIconLiteral("customicon-williams_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-williams_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains("stern")) {
+      try {
+        fontIcon.setIconLiteral("customicon-stern_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-stern_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().toLowerCase().contains(" fx")) {
+      //fontIcon.setIconLiteral("mdi2s-steam");
+      try {
+      fontIcon.setIconLiteral("customicon-fx_icon");
+      } catch (Exception e) {
+        LOG.error("Error loading customicon-fx_icon: " + e.getMessage(), e);;
+        throw new RuntimeException(e);
+      }
+    } else {
+     // LOG.info("Setting Alpha Playlist Icon:" + playlist.getName().toLowerCase() + ":Letter:" + playlist.getName().toLowerCase().charAt(0));
+      fontIcon.setIconLiteral("mdi2a-alpha-" + playlist.getName().toLowerCase().charAt(0) + "-circle");
     }
 
     if (disabled) {
