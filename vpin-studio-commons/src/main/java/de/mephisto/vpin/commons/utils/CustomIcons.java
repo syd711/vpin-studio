@@ -38,7 +38,14 @@ public enum CustomIcons implements Ikon {
     EIGHTIES_ICON('\ue91e'),
     NINETIES_ICON('\ue91d'),
     AUGHTS_ICON('\ue91a'),
-    VR_ICON('\ue922');
+    VR_ICON('\ue922'),
+    CAPCOM_ICON('\ue923'),
+    BW_ICON('\ue926'),
+    KIDS_ICON('\ue927'),
+    SS_ICON('\ue929'),
+    EM_ICON('\ue928'),
+    MOD_ICON('\ue925')
+   ;
 
     private final char code;
 

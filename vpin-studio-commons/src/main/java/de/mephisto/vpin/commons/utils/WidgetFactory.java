@@ -440,9 +440,19 @@ public class WidgetFactory {
             Map.entry("aught", "customicon-aughts_icon"),
             Map.entry("fx", "customicon-fx_icon"),
             Map.entry("fx3", "customicon-fx3_icon"),
-            Map.entry("vr", "customicon-vr_icon")
-
-    );
+            Map.entry("vr", "customicon-vr_icon"),
+            Map.entry("capcom", "customicon-capcom_icon"),
+            Map.entry("black", "customicon-bw_icon"),
+            Map.entry("b&w", "customicon-bw_icon"),
+            Map.entry("kids", "customicon-kids_icon"),
+            Map.entry("under 18", "customicon-kids_icon"),
+            Map.entry("children", "customicon-kids_icon"),
+            Map.entry("mod", "customicon-mod_icon"),
+            Map.entry("solid", "customicon-ss_icon"),
+            Map.entry("ss", "customicon-ss_icon"),
+            Map.entry("em", "customicon-em_icon"),
+            Map.entry("electro", "customicon-em_icon")
+            );
 
     for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {
       if (nameLower.contains(entry.getKey())) {
