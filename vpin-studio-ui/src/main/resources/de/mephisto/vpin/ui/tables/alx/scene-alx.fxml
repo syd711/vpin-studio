@@ -80,6 +80,19 @@
                            </ScrollPane>
                         </children>
                      </VBox>
+                     <VBox fx:id="col4" prefWidth="430.0" styleClass="subpanel">
+                        <padding>
+                           <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
+                        </padding>
+                        <children>
+                           <Label styleClass="default-title" text="Last Played" />
+                           <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
+                              <content>
+                                 <VBox fx:id="LastPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
+                              </content>
+                           </ScrollPane>
+                        </children>
+                     </VBox>
                      <VBox fx:id="tileList" prefWidth="430.0" spacing="12.0">
                         <padding>
                            <Insets right="3.0" />
