@@ -432,7 +432,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, null, version, authors, url, updatedAt, updateText, false, isFiltered);
+          VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, version, authors, url, updatedAt, updateText, false, isFiltered);
           if (!entries.contains(vpsEntry)) {
             entries.add(vpsEntry);
           }
@@ -501,7 +501,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
           for (VpsUrl vpsUrl : authoredUrlUrls) {
             String url = vpsUrl.getUrl();
-            VpsEntry vpsEntry = new VpsEntry(gameByVpsTable, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+            VpsEntry vpsEntry = new VpsEntry(gameByVpsTable, diffTypes, vpsTable, vpsTableVersion,
                 version, authors, url, updatedAt, updateText, installed, isFiltered);
             if (!entries.contains(vpsEntry)) {
               entries.add(vpsEntry);
@@ -509,7 +509,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
         else {
-          VpsEntry vpsEntry = new VpsEntry(gameByVpsTable, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+          VpsEntry vpsEntry = new VpsEntry(gameByVpsTable, diffTypes, vpsTable, vpsTableVersion,
               version, authors, null, updatedAt, updateText, installed, isFiltered);
           if (!entries.contains(vpsEntry)) {
             entries.add(vpsEntry);

@@ -306,9 +306,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        refreshModel(newSelection);
-      }
+      refreshView(newSelection);
     });
 
     tableView.setRowFactory(tv -> {
@@ -342,22 +340,19 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       this.doReload(false);
     }
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
-    refreshModel(selection);
+    refreshView(selection);
   }
 
   @Override
   public void vpsTableChanged(@NonNull String vpsTableId) {
-    Platform.runLater(() -> {
-      VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
-      Optional<VpsTableModel> first = tableView.getItems().stream().filter(i -> i.getVpsTable().getId().equals(tableById.getId())).findFirst();
-      if (first.isPresent()) {
-        first.get().setBean(tableById);
-        tableView.refresh();
-      }
-    });
+    Optional<VpsTableModel> first = models.stream().filter(m -> m.getVpsTableId().equals(vpsTableId)).findFirst();
+    if (first.isPresent()) {
+      reloadItem(first.get().getBean());
+    }
   }
 
-  protected void refreshModel(@Nullable VpsTableModel newSelection) {
+  @Override
+  protected void refreshView(@Nullable VpsTableModel newSelection) {
     if (newSelection != null) {
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
     }
@@ -425,6 +420,10 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     public boolean isInstalled() {
       return installed;
+    }
+
+    public String getVpsTableId() {
+      return bean.getId();
     }
 
     public String getVersionId() {
