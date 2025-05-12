@@ -1,8 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.matcher.TableMatcher;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -239,11 +240,17 @@ public class TableUploadController implements Initializable, DialogController {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
     if (game != null && tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
-      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName.replaceAll("_", " "), game.getGameDisplayName(), MATCHING_PERCENTAGE);
-      if (!similarAtLeastToPercent) {
-        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
+      TableMatcher matcher = new TableMatcher(null);
+      boolean similar = false;
+      if (StringUtils.isNotEmpty(game.getExtTableId())) {
+        VpsTable vpsTable = client.getVpsService().getTableById(game.getExtTableId());
+        similar = matcher.isClose(vpsTable, fileName);
       }
-      if (!similarAtLeastToPercent) {
+      else {
+        similar = matcher.isClose(game.getGameDisplayName(), fileName);
+      }
+
+      if (!similar) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",
             "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
         if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
