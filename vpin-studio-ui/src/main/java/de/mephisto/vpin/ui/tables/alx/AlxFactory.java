@@ -31,7 +31,7 @@ public class AlxFactory {
   private static final List<Color> colors = Arrays.asList(Tile.DARK_BLUE, Tile.RED, Tile.ORANGE, Tile.GREEN, Tile.MAGENTA, Tile.PINK.grayscale(), Tile.DARK_BLUE);
 
   public static double calculateColumnWidth(Stage stage) {
-    if(stage.getTitle().startsWith("VPin Studio")) {
+    if (stage.getTitle().startsWith("VPin Studio")) {
       double width = stage.getWidth();
       width = width - 130; //minus navigation
       return width / 4 - (12 * 2);
@@ -148,8 +148,8 @@ public class AlxFactory {
 
       AlxTileEntryController controller = loader.getController();
       controller.refresh(stage, new AlxTileEntry("Total Games Played",
-        FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend), 
-        String.valueOf(total)));
+              FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend),
+              String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -195,6 +195,46 @@ public class AlxFactory {
       }
     }
   }
+
+  public static void createLastPlayed(Stage stage, Pane root, List<TableAlxEntry> entries) {
+    root.getChildren().removeAll(root.getChildren());
+
+    List<TableAlxEntry> statEntries = new ArrayList<>(entries);
+    Collections.sort(statEntries, Comparator.comparing(TableAlxEntry::getLastPlayed));
+    Collections.reverse(statEntries);
+
+
+    int rowCount = 0;
+    int counter = 0;
+    for (TableAlxEntry alxEntry : statEntries) {
+
+    AlxBarEntry entry = new AlxBarEntry(alxEntry.getDisplayName(),DateFormat.getDateTimeInstance().format(alxEntry.getLastPlayed()), 100, PreferenceBindingUtil.toHexString(colors.get(counter)), alxEntry.getGameId());
+    rowCount++;
+
+    //limit to 20 rows.
+    if (rowCount >= 21)
+    {
+      break;
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
+      Parent builtInRoot = loader.load();
+      AlxBarEntryController controller = loader.getController();
+      controller.refresh(stage, entry);
+      root.getChildren().add(builtInRoot);
+    } catch (IOException e) {
+      LOG.error("Failed to load bar: " + e.getMessage(), e);
+    }
+
+    counter++;
+
+    if (counter >= colors.size()) {
+      counter = 0;
+    }
+
+  }
+}
 
   public static void createLongestPlayed(Stage stage, Pane root, List<TableAlxEntry> entries) {
     root.getChildren().removeAll(root.getChildren());
