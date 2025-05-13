@@ -212,7 +212,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor(stage, new TextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new TextFile(file), file.getName());
     }
   }
 
@@ -222,7 +222,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value + ".bat");
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Dialogs.openTextEditor(stage, new TextFile(file), file.getName());
+      Dialogs.openTextEditor("puppack", stage, new TextFile(file), file.getName());
     }
   }
 

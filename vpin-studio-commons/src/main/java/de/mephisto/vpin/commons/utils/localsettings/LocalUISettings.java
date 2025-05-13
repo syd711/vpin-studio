@@ -27,10 +27,11 @@ public class LocalUISettings {
   private static List<LocalSettingsChangeListener> listeners;
 
   private static Map<String, Object> jsonSettingsCache = new HashMap<>();
+  private static File propertiesFile;
 
   public static void initialize() {
     File basePath = Updater.getWriteableBaseFolder();
-    File propertiesFile = new File(basePath, "config/settings.properties");
+    propertiesFile = new File(basePath, "config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
 
@@ -115,8 +116,6 @@ public class LocalUISettings {
 
   public static void saveLocation(String id, int x, int y, int width, int height) {
     if (y >= 0 && id != null) {
-      store.set(id + "x", x);
-      store.set(id + "y", y);
       store.set(id + ".x", x);
       store.set(id + ".y", y);
       store.set(id + ".width", width);
@@ -153,5 +152,23 @@ public class LocalUISettings {
 
   public static boolean isModal(String stateId) {
     return store.getBoolean(stateId + "_modality");
+  }
+
+  public static boolean isMaximizeable(String stateId) {
+    if (stateId == null) {
+      return true;
+    }
+
+    return !stateId.equalsIgnoreCase("dialog-table-data");
+  }
+
+  public static void reset() {
+    store.getProperties().clear();
+    if (!propertiesFile.delete()) {
+      LOG.error("Reset failed.");
+    }
+    else {
+      LOG.info("Deleted {}", propertiesFile.getAbsolutePath());
+    }
   }
 }

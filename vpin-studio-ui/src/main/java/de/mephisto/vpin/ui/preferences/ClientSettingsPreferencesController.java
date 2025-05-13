@@ -176,6 +176,14 @@ public class ClientSettingsPreferencesController implements Initializable {
   }
 
   @FXML
+  private void onDialogReset() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset all dialogs?", "All dialog sizes and positions will be resetted.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      LocalUISettings.reset();
+    }
+  }
+
+  @FXML
   private void onHideReset() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Reset \"Do not show again\" flags?", "All previously hidden dialogs or panels will be shown again.");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {

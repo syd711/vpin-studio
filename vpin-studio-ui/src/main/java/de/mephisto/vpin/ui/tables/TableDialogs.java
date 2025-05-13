@@ -308,7 +308,7 @@ public class TableDialogs {
     }
 
     String fxml = getDataManagerFxml();
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
     controller.setGame(stage, overviewController, game, screen, false);
@@ -323,7 +323,7 @@ public class TableDialogs {
     }
 
     String fxml = getDataManagerFxml();
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game != null ? game.getEmulatorId() : -1);
     controller.setStage(stage);
@@ -341,7 +341,7 @@ public class TableDialogs {
     if (width <= 1300) {
       fxml = "dialog-table-asset-manager-hd.fxml";
     }
-    else  if (width < 1900) {
+    else if (width < 1900) {
       fxml = "dialog-table-asset-manager-fullhd.fxml";
     }
     return fxml;
@@ -456,7 +456,7 @@ public class TableDialogs {
     if (filterMode != null) {
       title = "Media Selection";
     }
-    Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title);
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title, null);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
     controller.setData(game, analysis, file, stage, filterMode, emulatorId);
     stage.showAndWait();
@@ -499,7 +499,7 @@ public class TableDialogs {
   }
 
   public static TableDetails openAutoFillSettingsDialog(Stage stage, List<GameRepresentation> games, TableDetails tableDetails, @Nullable String vpsTableId, @Nullable String vpsVersionId) {
-    Stage dialogStage = Dialogs.createStudioDialogStage(stage, AutoFillSelectionController.class, "dialog-autofill-settings.fxml", "Auto-Fill Settings");
+    Stage dialogStage = Dialogs.createStudioDialogStage(stage, AutoFillSelectionController.class, "dialog-autofill-settings.fxml", "Auto-Fill Settings", null);
     AutoFillSelectionController controller = (AutoFillSelectionController) dialogStage.getUserData();
     controller.setData(games, tableDetails, vpsTableId, vpsVersionId);
     dialogStage.showAndWait();
@@ -577,7 +577,7 @@ public class TableDialogs {
       stage.setUserData(fxResizeHelper);
       stage.setMinWidth(812);
       stage.setMaxWidth(812);
-      stage.setMaxHeight(1020);
+      stage.setMaxHeight(1060);
       stage.setMinHeight(TableDataController.MIN_HEIGHT);
 
       stage.showAndWait();
@@ -729,8 +729,7 @@ public class TableDialogs {
   }
 
   public static void openDismissAllDialog(GameRepresentation gameRepresentation) {
-    FXMLLoader fxmlLoader = new FXMLLoader(DismissAllController.class.getResource("dialog-dismiss-all.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Dismiss Validation Errors");
+    Stage stage = WidgetFactory.createDialogStage(DismissAllController.class, Studio.stage, "Dismiss Validation Errors", "dialog-dismiss-all.fxml");
     DismissAllController controller = (DismissAllController) stage.getUserData();
     controller.setGame(gameRepresentation);
     stage.showAndWait();
