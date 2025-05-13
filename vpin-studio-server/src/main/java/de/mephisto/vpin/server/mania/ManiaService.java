@@ -14,7 +14,6 @@ import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
@@ -80,9 +79,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private PreferencesService preferencesService;
-
-  @Autowired
-  private EmulatorService emulatorService;
 
   private List<CabinetContact> contacts;
 
@@ -620,14 +616,16 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-    if (cabinet != null) {
-      LOG.info("Cabinet is registered on VPin-Mania");
-      Thread.currentThread().setName("VPin Mania Tables Synchronizer");
-      synchronizeTables();
-    }
-    else {
-      LOG.info("Cabinet is not registered on VPin-Mania");
+    if (Features.MANIA_ENABLED) {
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+      if (cabinet != null) {
+        LOG.info("Cabinet is registered on VPin-Mania");
+        Thread.currentThread().setName("VPin Mania Tables Synchronizer");
+        synchronizeTables();
+      }
+      else {
+        LOG.info("Cabinet is not registered on VPin-Mania");
+      }
     }
   }
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.connectors.vps.matcher;
 
+import de.mephisto.vpin.connectors.vps.matcher.TableNameSplitter.TableNameParts;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -100,6 +101,29 @@ public class TableMatcher {
     String cleanTableName = StringUtils.isEmpty(tableName) ? null : cleanTable(tableName);
 
     double dist = getTableDistance(table, fileName, cleanTableName, manuf, year, rom, 10000);
+    return dist <= THRESHOLD_CONFIRM;
+  }
+
+  public boolean isClose(String filename1, String filename2) {
+    TableNameSplitter splitter = new TableNameSplitter();
+    TableNameParts parts1 = splitter.parseFilename(filename1);
+    String cleanTableName1 = StringUtils.isEmpty(parts1.tableName) ? null : cleanTable(parts1.tableName);
+
+    TableNameParts parts2 = splitter.parseFilename(filename2);
+    String cleanTableName2 = StringUtils.isEmpty(parts2.tableName) ? null : cleanTable(parts2.tableName);
+
+    double dist = tableDistance(cleanTableName1, parts1.manufacturer, parts1.year,
+                                cleanTableName2, parts2.manufacturer, parts2.year,
+                                debug, null, 10000);
+    return dist <= THRESHOLD_CONFIRM;
+  }
+
+  public boolean isClose(VpsTable table, String filename) {
+    TableNameSplitter splitter = new TableNameSplitter();
+    TableNameParts parts = splitter.parseFilename(filename);
+    String cleanTableName = StringUtils.isEmpty(parts.tableName) ? null : cleanTable(parts.tableName);
+
+    double dist = getTableDistance(table, filename, cleanTableName, parts.manufacturer, parts.year, null, 10000);
     return dist <= THRESHOLD_CONFIRM;
   }
 

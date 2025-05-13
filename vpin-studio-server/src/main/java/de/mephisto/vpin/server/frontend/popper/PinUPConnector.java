@@ -2137,8 +2137,10 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       game.setPatchVersion(rs.getString(serverSettings.getMappingPatchVersion()));
     }
 
-    String tourneyId = rs.getString("TourneyID");
-    game.setCompetitionTypes(CompetitionIdFactory.getCompetitionTypes(tourneyId));
+    if (sqlVersion >= DB_VERSION) {
+      String tourneyId = rs.getString("TourneyID");
+      game.setCompetitionTypes(CompetitionIdFactory.getCompetitionTypes(tourneyId));
+    }
 
     return game;
   }

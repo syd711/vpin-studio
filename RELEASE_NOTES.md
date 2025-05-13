@@ -38,12 +38,11 @@
   
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/playlist-icons.png?raw=true" width="150" />
   
-- **DMD Position Tool**:
-  - No more excuse for having an empty full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the video.
+- **DMD Position Tool**: 
+  - No more excuse for not having an image in your full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the frontend video.
   - Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
   - **Important change:** Disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
   - When there is no B2S full DMD or it is not active, and when the frontend has a full DMD video that is flagged to be kept displayed when game is launched, then a random frame of that video is picked to position the DMD onto it. 
-  - No more excuse for not having a full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active (also see previous change).
   - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number and default positions). The zones can then be modified and saved. Also a reset button permits to restore the default positions of zones taken from backglass if modified.
   - For alphanumeric DMD, added the possibility to remove the rendering of backglass scores. It generally causes problem as the alphanumeric DMD mays not cover the full backglass scores and not totally hide them. Mind the backglass is modified, and previous score state is backup within the backglass.
   - Added possibility to completely disconnect DMD and use backglass scores only. When choosing this option, the Freezy ext DMD can be disabled by turning off the ext DMD in VPinMame and/or disabling the DMD in dmdevice.ini.
