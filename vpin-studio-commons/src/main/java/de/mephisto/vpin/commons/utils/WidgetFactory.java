@@ -451,7 +451,10 @@ public class WidgetFactory {
             Map.entry("solid", "customicon-ss_icon"),
             Map.entry("ss", "customicon-ss_icon"),
             Map.entry("em", "customicon-em_icon"),
-            Map.entry("electro", "customicon-em_icon")
+            Map.entry("electro", "customicon-em_icon"),
+            Map.entry("iscore", "customicon-iscored_icon"),
+            Map.entry("tourn", "mdi2t-trophy-variant"),
+            Map.entry("compet", "mdi2t-trophy-variant")
             );
 
     for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {

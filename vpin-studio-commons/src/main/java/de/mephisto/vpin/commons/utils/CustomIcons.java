@@ -44,7 +44,8 @@ public enum CustomIcons implements Ikon {
     KIDS_ICON('\ue927'),
     SS_ICON('\ue929'),
     EM_ICON('\ue928'),
-    MOD_ICON('\ue925')
+    MOD_ICON('\ue925'),
+    ISCORED_ICON('\ue92a')
    ;
 
     private final char code;
