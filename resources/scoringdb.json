@@ -359,6 +359,54 @@
       "rom": "Vulcan",
       "tableName": "",
       "textFile": ""
+    },
+    {
+      "scannedRom": "cardwhiz_1976",
+      "rom": "cardwhiz",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "Abracadabra",
+      "rom": "Abra_Ca_Dabra",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "doubleup_1970",
+      "rom": "DoubleUp",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "Eye of the tiger_1978",
+      "rom": "Table1",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "goldenarrow_1977",
+      "rom": "GoldenArrow",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "star_jet",
+      "rom": "StarJet_VPX",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "tko_1979",
+      "rom": "TKO",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "Jungle_Queen",
+      "rom": "JungleQueen",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [
