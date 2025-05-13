@@ -35,6 +35,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -684,7 +685,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     deleteDMDBtn.setDisable(true);
 
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    thumbnailImage.setEffect(null);
+    thumbnailImage.setOpacity(1.0);
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    dmdThumbnailImage.setEffect(null);
+    dmdThumbnailImage.setOpacity(1.0);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -814,7 +819,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     refreshTableData(null);
 
     if (directb2s != null && getSelectedVersion() != null) {
-      refreshingCounter = 1;
+      refreshingCounter++;
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion()))
         .thenAcceptLater(data -> {
           this.tableData = data;
@@ -922,7 +927,14 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             thumbnailImage.setImage(_thumbnail);
             thumbnailImagePane.setCenter(thumbnailImage);
             downloadBackglassBtn.setDisable(false);
-            resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
+            if (tableSettings.isHideB2SBackglass()) {
+              resolutionLabel.setText("Backglass Hidden.");
+              thumbnailImage.setEffect(new GaussianBlur());
+              thumbnailImage.setOpacity(0.2);
+            }
+            else {
+              resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
+            }
           }
           else {
             thumbnailImage.setImage(null);
@@ -945,7 +957,13 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
             downloadDMDBtn.setDisable(false);
             deleteDMDBtn.setDisable(false);
-            dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
+            if (tableSettings.isHideB2SDMD()) {
+              dmdResolutionLabel.setText("B2S DMD Hidden");
+              dmdThumbnailImage.setEffect(new GaussianBlur());
+              dmdThumbnailImage.setOpacity(0.2);
+            } else {
+              dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
+            }
             fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
           }
           else {

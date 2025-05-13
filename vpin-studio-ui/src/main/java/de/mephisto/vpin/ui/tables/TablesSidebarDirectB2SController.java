@@ -25,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -308,11 +309,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setHideB2SDMD(newValue);
       save();
+      refreshView(this.game);
     });
 
     hideB2SBackglass.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setHideB2SBackglass(newValue);
       save();
+      refreshView(this.game);
     });
 
     hideDMD.setItems(FXCollections.observableList(VISIBILITIES));
@@ -461,7 +464,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     filesizeLabel.setText("-");
     modificationDateLabel.setText("-");
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    thumbnailImage.setEffect(null);
+    thumbnailImage.setOpacity(1.0);
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    dmdThumbnailImage.setEffect(null);
+    dmdThumbnailImage.setOpacity(1.0);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
 
@@ -497,7 +504,14 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                 final Image imageToLoad = image;
                 Platform.runLater(() -> {
                   thumbnailImage.setImage(imageToLoad);
-                  resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
+                  if (tableSettings.isHideB2SBackglass()) {
+                    resolutionLabel.setText("Backglass Hidden.");
+                    thumbnailImage.setEffect(new GaussianBlur());
+                    thumbnailImage.setOpacity(0.2);
+                  }
+                  else {
+                    resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
+                  }
                 });
               }
               catch (IOException ioe) {
@@ -517,7 +531,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                 Image image = new Image(in);
                 Platform.runLater(() -> {
                   dmdThumbnailImage.setImage(image);
-                  dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+                  if (tableSettings.isHideB2SDMD()) {
+                    dmdResolutionLabel.setText("B2S DMD Hidden");
+                    dmdThumbnailImage.setEffect(new GaussianBlur());
+                    dmdThumbnailImage.setOpacity(0.2);
+                  } else {
+                    dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+                  }
                 });
               }
               catch (IOException ioe) {

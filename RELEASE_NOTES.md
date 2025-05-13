@@ -32,6 +32,7 @@
   - Added possibility to remove the table specific 'Run as Exe' value and use the server default.
   - Added option to set "Simple LEDs" as default in the backglass server preferences.
   - Added button in the matching table toolbar to launch the game from the backglass.
+  - When Backglass and/or B2S DMD is hidden, the corresponding preview is blurred and translucent, reflecting the hidden state while still showing an image is present within the backglass
 - **Pause Menu**:The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here.
 - **Playlists Management**:
   - Custom icons depending on the playlists have been re-introduced. (We had to disable the first attempt but came up with a better solution now.)
