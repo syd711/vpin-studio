@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
@@ -1139,10 +1140,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnHSType, (value, model) -> {
-      String hsType = value.getHighscoreType();
-      if (!StringUtils.isEmpty(hsType) && hsType.equals("EM")) {
-        hsType = "Text";
-      }
+      HighscoreType type = value.getHighscoreType();
+      String hsType = HighscoreType.EM.equals(type) ? "Text" : type != null ? type.name() : null;
       Label label = new Label(hsType);
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));

@@ -118,7 +118,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
 
     if (game != null) {
-      if (StringUtils.isEmpty(game.getHighscoreType())) {
+      if (game.getHighscoreType() == null) {
         Label error = new Label("No valid highscore found.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");

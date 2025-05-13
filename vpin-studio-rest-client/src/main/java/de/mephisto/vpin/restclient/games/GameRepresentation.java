@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.games;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class GameRepresentation {
   private String scannedHsFileName;
   private boolean romExists;
   private List<Integer> ignoredValidations;
-  private String highscoreType;
+  private HighscoreType highscoreType;
   private boolean selected;
   private boolean romRequired;
   private String assets;
@@ -390,11 +391,11 @@ public class GameRepresentation {
     this.gameFileSize = gameFileSize;
   }
 
-  public String getHighscoreType() {
+  public HighscoreType getHighscoreType() {
     return highscoreType;
   }
 
-  public void setHighscoreType(String highscoreType) {
+  public void setHighscoreType(HighscoreType highscoreType) {
     this.highscoreType = highscoreType;
   }
 

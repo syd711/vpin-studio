@@ -204,7 +204,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         if (gameRepresentation.getHighscoreType() != null) {
-          HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
+          HighscoreType hsType = gameRepresentation.getHighscoreType();
 
           //try to open the actual highscore file
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
