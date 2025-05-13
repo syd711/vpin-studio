@@ -199,7 +199,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       LocalUISettings.setModal(CabMonitorController.MODAL_STATE_ID, false);
       monitorOpen = true;
       monitorBtn.getStyleClass().add("toggle-button-selected");
-      monitorStage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor", CabMonitorController.MODAL_STATE_ID);
+      monitorStage = Dialogs.createStudioDialogStage(CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", CabMonitorController.MODAL_STATE_ID);
       CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
       controller.setData(monitorStage);
       FXResizeHelper fxResizeHelper = new FXResizeHelper(monitorStage, 30, 6);

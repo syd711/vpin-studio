@@ -55,6 +55,10 @@ public class DialogHeaderResizeableController implements Initializable {
     getStage().close();
   }
 
+  public void setMaximizeable(boolean b) {
+    this.maximizeBtn.setVisible(b);
+  }
+
   @FXML
   private void onDragDone() {
     if (titleLabel.getText() != null) {

@@ -47,6 +47,9 @@
   - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number and default positions). The zones can then be modified and saved. Also a reset button permits to restore the default positions of zones taken from backglass if modified.
   - For alphanumeric DMD, added the possibility to remove the rendering of backglass scores. It generally causes problem as the alphanumeric DMD mays not cover the full backglass scores and not totally hide them. Mind the backglass is modified, and previous score state is backup within the backglass.
   - Added possibility to completely disconnect DMD and use backglass scores only. When choosing this option, the Freezy ext DMD can be disabled by turning off the ext DMD in VPinMame and/or disabling the DMD in dmdevice.ini.
+
+   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/dmd-positioner2.png?raw=true" width="700" /> 
+  
 - **Media Recorder**: 
   - Added option to set the VPX parameter "-Primary" for the recording.
   - For convenience, the screen validators are sychronized with the media recording screens now. So if validations for a screen are disabled, the screen will also be hidden from the Media Recorder. Of course, they can be enabled there again.
@@ -60,6 +63,7 @@
  
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="400" />
 - **Preferences Hooks**: Added support for .vbs files. Also, the ROM name and the table filename from the selected table in the table overview are passed as parameters to the script. (https://github.com/syd711/vpin-studio/wiki/Preferences-Hooks)
+- **Window Management**: All positions and sizes of resizeable dialogs are stored now. In case something is messed up, the settings can be resetted in the client preferences.
 - **PINemHi 3.6.6 Update**: 
   - Comes with new support for the ROMs "robo_a29" and "robo_a30".
   - robo_a34 (Robocop) Initials not handled correctly  , making PINemHi crash (happened when you put your initials in the hiscore table)  

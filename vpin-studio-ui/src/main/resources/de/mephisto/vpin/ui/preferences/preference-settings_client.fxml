@@ -486,6 +486,15 @@
                      </VBox.margin>
                   </Button>
                   <Label layoutX="34.0" layoutY="708.0" styleClass="preference-description" text="Resets the &quot;Do not show again&quot; flags for all dialogs." textFill="WHITE" />
+                  <Button layoutX="34.0" layoutY="1470.0" mnemonicParsing="false" onAction="#onDialogReset" text="Reset Dialogs" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Label layoutX="34.0" layoutY="1500.0" styleClass="preference-description" text="Resets all dialogs sizes and positions." textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

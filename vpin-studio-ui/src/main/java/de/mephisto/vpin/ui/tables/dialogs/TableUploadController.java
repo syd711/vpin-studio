@@ -188,7 +188,7 @@ public class TableUploadController implements Initializable, DialogController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor(stage, new TextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new TextFile(value), "README");
   }
 
   @FXML
