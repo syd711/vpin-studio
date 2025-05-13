@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -88,7 +90,11 @@ public class CabinetSettingsPreferencesController implements Initializable {
   }
 
   private void refreshAvatar() {
-    Image image = new Image(client.getAssetService().getAvatar(true));
+    InputStream av = client.getAssetService().getAvatar(false);
+    if (av == null) {
+      av = ServerFX.class.getResourceAsStream("avatar-default.png");
+    }
+    Image image = new Image(av);
     ImageView avatar = new ImageView();
     avatar.setImage(image);
     avatar.setFitWidth(200);

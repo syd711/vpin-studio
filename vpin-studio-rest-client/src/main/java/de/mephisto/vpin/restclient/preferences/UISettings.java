@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.LaunchConfiguration;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 
 import java.util.ArrayList;
@@ -90,6 +91,16 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
   private boolean columnPatchVersion = false;
+
+  private LaunchConfiguration launchConfiguration;
+
+  public LaunchConfiguration getLaunchConfiguration() {
+    return launchConfiguration;
+  }
+
+  public void setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
+    this.launchConfiguration = launchConfiguration;
+  }
 
   public boolean isTournamentsSidebarVisible() {
     return tournamentsSidebarVisible;

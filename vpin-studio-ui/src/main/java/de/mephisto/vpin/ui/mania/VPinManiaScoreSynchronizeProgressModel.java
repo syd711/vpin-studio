@@ -9,6 +9,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,16 +19,18 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
   private final static Logger LOG = LoggerFactory.getLogger(VPinManiaScoreSynchronizeProgressModel.class);
 
   private Iterator<VpsTable> iterator;
-  private List<VpsTable> vpsTableList;
+  private List<VpsTable> vpsTableList = new ArrayList<>();
 
   public VPinManiaScoreSynchronizeProgressModel() {
     super("VPin Mania Synchronization");
+    this.vpsTableList = Studio.client.getGameService().getInstalledVpsTables();
+    this.iterator = vpsTableList.iterator();
   }
 
   public VPinManiaScoreSynchronizeProgressModel(List<VpsTable> vpsTableList) {
     super("VPin Mania Synchronization");
-    this.iterator = vpsTableList.iterator();
     this.vpsTableList = vpsTableList;
+    this.iterator = vpsTableList.iterator();
   }
 
   @Override
@@ -75,10 +78,6 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
 
   @Override
   public boolean hasNext() {
-    if (this.vpsTableList == null) {
-      this.vpsTableList = Studio.client.getGameService().getInstalledVpsTables();
-      this.iterator = vpsTableList.iterator();
-    }
     return iterator.hasNext();
   }
 }

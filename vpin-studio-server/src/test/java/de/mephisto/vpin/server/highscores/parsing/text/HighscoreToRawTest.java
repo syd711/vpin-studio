@@ -25,13 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HighscoreToRawTest {
 
-  private static ScoringDB scoringDB = ScoringDB.load();
+  private static final ScoringDB scoringDB = ScoringDB.load();
+
+  private final static String SINGLE_TEST = "JetSpin_77VPX.txt";
 
   @Test
   public void testAllTextFiles() {
-    ScoringDB scoringDB = ScoringDB.load();
     File folder = new File("../testsystem/vPinball/VisualPinball/User/");
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt") && !FilenameUtils.getBaseName(name).endsWith("LUT"));
+    System.out.println("Found " + files.length + " .txt files");
     int count = 0;
 
     TextHighscoreAdapters ad = new TextHighscoreAdapters();
@@ -41,6 +43,9 @@ public class HighscoreToRawTest {
         continue;
       }
 
+      if (SINGLE_TEST != null && !entry.getName().equalsIgnoreCase(SINGLE_TEST)) {
+        continue;
+      }
       System.out.println("Reading '" + entry.getName() + "'");
       String raw = ad.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
       System.out.println(raw);
@@ -56,7 +61,6 @@ public class HighscoreToRawTest {
 
   @Test
   public void testResetting() {
-    ScoringDB scoringDB = ScoringDB.load();
     TextHighscoreAdapters ad = new TextHighscoreAdapters();
     ad.loadParsers(scoringDB);
 
@@ -72,7 +76,7 @@ public class HighscoreToRawTest {
         fileInputStream = new FileInputStream(entry);
         List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
         File resetFile = new File(entry.getParentFile(), entry.getName() + ".reset");
-        if(!resetFile.exists()) {
+        if (!resetFile.exists()) {
           System.out.println("No reset file found for " + resetFile.getAbsolutePath());
           continue;
         }
@@ -109,7 +113,6 @@ public class HighscoreToRawTest {
 
   @Test
   public void testSingle() {
-    ScoringDB scoringDB = ScoringDB.load();
     File entry = new File("../testsystem/vPinball/VisualPinball/User/", "aztec.txt");
     System.out.println("Reading '" + entry.getName() + "'");
     TextHighscoreAdapters ad = new TextHighscoreAdapters();

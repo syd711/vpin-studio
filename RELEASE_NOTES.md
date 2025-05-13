@@ -18,6 +18,10 @@
   - De-cluttered context menu and removed less used function with focus on supporting more bulk actions there.
   - Added context menu option to bulk reset table ratings.
   - Replace error status icon for better contrast.
+  - Changed the emulator .exe for the launch button to a combo box. The selection is stored now too. In addition to that, the launch button has moved to the left, so that less used button go into the overflow menu for smaller resolutions instead.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/launcher-menu.png?raw=true" width="250" />
+    
   - Added competition button to the status column, shown when the table is used in any competition or tournament. The button takes you to the corresponding competition view.
   
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/competition-button.png?raw=true" width="250" />

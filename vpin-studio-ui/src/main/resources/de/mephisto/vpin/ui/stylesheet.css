@@ -1231,10 +1231,25 @@
     -fx-padding: 0 0 0 26;
 }
 
+.external-component .arrow {
+    -fx-background-color: #FFFFFF;
+}
+
 .external-component {
     -fx-font-color: #FFFFFF;
     -fx-text-fill: #FFFFFF;
-    -fx-base : #338800;
+    -fx-background-color: #338800;
+    -fx-border-color: #33AA00;
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-border-radius: 3px;
+}
+
+.external-component:hover {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: #33AA00;
+    -fx-background-color: #339900;
 }
 
 .split-menu-button .arrow {

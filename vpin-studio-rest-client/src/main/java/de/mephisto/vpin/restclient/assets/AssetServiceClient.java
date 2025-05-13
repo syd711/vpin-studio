@@ -121,12 +121,17 @@ public class AssetServiceClient extends VPinStudioClientService {
 
   @Nullable
   public ByteArrayInputStream getAvatar(boolean forceRefresh) {
-    if (!forceRefresh && client.getImageCache().containsKey(UUID_MAIN_AVATAR)) {
-      return new ByteArrayInputStream(client.getImageCache().get(UUID_MAIN_AVATAR));
+    try {
+      if (!forceRefresh && client.getImageCache().containsKey(UUID_MAIN_AVATAR)) {
+        return new ByteArrayInputStream(client.getImageCache().get(UUID_MAIN_AVATAR));
+      }
+      byte[] bytes = getRestClient().readBinary(API + "assets/avatar");
+      client.getImageCache().put(UUID_MAIN_AVATAR, bytes);
+      return new ByteArrayInputStream(bytes);
     }
-    byte[] bytes = getRestClient().readBinary(API + "assets/avatar");
-    client.getImageCache().put(UUID_MAIN_AVATAR, bytes);
-    return new ByteArrayInputStream(bytes);
+    catch (Exception e) {
+      return null;
+    }
   }
 
   @Nullable

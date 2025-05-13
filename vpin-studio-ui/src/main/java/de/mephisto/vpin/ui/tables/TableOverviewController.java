@@ -58,6 +58,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -2036,7 +2037,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
-      SplitMenuButton playBtn = loader.load();
+      Parent playBtn = loader.load();
       playButtonController = loader.getController();
       int i = toolbar.getItems().indexOf(stopBtn);
       toolbar.getItems().add(i, playBtn);

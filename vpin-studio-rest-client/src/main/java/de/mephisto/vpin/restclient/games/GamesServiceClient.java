@@ -346,7 +346,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/highscorefiles/" + gameId, HighscoreFiles.class);
   }
 
-  public GameRepresentation saveGame(GameRepresentation game) throws Exception {
+  public GameRepresentation saveGame(GameRepresentation game) {
     try {
       return getRestClient().post(API + "games/save", game, GameRepresentation.class);
     }
