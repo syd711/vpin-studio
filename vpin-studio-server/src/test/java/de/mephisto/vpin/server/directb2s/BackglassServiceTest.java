@@ -42,7 +42,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   @Test
   public void testGetBackglasses() {
     List<DirectB2S> b2s = backglassService.getBackglasses();
-    assertEquals(4, b2s.size());
+    assertEquals(5, b2s.size());
 
     DirectB2S b2s1 = b2s.get(0);
     assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s1.getFileName());
@@ -52,7 +52,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     assertEquals("Baseball (1970).directb2s", b2s2.getFileName());
     assertEquals(1, b2s2.getNbVersions());
 
-    DirectB2S b2s3 = b2s.get(3);
+    DirectB2S b2s3 = b2s.get(4);
     assertEquals("Twister (1996).directb2s", b2s3.getFileName());
     assertEquals(2, b2s3.getNbVersions());
   }
@@ -161,7 +161,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   
     // also verify we did not corrupt the cache
     List<DirectB2S> allb2s = backglassService.getBackglasses();
-    assertEquals(4, allb2s.size());
+    assertEquals(5, allb2s.size());
   }
 
 
