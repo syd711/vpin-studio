@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.util;
 
 import javafx.scene.Parent;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.MediaView;
 
 import java.util.ArrayList;
@@ -21,6 +23,16 @@ public class JFXHelper {
       if (node instanceof Parent) {
         addAllDescendents((Parent)node, nodes);
       }
+    }
+  }
+
+  public static void setImageDisabled(ImageView imageview, boolean disabled) {
+    if (disabled) {
+      imageview.setEffect(new GaussianBlur());
+      imageview.setOpacity(0.2);
+    } else {
+      imageview.setEffect(null);
+      imageview.setOpacity(1.0);
     }
   }
 }

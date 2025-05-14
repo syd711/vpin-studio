@@ -21,6 +21,7 @@ import de.mephisto.vpin.ui.tables.models.*;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.util.JFXHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
@@ -35,7 +36,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -685,11 +685,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     deleteDMDBtn.setDisable(true);
 
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
-    thumbnailImage.setEffect(null);
-    thumbnailImage.setOpacity(1.0);
+    JFXHelper.setImageDisabled(thumbnailImage, false);
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
-    dmdThumbnailImage.setEffect(null);
-    dmdThumbnailImage.setOpacity(1.0);
+    JFXHelper.setImageDisabled(dmdThumbnailImage, false);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -929,8 +927,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             downloadBackglassBtn.setDisable(false);
             if (tableSettings.isHideB2SBackglass()) {
               resolutionLabel.setText("Backglass Hidden.");
-              thumbnailImage.setEffect(new GaussianBlur());
-              thumbnailImage.setOpacity(0.2);
+              JFXHelper.setImageDisabled(thumbnailImage, true);
             }
             else {
               resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
@@ -959,8 +956,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
             deleteDMDBtn.setDisable(false);
             if (tableSettings.isHideB2SDMD()) {
               dmdResolutionLabel.setText("B2S DMD Hidden");
-              dmdThumbnailImage.setEffect(new GaussianBlur());
-              dmdThumbnailImage.setOpacity(0.2);
+              JFXHelper.setImageDisabled(dmdThumbnailImage, true);
             } else {
               dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
             }

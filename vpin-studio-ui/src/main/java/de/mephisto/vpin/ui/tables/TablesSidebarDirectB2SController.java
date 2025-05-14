@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import de.mephisto.vpin.ui.util.JFXHelper;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -25,7 +26,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -464,11 +464,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     filesizeLabel.setText("-");
     modificationDateLabel.setText("-");
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
-    thumbnailImage.setEffect(null);
-    thumbnailImage.setOpacity(1.0);
+    JFXHelper.setImageDisabled(thumbnailImage, false);
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
-    dmdThumbnailImage.setEffect(null);
-    dmdThumbnailImage.setOpacity(1.0);
+    JFXHelper.setImageDisabled(dmdThumbnailImage, false);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
 
@@ -506,8 +504,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                   thumbnailImage.setImage(imageToLoad);
                   if (tableSettings.isHideB2SBackglass()) {
                     resolutionLabel.setText("Backglass Hidden.");
-                    thumbnailImage.setEffect(new GaussianBlur());
-                    thumbnailImage.setOpacity(0.2);
+                    JFXHelper.setImageDisabled(thumbnailImage, true);
                   }
                   else {
                     resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
@@ -533,8 +530,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                   dmdThumbnailImage.setImage(image);
                   if (tableSettings.isHideB2SDMD()) {
                     dmdResolutionLabel.setText("B2S DMD Hidden");
-                    dmdThumbnailImage.setEffect(new GaussianBlur());
-                    dmdThumbnailImage.setOpacity(0.2);
+                    JFXHelper.setImageDisabled(dmdThumbnailImage, true);
                   } else {
                     dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
                   }
