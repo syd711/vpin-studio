@@ -43,6 +43,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -137,9 +138,6 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private ImageView dmdThumbnailImage;
 
   @FXML
-  private Pane versionSelector;
-
-  @FXML
   private Pane noneActiveInfo;
 
   @FXML
@@ -157,10 +155,15 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private Button deleteDMDBtn;
 
   @FXML
+  private VBox versionPane;
+
+  @FXML
   private CheckBox activateCheckbox;
 
   @FXML
   private ComboBox<String> directB2SCombo;
+  @FXML
+  private Label directB2SLabel;
 
   //-- Editors
 
@@ -277,8 +280,13 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       if (selection != null && selectedVersion != null) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selectedVersion + "\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          client.getBackglassServiceClient().deleteBackglassVersion(selection.getEmulatorId(), selectedVersion);
-          backglassManagerController.delete(selection);
+          DirectB2S b2s = client.getBackglassServiceClient().deleteBackglassVersion(selection.getEmulatorId(), selectedVersion);
+          if (b2s != null) {
+            backglassManagerController.reloadItem(b2s);
+          }
+          else {
+             backglassManagerController.delete(selection);
+          }
         }
       }
     }
@@ -478,7 +486,9 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    versionSelector.managedProperty().bindBidirectional(versionSelector.visibleProperty());
+    versionPane.managedProperty().bindBidirectional(versionPane.visibleProperty());
+    directB2SCombo.managedProperty().bindBidirectional(directB2SCombo.visibleProperty());
+    directB2SLabel.managedProperty().bindBidirectional(directB2SLabel.visibleProperty());
     noneActiveInfo.managedProperty().bindBidirectional(noneActiveInfo.visibleProperty());
 
     FrontendType frontendType = Studio.client.getFrontendService().getFrontendType();
@@ -628,7 +638,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   private void refreshStatusCheckbox() {
     activateCheckbox.selectedProperty().removeListener(activationChangeListener);
     activateCheckbox.setSelected(false);
-    String selectedVersion = directB2SCombo.getValue();
+    String selectedVersion = getSelectedVersion();
     if (selectedVersion != null && directb2s != null) {
       boolean selected = FileUtils.baseNameMatches(selectedVersion, directb2s.getFileName());
       activateCheckbox.setSelected(selected);
@@ -789,16 +799,20 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
     // maintain current selection if possible
     directB2SCombo.getItems().clear();
-    noneActiveInfo.setVisible(false);
     if (model != null) {
       // TODO why is this required? The versions of the model that is passed here are always "0" on second select
       //DirectB2SAndVersions directB2SVersions = client.getBackglassServiceClient().getDirectB2S(model.getEmulatorId(), model.getFileName());
       //List<String> versions = directB2SVersions.getVersions();
       List<String> versions = model.getVersions();
 
-      versionSelector.setVisible(versions.size() > 1);
+      versionPane.setVisible(true);
+      noneActiveInfo.setVisible(!model.isEnabled());
+      activateCheckbox.setVisible(true);
 
       if (versions.size() > 1) {
+        directB2SCombo.setVisible(true);
+        directB2SLabel.setVisible(false);
+
         directB2SCombo.getItems().addAll(versions);
         // re-select previously one else first in the list
         if (latestSelection != null && versions.contains(latestSelection)) {
@@ -808,10 +822,15 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           directB2SCombo.getSelectionModel().selectFirst();
         }
       }
-      noneActiveInfo.setVisible(!model.isEnabled());
+      else if (versions.size() == 1) {
+        directB2SCombo.setVisible(false);
+        directB2SLabel.setVisible(true);
+
+        directB2SLabel.setText(versions.get(0));
+      }  
     }
     else {
-      versionSelector.setVisible(false);
+      versionPane.setVisible(false);
     }
 
     refreshTableData(null);

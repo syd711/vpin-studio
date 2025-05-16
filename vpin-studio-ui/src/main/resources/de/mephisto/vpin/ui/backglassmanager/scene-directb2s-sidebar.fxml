@@ -24,70 +24,45 @@
     <content>
         <VBox spacing="24.0" styleClass="accordion-container">
             <children>
-                <VBox fx:id="noneActiveInfo" styleClass="info-container">
+                <VBox fx:id="versionPane" >
                     <children>
-                    <Label text="None of the backglasses is currently activated." textFill="WHITE">
-                        <font>
-                            <Font size="14.0" />
-                        </font>
-                        <padding>
-                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                        </padding>
-                    </Label>
-                    </children>
-                    <VBox.margin>
-                    <Insets bottom="6.0" right="6.0" top="6.0" />
-                    </VBox.margin>
-                </VBox>
-                <VBox fx:id="versionSelector">
-                <children>
-                    <Label text="Version Selector" textFill="WHITE">
+                    <VBox fx:id="noneActiveInfo" styleClass="info-container">
+                        <children>
+                        <Label text="None of the backglasses is currently activated." textFill="WHITE">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <padding>
+                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                            </padding>
+                        </Label>
+                        </children>
+                        <VBox.margin>
+                        <Insets bottom="12.0" right="6.0" top="6.0"  />
+                        </VBox.margin>
+                    </VBox>
+
+                    <Label text="Version" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="14.0" />
                         </font>
                         <VBox.margin>
-                            <Insets left="5.0" />
+                            <Insets bottom="12.0" />
                         </VBox.margin>
                     </Label>
-                    <GridPane hgap="3.0" vgap="3.0">
-                        <columnConstraints>
-                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" prefWidth="155" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="460.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <children>
-                            <Label fx:id="directB2SLabel" text="Version:" textFill="WHITE">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <padding>
-                                <Insets left="6.0" right="6.0" />
-                            </padding>
-                            </Label>
-                            <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="450.0" GridPane.columnIndex="1" />
 
-                            <Label fx:id="directB2SLabel1" text="Status:" textFill="WHITE" GridPane.rowIndex="1">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                            <padding>
-                                <Insets left="6.0" right="6.0" />
-                            </padding>
-                            </Label>
-                            <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="This is the active backglass" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        </children>
+                    <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--" >
+                    </Label>
+                    <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="550.0"  />
+
+                    <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="Active backglass" GridPane.columnIndex="1" GridPane.rowIndex="1" >
                         <VBox.margin>
-                            <Insets top="6.0" />
+                            <Insets top="12.0" />
                         </VBox.margin>
-                    </GridPane>
-                </children>
-                <VBox.margin>
-                    <Insets left="-3.0" />
-                </VBox.margin>
+                    </CheckBox>
+                    </children>
                 </VBox>
+
                 <HBox spacing="24.0">
                     <children>
                         <VBox spacing="6.0">
