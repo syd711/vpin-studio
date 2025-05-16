@@ -35,6 +35,9 @@ public class UISettings extends JsonSettings {
 
   private boolean autoApplyVpsData = true;
 
+  /** Whether DMD position are auto-saved */
+  private boolean autoSaveDmdPosition = true;
+
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
   private String justAddedColor = "#FFFFFF";
@@ -490,6 +493,14 @@ public class UISettings extends JsonSettings {
 
   public void setAutoApplyVpsData(boolean autoApplyVpsData) {
     this.autoApplyVpsData = autoApplyVpsData;
+  }
+
+  public boolean isAutoSaveDmdPosition() {
+    return autoSaveDmdPosition;
+  }
+
+  public void setAutoSaveDmdPosition(boolean autoSaveDmdPosition) {
+    this.autoSaveDmdPosition = autoSaveDmdPosition;
   }
 
   public boolean isPropperAuthorField() {

@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -51,13 +50,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.juli.logging.Log;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -665,7 +662,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmationWithOption(Stage owner, String text, String help1, String help2, String btnText, String optionText) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithOptionController.class, owner, "defaultModal", "dialog-confirmation-with-option.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithOptionController.class, owner, "Confirmation", "dialog-confirmation-with-option.fxml");
     ConfirmationDialogWithOptionController controller = (ConfirmationDialogWithOptionController) stage.getUserData();
     controller.initDialog(stage, optionText, btnText, text, help1, help2);
     stage.showAndWait();
@@ -673,11 +670,28 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2, String btnText) {
-    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "defaultModal", "dialog-confirmation.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.initDialog(stage, null, btnText, text, help1, help2);
     stage.showAndWait();
     return controller.getResult();
+  }
+
+  public static Optional<ButtonType> showYesNoConfirmation(Stage owner, String text, String help) {
+    return showYesNoConfirmation(owner, text, help, null);
+  }
+
+  public static Optional<ButtonType> showYesNoConfirmation(Stage owner, String text, String help1, String help2) {
+    Optional<ButtonType> result = showConfirmationWithOption(owner, text, help1, help2, "Yes", "No");
+    if (result.isPresent()) {
+      if (ButtonType.APPLY.equals(result.get())) {
+        return Optional.of(ButtonType.NO);
+      }
+      else if (ButtonType.OK.equals(result.get())) {
+        return Optional.of(ButtonType.YES);
+      }
+    }
+    return result;
   }
 
   public static Optional<ButtonType> showInformation(Stage owner, String text, String help1) {

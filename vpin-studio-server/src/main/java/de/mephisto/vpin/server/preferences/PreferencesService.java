@@ -158,77 +158,9 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T getJsonPreference(String key) {
-    try {
-      switch (key) {
-        case PreferenceNames.UI_SETTINGS: {
-          return (T) getJsonPreference(key, UISettings.class);
-        }
-        case PreferenceNames.SERVER_SETTINGS: {
-          return (T) getJsonPreference(key, ServerSettings.class);
-        }
-        case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
-          return (T) getJsonPreference(key, CardSettings.class);
-        }
-        case PreferenceNames.MANIA_SETTINGS: {
-          return (T) getJsonPreference(key, ManiaSettings.class);
-        }
-        case PreferenceNames.DOF_SETTINGS: {
-          return (T) getJsonPreference(key, DOFSettings.class);
-        }
-        case PreferenceNames.DOFLINX_SETTINGS: {
-          return (T) getJsonPreference(key, DOFLinxSettings.class);
-        }
-        case PreferenceNames.PAUSE_MENU_SETTINGS: {
-          return (T) getJsonPreference(key, PauseMenuSettings.class);
-        }
-        case PreferenceNames.VALIDATION_SETTINGS: {
-          return (T) getJsonPreference(key, ValidationSettings.class);
-        }
-        case PreferenceNames.IGNORED_VALIDATION_SETTINGS: {
-          return (T) getJsonPreference(key, IgnoredValidationSettings.class);
-        }
-        case PreferenceNames.NOTIFICATION_SETTINGS: {
-          return (T) getJsonPreference(key, NotificationSettings.class);
-        }
-        case PreferenceNames.PINBALLX_SETTINGS: {
-          return (T) getJsonPreference(key, PinballXSettings.class);
-        }
-        case PreferenceNames.FILTER_SETTINGS: {
-          return (T) getJsonPreference(key, FilterSettings.class);
-        }
-        case PreferenceNames.VPU_SETTINGS: {
-          return (T) getJsonPreference(key, VPUSettings.class);
-        }
-        case PreferenceNames.OVERLAY_SETTINGS: {
-          return (T) getJsonPreference(key, OverlaySettings.class);
-        }
-        case PreferenceNames.VPF_SETTINGS: {
-          return (T) getJsonPreference(key, VPFSettings.class);
-        }
-        case PreferenceNames.BACKUP_SETTINGS: {
-          return (T) getJsonPreference(key, BackupSettings.class);
-        }
-        case PreferenceNames.RECORDER_SETTINGS: {
-          return (T) getJsonPreference(key, RecorderSettings.class);
-        }
-        case PreferenceNames.MONITORING_SETTINGS: {
-          return (T) getJsonPreference(key, MonitoringSettings.class);
-        }
-        case PreferenceNames.WEBHOOK_SETTINGS: {
-          return (T) getJsonPreference(key, WebhookSettings.class);
-        }
-        case PreferenceNames.ISCORED_SETTINGS: {
-          return (T) getJsonPreference(key, IScoredSettings.class);
-        }
-        default: {
-          throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
-        }
-      }
-    }
-    catch(ClassCastException cce) {
-      throw new UnsupportedOperationException("Cannot return settings in expected format for preference '" + key + "'");
-    }
+  public <T extends JsonSettings> T getJsonPreference(String key) {
+    Class<? extends JsonSettings> clazz = PreferenceNames.getClassFromKey(key);
+    return (T) getJsonPreference(key, clazz);
   }
 
   public <T> T getJsonPreference(String key, Class<T> jsonSettings) {

@@ -3,6 +3,8 @@ package de.mephisto.vpin.commons.fx;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +17,8 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class DialogHeaderResizeableController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
 
@@ -26,6 +30,9 @@ public class DialogHeaderResizeableController implements Initializable {
 
   @FXML
   private Label titleLabel;
+
+  /** The dirty indicator */
+  private BooleanProperty dirty = new SimpleBooleanProperty(false);
 
   @FXML
   private BorderPane header;
@@ -89,6 +96,33 @@ public class DialogHeaderResizeableController implements Initializable {
     titleLabel.setText(title);
   }
 
+  //---------------------------------------------
+  // Dirty management
+
+  public boolean isDirty() {
+    return this.dirty.get();
+  }
+
+  public void setDirty(boolean dirty) {
+    this.dirty.set(dirty);
+  }
+
+  public BooleanProperty dirtyProperty() {
+    return dirty;
+  }
+
+  private static final String dirtySuffix = " (*)";
+  
+  protected void updateTitle() {
+    String title = titleLabel.getText();
+    if (dirty.get() && !title.endsWith(dirtySuffix)) {
+      titleLabel.setText(title + dirtySuffix);
+    }
+    else if (!dirty.get() && title.endsWith(dirtySuffix)) {
+      titleLabel.setText(StringUtils.removeEnd(title, dirtySuffix));
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     minimizeBtn.setVisible(false);
@@ -108,5 +142,7 @@ public class DialogHeaderResizeableController implements Initializable {
       });
     });
 
+    // update title when the dirty flag changes
+    dirty.addListener((pbs, o, v) -> updateTitle());
   }
 }

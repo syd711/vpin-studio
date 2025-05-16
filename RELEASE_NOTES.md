@@ -42,6 +42,7 @@
 - **DMD Position Tool**: 
   - No more excuse for not having an image in your full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the frontend video.
   - Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
+  - Added detection of changes and auto-save capability, where a click on next / prev button can automatically trigger a save of the changes 
   - **Important change:** Disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
   - When there is no B2S full DMD or it is not active, and when the frontend has a full DMD video that is flagged to be kept displayed when game is launched, then a random frame of that video is picked to position the DMD onto it. 
   - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number and default positions). The zones can then be modified and saved. Also a reset button permits to restore the default positions of zones taken from backglass if modified.
