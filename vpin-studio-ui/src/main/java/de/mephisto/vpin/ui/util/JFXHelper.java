@@ -28,10 +28,8 @@ public class JFXHelper {
 
   public static void setImageDisabled(ImageView imageview, boolean disabled) {
     if (disabled) {
-      imageview.setEffect(new GaussianBlur());
-      imageview.setOpacity(0.2);
+      imageview.setOpacity(0.15);
     } else {
-      imageview.setEffect(null);
       imageview.setOpacity(1.0);
     }
   }
