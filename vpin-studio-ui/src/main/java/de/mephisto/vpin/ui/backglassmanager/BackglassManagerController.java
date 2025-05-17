@@ -563,9 +563,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
-    if (!activeView) {
-      return;
-    }
 
     DirectB2SModel selection = getSelectedModel();
 
