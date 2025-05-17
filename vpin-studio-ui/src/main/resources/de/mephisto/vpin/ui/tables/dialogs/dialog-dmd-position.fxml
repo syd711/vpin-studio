@@ -231,7 +231,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="When disable, tell the backglass not to render scores that are behind the alphanumeric scores and could be seen. Mind this setting modifies the backglass. IMPORTANT : When not checked, it re-enables only the scores turned off by studio !" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="When checked, tell the backglass not to render scores that are behind the alphanumeric scores and could be seen. Mind this setting modifies the backglass. IMPORTANT : When not checked, it re-enables only the scores turned off by studio !" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="12.0" />
