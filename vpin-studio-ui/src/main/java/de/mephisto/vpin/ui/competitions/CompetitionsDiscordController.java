@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.competitions;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -662,11 +663,14 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
-    if (this.competitionsController != null) {
-      refreshView(Optional.empty());
-    }
+    JFXFuture.runAsync(() -> {
+      long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
+      this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
+    }).thenLater(() -> {
+      if (this.competitionsController != null) {
+        refreshView(Optional.empty());
+      }
+    });
   }
 
   public void setCompetitionsController(CompetitionsController competitionsController) {

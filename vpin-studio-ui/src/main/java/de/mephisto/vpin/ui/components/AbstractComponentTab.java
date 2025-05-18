@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
@@ -52,15 +53,18 @@ abstract public class AbstractComponentTab implements StudioEventListener {
 
   protected void refresh() {
     String savedTargetFolder = component.getTargetFolder();
-    component = client.getComponentService().getComponent(getComponentType());
-    // set the target folder the user may have changed
-    if (!component.isInstalled()) {
-      component.setTargetFolder(savedTargetFolder);
-    }
+    JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(getComponentType()))
+      .thenAcceptLater(comp -> {
+        component = comp;
+        // set the target folder the user may have changed
+        if (!component.isInstalled()) {
+          component.setTargetFolder(savedTargetFolder);
+        }
 
-    componentSummaryController.refreshComponent(component);
-    componentUpdateController.refreshComponent(component);
-    refreshTab(component);
+        componentSummaryController.refreshComponent(component);
+        componentUpdateController.refreshComponent(component);
+        refreshTab(component);
+      });
   }
 
   /**
@@ -109,12 +113,15 @@ abstract public class AbstractComponentTab implements StudioEventListener {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
-    component = client.getComponentService().getComponent(getComponentType());
-    componentSummaryController.setComponent(this, component);
-    componentUpdateController.setComponent(this, component);
-    refreshTab(component);
+    JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(getComponentType()))
+      .thenAcceptLater(comp -> {
+        this.component = comp;
+        componentSummaryController.setComponent(this, component);
+        componentUpdateController.setComponent(this, component);
+        refreshTab(component);
 
-    EventManager.getInstance().addListener(this);
+        EventManager.getInstance().addListener(this);
+      });
   }
 
   public void clearCustomValues() {
