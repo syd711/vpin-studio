@@ -63,7 +63,7 @@ public class AssetFilterPanelController implements Initializable {
   private Stage parentStage;
   private GameRepresentation game;
   private AssetType filteringMode;
-  private UploaderAnalysis<?> uploaderAnalysis;
+  private UploaderAnalysis uploaderAnalysis;
   private File file;
 
   @FXML

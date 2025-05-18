@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 @Service
 public class ArchiveService implements InitializingBean {

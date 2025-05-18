@@ -175,7 +175,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   }
 
-  public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public void setFile(Stage stage, File file, UploaderAnalysis analysis, Runnable finalizer) {
     this.stage = stage;
     this.finalizer = finalizer;
     if (file != null) {
@@ -200,7 +200,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     return this.selection;
   }
 
-  protected void refreshSelection(UploaderAnalysis<?> analysis) {
+  protected void refreshSelection(UploaderAnalysis analysis) {
     this.uploadBtn.setDisable(true);
 
     if (this.selection != null && !this.selection.isEmpty()) {
@@ -247,7 +247,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   /**
    * Perform the analysis, by default just validateAssetType
    */
-  protected String validateAnalysis(UploaderAnalysis<?> analysis) {
+  protected String validateAnalysis(UploaderAnalysis analysis) {
     return analysis.validateAssetTypeInArchive(assetType);
   }
 
@@ -257,7 +257,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
    * @param analysis         The result of the analysis
    * @param uploaderAnalysis
    */
-  protected void endAnalysis(String analysis, UploaderAnalysis<?> uploaderAnalysis) {
+  protected void endAnalysis(String analysis, UploaderAnalysis uploaderAnalysis) {
     if (analysis == null) {
       String collect = multiSelection ?
           this.selection.stream().map(f -> f.getName()).collect(Collectors.joining(", ")) :

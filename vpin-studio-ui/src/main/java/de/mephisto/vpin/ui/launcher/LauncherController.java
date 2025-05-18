@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.launcher;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.*;
@@ -118,7 +119,8 @@ public class LauncherController implements Initializable {
   private void onInstall() {
     boolean dotNetInstalled = false;
     try {
-      dotNetInstalled = WinRegistry.isDotNetInstalled();
+      SystemInfo si = new SystemInfo();
+      dotNetInstalled = si.isDotNetInstalled();
     } catch (Exception e) {
       LOG.error("Error checking .net framework: {}", e.getMessage(), e);
       WidgetFactory.showAlert(stage, "Error", "Error checking .net framework: " + e.getMessage());

@@ -770,7 +770,7 @@ public class BackglassService implements InitializingBean {
       // The default filename ScreenRes.txt can be altered by setting the registry key
       // Software\B2S\B2SScreenResFileNameOverride to a different filename.
       screenresTxt = StringUtils.defaultIfEmpty(
-          systemService.readRegistryValue("HKEY_CURRENT_USER\\Software\\B2S", "B2SScreenResFileNameOverride"),
+          systemService.readUserValue("Software\\B2S", "B2SScreenResFileNameOverride"),
           "ScreenRes.txt");
     }
 

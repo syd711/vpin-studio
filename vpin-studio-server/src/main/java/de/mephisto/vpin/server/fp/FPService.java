@@ -1,11 +1,9 @@
 package de.mephisto.vpin.server.fp;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -26,9 +24,6 @@ public class FPService {
   @Autowired
   private FPCommandLineService fpCommandLineService;
 
-  @Autowired
-  private EmulatorService emulatorService;
-
   public boolean play(@Nullable Game game, @Nullable String altExe) {
     if (game != null) {
       return fpCommandLineService.execute(game, altExe);
@@ -37,18 +32,12 @@ public class FPService {
     return fpCommandLineService.launch();
   }
 
-  public void installBAMCfg(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, @NonNull File tempFile, @NonNull Frontend frontend, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = emulatorService.getGameEmulator(game.getEmulatorId());
+  public void installBAMCfg(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, @NonNull GameEmulator gameEmulator, @NonNull File tempFile, @NonNull UploaderAnalysis analysis) throws IOException {
     File bamFolder = new File(gameEmulator.getInstallationFolder(), "BAM/cfg/");
-    installBAMFile(uploadDescriptor, game, tempFile, analysis, AssetType.BAM_CFG, frontend, bamFolder);
+    installBAMFile(uploadDescriptor, game, tempFile, analysis, AssetType.BAM_CFG, bamFolder);
   }
 
-  public void installBAMFile(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, File tempFile, UploaderAnalysis analysis, AssetType assetType, Frontend frontend, File folder) throws IOException {
-    if (analysis == null) {
-      analysis = new UploaderAnalysis(frontend, tempFile);
-      analysis.analyze();
-    }
-
+  private void installBAMFile(@NonNull UploadDescriptor uploadDescriptor, @Nullable Game game, File tempFile, @NonNull UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {
     String bamCfgFile = analysis.getFileNameWithPathForExtension("cfg");
     if (bamCfgFile != null) {
       String filename = bamCfgFile;

@@ -6,14 +6,12 @@ import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.mame.MameUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GameEmulator {
@@ -29,7 +27,12 @@ public class GameEmulator {
   private String installationDirectory;
   private String gamesDirectory;
   private String mediaDirectory;
+
+  private String mameDirectory;
   private String romDirectory;
+  private String nvramDirectory;
+  private String cfgDirectory;
+
   private int id;
   private boolean enabled;
 
@@ -173,11 +176,27 @@ public class GameEmulator {
   }
 
   public String getMameDirectory() {
-    File mameFolder = new File(installationDirectory, "VPinMAME");
-    if (mameFolder.exists()) {
-      return mameFolder.getAbsolutePath();
-    }
-    return null;
+    return mameDirectory;
+  }
+
+  public void setMameDirectory(String mameDirectory) {
+    this.mameDirectory = mameDirectory;
+  }
+
+  public String getNvramDirectory() {
+    return nvramDirectory;
+  }
+
+  public void setNvramDirectory(String nvramDirectory) {
+    this.nvramDirectory = nvramDirectory;
+  }
+
+  public String getCfgDirectory() {
+    return cfgDirectory;
+  }
+
+  public void setCfgDirectory(String cfgDirectory) {
+    this.cfgDirectory = cfgDirectory;
   }
 
   public String getRomDirectory() {
@@ -234,27 +253,17 @@ public class GameEmulator {
     return exeParameters;
   }
 
-  public String getNvramDirectory() {
-    return getNvramFolder().getAbsolutePath();
-  }
 
   @NonNull
   @JsonIgnore
   public File getNvramFolder() {
-    if (isVpxEmulator()) {
-      File registryFolder = new File(MameUtil.getNvRamFolder());
-      if (registryFolder.exists()) {
-        return registryFolder;
-      }
-    }
-    return new File(getMameFolder(), "nvram");
+    return new File(getNvramDirectory());
   }
-
 
   @NonNull
   @JsonIgnore
   public File getCfgFolder() {
-    return new File(getMameFolder(), "cfg");
+    return new File(getCfgDirectory());
   }
 
   @NonNull
@@ -292,24 +301,13 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getRomFolder() {
-    if (isVpxEmulator() && StringUtils.isEmpty(romDirectory)) {
-      File romDir = new File(MameUtil.getRomsFolder());
-      if (romDir.exists()) {
-        return romDir;
-      }
-    }
-
-    if (!StringUtils.isEmpty(romDirectory)) {
-      return new File(romDirectory);
-    }
-
-    return new File(getMameFolder(), "roms");
+    return new File(romDirectory);
   }
 
   @NonNull
   @JsonIgnore
   public File getMameFolder() {
-    return new File(getInstallationFolder(), "VPinMAME");
+    return new File(getMameDirectory());
   }
 
   @NonNull

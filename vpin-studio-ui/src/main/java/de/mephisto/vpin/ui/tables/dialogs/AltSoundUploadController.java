@@ -33,7 +33,7 @@ public class AltSoundUploadController extends BaseUploadController {
       getSelection(), getSelectedEmulatorId(), rom, finalizer);
   }
 
-  public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis<?> uploaderAnalysis, Runnable finalizer) {
+  public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis uploaderAnalysis, Runnable finalizer) {
     this.game = game;
     super.setFile(stage, file, uploaderAnalysis, finalizer);
   }
@@ -45,13 +45,13 @@ public class AltSoundUploadController extends BaseUploadController {
   }
 
   @Override
-  protected String validateAnalysis(UploaderAnalysis<?> uploaderAnalysis) {
+  protected String validateAnalysis(UploaderAnalysis uploaderAnalysis) {
     rom = uploaderAnalysis.getRomFromAltSoundPack();
     return super.validateAnalysis(uploaderAnalysis);
   }
 
   @Override
-  protected void endAnalysis(String validation, UploaderAnalysis<?> uploaderAnalysis) {
+  protected void endAnalysis(String validation, UploaderAnalysis uploaderAnalysis) {
     if (rom != null) {
         //TODO Question here, seems that rom is not mandatory for altsound upload
         // but if rom is mandatory, simply return an error message 

@@ -107,7 +107,7 @@ public class Directb2sUploadController extends BaseUploadController {
   }
 
   @Override
-  public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public void setFile(Stage stage, File file, UploaderAnalysis analysis, Runnable finalizer) {
     super.setFile(stage, file, analysis, finalizer);
   }
 

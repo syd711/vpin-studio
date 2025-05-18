@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -40,9 +39,6 @@ public class AltColorService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
@@ -146,12 +142,7 @@ public class AltColorService implements InitializingBean {
     return null;
   }
 
-  public void installAltColorFromArchive(UploaderAnalysis analysis, Game game, File out) throws IOException {
-    if (analysis == null) {
-      analysis = new UploaderAnalysis(frontendService.getFrontend(), out);
-      analysis.analyze();
-    }
-
+  public void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, Game game, File out) throws IOException {
     String assetFileName = analysis.getFileNameForAssetType(AssetType.PAC);
     if (assetFileName != null) {
       PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"), assetFileName);

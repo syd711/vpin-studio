@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.util.SystemUtil;
@@ -262,8 +261,7 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   private File getPath(Properties s, String variable) {
     String path = s.getProperty(variable);
     if (path.contains("[PinballX]")) {
-      SystemInfo si = new SystemInfo();
-      path = path.replace("[PinballX]", si.resolvePinballXInstallationFolder().getAbsolutePath());
+      path = path.replace("[PinballX]", systemService.resolvePinballXInstallationFolder().getAbsolutePath());
     }
 
     File f = new File(path);

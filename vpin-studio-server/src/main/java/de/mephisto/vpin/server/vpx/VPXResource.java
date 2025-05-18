@@ -5,7 +5,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
@@ -140,7 +139,7 @@ public class VPXResource {
 
   @PostMapping("/music/upload")
   public UploadDescriptor uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     try {
       descriptor.setAcceptAllAudioAsMusic(true);
       descriptor.upload();
@@ -159,7 +158,7 @@ public class VPXResource {
   @PostMapping("/pov/upload")
   public UploadDescriptor povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
                                     @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+    UploadDescriptor descriptor = universalUploadService.create(file, gameId);
     try {
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);

@@ -530,12 +530,8 @@ public class GameMediaService {
     LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
   }
 
-  public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis<?> analysis) throws Exception {
+  public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis) throws Exception {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    if (analysis == null) {
-      analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
-      analysis.analyze();
-    }
 
     Game game = frontendService.getOriginalGame(uploadDescriptor.getGameId());
     List<VPinScreen> values = frontendService.getFrontend().getSupportedScreens();

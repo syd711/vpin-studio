@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 @Service("PinballX")
 public class PinballXConnector extends BaseConnector {

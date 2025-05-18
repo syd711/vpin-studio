@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.converter;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.converter.MediaConversionCommand.ImageOp;
 import de.mephisto.vpin.restclient.converter.MediaOperation;
@@ -11,6 +10,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -164,9 +164,9 @@ public class MediaConverterService implements InitializingBean {
 
     String[] args = StringUtils.split(command.getCommand());
 
-    File resources = new File(SystemInfo.RESOURCES);
+    File resources = new File(SystemService.RESOURCES);
     if (!resources.exists()) {
-      resources = new File("../" + SystemInfo.RESOURCES);
+      resources = new File("../" + SystemService.RESOURCES);
     }
 
     List<String> commandList = new ArrayList<>();

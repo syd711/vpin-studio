@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.mame;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +23,10 @@ public class MameResource {
   private final static Logger LOG = LoggerFactory.getLogger(MameResource.class);
 
   @Autowired
-  private MameService mameService;
+  private GameService gameService;
 
   @Autowired
-  private MameRomAliasService mameRomAliasService;
+  private MameService mameService;
 
   @Autowired
   private UniversalUploadService universalUploadService;
@@ -53,20 +53,18 @@ public class MameResource {
 
   @GetMapping("/clearcache")
   public boolean clearCache() {
-    mameRomAliasService.clearCache();
-    return mameService.clearCache();
+    return gameService.clearMameCaches();
   }
 
   @GetMapping("/clearcachefor/{rom}")
   public boolean clearCacheFor(@PathVariable("rom") String rom) {
-    mameRomAliasService.clearCache();
-    return mameService.clearCacheFor(rom);
+    return gameService.clearMameCacheFor(rom);
   }
 
 
   @PostMapping("/upload/rom/{emuId}")
   public UploadDescriptor uploadRom(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emuId);
 
     try {
@@ -85,7 +83,7 @@ public class MameResource {
 
   @PostMapping("/upload/cfg/{emuId}")
   public UploadDescriptor uploadCfg(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emuId);
 
     try {
@@ -104,7 +102,7 @@ public class MameResource {
 
   @PostMapping("/upload/nvram/{emuId}")
   public UploadDescriptor uploadNvRam(@PathVariable("emuId") int emuId, @RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emuId);
 
     try {

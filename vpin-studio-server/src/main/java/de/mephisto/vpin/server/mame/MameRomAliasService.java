@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.mame;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -12,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -28,9 +26,6 @@ public class MameRomAliasService implements InitializingBean {
   private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
 
   private final Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
-
-  @Autowired
-  private EmulatorService emulatorService;
 
   @NonNull
   @JsonIgnore
@@ -121,22 +116,22 @@ public class MameRomAliasService implements InitializingBean {
     return aliasToRomMapping;
   }
 
-  public void clearCache() {
+  public boolean clearCache(List<GameEmulator> gameEmulators) {
     aliasNamToRom.clear();
-    List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
-      aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
+      if (gameEmulator.isVpxEmulator()) {
+        aliasNamToRom.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
+      }
     }
     LOG.info("Loaded Alias Mappings:");
     Set<Map.Entry<Integer, Map<String, String>>> entries = aliasNamToRom.entrySet();
     for (Map.Entry<Integer, Map<String, String>> entry : entries) {
       LOG.info("Alias Mappings for emulator " + entry.getKey() + ": " + entry.getValue().size());
     }
+    return true;
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    clearCache();
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

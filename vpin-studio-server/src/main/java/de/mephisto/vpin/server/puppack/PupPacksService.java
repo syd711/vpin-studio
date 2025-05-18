@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -199,6 +198,11 @@ public class PupPacksService implements InitializingBean {
   }
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
+    FrontendType frontendType = frontendService.getFrontendType();
+    if (!frontendType.supportPupPacks()) {
+      return;
+    }
+
     File tempFile = new File(uploadDescriptor.getTempFilename());
     File pupVideosFolder = getPupPackFolder();
     if (!pupVideosFolder.exists()) {
@@ -303,7 +307,7 @@ public class PupPacksService implements InitializingBean {
     try {
       File pupPackScreenTweakerExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
       if (!pupPackScreenTweakerExe.exists()) {
-        File source = new File(SystemInfo.RESOURCES, PUP_PACK_TWEAKER_EXE);
+        File source = new File(SystemService.RESOURCES, PUP_PACK_TWEAKER_EXE);
         FileUtils.copyFile(source, pupPackScreenTweakerExe);
         LOG.info("Copied {}", pupPackScreenTweakerExe.getAbsolutePath());
       }

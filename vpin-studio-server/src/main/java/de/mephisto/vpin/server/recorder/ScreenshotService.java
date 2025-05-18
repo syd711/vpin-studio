@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.recorder;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -11,6 +10,7 @@ import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class ScreenshotService {
     try {
       Game game = gameId > 0 ? gameService.getGame(gameId) : null;
 
-      File targetFolder = new File(SystemInfo.RESOURCES, "screenshots/");
+      File targetFolder = new File(SystemService.RESOURCES, "screenshots/");
       if (!targetFolder.exists() && !targetFolder.mkdirs()) {
         LOG.error("Failed to create screenshot folder: {}", targetFolder.getAbsolutePath());
         return;

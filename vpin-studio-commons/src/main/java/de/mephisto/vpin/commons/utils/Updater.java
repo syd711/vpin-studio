@@ -251,7 +251,7 @@ public class Updater {
 
   public static File getWriteableBaseFolder() {
     if (!OSUtil.isMac()) {
-      LOG.info("Setting Base Path for Windows Download to ./");
+      LOG.info("Setting Base Path for Download to ./");
       return new File("./");
     }
     else {

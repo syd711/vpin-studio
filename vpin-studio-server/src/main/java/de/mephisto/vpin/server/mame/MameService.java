@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.mame;
 
-import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -9,12 +7,10 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -60,23 +56,14 @@ public class MameService implements InitializingBean {
   private final Map<String, Boolean> romValidationCache = new ConcurrentHashMap<>();
 
   @Autowired
-  private FrontendService frontendService;
+  protected SystemService systemService;
 
-  @Autowired
-  private EmulatorService emulatorService;
-
-  @Autowired
-  private GameLifecycleService gameLifecycleService;
-
-  private GameService gameService;
-
-  public boolean clearCache() {
+  public boolean clearGamesCache(List<Game> knownGames) {
     long l = System.currentTimeMillis();
     mameCache.clear();
-    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     LOG.info("Reading of " + romFolders.size() + " total mame options (" + (System.currentTimeMillis() - l) + "ms)");
 
-    List<Game> knownGames = gameService.getKnownGames(-1);
     for (String romFolder : romFolders) {
       List<Game> matches = knownGames.stream().filter(g -> (g.getRom() != null && g.getRom().equalsIgnoreCase(romFolder)) || (g.getRomAlias() != null && g.getRomAlias().equalsIgnoreCase(romFolder))).collect(Collectors.toList());
       if (!matches.isEmpty()) {
@@ -87,10 +74,12 @@ public class MameService implements InitializingBean {
 //      }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
-
-    l = System.currentTimeMillis();
+	  return true;
+  }
+	
+  public boolean clearValidationsCache(List<GameEmulator> gameEmulators) {
+    long l = System.currentTimeMillis();
     romValidationCache.clear();
-    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       validateRoms(gameEmulator);
     }
@@ -114,12 +103,12 @@ public class MameService implements InitializingBean {
       return mameCache.get(rom.toLowerCase());
     }
 
-    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     MameOptions options = new MameOptions();
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
 
-    Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY +
+    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
         (options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY));
 
     options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
@@ -144,29 +133,29 @@ public class MameService implements InitializingBean {
     String rom = options.getRom();
 
     if (!options.isExistInRegistry()) {
-      WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
+      systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
     }
     options.setExistInRegistry(true);
 
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_COMPACT, options.isCompactDisplay() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_DOUBLE_SIZE, options.isDoubleDisplaySize() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_IGNORE_ROM_ERRORS, options.isIgnoreRomCrcError() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_CABINET_MODE, options.isCabinetMode() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_COMPACT, options.isCompactDisplay() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_DMD_DOUBLE_SIZE, options.isDoubleDisplaySize() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_IGNORE_ROM_ERRORS, options.isIgnoreRomCrcError() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_CABINET_MODE, options.isCabinetMode() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
+    systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
 
     mameCache.put(options.getRom().toLowerCase(), options);
     return getOptions(rom);
   }
 
   public boolean deleteOptions(String rom) {
-    WinRegistry.deleteKey(MAME_REG_FOLDER_KEY + rom);
+    systemService.deleteUserKey(MAME_REG_FOLDER_KEY + rom);
     mameCache.remove(rom.toLowerCase());
     return true;
   }
@@ -177,10 +166,10 @@ public class MameService implements InitializingBean {
    * @return true if the DmdPosition is rom specific or false if this is default
    */
   public boolean fillDmdPosition(String rom, DMDInfoZone dmdinfo) {
-    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     boolean existInRegistry = romFolders.contains(rom.toLowerCase());
 
-    Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY +
+    Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
         (existInRegistry ? rom : MameOptions.DEFAULT_KEY));
     dmdinfo.setX(getInteger(values, "dmd_pos_x"));
     dmdinfo.setY(getInteger(values, "dmd_pos_y"));
@@ -190,15 +179,15 @@ public class MameService implements InitializingBean {
   }
 
   public boolean saveDmdPosition(String rom, DMDInfoZone dmdinfo) {
-    List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     if (!romFolders.contains(rom.toLowerCase())) {
-      WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
+      systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
     }
     String regkey = MAME_REG_FOLDER_KEY + rom;
-    WinRegistry.setIntValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
-    WinRegistry.setIntValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
-    WinRegistry.setIntValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
-    WinRegistry.setIntValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
+    systemService.setUserValue(regkey, "dmd_pos_x", (int) dmdinfo.getX());
+    systemService.setUserValue(regkey, "dmd_pos_y", (int) dmdinfo.getY());
+    systemService.setUserValue(regkey, "dmd_width", (int) dmdinfo.getWidth());
+    systemService.setUserValue(regkey, "dmd_height", (int) dmdinfo.getHeight());
     return true;
   }
 
@@ -214,14 +203,14 @@ public class MameService implements InitializingBean {
     return 0;
   }
 
-  public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis) throws IOException {
-    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
-    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
+  public void installRom(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File romFolder = gameEmulator != null ? gameEmulator.getRomFolder() : getRomsFolder();
+    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, romFolder);
   }
 
-  public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis) throws IOException {
-    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
-    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
+  public void installNvRam(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File nvramFolder = gameEmulator != null ? gameEmulator.getNvramFolder() : getNvRamFolder();
+    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
   public boolean isValidRom(String name) {
@@ -300,17 +289,12 @@ public class MameService implements InitializingBean {
     }
   }
 
-  public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis) throws IOException {
-    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
-    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
+  public void installCfg(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
+    File cfgFolder = gameEmulator != null ? gameEmulator.getCfgFolder(): getCfgFolder();
+    installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
   }
 
-  public void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis<?> analysis, AssetType assetType, File folder) throws IOException {
-    if (analysis == null) {
-      analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
-      analysis.analyze();
-    }
-
+  private void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {
     File out = new File(folder, uploadDescriptor.getOriginalUploadFileName());
     String nvFileName = analysis.getFileNameForAssetType(assetType);
     if (nvFileName != null) {
@@ -331,10 +315,49 @@ public class MameService implements InitializingBean {
   }
 
   public File getMameFolder() {
-    SystemInfo si = new SystemInfo();
-    File vpxFolder = si.resolveVpx64InstallFolder();
-    File mameFolder = new File(vpxFolder, "VPinMAME");
-    return mameFolder.exists() ? mameFolder : null;
+    File vpxFolder = systemService.resolveVpx64InstallFolder();
+    if (vpxFolder != null && vpxFolder.exists()) {
+      File mameFolder = new File(vpxFolder, "VPinMAME");
+      return mameFolder;
+    }
+    return null;
+  }
+
+  public static final String NVRAM_DIRECTORY = "nvram_directory";
+  public static final String ROMS_DIRECTORY = "rompath";
+  public static final String CFG_DIRECTORY = "cfg_directory";
+
+  private File nvRamFolder = null;
+  private File romsFolder = null;
+  private File cfgFolder = null;
+
+  private File getVpinMameSetupFolder(String directoryType) {
+    Map<String, Object> values = systemService.getCurrentUserValues(MameService.MAME_REG_FOLDER_KEY + MameOptions.GLOBALS_KEY);
+    return values.containsKey(directoryType) ? new File((String) values.get(directoryType)) : null;
+  }
+
+  public File getNvRamFolder() {
+    if (nvRamFolder == null) {
+      nvRamFolder = getVpinMameSetupFolder(NVRAM_DIRECTORY);
+      LOG.info("Resolved registry PinMAME nvram folder: {}", nvRamFolder);
+    }
+    return nvRamFolder;
+  }
+
+  public File getCfgFolder() {
+    if (cfgFolder == null) {
+      cfgFolder = getVpinMameSetupFolder(CFG_DIRECTORY);
+      LOG.info("Resolved registry PinMAME cfg folder: {}", cfgFolder);
+    }
+    return cfgFolder;
+  }
+
+  public File getRomsFolder() {
+    if (romsFolder == null) {
+      romsFolder = getVpinMameSetupFolder(ROMS_DIRECTORY);
+      LOG.info("Resolved registry PinMAME roms folder: {}", romsFolder);
+    }
+    return romsFolder;
   }
 
   @Nullable
@@ -348,9 +371,5 @@ public class MameService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-  }
-
-  public void setGameService(GameService gameService) {
-    this.gameService = gameService;
   }
 }
