@@ -87,7 +87,7 @@ public class Studio extends Application {
   public void start(Stage stage) throws IOException {
     try (InputStream banner = getClass().getResourceAsStream("/banner.txt")) {
       String txt = StreamUtils.copyToString(banner, StandardCharsets.UTF_8);
-      LOG.info("\n" + txt + "\n");
+      LOG.info("\n" + txt);
     }
 
     runOperatingSystemChecks();
