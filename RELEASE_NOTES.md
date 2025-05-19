@@ -11,6 +11,7 @@
   
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/iscored.png?raw=true" width="650" />
 - **Competitions**: Added quick-settings for every tab and collapsible button for the sidebar. So this matches with the tables view now.
+- **Table Statistics**: Added the column "Last Played" to the table statistics overview which shows in chronological order the last played games.
 - **System Manager**: 
   - The overall update check is not blocking the UI anymore. This way, you can immediately switch to other system manager tabs now.
   - Full support of target folder that were ignored before for component fresh installation.
