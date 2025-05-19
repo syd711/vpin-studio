@@ -55,6 +55,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   private VBox scoresWidget;
 
   @FXML
+  private VBox LastPlayedWidget;
+
+  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   private List<Integer> ignoredEmulators = null;
@@ -70,6 +73,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @FXML
   private VBox col3;
+
+  @FXML
+  private VBox col4;
 
   @FXML
   private BorderPane root;
@@ -153,6 +159,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       mostPlayedWidget.getChildren().clear();
       timePlayedWidget.getChildren().clear();
       scoresWidget.getChildren().clear();
+      LastPlayedWidget.getChildren().clear();
+
 
       double v = AlxFactory.calculateColumnWidth(Studio.stage);
       col1.setPrefWidth(v);
@@ -213,6 +221,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createMostPlayed(Studio.stage, mostPlayedWidget, entries);
       AlxFactory.createLongestPlayed(Studio.stage, timePlayedWidget, entries);
       AlxFactory.createRecordedScores(Studio.stage, scoresWidget, entries);
+      AlxFactory.createLastPlayed(Studio.stage, LastPlayedWidget, entries);
+
 
       tileList.getChildren().removeAll(tileList.getChildren());
       AlxFactory.createTotalTimeTile(Studio.stage, tileList, entries);
