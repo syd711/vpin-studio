@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
@@ -74,14 +73,22 @@ public class MameService implements InitializingBean {
 //      }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
-	  return true;
+    return true;
   }
-	
+
   public boolean clearValidationsCache(List<GameEmulator> gameEmulators) {
     long l = System.currentTimeMillis();
     romValidationCache.clear();
-    for (GameEmulator gameEmulator : gameEmulators) {
-      validateRoms(gameEmulator);
+    List<File> folders = new ArrayList<>();
+    List<GameEmulator> filteredEmulators = gameEmulators.stream().filter(g -> g.isVpxEmulator()).collect(Collectors.toList());
+    for (GameEmulator filteredEmulator : filteredEmulators) {
+      if (!folders.contains(filteredEmulator.getMameFolder())) {
+        folders.add(filteredEmulator.getMameFolder());
+      }
+    }
+
+    for (File folder : folders) {
+      validateRoms(folder);
     }
     LOG.info("ROM validation took " + (System.currentTimeMillis() - l) + "ms.");
 
@@ -222,7 +229,7 @@ public class MameService implements InitializingBean {
       File romFolder = gameEmulator.getRomFolder();
       File romFile = new File(romFolder, name + ".zip");
       if (romFile.exists()) {
-        File mameExe = getMameExe(gameEmulator);
+        File mameExe = getMameExe(gameEmulator.getMameFolder());
         if (mameExe != null) {
           List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms", name);
           LOG.info("Executing ROM validation: " + String.join(" ", cmds));
@@ -254,9 +261,9 @@ public class MameService implements InitializingBean {
     return false;
   }
 
-  public void validateRoms(GameEmulator gameEmulator) {
+  public void validateRoms(@NonNull File mameFolder) {
     try {
-      File mameExe = getMameExe(gameEmulator);
+      File mameExe = getMameExe(mameFolder);
       if (mameExe != null) {
         List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms");
         LOG.info("Executing ROM validation: " + String.join(" ", cmds));
@@ -290,7 +297,7 @@ public class MameService implements InitializingBean {
   }
 
   public void installCfg(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
-    File cfgFolder = gameEmulator != null ? gameEmulator.getCfgFolder(): getCfgFolder();
+    File cfgFolder = gameEmulator != null ? gameEmulator.getCfgFolder() : getCfgFolder();
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, cfgFolder);
   }
 
@@ -361,10 +368,10 @@ public class MameService implements InitializingBean {
   }
 
   @Nullable
-  private File getMameExe(GameEmulator emulator) {
-    File exe = new File(emulator.getMameFolder(), "PinMAME64.exe");
+  private File getMameExe(@NonNull File mameFolder) {
+    File exe = new File(mameFolder, "PinMAME64.exe");
     if (!exe.exists()) {
-      exe = new File(emulator.getMameFolder(), "PinMAME32.exe");
+      exe = new File(mameFolder, "PinMAME32.exe");
     }
     return exe.exists() ? exe : null;
   }
