@@ -27,6 +27,7 @@
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/competition-button.png?raw=true" width="250" />
   
 - **Highscore Backups**: Added bulk-operation support for highscore backups.
+- **Table Validation**: Added new Virtual Pinball Spreadsheet validators that are triggered when the table has an ALT sound, ALT color or PUP pack available, but not installed. The new validators are enabled by default and you can disable them in the "Table Validator" preferences.
 - **Backglass Management**: 
   - Backglass validators have been added, reusing the status column. 4 validators are supported, and can be activated / deactivated in the new backglass validator preference page.
   - Added possibility to remove the table specific 'Run as Exe' value and use the server default.
@@ -85,6 +86,7 @@
 - **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
 - **MAME Settings**: Fixed missing displaying of MAME related errors in the MAME sidepanel.
 - **Pause Menu**: The navigation glitch that lead to wrong scaled items or selection positioning has been fixed.
+- **Drop-In Folder**: Fixed "Open" button for unsupported filetypes.
 
 ## VPin Mania
 
