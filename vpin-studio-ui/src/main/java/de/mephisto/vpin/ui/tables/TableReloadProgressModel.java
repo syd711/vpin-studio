@@ -53,6 +53,11 @@ public class TableReloadProgressModel extends ProgressModel<Integer> {
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    client.getGameService().clearCache();
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, Integer next) {
     try {
       GameRepresentation gameRepresentation = client.getGame(next);

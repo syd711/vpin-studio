@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
+import de.mephisto.vpin.ui.tables.CacheInvalidationProgressModel;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -235,6 +236,7 @@ public class Studio extends Application {
             if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
               LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
               ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+              ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
             }
 
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
