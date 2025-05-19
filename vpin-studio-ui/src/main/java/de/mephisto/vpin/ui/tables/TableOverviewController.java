@@ -5,7 +5,9 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -1237,15 +1239,28 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
+
       if (value.getAltColorType() != null) {
+        //set AltColorType in text of label
+        AltColor altColor;
+        altColor = Studio.client.getAltColorService().getAltColor(value.getId());
+        Label label = new Label(altColor.getAltColorType().name());
+        label.getStyleClass().add("default-text");
+        label.setStyle(getLabelCss(value));
+
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
+          //add update icon
+          label.setGraphic(WidgetFactory.createUpdateIcon("New ALT color updates available"));
+          //return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
         }
-        else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value));
-        }
+          return label;
+          //tooltip and checkbox
+         //else {
+         // return WidgetFactory.createCheckboxIcon(getIconColor(value),altColor.getAltColorType().name());
+        //}
       }
       else if (hasUpdate) {
+        //We don't have a type, so just show the update.
         return WidgetFactory.createUpdateIcon("New ALT color updates available");
       }
       return null;

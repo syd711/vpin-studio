@@ -54,6 +54,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -61,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -349,143 +351,124 @@ public class WidgetFactory {
     return createPlaylistIcon(playlist, uiSettings, false);
   }
 
-  public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
+ public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf(hexColor(playlist.getMenuColor())));
-    fontIcon.setIconLiteral("mdi2v-view-list");
-    label.setTooltip(new Tooltip(playlist.getName()));
 
+    String nameLower = playlist.getName().toLowerCase();
+    String iconLiteral = "mdi2v-view-list";
+    String iconColor = hexColor(playlist.getMenuColor());
+
+    // Special ID cases
     if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
-      fontIcon.setIconLiteral("mdi2s-star");
-      fontIcon.setIconColor(Paint.valueOf(uiSettings.getLocalFavsColor()));
-    }
-    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
-      fontIcon.setIconLiteral("mdi2s-star");
-      fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
-    }
-    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-      fontIcon.setIconLiteral("mdi2d-database-clock");
-      fontIcon.setIconColor(Paint.valueOf(uiSettings.getJustAddedColor()));
-    }
-    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
-      fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
-      fontIcon.setIconColor(Paint.valueOf(uiSettings.getMostPlayedColor()));
-    }
-    else if (playlist.getName().contains("Visual Pinball X")) {
-      // fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
-      try {
-        fontIcon.setIconLiteral("customicon-vpx_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-vpx_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().contains("VPX")) {
-      //fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
-      try {
-        fontIcon.setIconLiteral("customicon-vpx_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-vpx_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().contains("Future")) {
-      //   fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
-      try {
-        fontIcon.setIconLiteral("customicon-futurepinball_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-futurepinball_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().contains("FX3")) {
-      //fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
-      try {
-        fontIcon.setIconLiteral("customicon-fx3_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-fx3_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().contains("Just Added")) {
-      fontIcon.setIconLiteral("mdi2d-database-clock");
-    }
-    else if (playlist.getName().contains(" Added")) {
-      fontIcon.setIconLiteral("mdi2d-database-clock");
-    }
-    else if (playlist.getName().contains("Most Played")) {
-      fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
-    }
-    else if (playlist.getName().contains("Recently Played")) {
-      try {
-        fontIcon.setIconLiteral("customicon-recentlyplayed_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-recentlyplayed_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().contains("Home")) {
-      fontIcon.setIconLiteral("mdi2h-home-circle");
-    }
-    else if (playlist.getName().contains("VPW")) {
-      // fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
-      try {
-        fontIcon.setIconLiteral("customicon-vpw_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-vpw_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().endsWith(" M")) {
-      // fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
-      try {
-        fontIcon.setIconLiteral("customicon-pinballm_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-pinballm_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else if (playlist.getName().contains(" Updated")) {
-      fontIcon.setIconLiteral("mdi2u-update");
-    }
-    else if (playlist.getName().contains(" FX")) {
-      //fontIcon.setIconLiteral("mdi2s-steam");
-      try {
-        fontIcon.setIconLiteral("customicon-fx_icon");
-      }
-      catch (Exception e) {
-        LOG.error("Error loading customicon-fx_icon: " + e.getMessage(), e);
-        ;
-        throw new RuntimeException(e);
-      }
-    }
-    else {
-      // LOG.info("Setting Alpha Playlist Icon:" + playlist.getName().toLowerCase() + ":Letter:" + playlist.getName().toLowerCase().charAt(0));
-      fontIcon.setIconLiteral("mdi2a-alpha-" + playlist.getName().toLowerCase().charAt(0) + "-circle");
+      iconLiteral = "mdi2s-star";
+      iconColor = uiSettings.getLocalFavsColor();
+    } else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+      iconLiteral = "mdi2s-star";
+      iconColor = uiSettings.getGlobalFavsColor();
+    } else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+      iconLiteral = "mdi2d-database-clock";
+      iconColor = uiSettings.getJustAddedColor();
+    } else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+      iconLiteral = "mdi2p-play-box-multiple-outline";
+      iconColor = uiSettings.getMostPlayedColor();
+    } else {
+      iconLiteral = determineIconLiteral(nameLower);
     }
 
-    if (disabled) {
-      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+      try {
+        fontIcon.setIconLiteral(iconLiteral);
+      }
+      catch (Exception e) {
+      LOG.error("Error loading icon literal: " + iconLiteral, e);
+
+      throw new RuntimeException(e);
     }
 
+    fontIcon.setIconColor(Paint.valueOf(disabled ? WidgetFactory.DISABLED_COLOR : iconColor));
     label.setGraphic(fontIcon);
+    label.setTooltip(new Tooltip(playlist.getName()));
     return label;
+  }
+
+  private static String determineIconLiteral(String nameLower) {
+    Map<String, String> keywordToIcon = Map.ofEntries(
+            Map.entry("visual pinball x", "customicon-vpx_icon"),
+            Map.entry("vpx", "customicon-vpx_icon"),
+            Map.entry("future", "customicon-futurepinball_icon"),
+            Map.entry("just added", "mdi2d-database-clock"),
+            Map.entry(" added", "mdi2d-database-clock"),
+            Map.entry("most played", "mdi2p-play-box-multiple-outline"),
+            Map.entry("recently played", "customicon-recentlyplayed_icon"),
+            Map.entry("home", "mdi2h-home-circle"),
+            Map.entry("vpw", "customicon-vpw_icon"),
+            Map.entry(" updated", "mdi2u-update"),
+            Map.entry("music", "customicon-music_icon"),
+            Map.entry("movie", "customicon-movie_icon"),
+            Map.entry("star wars", "customicon-star_wars_icon"),
+            Map.entry("adult", "customicon-adult_icon"),
+            Map.entry("top 10", "customicon-top_10_icon"),
+            Map.entry("pup", "customicon-pup_icon"),
+            Map.entry("soccer", "customicon-soccer_icon"),
+            Map.entry("nfozzy", "customicon-nfozzy_icon"),
+            Map.entry("super", "customicon-superhero_icon"),
+            Map.entry("tv", "mdi2t-television-classic"),
+            Map.entry("television", "mdi2t-television-classic"),
+            Map.entry("mame", "customicon-mame_icon"),
+            Map.entry("bally", "customicon-bally_icon"),
+            Map.entry("atari", "customicon-atari_icon"),
+            Map.entry("sega", "customicon-sega_icon"),
+            Map.entry("zaccaria", "customicon-zaccaria_icon"),
+            Map.entry("east", "customicon-dataeast_icon"),
+            Map.entry("midway", "customicon-midway_icon"),
+            Map.entry("gottlieb", "customicon-gottlieb_icon"),
+            Map.entry("williams", "customicon-williams_icon"),
+            Map.entry("stern", "customicon-stern_icon"),
+            Map.entry("chicago", "customicon-chicago_icon"),
+            Map.entry("50", "customicon-fifties_icon"),
+            Map.entry("fift", "customicon-fifties_icon"),
+            Map.entry("60", "customicon-sixties_icon"),
+            Map.entry("sixt", "customicon-sixties_icon"),
+            Map.entry("70", "customicon-seventies_icon"),
+            Map.entry("seven", "customicon-seventies_icon"),
+            Map.entry("80", "customicon-eighties_icon"),
+            Map.entry("eight", "customicon-eighties_icon"),
+            Map.entry("90", "customicon-nineties_icon"),
+            Map.entry("nine", "customicon-nineties_icon"),
+            Map.entry("00", "customicon-aughts_icon"),
+            Map.entry("aught", "customicon-aughts_icon"),
+            Map.entry("fx", "customicon-fx_icon"),
+            Map.entry("fx3", "customicon-fx3_icon"),
+            Map.entry("vr", "customicon-vr_icon"),
+            Map.entry("capcom", "customicon-capcom_icon"),
+            Map.entry("black", "customicon-bw_icon"),
+            Map.entry("b&w", "customicon-bw_icon"),
+            Map.entry("kids", "customicon-kids_icon"),
+            Map.entry("under 18", "customicon-kids_icon"),
+            Map.entry("children", "customicon-kids_icon"),
+            Map.entry("mod", "customicon-mod_icon"),
+            Map.entry("solid", "customicon-ss_icon"),
+            Map.entry("ss", "customicon-ss_icon"),
+            Map.entry("em", "customicon-em_icon"),
+            Map.entry("electro", "customicon-em_icon"),
+            Map.entry("iscore", "customicon-iscored_icon"),
+            Map.entry("tourn", "mdi2t-trophy-variant"),
+            Map.entry("compet", "mdi2t-trophy-variant")
+            );
+
+    for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {
+      if (nameLower.contains(entry.getKey())) {
+        return entry.getValue();
+      }
+    }
+
+    if (nameLower.endsWith(" m")) {
+      return "customicon-pinballm_icon";
+    }
+
+    // Default fallback: alphabet letter
+    return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
   }
 
   public static Stage createStage() {
