@@ -1041,19 +1041,26 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
-    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings));
-    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-    this.emulatorCombo.setDisable(false);
+    JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings))
+      .thenAcceptLater(filtered -> {
+        this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+        this.emulatorCombo.setDisable(false);
 
-    if (selectedEmu == null) {
-      this.emulatorCombo.getSelectionModel().selectFirst();
-    }
-    selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    emulatorBtn.setDisable(selectedEmu == null || selectedEmu.getId() == -1);
-    this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
+        if (selectedEmu != null) {
+          this.emulatorCombo.getSelectionModel().select(selectedEmu);
+        }
+        GameEmulatorRepresentation newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+        if (newSelection == null) {
+          this.emulatorCombo.getSelectionModel().selectFirst();
+          newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+        }
+
+        emulatorBtn.setDisable(newSelection == null || newSelection.getId() == -1);
+        this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
+      });
   }
 
   private void bindTable() {

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.panels;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -77,56 +77,58 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
     launchBtn.setDisable(disable);
     this.launchCombo.getItems().clear();
 
-    if (disable) {
+    if (disable || game == null) {
       return;
     }
 
-    List<LaunchConfiguration> items = new ArrayList<>();
-    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-    String exeName = gameEmulator.getExeName();
-    if (!StringUtils.isEmpty(exeName)) {
-      items.add(new LaunchConfiguration("Emulator Default", false, exeName, null));
-    }
+    JFXFuture.supplyAllAsync(
+      () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()),
+      () -> client.getEmulatorService().getAltExeNames(game.getEmulatorId())
+    ).thenAcceptLater(objs -> {
+      GameEmulatorRepresentation gameEmulator = (GameEmulatorRepresentation) objs[0];
+      @SuppressWarnings("unchecked")
+      List<String> altExeNames = (List<String>) objs[1];
 
-    if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
-      items.add(new LaunchConfiguration("Launch via PinUP Popper", true, null, null));
-    }
+      List<LaunchConfiguration> items = new ArrayList<>();
 
-    if (game.isVpxGame()) {
-      gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
-      for (String altExeName : altExeNames) {
-        items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
+      String exeName = gameEmulator != null ? gameEmulator.getExeName() : null;
+      if (!StringUtils.isEmpty(exeName)) {
+        items.add(new LaunchConfiguration("Emulator Default", false, exeName, null));
+      }
 
-        if (isCameraModeSupported(altExeName)) {
-          items.add(new LaunchConfiguration(altExeName + " [Camera Mode]", false, altExeName, "cameraMode"));
+      if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
+        items.add(new LaunchConfiguration("Launch via PinUP Popper", true, null, null));
+      }
+
+      if (game.isVpxGame() && altExeNames != null) {
+        for (String altExeName : altExeNames) {
+          items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
+          if (isCameraModeSupported(altExeName)) {
+            items.add(new LaunchConfiguration(altExeName + " [Camera Mode]", false, altExeName, "cameraMode"));
+          }
         }
       }
-    }
-    else if (game.isFpGame()) {
-      gameEmulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      if (gameEmulator != null) {
-        List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
+      else if (game.isFpGame() && altExeNames != null) {
         for (String altExeName : altExeNames) {
           items.add(new LaunchConfiguration(altExeName, false, altExeName, null));
         }
       }
-    }
 
-    launchCombo.setItems(FXCollections.observableList(items));
-    launchCombo.setDisable(items.isEmpty());
-    launchBtn.setDisable(items.isEmpty());
+      launchCombo.setItems(FXCollections.observableList(items));
+      launchCombo.setDisable(items.isEmpty());
+      launchBtn.setDisable(items.isEmpty());
 
-    if (!items.isEmpty()) {
-      this.launchCombo.valueProperty().removeListener(this);
-      launchCombo.getSelectionModel().select(0);
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      LaunchConfiguration launchConfiguration = uiSettings.getLaunchConfiguration();
-      if (launchConfiguration != null) {
-        launchCombo.setValue(launchConfiguration);
+      if (!items.isEmpty()) {
+        this.launchCombo.valueProperty().removeListener(this);
+        launchCombo.getSelectionModel().select(0);
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+        LaunchConfiguration launchConfiguration = uiSettings.getLaunchConfiguration();
+        if (launchConfiguration != null) {
+          launchCombo.setValue(launchConfiguration);
+        }
+        this.launchCombo.valueProperty().addListener(this);
       }
-      this.launchCombo.valueProperty().addListener(this);
-    }
+    });
   }
 
   private static boolean isCameraModeSupported(String altExeName) {

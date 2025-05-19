@@ -40,7 +40,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -48,7 +47,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -180,7 +178,7 @@ public class TableDialogs {
     });
   }
 
-  public static void onMusicUploads(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void onMusicUploads(File file, UploaderAnalysis analysis, Runnable finalizer) {
     TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
   }
 
@@ -395,7 +393,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setData(stage, file, game, analysis, finalizer);
@@ -418,7 +416,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
     }
@@ -430,7 +428,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
     }
@@ -441,14 +439,14 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
     controller.setData(stage, file, game, analysis, finalizer);
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, @Nullable AssetType filterMode, int emulatorId) {
+  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis analysis, @Nullable AssetType filterMode, int emulatorId) {
     String title = "Media Pack";
     if (game != null) {
       title = "Media for \"" + game.getGameDisplayName() + "\"";
@@ -464,7 +462,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis<?> analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -473,7 +471,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, emutype, uploadType, analysis);
+    controller.setGame(stage, game, uploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -690,7 +688,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openPatchUpload(GameRepresentation gameRepresentation, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openPatchUpload(GameRepresentation gameRepresentation, File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(PatchUploadController.class, "dialog-patch-upload.fxml", "Patch Upload");
     PatchUploadController controller = (PatchUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);
@@ -698,7 +696,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMusicUploadDialog(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);

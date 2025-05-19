@@ -106,7 +106,7 @@ public class UpdateInfoDialogController implements Initializable, DialogControll
       return new String(bytes);
     }
     catch (Exception e) {
-      LOG.error("Failed to execute download: " + e.getMessage(), e);
+      LOG.error("Failed to execute download: " + e.getMessage());
     }
     return "Failed to load release notes.";
   }

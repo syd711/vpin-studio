@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -120,9 +121,12 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
 
   public void applyFilters() {
     // as we do not call filterGames() anymore, manually call saveFilterSettings to persist the reset
-    client.getPreferenceService().setJsonPreference(filterSettings);
-    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    super.applyFilters();
+    JFXFuture.runAsync(() -> {
+      client.getPreferenceService().setJsonPreference(filterSettings);
+      uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    }).thenLater(() -> {
+      super.applyFilters();
+    });
   }
 
   @Override

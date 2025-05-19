@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
 import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -11,6 +10,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 @Service
 public class VpbmService implements InitializingBean {
@@ -41,6 +41,10 @@ public class VpbmService implements InitializingBean {
 
   @Autowired
   private EmulatorService emulatorService;
+
+  @Autowired
+  private SystemService systemService;
+
 
   public File getArchiveFolder() {
     return new File(getArchivesFolder(), "backups/Visual Pinball X/");
@@ -157,7 +161,7 @@ public class VpbmService implements InitializingBean {
     SystemCommandOutput out = new SystemCommandOutput();
     long start = System.currentTimeMillis();
     try {
-      if (!WinRegistry.isDotNetInstalled()) {
+      if (!systemService.isDotNetInstalled()) {
         LOG.error("Can't execute VPBM command, no .net installation found!");
         return out;
       }

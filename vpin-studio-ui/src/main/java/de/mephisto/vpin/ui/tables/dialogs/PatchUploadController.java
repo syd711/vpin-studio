@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -79,9 +78,8 @@ public class PatchUploadController extends BaseUploadController {
   }
 
   private AssetFilterPanelController assetFilterPanelController;
-  private UploadDescriptor uploadDescriptor = UploadDescriptorFactory.create();
   private GameRepresentation game;
-  private UploaderAnalysis<?> analysis;
+  private UploaderAnalysis analysis;
 
   @Override
   protected UploadProgressModel createUploadModel() {
@@ -100,7 +98,10 @@ public class PatchUploadController extends BaseUploadController {
       stage.close();
     });
 
-    result = UniversalUploadUtil.upload(getSelection(), game.getId(), uploadDescriptor.getUploadType(), game.getEmulatorId());
+    UploadType type = patchAndCloneRadio.isSelected() ? UploadType.uploadAndClone:
+                      patchAndReplaceRadio.isSelected() ? UploadType.uploadAndReplace:
+                      null;
+    result = UniversalUploadUtil.upload(getSelection(), game.getId(), type, game.getEmulatorId());
     if (result.isPresent()) {
       try {
         UploadDescriptor uploadDescriptor = result.get();
@@ -158,7 +159,6 @@ public class PatchUploadController extends BaseUploadController {
     patchAndCloneRadio.setToggleGroup(toggleGroup);
 
     patchAndCloneRadio.setSelected(true);
-    uploadDescriptor.setUploadType(UploadType.uploadAndClone);
     uploadCloneBox.getStyleClass().add("selection-panel-selected");
 
     patchAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -169,7 +169,6 @@ public class PatchUploadController extends BaseUploadController {
             uploadReplaceBox.getStyleClass().add("selection-panel-selected");
           }
           uploadCloneBox.getStyleClass().remove("selection-panel-selected");
-          uploadDescriptor.setUploadType(UploadType.uploadAndReplace);
         }
         else {
           uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
@@ -185,7 +184,6 @@ public class PatchUploadController extends BaseUploadController {
             uploadCloneBox.getStyleClass().add("selection-panel-selected");
           }
           uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
-          uploadDescriptor.setUploadType(UploadType.uploadAndClone);
         }
         else {
           uploadCloneBox.getStyleClass().remove("selection-panel-selected");
@@ -207,7 +205,7 @@ public class PatchUploadController extends BaseUploadController {
   }
 
   @Override
-  protected void endAnalysis(@Nullable String analysis, @Nullable UploaderAnalysis<?> uploaderAnalysis) {
+  protected void endAnalysis(@Nullable String analysis, @Nullable UploaderAnalysis uploaderAnalysis) {
     super.endAnalysis(analysis, uploaderAnalysis);
     assetsFilterPanel.setVisible(uploaderAnalysis != null && uploaderAnalysis.isArchive());
     assetFilterPanelController.refresh(analysis == null ? getSelection() : null, uploaderAnalysis);
@@ -227,7 +225,7 @@ public class PatchUploadController extends BaseUploadController {
   }
 
   @Override
-  public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public void setFile(Stage stage, File file, UploaderAnalysis analysis, Runnable finalizer) {
     super.setFile(stage, file, analysis, finalizer);
     assetFilterPanelController.setData(stage, game, AssetType.DIF);
   }

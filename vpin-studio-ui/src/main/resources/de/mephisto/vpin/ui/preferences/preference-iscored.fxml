@@ -18,7 +18,7 @@
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
             <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="iScored Game Rooms" />
             <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="iScored game rooms used for competitions can be preconfigured here." textFill="WHITE">
                <VBox.margin>

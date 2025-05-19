@@ -228,11 +228,15 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   private void initListener() {
-    FileMonitoringThread monitoringThread = new FileMonitoringThread(this, getPinVolTablesIniFile(), true);
-    monitoringThread.startMonitoring();
+    File pinvolTablesFile = getPinVolTablesIniFile();
+    if (pinvolTablesFile.exists()) {
+      FileMonitoringThread monitoringThread = new FileMonitoringThread(this, pinvolTablesFile, true);
+      monitoringThread.startMonitoring();
+    }
 
-    if (getPinVolSettingsIniFile().exists()) {
-      FileMonitoringThread settingsThread = new FileMonitoringThread(this, getPinVolSettingsIniFile(), true);
+    File pincolSettingsFile = getPinVolSettingsIniFile();
+    if (pincolSettingsFile.exists()) {
+      FileMonitoringThread settingsThread = new FileMonitoringThread(this, pincolSettingsFile, true);
       settingsThread.startMonitoring();
     }
   }

@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.recorder;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.Ffmpeg;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,9 +120,9 @@ public class ScreenRecorder {
     List<String> commandList = new ArrayList<>(Arrays.asList(command.split(" ")));
     commandList.add("\"" + temporaryTarget.getAbsolutePath() + "\"");
 
-    File resources = new File(SystemInfo.RESOURCES);
+    File resources = new File(SystemService.RESOURCES);
     if (!resources.exists()) {
-      resources = new File("../" + SystemInfo.RESOURCES);
+      resources = new File("../" + SystemService.RESOURCES);
     }
 
     result.setCommand(String.join(" ", commandList));

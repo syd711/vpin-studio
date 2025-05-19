@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.client.CommandOption;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -115,12 +114,12 @@ public class PupPacksResource {
 
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     try {
       descriptor.upload();
 
       File tempFile = new File(descriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
+      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
       analysis.analyze();
 
       descriptor.setAsync(true);

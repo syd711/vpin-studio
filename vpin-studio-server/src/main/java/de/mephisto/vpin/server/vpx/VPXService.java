@@ -298,7 +298,7 @@ public class VPXService implements InitializingBean {
     return null;
   }
 
-  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis<?> analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
     MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }

@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
@@ -54,7 +53,7 @@ public class DMDResource {
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                  @RequestParam("objectId") Integer emulatorId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setEmulatorId(emulatorId);
     try {
       descriptor.upload();

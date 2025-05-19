@@ -325,13 +325,16 @@ public class ComponentsController implements Initializable, StudioFXController, 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      hint.setVisible(!uiSettings.isHideComponentWarning());
+      JFXFuture.supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class))
+        .thenAcceptLater(uiSettings -> {
+          hint.setVisible(!uiSettings.isHideComponentWarning());
+        });
     }
     if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
-      Platform.runLater(() -> {
-        client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
-        if (client.getDofLinxService().isValid()) {
+        //client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
+      JFXFuture.supplyAsync(() -> client.getDofLinxService().isValid())
+      .thenAcceptLater(isDofLinxValid -> {
+        if (isDofLinxValid) {
           if (!tabPane.getTabs().contains(doflinxTab)) {
             tabPane.getTabs().add(doflinxTab);
           }

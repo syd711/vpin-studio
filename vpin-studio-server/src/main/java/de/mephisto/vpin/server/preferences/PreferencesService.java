@@ -1,31 +1,13 @@
 package de.mephisto.vpin.server.preferences;
 
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.dof.DOFSettings;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
-import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.iscored.IScoredSettings;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
-import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.restclient.preferences.BackupSettings;
-import de.mephisto.vpin.restclient.preferences.OverlaySettings;
-import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
-import de.mephisto.vpin.restclient.validation.ValidationSettings;
-import de.mephisto.vpin.restclient.vpf.VPFSettings;
-import de.mephisto.vpin.restclient.vpu.VPUSettings;
-import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
+import de.mephisto.vpin.server.system.SystemService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -45,6 +27,9 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
 
   @Autowired
   private AssetRepository assetRepository;
+
+  @Autowired
+  private SystemService systemService;
 
   private Preferences preferences;
 
@@ -158,77 +143,9 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
   }
 
   @SuppressWarnings("unchecked")
-  public <T> T getJsonPreference(String key) {
-    try {
-      switch (key) {
-        case PreferenceNames.UI_SETTINGS: {
-          return (T) getJsonPreference(key, UISettings.class);
-        }
-        case PreferenceNames.SERVER_SETTINGS: {
-          return (T) getJsonPreference(key, ServerSettings.class);
-        }
-        case PreferenceNames.HIGHSCORE_CARD_SETTINGS: {
-          return (T) getJsonPreference(key, CardSettings.class);
-        }
-        case PreferenceNames.MANIA_SETTINGS: {
-          return (T) getJsonPreference(key, ManiaSettings.class);
-        }
-        case PreferenceNames.DOF_SETTINGS: {
-          return (T) getJsonPreference(key, DOFSettings.class);
-        }
-        case PreferenceNames.DOFLINX_SETTINGS: {
-          return (T) getJsonPreference(key, DOFLinxSettings.class);
-        }
-        case PreferenceNames.PAUSE_MENU_SETTINGS: {
-          return (T) getJsonPreference(key, PauseMenuSettings.class);
-        }
-        case PreferenceNames.VALIDATION_SETTINGS: {
-          return (T) getJsonPreference(key, ValidationSettings.class);
-        }
-        case PreferenceNames.IGNORED_VALIDATION_SETTINGS: {
-          return (T) getJsonPreference(key, IgnoredValidationSettings.class);
-        }
-        case PreferenceNames.NOTIFICATION_SETTINGS: {
-          return (T) getJsonPreference(key, NotificationSettings.class);
-        }
-        case PreferenceNames.PINBALLX_SETTINGS: {
-          return (T) getJsonPreference(key, PinballXSettings.class);
-        }
-        case PreferenceNames.FILTER_SETTINGS: {
-          return (T) getJsonPreference(key, FilterSettings.class);
-        }
-        case PreferenceNames.VPU_SETTINGS: {
-          return (T) getJsonPreference(key, VPUSettings.class);
-        }
-        case PreferenceNames.OVERLAY_SETTINGS: {
-          return (T) getJsonPreference(key, OverlaySettings.class);
-        }
-        case PreferenceNames.VPF_SETTINGS: {
-          return (T) getJsonPreference(key, VPFSettings.class);
-        }
-        case PreferenceNames.BACKUP_SETTINGS: {
-          return (T) getJsonPreference(key, BackupSettings.class);
-        }
-        case PreferenceNames.RECORDER_SETTINGS: {
-          return (T) getJsonPreference(key, RecorderSettings.class);
-        }
-        case PreferenceNames.MONITORING_SETTINGS: {
-          return (T) getJsonPreference(key, MonitoringSettings.class);
-        }
-        case PreferenceNames.WEBHOOK_SETTINGS: {
-          return (T) getJsonPreference(key, WebhookSettings.class);
-        }
-        case PreferenceNames.ISCORED_SETTINGS: {
-          return (T) getJsonPreference(key, IScoredSettings.class);
-        }
-        default: {
-          throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
-        }
-      }
-    }
-    catch(ClassCastException cce) {
-      throw new UnsupportedOperationException("Cannot return settings in expected format for preference '" + key + "'");
-    }
+  public <T extends JsonSettings> T getJsonPreference(String key) {
+    Class<? extends JsonSettings> clazz = PreferenceNames.getClassFromKey(key);
+    return (T) getJsonPreference(key, clazz);
   }
 
   public <T> T getJsonPreference(String key, Class<T> jsonSettings) {
@@ -262,7 +179,7 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
 
     try {
       ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-      boolean stickyKeysEnabled = WinRegistry.isStickyKeysEnabled();
+      boolean stickyKeysEnabled = systemService.isStickyKeysEnabled();
       if (stickyKeysEnabled && !serverSettings.isStickyKeysEnabled()) {
         serverSettings.setStickyKeysEnabled(true);
         savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
@@ -285,7 +202,8 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     try {
       if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
         ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-        WinRegistry.setStickyKeysEnabled(serverSettings.isStickyKeysEnabled());
+        systemService.setStickyKeysEnabled(serverSettings.isStickyKeysEnabled());
+        LOG.info("Sticky keys enabled: " + serverSettings.isStickyKeysEnabled());
       }
     }
     catch (Exception e) {

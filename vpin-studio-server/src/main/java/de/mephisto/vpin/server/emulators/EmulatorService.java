@@ -5,6 +5,8 @@ import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameEmulatorValidationService;
+import de.mephisto.vpin.server.mame.MameService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +24,19 @@ public class EmulatorService {
   @Autowired
   private GameEmulatorValidationService gameEmulatorValidationService;
 
+  @Autowired
+  private MameService mameService;
+
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
 
   private FrontendService frontendService;
 
   public GameEmulator getGameEmulator(int emulatorId) {
     return this.emulators.get(emulatorId);
+  }
+
+  public Collection<GameEmulator> getGameEmulators() {
+    return this.emulators.values();
   }
 
   public List<String> getAltExeNames(int emulatorId) {
@@ -52,7 +61,7 @@ public class EmulatorService {
   }
 
   public List<GameEmulator> getValidatedGameEmulators() {
-    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
+    List<GameEmulator> gameEmulators = new ArrayList<>(getGameEmulators());
     for (GameEmulator gameEmulator : gameEmulators) {
       List<ValidationState> validate = gameEmulatorValidationService.validate(frontendService.getFrontendType(), gameEmulator, true);
       gameEmulator.setValidationStates(validate);
@@ -62,20 +71,17 @@ public class EmulatorService {
   }
 
   public List<GameEmulator> getValidGameEmulators() {
-    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values()).stream().filter(e -> e.isValid()).collect(Collectors.toList());
+    List<GameEmulator> gameEmulators = getGameEmulators().stream().filter(e -> e.isValid()).collect(Collectors.toList());
     Collections.sort(gameEmulators, (o1, o2) -> o2.getName().compareTo(o1.getName()));
     return gameEmulators;
   }
 
   public List<GameEmulator> getVpxGameEmulators() {
-    return this.emulators.values().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(e -> e.isVpxEmulator() && e.isValid()).collect(Collectors.toList());
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
-    List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
-    return gameEmulators.stream().filter(GameEmulator::isValid).filter(e -> {
-      return e.isVpxEmulator();
-    }).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(GameEmulator::isValid).filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
 
   //@deprecated, always determine emulator
@@ -168,6 +174,41 @@ public class EmulatorService {
 //      if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
 //        return;
 //      }
+
+
+      File mameFolder = new File(emulator.getInstallationDirectory(), "VPinMAME");
+      if (mameFolder.exists()) {
+        emulator.setMameDirectory(mameFolder.getAbsolutePath());
+      }
+
+      if (emulator.isVpxEmulator()) {
+        File registryFolder = mameService.getNvRamFolder();
+        if (registryFolder != null && registryFolder.exists()) {
+          emulator.setNvramDirectory(registryFolder.getAbsolutePath());
+        }
+        else {
+          emulator.setNvramDirectory(new File(mameFolder, "nvram").getAbsolutePath());
+        }  
+
+        File cfgFolder = mameService.getCfgFolder();
+        if (cfgFolder != null && cfgFolder.exists()) {
+          emulator.setCfgDirectory(cfgFolder.getAbsolutePath());
+        }
+        else {
+          emulator.setCfgDirectory(new File(mameFolder, "nvram").getAbsolutePath());
+        }
+
+        // mind that popper may set a specific romDirectory
+        if (StringUtils.isEmpty(emulator.getRomDirectory())) {
+          File romFolder = mameService.getRomsFolder();
+          if (romFolder != null && romFolder.exists()) {
+            emulator.setRomDirectory(romFolder.getAbsolutePath());;
+          }
+          else {
+            emulator.setRomDirectory(new File(mameFolder, "roms").getAbsolutePath());
+          }
+        }
+      }
       emulators.put(emulator.getId(), emulator);
 
       LOG.info("Loaded Emulator: " + emulator);

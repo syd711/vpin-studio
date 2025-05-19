@@ -17,7 +17,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);

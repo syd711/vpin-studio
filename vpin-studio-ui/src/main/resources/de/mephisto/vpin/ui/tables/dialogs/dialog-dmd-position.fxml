@@ -35,6 +35,9 @@
                </HBox.margin>
             </Button>
             <Button fx:id="saveLocallyBtn" mnemonicParsing="false" onAction="#onSaveLocallyClick" styleClass="submit-button" text="Save Position Locally">
+               <tooltip>
+                  <Tooltip prefWidth="300.0" text="Save the current DMD Position. [Ctrl-S]" wrapText="true" />
+               </tooltip>
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -65,7 +68,7 @@
                   </Label>
                </left>
                <right>
-                  <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                  <HBox spacing="3.0" alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
                            <font>
@@ -89,6 +92,11 @@
                               <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
                            </tooltip>
                         </Button>
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
                      </children>
                   </HBox>
                   </right>
@@ -223,7 +231,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                        </graphic>
                                        <tooltip>
-                                          <Tooltip prefWidth="300.0" text="When disable, tell the backglass not to render scores that are behind the alphanumeric scores and could be seen. Mind this setting modifies the backglass. IMPORTANT : When not checked, it re-enables only the scores turned off by studio !" wrapText="true" />
+                                          <Tooltip prefWidth="300.0" text="When checked, tell the backglass not to render scores that are behind the alphanumeric scores and could be seen. Mind this setting modifies the backglass. IMPORTANT : When not checked, it re-enables only the scores turned off by studio !" wrapText="true" />
                                        </tooltip>
                                        <HBox.margin>
                                           <Insets left="12.0" />

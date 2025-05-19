@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.components.facades;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.mame.MameService;
@@ -43,13 +42,7 @@ public class VPinMAMEComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    File mameFolder = mameService.getMameFolder();
-    if (mameFolder != null) {
-      return mameFolder;
-    }
-    SystemInfo si = new SystemInfo();
-    File vpxFolder = si.resolveVpx64InstallFolder();
-    return vpxFolder.exists() ? new File(vpxFolder, "VPinMAME") : null;
+    return mameService.getMameFolder();
   }
 
   @Nullable

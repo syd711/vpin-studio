@@ -92,7 +92,9 @@ public class StudioKeyEventHandler implements EventHandler<KeyEvent> {
 
     if (!ke.isConsumed()) {
       StudioFXController controller = NavigationController.getActiveNavigationController();
-      controller.onKeyEvent(ke);
+      if (controller != null) {
+        controller.onKeyEvent(ke);
+      }
     }
   }
 }

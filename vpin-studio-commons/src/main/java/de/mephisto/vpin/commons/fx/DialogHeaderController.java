@@ -2,14 +2,16 @@ package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.Window;
+
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
@@ -26,6 +28,9 @@ public class DialogHeaderController implements Initializable {
 
   @FXML
   private Label titleLabel;
+
+  /** The dirty indicator */
+  private BooleanProperty dirty = new SimpleBooleanProperty(false);
 
   @FXML
   private Button modalBtn;
@@ -81,6 +86,8 @@ public class DialogHeaderController implements Initializable {
       stage.setX(event.getScreenX() + xOffset);
       stage.setY(event.getScreenY() + yOffset);
     });
+    // update title when the dirty flag changes
+    dirty.addListener((pbs, o, v) -> updateTitle());
   }
 
   public void setStage(Stage stage) {
@@ -89,6 +96,33 @@ public class DialogHeaderController implements Initializable {
 
   public void setTitle(String title) {
     titleLabel.setText(title);
+  }
+
+  //---------------------------------------------
+  // Dirty management
+
+  private static final String dirtySuffix = " (*)";
+
+  public boolean isDirty() {
+    return this.dirty.get();
+  }
+
+  public void setDirty(boolean dirty) {
+    this.dirty.set(dirty);
+  }
+
+  public BooleanProperty dirtyProperty() {
+    return dirty;
+  }
+  
+  protected void updateTitle() {
+    String title = titleLabel.getText();
+    if (dirty.get() && !title.endsWith(dirtySuffix)) {
+      titleLabel.setText(title + dirtySuffix);
+    }
+    else if (!dirty.get() && title.endsWith(dirtySuffix)) {
+      titleLabel.setText(StringUtils.removeEnd(title, dirtySuffix));
+    }
   }
 
   public void enableStateListener(Stage stage, DialogController dialogController, String id) {

@@ -21,7 +21,7 @@ public class DMDUploadController extends BaseUploadController {
     return new DMDUploadProgressModel("DMD Bundle Upload", getSelection(), getSelectedEmulatorId(), game, finalizer);
   }
 
-  public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis analysis, Runnable finalizer) {
     this.game = game;
     super.setFile(stage, file, analysis, finalizer);
   }

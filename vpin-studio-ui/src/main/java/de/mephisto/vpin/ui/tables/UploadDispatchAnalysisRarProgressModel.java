@@ -6,7 +6,6 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.zip.ZipEntry;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -30,7 +28,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   private int size = 0;
   private Iterator<ISimpleInArchiveItem> iterator;
 
-  private UploaderAnalysis<ISimpleInArchiveItem> uploaderAnalysis;
+  private UploaderAnalysis uploaderAnalysis;
 
   public UploadDispatchAnalysisRarProgressModel(File file) throws IOException {
     super("Analyzing Archive");
@@ -44,7 +42,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
     size = archiveItems.length;
     iterator = Arrays.stream(archiveItems).iterator();
 
-    uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
+    uploaderAnalysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), file);
   }
 
   @Override

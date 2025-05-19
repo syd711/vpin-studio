@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
@@ -262,16 +263,16 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    Platform.runLater(() -> {
-      systemManagerOverlay.getChildren().remove(updateIcon);
-      List<ComponentRepresentation> components = Studio.client.getComponentService().getComponents();
-      for (ComponentRepresentation component : components) {
-        if (component.isVersionDiff()) {
-          systemManagerOverlay.getChildren().add(updateIcon);
-          break;
-        }
-      }
-    });
+    systemManagerOverlay.getChildren().remove(updateIcon);
+    JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents())
+      .thenAcceptLater(components -> {
+          for (ComponentRepresentation component : components) {
+            if (component.isVersionDiff()) {
+              systemManagerOverlay.getChildren().add(updateIcon);
+              break;
+            }
+          }
+      });
   }
 
   @Override

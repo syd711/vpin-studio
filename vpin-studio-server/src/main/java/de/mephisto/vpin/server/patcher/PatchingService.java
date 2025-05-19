@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.patcher;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class PatchingService {
     try {
       List<String> params = Arrays.asList(JPTCH_EXE, game.getGameFile().getAbsolutePath(), patchFile.getAbsolutePath(), targetVpxFile.getAbsolutePath());
       SystemCommandExecutor executor = new SystemCommandExecutor(params, true);
-      executor.setDir(new File(SystemInfo.RESOURCES));
+      executor.setDir(new File(SystemService.RESOURCES));
       executor.executeCommand();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();

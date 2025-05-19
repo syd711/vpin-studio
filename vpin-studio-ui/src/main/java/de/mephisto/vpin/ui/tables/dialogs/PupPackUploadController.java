@@ -34,7 +34,7 @@ public class PupPackUploadController extends BaseUploadController {
   }
 
   @Override
-  protected String validateAnalysis(UploaderAnalysis<?> uploaderAnalysis) {
+  protected String validateAnalysis(UploaderAnalysis uploaderAnalysis) {
     // do the standard puppack validation
     String validation = super.validateAnalysis(uploaderAnalysis);
     if (validation == null) {
@@ -44,7 +44,7 @@ public class PupPackUploadController extends BaseUploadController {
   }
 
   @Override
-  protected void endAnalysis(String validation, UploaderAnalysis<?> uploaderAnalysis) {
+  protected void endAnalysis(String validation, UploaderAnalysis uploaderAnalysis) {
     if (rom != null) {
       //TODO Question here, seems that rom is not mandatory for altsound upload
       // but if rom is mandatory, simply return an error message 

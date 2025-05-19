@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.fp;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class FpResource {
 
   @PostMapping("/upload/cfg/{gameId}")
   public UploadDescriptor uploadCfg(@PathVariable("gameId") int gameId, @RequestParam(value = "file", required = false) MultipartFile file) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    UploadDescriptor descriptor = universalUploadService.create(file);
     descriptor.setGameId(gameId);
     try {
       descriptor.upload();

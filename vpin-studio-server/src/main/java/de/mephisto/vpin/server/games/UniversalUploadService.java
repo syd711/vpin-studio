@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
 import java.io.*;
@@ -122,7 +123,7 @@ public class UniversalUploadService {
 
       if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadDescriptorBundleFile.getName()))) {
         if (analysis == null) {
-          analysis = new UploaderAnalysis<>(frontendService.getFrontend(), temporaryUploadDescriptorBundleFile);
+          analysis = new UploaderAnalysis(frontendService.supportPupPacks(), temporaryUploadDescriptorBundleFile);
           analysis.analyze();
         }
 
@@ -154,11 +155,12 @@ public class UniversalUploadService {
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
+      analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
       analysis.analyze();
     }
 
     Game game = gameService.getGame(uploadDescriptor.getGameId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
     String updatedAssetName = uploadDescriptor.getRom();
 
     switch (assetType) {
@@ -205,7 +207,6 @@ public class UniversalUploadService {
           if (game != null) {
             rom = game.getRom();
           }
-          GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
           if (gameEmulator != null) {
             File musicFolder = gameEmulator.getMusicFolder();
             if (musicFolder.exists()) {
@@ -220,25 +221,25 @@ public class UniversalUploadService {
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          mameService.installRom(uploadDescriptor, tempFile, analysis);
+          mameService.installRom(uploadDescriptor, gameEmulator, tempFile, analysis);
         }
         break;
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
-          mameService.installNvRam(uploadDescriptor, tempFile, analysis);
+          mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
-          mameService.installCfg(uploadDescriptor, tempFile, analysis);
+          mameService.installCfg(uploadDescriptor, gameEmulator, tempFile, analysis);
         }
         break;
       }
       case BAM_CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
-          fpService.installBAMCfg(uploadDescriptor, game, tempFile, frontendService.getFrontend(), analysis);
+          fpService.installBAMCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
         }
         break;
       }
@@ -378,5 +379,30 @@ public class UniversalUploadService {
         discordService.sendMessage(serverId, channelId, build);
       }
     }
+  }
+
+  //-------------------------------
+
+  public UploadDescriptor create() {
+    UploadDescriptor uploadDescriptor = new UploadDescriptor();
+    return uploadDescriptor;
+  }
+
+  public UploadDescriptor error(String message) {
+    UploadDescriptor descriptor = create();
+    descriptor.setError(message);
+    return descriptor;
+  }
+
+  public UploadDescriptor create(MultipartFile file, int gameId) {
+    UploadDescriptor descriptor = create();
+    descriptor.setGameId(gameId);
+    descriptor.setFile(file);
+    descriptor.setOriginalUploadFileName(file.getOriginalFilename());
+    return descriptor;
+  }
+
+  public UploadDescriptor create(MultipartFile file) {
+    return create(file, 0);
   }
 }

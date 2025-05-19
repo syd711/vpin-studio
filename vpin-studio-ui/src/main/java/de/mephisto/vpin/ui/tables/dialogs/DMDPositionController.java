@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
@@ -9,12 +9,16 @@ import de.mephisto.vpin.restclient.dmd.DMDType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.DialogHeaderController;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
@@ -30,6 +34,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -52,12 +57,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class DMDPositionController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionController.class);
+
+  @FXML
+  protected DialogHeaderController headerController;  //fxml magic! Not unused -> id + "Controller"
 
   private BackglassManagerController backglassMgrController;
 
@@ -67,6 +76,8 @@ public class DMDPositionController implements Initializable, DialogController {
   private Button prevButton;
   @FXML
   private Button nextButton;
+  @FXML
+  private CheckBox autosaveCheckbox;
 
   @FXML
   private TabPane tabPane;
@@ -185,21 +196,48 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private ToggleGroup ratioRadioGroup;
   
-  
-  
+ 
   @FXML
-  private void onNext(ActionEvent e) {
-    clearGame();
-    switchGame(backglassMgrController.selectNextGame());
+  protected void onPrevious(ActionEvent e) {
+    onAutosave(() -> {
+      clearGame();
+      switchGame(backglassMgrController.selectPreviousGame());  
+    });
   }
 
   @FXML
-  private void onPrevious(ActionEvent e) {
-    clearGame();
-    switchGame(backglassMgrController.selectPreviousGame());
+  protected void onNext(ActionEvent e) {
+    onAutosave(() -> {
+      clearGame();
+      switchGame(backglassMgrController.selectNextGame());
+    });
+  }
+
+ protected void onAutosave(@NonNull Runnable onSuccess) {
+    if (autosaveCheckbox.isSelected()) {
+      onSaveClick(true, onSuccess);
+    }
+    else if (headerController.isDirty()) {
+      Optional<ButtonType> result = WidgetFactory.showYesNoConfirmation(Studio.stage, "You have unsaved changes.", "Do you want to save them ?");
+      if (result.isPresent() && result.get().equals(ButtonType.YES)) {
+        onSaveClick(true, onSuccess);
+        return;
+      }
+      else if (result.isPresent() && result.get().equals(ButtonType.NO)) {
+        onSuccess.run();
+      }
+      else {
+        // click cancel, stay on the table
+        return;
+      }
+    }
+    else {
+      onSuccess.run();
+    }
   }
 
   private void clearGame() {
+    headerController.setDirty(false);
     titleLabel.setText("loading...");
     romLabel.setText("--");
     tablePositionLabel.setText("");
@@ -226,21 +264,23 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private void onSaveGloballyClick(ActionEvent e) {
-    onSaveClick(e, false, true);
+    onSaveClick(false, null);
   }
 
   @FXML
   private void onSaveLocallyClick(ActionEvent e) {
-    onSaveClick(e, true, false);
+    onSaveClick(true, null);
   }
 
   @FXML
   private void onSaveCloseLocallyClick(ActionEvent e) {
-    onSaveClick(e, true, true);
+    onSaveClick(true, () -> {
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      stage.close();
+    });
   }
 
-  private void onSaveClick(ActionEvent e, boolean locally, boolean close) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+  private void onSaveClick(boolean locally, @Nullable Runnable onSuccess) {
     JFXFuture.runAsync(() -> {
           DMDInfo dmdinfo = fillDmdInfo();
           dmdinfo.setLocallySaved(locally);
@@ -248,8 +288,9 @@ public class DMDPositionController implements Initializable, DialogController {
           client.getDmdPositionService().saveDMDInfo(dmdinfo);
         })
         .thenLater(() -> {
-          if (close) {
-            stage.close();
+          headerController.setDirty(false);
+          if (onSuccess != null) {
+            onSuccess.run();
           }
         });
   }
@@ -259,6 +300,25 @@ public class DMDPositionController implements Initializable, DialogController {
     for (DMDPositionResizer dragBox : dragBoxes) {
       if (dragBox.keyPressed(ke)) {
         ke.consume();
+        return;
+      }
+    }
+    // else process dialog keys
+    KeyCode code = ke.getCode();
+    switch (code) {
+      case PAGE_DOWN: {
+        onNext(null); 
+        return;
+      }
+      case PAGE_UP: {
+        onPrevious(null); 
+        return;
+      }
+      case S: {
+        if (ke.isControlDown()) {
+          onSaveLocallyClick(null);
+          return;
+        }
       }
     }
   }
@@ -282,7 +342,7 @@ public class DMDPositionController implements Initializable, DialogController {
     LOG.info("Reseting Zones to Scores positionsfor game {}", game.getGameFileName());
     disableAll();
     JFXFuture.supplyAsync(() -> client.getDmdPositionService().resetToScores(movedDmdinfo))
-        .thenAcceptLater(dmd -> setDmdInfo(dmd, false));
+        .thenAcceptLater(dmd -> setDmdInfo(dmd, false, true));
   }
 
   @FXML
@@ -323,11 +383,10 @@ public class DMDPositionController implements Initializable, DialogController {
     disableAll();
     JFXFuture.supplyAsync(() -> client.getDmdPositionService().useFrontendFullDMDMedia(movedDmdinfo))
         .thenAcceptLater(dmd -> {
-          setDmdInfo(dmd, false);
+          setDmdInfo(dmd, false, false);
           loadImage(loadedVpinScreen, true);
         });
   }
-
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -365,6 +424,7 @@ public class DMDPositionController implements Initializable, DialogController {
             dragBox.setAspectRatio(aspectRatio.getValue());
           }
         }
+        headerController.setDirty(true);
       }
     });
 
@@ -422,6 +482,7 @@ public class DMDPositionController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         DMDInfo dmdinfo = fillDmdInfo();
         loadDmdInfo(dmdinfo);
+        headerController.setDirty(true);
       }
     });
 
@@ -434,7 +495,7 @@ public class DMDPositionController implements Initializable, DialogController {
         LOG.info("Swicthing dmdinfo for game {} to {}", game.getGameFileName(), t1);
         disableAll();
         JFXFuture.supplyAsync(() -> client.getDmdPositionService().switchDMDInfo(movedDmdinfo, t1))
-            .thenAcceptLater(dmd -> setDmdInfo(dmd, false));
+            .thenAcceptLater(dmd -> setDmdInfo(dmd, false, true));
       }
     });
 
@@ -442,11 +503,13 @@ public class DMDPositionController implements Initializable, DialogController {
       if (!newV) {
         disableViaIniCheckbox.setSelected(true);
       }
+      headerController.setDirty(true);
     });
     disableViaIniCheckbox.selectedProperty().addListener((obs, oldV, newV) -> {
       if (!newV) {
         disableViaMameCheckbox.setSelected(true);
       }
+      headerController.setDirty(true);
     });
 
     // by default hide the noFullDMD Pane
@@ -464,6 +527,20 @@ public class DMDPositionController implements Initializable, DialogController {
             Platform.runLater(() -> updateDMDImage(selection));
           }
         });
+
+    // Load user preferences
+    try {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS);
+      autosaveCheckbox.setSelected(uiSettings.isAutoSaveDmdPosition());
+      autosaveCheckbox.selectedProperty().addListener((obs, o, v) -> {
+        UISettings modifiedUISettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS);
+        modifiedUISettings.setAutoSaveDmdPosition(v);
+        client.getPreferenceService().setJsonPreference(modifiedUISettings);
+      });
+    }
+    catch (Exception e) {
+      LOG.error("Cannot set UI preference, exception ignored : " + e.getMessage());
+    }
   }
 
   private void configureSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
@@ -475,6 +552,7 @@ public class DMDPositionController implements Initializable, DialogController {
     factory.valueProperty().bindBidirectional(property);
     factory.minProperty().bind(minProperty);
     factory.maxProperty().bind(maxProperty);
+    factory.valueProperty().addListener((obs, o, v) -> headerController.setDirty(true));
   }
 
   @Override
@@ -484,7 +562,7 @@ public class DMDPositionController implements Initializable, DialogController {
   public void setGame(GameRepresentation gameRepresentation, @Nullable BackglassManagerController backglassMgrController) {
     this.game = gameRepresentation;
     this.backglassMgrController = backglassMgrController;
-    this.titleLabel.setText(game.getGameDisplayName());
+    titleLabel.setText(game.getGameDisplayName());
 
     saveLocallyBtn.setVisible(backglassMgrController != null);
     prevButton.setVisible(backglassMgrController != null);
@@ -496,7 +574,7 @@ public class DMDPositionController implements Initializable, DialogController {
       () -> client.getDmdPositionService().getDMDInfo(game.getId()))
     .thenAcceptLater((objs) -> {
       this.screenres = (DirectB2sScreenRes) objs[0];
-      setDmdInfo((DMDInfo) objs[1], true);
+      setDmdInfo((DMDInfo) objs[1], true, false);
     })
     .onErrorLater(ex -> setDmdError(ex));
   }
@@ -547,13 +625,15 @@ public class DMDPositionController implements Initializable, DialogController {
       this.selectedZone = zone;
       selectTab(zone.getOnScreen(), false);
     }
+    // method called either after autoposition or move, so DMD is modified
+    headerController.setDirty(true);
   }
 
   /**
    * To be called on a Thread, from a Future, as it loads the image synchronously
    * in order to calculate the bounds of the image
    */
-  private void setDmdInfo(DMDInfo dmdinfo, boolean forceRefresh) {
+  private void setDmdInfo(DMDInfo dmdinfo, boolean forceRefresh, boolean dirty) {
     LOG.info("Received dmdinfo for game {} : {}", game.getGameFileName(), dmdinfo);
     this.dmdinfo = dmdinfo;
 
@@ -624,6 +704,7 @@ public class DMDPositionController implements Initializable, DialogController {
     disableBGScoreCheckbox.setSelected(dmdinfo.isDisableBackglassScores());
 
     loadDmdInfo(dmdinfo);
+    headerController.setDirty(dirty);
   }
 
   private void loadImage(VPinScreen onScreen, boolean forceRefresh) {

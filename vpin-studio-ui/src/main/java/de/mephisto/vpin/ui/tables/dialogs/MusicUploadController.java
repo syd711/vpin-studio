@@ -30,7 +30,7 @@ public class MusicUploadController extends BaseUploadController {
   }
 
   @Override
-  protected String validateAnalysis(UploaderAnalysis<?> analysis) {
+  protected String validateAnalysis(UploaderAnalysis analysis) {
     // first check first
     try {
       analysis.analyze();

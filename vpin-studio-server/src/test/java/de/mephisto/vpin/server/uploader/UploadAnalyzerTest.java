@@ -21,7 +21,7 @@ public class UploadAnalyzerTest {
       Frontend frontend = new Frontend();
       frontend.setFrontendType(FrontendType.Popper);
 
-      UploaderAnalysis analysis = new UploaderAnalysis(frontend, archive);
+      UploaderAnalysis analysis = new UploaderAnalysis(true, archive);
       analysis.analyze();
 
       System.out.println("Root: " + analysis.getPupPackRootDirectory());

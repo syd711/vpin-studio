@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ public class UniversalUploadResource {
                                  @RequestParam(value = "gameId") int gameId,
                                  @RequestParam(value = "emuId") int emuId,
                                  @RequestParam(value = "mode") UploadType mode) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+    UploadDescriptor descriptor = universalUploadService.create(file, gameId);
     try {
       descriptor.setUploadType(mode);
       descriptor.setEmulatorId(emuId);
@@ -59,7 +58,7 @@ public class UniversalUploadResource {
       universalUploadService.resolveLinks(uploadDescriptor);
 
       File tempFile = new File(uploadDescriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
+      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
       analysis.analyze();
       analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
