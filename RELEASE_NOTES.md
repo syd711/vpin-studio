@@ -15,6 +15,7 @@
 - **System Manager**: 
   - The overall update check is not blocking the UI anymore. This way, you can immediately switch to other system manager tabs now.
   - Full support of target folder that were ignored before for component fresh installation.
+  - Added DOF to the list of components in the system mananger. Note that the tab is only active when a valid installation folder has been set in the preferences.
 - **Table Overview**: 
   - De-cluttered context menu and removed less used function with focus on supporting more bulk actions there.
   - Added context menu option to bulk reset table ratings.

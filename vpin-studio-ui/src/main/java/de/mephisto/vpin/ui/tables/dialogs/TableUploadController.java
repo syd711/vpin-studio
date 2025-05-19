@@ -171,7 +171,7 @@ public class TableUploadController implements Initializable, DialogController {
   private GameRepresentation game;
   private GameEmulatorRepresentation emulatorRepresentation;
 
-  private UploadType uploadType;
+  private UploadType uploadType = UploadType.uploadAndImport;
   private UploaderAnalysis uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
