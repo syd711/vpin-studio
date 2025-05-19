@@ -28,13 +28,15 @@ import java.util.*;
 public class AlxFactory {
   private final static Logger LOG = LoggerFactory.getLogger(AlxFactory.class);
 
+  private final static int COLUMN_COUNT = 5;
+
   private static final List<Color> colors = Arrays.asList(Tile.DARK_BLUE, Tile.RED, Tile.ORANGE, Tile.GREEN, Tile.MAGENTA, Tile.PINK.grayscale(), Tile.DARK_BLUE);
 
   public static double calculateColumnWidth(Stage stage) {
     if (stage.getTitle().startsWith("VPin Studio")) {
       double width = stage.getWidth();
       width = width - 130; //minus navigation
-      return width / 4 - (12 * 2);
+      return width / COLUMN_COUNT - (12 * 2);
     }
     double width = stage.getWidth();
     return width / 2 - (12 * 2);

@@ -40,31 +40,40 @@ public class AlxBarEntryController implements Initializable {
 
   public void refresh(@NonNull Stage stage, @NonNull AlxBarEntry entry) {
     String title = entry.getTitle();
-    if (title.length() > 40) {
-      title = title.substring(0, 39) + "...";
-    }
 
-    titleLabel.setText(title);
     valueLabel.setText(entry.getValue());
-    valueLabel.setTooltip(new Tooltip(entry.getValue()));
+    valueLabel.setTooltip(new Tooltip(entry.getTitle()));
 
     bar.setStyle("-fx-background-color: " + entry.getColor() + ";");
     CompletableFuture.supplyAsync(() -> client.getGameService().getGame(entry.getGameId()))
-      .thenAcceptAsync(game -> {
-        if (game != null) {
-          root.setStyle("-fx-cursor: hand;");
-          root.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-              TableDialogs.openTableDataDialog(null, game, 6);
-            }
-          });
-        }
-      }, Platform::runLater);
+        .thenAcceptAsync(game -> {
+          if (game != null) {
+            root.setStyle("-fx-cursor: hand;");
+            root.setOnMouseClicked(new EventHandler<MouseEvent>() {
+              @Override
+              public void handle(MouseEvent event) {
+                TableDialogs.openTableDataDialog(null, game, 6);
+              }
+            });
+          }
+        }, Platform::runLater);
 
     int percentage = entry.getPercentage();
     double v = AlxFactory.calculateColumnWidth(stage) - 24;
     barStack.setPrefWidth(v);
+
+    boolean trimmed = false;
+    while (title.length() * 7 > v) {
+      trimmed = true;
+      title = title.substring(0, title.length() - 1);
+    }
+
+    if (trimmed) {
+      title = title + "...";
+    }
+    titleLabel.setText(title);
+    titleLabel.setTooltip(new Tooltip(entry.getTitle()));
+
 
     double barWidth = v * percentage / 100;
     if (barWidth < 1) {

@@ -166,6 +166,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       col1.setPrefWidth(v);
       col2.setPrefWidth(v);
       col3.setPrefWidth(v);
+      col4.setPrefWidth(v);
 
       reloadBtn.setDisable(true);
       deleteBtn.setDisable(true);
@@ -215,6 +216,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       col1.setPrefWidth(v);
       col2.setPrefWidth(v);
       col3.setPrefWidth(v);
+      col4.setPrefWidth(v);
 
       List<TableAlxEntry> entries = alxSummary.getEntries();
 
