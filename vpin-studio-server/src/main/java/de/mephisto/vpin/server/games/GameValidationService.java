@@ -193,7 +193,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           if (game.getAltColorType() == null) {
             List<VpsAuthoredUrls> altColorFiles = vpsTable.getAltColorFiles();
             for (VpsAuthoredUrls altColorFile : altColorFiles) {
-              if (altColorFile.getUrls().isEmpty() || !altColorFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
+              if (altColorFile.getUrls().isEmpty() || altColorFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
                 continue;
               }
               result.add(ValidationStateFactory.create(CODE_VPS_ALTCOLOR_MISSING));
@@ -207,7 +207,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           if (!game.isAltSoundAvailable()) {
             List<VpsAuthoredUrls> altSoundFiles = vpsTable.getAltSoundFiles();
             for (VpsAuthoredUrls altSoundFile : altSoundFiles) {
-              if (altSoundFile.getUrls().isEmpty() || !altSoundFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
+              if (altSoundFile.getUrls().isEmpty() || altSoundFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
                 continue;
               }
               result.add(ValidationStateFactory.create(CODE_VPS_ALTSOUND_MISSING));
@@ -221,7 +221,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           if (game.getPupPack() == null) {
             List<VpsAuthoredUrls> pupPackFiles = vpsTable.getPupPackFiles();
             for (VpsAuthoredUrls pupPackFile : pupPackFiles) {
-              if (pupPackFile.getUrls().isEmpty() || !pupPackFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
+              if (pupPackFile.getUrls().isEmpty() || pupPackFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
                 continue;
               }
               result.add(ValidationStateFactory.create(CODE_VPS_PUPPACK_MISSING));

@@ -145,6 +145,7 @@ public class TablesSidebarAltSoundController implements Initializable {
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new AltSoundRefreshProgressModel(game.get()));
         this.reloadBtn.setDisable(false);
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
       });
     }
   }

@@ -307,7 +307,11 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getMameFolder() {
-    return new File(getMameDirectory());
+    String dir = getMameDirectory();
+    if (!StringUtils.isEmpty(dir)) {
+      return new File(dir);
+    }
+    return new File("./");
   }
 
   @NonNull
@@ -348,23 +352,23 @@ public class GameEmulator {
     if (this.type != null) {
       switch (this.type) {
         case VisualPinball: {
-          return new String[] { VpsFeatures.VPX };
+          return new String[]{VpsFeatures.VPX};
         }
         case FuturePinball: {
-          return new String[] { VpsFeatures.FP };
+          return new String[]{VpsFeatures.FP};
         }
         case ZenFX: {
-          return new String[] { VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3 };
+          return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
         }
         case ZenFX2: {
-          return new String[] { VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3 };
+          return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
         }
         case ZenFX3: {
-          return new String[] { VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3 };
+          return new String[]{VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3};
         }
       }
     }
-    return new String[] { VpsFeatures.VPX };
+    return new String[]{VpsFeatures.VPX};
   }
 
 

@@ -947,6 +947,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
+    this.emulatorCombo.setDisable(true);
+    this.playlistCombo.setDisable(true);
+
     GameRepresentation selection = getSelection();
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
@@ -972,12 +975,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return Collections.emptyList();
         })
         .thenAcceptLater(data -> {
-          // as the load of tables could take some time, users may have switched to another emulators in between
-          // if this is the case, do not refresh the UI with the results
-          GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
-          if (valueAfterSearch != null && (value == null || valueAfterSearch.getId() != value.getId())) {
-            return;
-          }
+          this.emulatorCombo.setDisable(false);
+          this.playlistCombo.setDisable(false);
 
           tableView.getSelectionModel().getSelectedItems().removeListener(this);
           setItems(data);
