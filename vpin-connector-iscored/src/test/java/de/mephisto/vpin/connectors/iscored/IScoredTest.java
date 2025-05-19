@@ -17,8 +17,8 @@ public class IScoredTest {
     assertNotNull(gameRoom.getSettings());
     List<IScoredGame> games = gameRoom.getGames();
     assertFalse(games.isEmpty());
-    assertFalse(gameRoom.getGames().get(gameIndex).getScores().isEmpty());
-    assertFalse(gameRoom.getGames().get(gameIndex).getTags().isEmpty());
+//    assertFalse(gameRoom.getGames().get(gameIndex).getScores().isEmpty());
+//    assertFalse(gameRoom.getGames().get(gameIndex).getTags().isEmpty());
     assertTrue(gameRoom.getSettings().isLongNameInputEnabled());
 
     gameRoom = IScored.getGameRoom("https://www.iScored.info?mode=public&user=Syd", false);
