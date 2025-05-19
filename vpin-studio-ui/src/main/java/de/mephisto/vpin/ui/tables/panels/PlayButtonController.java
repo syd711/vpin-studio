@@ -67,7 +67,6 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         onPlay(game, value.getAltExe(), value.getOption());
       }
     }
-
   }
 
   public void setData(GameRepresentation game) {
@@ -123,7 +122,7 @@ public class PlayButtonController implements Initializable, ChangeListener<Launc
         launchCombo.getSelectionModel().select(0);
         UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         LaunchConfiguration launchConfiguration = uiSettings.getLaunchConfiguration();
-        if (launchConfiguration != null) {
+        if (launchConfiguration != null && launchCombo.getItems().contains(launchConfiguration)) {
           launchCombo.setValue(launchConfiguration);
         }
         this.launchCombo.valueProperty().addListener(this);
