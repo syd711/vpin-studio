@@ -77,7 +77,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
                                             </graphic>
                                             <tooltip>
-                                                <Tooltip text="Open VPX tables folder" />
+                                                <Tooltip text="Open folder" />
                                             </tooltip>
                                         </Button>
                                     </children>

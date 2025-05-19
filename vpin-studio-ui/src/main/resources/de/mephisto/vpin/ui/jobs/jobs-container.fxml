@@ -65,7 +65,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Open VPX tables folder" />
+                  <Tooltip text="Open folder" />
                </tooltip>
             </Button>
             <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
@@ -103,7 +103,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close" iconSize="13" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Open VPX tables folder" />
+                  <Tooltip text="Open folder folder" />
                </tooltip>
             </Button>
          </right>
