@@ -64,7 +64,7 @@ public class DOFLinxComponent implements ComponentFacade {
     return dofLinxService.isValid();
   }
 
-  @Nullable
+  @NonNull
   @Override
   public List<String> getExcludedFilenames() {
     return Arrays.asList(".ini", ".INI", ".log", ".bak");

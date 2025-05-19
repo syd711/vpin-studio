@@ -29,9 +29,6 @@ public class ComponentService implements InitializingBean {
   private ComponentRepository componentRepository;
 
   @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
   private SystemService systemService;
 
   @Autowired
@@ -54,6 +51,9 @@ public class ComponentService implements InitializingBean {
 
   @Autowired
   private DOFLinxComponent dofLinxComponent;
+
+  @Autowired
+  private DOFComponent dofComponent;
 
   private Map<ComponentType, List<GithubRelease>> releaseCache = new HashMap<>();
 
@@ -279,6 +279,9 @@ public class ComponentService implements InitializingBean {
       }
       case doflinx: {
         return dofLinxComponent;
+      }
+      case dof: {
+        return dofComponent;
       }
       default: {
         throw new UnsupportedOperationException("Invalid component type " + type);

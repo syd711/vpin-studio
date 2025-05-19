@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.components;
 
 public enum ComponentType {
   //do not change order of declaration, ordinal is used in DB
-  vpinmame(1), vpinball(0), b2sbackglass(2), freezy(3), flexdmd(4), serum(5), doflinx(6);
+  vpinmame(1), vpinball(0), b2sbackglass(2), freezy(3), flexdmd(4), serum(5), doflinx(6), dof(7);
 
   /**
    * The order for display
@@ -18,7 +18,7 @@ public enum ComponentType {
   }
 
   public static ComponentType[] getValues() {
-    return new ComponentType[]{vpinmame, vpinball, b2sbackglass, freezy, flexdmd, doflinx};
+    return new ComponentType[]{vpinmame, vpinball, b2sbackglass, freezy, flexdmd, doflinx, dof};
   }
 
   @Override
@@ -41,6 +41,9 @@ public enum ComponentType {
       }
       case serum: {
         return "Serum";
+      }
+      case dof: {
+        return "DOF";
       }
       case doflinx: {
         return "DOFLinx";

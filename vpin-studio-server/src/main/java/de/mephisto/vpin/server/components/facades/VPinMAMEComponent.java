@@ -58,7 +58,7 @@ public class VPinMAMEComponent implements ComponentFacade {
     return null;
   }
 
-  @Nullable
+  @NonNull
   @Override
   public List<String> getExcludedFilenames() {
     return Arrays.asList("VPMAlias.txt");

@@ -54,7 +54,7 @@ public class SerumComponent implements ComponentFacade {
     return null;
   }
 
-  @Nullable
+  @NonNull
   @Override
   public List<String> getExcludedFilenames() {
     return Collections.emptyList();

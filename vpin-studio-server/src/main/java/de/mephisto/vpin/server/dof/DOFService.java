@@ -1,13 +1,16 @@
 package de.mephisto.vpin.server.dof;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.components.ComponentSummary;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +103,39 @@ public class DOFService implements InitializingBean {
       }
     }
     return false;
+  }
+
+  @Nullable
+  public File getInstallationFolder() {
+    DOFSettings settings = preferencesService.getJsonPreference(PreferenceNames.DOF_SETTINGS, DOFSettings.class);
+    if (StringUtils.isEmpty(settings.getInstallationPath())) {
+      return null;
+    }
+
+    return new File(settings.getInstallationPath());
+  }
+
+  public boolean isValid() {
+    return getInstallationFolder() != null && getInstallationFolder().exists();
+  }
+
+  public ComponentSummary getComponentSummary() {
+    ComponentSummary summary = new ComponentSummary();
+    summary.setType(ComponentType.doflinx);
+
+    if (isValid()) {
+      File tableMappingsfile = new File(getInstallationFolder(), "Config/tablemappings.xml");
+      if(tableMappingsfile.exists()) {
+        summary.addEntry("tablemappings.xml", tableMappingsfile.getAbsolutePath());
+        summary.addEntry("Last Modified", DateUtil.formatDateTime(new Date(tableMappingsfile.lastModified())));
+      }
+    }
+    else {
+      summary.addEntry("tablemappings.xml", "-");
+      summary.addEntry("Last Modified", "-");
+    }
+
+    return summary;
   }
 
   @Override

@@ -78,13 +78,20 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
     if (component.getType().equals(ComponentType.doflinx)) {
       preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);
     }
+    else if (component.getType().equals(ComponentType.dof)) {
+      preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+    }
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.DOFLINX_SETTINGS) && component.getType().equals(ComponentType.doflinx)) {
       JFXFuture.supplyAsync(() -> client.getDofLinxService().isValid())
-        .thenAcceptLater(isDofLinxValid -> root.setVisible(isDofLinxValid));
+          .thenAcceptLater(isDofLinxValid -> root.setVisible(isDofLinxValid));
+    }
+    if (key.equals(PreferenceNames.DOF_SETTINGS) && component.getType().equals(ComponentType.dof)) {
+      JFXFuture.supplyAsync(() -> client.getDofService().isValid())
+          .thenAcceptLater(isDofValid -> root.setVisible(isDofValid));
     }
   }
 
@@ -92,7 +99,7 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
     if (component.getType().equals(type)) {
       JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(type))
-        .thenAcceptLater(updatedComponent -> refresh(updatedComponent));
+          .thenAcceptLater(updatedComponent -> refresh(updatedComponent));
     }
   }
 

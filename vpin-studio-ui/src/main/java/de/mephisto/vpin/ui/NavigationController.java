@@ -263,16 +263,16 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
-    systemManagerOverlay.getChildren().remove(updateIcon);
     JFXFuture.supplyAsync(() -> Studio.client.getComponentService().getComponents())
-      .thenAcceptLater(components -> {
+        .thenAcceptLater(components -> {
+          systemManagerOverlay.getChildren().remove(updateIcon);
           for (ComponentRepresentation component : components) {
             if (component.isVersionDiff()) {
               systemManagerOverlay.getChildren().add(updateIcon);
               break;
             }
           }
-      });
+        });
   }
 
   @Override

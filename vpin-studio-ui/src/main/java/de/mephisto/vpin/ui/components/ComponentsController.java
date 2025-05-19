@@ -80,6 +80,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
   private Tab doflinxTab;
 
   @FXML
+  private Tab dofTab;
+
+  @FXML
   private Tab flexDMDTab;
 
   @FXML
@@ -157,6 +160,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
     else if (index == 7) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOFLinx"));
     }
+    else if (index == 8) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOF"));
+    }
   }
 
   private void refreshView(Number t1) {
@@ -216,6 +222,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(freezyTab, "tab-freezy.fxml");
 //    loadTab(serumTab, "tab-serum.fxml");
     loadTab(doflinxTab, "tab-doflinx.fxml");
+    loadTab(dofTab, "tab-dof.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1.intValue());
@@ -330,8 +337,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
           hint.setVisible(!uiSettings.isHideComponentWarning());
         });
     }
-    if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
-        //client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
+    else if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
       JFXFuture.supplyAsync(() -> client.getDofLinxService().isValid())
       .thenAcceptLater(isDofLinxValid -> {
         if (isDofLinxValid) {
@@ -344,5 +350,19 @@ public class ComponentsController implements Initializable, StudioFXController, 
         }
       });
     }
+    else if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+      JFXFuture.supplyAsync(() -> client.getDofService().isValid())
+          .thenAcceptLater(isDofLinxValid -> {
+            if (isDofLinxValid) {
+              if (!tabPane.getTabs().contains(dofTab)) {
+                tabPane.getTabs().add(dofTab);
+              }
+            }
+            else {
+              tabPane.getTabs().remove(dofTab);
+            }
+          });
+    }
+
   }
 }

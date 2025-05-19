@@ -103,6 +103,7 @@ public class ComponentUpdateController implements Initializable, ChangeListener<
         String artifact = artifactCombo.getValue();
 
         ComponentInstallation install = new ComponentInstallation();
+        install.setComponent(type);
         install.setReleaseTag(release.getTag());
         install.setArtifactName(artifact);
         install.setTargetFolder(component.getTargetFolder());

@@ -5,7 +5,8 @@ import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.connectors.github.ReleaseArtifact;
 import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.dof.DOFService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,13 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class FreezyComponent implements ComponentFacade {
-
-  private final static List<String> INVALID_MAME_FILES = Arrays.asList("serum.dll", "serum.exp", "serum.lib", "serum64.dll", "serum64.exp", "serum64.lib");
+public class DOFComponent implements ComponentFacade {
 
   @Autowired
-  private MameService mameService;
+  private DOFService dofService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @NonNull
   @Override
@@ -35,48 +37,55 @@ public class FreezyComponent implements ComponentFacade {
   @NonNull
   @Override
   public String getReleasesUrl() {
-    return "https://github.com/freezy/dmd-extensions/releases";
+    return "https://github.com/mjrgh/DirectOutput/releases";
   }
 
   @Override
   public List<GithubRelease> loadReleases() throws IOException {
-    return Arrays.asList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source", ".msi")));
+    return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source", ".msi"));
   }
 
-  @NonNull
+  @Nullable
   @Override
   public File getTargetFolder() {
-    return mameService.getMameFolder();
+    return dofService.getInstallationFolder();
   }
 
   @Nullable
   @Override
   public Date getModificationDate() {
-    File file = new File(mameService.getMameFolder(), "DmdDevice64.dll");
-    if (!file.exists()) {
-      file = new File(mameService.getMameFolder(), "DmdDevice.dll");
-    }
-    if (file.exists()) {
-      return new Date(file.lastModified());
+    if (dofService.getInstallationFolder() != null) {
+      File testExe = new File(dofService.getInstallationFolder(), "config/tablemappings.xml");
+      if (testExe.exists()) {
+        return new Date(testExe.lastModified());
+      }
     }
     return null;
   }
 
   @Override
-  public void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
-    for (String deleteFile : INVALID_MAME_FILES) {
-      FileUtils.delete(new File(mameService.getMameFolder(), deleteFile));
-    }
+  public boolean isInstalled() {
+    return dofService.isValid();
   }
 
   @NonNull
   @Override
   public List<String> getExcludedFilenames() {
-    return Arrays.asList("DmdDevice.log.config", "DmdDevice.ini", "dmdext.log.config");
+    return Arrays.asList(".ini", ".xml", ".png");
+  }
+
+  @Override
+  public void preProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
+    frontendService.killFrontend();
+  }
+
+  @Override
+  public void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
+
   }
 
   @Override
   public List<String> getRootFolderInArchiveIndicators() {
-    return Arrays.asList("DmdDevice.ini");
+    return Arrays.asList("DirectOutput.dll");
   }
 }

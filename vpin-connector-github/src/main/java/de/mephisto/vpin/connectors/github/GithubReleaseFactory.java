@@ -84,7 +84,8 @@ public class GithubReleaseFactory {
             }
 
             for (String s : ignoreList) {
-              if (e.text().contains(s)) {
+              String text = e.text();
+              if (text.contains(s)) {
                 return;
               }
             }

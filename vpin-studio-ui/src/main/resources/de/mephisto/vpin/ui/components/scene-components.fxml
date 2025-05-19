@@ -39,6 +39,7 @@
                                                 <Tab fx:id="flexDMDTab" closable="false" text="FlexDMD" />
                   <!--                        <Tab fx:id="serumTab" closable="false" text="Serum" />-->
                                           <Tab fx:id="doflinxTab" closable="false" text="DOFLinx" />
+                                          <Tab fx:id="dofTab" closable="false" text="DOF" />
                                             </tabs>
                                         </TabPane>
                                  </center>

@@ -56,7 +56,7 @@ public class BackglassComponent implements ComponentFacade {
     return null;
   }
 
-  @Nullable
+  @NonNull
   @Override
   public List<String> getExcludedFilenames() {
     return Arrays.asList("B2S_ScreenResIdentifier.exe.config", "B2SBackglassServerEXE.exe.config");

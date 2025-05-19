@@ -35,7 +35,7 @@
   - Added button in the matching table toolbar to launch the game from the backglass.
   - When Backglass and/or B2S DMD is hidden, the corresponding preview is blurred and translucent, reflecting the hidden state while still showing an image is present within the backglass
 
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/backglass-validators.png?raw=true" width="250" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/backglass-validators.png?raw=true" width="300" />
   
 - **Pause Menu**:The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here.
 - **Playlists Management**:
@@ -87,6 +87,7 @@
 - **MAME Settings**: Fixed missing displaying of MAME related errors in the MAME sidepanel.
 - **Pause Menu**: The navigation glitch that lead to wrong scaled items or selection positioning has been fixed.
 - **Drop-In Folder**: Fixed "Open" button for unsupported filetypes.
+- **PinVol**: Preferences are reloaded before saved, so manually changes won't be overwritten again.
 
 ## VPin Mania
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.dof;
 
+import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.slf4j.Logger;
@@ -25,6 +26,16 @@ public class DOFResource {
   @GetMapping
   public DOFSettings getSettings() {
     return dofService.getSettings();
+  }
+
+  @GetMapping("/valid")
+  public boolean isValid() {
+    return dofService.isValid();
+  }
+
+  @GetMapping("/summary")
+  public ComponentSummary getFreezySummary() {
+    return dofService.getComponentSummary();
   }
 
   @PostMapping
