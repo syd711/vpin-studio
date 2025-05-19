@@ -242,6 +242,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   public PinVolPreferences update(@NonNull PinVolUpdate update) {
+    loadIni();
     PinVolPreferences preferences = getPinVolTablePreferences();
     LOG.info("Loaded PinVolTables.ini with {} entries.", preferences.getTableEntries().size());
     PinVolTableEntry systemVolume = preferences.getSystemVolume();
