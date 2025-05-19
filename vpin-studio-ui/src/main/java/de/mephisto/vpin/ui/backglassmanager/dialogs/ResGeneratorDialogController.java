@@ -117,10 +117,10 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
           DirectB2sScreenRes screenres = client.getBackglassServiceClient().getGlobalScreenRes();
           // Mind that the case where globalRes has a frame background is not fully tested...
-          int x = screenres.isBackglassCentered() ? screenres.getBackgroundX() : screenres.getBackglassX();
-          int y = screenres.isBackglassCentered() ? screenres.getBackgroundY() : screenres.getBackglassY();
-          int w = screenres.isBackglassCentered() ? screenres.getBackgroundWidth() : screenres.getBackglassWidth();
-          int h = screenres.isBackglassCentered() ? screenres.getBackgroundHeight() : screenres.getBackglassHeight();
+          int x = screenres.getFullBackglassX();
+          int y = screenres.getFullBackglassY();
+          int w = screenres.getFullBackglassWidth();
+          int h = screenres.getFullBackglassHeight();
 
           if (stretchedBackglass) {
             screenres.setBackglassX(x);
@@ -301,8 +301,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
     JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getGlobalScreenRes())
         .thenAcceptLater(screenres -> {
           if (screenres != null) {
-            int w = screenres.isBackglassCentered() ? screenres.getBackgroundWidth() : screenres.getBackglassWidth();
-            int h = screenres.isBackglassCentered() ? screenres.getBackgroundHeight() : screenres.getBackglassHeight();
+            int w = screenres.getFullBackglassWidth();
+            int h = screenres.getFullBackglassHeight();
 
             backglassScreenLabel.setText(formatDimension(w, h));
 

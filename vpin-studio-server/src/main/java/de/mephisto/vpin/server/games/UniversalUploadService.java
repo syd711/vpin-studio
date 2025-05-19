@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
 import java.io.*;
@@ -86,6 +87,9 @@ public class UniversalUploadService {
   @Autowired
   private EmulatorService emulatorService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
@@ -111,15 +115,15 @@ public class UniversalUploadService {
 
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
+    Game game = gameService.getGame(uploadDescriptor.getGameId());
     try {
-      Game game = gameService.getGame(uploadDescriptor.getGameId());
       if (game == null) {
         throw new Exception("No game found for id " + uploadDescriptor.getGameId());
       }
 
       if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadDescriptorBundleFile.getName()))) {
         if (analysis == null) {
-          analysis = new UploaderAnalysis<>(frontendService.getFrontend(), temporaryUploadDescriptorBundleFile);
+          analysis = new UploaderAnalysis(frontendService.supportPupPacks(), temporaryUploadDescriptorBundleFile);
           analysis.analyze();
         }
 
@@ -138,6 +142,9 @@ public class UniversalUploadService {
       LOG.error("Failed to import " + assetType.name() + " file:" + e.getMessage(), e);
       throw e;
     }
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, null);
+    }
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType) throws Exception {
@@ -148,11 +155,14 @@ public class UniversalUploadService {
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
+      analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
       analysis.analyze();
     }
 
     Game game = gameService.getGame(uploadDescriptor.getGameId());
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    String updatedAssetName = uploadDescriptor.getRom();
+
     switch (assetType) {
       case ALT_SOUND: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
@@ -197,33 +207,39 @@ public class UniversalUploadService {
           if (game != null) {
             rom = game.getRom();
           }
-          //TODO better music bundle handling based on emulators
-          File musicFolder = emulatorService.getDefaultGameEmulator().getMusicFolder();
-          vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+          if (gameEmulator != null) {
+            File musicFolder = gameEmulator.getMusicFolder();
+            if (musicFolder.exists()) {
+              vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+            }
+            else {
+              LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder.getAbsolutePath());
+            }
+          }
         }
         break;
       }
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
-          mameService.installRom(uploadDescriptor, tempFile, analysis);
+          mameService.installRom(uploadDescriptor, gameEmulator, tempFile, analysis);
         }
         break;
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
-          mameService.installNvRam(uploadDescriptor, tempFile, analysis);
+          mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
-          mameService.installCfg(uploadDescriptor, tempFile, analysis);
+          mameService.installCfg(uploadDescriptor, gameEmulator, tempFile, analysis);
         }
         break;
       }
       case BAM_CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
-          fpService.installBAMCfg(uploadDescriptor, game, tempFile, frontendService.getFrontend(), analysis);
+          fpService.installBAMCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
         }
         break;
       }
@@ -231,6 +247,7 @@ public class UniversalUploadService {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
     }
+    gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
   }
 
   public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
@@ -362,5 +379,30 @@ public class UniversalUploadService {
         discordService.sendMessage(serverId, channelId, build);
       }
     }
+  }
+
+  //-------------------------------
+
+  public UploadDescriptor create() {
+    UploadDescriptor uploadDescriptor = new UploadDescriptor();
+    return uploadDescriptor;
+  }
+
+  public UploadDescriptor error(String message) {
+    UploadDescriptor descriptor = create();
+    descriptor.setError(message);
+    return descriptor;
+  }
+
+  public UploadDescriptor create(MultipartFile file, int gameId) {
+    UploadDescriptor descriptor = create();
+    descriptor.setGameId(gameId);
+    descriptor.setFile(file);
+    descriptor.setOriginalUploadFileName(file.getOriginalFilename());
+    return descriptor;
+  }
+
+  public UploadDescriptor create(MultipartFile file) {
+    return create(file, 0);
   }
 }

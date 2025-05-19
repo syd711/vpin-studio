@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -85,6 +86,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public FrontendMediaRepresentation getFrontendMedia(int gameId) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class);
   }
+  public FrontendMediaItemRepresentation getDefaultFrontendMediaItem(int gameId, VPinScreen screen) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId + "/" + screen.name(), 
+      FrontendMediaItemRepresentation.class);
+  }
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/screen/" + screen.name(), FrontendPlayerDisplay.class);
@@ -165,17 +170,17 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public GameVpsMatch autoMatch(int gameId, boolean overwrite, boolean simulate) {
+  public VpsMatch autoMatch(int gameId, boolean overwrite, boolean simulate) {
     if (simulate) {
-      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatchsimulate/" + gameId + "/" + overwrite, GameVpsMatch.class);
+      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatchsimulate/" + gameId + "/" + overwrite, VpsMatch.class);
     }
     else {
-      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite, GameVpsMatch.class);
+      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite, VpsMatch.class);
     }
   }
 
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) throws Exception {
-    GameVpsMatch vpsMatch = new GameVpsMatch();
+    VpsMatch vpsMatch = new VpsMatch();
     vpsMatch.setGameId(gameId);
     vpsMatch.setExtTableId(extTableId);
     vpsMatch.setExtTableVersionId(extTableVersionId);

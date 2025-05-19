@@ -61,18 +61,21 @@
                               <Label styleClass="checkbox-description" text="but you can override this setting for the recording." textFill="WHITE" />
                               <GridPane hgap="3.0" vgap="3.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="86.199951171875" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="425.60002441406255" minWidth="10.0" prefWidth="240.600048828125" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.8000244140625" minWidth="10.0" prefWidth="86.4000244140625" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="425.60002441406255" minWidth="10.0" prefWidth="245.5999755859375" />
                                 </columnConstraints>
                                 <rowConstraints>
                                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label layoutX="10.0" layoutY="44.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="Launcher:" />
                                     <CheckBox fx:id="customLauncherCheckbox" mnemonicParsing="false" styleClass="default-text" text="Use Custom Launcher" GridPane.columnIndex="1" />
                                     <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="70.0" styleClass="default-headline" text="VPX .exe:" GridPane.rowIndex="1" />
                                     <ComboBox fx:id="launcherCombo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <CheckBox fx:id="primaryCheckbox" layoutX="102.0" layoutY="10.0" mnemonicParsing="false" styleClass="default-text" text="Run with &quot;-Primary&quot; parameter" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="Parameters:" GridPane.rowIndex="2" />
                                  </children>
                                  <VBox.margin>
                                     <Insets left="26.0" top="12.0" />

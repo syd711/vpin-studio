@@ -2,21 +2,20 @@ package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RecorderTest {
 
   @Test
   public void testRecorder() throws Exception {
     PinUPConnector connector = new PinUPConnector() {
-      @NotNull
+      @NonNull
       @Override
       public File getInstallationFolder() {
         return new File("../testsystem/vPinball/PinUPSystem");

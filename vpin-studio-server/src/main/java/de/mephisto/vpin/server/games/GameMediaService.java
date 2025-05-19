@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -74,6 +74,9 @@ public class GameMediaService {
   private GameService gameService;
 
   @Autowired
+  private GameLifecycleService gameLifecycleService;
+
+  @Autowired
   private DefaultPictureService defaultPictureService;
 
   @Autowired
@@ -97,8 +100,8 @@ public class GameMediaService {
   /**
    * moved from VpsService to break circular dependency.
    */
-  public GameVpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
-    GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
+  public VpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
+    VpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
     if (vpsMatch != null && !simulate) {
       gameService.vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
       if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {
@@ -199,7 +202,6 @@ public class GameMediaService {
 
     //rename the game name, which results in renaming all assets
     if (!updatedTableDetails.getGameName().equals(originalTableDetails.getGameName())) {
-      //TODO this smells!
       renameGameMedia(game, originalTableDetails.getGameName(), updatedTableDetails.getGameName());
     }
 
@@ -207,7 +209,7 @@ public class GameMediaService {
       runHighscoreRefreshCheck(game, originalTableDetails, updatedTableDetails);
     }
 
-    gameService.notifyGameDataChanged(game, originalTableDetails, updatedTableDetails);
+    gameLifecycleService.notifyGameDataChanged(game.getId(), originalTableDetails, updatedTableDetails);
 
     return updatedTableDetails;
   }
@@ -528,12 +530,8 @@ public class GameMediaService {
     LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
   }
 
-  public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis<?> analysis) throws Exception {
+  public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis) throws Exception {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    if (analysis == null) {
-      analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
-      analysis.analyze();
-    }
 
     Game game = frontendService.getOriginalGame(uploadDescriptor.getGameId());
     List<VPinScreen> values = frontendService.getFrontend().getSupportedScreens();
@@ -744,7 +742,7 @@ public class GameMediaService {
           }
 
           LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
-          gameService.notifyGameDeleted(game);
+          gameLifecycleService.notifyGameDeleted(game.getId());
         }
 
         //delete the game folder if it is empty

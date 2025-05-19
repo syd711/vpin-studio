@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -267,13 +268,17 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     return result;
   }
 
-  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, @Nullable AssetType filterMode) {
+  public void setData(@Nullable GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, @Nullable AssetType filterMode, int emulatorId) {
     this.filterMode = filterMode;
-    this.emulator = client.getEmulatorService().getDefaultGameEmulator();
     this.game = game;
     this.selection = file;
     this.uploaderAnalysis = analysis;
     this.stage = stage;
+
+    if (emulatorId != -1) {
+      this.emulator = client.getEmulatorService().getGameEmulator(emulatorId);
+      this.emulatorLabel.setText(this.emulator.getName());
+    }
 
     if (game != null) {
       this.emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
@@ -355,8 +360,8 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     BaseLoadingColumn.configureColumn(columnTarget, (value, model) -> {
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
-      label.setText(model.getTarget());
-      label.setTooltip(new Tooltip(model.getTarget()));
+      label.setText(model.getTargetDisplayName());
+      label.setTooltip(new Tooltip(model.getTargetDisplayName()));
       return label;
     }, this, true);
 

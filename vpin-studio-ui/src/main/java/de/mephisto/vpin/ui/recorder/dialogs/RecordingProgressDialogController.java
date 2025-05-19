@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.recorder.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -30,10 +28,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -81,6 +82,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   @FXML
   private CheckBox customLauncherCheckbox;
+
+  @FXML
+  private CheckBox primaryCheckbox;
 
   @FXML
   private ComboBox<String> launcherCombo;
@@ -137,6 +141,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     emulatorRecordingRadio.setDisable(true);
     launcherCombo.setDisable(true);
     customLauncherCheckbox.setDisable(true);
+    primaryCheckbox.setDisable(true);
 
     recordingProgressPanel.getStyleClass().add("selection-panel-selected");
     emulatorRecordingPanel.getStyleClass().remove("selection-panel-selected");
@@ -222,6 +227,13 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       Platform.runLater(() -> {
         stage.close();
         if (game != null) {
+          //give the server some time to detect the new media files
+          try {
+            Thread.sleep(2000);
+          }
+          catch (InterruptedException e) {
+            //ignore
+          }
           EventManager.getInstance().notifyTableChange(game.getId(), null);
         }
       });
@@ -266,6 +278,13 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         emulatorRecordingRadio.setDisable(true);
         launcherCombo.setDisable(true);
         customLauncherCheckbox.setDisable(true);
+        primaryCheckbox.setDisable(true);
+        break;
+      }
+      else {
+        GameEmulatorRepresentation gameEmulator= client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
+        launcherCombo.setItems(FXCollections.observableList(altExeNames));
         break;
       }
     }
@@ -335,10 +354,6 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     });
 
-    GameEmulatorRepresentation gameEmulator = client.getEmulatorService().getDefaultGameEmulator();
-    List<String> altExeNames = client.getEmulatorService().getAltExeNames(gameEmulator.getId());
-    launcherCombo.setItems(FXCollections.observableList(altExeNames));
-
     if (!StringUtils.isEmpty(settings.getCustomLauncher())) {
       launcherCombo.setValue(settings.getCustomLauncher());
     }
@@ -349,11 +364,22 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         settings.setCustomLauncherEnabled(newValue);
         launcherCombo.setDisable(!newValue);
+        primaryCheckbox.setDisable(!newValue);
         client.getPreferenceService().setJsonPreference(settings);
       }
     });
-    launcherCombo.setDisable(!settings.isCustomLauncherEnabled());
 
+    primaryCheckbox.setSelected(settings.isPrimaryParam());
+    primaryCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        settings.setPrimaryParam(newValue);
+        client.getPreferenceService().setJsonPreference(settings);
+      }
+    });
+
+
+    launcherCombo.setDisable(!settings.isCustomLauncherEnabled());
     launcherCombo.valueProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

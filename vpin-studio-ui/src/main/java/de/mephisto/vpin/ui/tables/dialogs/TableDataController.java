@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
@@ -22,6 +23,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.PinVolSettingsController;
 import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
@@ -245,6 +247,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
 
   @FXML
+  private Tab commentsTab;
+  @FXML
+  private Tab playlistsTab;
+  @FXML
   private Tab metaDataTab;
   @FXML
   private Tab extrasTab;
@@ -276,7 +282,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private ComboBox<VpsTableVersion> tableVersionsCombo;
   private AutoCompleteTextField autoCompleteNameField;
 
-  private TableOverviewController overviewController;
+  private TableOverviewController tableOverviewController;
 
   private GameRepresentation game;
   private TableDetails tableDetails;
@@ -291,6 +297,8 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TableDataTabStatisticsController tableStatisticsController;
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
+  private TableDataTabCommentsController tableDataTabCommentsController;
+  private TablesSidebarPlaylistsController tablesSidebarPlaylistsController;
   private PropperRenamingController propperRenamingController;
   private Pane propertRenamingRoot;
   private PinVolSettingsController pinVolController;
@@ -299,7 +307,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAssetManager(ActionEvent e) {
     this.onCancelClick(e);
     Platform.runLater(() -> {
-      TableDialogs.openTableAssetsDialog(overviewController, this.game, VPinScreen.BackGlass);
+      TableDialogs.openTableAssetsDialog(tableOverviewController, this.game, VPinScreen.BackGlass);
     });
   }
 
@@ -333,7 +341,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       this.tableVersionsCombo.valueProperty().removeListener(this);
     }
 
-    GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
+    VpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
     if (vpsMatch != null) {
       String mappedTableId = vpsMatch.getExtTableId();
       String mappedVersion = vpsMatch.getExtTableVersionId();
@@ -471,8 +479,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onNext(ActionEvent e) {
-    overviewController.selectNext();
-    GameRepresentation selection = overviewController.getSelection();
+    tableOverviewController.selectNext();
+    GameRepresentation selection = tableOverviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       TableDataController.lastTab = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
@@ -480,15 +488,15 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, TableDataController.lastTab);
+        TableDialogs.openTableDataDialog(this.tableOverviewController, selection, TableDataController.lastTab);
       });
     }
   }
 
   @FXML
   private void onPrevious(ActionEvent e) {
-    overviewController.selectPrevious();
-    GameRepresentation selection = overviewController.getSelection();
+    tableOverviewController.selectPrevious();
+    GameRepresentation selection = tableOverviewController.getSelection();
     if (selection != null && !selection.equals(this.game)) {
       int index = this.tabPane.getSelectionModel().getSelectedIndex();
       Platform.runLater(() -> {
@@ -496,7 +504,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(this.overviewController, selection, index);
+        TableDialogs.openTableDataDialog(this.tableOverviewController, selection, index);
       });
     }
   }
@@ -579,6 +587,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     pinVolController.save();
     tableScreensController.save();
+    tableDataTabCommentsController.save();
     tableDataTabScoreDataController.save();
 
     try {
@@ -617,6 +626,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   public void initialize(URL url, ResourceBundle resourceBundle) {
     openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
     patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
+    patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
 
     FrontendType frontendType = null;
     try {
@@ -625,6 +635,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (!frontendType.supportStandardFields()) {
         tabPane.getTabs().remove(metaDataTab);
       }
+
       if (!frontendType.supportExtendedFields()) {
         tabPane.getTabs().remove(customizationTab);
         tabPane.getTabs().remove(extrasTab);
@@ -632,6 +643,10 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       if (!frontendType.supportMedias()) {
         buttonsBar.getChildren().remove(openAssetMgrBtn);
+      }
+
+      if (!frontendType.supportPlaylists()) {
+        tabPane.getTabs().remove(playlistsTab);
       }
 
       hintCustom2.setVisible(false);
@@ -662,7 +677,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     else {
       tabPane.getTabs().remove(statisticsTab);
     }
+  }
 
+  private void loadTabs() {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
@@ -695,6 +713,30 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     try {
+      FXMLLoader loader = new FXMLLoader(TableDataTabCommentsController.class.getResource("dialog-table-data-tab-comments.fxml"));
+      Parent commentsRoot = loader.load();
+      tableDataTabCommentsController = loader.getController();
+      commentsTab.setContent(commentsRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load dialog-table-data-tab-comments.fxml: " + e.getMessage(), e);
+    }
+
+    try {
+      if (frontendType.supportPlaylists()) {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarPlaylistsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        Parent playlistsRoot = loader.load();
+        tablesSidebarPlaylistsController = loader.getController();
+        tablesSidebarPlaylistsController.setTableOverviewController(this.tableOverviewController);
+        tablesSidebarPlaylistsController.setDialogMode();
+        playlistsTab.setContent(playlistsRoot);
+      }
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load dialog-table-data-tab-comments.fxml: " + e.getMessage(), e);
+    }
+
+    try {
       FXMLLoader loader = new FXMLLoader(PinVolSettingsController.class.getResource("pinvol-settings.fxml"));
       Parent builtInRoot = loader.load();
       pinVolController = loader.getController();
@@ -715,18 +757,22 @@ public class TableDataController implements Initializable, DialogController, Aut
     try {
       this.stage = stage;
       this.game = game;
+      this.tableOverviewController = overviewController;
+
       this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
       this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       scoringDB = client.getSystemService().getScoringDatabase();
       tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
-      boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
-    patchVersion.setDisable(!patchVersionEnabled);
-    patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
+      loadTabs();
 
-    nextButton.setVisible(overviewController != null);
-    prevButton.setVisible(overviewController != null);
-    openAssetMgrBtn.setVisible(overviewController != null);
+      boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
+      patchVersion.setDisable(!patchVersionEnabled);
+      patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
+
+      nextButton.setVisible(overviewController != null);
+      prevButton.setVisible(overviewController != null);
+      openAssetMgrBtn.setVisible(overviewController != null);
 
       FrontendType frontendType = client.getFrontendService().getFrontendType();
       Frontend frontend = client.getFrontendService().getFrontendCached();
@@ -778,8 +824,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       TableDataController.lastTab = tab;
       tabPane.getSelectionModel().select(tab);
-
-      this.overviewController = overviewController;
       this.initialVpxFileName = game.getGameFileName();
 
       this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(game.getVersion()));
@@ -789,13 +833,13 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       patchVersion.setText(game.getPatchVersion());
-    setPatchVersionValue(game.getPatchVersion());
-    patchVersion.textProperty().addListener((observable, oldValue, newValue) -> {
-      setPatchVersionValue(newValue);
-    });
+      setPatchVersionValue(game.getPatchVersion());
+      patchVersion.textProperty().addListener((observable, oldValue, newValue) -> {
+        setPatchVersionValue(newValue);
+      });
 
-    //---------------------------------------------------------
-    if (tableDetails != null) {
+      //---------------------------------------------------------
+      if (tableDetails != null) {
 
         //---------------
         // TAB Details
@@ -1072,6 +1116,14 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (pinVolController != null) {
         pinVolController.setData(stage, Arrays.asList(game), false);
       }
+
+      if (tableDataTabCommentsController != null) {
+        tableDataTabCommentsController.setGame(game);
+      }
+
+      if (tablesSidebarPlaylistsController != null) {
+        tablesSidebarPlaylistsController.setGames(Arrays.asList(game));
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to initialize Table Data Manager: {}", e.getMessage(), e);
@@ -1187,7 +1239,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void refreshVersionsCombo(VpsTable tableById) {
     if (tableById != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-      List<String> tableFormat = emulatorRepresentation.getVpsEmulatorFeatures();
+      String[] tableFormat = emulatorRepresentation.getVpsEmulatorFeatures();
       List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
 
       if (!tableFiles.isEmpty()) {

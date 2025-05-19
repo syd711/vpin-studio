@@ -1,8 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.matcher.TableMatcher;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -11,7 +12,6 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
@@ -171,11 +171,10 @@ public class TableUploadController implements Initializable, DialogController {
   private GameRepresentation game;
   private GameEmulatorRepresentation emulatorRepresentation;
 
-  private UploadDescriptor tableUploadDescriptor = UploadDescriptorFactory.create();
-  private UploaderAnalysis<?> uploaderAnalysis;
+  private UploadType uploadType;
+  private UploaderAnalysis uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
-  private EmulatorType emuType;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -187,7 +186,7 @@ public class TableUploadController implements Initializable, DialogController {
   private void onReadme(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     String value = (String) ((Button) e.getSource()).getUserData();
-    Dialogs.openTextEditor(stage, new TextFile(value), "README");
+    Dialogs.openTextEditor("readme", stage, new TextFile(value), "README");
   }
 
   @FXML
@@ -208,7 +207,7 @@ public class TableUploadController implements Initializable, DialogController {
         onCancelClick(event);
       });
 
-      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
+      result = UniversalUploadUtil.upload(selection, gameId, uploadType, emulatorRepresentation.getId());
       if (result.isPresent()) {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setSubfolderName(subFolder);
@@ -231,19 +230,25 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onAssetFilter() {
-    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE);
+    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE, -1);
     updateAnalysis();
   }
 
   private boolean runPreChecks(Stage s) {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
-    if (game != null && tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
-      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName.replaceAll("_", " "), game.getGameDisplayName(), MATCHING_PERCENTAGE);
-      if (!similarAtLeastToPercent) {
-        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
+    if (game != null && uploadType.equals(UploadType.uploadAndReplace)) {
+      TableMatcher matcher = new TableMatcher(null);
+      boolean similar = false;
+      if (StringUtils.isNotEmpty(game.getExtTableId())) {
+        VpsTable vpsTable = client.getVpsService().getTableById(game.getExtTableId());
+        similar = matcher.isClose(vpsTable, fileName);
       }
-      if (!similarAtLeastToPercent) {
+      else {
+        similar = matcher.isClose(game.getGameDisplayName(), fileName);
+      }
+
+      if (!similar) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",
             "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
         if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
@@ -253,7 +258,7 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     //suggest table match
-    if (tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndImport)) {
+    if (uploadType.equals(UploadType.uploadAndImport)) {
       try {
         ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s,
             new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
@@ -381,7 +386,7 @@ public class TableUploadController implements Initializable, DialogController {
         });
       }
       else {
-        this.uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), this.selection);
+        this.uploaderAnalysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), this.selection);
         if (!selectMatchingEmulator()) {
           return;
         }
@@ -581,7 +586,7 @@ public class TableUploadController implements Initializable, DialogController {
         this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
       }
       else if (selection != null) {
-        UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendCached(), selection);
+        UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), selection);
         this.uploadBtn.setDisable(!analysis.getEmulatorType().equals(emulatorType));
       }
     });
@@ -630,7 +635,7 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadCloneBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(UploadType.uploadAndClone);
+          uploadType = UploadType.uploadAndClone;
           uiSettings.setDefaultUploadMode(UploadType.uploadAndClone.name());
         }
         else {
@@ -644,7 +649,7 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadReplaceBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(UploadType.uploadAndReplace);
+          uploadType = UploadType.uploadAndReplace;
           uiSettings.setDefaultUploadMode(UploadType.uploadAndReplace.name());
         }
         else {
@@ -658,19 +663,12 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadImportBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(UploadType.uploadAndImport);
+          uploadType = UploadType.uploadAndImport;
           uiSettings.setDefaultUploadMode(UploadType.uploadAndImport.name());
         }
         else {
           uploadImportBox.getStyleClass().remove("selection-panel-selected");
         }
-      }
-    });
-
-    autofillCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        tableUploadDescriptor.setAutoFill(newValue);
       }
     });
 
@@ -705,10 +703,9 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
     this.stage = stage;
     this.uploaderAnalysis = analysis;
-    this.emuType = emuType;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {
       uploadType = UploadType.valueOf(uiSettings.getDefaultUploadMode());
@@ -718,16 +715,9 @@ public class TableUploadController implements Initializable, DialogController {
       uploadType = UploadType.uploadAndImport;
     }
 
-    tableUploadDescriptor.setUploadType(uploadType);
-    tableUploadDescriptor.setEmulatorId(this.emulatorCombo.getValue().getId());
-    tableUploadDescriptor.setAutoFill(this.autofillCheckbox.isSelected());
-    this.tableUploadDescriptor.setUploadType(uploadType);
-
-
     this.game = game;
 
     if (game != null) {
-      tableUploadDescriptor.setGameId(game.getId());
       this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
 

@@ -78,11 +78,19 @@ public class TablesSidebarPlaylistsController implements Initializable {
   private Button playlistManagerBtn;
 
   @FXML
+  private ToolBar toolbar;
+
+  @FXML
+  private Label dialogTitleLabel;
+
+  @FXML
   private Separator playlistManagerSeparator;
 
   private List<GameRepresentation> games = new ArrayList<>();
 
-  private TablesSidebarController tablesSidebarController;
+  private TableOverviewController tableOverviewController;
+
+  private boolean dialogMode = false;
 
   // Add a public no-args constructor
   public TablesSidebarPlaylistsController() {
@@ -94,7 +102,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   @FXML
   private void onPlaylistManager() {
-    PlaylistDialogs.openPlaylistManager(tablesSidebarController.getTableOverviewController(), null);
+    PlaylistDialogs.openPlaylistManager(tableOverviewController, null);
   }
 
   @FXML
@@ -103,7 +111,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
       List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
       if (!playlists.isEmpty()) {
         PlaylistRepresentation playlistRepresentation = playlists.get(0);
-        TableDialogs.openTableAssetsDialog(this.tablesSidebarController.getTableOverviewController(), this.games.get(0), playlistRepresentation, VPinScreen.Wheel);
+        TableDialogs.openTableAssetsDialog(tableOverviewController, this.games.get(0), playlistRepresentation, VPinScreen.Wheel);
       }
     }
   }
@@ -111,6 +119,12 @@ public class TablesSidebarPlaylistsController implements Initializable {
   public void setGames(List<GameRepresentation> games) {
     this.games = games;
     this.refreshView(games);
+  }
+
+  public void setDialogMode() {
+    this.dialogMode = true;
+    this.dialogTitleLabel.setVisible(true);
+    this.toolbar.setVisible(false);
   }
 
   public void refreshView() {
@@ -200,7 +214,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
         Tooltip playlistTooltip = TableOverviewController.createPlaylistTooltip(playlist, playlistIcon);
         playlistIcon.setTooltip(playlistTooltip);
-        if (frontendType.supportPlaylistsCrud() && isEditablePlaylist(playlist)) {
+        if (frontendType.supportPlaylistsCrud() && isEditablePlaylist(playlist) && !dialogMode) {
           Button plyButton = new Button();
           plyButton.setGraphic(playlistIcon.getGraphic());
           plyButton.setTooltip(playlistTooltip);
@@ -208,7 +222,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           plyButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-              PlaylistDialogs.openPlaylistManager(tablesSidebarController.getTableOverviewController(), playlist);
+              PlaylistDialogs.openPlaylistManager(tableOverviewController, playlist);
             }
           });
           root.getChildren().add(plyButton);
@@ -341,7 +355,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
   public void refreshPlaylist(PlaylistRepresentation playlist, boolean updateAll) {
     client.getPreferenceService().clearCache(PreferenceNames.UI_SETTINGS);
-    tablesSidebarController.getTableOverviewController().updatePlaylist(playlist);
+    tableOverviewController.updatePlaylist(playlist);
 
     if (updateAll) {
       List<PlaylistGame> games = playlist.getGames();
@@ -368,14 +382,17 @@ public class TablesSidebarPlaylistsController implements Initializable {
     }
   }
 
-  public void setSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
+  public void setTableOverviewController(TableOverviewController tableOverviewController) {
+    this.tableOverviewController = tableOverviewController;
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
     playlistManagerSeparator.managedProperty().bindBidirectional(playlistManagerSeparator.visibleProperty());
+    toolbar.managedProperty().bindBidirectional(toolbar.visibleProperty());
+    dialogTitleLabel.managedProperty().bindBidirectional(dialogTitleLabel.visibleProperty());
+    dialogTitleLabel.setVisible(false);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);

@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.textedit.TextFile;
@@ -81,12 +81,13 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   private void refreshCustomValues() {
     clearCustomValues();
-
-    ComponentSummary freezySummary = client.getDmdService().getFreezySummary();
-    List<ComponentSummaryEntry> entries = freezySummary.getEntries();
-    for (ComponentSummaryEntry entry : entries) {
-      super.addCustomValue(entry);
-    }
+    JFXFuture.supplyAsync(() -> client.getDmdService().getFreezySummary())
+      .thenAcceptLater(freezySummary -> {
+        List<ComponentSummaryEntry> entries = freezySummary.getEntries();
+        for (ComponentSummaryEntry entry : entries) {
+          super.addCustomValue(entry);
+        }
+      });
   }
 
   @Override

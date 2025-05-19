@@ -2,8 +2,11 @@ package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,13 +48,14 @@ public class GameRepresentation {
 
   private boolean played;
   private int gameStatus;
+  private List<CompetitionType> competitionTypes = new ArrayList<>();
 
   private String hsFileName;
   private String highscoreIniFilename;
   private String scannedHsFileName;
   private boolean romExists;
   private List<Integer> ignoredValidations;
-  private String highscoreType;
+  private HighscoreType highscoreType;
   private boolean selected;
   private boolean romRequired;
   private String assets;
@@ -84,6 +88,14 @@ public class GameRepresentation {
   private boolean altSoundAvailable;
 
   private int nbDirectB2S = -1;
+
+  public List<CompetitionType> getCompetitionTypes() {
+    return competitionTypes;
+  }
+
+  public void setCompetitionTypes(List<CompetitionType> competitionTypes) {
+    this.competitionTypes = competitionTypes;
+  }
 
   public String getHighscoreIniFilename() {
     return highscoreIniFilename;
@@ -379,11 +391,11 @@ public class GameRepresentation {
     this.gameFileSize = gameFileSize;
   }
 
-  public String getHighscoreType() {
+  public HighscoreType getHighscoreType() {
     return highscoreType;
   }
 
-  public void setHighscoreType(String highscoreType) {
+  public void setHighscoreType(HighscoreType highscoreType) {
     this.highscoreType = highscoreType;
   }
 

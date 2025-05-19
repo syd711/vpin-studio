@@ -22,16 +22,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class B2STableSettingsSerializer  {
+public class B2STableSettingsSerializer {
   private final static Logger LOG = LoggerFactory.getLogger(B2STableSettingsSerializer.class);
 
   private final static List<String> tableEntries = Arrays.asList("HideGrill", "HideB2SDMD", "HideB2SBackglass", "HideDMD",
       "LampsSkipFrames", "SolenoidsSkipFrames", "GIStringsSkipFrames", "LEDsSkipFrames",
       "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "FormToBack", "Animations");
 
-      private final static List<String> serverEntries = Arrays.asList(
-    "ArePluginsOn",  "DefaultStartMode", "ShowStartupError", "DisableFuzzyMatching",
-        "HideGrill", "HideB2SDMD", "HideDMD", "FormToFront", "FormToBack");
+  private final static List<String> serverEntries = Arrays.asList(
+      "ArePluginsOn", "DefaultStartMode", "ShowStartupError", "DisableFuzzyMatching",
+      "HideGrill", "HideB2SDMD", "HideDMD", "FormToFront", "FormToBack", "UsedLEDType");
+
+  private final static List<String> skippedWhenMinusOne = Arrays.asList("UsedLEDType");
 
   private final File xmlFile;
 
@@ -70,7 +72,7 @@ public class B2STableSettingsSerializer  {
       // check document is valid 
       else if (!root.getNodeName().equalsIgnoreCase("B2STableSettings")) {
         throw new IOException("The file exists but is not a valid B2STableSettings file. " +
-          "Nothing saved to prevent erasing data, please check your file!");
+            "Nothing saved to prevent erasing data, please check your file!");
       }
       else {
         root.normalize();
@@ -89,13 +91,13 @@ public class B2STableSettingsSerializer  {
         rootNodeByRom = root;
       }
 
-     if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {       
+      if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {
         Node insertionPoint = findFirstChildWithChildNodes(rootNodeByRom);
         for (String tableEntry : tableEntries) {
           String newValue = getter.getValue(settings, tableEntry);
           Node settingsNode = findChild(rootNodeByRom, tableEntry);
-          if (!StringUtils.isEmpty(newValue)) {
-            if (settingsNode==null) {
+          if (!StringUtils.isEmpty(newValue) && !(newValue.equals("-1") && skippedWhenMinusOne.contains(tableEntry))) {
+            if (settingsNode == null) {
               settingsNode = doc.createElement(tableEntry);
               rootNodeByRom.insertBefore(settingsNode, insertionPoint);
             }
@@ -104,7 +106,7 @@ public class B2STableSettingsSerializer  {
             }
           }
           else {
-            if (settingsNode!=null) {
+            if (settingsNode != null) {
               rootNodeByRom.removeChild(settingsNode);
             }
           }
@@ -194,12 +196,12 @@ public class B2STableSettingsSerializer  {
         return String.valueOf(settings.getGlowIndex());
       }
       case "StartAsEXE": {
-        Boolean startAsEXE = settings.getStartAsEXE();
-        return startAsEXE != null ? intValue(startAsEXE.booleanValue()) : "";
+        int startAsEXE = settings.getStartAsEXE();
+        return startAsEXE == 2 ? null : String.valueOf(startAsEXE);
       }
       case "StartBackground": {
         // absence of settings means standard, else a boolean encoded as 0/1n which is invers from visibility (0=visible)
-        return (settings.getStartBackground()==2) ? null : settings.getStartBackground()==1 ? "0" : "1";
+        return (settings.getStartBackground() == 2) ? null : settings.getStartBackground() == 1 ? "0" : "1";
       }
       case "DisableFuzzyMatching": {
         return intValue(settings.isDisableFuzzyMatching());
@@ -213,7 +215,7 @@ public class B2STableSettingsSerializer  {
       case "Animations": {
         return "";
       }
-      default : {
+      default: {
         return null;
       }
     }
@@ -223,8 +225,8 @@ public class B2STableSettingsSerializer  {
     return b ? "1" : "0";
   }
 
-    @FunctionalInterface
-    private static interface SettingsGetter<T> {
-      String getValue(T settings, String qName);
-    }
+  @FunctionalInterface
+  private static interface SettingsGetter<T> {
+    String getValue(T settings, String qName);
+  }
 }

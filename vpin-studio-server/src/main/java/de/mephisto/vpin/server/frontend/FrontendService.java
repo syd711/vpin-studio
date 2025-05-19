@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -55,6 +56,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   private FrontendStatusService frontendStatusService;
 
@@ -113,6 +117,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public void saveTableDetails(int id, TableDetails tableDetails) {
     getFrontendConnector().saveTableDetails(id, tableDetails);
+    gameLifecycleService.notifyGameDataChanged(id, tableDetails, tableDetails);
   }
 
   public void updateTableFileUpdated(int id) {
@@ -194,7 +199,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //--------------------------
 
-  //TODO no more used ?
   public int getVersion() {
     return getFrontendConnector().getVersion();
   }
@@ -205,6 +209,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public void saveSettings(@NonNull Map<String, Object> data) {
     getFrontendConnector().saveSettings(data);
+  }
+
+  public boolean supportPupPacks() {
+    return getFrontendType().supportPupPacks();
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
@@ -498,13 +506,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
     switch (screen) {
       case Other2: {
-        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_OTHER);
+        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
       }
       case GameHelp: {
-        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_HELP);
+        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
       }
       case GameInfo: {
-        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_FLYER);
+        return getFrontendConnector().getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
       }
       default: {
       }
@@ -541,9 +549,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //--------------------------
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
-    GameEmulator emu = emulatorService.getDefaultGameEmulator();
+    List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+    if(vpxGameEmulators.isEmpty()) {
+      return getFrontendInstallationFolder();
+    }
+    GameEmulator emulator = vpxGameEmulators.get(0);
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emu, screen) : null;
+    return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emulator, screen) : null;
   }
 
   public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {

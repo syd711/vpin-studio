@@ -74,6 +74,26 @@
                         </Label>
                      </children>
                   </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="synchronizeTablesCheckbox" mnemonicParsing="false" text="Submit Installed Tables">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="This will synchronize the list of installed tables with VPin Mania." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
                <VBox.margin>
                   <Insets top="6.0" />

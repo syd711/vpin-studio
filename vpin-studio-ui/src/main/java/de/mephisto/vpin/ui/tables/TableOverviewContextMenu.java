@@ -2,14 +2,14 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationItem;
-import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
+import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -19,7 +19,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,64 +34,86 @@ public class TableOverviewContextMenu {
   private final TableOverviewController tableOverviewController;
   private ContextMenu ctxMenu;
 
-  public TableOverviewContextMenu(TableOverviewController tableOverviewController) {
-    this.tableOverviewController = tableOverviewController;
-  }
+  private static ImageView iconMedia;
+  private static ImageView iconAssetView;
+  private static ImageView iconBackglassManager;
+  private static ImageView iconMania;
+  private static ImageView iconManiaSync;
+  private static ImageView iconVps;
+  private static ImageView iconVpbm;
+  private static ImageView iconVpsReset;
 
-  public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, GameRepresentation game) {
-    this.ctxMenu = ctxMenu;
-    this.ctxMenu.getItems().clear();
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-    List<GameRepresentation> games = tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList());
-
+  static {
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView iconMedia = new ImageView(image3);
+    iconMedia = new ImageView(image3);
     iconMedia.setFitWidth(18);
     iconMedia.setFitHeight(18);
 
     Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
-    ImageView iconAssetView = new ImageView(image6);
+    iconAssetView = new ImageView(image6);
     iconAssetView.setFitWidth(18);
     iconAssetView.setFitHeight(18);
 
 
     Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
-    ImageView iconBackglassManager = new ImageView(image5);
+    iconBackglassManager = new ImageView(image5);
     iconBackglassManager.setFitWidth(18);
     iconBackglassManager.setFitHeight(18);
 
 
     Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
-    ImageView iconMania = new ImageView(imageMania);
+    iconMania = new ImageView(imageMania);
     iconMania.setFitWidth(18);
     iconMania.setFitHeight(18);
 
+    Image imageManiaSync = new Image(Studio.class.getResourceAsStream("logo-m.png"));
+    iconManiaSync = new ImageView(imageManiaSync);
+    iconManiaSync.setFitWidth(18);
+    iconManiaSync.setFitHeight(18);
+
 
     Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
-    ImageView iconVps = new ImageView(image);
+    iconVps = new ImageView(image);
     iconVps.setFitWidth(18);
     iconVps.setFitHeight(18);
 
     Image imageVpbm = new Image(Studio.class.getResourceAsStream("vpbm-128.png"));
-    ImageView iconVpbm = new ImageView(imageVpbm);
+    iconVpbm = new ImageView(imageVpbm);
     iconVpbm.setFitWidth(18);
     iconVpbm.setFitHeight(18);
 
     Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
-    ImageView iconVpsReset = new ImageView(image2);
+    iconVpsReset = new ImageView(image2);
     iconVpsReset.setFitWidth(18);
     iconVpsReset.setFitHeight(18);
+  }
+
+  public TableOverviewContextMenu(TableOverviewController tableOverviewController) {
+    this.tableOverviewController = tableOverviewController;
+  }
+
+  public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, List<GameRepresentationModel> games) {
+    this.ctxMenu = ctxMenu;
+    this.ctxMenu.getItems().clear();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    boolean multiSelection = tableOverviewController.getSelections().size() > 1;
+    if (games.isEmpty()) {
+      return;
+    }
+    GameRepresentationModel gameModel = games.get(0);
+    GameRepresentation game = gameModel.getGame();
 
     MenuItem dataItem = new MenuItem("Edit Table Data");
     KeyCombination dataItemKey = new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN);
     dataItem.setAccelerator(dataItemKey);
+    dataItem.setDisable(multiSelection);
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
 
     if (frontendType.supportStandardFields()) {
       boolean isDisabled = game.isDisabled();
-      String txt = isDisabled ? "Enable Table" : "Disable Table";
+      String txt = isDisabled ? "Enable Table(s)" : "Disable Table(s)";
       String icon = isDisabled ? "mdi2c-checkbox-marked-outline" : "mdi2c-checkbox-blank-off-outline";
       //icon = isDisabled ? "mdi2m-microsoft-xbox-controller" : "mdi2m-microsoft-xbox-controller-off";
       MenuItem enableItem = new MenuItem(txt, WidgetFactory.createIcon(icon));
@@ -105,6 +126,7 @@ public class TableOverviewContextMenu {
     if (frontendType.supportMedias()) {
       MenuItem assetsItem = new MenuItem("Edit Table Assets");
       assetsItem.setGraphic(iconMedia);
+      assetsItem.setDisable(multiSelection);
       KeyCombination assetsItemKey = new KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN);
       assetsItem.setAccelerator(assetsItemKey);
       assetsItem.setOnAction(actionEvent -> tableOverviewController.onMediaEdit());
@@ -120,21 +142,22 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem notesItem = new MenuItem("Edit Comment");
-    FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
-    icon.setIconSize(16);
-    KeyCombination notesItemKey = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
-    notesItem.setAccelerator(notesItemKey);
-    notesItem.setOnAction(actionEvent -> TableDialogs.openCommentDialog(game));
-    notesItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
-    notesItem.setGraphic(icon);
-    ctxMenu.getItems().add(notesItem);
-
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+//    MenuItem notesItem = new MenuItem("Edit Comment");
+//    FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+//    icon.setIconSize(16);
+//    KeyCombination notesItemKey = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);
+//    notesItem.setAccelerator(notesItemKey);
+//    notesItem.setOnAction(actionEvent -> TableDialogs.openCommentDialog(tableOverviewController, game));
+//    notesItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+//    notesItem.setGraphic(icon);
+//    ctxMenu.getItems().add(notesItem);
+//
+//    ctxMenu.getItems().add(new SeparatorMenuItem());
 
     MenuItem vpsItem = new MenuItem("Open VPS Entry");
     KeyCombination vpsItemKey = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
     vpsItem.setAccelerator(vpsItemKey);
+    vpsItem.setDisable(multiSelection);
     vpsItem.setOnAction(actionEvent -> tableOverviewController.onVps());
     vpsItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
     vpsItem.setGraphic(iconVps);
@@ -146,14 +169,38 @@ public class TableOverviewContextMenu {
     vpsUpdateItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsUpdateItem);
 
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
+    resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
+    resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
+    ctxMenu.getItems().add(resetRatingsItem);
+
     if (Features.MANIA_ENABLED) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
       MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
-      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
-      maniaEntry.setOnAction(actionEvent -> NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(game.getExtTableId())));
-      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()) || multiSelection);
+      maniaEntry.setOnAction(actionEvent -> Studio.browse(ManiaUrlFactory.createTableUrl(game.getExtTableId(), game.getExtTableVersionId())));
       maniaEntry.setGraphic(iconMania);
       ctxMenu.getItems().add(maniaEntry);
+
+      MenuItem maniaSyncEntry = new MenuItem("Synchronize Scores with VPin Mania");
+      maniaSyncEntry.setDisable(multiSelection || games.stream().anyMatch(gameRepresentation -> StringUtils.isEmpty(gameRepresentation.getGame().getExtTableId())));
+      maniaSyncEntry.setOnAction(actionEvent -> {
+        List<VpsTable> tables = new ArrayList<>();
+        for (GameRepresentation gameRepresentation : tableOverviewController.getSelections()) {
+          VpsTable vpsTable = client.getVpsService().getTableById(gameRepresentation.getExtTableId());
+          if (vpsTable != null) {
+            tables.add(vpsTable);
+          }
+        }
+        if (!tables.isEmpty()) {
+          ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
+        }
+      });
+      maniaSyncEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+      maniaSyncEntry.setGraphic(iconManiaSync);
+      ctxMenu.getItems().add(maniaSyncEntry);
     }
 
 
@@ -162,6 +209,7 @@ public class TableOverviewContextMenu {
     MenuItem eventLogItem = new MenuItem("Event Log");
     KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
     eventLogItem.setAccelerator(eventLogItemKey);
+    eventLogItem.setDisable(multiSelection);
     eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
     eventLogItem.setDisable(!game.isEventLogAvailable());
     eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
@@ -175,32 +223,30 @@ public class TableOverviewContextMenu {
     pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
     ctxMenu.getItems().add(pinVolItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+//    ctxMenu.getItems().add(new SeparatorMenuItem());
+//    if (game.isVpxGame()) {
+//      MenuItem scanItem = new MenuItem("Scan");
+//      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+//      scanItem.setAccelerator(scanItemKey);
+//      scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
+//      scanItem.setOnAction(actionEvent -> tableOverviewController.onTablesScan());
+//      ctxMenu.getItems().add(scanItem);
+//
+//      MenuItem scanAllItem = new MenuItem("Scan All");
+////      KeyCombination scanAllItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN);
+////      scanAllItem.setAccelerator(scanAllItemKey);
+//      scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
+//      scanAllItem.setOnAction(actionEvent -> tableOverviewController.onTablesScanAll());
+//      ctxMenu.getItems().add(scanAllItem);
+//    }
 
-    if (game.isVpxGame()) {
-      MenuItem scanItem = new MenuItem("Scan");
-      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
-      scanItem.setAccelerator(scanItemKey);
-      scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
-      scanItem.setOnAction(actionEvent -> tableOverviewController.onTablesScan());
-      ctxMenu.getItems().add(scanItem);
-
-      MenuItem scanAllItem = new MenuItem("Scan All");
-//      KeyCombination scanAllItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN);
-//      scanAllItem.setAccelerator(scanAllItemKey);
-      scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
-      scanAllItem.setOnAction(actionEvent -> tableOverviewController.onTablesScanAll());
-      ctxMenu.getItems().add(scanAllItem);
-    }
-
-    if (frontendType.isNotStandalone()) {
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem importsItem = new MenuItem("Import Tables");
-      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
-      importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
-      ctxMenu.getItems().add(importsItem);
-    }
+//    if (frontendType.isNotStandalone()) {
+//      ctxMenu.getItems().add(new SeparatorMenuItem());
+//      MenuItem importsItem = new MenuItem("Import Tables");
+//      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
+//      importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
+//      ctxMenu.getItems().add(importsItem);
+//    }
 
     //Declutter
 //    ctxMenu.getItems().add(new SeparatorMenuItem());
@@ -308,26 +354,26 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(uploadMenu);
     }
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
-
-    MenuItem validateItem = new MenuItem("Validate");
-    validateItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
-    validateItem.setOnAction(actionEvent -> tableOverviewController.onValidate());
-    ctxMenu.getItems().add(validateItem);
-
-    MenuItem validateAllItem = new MenuItem("Validate All");
-    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
-    validateAllItem.setOnAction(actionEvent -> tableOverviewController.onValidateAll());
-    ctxMenu.getItems().add(validateAllItem);
+//    ctxMenu.getItems().add(new SeparatorMenuItem());
+//
+//    MenuItem validateItem = new MenuItem("Validate");
+//    validateItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
+//    validateItem.setOnAction(actionEvent -> tableOverviewController.onValidate());
+//    ctxMenu.getItems().add(validateItem);
+//
+//    MenuItem validateAllItem = new MenuItem("Validate All");
+//    validateAllItem.setGraphic(WidgetFactory.createIcon("mdi2c-check-bold"));
+//    validateAllItem.setOnAction(actionEvent -> tableOverviewController.onValidateAll());
+//    ctxMenu.getItems().add(validateAllItem);
 
 
     if (game.isVpxGame()) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem launchItem = new MenuItem("Launch");
+      launchItem.setDisable(multiSelection);
       KeyCombination launchKey = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
       launchItem.setAccelerator(launchKey);
-
       launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
       launchItem.setOnAction(actionEvent -> tableOverviewController.onPlay());
       ctxMenu.getItems().add(launchItem);
@@ -341,14 +387,14 @@ public class TableOverviewContextMenu {
         exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
         ctxMenu.getItems().add(exportItem);
 
-        ctxMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-        vpbmItem.setGraphic(iconVpbm);
-        vpbmItem.setOnAction(actionEvent -> {
-          VPBMPreferencesController.openVPBM();
-        });
-        ctxMenu.getItems().add(vpbmItem);
+//        ctxMenu.getItems().add(new SeparatorMenuItem());
+//
+//        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
+//        vpbmItem.setGraphic(iconVpbm);
+//        vpbmItem.setOnAction(actionEvent -> {
+//          VPBMPreferencesController.openVPBM();
+//        });
+//        ctxMenu.getItems().add(vpbmItem);
       }
     }
 

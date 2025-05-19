@@ -14,6 +14,7 @@
         <license>
           <name>GNU Lesser General Public License</name>
           <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+          <file>gnu lesser general public license - lgpl-2.1.html</file>
         </license>
       </licenses>
     </dependency>
@@ -240,7 +241,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>3.13.4</version>
+      <version>4.0.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -248,7 +249,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>3.13.4</version>
+      <version>4.0.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -256,7 +257,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>3.13.4</version>
+      <version>4.0.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -264,7 +265,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>3.13.4</version>
+      <version>4.0.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -280,7 +281,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>3.13.4</version>
+      <version>4.0.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -296,7 +297,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>3.13.4</version>
+      <version>4.0.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -529,6 +530,19 @@
           <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
           <file>apache-2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>the apache software license, version 2.0 - license-2.0.txt</file>
         </license>
       </licenses>
     </dependency>

@@ -28,7 +28,7 @@ public class MediaUploaderColumnSorter implements BaseColumnSorter<MediaUploadAr
         comp = Comparator.comparing(o -> o.getName());
       }
       else if (column.equals(mediaUploadController.columnTarget)) {
-        comp = Comparator.comparing(o -> o.getTarget());
+        comp = Comparator.comparing(o -> o.getTargetDisplayName());
       }
 
       // optionally reverse order 

@@ -1,10 +1,13 @@
 package de.mephisto.vpin.restclient.competitions;
 
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -130,6 +134,31 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
       LOG.error("Failed to read competition scores " + id + ": " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public boolean synchronizeGameRooms() {
+    try {
+      return getRestClient().post(API + "competitions/iscored/synchronize", new HashMap<>(), Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save competition: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public IScoredSyncModel synchronizeIScoredGameRoomGame(@NonNull IScoredGameRoom gameRoom, @NonNull IScoredGame next, boolean invalidate, boolean manualSubscription) {
+    try {
+      IScoredSyncModel sync = new IScoredSyncModel();
+      sync.setGame(next);
+      sync.setiScoredGameRoom(gameRoom);
+      sync.setManualSubscription(manualSubscription);
+      sync.setInvalidate(invalidate);
+      return getRestClient().post(API + "competitions/iscored/synchronizeGameRoom", sync, IScoredSyncModel.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save competition: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public ByteArrayInputStream getCompetitionBackground(long gameId) {

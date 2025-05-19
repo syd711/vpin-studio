@@ -10,11 +10,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.textedit.TextFile;
-import de.mephisto.vpin.ui.ClientUpdatePostProcessing;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.TextEditorController;
-import de.mephisto.vpin.ui.UpdateDialogController;
-import de.mephisto.vpin.ui.UpdateInfoDialogController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
@@ -22,6 +18,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +54,7 @@ public class Dialogs {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     if (force || !uiSettings.isHideUpdateInfo()) {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
-      Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
+      Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
       stage.showAndWait();
 
       uiSettings.setHideUpdateInfo(true);
@@ -71,7 +68,7 @@ public class Dialogs {
 
   public static void openNextUpdateDialog(String version) {
     FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
+    Stage stage = WidgetFactory.createDialogStage("update-info", fxmlLoader, Studio.stage, "Release Notes for " + version);
     UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
     controller.setForUpdate(version);
     stage.showAndWait();
@@ -80,6 +77,7 @@ public class Dialogs {
   public static boolean openUpdateDialog() {
     return openUpdateDialog(Studio.client);
   }
+
   public static boolean openUpdateDialog(VPinStudioClient client) {
     Stage stage = createStudioDialogStage("dialog-update.fxml", "VPin Studio Updater");
     UpdateDialogController controller = (UpdateDialogController) stage.getUserData();
@@ -89,13 +87,13 @@ public class Dialogs {
   }
 
   public static boolean openTextEditor(TextFile file, String title) throws Exception {
-    return openTextEditor(Studio.stage, file, title);
+    return openTextEditor("text-editor", Studio.stage, file, title);
   }
 
-  public static boolean openTextEditor(Stage s, TextFile file, String title) {
+  public static boolean openTextEditor(String stateId, Stage s, TextFile file, String title) {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
-      Stage stage = WidgetFactory.createDialogStage(fxmlLoader, s, title, TextEditorController.class.getSimpleName());
+      Stage stage = WidgetFactory.createDialogStage(stateId, fxmlLoader, s, title, TextEditorController.class.getSimpleName());
       stage.setMinWidth(800);
       stage.setMinHeight(600);
       TextEditorController controller = (TextEditorController) stage.getUserData();
@@ -121,7 +119,7 @@ public class Dialogs {
     }
 
     FXMLLoader fxmlLoader = new FXMLLoader(PlayerDialogController.class.getResource("dialog-player-edit.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    Stage stage = WidgetFactory.createDialogStage("player-edit", fxmlLoader, Studio.stage, title);
     PlayerDialogController controller = (PlayerDialogController) stage.getUserData();
     controller.setPlayer(selection, players);
     stage.showAndWait();
@@ -131,7 +129,7 @@ public class Dialogs {
 
 
   public static boolean openInstallerDialog() {
-    Stage stage = createStudioDialogStage(InstallationDialogController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
+    Stage stage = createStudioDialogStage(null, Studio.stage, InstallationDialogController.class, "dialog-installer.fxml", "Visual Studio Server Installation");
     InstallationDialogController controller = (InstallationDialogController) stage.getUserData();
     controller.setStage(stage);
     stage.showAndWait();
@@ -163,30 +161,32 @@ public class Dialogs {
 
   public static Stage createStudioDialogStage(String fxml, String title) {
     FXMLLoader fxmlLoader = new FXMLLoader(Studio.class.getResource(fxml));
-    return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
+    String stateId = FilenameUtils.getBaseName(fxml);
+    return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title);
   }
 
-  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title) {
-    return createStudioDialogStage(stage, clazz, fxml, title, null);
-  }
-
-  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String stateId, String modalStateId) {
+  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String modalStateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return WidgetFactory.createDialogStage(fxmlLoader, stage, title, stateId, modalStateId);
+    String stateId = FilenameUtils.getBaseName(fxml);
+    return WidgetFactory.createDialogStage(stateId, fxmlLoader, stage, title, modalStateId);
   }
 
-  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String stateId) {
-    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return WidgetFactory.createDialogStage(fxmlLoader, stage, title, stateId);
-  }
 
   public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title) {
-    return createStudioDialogStage(clazz, fxml, title, null);
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    String stateId = FilenameUtils.getBaseName(fxml);
+    return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title, null);
   }
 
-  public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title, String stateId) {
+  public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title, String modalStateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title, stateId);
+    String stateId = FilenameUtils.getBaseName(fxml);
+    return WidgetFactory.createDialogStage(stateId, fxmlLoader, Studio.stage, title, modalStateId);
+  }
+
+  public static Stage createStudioDialogStage(String stateId, Stage stage, Class<?> clazz, String fxml, String title) {
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    return WidgetFactory.createDialogStage(stateId, fxmlLoader, stage, title);
   }
 
   public static boolean openFrontendRunningWarning(Stage stage) {

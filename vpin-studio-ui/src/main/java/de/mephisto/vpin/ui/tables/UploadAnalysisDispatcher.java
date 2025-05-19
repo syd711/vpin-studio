@@ -53,12 +53,12 @@ public class UploadAnalysisDispatcher {
   }
 
   public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, @Nullable Runnable finalizer) {
-    UploaderAnalysis<?> analysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
+    UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), file);
     dispatchBySuffix(file, game, assetType, analysis, finalizer);
   }
 
   private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType,
-                                       @NonNull UploaderAnalysis<?> analysis, @Nullable Runnable finalizer) {
+                                       @NonNull UploaderAnalysis analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(file, finalizer);
@@ -139,7 +139,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case FRONTEND_MEDIA: {
-        TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null);
+        TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);
         break;
       }
       default: {
@@ -164,17 +164,17 @@ public class UploadAnalysisDispatcher {
     return PackageUtil.isSupportedArchive(extension);
   }
 
-  public static UploaderAnalysis<?> analyzeArchive(File file) {
+  public static UploaderAnalysis analyzeArchive(File file) {
     return analyzeArchive(null, file);
   }
 
-  public static UploaderAnalysis<?> analyzeArchive(Stage parentStage, File file) {
+  public static UploaderAnalysis analyzeArchive(Stage parentStage, File file) {
     try {
       ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(parentStage, model);
       List<Object> results = progressDialog.getResults();
       if (!results.isEmpty()) {
-        return (UploaderAnalysis<?>) results.get(0);
+        return (UploaderAnalysis) results.get(0);
       }
       else {
         WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
@@ -189,12 +189,12 @@ public class UploadAnalysisDispatcher {
 
 
   public static String validateArchive(File file, AssetType assetType) {
-    UploaderAnalysis<?> analysis = analyzeArchive(file);
+    UploaderAnalysis analysis = analyzeArchive(file);
     return analysis != null ? analysis.validateAssetTypeInArchive(assetType) : null;
   }
 
   public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
-    UploaderAnalysis<?> analysis = analyzeArchive(file);
+    UploaderAnalysis analysis = analyzeArchive(file);
     if (analysis != null) {
       List<AssetType> assetTypes = analysis.getAssetTypes();
       if (!assetTypes.isEmpty()) {
@@ -212,7 +212,7 @@ public class UploadAnalysisDispatcher {
           dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
         }
         else {
-          TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null);
+          TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);
         }
       }
       else {

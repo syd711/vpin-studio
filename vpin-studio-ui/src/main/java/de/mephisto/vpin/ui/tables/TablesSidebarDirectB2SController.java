@@ -15,7 +15,9 @@ import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.models.B2SFormPosition;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
+import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import de.mephisto.vpin.ui.util.JFXHelper;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -52,9 +54,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public static final int DEBOUNCE_MS = 100;
 
   //WE ARE CONFIGURING HIDE FIELDS HERE; SO VALUES ARE SET HERE INVERTED
-  public final static List<B2SVisibility> VISIBILITIES = Arrays.asList(new B2SVisibility(0, "Visible"),
-      new B2SVisibility(1, "Hidden"),
-      new B2SVisibility(2, "Standard"));
+  public final static List<B2SVisibility> VISIBILITIES = Arrays.asList(
+    new B2SVisibility(0, "Visible"),
+    new B2SVisibility(1, "Hidden"),
+    new B2SVisibility(2, "Standard")
+  );
 
   public final static List<B2SFormPosition> FORM_POSITIONS = Arrays.asList(
     new B2SFormPosition(DirectB2ServerSettings.FORM_TO_BACK, "Form To Back"),
@@ -62,14 +66,24 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     new B2SFormPosition(DirectB2ServerSettings.FORM_TO_STANDARD, "Standard")
   );
 
-  public final static List<B2SLedType> LED_TYPES = Arrays.asList(new B2SLedType(1, "Simple LEDs"),
-      new B2SLedType(2, "Dream7 LEDs"));
+  public final static List<B2SStartAsExe> START_AS_EXE = Arrays.asList(
+    new B2SStartAsExe(0, "No"),
+    new B2SStartAsExe(1, "Yes"),
+    new B2SStartAsExe(2, "Use Server Default")
+  );
 
-  public final static List<B2SGlowing> GLOWINGS = Arrays.asList(new B2SGlowing(0, "Off"),
-      new B2SGlowing(1, "Low"),
-      new B2SGlowing(2, "Medium"),
-      new B2SGlowing(3, "High"),
-      new B2SGlowing(-1, "Default"));
+  public final static List<B2SLedType> LED_TYPES = Arrays.asList(
+    new B2SLedType(1, "Simple LEDs"),
+    new B2SLedType(2, "Dream7 LEDs")
+  );
+
+  public final static List<B2SGlowing> GLOWINGS = Arrays.asList(
+    new B2SGlowing(0, "Off"),
+    new B2SGlowing(1, "Low"),
+    new B2SGlowing(2, "Medium"),
+    new B2SGlowing(3, "High"),
+    new B2SGlowing(-1, "Default")
+  );
 
   @FXML
   private Label nameLabel;
@@ -155,7 +169,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private CheckBox hideB2SDMD;
 
   @FXML
-  private CheckBox startAsExe;
+  private ComboBox<B2SStartAsExe> startAsExe;
 
   @FXML
   private CheckBox startAsExeServer;
@@ -209,7 +223,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onDMDPosition() {
     if (game.isPresent()) {
-      TableDialogs.openDMDPositionDialog(game.get());
+      TableDialogs.openDMDPositionDialog(game.get(), null);
     }
   }
 
@@ -295,11 +309,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setHideB2SDMD(newValue);
       save();
+      refreshView(this.game);
     });
 
     hideB2SBackglass.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setHideB2SBackglass(newValue);
       save();
+      refreshView(this.game);
     });
 
     hideDMD.setItems(FXCollections.observableList(VISIBILITIES));
@@ -356,13 +372,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
       save();
     });
 
-    startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) {
-        tableSettings.setStartAsEXE(newValue);
-      }
-      else {
-        tableSettings.setStartAsEXE(null);
-      }
+    startAsExe.setItems(FXCollections.observableList(START_AS_EXE));
+    startAsExe.valueProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setStartAsEXE(newValue.getId());
       save();
     });
 
@@ -452,7 +464,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     filesizeLabel.setText("-");
     modificationDateLabel.setText("-");
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    JFXHelper.setImageDisabled(thumbnailImage, false);
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
+    JFXHelper.setImageDisabled(dmdThumbnailImage, false);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
 
@@ -488,7 +502,13 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                 final Image imageToLoad = image;
                 Platform.runLater(() -> {
                   thumbnailImage.setImage(imageToLoad);
-                  resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
+                  if (tableSettings.isHideB2SBackglass()) {
+                    resolutionLabel.setText("Backglass Hidden.");
+                    JFXHelper.setImageDisabled(thumbnailImage, true);
+                  }
+                  else {
+                    resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
+                  }
                 });
               }
               catch (IOException ioe) {
@@ -508,7 +528,12 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                 Image image = new Image(in);
                 Platform.runLater(() -> {
                   dmdThumbnailImage.setImage(image);
-                  dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+                  if (tableSettings.isHideB2SDMD()) {
+                    dmdResolutionLabel.setText("B2S DMD Hidden");
+                    JFXHelper.setImageDisabled(dmdThumbnailImage, true);
+                  } else {
+                    dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+                  }
                 });
               }
               catch (IOException ioe) {
@@ -534,9 +559,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
             startBackground.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getStartBackground()).findFirst().orElse(null));
             formToPosition.setValue(FORM_POSITIONS.stream().filter(v -> v.getId() == tableSettings.getFormToPosition()).findFirst().orElse(null));
-
-            boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
-            startAsExe.setSelected(tableLaunchAsExe);
+            startAsExe.setValue(START_AS_EXE.stream().filter(v -> v.getId() == tableSettings.getStartAsEXE()).findFirst().orElse(null));
 
             DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
             if (serverSettings != null) {

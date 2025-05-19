@@ -3,7 +3,9 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.utils.*;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.JFXFuture;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -71,7 +73,7 @@ public class Studio extends Application {
   public static VPinStudioClient client;
   public static VPinManiaClient maniaClient;
 
-  private static HostServices hostServices;
+  public static HostServices hostServices;
 
   private ServerSocket ss;
 
@@ -85,7 +87,7 @@ public class Studio extends Application {
   public void start(Stage stage) throws IOException {
     try (InputStream banner = getClass().getResourceAsStream("/banner.txt")) {
       String txt = StreamUtils.copyToString(banner, StandardCharsets.UTF_8);
-      LOG.info("\n" + txt + "\n");
+      LOG.info("\n" + txt);
     }
 
     runOperatingSystemChecks();
@@ -129,18 +131,6 @@ public class Studio extends Application {
       loadStudio(stage, Studio.client);
     }
     else {
-      ConnectionProperties connectionProperties = new ConnectionProperties();
-      List<ConnectionEntry> connections = connectionProperties.getConnections();
-      if (!connections.isEmpty()) {
-        for (ConnectionEntry connection : connections) {
-          Studio.client = new VPinStudioClient(connection.getIp());
-          version = client.getSystemService().getVersion();
-          if (!StringUtils.isEmpty(version)) {
-            loadStudio(stage, Studio.client);
-            return;
-          }
-        }
-      }
       loadLauncher(stage);
     }
   }
@@ -316,20 +306,26 @@ public class Studio extends Application {
   }
 
   private static Stage createSplash() throws Exception {
-    Image image = new Image(Studio.class.getResourceAsStream("splash.png"));
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
     SplashScreenController controller = loader.getController();
-    controller.setImage(image);
 
-    Scene scene = new Scene(root, image.getWidth(), image.getHeight(), Color.TRANSPARENT);
+    double imgWidth = 800, imgHeight = 534;
+    try (InputStream imgStream = Studio.class.getResourceAsStream("splash4.0.png")) {
+      Image image = new Image(imgStream);
+      controller.setImage(image);
+      imgWidth = image.getWidth();
+      imgHeight = image.getHeight();
+    }
+
+    Scene scene = new Scene(root, imgWidth, imgHeight, Color.TRANSPARENT);
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.UNDECORATED);
     stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
     stage.setScene(scene);
-    stage.setX((screenBounds.getWidth() / 2) - (image.getWidth() / 2));
-    stage.setY((screenBounds.getHeight() / 2) - (image.getHeight() / 2));
+    stage.setX((screenBounds.getWidth() / 2) - (imgWidth / 2));
+    stage.setY((screenBounds.getHeight() / 2) - (imgHeight / 2));
     stage.setResizable(false);
     stage.show();
     return stage;
@@ -444,27 +440,32 @@ public class Studio extends Application {
   }
 
   public static boolean exit() {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
+    try {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+      boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
 
-    if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
-      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
-      if (confirmationResult.isCancelClicked()) {
-        return false;
-      }
+      if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
+        Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+        ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
+        if (confirmationResult.isCancelClicked()) {
+          return false;
+        }
 
-      if (confirmationResult.isOkClicked()) {
-        new Thread(() -> {
-          client.getFrontendService().restartFrontend();
-        }).start();
-      }
+        if (confirmationResult.isOkClicked()) {
+          new Thread(() -> {
+            client.getFrontendService().restartFrontend();
+          }).start();
+        }
 
-      if (confirmationResult.isChecked()) {
-        uiSettings.setHideFrontendLaunchQuestion(true);
-        client.getPreferenceService().setJsonPreference(uiSettings);
+        if (confirmationResult.isChecked()) {
+          uiSettings.setHideFrontendLaunchQuestion(true);
+          client.getPreferenceService().setJsonPreference(uiSettings);
+        }
       }
+    }
+    catch (Exception e) {
+      LOG.error("Shutdown failed, continue to exit... {}", e.getMessage());
     }
 
     AtomicBoolean polling = new AtomicBoolean(false);

@@ -71,6 +71,12 @@
                   <CheckBox fx:id="pref_70" layoutX="34.0" layoutY="700.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Virtual Pinball Spreadsheet Data" />
                   <Label layoutX="34.0" layoutY="738.0" styleClass="checkbox-description" text="Checks if a table and its version has been matched against the &quot;Virtual Pinball Spreadsheet&quot; data." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="798.0" styleClass="checkbox-description" text="This ensures that table updates will be shown in the table overview." textFill="WHITE" />
+                  <CheckBox fx:id="pref_71" layoutX="34.0" layoutY="1305.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Color Check" />
+                  <Label layoutX="34.0" layoutY="1344.0" styleClass="checkbox-description" text="Checks if there is an ALT color resource available and installed." textFill="WHITE" />
+                  <CheckBox fx:id="pref_72" layoutX="34.0" layoutY="1224.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Check" />
+                  <Label layoutX="34.0" layoutY="1262.0" styleClass="checkbox-description" text="Checks if there is an ALT sound bundle available and installed." textFill="WHITE" />
+                  <CheckBox fx:id="pref_73" layoutX="34.0" layoutY="1365.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Check" />
+                  <Label layoutX="34.0" layoutY="1404.0" styleClass="checkbox-description" text="Checks if there is a PUP pack available and installed." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Additional Media Validators">
                      <VBox.margin>
                         <Insets top="12.0" />

@@ -4,22 +4,18 @@ import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.NirCmd;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.system.NVRamsInfo;
-import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.system.SystemData;
-import de.mephisto.vpin.restclient.system.SystemId;
-import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.system.*;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -282,7 +278,11 @@ public class SystemResource {
   }
 
   @GetMapping("/update/install")
-  public boolean installUpdate() throws IOException {
+  public boolean installServerUpdate() throws IOException {
+    File serverUpdate = new File("./VPin-Studio-Server.zip");
+    if (!serverUpdate.exists()) {
+      return false;
+    }
     Updater.installServerUpdate();
     new Thread(() -> {
       try {
@@ -326,7 +326,7 @@ public class SystemResource {
       File disabled = new File("./server.vbs.bak");
       File file = new File("./server.vbs");
       if (disabled.exists()) {
-        FileUtils.moveFile(disabled, file);//TODO mpf
+        FileUtils.moveFile(disabled, file);
         return true;
       }
       return ServerInstallationUtil.install();

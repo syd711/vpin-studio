@@ -104,7 +104,7 @@ public class TextEditService {
           break;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(textFile.getEmulatorId());
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
@@ -193,7 +193,7 @@ public class TextEditService {
           return textFile;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = emulatorService.getGameEmulator(textFile.getEmulatorId());
           String[] lines = textFile.getContent().split("\n");
           List<String> sorted = Arrays.asList(lines);
           sorted.sort(Comparator.comparing(String::toLowerCase));

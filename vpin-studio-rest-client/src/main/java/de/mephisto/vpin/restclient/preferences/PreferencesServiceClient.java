@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
@@ -40,12 +41,23 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
 
+  @SuppressWarnings("unchecked")
+  public <T extends JsonSettings> T getJsonPreference(String key) {
+    Class<? extends JsonSettings> clazz = PreferenceNames.getClassFromKey(key);
+    return (T) getJsonPreference(key, clazz);
+  }
+
+  @SuppressWarnings("unchecked")
   public <T> T getJsonPreference(String key, Class<T> clazz) {
     if (!jsonSettingsCache.containsKey(key)) {
-      T settings = getRestClient().get(API + "preferences/json/" + key, clazz);
-      jsonSettingsCache.put(key, settings);
+      try {
+        T settings = getRestClient().get(API + "preferences/json/" + key, clazz);
+        jsonSettingsCache.put(key, settings);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to load json preferences " + key + ": " + e.getMessage());
+      }
     }
-
     return (T) jsonSettingsCache.get(key);
   }
 

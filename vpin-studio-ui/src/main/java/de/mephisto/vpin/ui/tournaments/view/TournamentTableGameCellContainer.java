@@ -58,7 +58,7 @@ public class TournamentTableGameCellContainer extends HBox {
     column.getChildren().add(title);
 
     if (game == null) {
-      Label label = new Label("Table not installed");
+      Label label = new Label("No matching table installed");
       label.setStyle("-fx-padding: 3 6 3 6;");
       label.getStyleClass().add("error-title");
       column.getChildren().add(label);
@@ -118,7 +118,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
 
     if (game != null) {
-      if (StringUtils.isEmpty(game.getHighscoreType())) {
+      if (game.getHighscoreType() == null) {
         Label error = new Label("No valid highscore found.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");

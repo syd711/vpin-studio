@@ -33,9 +33,9 @@
                         <Insets right="24.0" />
                      </HBox.margin>
                      <children>
-                        <Button fx:id="friendsBtn" mnemonicParsing="false" onAction="#onFriends" styleClass="friends-button" text="Friends">
+                        <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onMania" styleClass="bar-button" text="VPin Mania">
                            <graphic>
-                              <Label>
+                              <Label fx:id="maniaIconLabel">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple" iconSize="18" />
                                  </graphic>

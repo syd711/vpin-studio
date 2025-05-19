@@ -8,7 +8,6 @@ import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,19 +70,19 @@ public class DOFLinxComponent implements ComponentFacade {
     return Arrays.asList(".ini", ".INI", ".log", ".bak");
   }
 
-  @NotNull
+  @NonNull
   @Override
   public List<String> getIncludedFilenames() {
     return Arrays.asList("Sample INI files/");
   }
 
   @Override
-  public void preProcess(@NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+  public void preProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
     dofLinxService.killDOFLinx();
   }
 
   @Override
-  public void postProcess(@NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+  public void postProcess(@NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
     if (dofLinxService.isValid()) {
       File starter1 = new File(dofLinxService.getInstallationFolder(), "Starter 32 bit");
       if (starter1.exists()) {

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 
 /**
@@ -35,14 +36,14 @@ public class MediaRenamer {
 
   public void renameAll(Path path, VPS vpsDatabase) {
 
-		VpsAutomatcher automatcher = VpsAutomatcher.getInstance();
+		VpsAutomatcher automatcher = new VpsAutomatcher(null);
 
 		try {
 			Files.list(path)
 				.filter(p -> !Files.isDirectory(p) )
 				.forEach(p -> {
 					String filename = FilenameUtils.getBaseName(p.getFileName().toString());
-					VpsTable table = automatcher.autoMatch(vpsDatabase, filename);
+					VpsTable table = automatcher.autoMatchTable(vpsDatabase, filename);
 					if (table != null) {				
 						renameToTable(p, table);
 					}

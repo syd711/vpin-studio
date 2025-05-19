@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -13,12 +13,16 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.tables.validation.BackglassValidationTexts;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.util.WaitProgressModel;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -28,6 +32,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +43,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -45,7 +52,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
 /**
  *
  */
-public class BackglassManagerController extends BaseTableController<DirectB2SAndVersions, DirectB2SModel>
+public class BackglassManagerController extends BaseTableController<DirectB2S, DirectB2SModel>
     implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
@@ -96,6 +103,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   //-------------
 
   @FXML
+  private BorderPane validationError;
+  @FXML
+  private Label validationErrorLabel;
+  @FXML
+  private Label validationErrorText;
+
+  //-------------
+
+  @FXML
   private BackglassManagerSidebarController backglassManagerSideBarController; //fxml magic! Not unused
 
   //-------------
@@ -116,7 +132,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     GameRepresentation game = getGameFromSelection();
     if (game != null) {
       LOG.info("open DMD Position dialog for game " + game.getId());
-      TableDialogs.openDMDPositionDialog(game);
+      TableDialogs.openDMDPositionDialog(game, this);
     }
   }
 
@@ -139,14 +155,14 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   @FXML
   public void onBackglassReload(ActionEvent e) {
     DirectB2SModel selectedModel = getSelectedModel();
-    DirectB2SAndVersions versions = client.getBackglassServiceClient().reloadDirectB2S(selectedModel.getEmulatorId(), selectedModel.getFileName());
+    DirectB2S versions = client.getBackglassServiceClient().reloadDirectB2S(selectedModel.getEmulatorId(), selectedModel.getFileName());
     selectedModel.setBean(versions);
     reloadSelection();
   }
 
   @FXML
   private void onResEdit(ActionEvent e) {
-    DirectB2SAndVersions selection = getSelection();
+    DirectB2S selection = getSelection();
     if (selection != null) {
       BackglassManagerDialogs.openResGenerator(selection.getEmulatorId(), selection.getFileName());
     }
@@ -176,7 +192,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
           if (!newName.endsWith(".directb2s")) {
             newName = newName + ".directb2s";
           }
-          DirectB2SAndVersions b2s = client.getBackglassServiceClient().renameBackglass(selection.getEmulatorId(), selection.getFileName(), newName);
+          DirectB2S b2s = client.getBackglassServiceClient().renameBackglass(selection.getEmulatorId(), selection.getFileName(), newName);
           if (b2s != null) {
             selection.setBean(b2s);
             reloadSelection();
@@ -197,7 +213,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
   @FXML
   private void onOpen() {
-    DirectB2SAndVersions selectedItem = getSelection();
+    DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(selectedItem.getEmulatorId());
       File folder = new File(emulatorRepresentation.getGamesDirectory());
@@ -213,7 +229,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
 
   @FXML
   private void onDirectB2SDisable() {
-    DirectB2SAndVersions selectedItem = getSelection();
+    DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       JFXFuture
           .supplyAsync(() -> client.getBackglassServiceClient().disableBackglass(selectedItem.getEmulatorId(), selectedItem.getFileName()))
@@ -251,6 +267,22 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       setItems(data);
       endReload();
     });
+  }
+
+  @FXML
+  private void onDismiss() {
+    DirectB2SModel model = this.getSelectedModel();
+    if (model != null) {
+    }
+  }
+
+  @FXML
+  private void onDismissAll() {
+  }
+
+  @FXML
+  private void onValidationSettings() {
+    PreferencesController.open("validators_backglass");
   }
 
   @Override
@@ -311,16 +343,21 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   private void bindTable() {
-    BaseLoadingColumn.configureColumn(statusColumn, (value, model) -> {
-      if (!model.isGameAvailable()) {
+    BaseLoadingColumn.configureLoadingColumn(statusColumn, "", (value, model) -> {
+      int validationCode = model.getValidationCode();
+      if (validationCode > 0) {
         Label icon = new Label();
-        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has no matching game file."));
+        icon.setTooltip(new Tooltip("The backglass file \"" + model.getName() + "\n has configuration issue(s)."));
         icon.setGraphic(WidgetFactory.createExclamationIcon(getIconColor(value)));
         return icon;
       }
-      // else
-      return WidgetFactory.createCheckIcon(getIconColor(value));
-    }, this, true);
+      else if (validationCode == 0) {
+        return WidgetFactory.createCheckIcon(getIconColor(value));
+      }
+      else {
+        return null;
+      }
+    });
 
     BaseLoadingColumn.configureColumn(displayNameColumn, (value, model) -> {
       Label label = new Label(model.getName());
@@ -425,6 +462,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
     }
 
+    setValidationVisible(false);
+    validationErrorLabel.setText("");
+    validationErrorText.setText("");
+
     this.dmdPositionBtn.setDisable(true);
     this.resBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
@@ -433,11 +474,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     this.vpsOpenBtn.setDisable(true);
 
     // load the sidebar
-    backglassManagerSideBarController.setData(model);
+    backglassManagerSideBarController.setData(model != null ? model.getBean() : null);
+
+    // empty game sidebar section while loading game
+    backglassManagerSideBarController.resetGame();
 
     if (model != null) {
-      // empty game sidebar section while loading game
-      backglassManagerSideBarController.setGame(null);
       JFXFuture
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {
@@ -450,8 +492,20 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
             }
             // Pass Game to sidebar so that it also updates the Game section
-            backglassManagerSideBarController.setGame(game);
+            backglassManagerSideBarController.setGame(game, model._isGameAvailable());
           });
+      
+      int validationCode = model.getValidationCode();
+      if (validationCode > 0) {
+        setValidationVisible(true);
+        LocalizedValidation validationMessage = BackglassValidationTexts.validate(validationCode, model);
+        validationErrorLabel.setText(validationMessage.getLabel());
+        validationErrorText.setText(validationMessage.getText());
+      }
+      else {
+        setValidationVisible(false);
+      }
+
     }
   }
 
@@ -488,14 +542,27 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     }
   }
 
+  public void setValidationVisible(boolean visible) {
+    validationError.setVisible(visible);
+  }
+
+  //------------------------------------------------
+  // Implementation of StudioEventListener
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.serverSettings)) {
+      Platform.runLater(() -> {
+        this.doReload();
+      });
+    }
+  }
+
   //------------------------------------------------
   // Implementation of StudioEventListener
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
-    if (!activeView) {
-      return;
-    }
 
     DirectB2SModel selection = getSelectedModel();
 
@@ -503,7 +570,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     if (id > 0 && models != null) {
       // When a game is updated or added, the associated backglass in table + view should be updated
       // If it is a new game, this backglass sis discovered and added into the table as a new row
-      DirectB2SAndVersions b2s = client.getBackglassServiceClient().getDirectB2S(id);
+      DirectB2S b2s = client.getBackglassServiceClient().getDirectB2S(id);
       reloadItem(b2s);
     }
 
@@ -512,13 +579,21 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
     }
   }
 
+  @Override
+  public void backglassChanged(int emulatorId, String b2sFileName) {
+    Optional<DirectB2SModel> model = models.stream().filter(m -> m.getEmulatorId() == emulatorId && StringUtils.equals(m.getFileName(), b2sFileName)).findFirst();
+    if (model.isPresent()) {
+      reloadItem(model.get().getBean());
+    }
+  }
+
   //------------------------------------------------
 
-  private String getIconColor(DirectB2SAndVersions value) {
+  private String getIconColor(DirectB2S value) {
     return value.isEnabled() ? null : WidgetFactory.DISABLED_COLOR;
   }
 
-  private String getLabelCss(DirectB2SAndVersions value) {
+  private String getLabelCss(DirectB2S value) {
     return value.isEnabled() ? "" : WidgetFactory.DISABLED_TEXT_STYLE;
   }
 
@@ -533,7 +608,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
   }
 
   @Override
-  protected DirectB2SModel toModel(DirectB2SAndVersions b2s) {
+  protected DirectB2SModel toModel(DirectB2S b2s) {
     return new DirectB2SModel(b2s);
   }
 
@@ -543,5 +618,44 @@ public class BackglassManagerController extends BaseTableController<DirectB2SAnd
       return client.getGame(selection.getGameId());
     }
     return null;
+  }
+
+  public int selectNextGame() {
+    DirectB2SModel selection = getSelectedModel();
+    if (selection != null) {
+      int nbCheck = 0;
+      do {
+        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() + 1;
+        if (selectedIndex >= tableView.getItems().size()) {
+          selectedIndex = 0;
+        }
+        tableView.getSelectionModel().select(selectedIndex);
+        selection = getSelectedModel();
+        nbCheck ++;
+      } 
+      while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
+      return selection.getGameId();
+    }
+    return -1;
+  }
+
+  public int selectPreviousGame() {
+    DirectB2SModel selection = getSelectedModel();
+    if (selection != null) {
+      int nbCheck = 0;
+      do {
+        int selectedIndex = this.tableView.getSelectionModel().getSelectedIndex() - 1;
+        if (selectedIndex < 0) {
+          selectedIndex = tableView.getItems().size() - 1;
+        }
+        tableView.getSelectionModel().select(selectedIndex);
+        selection = getSelectedModel();
+        //this.
+        nbCheck ++;
+      } 
+      while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
+      return selection.getGameId();
+    }
+    return -1;
   }
 }

@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -27,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,9 +306,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        refreshModel(newSelection);
-      }
+      refreshView(newSelection);
     });
 
     tableView.setRowFactory(tv -> {
@@ -342,22 +340,19 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       this.doReload(false);
     }
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
-    refreshModel(selection);
+    refreshView(selection);
   }
 
   @Override
-  public void vpsTableChanged(@NotNull String vpsTableId) {
-    Platform.runLater(() -> {
-      VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
-      Optional<VpsTableModel> first = tableView.getItems().stream().filter(i -> i.getVpsTable().getId().equals(tableById.getId())).findFirst();
-      if (first.isPresent()) {
-        first.get().setBean(tableById);
-        tableView.refresh();
-      }
-    });
+  public void vpsTableChanged(@NonNull String vpsTableId) {
+    Optional<VpsTableModel> first = models.stream().filter(m -> m.getVpsTableId().equals(vpsTableId)).findFirst();
+    if (first.isPresent()) {
+      reloadItem(first.get().getBean());
+    }
   }
 
-  protected void refreshModel(@Nullable VpsTableModel newSelection) {
+  @Override
+  protected void refreshView(@Nullable VpsTableModel newSelection) {
     if (newSelection != null) {
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
     }
@@ -425,6 +420,10 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     public boolean isInstalled() {
       return installed;
+    }
+
+    public String getVpsTableId() {
+      return bean.getId();
     }
 
     public String getVersionId() {

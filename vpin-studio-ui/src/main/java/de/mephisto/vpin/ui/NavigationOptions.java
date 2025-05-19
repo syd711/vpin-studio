@@ -1,7 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-
 /**
  * Contains parameters that can be used to initialize a navigation item.
  */
@@ -15,6 +13,10 @@ public class NavigationOptions {
 
   public NavigationOptions(Object model) {
     this.model = model;
+  }
+
+  public static NavigationOptions empty() {
+    return new NavigationOptions(null);
   }
 
   public Object getModel() {

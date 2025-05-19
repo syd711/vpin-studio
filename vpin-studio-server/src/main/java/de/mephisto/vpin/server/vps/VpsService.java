@@ -3,11 +3,12 @@ package de.mephisto.vpin.server.vps;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
+import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
@@ -15,20 +16,23 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpsdb.VpsDbEntry;
 import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +54,9 @@ public class VpsService implements InitializingBean {
   private GameDetailsRepository gameDetailsRepository;
 
   @Autowired
+  private GameLifecycleService gameLifecycleService;
+
+  @Autowired
   private VpsEntryService vpsEntryService;
 
   /**
@@ -57,17 +64,47 @@ public class VpsService implements InitializingBean {
    */
   private VPS vpsDatabase;
 
+  private VpsAutomatcher automatcher = new VpsAutomatcher(null);
+
   /**
    * Match game and fill associated TableDetail with VPS Database mapping
    *
    * @return non null array of ids if matching was done
    */
-  public GameVpsMatch autoMatch(Game game, boolean overwrite) {
+  public VpsMatch autoMatch(Game game, boolean overwrite) {
     TableInfo tableInfo = vpxService.getTableInfo(game);
-
-    VpsAutomatcher automatcher = VpsAutomatcher.getInstance();
-    return automatcher.autoMatch(vpsDatabase, game, tableInfo, false, overwrite, game.isFxGame());
+    return autoMatch(vpsDatabase, game, tableInfo, false, overwrite, game.isFxGame());
   }
+
+  /**
+   * Match game and return a GameVpsMatch with the VPS Database mapping
+   * @return GameVpsMatch of ids
+   */
+  public VpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
+    VpsMatch vpsMatch = new VpsMatch();
+    vpsMatch.setGameId(game.getId());
+    vpsMatch.setExtTableId(game.getExtTableId());
+    vpsMatch.setExtTableVersionId(game.getExtTableVersionId());
+    vpsMatch.setVersion(game.getVersion());
+
+    String gameFileName = game.getGameFileName();
+    if (useDisplayName) {
+      gameFileName = game.getGameDisplayName();
+    }
+    gameFileName = FilenameUtils.getBaseName(gameFileName);
+
+    String[] tableFormats = game.getEmulator().getVpsEmulatorFeatures();
+    File gamefile = game.getGameFile();
+    long lastmodified = gamefile != null && gamefile.exists() ? gamefile.lastModified() : null;
+
+    automatcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, game.getRom(), 
+      tableInfo!=null? tableInfo.getTableName(): null, 
+      tableInfo!=null? tableInfo.getAuthorName(): null,
+      tableInfo!=null? tableInfo.getTableVersion(): null,
+      lastmodified, overwrite);
+    return vpsMatch;
+  }
+
 
   /**
    * Checks the available table data for updates again the VPS.
@@ -174,6 +211,7 @@ public class VpsService implements InitializingBean {
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);
+            gameLifecycleService.notifyGameUpdated(game.getId());
           }
         }
       }

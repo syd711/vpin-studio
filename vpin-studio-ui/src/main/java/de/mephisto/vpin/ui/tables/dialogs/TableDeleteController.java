@@ -141,7 +141,9 @@ public class TableDeleteController implements Initializable, DialogController {
 
     Platform.runLater(() -> {
       ProgressDialog.createProgressDialog(new TableDeleteProgressModel(tableOverviewController, descriptor));
-      EventManager.getInstance().notifyTablesChanged();
+      for (GameRepresentation game : games) {
+        EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
+      }
     });
 
     stage.close();

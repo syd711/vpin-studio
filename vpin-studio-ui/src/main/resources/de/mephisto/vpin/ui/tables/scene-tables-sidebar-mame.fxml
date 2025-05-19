@@ -279,7 +279,7 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button" text="VPMAlias.txt" textFill="WHITE">
+            <Button fx:id="aliasBtn" mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button" text="VPMAlias.txt" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>

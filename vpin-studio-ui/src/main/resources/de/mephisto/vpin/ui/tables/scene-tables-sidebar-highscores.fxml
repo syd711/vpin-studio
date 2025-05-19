@@ -302,17 +302,7 @@
                   <Tooltip text="Open Highscore Card Editor" />
                </tooltip>
                 </Button>
-            <Button fx:id="eventLogBtn" layoutX="124.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Open the event log window with the latest server processing information" />
-               </tooltip>
-            </Button>
+            <Separator layoutX="262.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
@@ -322,6 +312,17 @@
                </font>
                <tooltip>
                   <Tooltip text="Open Table on VPin Mania" />
+               </tooltip>
+            </Button>
+            <Button fx:id="maniaSyncBtn" layoutX="314.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTableSync" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-right" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Synchronize Table with VPin Mania" />
                </tooltip>
             </Button>
             <Separator layoutX="262.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />

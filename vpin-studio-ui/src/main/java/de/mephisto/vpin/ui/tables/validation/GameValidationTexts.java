@@ -178,6 +178,21 @@ public class GameValidationTexts {
         text = "The table and its version has not been matched against the Virtual Pinball Spreadsheet.";
         break;
       }
+      case CODE_VPS_ALTCOLOR_MISSING: {
+        label = "No ALT color resource found.";
+        text = "There is an ALT color resource available on the Virtual Pinball Spreadsheet for this table.";
+        break;
+      }
+      case CODE_VPS_ALTSOUND_MISSING: {
+        label = "No ALT sound bundle found.";
+        text = "There is an ALT sound bundle available on the Virtual Pinball Spreadsheet for this table.";
+        break;
+      }
+      case CODE_VPS_PUPPACK_MISSING: {
+        label = "No PUP pack found.";
+        text = "There is a PUP pack available on the Virtual Pinball Spreadsheet for this table.";
+        break;
+      }
       case CODE_ALT_COLOR_FILES_MISSING: {
         label = "ALT Color files missing.";
         text = "An ALT Color file is missing: " + state.getOptions().get(0);

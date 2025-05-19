@@ -52,6 +52,9 @@ public class GamesResource {
   @Autowired
   private GameStatusService gameStatusService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
@@ -79,26 +82,31 @@ public class GamesResource {
 
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    systemService.setMaintenanceMode(false);
-
-    String altExe = (String) values.get("altExe");
-    String option = (String) values.get("option");
     Game game = gameService.getGame(id);
-    if (game.getEmulator().isVpxEmulator()) {
-      frontendService.killFrontend();
-      if (vpxService.play(game, altExe, option)) {
-        gameStatusService.setActiveStatus(id);
-        return true;
+    try {
+      systemService.setMaintenanceMode(false);
+      String altExe = (String) values.get("altExe");
+      String option = (String) values.get("option");
+
+      if (game.getEmulator().isVpxEmulator()) {
+        frontendService.killFrontend();
+        if (vpxService.play(game, altExe, option)) {
+          gameStatusService.setActiveStatus(id);
+          return true;
+        }
       }
-    }
-    else if (game.getEmulator().isFpEmulator()) {
-      frontendService.killFrontend();
-      if (fpService.play(game, altExe)) {
-        gameStatusService.setActiveStatus(id);
-        return true;
+      else if (game.getEmulator().isFpEmulator()) {
+        frontendService.killFrontend();
+        if (fpService.play(game, altExe)) {
+          gameStatusService.setActiveStatus(id);
+          return true;
+        }
       }
+      throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
     }
-    throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
+    finally {
+      gameLifecycleService.notifyGameUpdated(game.getId());
+    }
   }
 
   @GetMapping("/recent/{count}")

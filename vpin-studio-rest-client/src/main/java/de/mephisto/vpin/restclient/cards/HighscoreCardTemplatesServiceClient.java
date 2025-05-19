@@ -41,12 +41,12 @@ public class HighscoreCardTemplatesServiceClient extends VPinStudioClientService
     }
   }
 
-  public CardTemplate save(CardTemplate template) throws Exception {
+  public CardTemplate save(CardTemplate template) {
     try {
       return getRestClient().post(API + "cardtemplates/save", template, CardTemplate.class);
     } catch (Exception e) {
       LOG.error("Failed to save template: " + e.getMessage(), e);
-      throw e;
+      throw new RuntimeException(e);
     }
     finally {
       cachedTemplates.clear();

@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.components.facades;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,6 +18,10 @@ import java.util.List;
 
 @Service
 public class VpxComponent implements ComponentFacade {
+
+  @Autowired
+  protected SystemService systemService;
+
   @NonNull
   @Override
   public String[] getDiffList() {
@@ -36,15 +42,13 @@ public class VpxComponent implements ComponentFacade {
   @NonNull
   @Override
   public File getTargetFolder() {
-    SystemInfo si = new SystemInfo();
-    return si.resolveVpx64InstallFolder();
+    return systemService.resolveVpx64InstallFolder();
   }
 
   @Nullable
   @Override
   public Date getModificationDate() {
-    SystemInfo si = new SystemInfo();
-    File setupExe = si.resolveVpx64Exe();
+    File setupExe = systemService.resolveVpx64Exe();
     if (setupExe != null && setupExe.exists()) {
       return new Date(setupExe.lastModified());
     }

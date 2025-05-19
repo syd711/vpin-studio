@@ -76,7 +76,6 @@ public class StateMananger implements GameControllerInputListener {
   }
 
   public void handle(String button) {
-//    LOG.info("Pause Menu Input Event: " + button);
     if (button == null) {
       return;
     }
@@ -121,8 +120,15 @@ public class StateMananger implements GameControllerInputListener {
   }
 
   public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
-    GameController.getInstance().addListener(StateMananger.getInstance());
     menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
+
+    try {
+      Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
+    }
+    catch (InterruptedException e) {
+      //ignore
+    }
+    GameController.getInstance().addListener(StateMananger.getInstance());
     running = true;
   }
 
@@ -141,23 +147,23 @@ public class StateMananger implements GameControllerInputListener {
 
   public void checkAutoPlay() {
     boolean autoPlay = true;
-    if (autoPlay && menuController.isVisible()) {
-      PauseMenuItem item = menuController.getSelection();
-      if (item.getYouTubeUrl() != null) {
-        new Thread(() -> {
-          try {
-            Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
-          }
-          catch (InterruptedException e) {
-            //ignore
-          }
-          Platform.runLater(() -> {
-            if (menuController.isVisible()) {
-              menuController.showYouTubeVideo(item);
-            }
-          });
-        }).start();
-      }
-    }
+//    if (autoPlay && menuController.isVisible()) {
+//      PauseMenuItem item = menuController.getSelection();
+//      if (item.getVideoUrl() != null) {
+//        new Thread(() -> {
+//          try {
+//            Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION * 2);
+//          }
+//          catch (InterruptedException e) {
+//            //ignore
+//          }
+//          Platform.runLater(() -> {
+//            if (menuController.isVisible()) {
+////              menuController.showYouTubeVideo(item);
+//            }
+//          });
+//        }).start();
+//      }
+//    }
   }
 }

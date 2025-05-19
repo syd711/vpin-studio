@@ -10,61 +10,95 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsController">
 
     <center>
         <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-                    <tabs>
-                        <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
-                            <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                            </content>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
-                            </graphic>
+            <StackPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+               <children>
+                      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                              <Tab fx:id="offlineTab" closable="false" text="Offline Competitions">
+                                  <content>
+                                      <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                  </content>
+                                  <graphic>
+                                      <FontIcon iconColor="WHITE" iconLiteral="bi-trophy" />
+                                  </graphic>
+                              </Tab>
+                              <Tab fx:id="onlineTab" text="Discord Competitions">
+                                  <content>
+                                      <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                  </content>
+                                  <graphic>
+                                      <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
+                                  </graphic>
+                              </Tab>
+                        <Tab fx:id="tableSubscriptionsTab" text="Table Subscriptions">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                           </graphic>
                         </Tab>
-                        <Tab fx:id="onlineTab" text="Discord Competitions">
-                            <content>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                            </content>
-                            <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="bi-trophy-fill" />
-                            </graphic>
+                        <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="iScored Subscriptions">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                           </graphic>
                         </Tab>
-                  <Tab fx:id="tableSubscriptionsTab" text="Table Subscriptions">
-                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                     </content>
+                          </tabs>
+                      </TabPane>
+                  <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-expand-right" iconSize="18" />
                      </graphic>
-                  </Tab>
-                  <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="iScored Subscriptions">
-                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                     </content>
+                     <tooltip>
+                        <Tooltip text="Toggle Sidebar [F3]" />
+                     </tooltip>
+                     <StackPane.margin>
+                        <Insets right="3.0" top="6.0" />
+                     </StackPane.margin>
+                  </Button>
+                  <Button fx:id="competitionSettingsBtn" mnemonicParsing="false" onAction="#onCompetitionSettings" StackPane.alignment="TOP_RIGHT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                      </graphic>
-                  </Tab>
-                    </tabs>
-                    <BorderPane.margin>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                    </BorderPane.margin>
-                </TabPane>
+                     <tooltip>
+                        <Tooltip text="Open Competition Settings" />
+                     </tooltip>
+                     <StackPane.margin>
+                        <Insets right="43.0" top="6.0" />
+                     </StackPane.margin>
+                  </Button>
+               </children>
+            </StackPane>
             </center>
             <BorderPane.margin>
                 <Insets right="12.0" />

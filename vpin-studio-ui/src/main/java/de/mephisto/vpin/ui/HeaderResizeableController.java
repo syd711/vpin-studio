@@ -9,7 +9,9 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.mania.ManiaHelper;
+import de.mephisto.vpin.ui.mania.ManiaSettingsController;
+import de.mephisto.vpin.ui.mania.util.ManiaHelper;
+import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,6 +19,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -43,7 +47,10 @@ public class HeaderResizeableController implements Initializable {
   private Button minimizeBtn;
 
   @FXML
-  private Button friendsBtn;
+  private Button maniaBtn;
+
+  @FXML
+  private Label maniaIconLabel;
 
   @FXML
   private Label titleLabel;
@@ -63,7 +70,15 @@ public class HeaderResizeableController implements Initializable {
   }
 
   @FXML
-  private void onFriends() {
+  private void onMania() {
+    if (ToolbarController.newVersion != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Dialogs.openUpdateDialog();
+      }
+      return;
+    }
+
     Cabinet cabinet = null;
     try {
       cabinet = maniaClient.getCabinetClient().getCabinet();
@@ -86,7 +101,7 @@ public class HeaderResizeableController implements Initializable {
   }
 
   public static void toggleFriendsView() {
-    boolean open = FriendsController.toggle();
+    boolean open = ManiaSettingsController.toggle();
     if (open) {
       if (!FRIENDS_BTN.getStyleClass().contains("friends-button-selected")) {
         FRIENDS_BTN.getStyleClass().add("friends-button-selected");
@@ -158,10 +173,15 @@ public class HeaderResizeableController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
 
-    FRIENDS_BTN = friendsBtn;
+    FRIENDS_BTN = maniaBtn;
 
-    friendsBtn.managedProperty().bindBidirectional(friendsBtn.visibleProperty());
-    friendsBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+    maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
+    maniaBtn.setVisible(Features.MANIA_SOCIAL_ENABLED && Features.MANIA_ENABLED);
+    Image maniaImage = new Image(Studio.class.getResourceAsStream("mania.png"));
+    ImageView iconMedia = new ImageView(maniaImage);
+    iconMedia.setFitWidth(18);
+    iconMedia.setFitHeight(18);
+    maniaIconLabel.setGraphic(iconMedia);
 
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);

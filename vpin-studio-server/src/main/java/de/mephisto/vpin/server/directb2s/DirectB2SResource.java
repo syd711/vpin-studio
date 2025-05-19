@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.JsonArg;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
@@ -17,6 +17,7 @@ import de.mephisto.vpin.restclient.util.ReturnMessage;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 
@@ -75,6 +76,9 @@ public class DirectB2SResource {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   //--------------------------------------------------
 
   @PostMapping("/gameId")
@@ -95,19 +99,25 @@ public class DirectB2SResource {
     return backglassService.getDirectB2SData(emulatorId, fileName);
   }
 
+  @PostMapping("/detail")
+  public DirectB2SDetail getDetail(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName, @JsonArg("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    return backglassService.getBackglassDetail(emulatorId, fileName, game);
+  }
+
   @GetMapping
-  public List<DirectB2SAndVersions> getBackglasses() {
+  public List<DirectB2S> getBackglasses() {
     return backglassService.getBackglasses();
   }
 
   @GetMapping("/{gameId}/versions")
-  public DirectB2SAndVersions getVersionsByGame(@PathVariable("gameId") int gameId) {
+  public DirectB2S getVersionsByGame(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     return backglassService.getDirectB2SAndVersions(game);
   }
 
   @PostMapping("/versions")
-  public DirectB2SAndVersions getVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
+  public DirectB2S getVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
     return backglassService.getDirectB2SAndVersions(emulatorId, fileName);
   }
 
@@ -244,27 +254,36 @@ public class DirectB2SResource {
 
   @PostMapping("/delete")
   public boolean deleteBackglass(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
-    return backglassService.deleteBackglass(emulatorId, fileName);
+    boolean b = backglassService.deleteBackglass(emulatorId, fileName);
+    if (b) {
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
+    }
+    return b;
   }
 
   @PutMapping
-  public DirectB2SAndVersions updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
+  public DirectB2S updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
     int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
-    if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
-      return backglassService.rename(emulatorId, fileName, newName);
+    try {
+      if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
+        return backglassService.rename(emulatorId, fileName, newName);
+      }
+      else if (values.containsKey("setVersionAsDefault")) {
+        return backglassService.setAsDefault(emulatorId, fileName);
+      }
+      else if (values.containsKey("disable")) {
+        return backglassService.disable(emulatorId, fileName);
+      }
+      else if (values.containsKey("deleteVersion")) {
+        return backglassService.deleteVersion(emulatorId, fileName);
+      }
+      return null;
     }
-    else if (values.containsKey("setVersionAsDefault")) {
-      return backglassService.setAsDefault(emulatorId, fileName);
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
     }
-    else if (values.containsKey("disable")) {
-      return backglassService.disable(emulatorId, fileName);
-    }
-    else if (values.containsKey("deleteVersion")) {
-      return backglassService.deleteVersion(emulatorId, fileName);
-    }
-    return null;
   }
 
   //--------------------------------------------------
@@ -283,6 +302,9 @@ public class DirectB2SResource {
     }
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Save error: " + e.getMessage());
+    }
+    finally {
+      gameLifecycleService.notifyGameAssetsChanged(gameId, AssetType.DIRECTB2S, null);
     }
   }
 
@@ -309,7 +331,7 @@ public class DirectB2SResource {
   public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
                                           @RequestParam("uploadType") UploadType uploadType,
                                           @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+    UploadDescriptor descriptor = universalUploadService.create(file, gameId);
     try {
       descriptor.upload();
       descriptor.setUploadType(uploadType);

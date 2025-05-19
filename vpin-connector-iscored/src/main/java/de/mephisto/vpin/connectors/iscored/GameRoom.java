@@ -1,7 +1,10 @@
 package de.mephisto.vpin.connectors.iscored;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameRoom {
 
@@ -47,6 +50,11 @@ public class GameRoom {
 
   public List<IScoredGame> getGames() {
     return games;
+  }
+
+  @JsonIgnore
+  public List<IScoredGame> getTaggedGames() {
+    return games.stream().filter(g -> g.isVpsTagged()).collect(Collectors.toList());
   }
 
   public IScoredGame getGameByVps(String vpsTableId, String vpsVersionId) {

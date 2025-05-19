@@ -71,7 +71,7 @@ public class SystemUtil {
   }
 
   private static String getSystemId() {
-    if(systemId == null) {
+    if (systemId == null) {
       String firstSegment = NetworkUtil.getMacAddress() != null ? NetworkUtil.getMacAddress().trim() : "#";
       if (StringUtils.isEmpty(firstSegment)) {
         firstSegment = getWindowsSystemId();

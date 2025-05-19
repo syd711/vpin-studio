@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import javafx.beans.property.Property;
@@ -44,7 +44,7 @@ public class BackglassManagerPredicateFactory {
     return new Predicate<DirectB2SModel>() {
       @Override
       public boolean test(DirectB2SModel model) {
-        DirectB2SAndVersions backglass = model.getBacklass();
+        DirectB2S backglass = model.getBacklass();
 
         if (emulatorIds!=null && !emulatorIds.isEmpty() && !emulatorIds.contains(backglass.getEmulatorId())) {
           return false;
@@ -67,7 +67,7 @@ public class BackglassManagerPredicateFactory {
         if (scoresAvailableFilter.getValue() && model.getNbScores() <= 0) {
           return false;
         }
-        if (missingTableFilter.getValue() && model.isGameAvailable()) {
+        if (missingTableFilter.getValue() && model._isGameAvailable()) {
           return false;
         }
         if (equalsVisibility(grillVisibilityFilter.getValue(), model.getHideGrill())) {

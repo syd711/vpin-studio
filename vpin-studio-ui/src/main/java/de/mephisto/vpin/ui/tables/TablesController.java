@@ -180,7 +180,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     sidebarVisible = !sidebarVisible;
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    uiSettings.setSidebarVisible(sidebarVisible);
+    uiSettings.setTablesSidebarVisible(sidebarVisible);
     client.getPreferenceService().setJsonPreference(uiSettings, true);
 
     setSidebarVisible(sidebarVisible);
@@ -341,11 +341,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
       t.play();
     }
     else {
+      sidePanelRoot.setVisible(true);
       TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, -612);
       t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-          sidePanelRoot.setVisible(true);
           FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
           toggleSidebarBtn.setGraphic(icon);
         }
@@ -461,7 +461,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL)) {
+    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL) && repositoryController != null) {
       Platform.runLater(() -> {
         repositoryController.doReload();
       });
@@ -562,16 +562,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
-    if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings)) {
+    if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings) || preferenceType.equals(PreferenceType.competitionSettings)) {
       Platform.runLater(() -> {
-        this.tableOverviewController.doReload();
+        this.tableOverviewController.onReload();
       });
     }
   }
 
   @Override
   public void tablesChanged() {
-    preferencesChanged(PreferenceType.uiSettings);
+    //ignore
   }
 
   @Override

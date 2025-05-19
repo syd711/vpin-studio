@@ -28,6 +28,7 @@ public enum AssetType {
   ROM,
   MUSIC,
   MUSIC_BUNDLE,
+  PINVOL,
   POV,
   VPX,
   FPT,

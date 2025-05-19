@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FrontendStatusService implements InitializingBean {
+public class FrontendStatusService implements InitializingBean, ApplicationListener<ApplicationReadyEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
 
   private final List<TableStatusChangeListener> tableStatusChangeListeners = new ArrayList<>();
@@ -46,6 +48,9 @@ public class FrontendStatusService implements InitializingBean {
 
   @Autowired
   private EmulatorService emulatorService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   private boolean eventsEnabled = true;
 
@@ -178,7 +183,7 @@ public class FrontendStatusService implements InitializingBean {
       Thread.currentThread().setName("Game Launch Thread");
       notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
-    return game != null;
+    return true;
   }
 
   public boolean gameExit(@NonNull String table, @Nullable String emuDirOrName) {
@@ -230,6 +235,7 @@ public class FrontendStatusService implements InitializingBean {
       File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
         augmenter.augment(badgeFile);
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
   }
@@ -240,6 +246,7 @@ public class FrontendStatusService implements InitializingBean {
       File wheelIcon = frontendMediaItem.getFile();
       new WheelAugmenter(wheelIcon).deAugment();
       new WheelIconDelete(wheelIcon).delete();
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
     }
   }
 
@@ -286,6 +293,14 @@ public class FrontendStatusService implements InitializingBean {
 
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+    LOG.info("{} initialization finished, running frontend version {}", this.getClass().getSimpleName(), frontendService.getVersion());
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+//    LOG.info("-----------------------------TableStatusChangeListener Summary ----------------------------------------");
+//    for (TableStatusChangeListener listener : tableStatusChangeListeners) {
+//      LOG.info("TableStatusChangeListener: {}", listener.getClass().getSimpleName() + "/" + listener.getPriority());
+//    }
   }
 }

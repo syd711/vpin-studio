@@ -2,13 +2,13 @@ package de.mephisto.vpin.server.altsound;
 
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -42,6 +42,9 @@ public class AltSoundService implements InitializingBean {
   @Autowired
   private EmulatorService emulatorService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
@@ -58,6 +61,7 @@ public class AltSoundService implements InitializingBean {
         if (FileUtils.deleteFolder(folder)) {
           return clearCache();
         }
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
       }
     }
     return false;
@@ -86,6 +90,7 @@ public class AltSoundService implements InitializingBean {
         new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
       }
       createAltSound(new File(altSound.getFolder()), altSound.getEmulatorId());
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
     }
     return altSound;
   }
@@ -126,6 +131,7 @@ public class AltSoundService implements InitializingBean {
   public AltSound restore(Game game) {
     if (game != null) {
       this.altSoundBackupService.restore(game);
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
       return getAltSound(game);
     }
     return new AltSound();
@@ -138,14 +144,14 @@ public class AltSoundService implements InitializingBean {
     for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
       File altSoundFolder = vpxGameEmulator.getAltSoundFolder();
       if (altSoundFolder.exists()) {
-        File[] files = altSoundFolder.listFiles(new FilenameFilter() {
+        File[] altSoundBundles = altSoundFolder.listFiles(new FilenameFilter() {
           @Override
           public boolean accept(File dir, String name) {
             return new File(dir, name).isDirectory();
           }
         });
-        if (files != null) {
-          for (File altSoundDir : files) {
+        if (altSoundBundles != null) {
+          for (File altSoundDir : altSoundBundles) {
             createAltSound(altSoundDir, vpxGameEmulator.getId());
           }
         }

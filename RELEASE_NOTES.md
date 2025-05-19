@@ -1,122 +1,106 @@
-## Release Notes 3.14.6
+## Release Notes 4.0.0
 
 ## Changes
 
-- **Table Overview / Table Media Outliner**: Added "Open DMD Positioner" for Apron, DMD and Backglass screen. They are enabled when a backglass is available.
-- **Launcher**: Added auto-connect for remote clients so that the latest known connection is used.
-- **Launcher / Toolbar Menu**: Added direct login buttons for other cabinets to the preferences drop-down menu. The entries are only generated for remote clients and for cabinets where the connection was established before.
-- **Table Asset Manager**: Fixed dialog size calculation. Instead of trying to calculate the monitor resolution, the size of the main Studio window is used to determine which (more compact) dialog version of the asset manager dialog should be used.
-- **Drop-In Menu** Limited the amount of items to 100 to avoid a client crash when a folder with thousands of entries is added.
-- **Drop-In Menu** Removed the system tray notification. It was ugly anyway.
-- **Drop-In Menu** Added filtering for hidden files.
-- **Backglass Manager**: Skipping serialization of empty XML elements instead of writing them with an empty value. (This is a blind-fix, and should make the backglass defaults work, but is not confirmed yet.)
-- **Screen Recorder**: Fixed recording error when "expert mode" has been selected but the command has not been re-confirmed.
-- **VB Script Editing**: Fixed error handling so that when the extraction of the VBS fails a proper error message is shown.
-- **VB Script Editing**: Updated to vpxtools version v0.23.5. Once again a big thank you to @francisdb for this tool: https://github.com/francisdb/vpxtool
-- **Highscore Parsing:** Added support for the table "Hot Line".
-- **Highscore Matching:** Fixed highscore matching (in the players section) for players with initials smaller than 3 characters.
-- **Pause Menu**: After revisiting the Pause Menu, only minor fixes have been made for this patch release. **A bigger change tackling the issues with tutorials will follow soon.**
-  - Removed initial focus forcing for VPX GL emulators. This lead to stuttering, but was necessary to "win" the focus over the emulator to show the pause menu on top. (I could not reproduce this with the latest GL version anymore, but this may need to be revisited).
-  - Added "Resume Delay" configuration option. This is 1 second by default. But when VPX is run in "force fullscreen" mode, it can take longer for VPX to regain the focus. An additional help tooltip has been added.
+- **Server Side Caching**: The games are now cached on the server side too. You will notice a general improvement regarding the responsiveness of the Studio. This was a larget backend change, so please let me know if anything does not refresh properly. A manual reload in the table overview triggers a full reset of the client and server and will invalidate all tables.
+- **iScored**: Large parts of the iScored integration have been re-implemented. The concept has changed so that you don't have to manually subscribe to tables anymore. A complete instruction about the new mechanism can be read here: https://github.com/syd711/vpin-studio/wiki/iScored or on YouTube (https://www.youtube.com/@vpin-studio). The changes in short are:
+  - Added preferences section where iScored Game Rooms can be setup and selected for synchronization.
+  - Added option to disable the complete iScored integration for users who don't need it.
+  - Added iScored badge for wheels (only available for fresh installations, these are not updated automatically).
+  - Added iScored playlist to the list of SQL playlist templates.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/iscored.png?raw=true" width="650" />
+- **Competitions**: Added quick-settings for every tab and collapsible button for the sidebar. So this matches with the tables view now.
+- **System Manager**: 
+  - The overall update check is not blocking the UI anymore. This way, you can immediately switch to other system manager tabs now.
+  - Full support of target folder that were ignored before for component fresh installation.
+- **Table Overview**: 
+  - De-cluttered context menu and removed less used function with focus on supporting more bulk actions there.
+  - Added context menu option to bulk reset table ratings.
+  - Replace error status icon for better contrast.
+  - Changed the emulator .exe for the launch button to a combo box. The selection is stored now too. In addition to that, the launch button has moved to the left, so that less used button go into the overflow menu for smaller resolutions instead.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/launcher-menu.png?raw=true" width="250" />
+    
+  - Added competition button to the status column, shown when the table is used in any competition or tournament. The button takes you to the corresponding competition view.
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/competition-button.png?raw=true" width="250" />
+  
+- **Highscore Backups**: Added bulk-operation support for highscore backups.
+- **Backglass Management**: 
+  - Backglass validators have been added, reusing the status column. 4 validators are supported, and can be activated / deactivated in the new backglass validator preference page.
+  - Added possibility to remove the table specific 'Run as Exe' value and use the server default.
+  - Added option to set "Simple LEDs" as default in the backglass server preferences.
+  - Added button in the matching table toolbar to launch the game from the backglass.
+  - When Backglass and/or B2S DMD is hidden, the corresponding preview is blurred and translucent, reflecting the hidden state while still showing an image is present within the backglass
 
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/backglass-validators.png?raw=true" width="250" />
+  
+- **Pause Menu**:The pause menu has undergone an overhaul. The browser solution just did not work reliable enough and had a bunch of issues. As a result, **the tutorial video from Michael Kongedam/@kongedam are now hosted on vpin-mania.net too**. This way they can be directly streamed into the media player of the pause menu. So right now tutorials videos are restricted to this author. There is likely more to come here.
+- **Playlists Management**:
+  - Custom icons depending on the playlists have been re-introduced. (We had to disable the first attempt but came up with a better solution now.)
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/playlist-icons.png?raw=true" width="150" />
+  
+- **DMD Position Tool**: 
+  - No more excuse for not having an image in your full dmd. It is now possible to add a full dmd image directly from the dmd position tool or keep the full dmd video from the frontend active. In that case a frame is picked to position the DMD onto the frontend video.
+  - Added possibility to mass edit DMD positions with next / prev buttons, and a save button that saves the position but does not close the dialog.
+  - Added detection of changes and auto-save capability, where a click on next / prev button can automatically trigger a save of the changes 
+  - **Important change:** Disconnected the display of a screen from the move of a zone in that screen. The different screens with associated zones can be displayed thank to a new tab bar in the top of the window, and the "move to" radio buttons are used to move the selected DMD zone onto the selected screen.
+  - When there is no B2S full DMD or it is not active, and when the frontend has a full DMD video that is flagged to be kept displayed when game is launched, then a random frame of that video is picked to position the DMD onto it. 
+  - Added support of alphanumeric DMD. The DMD zones are inherited from the backglass (number and default positions). The zones can then be modified and saved. Also a reset button permits to restore the default positions of zones taken from backglass if modified.
+  - For alphanumeric DMD, added the possibility to remove the rendering of backglass scores. It generally causes problem as the alphanumeric DMD mays not cover the full backglass scores and not totally hide them. Mind the backglass is modified, and previous score state is backup within the backglass.
+  - Added possibility to completely disconnect DMD and use backglass scores only. When choosing this option, the Freezy ext DMD can be disabled by turning off the ext DMD in VPinMame and/or disabling the DMD in dmdevice.ini.
 
----
-## Release Notes 3.14.5
-
-## Changes
-
-- **Highscore Resolving**: Fixed highscore resetting with values for .ini highscores.
-- **Performance Updates and Fixes:**
-  - Enabled gzip compression for requests: Unfortunately this was not enabled yet and will improve the response times when working remote.
-  - Fixed several situations where all games from all emulators were loaded (e.g. after editing assets).
-  - Removed duplicated table refreshes.
-
----
-
-## Release Notes 3.14.4
-
-## Changes
-
-- **Highscore Resolving**: Added highscore support for **Dark Chaos**.
-- **Table Data Manager / VPS Integration**: Removed copy table id button, only the copy version button should be used.
-- **iScored**: Added support for multi-score submissions. You have to add the tag **vps:multiscore** for all tables where this should be enabled. See also: https://github.com/syd711/vpin-studio/wiki/iScored#multi-score-submissions
-- **iScored**: Improved logging for iScored competitions.
-
----
-
-## Release Notes 3.14.3
-
-## Changes
-
-- **iScored**: Fixed critical error that skipped the highscore submission for game room games without existing highscores.
-- **Tables / Drag and Drop**: Fixed UI freezing for file drops when no table was selecting.
-- **PinballY**: Improved error handling for emulators where not games folder was found.
-- **Pause Menu**: Fixed accidental delay when shown, introduced with the latest mute option.
-
----
-
-## Release Notes 3.14.2
-
-## Changes
-
-- **Tables / Asset Manager**: Added another compact dialog variant used on smaller screens (<= 1024px height).
-- **Tables / Media Recorder**: Instead of moving the Studio window to the back, it is minimized during recordings now.
-- **Tables / Media Recorder**: The VPX emulator recording option is disabled when a non-VPX game is part of the recording session now. You need to go through the frontend for these cases.
-- **Tables / Play Button**: Fixed resolving of a games emulator, so that additional menu entries can be added.
-- **Backglass Manager / res generator**: Fixed positioning of Full DMD B2S that was offset when using background.
-- **Backglass Manager / preferences**: To ease understanding where backglass options are stored, the backglass preferences screen now displays the location of the used B2STableSettings.xml. 
-- **Pause Menu / Auto-Shutdown**: Added additional check during the automatic shutdown timer that checks if the pause menu or overlay is currently opened. In this case, the shutdown is not executed so you can pause as long as you want.
-- **Pause Menu** Added option to mute the system on pause.
-- **Competitions / iScores**: Fixed reading highscores from the iScored dashboard, leading to an empty list in the competitions overview.
-- **Preferences / Emulators** Fixed configuration issue with the visibility of the Future Pinball emulator.
-- **Default Emulator Resolving**: There are some situations, e.g. for the component manager, where just the first emulator is picked to see calculate VPX related summaries. This may not hold up when the Popper defaults have changed. For now, at least the first VPX emulator with the lowest id is picked. This is yet subject to change since may need to provide more emulator selections in these situations.
-- **Remote Monitor**: The button for toggling the remote monitor screens is only shown when connected from remote now.
-- **Studio Window Closing**: Fixed properly closing the Studio window when closed via shortcut and the action was cancelled.
-- **System Manager / Freezy**: Fixed folder of freezy for generating summary. It was using first VPX emulator instead of the Mame installation folder.
-
----
-
-## Release Notes 3.14.1
-
-## Changes
-
-- **Server Game Launch Events**: Fixed issue that when multiple VPX emulators have been setup with the same installation directory, the active game was not detected properly. Therefore, the pause menu did not work and no highscore change event could be fired.  
-- **VPin Mania Table Rating Enablement**: Fixed possible database deadlock that froze the UI.
-
----
-
-## Release Notes 3.14
-
-## Changes
-
-- **Tables / Launch Button**: Added options to launch VPX versions in camera mode.
-- **Tables / Media Previews**: Added tooltips with filename, size and modification date to all previews.
-- **Tables / Media Recorder**: Added new "expert" mode which allows to customize the ffmpeg.exe command for every screen. Please refer to the ffmpeg documentation for more details. And if someone manages to record with audio, please share the corresponding command on my Discord!
-- **Competitions / iScored**: Added error message in case the game room's read API is not enabled.
-- **DMD Position Tool**: Added ability to turn external DMD off in VpinMame settings and/or disable DMD in DmdDevice.ini.
-
+   <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/dmd-positioner2.png?raw=true" width="700" /> 
+  
+- **Media Recorder**: 
+  - Added option to set the VPX parameter "-Primary" for the recording.
+  - For convenience, the screen validators are sychronized with the media recording screens now. So if validations for a screen are disabled, the screen will also be hidden from the Media Recorder. Of course, they can be enabled there again.
+- **Table Data Manager**: 
+  - The comments dialog has been integrated into the Table Data Manager dialog. The feature was a bit too hidden.
+  - The Table Data Manager dialog has an additional tab "Playlists" now where the game can be assigned to playlists.
+  - The auto-matching has been improved for a better accuracy in the match with the VPS database.
+- **Table Asset Management** 
+  - Added highscore reset button to "Scores" tab.
+  - Added additional dialog for media bulk conversions. The action for this is only available in the asset mode view. Note that you can extend the given conversion options on your own (https://github.com/syd711/vpin-studio/wiki/Table-Asset-Manager#media-converter).
+ 
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="400" />
+- **Preferences Hooks**: Added support for .vbs files. Also, the ROM name and the table filename from the selected table in the table overview are passed as parameters to the script. (https://github.com/syd711/vpin-studio/wiki/Preferences-Hooks)
+- **Window Management**: All positions and sizes of resizeable dialogs are stored now. In case something is messed up, the settings can be resetted in the client preferences.
+- **PINemHi 3.6.6 Update**: 
+  - Comes with new support for the ROMs "robo_a29" and "robo_a30".
+  - robo_a34 (Robocop) Initials not handled correctly  , making PINemHi crash (happened when you put your initials in the hiscore table)  
+  - eballchp, eballch2, ladyluck, motrdome, beatclck, beatclc2  scores not handled correctly after a hiscore reset using vpinmame when hiscore being set is less than 7 digits long
 
 ## Bugfixes
 
-- **Tables / Asset Manager**: Fixed reset of the server asset list on game selection change.
-- **Tables / Asset Manager**: Fixed reset media players when the dialog is closed and media playback is still running.
-- **Tables / Media Recorder**: Fixed flag for 60fps recording.
-- **Tables / Media Recorder**: Added "move back" behaviour when the recording is started from the client on the cabinet. This should solve the issue that the Studio stays in front during the recording.
-- **Tables / ALT Sound**: Fixed case sensitive issue for upper-case ROM names.
-- **Webhooks**: Added missing change listener for the game lifecycle events (create, update and delete).
-- **Backglass Manager / .res Editor**: Fixed saving .res files without frame images.
-- **Backglass Manager / Screen offset**: Fixed the backglass screen identification when parsing screenres.txt.
-- **Highscore Event Handling**: Fixed issue that if the player achieved multiple new highscores during one game, only one highscore change event was emitted. The server emits now messages for every change, starting with the highest one. This way, all new scores are posted to iScored too (or only the highest if the single score submission is enabled).
-- **Future Pinball Support**: Phew, this was neglected a lot. So here comes a bunch of fixes based on table archives from **Terry Red**. I still lack some knowledge here, so feel free to drop feedback on the VPin Studio's Discord server.
-  - Fixed auto-renaming for .fpt files.
-  - Fixed some validations that have been skipped for .fpt files.
-  - Added renaming support for BAM configuration files.
-  - Added upload detection for BAM configuration files, including a separate upload dialog. When you upload **Terry Red** bundles, make sure to select only the BAM files you wish to install by using the media filter dialog (which is part of the table upload dialog).
-  - Added option in the table deletion dialog for BAM configuration files.
-
+- **Media Recorder**: 
+  - Fixed issue that the selection was kept when the emulator selection was switched. Because of the possible emulator recording mode, only recording from one emulator type are allowed. 
+  - Fixed issue that the "default" VPX emulator was used for emulator recordings instead of the actual VPX emulator selection.
+  - Fixed issue existing recordings couldn't be overwritten by new ones. To avoid the file lock, the copy process for the recordings is executed after the emulator/frontend has been closed now.
+  - Fixed issue that the media overview was not properly refreshed after a recording was finished.
+  - Changed the Media Recorder view to a split view, so that the vertical splitter can be resized. 
+- **DMD Position Tool**: Fixed issue when rom contains a dot like PiratesLife, positions were not properly saved. The rom name in the dmddevice.ini has to be ecsaped.
+- **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
+- **MAME Settings**: Fixed missing displaying of MAME related errors in the MAME sidepanel.
+- **Pause Menu**: The navigation glitch that lead to wrong scaled items or selection positioning has been fixed.
 
 ## VPin Mania
 
-- Reworked registration dialog and preferences page.
-- Players statistics are loaded with a single request now. So you don't have to wait until all scores are loaded anymore.
-- Additional statistic data is submitted to VPin Mania when the corresponding privacy settings are enabled. They are disabled by default, but you'll get a notification on the first table rating to enable these. The data is **anonymous** and will help to gather insights about the popularity of tables and their versions. 
+The VPin Mania integration has undergone a complete overhaul. The whole "VPin Mania" section has been removed and migrated into the VPin Mania app. Also, all preferences have been consolidated into a separate toolbar menu (the former "Friends" menu). **If you have connected with friends already, please revisit the privacy settings.** Here is a summary of all the changes:
+- The account management and tournaments settings have been moved from the regular settings into the "VPin Mania" preferences.
+- The preferences section "My Cabinet" has been duplicated for the VPin Mania preferences to highlight that these changes are reflected on the new website too.
+- The tournaments view has a quick-preferences and sidebar toggle button now, so it matches with the tables and competitions view now.
+- The tournaments dialog was revisited and adapted to the new iScored integration. Several bugs have been fixed and performance optimizations been added.
+- The playlist manager has now also a SQL template for tournament tables now.
+
+## VPin Mania Webapp
+<img src="https://app.vpin-mania.net/android-icon-144x144.png" width="80" />
+
+**https://app.vpin-mania.net/ has been launched!** You can now browse all your highscores online.
+The website replaces the old VPin Mania view from the Studio and has the same feature set the older view and even more!
+Check out the YouTube video (https://www.youtube.com/@vpin-studio) for more details.
+
+Note for the highscore admins of vpin-mania: The website comes with an additional admin interface to put highscores on the deny list.
+

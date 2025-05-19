@@ -31,18 +31,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.*;
 
@@ -146,24 +144,18 @@ public class MenuController implements Initializable {
   }
 
   public void scrollGameBarRight() {
-    resetBrowser();
     scroll(false);
   }
 
   public void scrollGameBarLeft() {
-    resetBrowser();
     scroll(true);
   }
 
-  public boolean isAtEnd() {
-    return selectionIndex == (pauseMenuItems.size() - 1);
-  }
+  private synchronized void scroll(boolean left) {
+    if (animating.get()) {
+      return;
+    }
 
-  public boolean isAtStart() {
-    return selectionIndex == 0;
-  }
-
-  private void scroll(boolean left) {
     if (menuItemsRow.getChildren().isEmpty() || pauseMenuItems.size() == 1) {
       return;
     }
@@ -193,11 +185,15 @@ public class MenuController implements Initializable {
         selectionIndex++;
       }
     }
-
     animateMenuSteps(left, oldIndex, steps, duration);
   }
 
-  private void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
+  private AtomicBoolean animating = new AtomicBoolean(false);
+
+  private synchronized void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
+
+
+    animating.set(true);
     final Node node = menuItemsRow.getChildren().get(oldIndex);
     Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? PauseMenuUIDefaults.SCROLL_OFFSET : -PauseMenuUIDefaults.SCROLL_OFFSET);
     Transition t2 = TransitionUtil.createScaleTransition(node, PauseMenuUIDefaults.SELECTION_SCALE_DEFAULT, duration);
@@ -220,6 +216,7 @@ public class MenuController implements Initializable {
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.onFinishedProperty().set(event -> {
+      animating.set(false);
       int updatedSteps = steps - 1;
       int updatedOldIndex = left ? oldIndex - 1 : oldIndex + 1;
       if (updatedSteps > 0) {
@@ -227,6 +224,7 @@ public class MenuController implements Initializable {
         return;
       }
       updateSelection(oldSelection, currentSelection);
+      animating.set(false);
     });
     parallelTransition.play();
   }
@@ -234,13 +232,7 @@ public class MenuController implements Initializable {
   private void updateSelection(Node oldNode, Node node) {
     if (oldNode != null) {
       PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
-      if (activeSelection.getYouTubeUrl() != null) {
-        //TODO webview
-//        webView.setVisible(true);
-//        WebEngine engine = webView.getEngine();
-//        engine.loadContent("");
-      }
-      else if (activeSelection.getVideoUrl() != null) {
+      if (activeSelection.getVideoUrl() != null && mediaView != null && mediaView.getMediaPlayer() != null) {
         try {
           mediaView.getMediaPlayer().stop();
           mediaView.getMediaPlayer().dispose();
@@ -304,30 +296,8 @@ public class MenuController implements Initializable {
         mediaPlayer.setCycleCount(-1);
         mediaPlayer.setMute(false);
         mediaView.setMediaPlayer(mediaPlayer);
+        LOG.info("Started streaming of {}", activeSelection.getVideoUrl());
       }
-    }
-    else if (activeSelection.getYouTubeUrl() != null) {
-      screenImageView.setVisible(true);
-      screenImageView.setImage(activeSelection.getDataImage());
-      LOG.info("Loading YT video: " + activeSelection.getYouTubeUrl());
-
-      //TODO webview
-//      webView.setVisible(true);
-//      WebEngine engine = webView.getEngine();
-//      try {
-//        byte[] byteArray = IOUtils.toByteArray(PauseMenu.class.getResourceAsStream("video.html"));
-//        String html = new String(byteArray);
-//        engine.loadContent(html);
-//
-//        Document document = engine.getDocument();
-//        org.w3c.dom.Node iframe = document.getElementsByTagName("iframe").item(0);
-//        System.out.println(iframe.getOwnerDocument());
-//      }
-//      catch (IOException e) {
-//        throw new RuntimeException(e);
-//      }
-//      engine.load(activeSelection.getYouTubeUrl());
-
     }
     else if (activeSelection.getDataImage() != null) {
       screenImageView.setVisible(true);
@@ -339,7 +309,6 @@ public class MenuController implements Initializable {
 
   public void reset() {
     LOG.info("Resetting pause menu media items.");
-    this.resetBrowser();
     this.screenImageView.setImage(null);
 
     try {
@@ -428,16 +397,6 @@ public class MenuController implements Initializable {
       label.setMinWidth(THUMBNAIL_SIZE);
       menuItemsRow.getChildren().add(label);
     }
-  }
-
-  public void showYouTubeVideo(PauseMenuItem item) {
-    if (pauseMenuSettings != null) {
-      Browser.getInstance().showYouTubeVideo(tutorialScreen, item.getYouTubeUrl(), item.getName());
-    }
-  }
-
-  public void resetBrowser() {
-    Browser.getInstance().exitBrowser();
   }
 
   public boolean isVisible() {

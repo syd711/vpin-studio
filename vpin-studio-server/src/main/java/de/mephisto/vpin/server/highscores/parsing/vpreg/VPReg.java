@@ -38,6 +38,7 @@ public class VPReg {
     adapters.put("singleAnonymousEntry2", new SingleEntryAnonymousVPRegHighscoreAdapter("RaygunRunner", "highscore"));
     adapters.put("singleAnonymousEntry3", new SingleEntryAnonymousVPRegHighscoreAdapter("Heatw", "HS"));
     adapters.put("singleAnonymousEntry4", new SingleEntryAnonymousVPRegHighscoreAdapter("SpEyes", "HS"));
+    adapters.put("singleAnonymousEntry5", new SingleEntryAnonymousVPRegHighscoreAdapter("JungleQueen", "HighScore5"));
     adapters.put("multiWithLettersEntry", new MultiEntryWithLettersVPRegHighscoreAdapter(Arrays.asList("Gulfstream", "Mariner", "AirAces", "SeaRay"), 5));
     adapters.put("singleAnonymousEntry", new SingleEntryAnonymousVPRegHighscoreAdapter());
     adapters.put("singleWithLettersEntry", new SingleEntryWithLettersVPRegHighscoreAdapter());

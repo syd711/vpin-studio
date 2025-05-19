@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -10,6 +11,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
@@ -143,8 +145,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private void onManiaTable() {
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(selection.getExtTableId()));
+    if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
+      Studio.browse(ManiaUrlFactory.createTableUrl(selection.getExtTableId(), selection.getExtTableVersionId()));
     }
   }
 
@@ -158,13 +160,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     setBusy(true);
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
-    new Thread(() -> {
+    JFXFuture.supplyAsync(() -> {
       if (force) {
         client.getGameService().clearCache();
       }
-      games = client.getGameService().getVpxGamesCached();
-
-      Platform.runLater(() -> {
+      return client.getGameService().getVpxGamesCached();
+    })
+    .thenAcceptLater(games -> {
+        this.games = games;
         filterGames(games);
         tableView.setItems(data);
         templateEditorPane.setVisible(!data.isEmpty());
@@ -185,7 +188,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           tableView.requestFocus();
         });
       });
-    }).start();
   }
 
   private void setBusy(boolean b) {
@@ -370,7 +372,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     maniaBtn.setGraphic(iconMania);
 
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
-    games = client.getGameService().getVpxGamesCached();
+
     cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
 
     try {
@@ -568,8 +570,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     if (gameRepresentation.isPresent()) {
-      GameRepresentation refreshedGame = client.getGameService().getVpxGameCached(gameRepresentation.get().getId());
-      Platform.runLater(() -> {
+      JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameRepresentation.get().getId()))
+      .thenAcceptLater(refreshedGame -> {
         tableView.getSelectionModel().getSelectedItems().removeListener(this);
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
         tableView.getSelectionModel().clearSelection();

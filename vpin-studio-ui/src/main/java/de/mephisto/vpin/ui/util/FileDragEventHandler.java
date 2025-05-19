@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class FileDragEventHandler implements EventHandler<DragEvent> {
 
@@ -21,8 +22,8 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
   private List<String> suffixes;
 
   protected DnDOverlayController overlayController;
-  private boolean disabled = false;
-
+  
+  private Predicate<DragEvent> dragFilter;
 
   public static FileDragEventHandler install(Pane loaderStack, Node node, boolean singleSelectionOnly, String... suffix) {
     FileDragEventHandler handler = new FileDragEventHandler(loaderStack, node, singleSelectionOnly, suffix);
@@ -43,10 +44,9 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
 
   @Override
   public void handle(DragEvent event) {
-    if (disabled) {
+    if (dragFilter != null && !dragFilter.test(event)) {
       return;
     }
-
 
     List<File> files = event.getDragboard().getFiles();
 
@@ -84,6 +84,11 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     overlayController.showOverlay();
   }
 
+  public FileDragEventHandler setOnDragFilter(Predicate<DragEvent> dragFilter) {
+    this.dragFilter  = dragFilter;
+    return this;
+  }
+
   public FileDragEventHandler setOnDragDropped(EventHandler<DragEvent> handler) {
     overlayController.setOnDragDropped(e -> {
       overlayController.hideOverlay();
@@ -97,22 +102,5 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
       overlayController.setMessage(null);
     }
     return this;
-  }
-
-
-  private boolean checkDataFormat(DataFormat contentType) {
-    Set<String> identifiers = contentType.getIdentifiers();
-    for (String identifier : identifiers) {
-      for (String suffix : suffixes) {
-        if (identifier.toLowerCase().contains("." + suffix.toLowerCase())) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  public void setDisabled(boolean b) {
-    this.disabled = b;
   }
 }

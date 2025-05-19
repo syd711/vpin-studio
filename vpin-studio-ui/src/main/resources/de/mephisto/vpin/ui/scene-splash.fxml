@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
@@ -26,6 +25,14 @@
          <font>
             <Font name="System Bold Italic" size="16.0" />
          </font>
+      </Label>
+      <Label fx:id="versionLabel1" layoutX="27.0" layoutY="492.0" text="VPin Studio" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
+         <font>
+            <Font name="Impact" size="48.0" />
+         </font>
+         <StackPane.margin>
+            <Insets bottom="43.0" left="17.0" />
+         </StackPane.margin>
       </Label>
    </children>
 </StackPane>

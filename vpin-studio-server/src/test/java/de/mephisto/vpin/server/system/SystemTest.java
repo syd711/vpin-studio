@@ -18,4 +18,30 @@ public class SystemTest extends AbstractVPinServerTest {
     assertFalse(systemService.getMonitorInfos().isEmpty());
     assertFalse(systemService.getCompetitionBadges().isEmpty());
   }
+
+
+  @Test
+  public void testDotNet() throws Exception {
+    boolean dotNetInstalled = systemService.isDotNetInstalled();
+    assertTrue(dotNetInstalled);
+
+    assertTrue(systemService.isValidDotNetVersion("v4"));
+    assertTrue(systemService.isValidDotNetVersion("v4.0"));
+    assertTrue(systemService.isValidDotNetVersion("v3.5"));
+    assertFalse(systemService.isValidDotNetVersion("v2.0.4"));
+  }
+
+  @Test
+  public void testStickKeys() throws Exception {
+    boolean stickyKeysEnabled = systemService.isStickyKeysEnabled();
+    if(stickyKeysEnabled) {
+      systemService.setStickyKeysEnabled(false);
+      assertFalse(systemService.isStickyKeysEnabled());
+    }
+    else {
+      systemService.setStickyKeysEnabled(true);
+      assertTrue(systemService.isStickyKeysEnabled());
+    }
+  }
+
 }

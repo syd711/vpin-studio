@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.system.SystemService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public class PupLauncher {
 
   public boolean launch(int gameId) {
     try {
-      File launchFolder = new File(SystemInfo.RESOURCES);
+      File launchFolder = new File(SystemService.RESOURCES);
       List<String> params = Arrays.asList("cmd", "/c", "start", "puplauncher.exe", String.valueOf(gameId));
       SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
       executor.setDir(launchFolder);

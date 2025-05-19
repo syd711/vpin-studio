@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" styleClass="main" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.ManiaSettingsController">
+   <center>
+      <HBox alignment="TOP_CENTER" BorderPane.alignment="TOP_CENTER">
+         <children>
+            <BorderPane>
+               <center>
+                  <ScrollPane hbarPolicy="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" styleClass="base-component">
+                     <content>
+                        <VBox fx:id="navigationBox" fillWidth="false">
+                           <children>
+                              <VBox fx:id="maniaGroup">
+                                 <children>
+                                    <Label alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" styleClass="preference-section" text="ACCOUNT">
+                                       <font>
+                                          <Font size="13.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button fx:id="initialButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="menuItemsPanel">
+                                 <children>
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPrivacySettings" styleClass="preference-button" text="Data &amp; Privacy Settings" />
+                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="CABINET">
+                                       <font>
+                                          <Font size="13.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button fx:id="cabinetBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onCabinet" styleClass="preference-button" text="Cabinet Settings" />
+                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRIENDS">
+                                       <font>
+                                          <Font size="13.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsList" styleClass="preference-button" text="All" />
+                                    <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onFriendsPendingInvites" styleClass="preference-button" text="Pending Invites" />
+                                    <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="TOURNAMENTS">
+                                       <font>
+                                          <Font size="13.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="24.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <Button fx:id="tournamentsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onTournaments" styleClass="preference-button" text="Tournament Settings" />
+                                 </children>
+                              </VBox>
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <padding>
+                              <Insets left="18.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </center>
+               <HBox.margin>
+                  <Insets top="24.0" />
+               </HBox.margin>
+               <bottom>
+                  <VBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <Hyperlink fx:id="kofiLink" onAction="#onKofiLink">
+                           <graphic>
+                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
+                           </graphic>
+                        </Hyperlink>
+                        <Hyperlink onAction="#onDiscordLink" text="Join Discord">
+                           <graphic>
+                              <FontIcon iconColor="#c7c3c3" iconLiteral="mdi2d-discord" iconSize="24" />
+                           </graphic>
+                        </Hyperlink>
+                        <Hyperlink fx:id="versionLink" onAction="#onVersionLInk" styleClass="version-label" text="Hyperlink" textFill="#b0abab" />
+                        <Label fx:id="hostLabel" layoutX="358.0" layoutY="10.0" styleClass="version-label" text="Label">
+                           <VBox.margin>
+                              <Insets right="5.0" />
+                           </VBox.margin>
+                        </Label>
+                     </children>
+                  </VBox>
+               </bottom>
+            </BorderPane>
+            <BorderPane>
+               <left>
+                  <BorderPane fx:id="preferencesMain" maxWidth="900.0" minWidth="900.0" prefWidth="900.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" top="24.0" />
+                     </BorderPane.margin>
+                     <center>
+                     </center>
+                  </BorderPane>
+               </left>
+               <right>
+                  <HBox BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets top="28.0" />
+                     </BorderPane.margin>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#onClose" styleClass="ghost-button-default">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close-circle-outline" iconSize="48" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </right>
+            </BorderPane>
+         </children>
+      </HBox>
+   </center>
+</BorderPane>

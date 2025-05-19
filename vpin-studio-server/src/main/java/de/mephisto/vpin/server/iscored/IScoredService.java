@@ -51,13 +51,13 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       return;
     }
     String dashboardUrl = tournament.getDashboardUrl();
-    if (!IScored.isIscoredGameRoomUrl(dashboardUrl)) {
+    if (!IScored.isIScoredGameRoomUrl(dashboardUrl)) {
       LOG.info("Not a tournament url for iScored: {}", dashboardUrl);
       return;
     }
 
     try {
-      GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
+      GameRoom gameRoom = IScored.getGameRoom(dashboardUrl, true);
       if (gameRoom != null) {
         if (!gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
           LOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
@@ -90,55 +90,25 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
     }
   }
 
-  public void submitScore(Competition iScoredSubscription, Score newScore) {
-    String url = iScoredSubscription.getUrl();
-    if (!IScored.isIscoredGameRoomUrl(url)) {
-      LOG.warn("The URL of " + iScoredSubscription + " (" + url + ") is not a valid iScored URL.");
-      SLOG.warn("The URL of " + iScoredSubscription + " (" + url + ") is not a valid iScored URL.");
-      return;
-    }
-
-    LOG.info("Emitting iScored game score to " + url);
-    SLOG.info("Emitting iScored game score to " + url);
-
-    IScored.invalidate();
-    GameRoom gameRoom = IScored.getGameRoom(url);
+  public void submitScore(@NonNull IScoredGame iScoredGame, Score newScore) {
+    GameRoom gameRoom = IScored.getGameRoom(iScoredGame.getGameRoomUrl(), true);
     if (gameRoom != null) {
-      String vpsTableId = iScoredSubscription.getVpsTableId();
-      String vpsVersionId = iScoredSubscription.getVpsTableVersionId();
-      IScoredGame iScoredGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
-      if (iScoredGame != null) {
-        String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
-        if (iScoredGame.isDisabled()) {
-          LOG.info("Skipped iScored score submission, because table " + iScoredGame + " has disabled flag set.");
-          SLOG.info("Skipped iScored score submission, because table " + iScoredGame + " has disabled flag set.");
-          return;
-        }
+      String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
+      IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
+      SLOG.info(result.toString());
 
-        IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), newScore.getScore());
-        SLOG.info(result.toString());
-        if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isiScoredNotification()) {
-          Game game = gameService.getGame(newScore.getGameId());
+      if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isiScoredNotification()) {
+        Game game = gameService.getGame(newScore.getGameId());
 
-          Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
-              game.getGameDisplayName(), "An iScored highscore has been posted!",
-              newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
-          notificationService.showNotification(notification);
-        }
-      }
-      else {
-        LOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "' and VPS version id '" + vpsVersionId + "'");
-        SLOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "' and VPS version id '" + vpsVersionId + "', check is tagged with the correct URL.");
-        List<IScoredGame> games = gameRoom.getGames();
-        SLOG.info("Game Room Games:");
-        for (IScoredGame game : games) {
-          SLOG.info(" - " + game.getName() + "[" + String.join(", ", game.getTags()) + "] (matches VPS ids: " + game.matches(vpsTableId, vpsVersionId) + ")");
-        }
+        Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
+            game.getGameDisplayName(), "An iScored highscore has been posted!",
+            newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
+        notificationService.showNotification(notification);
       }
     }
     else {
-      LOG.warn("No iScored game room found for " + url);
-      SLOG.warn("No iScored game room found for " + url);
+      LOG.warn("No iScored game room found for " + iScoredGame.getGameRoomUrl());
+      SLOG.warn("No iScored game room found for " + iScoredGame.getGameRoomUrl());
     }
   }
 

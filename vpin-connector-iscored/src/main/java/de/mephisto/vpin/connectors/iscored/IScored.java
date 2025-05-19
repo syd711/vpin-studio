@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.iscored.models.GameModel;
 import de.mephisto.vpin.connectors.iscored.models.GameRoomModel;
 import de.mephisto.vpin.connectors.iscored.models.GameScoreModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,12 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class IScored {
   private final static Logger LOG = LoggerFactory.getLogger(IScored.class);
 
-  private static ObjectMapper objectMapper;
+  private final static ObjectMapper objectMapper;
 
   static {
     objectMapper = new ObjectMapper();
@@ -31,31 +33,35 @@ public class IScored {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  private static Map<String, GameRoom> cache = new HashMap<>();
+  private final static Map<String, GameRoom> cache = new ConcurrentHashMap<>();
 
-  //fixme implement proper check
-  public static boolean isIscoredGameRoomUrl(String dashboardUrl) {
-    return true; //dashboardUrl != null && dashboardUrl.toLowerCase().contains("iscored.info");
+  public static boolean isIScoredGameRoomUrl(String dashboardUrl) {
+    return dashboardUrl.toLowerCase().startsWith("https://www.iScored.info/".toLowerCase());
   }
 
-  public static GameRoom getGameRoom(@NonNull String url) {
-    if (!cache.containsKey(url)) {
-      cache.put(url, loadGameRoom(url));
+  @Nullable
+  public static GameRoom getGameRoom(@Nullable String url, boolean forceReload) {
+    if (url == null) {
+      return null;
     }
-    return cache.get(url);
-  }
 
-  public static void invalidate() {
-    cache.clear();
-  }
-
-  public static GameRoom loadGameRoom(@NonNull String url) {
-    try {
-
-      long start = System.currentTimeMillis();
-      if (!isIscoredGameRoomUrl(url)) {
-        throw new UnsupportedOperationException("Invalid gameroom URL \"" + url + "\"");
+    if (!cache.containsKey(url) || forceReload) {
+      GameRoom gameRoom = loadGameRoom(url);
+      if (gameRoom != null) {
+        cache.put(url, gameRoom);
       }
+    }
+
+    if (cache.containsKey(url)) {
+      return cache.get(url);
+    }
+
+    return null;
+  }
+
+  private static GameRoom loadGameRoom(@NonNull String url) {
+    try {
+      long start = System.currentTimeMillis();
 
       // parse and align room URL 
       URL roomurl = new URL(url);
@@ -86,6 +92,7 @@ public class IScored {
 
           for (GameModel gameModel : games) {
             IScoredGame game = new IScoredGame();
+            game.setGameRoomUrl(gameRoom.getUrl());
             game.setId(gameModel.getGameID());
             game.setName(gameModel.getGameName());
             game.setTags(gameModel.getTags());
@@ -94,13 +101,22 @@ public class IScored {
             gameRoom.getGames().add(game);
           }
 
+          Collections.sort(gameRoom.getGames(), new Comparator<IScoredGame>() {
+            @Override
+            public int compare(IScoredGame o1, IScoredGame o2) {
+              return o1.getName().compareTo(o2.getName());
+            }
+          });
+
+
+
           LOG.info("Loaded game room from URL '" + url + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
           return gameRoom;
         }
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to load iScored Game Room: {}", e.getMessage(), e);
+      LOG.error("Failed to load iScored Game Room: {}", e.getMessage());
     }
 
     return null;
@@ -193,6 +209,14 @@ public class IScored {
 
   public static IScoredResult submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
     IScoredResult result = new IScoredResult();
+
+    if (game.isGameLocked()) {
+      LOG.info("The submission for this table is locked on iScored.");
+      result.setMessage("The submission for this table is locked on iScored.");
+      result.setReturnCode(200);
+      return result;
+    }
+
     List<Score> scores = game.getScores();
     if (scores != null) {
       for (Score score : scores) {

@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.competitions.CompetitionIdFactory;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
@@ -1660,9 +1661,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 //    }
 //  }
 
-  //TODO rename getControl
   @Nullable
-  public FrontendControl getFunction(@NonNull String description) {
+  public FrontendControl getFrontendControl(@NonNull String description) {
     FrontendControl f = null;
     Connection connect = this.connect();
     try {
@@ -1691,16 +1691,16 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
 
-  public FrontendControl getPinUPControlFor(VPinScreen screen) {
+  public FrontendControl getFrontendControlFor(VPinScreen screen) {
     switch (screen) {
       case Other2: {
-        return getFunction(FrontendControl.FUNCTION_SHOW_OTHER);
+        return getFrontendControl(FrontendControl.FUNCTION_SHOW_OTHER);
       }
       case GameHelp: {
-        return getFunction(FrontendControl.FUNCTION_SHOW_HELP);
+        return getFrontendControl(FrontendControl.FUNCTION_SHOW_HELP);
       }
       case GameInfo: {
-        return getFunction(FrontendControl.FUNCTION_SHOW_FLYER);
+        return getFrontendControl(FrontendControl.FUNCTION_SHOW_FLYER);
       }
       default: {
 
@@ -2137,6 +2137,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       game.setPatchVersion(rs.getString(serverSettings.getMappingPatchVersion()));
     }
 
+    if (sqlVersion >= DB_VERSION) {
+      String tourneyId = rs.getString("TourneyID");
+      game.setCompetitionTypes(CompetitionIdFactory.getCompetitionTypes(tourneyId));
+    }
+
     return game;
   }
 
@@ -2518,7 +2523,6 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
-          //TODO mpf
           while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player")) {
             Thread.sleep(1000);
           }

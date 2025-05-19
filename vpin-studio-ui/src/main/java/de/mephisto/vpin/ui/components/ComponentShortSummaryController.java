@@ -1,16 +1,14 @@
 package de.mephisto.vpin.ui.components;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -85,17 +83,16 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.DOFLINX_SETTINGS) && component.getType().equals(ComponentType.doflinx)) {
-      root.setVisible(client.getDofLinxService().isValid());
+      JFXFuture.supplyAsync(() -> client.getDofLinxService().isValid())
+        .thenAcceptLater(isDofLinxValid -> root.setVisible(isDofLinxValid));
     }
   }
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
     if (component.getType().equals(type)) {
-      Platform.runLater(() -> {
-        ComponentRepresentation updatedComponent = client.getComponentService().getComponent(type);
-        refresh(updatedComponent);
-      });
+      JFXFuture.supplyAsync(() -> client.getComponentService().getComponent(type))
+        .thenAcceptLater(updatedComponent -> refresh(updatedComponent));
     }
   }
 

@@ -1,13 +1,10 @@
 package de.mephisto.vpin.restclient.dmd;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+public class DMDInfo {
 
-public class DMDInfo extends DMDInfoZone {
   private int gameId;
   private String gameRom;
 
@@ -24,25 +21,23 @@ public class DMDInfo extends DMDInfoZone {
   /** Whether external DMD is used for that table or VpinMame */
   private DMDType dmdType;
 
-  /** additional marging used to autoposition the dmd */
-  private int margin;
+  /** Whether backglass scores should be disabled (for alphanumeric) */
+  private boolean disableBackglassScores;
 
   /** When disabled, whether use virtualdmd enabled = false or turn external dmd off in VpinMame settings */
   private boolean disableInVpinMame;
   private boolean disableViaIni;
 
-  /** The screen where the DMD is displayed */  
-  private VPinScreen onScreen;
-  /** Width of the screen hosting the dmd */
-  private double screenWidth;
-  /** Height of the screen hosting the dmd */
-  private double screenHeight;
-  private boolean imageCentered;
+  private List<DMDInfoZone> zones = new ArrayList<>();
 
+  //private boolean imageCentered;
+
+  /** whether external DMD is supported */ 
+  private boolean supportExtDmd;
+  /** Whether alphanumeric DMD i ssupported or not */
+  private boolean supportAlphaNumericDmd;
   /** when dmd is positioned on grill, dmd size is 0x0, then option to position on dmd should be turned off */ 
-  private boolean dmdScreenSet;
-
-  List<DMDInfoZone> zones = null;
+  private boolean supportFullDmd;
 
 
   public int getGameId() {
@@ -100,39 +95,9 @@ public class DMDInfo extends DMDInfoZone {
   public void setDMDType(DMDType dmdType) {
     this.dmdType = dmdType;
   }
+
   
-  public int getMargin() {
-    return margin;
-  }
-
-  public void setMargin(int margin) {
-    this.margin = margin;
-  }
-
-  public VPinScreen getOnScreen() {
-    return onScreen;
-  }
-
-  public void setOnScreen(VPinScreen onScreen) {
-		this.onScreen = onScreen;
-	}
-
-	public double getScreenWidth() {
-		return screenWidth;
-	}
-
-	public void setScreenWidth(double screenWidth) {
-		this.screenWidth = screenWidth;
-	}
-
-	public double getScreenHeight() {
-		return screenHeight;
-	}
-
-	public void setScreenHeight(double screenHeight) {
-		this.screenHeight = screenHeight;
-	}
-
+/*
 	public boolean isImageCentered() {
 		return imageCentered;
 	}
@@ -140,13 +105,14 @@ public class DMDInfo extends DMDInfoZone {
 	public void setImageCentered(boolean imageCentered) {
 		this.imageCentered = imageCentered;
 	}
+*/
 
-  public boolean isDmdScreenSet() {
-    return dmdScreenSet;
+  public List<DMDInfoZone> getZones() {
+    return zones;
   }
 
-  public void setDmdScreenSet(boolean dmdScreenSet) {
-    this.dmdScreenSet = dmdScreenSet;
+  public void setZones(List<DMDInfoZone> zones) {
+    this.zones = zones;
   }
 
   public boolean isDisableInVpinMame() {
@@ -165,26 +131,16 @@ public class DMDInfo extends DMDInfoZone {
     this.disableViaIni = disableViaIni;
   }
 
+  public boolean isDisableBackglassScores() {
+    return disableBackglassScores;
+  }
+
+  public void setDisableBackglassScores(boolean disableBackglassScore) {
+    this.disableBackglassScores = disableBackglassScore;
+  }
+
   //-----------------------
-
-  public boolean isOnPlayfield() {
-    return onScreen != null && VPinScreen.PlayField.equals(onScreen);
-  }
-
-  public boolean isOnBackglass() {
-    return onScreen != null && VPinScreen.BackGlass.equals(onScreen);
-  }
-
-  public boolean isOnFullDmd() {
-    return onScreen != null && VPinScreen.Menu.equals(onScreen);
-  }
-
-  public void centerOnScreen() {
-    setX(getScreenWidth() / 2 - getWidth() / 2);
-    setY(getScreenHeight() / 2 - getHeight() / 2);
-  }
-
-
+  /*
   @Override
   public boolean equals(Object object) {
     if (this == object) return true;
@@ -194,40 +150,43 @@ public class DMDInfo extends DMDInfoZone {
   }
 
   @Override
-  public String toString() {
-    return "[" + x + "/" + y + " - " + width + "x" + height + " @ " + onScreen + "]";
-  }
-
-  @Override
   public int hashCode() {
     return Objects.hash(gameId, x, y, width, height);
   }
-
-  public void adjustAspectRatio() {
-    super.adjustAspectRatio(aspectRatio);
-  }
+  */
 
   public boolean isUseExternalDmd() {
     return dmdType.equals(DMDType.VirtualDMD) || dmdType.equals(DMDType.AlphaNumericDMD);
   }
 
   public boolean isDisabled() {
-    return dmdType.equals(DMDType.NoDMD);
+    return dmdType == null || dmdType.equals(DMDType.NoDMD);
   }
 
-  public void addAlphaNumericScore(DMDInfoZone rect) {
-    if (zones == null) {
-      zones = new ArrayList<>();
-    }
-    zones.add(rect);
+  public boolean isSupportExtDmd() {
+    return supportExtDmd;
   }
 
-  public List<DMDInfoZone> getAlphaNumericScores() {
-    return zones != null? Collections.unmodifiableList(zones) : Collections.emptyList();
+  public void setSupportExtDmd(boolean supportExtDmd) {
+    this.supportExtDmd = supportExtDmd;
   }
 
-  public void setAlphaNumericScores(List<DMDInfoZone> zones) {
-    this.zones = zones;
+  public boolean isSupportAlphaNumericDmd() {
+    return supportAlphaNumericDmd;
   }
+
+  public void setSupportAlphaNumericDmd(boolean supportAlphaNumericDmd) {
+    this.supportAlphaNumericDmd = supportAlphaNumericDmd;
+  }
+
+  public boolean isSupportFullDmd() {
+    return supportFullDmd;
+  }
+
+  public void setSupportFullDmd(boolean supportFullDmd) {
+    this.supportFullDmd = supportFullDmd;
+  }
+
+  //-------------------------------
 
 }

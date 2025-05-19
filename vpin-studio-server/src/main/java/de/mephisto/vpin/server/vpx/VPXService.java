@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -266,12 +267,15 @@ public class VPXService implements InitializingBean {
       if ("cameraMode".equals(option)) {
         return vpxCommandLineService.execute(game, altExe, "-Minimized", "-PovEdit");
       }
+      else if ("primary".equals(option)) {
+        return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Primary", "-Play");
+      }
       else {
         return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
       }
 
     }
-    return vpxCommandLineService.launch();
+    return false;
   }
 
   public boolean waitForPlayer() {
@@ -294,7 +298,7 @@ public class VPXService implements InitializingBean {
     return null;
   }
 
-  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis<?> analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
     MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }

@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.components.ComponentInstallation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -16,29 +16,25 @@ import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentInstallProgressModel extends ProgressModel<ComponentType> {
+public class ComponentInstallProgressModel extends ProgressModel<ComponentInstallation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentInstallProgressModel.class);
 
-  private final Iterator<ComponentType> iterator;
+  private final List<ComponentInstallation> components;
+  private final Iterator<ComponentInstallation> iterator;
   private final boolean simulate;
-  private final String artifactName;
-  private final List<ComponentType> components;
-  private final String releaseTag;
 
-  public ComponentInstallProgressModel(ComponentType type, boolean simulate, String releaseTag, String artifactName) {
+  public ComponentInstallProgressModel(ComponentInstallation component, boolean simulate) {
     super("");
-    this.releaseTag = releaseTag;
     if(simulate) {
-      super.setTitle("Installation Simulator for " + artifactName);
+      super.setTitle("Installation Simulator for " + component.getArtifactName());
     }
     else {
-      super.setTitle("Installing " + artifactName);
+      super.setTitle("Installing " + component.getArtifactName());
     }
 
-    this.components = Arrays.asList(type);
+    this.components = Arrays.asList(component);
     this.iterator = components.iterator();
     this.simulate = simulate;
-    this.artifactName = artifactName;
   }
 
   @Override
@@ -47,7 +43,7 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
   }
 
   @Override
-  public ComponentType getNext() {
+  public ComponentInstallation getNext() {
     return iterator.next();
   }
 
@@ -57,11 +53,11 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
   }
 
   @Override
-  public String nextToString(ComponentType c) {
+  public String nextToString(ComponentInstallation c) {
     if (simulate) {
-      return "Simulating Installation of " + c;
+      return "Simulating Installation of " + c.getArtifactName();
     }
-    return "Updating " + c;
+    return "Updating " + c.getArtifactName();
   }
 
   @Override
@@ -70,14 +66,14 @@ public class ComponentInstallProgressModel extends ProgressModel<ComponentType> 
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, ComponentType next) {
+  public void processNext(ProgressResultModel progressResultModel, ComponentInstallation next) {
     try {
       ComponentActionLogRepresentation install = null;
       if (simulate) {
-        install = client.getComponentService().simulate(next, releaseTag, artifactName);
+        install = client.getComponentService().simulate(next);
       }
       else {
-        install = client.getComponentService().install(next, releaseTag, artifactName);
+        install = client.getComponentService().install(next);
       }
       progressResultModel.getResults().add(install);
     } catch (Exception e) {

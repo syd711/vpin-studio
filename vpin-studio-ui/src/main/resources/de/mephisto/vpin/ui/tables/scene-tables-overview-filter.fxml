@@ -110,6 +110,7 @@
                         <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="NVOffset Set" />
                         <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ROM Alias Set" />
                         <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />
+                        <CheckBox fx:id="iScoredCompetitionCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Game" />
                      </children>
                   </VBox>
                   <Label layoutX="21.0" layoutY="244.0" styleClass="default-title" text="Data Filters">

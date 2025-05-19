@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.altsound.AltSound;
@@ -24,7 +26,9 @@ import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomDialogController;
 import de.mephisto.vpin.ui.preferences.dialogs.WebhooksDialogController;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
@@ -36,16 +40,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -177,7 +178,7 @@ public class TableDialogs {
     });
   }
 
-  public static void onMusicUploads(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void onMusicUploads(File file, UploaderAnalysis analysis, Runnable finalizer) {
     TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
   }
 
@@ -305,7 +306,7 @@ public class TableDialogs {
     }
 
     String fxml = getDataManagerFxml();
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
     controller.setGame(stage, overviewController, game, screen, false);
@@ -320,7 +321,7 @@ public class TableDialogs {
     }
 
     String fxml = getDataManagerFxml();
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", null, TableAssetManagerDialogController.MODAL_STATE_ID);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game != null ? game.getEmulatorId() : -1);
     controller.setStage(stage);
@@ -331,14 +332,14 @@ public class TableDialogs {
     return true;
   }
 
-  @NotNull
+  @NonNull
   private static String getDataManagerFxml() {
     double width = Studio.stage.getWidth();
     String fxml = "dialog-table-asset-manager.fxml";
     if (width <= 1300) {
       fxml = "dialog-table-asset-manager-hd.fxml";
     }
-    else  if (width < 1900) {
+    else if (width < 1900) {
       fxml = "dialog-table-asset-manager-fullhd.fxml";
     }
     return fxml;
@@ -364,12 +365,8 @@ public class TableDialogs {
   }
 
 
-  public static boolean openCommentDialog(GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");
-    TableNotesController controller = (TableNotesController) stage.getUserData();
-    controller.setGame(game);
-    stage.showAndWait();
-
+  public static boolean openCommentDialog(TableOverviewController overviewController, GameRepresentation game) {
+    openTableDataDialog(overviewController, game, 2);
     return true;
   }
 
@@ -389,14 +386,14 @@ public class TableDialogs {
     return true;
   }
 
-  public static void openDMDPositionDialog(GameRepresentation game) {
+  public static void openDMDPositionDialog(GameRepresentation game, @Nullable BackglassManagerController backglassMgrController) {
     Stage stage = Dialogs.createStudioDialogStage(DMDPositionController.class, "dialog-dmd-position.fxml", "DMD Position");
     DMDPositionController controller = (DMDPositionController) stage.getUserData();
-    controller.setGame(game);
+    controller.setGame(game, backglassMgrController);
     stage.showAndWait();
   }
 
-  public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setData(stage, file, game, analysis, finalizer);
@@ -419,7 +416,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
     }
@@ -431,7 +428,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
     }
@@ -442,14 +439,14 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
     controller.setData(stage, file, game, analysis, finalizer);
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, @Nullable AssetType filterMode) {
+  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis analysis, @Nullable AssetType filterMode, int emulatorId) {
     String title = "Media Pack";
     if (game != null) {
       title = "Media for \"" + game.getGameDisplayName() + "\"";
@@ -457,15 +454,15 @@ public class TableDialogs {
     if (filterMode != null) {
       title = "Media Selection";
     }
-    Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title);
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title, null);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
-    controller.setData(game, analysis, file, stage, filterMode);
+    controller.setData(game, analysis, file, stage, filterMode, emulatorId);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis<?> analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getEmulatorService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -474,7 +471,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, emutype, uploadType, analysis);
+    controller.setGame(stage, game, uploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -487,13 +484,20 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
+  public static void openConverterDialog(List<GameRepresentation> selectedGames) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaConverterDialogController.class, "dialog-media-converter.fxml", "Media Conversion");
+    MediaConverterDialogController controller = (MediaConverterDialogController) stage.getUserData();
+    controller.setGames(selectedGames);
+    stage.showAndWait();
+  }
+
 
   public static TableDetails openAutoFillSettingsDialog(Stage stage, List<GameRepresentation> games, TableDetails tableDetails) {
     return openAutoFillSettingsDialog(stage, games, tableDetails, null, null);
   }
 
   public static TableDetails openAutoFillSettingsDialog(Stage stage, List<GameRepresentation> games, TableDetails tableDetails, @Nullable String vpsTableId, @Nullable String vpsVersionId) {
-    Stage dialogStage = Dialogs.createStudioDialogStage(stage, AutoFillSelectionController.class, "dialog-autofill-settings.fxml", "Auto-Fill Settings");
+    Stage dialogStage = Dialogs.createStudioDialogStage(stage, AutoFillSelectionController.class, "dialog-autofill-settings.fxml", "Auto-Fill Settings", null);
     AutoFillSelectionController controller = (AutoFillSelectionController) dialogStage.getUserData();
     controller.setData(games, tableDetails, vpsTableId, vpsVersionId);
     dialogStage.showAndWait();
@@ -571,7 +575,7 @@ public class TableDialogs {
       stage.setUserData(fxResizeHelper);
       stage.setMinWidth(812);
       stage.setMaxWidth(812);
-      stage.setMaxHeight(1020);
+      stage.setMaxHeight(1060);
       stage.setMinHeight(TableDataController.MIN_HEIGHT);
 
       stage.showAndWait();
@@ -610,12 +614,19 @@ public class TableDialogs {
     return controller.getArchiveSource();
   }
 
-
   public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
     Stage stage = Dialogs.createStudioDialogStage(WebhooksDialogController.class, "dialog-webhook-set.fxml", "Webhook Set");
     WebhooksDialogController controller = (WebhooksDialogController) stage.getUserData();
     controller.setData(settings, set);
     stage.showAndWait();
+  }
+
+  public static boolean openIScoredGameRoomDialog(@NonNull IScoredSettings settings, @Nullable IScoredGameRoom gameRoom) {
+    Stage stage = Dialogs.createStudioDialogStage(IScoredGameRoomDialogController.class, "dialog-iscored-gameroom.fxml", "iScored Game Room");
+    IScoredGameRoomDialogController controller = (IScoredGameRoomDialogController) stage.getUserData();
+    controller.setData(settings, gameRoom);
+    stage.showAndWait();
+    return controller.getResult();
   }
 
   public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {
@@ -677,7 +688,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openPatchUpload(GameRepresentation gameRepresentation, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openPatchUpload(GameRepresentation gameRepresentation, File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(PatchUploadController.class, "dialog-patch-upload.fxml", "Patch Upload");
     PatchUploadController controller = (PatchUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);
@@ -685,7 +696,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openMusicUploadDialog(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);
@@ -716,8 +727,7 @@ public class TableDialogs {
   }
 
   public static void openDismissAllDialog(GameRepresentation gameRepresentation) {
-    FXMLLoader fxmlLoader = new FXMLLoader(DismissAllController.class.getResource("dialog-dismiss-all.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Dismiss Validation Errors");
+    Stage stage = WidgetFactory.createDialogStage(DismissAllController.class, Studio.stage, "Dismiss Validation Errors", "dialog-dismiss-all.fxml");
     DismissAllController controller = (DismissAllController) stage.getUserData();
     controller.setGame(gameRepresentation);
     stage.showAndWait();

@@ -413,9 +413,11 @@
                         </Tab>
                         <Tab fx:id="scoreDataTab" closable="false" text="Score Data">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                            <AnchorPane minHeight="0.0" minWidth="0.0" />
                           </content>
                         </Tab>
+                        <Tab fx:id="commentsTab" closable="false" text="Comments" />
+                        <Tab fx:id="playlistsTab" closable="false" text="Playlists" />
                         <Tab fx:id="metaDataTab" closable="false" text="Meta Data">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">

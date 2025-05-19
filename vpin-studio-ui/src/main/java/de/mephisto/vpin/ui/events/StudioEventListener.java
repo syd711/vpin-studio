@@ -18,6 +18,10 @@ public interface StudioEventListener {
 
   }
 
+  default void backglassChanged(int emulatorId, String b2sFileName) {
+
+  }
+
   default void vpsTableChanged(@NonNull String vpsTableId) {
 
   }

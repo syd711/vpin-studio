@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -22,10 +21,10 @@ import java.util.zip.ZipInputStream;
 
 import static de.mephisto.vpin.restclient.util.FileUtils.isFileBelowFolder;
 
-public class UploaderAnalysis<T> {
+public class UploaderAnalysis {
   private final static Logger LOG = LoggerFactory.getLogger(UploaderAnalysis.class);
   private final static List<String> romSuffixes = Arrays.asList("bin", "rom", "cpu", "snd", "dat", "s2", "l1");
-  private final static List<String> altColorSuffixes = Arrays.asList("vni", "crz", "pal", "pac", "pal");
+  private final static List<String> altColorSuffixes = Arrays.asList("vni", "crz", "pal", "pac");
   private final static List<String> mediaSuffixes = Arrays.asList("mp3", "png", "apng", "jpg", "mp4");
   private final static List<String> musicSuffixes = Arrays.asList("mp3", "ogg", "wav");
 
@@ -37,7 +36,6 @@ public class UploaderAnalysis<T> {
   public final static String CFG_SUFFIX = "cfg";
   public final static String BAM_CFG_SUFFIX = "cfg";
 
-  private final Frontend frontend;
   private final File file;
 
   private final List<String> fileNamesWithPath = new ArrayList<>();
@@ -46,10 +44,11 @@ public class UploaderAnalysis<T> {
   private List<String> excludedFolders = new ArrayList<>();
 
   private String readme;
+  private boolean supportPupPacks;
   private String pupFolder;
 
-  public UploaderAnalysis(Frontend frontend, File file) {
-    this.frontend = frontend;
+  public UploaderAnalysis(boolean supportPupPacks, File file) {
+    this.supportPupPacks = supportPupPacks;
     this.file = file;
   }
 
@@ -123,7 +122,7 @@ public class UploaderAnalysis<T> {
   }
 
   public String getRomFromPupPack() {
-    if (!frontend.getFrontendType().supportPupPacks()) {
+    if (!supportPupPacks) {
       return null;
     }
 
@@ -264,7 +263,7 @@ public class UploaderAnalysis<T> {
   }
 
   public List<String> getPopperMediaFiles(VPinScreen screen) {
-    if (!frontend.getFrontendType().supportPupPacks()) {
+    if (!supportPupPacks) {
       return Collections.emptyList();
     }
 
@@ -302,7 +301,7 @@ public class UploaderAnalysis<T> {
       zis = new ZipInputStream(fileInputStream);
       ZipEntry nextEntry = zis.getNextEntry();
       while (nextEntry != null) {
-        analyze(zis, (T) nextEntry, nextEntry.getName(), nextEntry.isDirectory(), nextEntry.getSize());
+        analyze(zis, nextEntry, nextEntry.getName(), nextEntry.isDirectory(), nextEntry.getSize());
         zis.closeEntry();
         nextEntry = zis.getNextEntry();
       }
@@ -328,7 +327,7 @@ public class UploaderAnalysis<T> {
     try {
       IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
       for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
-        analyze(inArchive, (T) item, item.getPath(), item.isFolder(), item.getSize());
+        analyze(inArchive, item, item.getPath(), item.isFolder(), item.getSize());
       }
       inArchive.close();
       randomAccessFileStream.close();
@@ -344,23 +343,23 @@ public class UploaderAnalysis<T> {
     }
   }
 
-  public void analyze(IInArchive in, T archiveEntry, String name, boolean directory, long size) {
+  public void analyze(IInArchive in, ISimpleInArchiveItem archiveEntry, String name, boolean directory, long size) {
     String formattedName = name.replaceAll("\\\\", "/");
-    boolean checkReadme = analyze(archiveEntry, formattedName, directory, size);
+    boolean checkReadme = analyze(formattedName, directory, size);
     if (checkReadme) {
-      readReadme((ISimpleInArchiveItem) archiveEntry, formattedName);
+      readReadme(archiveEntry, formattedName);
     }
   }
 
-  public void analyze(InputStream in, T archiveEntry, String name, boolean directory, long size) {
+  public void analyze(InputStream in, ZipEntry archiveEntry, String name, boolean directory, long size) {
     String formattedName = name.replaceAll("\\\\", "/");
-    boolean checkReadme = analyze(archiveEntry, formattedName, directory, size);
+    boolean checkReadme = analyze(formattedName, directory, size);
     if (checkReadme) {
       readReadme(in, formattedName);
     }
   }
 
-  public boolean analyze(T archiveEntry, String formattedName, boolean directory, long size) {
+  protected boolean analyze(String formattedName, boolean directory, long size) {
     if (formattedName.contains("_MACOSX")) {
       return false;
     }
@@ -883,7 +882,6 @@ public class UploaderAnalysis<T> {
           return true;
         }
       }
-
     }
 
     return false;

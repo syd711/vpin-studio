@@ -10,5 +10,5 @@ public interface PauseMenuUIDefaults {
   int THUMBNAIL_SIZE = 240;
   int SCROLL_OFFSET = 120;
 
-  int MAX_REFRESH_COUNT = 3;
+  int MAX_REFRESH_COUNT = 10;
 }

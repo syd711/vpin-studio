@@ -1,11 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -53,43 +50,11 @@ public class CompetitionService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private IScoredService iScoredService;
-
-  @Autowired
-  private VpsService vpsService;
-
-  @Autowired
   private CompetitionValidator competitionValidator;
 
-  private final List<CompetitionChangeListener> listeners = new ArrayList<>();
+  @Autowired
+  private CompetitionLifecycleService competitionLifecycleService;
 
-  public void addCompetitionChangeListener(CompetitionChangeListener c) {
-    this.listeners.add(c);
-  }
-
-  public void notifyCompetitionCreation(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionCreated(c);
-    }
-  }
-
-  public void notifyCompetitionStarted(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionStarted(c);
-    }
-  }
-
-  public void notifyCompetitionChanged(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionChanged(c);
-    }
-  }
-
-  public void notifyCompetitionDeleted(@NonNull Competition c) {
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionDeleted(c);
-    }
-  }
 
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
@@ -112,13 +77,8 @@ public class CompetitionService implements InitializingBean {
         .collect(Collectors.toList());
   }
 
-
   public List<Competition> getIScoredSubscriptions() {
-    List<Competition> collect = competitionsRepository
-        .findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name())
-        .stream().map(c -> competitionValidator.validate(c))
-        .collect(Collectors.toList());
-    return autoFixCompetitionGames(collect);
+    return competitionsRepository.findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name());
   }
 
   public List<Competition> getSubscriptions(String rom) {
@@ -206,10 +166,10 @@ public class CompetitionService implements InitializingBean {
     Competition updated = competitionsRepository.saveAndFlush(c);
     LOG.info("Saved " + updated);
     if (isNew) {
-      notifyCompetitionCreation(updated);
+      competitionLifecycleService.notifyCompetitionCreation(updated);
     }
     else {
-      notifyCompetitionChanged(updated);
+      competitionLifecycleService.notifyCompetitionChanged(updated);
     }
     return getCompetition(c.getId());
   }
@@ -234,11 +194,11 @@ public class CompetitionService implements InitializingBean {
     for (Competition activeCompetition : activeCompetitions) {
       if (activeCompetition.isActive() && !activeCompetition.isStarted()) {
         LOG.info("Starting " + activeCompetition);
-        notifyCompetitionStarted(activeCompetition);
-
         //update state
         activeCompetition.setStarted(true);
         competitionsRepository.saveAndFlush(activeCompetition);
+
+        competitionLifecycleService.notifyCompetitionStarted(activeCompetition);
       }
 
       if (activeCompetition.isActive() && activeCompetition.isStarted() && activeCompetition.getType().equals(CompetitionType.DISCORD.name())) {
@@ -292,9 +252,7 @@ public class CompetitionService implements InitializingBean {
       player = discordService.getPlayerByInitials(finishedCompetition.getDiscordServerId(), finishedCompetition.getWinnerInitials());
     }
 
-    for (CompetitionChangeListener listener : this.listeners) {
-      listener.competitionFinished(finishedCompetition, player, competitionScore);
-    }
+    competitionLifecycleService.notifyCompetitionFinished(finishedCompetition, player, competitionScore);
     return finishedCompetition;
   }
 
@@ -320,7 +278,8 @@ public class CompetitionService implements InitializingBean {
     Optional<Competition> c = competitionsRepository.findById(id);
     if (c.isPresent()) {
       competitionsRepository.deleteById(id);
-      notifyCompetitionDeleted(c.get());
+      competitionLifecycleService.notifyCompetitionDeleted(c.get());
+      LOG.error("Deleted competition " + c.get().getName());
       return true;
     }
     else {
@@ -351,60 +310,17 @@ public class CompetitionService implements InitializingBean {
     return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
 
-  private List<Competition> autoFixCompetitionGames(List<Competition> collect) {
-    List<Competition> validatedCompetitions = new ArrayList<>();
-    for (Competition competition : collect) {
-      int gameId = competition.getGameId();
-      if (gameId > 0) {
-        Game game = gameService.getGame(gameId);
-        if (game != null) {
-          String extTableId = game.getExtTableId();
-          String extTableVersionId = game.getExtTableVersionId();
-          VpsTable tableById = vpsService.getTableById(extTableId);
-          if (tableById != null && !StringUtils.isEmpty(extTableVersionId)) {
-            VpsTableVersion tableVersionById = tableById.getTableVersionById(extTableVersionId);
-            if (tableVersionById == null) {
-              competition.setGameId(-1);
-              Competition save = save(competition);
-              LOG.info("Resetted game of " + competition + ", because no matching VPS table version was found");
-              validatedCompetitions.add(save);
-              continue;
-            }
-          }
-          else {
-            competition.setGameId(-1);
-            Competition save = save(competition);
-            LOG.info("Resetted game of " + competition + ", because no matching VPS table was found");
-            validatedCompetitions.add(save);
-            continue;
-          }
-        }
-      }
-      else {
-        Game game = gameService.getGameByVpsTable(competition.getVpsTableId(), competition.getVpsTableVersionId());
-        if (game != null) {
-          competition.setGameId(game.getId());
-          Competition save = save(competition);
-          validatedCompetitions.add(save);
-          LOG.info("Auto-applied game of " + competition);
-          continue;
-        }
-      }
-
-      validatedCompetitions.add(competition);
-    }
-    return validatedCompetitions;
-  }
-
   @Override
   public void afterPropertiesSet() throws Exception {
     scheduler.scheduleAtFixedRate(new CompetitionCheckRunnable(this), 1000 * 60 * 2);
+
+
 
     try {
       List<Competition> iScoredSubscriptions = getIScoredSubscriptions();
       LOG.info("---------------------------------- iScored Competitions -----------------------------------------------");
       for (Competition s : iScoredSubscriptions) {
-        LOG.info(s.toString() + " (" + gameService.getGame(s.getGameId()) + ") [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
+        LOG.info(s.toString() + " [" + s.getUrl() + "], [" + VPS.getVpsTableUrl(s.getVpsTableId(), s.getVpsTableVersionId()) + "], ID: " + s.getGameId());
       }
       LOG.info("--------------------------------- /iScored Competitions -----------------------------------------------");
     }

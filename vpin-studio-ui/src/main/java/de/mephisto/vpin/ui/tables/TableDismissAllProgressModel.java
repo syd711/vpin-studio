@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.MAX_REFRESH_COUNT;
+
 public class TableDismissAllProgressModel extends ProgressModel<GameRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(TableDismissAllProgressModel.class);
   private List<GameRepresentation> games;
@@ -33,7 +35,14 @@ public class TableDismissAllProgressModel extends ProgressModel<GameRepresentati
 
   @Override
   public void finalizeModel(ProgressResultModel progressResultModel) {
-    EventManager.getInstance().notifyTablesChanged();
+    if (games.size() > MAX_REFRESH_COUNT) {
+      EventManager.getInstance().notifyTablesChanged();
+    }
+    else {
+      for (GameRepresentation game : games) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+    }
   }
 
   @Override

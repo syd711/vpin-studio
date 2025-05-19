@@ -2,11 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -33,6 +35,14 @@
                </HBox.margin>
             </Button>
             <Button fx:id="saveLocallyBtn" mnemonicParsing="false" onAction="#onSaveLocallyClick" styleClass="submit-button" text="Save Position Locally">
+               <tooltip>
+                  <Tooltip prefWidth="300.0" text="Save the current DMD Position. [Ctrl-S]" wrapText="true" />
+               </tooltip>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="saveCloseLocallyBtn" mnemonicParsing="false" onAction="#onSaveCloseLocallyClick" styleClass="submit-button" text="Save &amp; Close Position Locally">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -44,20 +54,131 @@
       </HBox>
    </bottom>
    <center>
-      <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
+         <top>
+            <BorderPane BorderPane.alignment="TOP_LEFT">
+               <left>
+                  <Label fx:id="titleLabel" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </left>
+               <right>
+                  <HBox spacing="3.0" alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+                  </right>
+            </BorderPane>
+         </top>
+         <center>
+            <VBox>
+               <children>
+                  <TabPane fx:id="tabPane">
+                     <tabs>
+                        <Tab fx:id="playfieldTab" closable="false" text="Playfield" />
+                        <Tab fx:id="backglassTab" closable="false" text="Backglass" />
+                        <Tab fx:id="dmdTab" closable="false" text="DMD" />
+                     </tabs>
+                  </TabPane>
+
+      <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
          <center>
             <Pane fx:id="imagepane" styleClass="media-parent">
                <ImageView fx:id="fullDMDImage" fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="false">
                </ImageView>
+               <VBox fx:id="noFullDMDPane">
+                  <children>
+                     <VBox spacing="3">
+                        <children>
+                           <Label fx:id="noFullDMDLabel" styleClass="default-text" text="No Full DMD Image present in the backglass !" textFill="WHITE" />
+                           <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="You can upload or drop a Full DMD image here. Please note the backglass will be modified and will be enhanced with the uploaded image." />
+                           <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
+                        </VBox.margin>
+                     </VBox>
+
+                     <VBox fx:id="useFullDMDMediaPane" spacing="3">
+                        <children>
+                           <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" text="... or Use Full DMD Media :" textFill="WHITE" />
+                           <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description" text="Full DMD Media is present. You can keep the full DMD/Apron frontend screen on to use it." textFill="WHITE" />
+                           <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="Keep Frontend Full DMD On">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="12.0" left="12.0" right="12.0" />
+                        </VBox.margin>
+                     </VBox>
+                  </children>
+               </VBox>
             </Pane>
          </center>
          <right>
-            <VBox BorderPane.alignment="TOP_LEFT">
+            <VBox prefWidth="280.0" BorderPane.alignment="TOP_LEFT">
                <children>
-                  <Label styleClass="default-headline" text="DMD Type" />
+                  <Label fx:id="tablePositionLabel" text="--">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox fx:id="romPane" spacing="3.0">
+                     <children>
+                        <Label styleClass="default-text" text="ROM (or alias):" />
+                        <Label fx:id="romLabel" text="--">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label styleClass="default-headline" text="DMD Type">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
                   <VBox spacing="3.0">
                      <children>
                         <ComboBox fx:id="DMDTypeCombo" />
@@ -65,12 +186,12 @@
                            <children>
                               <VBox spacing="3.0">
                                  <children>
-                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="Turn off in VpinMAME" textFill="WHITE">
+                                    <CheckBox fx:id="disableViaMameCheckbox" mnemonicParsing="false" text="Turn DMD off in VpinMAME" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="Disable in dmddevice.ini" textFill="WHITE">
+                                    <CheckBox fx:id="disableViaIniCheckbox" mnemonicParsing="false" text="Disable DMD in dmddevice.ini" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -93,21 +214,41 @@
                               <Insets bottom="12.0" top="6.0" />
                            </VBox.margin>
                         </HBox>
-                        <Label fx:id="tablePositionLabel" text="--" >
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox>
+                        <VBox fx:id="backglassScorePane" spacing="3.0">
                            <children>
-                              <Label styleClass="default-text" text="ROM (or alias):" />
-                              <Label fx:id="romLabel" text="--" >
+                              <HBox >
+                                 <children>
+                                    <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="Turn Backglass Scores off" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="When checked, tell the backglass not to render scores that are behind the alphanumeric scores and could be seen. Mind this setting modifies the backglass. IMPORTANT : When not checked, it re-enables only the scores turned off by studio !" wrapText="true" />
+                                       </tooltip>
+                                       <HBox.margin>
+                                          <Insets left="12.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="12.0" top="6.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Button fx:id="resetToScoresBtn" mnemonicParsing="false" onAction="#onResetToScores" text="Reset to Backglass Scores Positions" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
-                              </Label>
+                              </Button>
                            </children>
-                        </HBox>
+                        </VBox>
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -119,7 +260,7 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox spacing="3.0" fx:id="radioOnPane" >
+                  <VBox fx:id="radioOnPane" spacing="3.0">
                      <children>
                         <RadioButton fx:id="radioOnBackglass" mnemonicParsing="false" text="On Backglass" textFill="WHITE">
                            <font>
@@ -144,8 +285,8 @@
 
                   <GridPane fx:id="spinnersPane" vgap="3.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95" minWidth="10.0" prefWidth="60" />
-                        <ColumnConstraints hgrow="SOMETIMES" prefWidth="150" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="64.5999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="221.39999999999998" minWidth="190.20004882812498" prefWidth="215.80002441406248" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
@@ -230,8 +371,7 @@
                      </rowConstraints>
                      <children>
                         <Label styleClass="default-text" text="Margin:" GridPane.rowIndex="0" />
-                        <Spinner GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="marginSpinner" 
-                           min="0" initialValue="0" max="20" amountToStepBy="1" />
+                        <Spinner fx:id="marginSpinner" amountToStepBy="1" initialValue="0" max="20" min="0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
                         <Button fx:id="autoPositionBtn" mnemonicParsing="false" onAction="#onAutoPosition" text="Auto Position" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <font>
@@ -246,8 +386,6 @@
                         <Insets top="8.0" />
                      </VBox.margin>
                   </GridPane>
-
-
                </children>
 
                <BorderPane.margin>
@@ -255,6 +393,14 @@
                </BorderPane.margin>
             </VBox>
          </right>
+      </BorderPane>
+
+               </children>
+               <BorderPane.margin>
+                  <Insets top="6.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
       </BorderPane>
    </center>
 </BorderPane>

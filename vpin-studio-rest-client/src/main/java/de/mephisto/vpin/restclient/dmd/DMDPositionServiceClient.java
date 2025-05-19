@@ -21,20 +21,33 @@ public class DMDPositionServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "dmdposition/" + gameId, DMDInfo.class);
   }
 
-  public DMDInfo moveDMDInfo(DMDInfo dmdInfo, VPinScreen target) {
-    return getRestClient().post(API + "dmdposition/move?target=" + target, dmdInfo, DMDInfo.class);
+  public DMDInfo switchDMDInfo(DMDInfo dmdInfo, DMDType type) {
+    return getRestClient().post(API + "dmdposition/switch?type=" + type.name(), dmdInfo, DMDInfo.class);
   }
 
-  public DMDInfo autoPositionDMDInfo(DMDInfo dmdInfo) {
-    return getRestClient().post(API + "dmdposition/autoPosition", dmdInfo, DMDInfo.class);
+  public DMDInfo resetToScores(DMDInfo dmdInfo) {
+    return getRestClient().post(API + "dmdposition/resetToScores", dmdInfo, DMDInfo.class);
   }
+
+  public DMDInfo useFrontendFullDMDMedia(DMDInfo dmdInfo) {
+    return getRestClient().post(API + "dmdposition/useFrontendFullDMDMedia", dmdInfo, DMDInfo.class);
+  }
+
 
   public boolean saveDMDInfo(DMDInfo dmdInfo) {
     return getRestClient().post(API + "dmdposition/save", dmdInfo, Boolean.class);
   }
 
-  public ByteArrayInputStream getPicture(DMDInfo dmdinfo) {
-    byte[] bytes = getRestClient().readBinary(API + "dmdposition/picture/" + dmdinfo.getGameId() + "/" + dmdinfo.getOnScreen() + ".png");
+  public DMDInfoZone moveDMDInfo(int gameId, DMDInfoZone dmdInfoZone, VPinScreen target) {
+    return getRestClient().post(API + "dmdposition/" + gameId +  "/move?target=" + target.name(), dmdInfoZone, DMDInfoZone.class);
+  }
+
+  public DMDInfoZone autoPositionDMDInfo(int gameId, DMDInfoZone dmdInfoZone) {
+    return getRestClient().post(API + "dmdposition/" + gameId + "/autoPosition", dmdInfoZone, DMDInfoZone.class);
+  }
+
+  public ByteArrayInputStream getPicture(int gameId, VPinScreen onScreen) {
+    byte[] bytes = getRestClient().readBinary(API + "dmdposition/picture/" + gameId + "/" + onScreen.name() + ".png");
     return (bytes != null) ? new ByteArrayInputStream(bytes) : null;
   }
 }

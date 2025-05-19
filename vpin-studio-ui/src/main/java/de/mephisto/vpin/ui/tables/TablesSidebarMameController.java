@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -112,6 +113,9 @@ public class TablesSidebarMameController implements Initializable {
   private Button mameBtn;
 
   @FXML
+  private Button aliasBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -175,7 +179,9 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onVPMAlias() {
     try {
-      boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.VPMAliasTxt), "VPMAlias.txt");
+      TextFile textFile = new TextFile(VPinFile.VPMAliasTxt);
+      textFile.setEmulatorId(game.get().getEmulatorId());
+      boolean b = Dialogs.openTextEditor(textFile, "VPMAlias.txt");
       if (b) {
         client.getMameService().clearCache();
         EventManager.getInstance().notifyTablesChanged();
@@ -251,7 +257,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
-    DismissalUtil.dismissValidation(g, options.getValidationStates().get(0));
+    DismissalUtil.dismissValidation(g, game.get().getValidationState());
   }
 
   @Override
@@ -303,6 +309,7 @@ public class TablesSidebarMameController implements Initializable {
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
     copyRomBtn.setDisable(true);
+    aliasBtn.setDisable(g.isEmpty());
 
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);
@@ -364,13 +371,18 @@ public class TablesSidebarMameController implements Initializable {
           soundModeCombo.setValue(SOUND_MODES.get(options.getSoundMode()));
           forceStereo.setSelected(options.isForceStereo());
 
-          if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
-            ValidationState validationState = options.getValidationStates().get(0);
-            LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
+          if (game.getValidationState() != null) {
+            ValidationState validationState = game.getValidationState();
+            if (validationState.getCode() == GameValidationCode.CODE_ALT_COLOR_COLORIZE_DMD_ENABLED ||
+                validationState.getCode() == GameValidationCode.CODE_FORCE_STEREO ||
+                validationState.getCode() == GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED ||
+                validationState.getCode() == GameValidationCode.CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) {
+              LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
 
-            this.errorBox.setVisible(true);
-            this.errorTitle.setText(validationResult.getLabel());
-            this.errorText.setText(validationResult.getText());
+              this.errorBox.setVisible(true);
+              this.errorTitle.setText(validationResult.getLabel());
+              this.errorText.setText(validationResult.getText());
+            }
           }
         }
       }

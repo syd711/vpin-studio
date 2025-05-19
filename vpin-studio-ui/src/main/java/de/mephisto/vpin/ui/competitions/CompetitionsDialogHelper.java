@@ -18,11 +18,11 @@ public class CompetitionsDialogHelper {
       nvramLabel.setGraphic(WidgetFactory.createExclamationIcon());
       nvramLabel.setTooltip(new Tooltip("Unknown Highscore Format"));
     }
-    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.EM.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.VPReg.name()) || game.getHighscoreType().equalsIgnoreCase(HighscoreType.Ini.name())) {
+    else if (game.getHighscoreType().equals(HighscoreType.EM) || game.getHighscoreType().equals(HighscoreType.VPReg) || game.getHighscoreType().equals(HighscoreType.Ini)) {
       nvramLabel.setGraphic(WidgetFactory.createCheckIcon());
       nvramLabel.setTooltip(new Tooltip("The highscore can be resetted."));
     }
-    else if (game.getHighscoreType().equalsIgnoreCase(HighscoreType.NVRam.name())) {
+    else if (game.getHighscoreType().equals(HighscoreType.NVRam)) {
       nvramLabel.setGraphic(WidgetFactory.createIcon("mdi2a-alert-circle-check-outline"));
       nvramLabel.setTooltip(new Tooltip("No resetted NVRam found, the highscores will be resetted to the ROMs default values."));
     }

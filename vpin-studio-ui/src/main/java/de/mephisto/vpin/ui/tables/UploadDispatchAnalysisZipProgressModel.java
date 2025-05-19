@@ -6,7 +6,6 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +22,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
   private final FileInputStream fileInputStream;
   private int size = 0;
 
-  private UploaderAnalysis<ZipEntry> uploaderAnalysis;
+  private UploaderAnalysis uploaderAnalysis;
 
   public UploadDispatchAnalysisZipProgressModel(File file) throws IOException {
     super("Analyzing Archive");
@@ -34,7 +33,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
     fileInputStream = new FileInputStream(file);
     zis = new ZipInputStream(fileInputStream);
 
-    uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
+    uploaderAnalysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), file);
   }
 
   @Override

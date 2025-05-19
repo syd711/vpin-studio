@@ -7,14 +7,20 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
@@ -24,7 +30,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.mania.TableRatingHelper;
+import de.mephisto.vpin.ui.mania.util.TableRatingHelper;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
@@ -36,6 +42,7 @@ import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.*;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -51,6 +58,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,15 +71,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -214,6 +219,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Button emulatorBtn;
 
   @FXML
+  private Button converterBtn;
+
+  @FXML
   private Separator importSeparator;
 
   @FXML
@@ -313,6 +321,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private UISettings uiSettings;
   private ServerSettings serverSettings;
   private ValidationSettings validationSettings;
+  private IScoredSettings iScoredSettings;
 
   private final List<Consumer<GameRepresentation>> reloadConsumers = new ArrayList<>();
 
@@ -353,6 +362,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @FXML
+  private void onConvert() {
+    TableDialogs.openConverterDialog(getSelections());
+  }
+
+  @FXML
   public void onAssetView() {
     tablesController.setSidebarVisible(true);
 
@@ -361,6 +375,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     assetManagerMode = !assetManagerMode;
     tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
     tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
+    converterBtn.setVisible(assetManagerMode);
 
     Platform.runLater(() -> {
       if (assetManagerMode) {
@@ -490,7 +505,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onMediaUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openMediaUploadDialog(Studio.stage, selectedItems.get(0), null, null, null);
+      TableDialogs.openMediaUploadDialog(Studio.stage, selectedItems.get(0), null, null, null, -1);
     }
   }
 
@@ -552,6 +567,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onVpsResetUpdates() {
     List<GameRepresentation> selectedItems = getSelections();
     onVpsResetUpdates(selectedItems);
+  }
+
+  @FXML
+  public void onResetRatings() {
+    List<GameRepresentation> selectedItems = getSelections();
+    for (GameRepresentation selectedItem : selectedItems) {
+      setGameRating(selectedItem, -1);
+    }
   }
 
   public static void onVpsResetUpdates(List<GameRepresentation> selectedItems) {
@@ -887,7 +910,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
 
   @FXML
-  private void onReload(ActionEvent e) {
+  public void onReload() {
     ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
     this.doReload();
   }
@@ -924,6 +947,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
+    this.emulatorCombo.setDisable(true);
+    this.playlistCombo.setDisable(true);
+
     GameRepresentation selection = getSelection();
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
@@ -949,12 +975,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return Collections.emptyList();
         })
         .thenAcceptLater(data -> {
-          // as the load of tables could take some time, users may have switched to another emulators in between
-          // if this is the case, do not refresh the UI with the results
-          GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
-          if (valueAfterSearch != null && (value == null || valueAfterSearch.getId() != value.getId())) {
-            return;
-          }
+          this.emulatorCombo.setDisable(false);
+          this.playlistCombo.setDisable(false);
 
           tableView.getSelectionModel().getSelectedItems().removeListener(this);
           setItems(data);
@@ -1018,19 +1040,26 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
-    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings));
-    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-    this.emulatorCombo.setDisable(false);
+    JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings))
+      .thenAcceptLater(filtered -> {
+        this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+        this.emulatorCombo.setDisable(false);
 
-    if (selectedEmu == null) {
-      this.emulatorCombo.getSelectionModel().selectFirst();
-    }
-    selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    emulatorBtn.setDisable(selectedEmu == null || selectedEmu.getId() == -1);
-    this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
+        if (selectedEmu != null) {
+          this.emulatorCombo.getSelectionModel().select(selectedEmu);
+        }
+        GameEmulatorRepresentation newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+        if (newSelection == null) {
+          this.emulatorCombo.getSelectionModel().selectFirst();
+          newSelection = this.emulatorCombo.getSelectionModel().getSelectedItem();
+        }
+
+        emulatorBtn.setDisable(newSelection == null || newSelection.getId() == -1);
+        this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
+      });
   }
 
   private void bindTable() {
@@ -1118,10 +1147,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnHSType, (value, model) -> {
-      String hsType = value.getHighscoreType();
-      if (!StringUtils.isEmpty(hsType) && hsType.equals("EM")) {
-        hsType = "Text";
-      }
+      HighscoreType type = value.getHighscoreType();
+      String hsType = HighscoreType.EM.equals(type) ? "Text" : type != null ? type.name() : null;
       Label label = new Label(hsType);
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
@@ -1241,30 +1268,47 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
-      ValidationState validationState = value.getValidationState();
-      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
-      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
-        if (validationState != null && validationState.getCode() > 0) {
-          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
-        }
+      HBox row = new HBox(2);
+      row.setAlignment(Pos.CENTER_RIGHT);
+      row.setMinWidth(34);
+
+      if (iScoredSettings != null && iScoredSettings.isEnabled() && !value.getCompetitionTypes().isEmpty()) {
+        Button compBtn = new Button();
+        compBtn.getStyleClass().add("table-media-button");
+        compBtn.setTooltip(new Tooltip("This table is competed."));
+        FontIcon cmpIcon = WidgetFactory.createIcon("mdi2t-trophy-variant");
+        cmpIcon.setIconColor(Paint.valueOf("#00c4ec"));
+        compBtn.setGraphic(cmpIcon);
+        row.getChildren().add(compBtn);
+        compBtn.setOnAction(event -> {
+          Platform.runLater(() -> {
+            CompetitionType competitionType = value.getCompetitionTypes().get(0);
+            if (competitionType.equals(CompetitionType.MANIA)) {
+              ManiaSettings maniaSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+              if (maniaSettings.isTournamentsEnabled()) {
+                NavigationController.navigateTo(NavigationItem.Tournaments, new NavigationOptions(-1));
+              }
+              else {
+                WidgetFactory.showInformation(stage, "Tournaments not enabled!", "You must enable the Mania Tournaments view to navigate there.");
+              }
+            }
+            else {
+              NavigationController.navigateTo(NavigationItem.Competitions, new NavigationOptions(competitionType));
+            }
+          });
+        });
       }
 
-      Button btn = new Button();
-      btn.getStyleClass().add("table-media-button");
-      HBox graphics = new HBox(3);
-      graphics.setAlignment(Pos.CENTER_RIGHT);
-      graphics.setMinWidth(34);
-      graphics.getChildren().add(statusIcon);
-
       if (!StringUtils.isEmpty(value.getComment())) {
+        Button commentBtn = new Button();
+        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
+        icon.setIconSize(16);
+        commentBtn.setGraphic(icon);
+        commentBtn.getStyleClass().add("table-media-button");
         String notes = value.getComment();
         Tooltip tooltip = new Tooltip(value.getComment());
         tooltip.setWrapText(true);
-        btn.setTooltip(tooltip);
-
-        FontIcon icon = WidgetFactory.createIcon("mdi2c-comment");
-        icon.setIconSize(16);
-        graphics.getChildren().add(0, icon);
+        commentBtn.setTooltip(tooltip);
 
         if (notes.toLowerCase().contains("//error")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
@@ -1275,18 +1319,31 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         else if (notes.toLowerCase().contains("//outdated")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
         }
+
+        row.getChildren().add(commentBtn);
+        commentBtn.setOnAction(event -> {
+          tableView.getSelectionModel().clearSelection();
+          tableView.getSelectionModel().select(model);
+          Platform.runLater(() -> {
+            TableDialogs.openCommentDialog(this, value);
+          });
+        });
       }
 
-      btn.setGraphic(graphics);
-      btn.setOnAction(event -> {
-        tableView.getSelectionModel().clearSelection();
-        tableView.getSelectionModel().select(model);
-        Platform.runLater(() -> {
-          TableDialogs.openCommentDialog(value);
-        });
-      });
 
-      return btn;
+      ValidationState validationState = value.getValidationState();
+      FontIcon statusIcon = WidgetFactory.createCheckIcon(getIconColor(value));
+      Label statusLabel = new Label();
+      if (value.getIgnoredValidations() != null && !value.getIgnoredValidations().contains(-1)) {
+        if (validationState != null && validationState.getCode() > 0) {
+          statusIcon = WidgetFactory.createExclamationIcon(getIconColor(value));
+          statusLabel.setTooltip(new Tooltip("This table has configuration issues."));
+        }
+      }
+      statusLabel.setGraphic(statusIcon);
+      row.getChildren().add(statusLabel);
+
+      return row;
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPinVol, (value, model) -> {
@@ -1518,15 +1575,23 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           final TableRow<GameRepresentationModel> row = new TableRow<>();
           final ContextMenu menu = new ContextMenu();
 
-          //ListChangeListener<GameRepresentation> changeListener = (ListChangeListener.Change<? extends GameRepresentation> c) ->
-          //    contextMenuController.refreshContextMenu(tableView, menu, this.getSelection());
+
+          row.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+              if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+                return;
+              }
+              contextMenuController.refreshContextMenu(tableView, menu, tableView.getSelectionModel().getSelectedItems());
+            }
+          });
 
           row.itemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem == null) {
 //              menu.getItems().clear();
             }
             else {
-              contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
+//              contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
             }
           });
 
@@ -1538,7 +1603,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   }
 
-  @NotNull
+  @NonNull
   public static Tooltip createPlaylistTooltip(PlaylistRepresentation match, Label playlistIcon) {
     Tooltip tooltip = new Tooltip(match.getName());
 
@@ -1694,6 +1759,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     if (assetManagerMode) {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
+      this.converterBtn.setDisable(getSelections().isEmpty());
     }
     else {
       List<GameRepresentation> games = this.tableView.getSelectionModel().getSelectedItems().stream().map(GameRepresentationModel::getGame).collect(Collectors.toList());
@@ -1854,6 +1920,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    ToolbarController.INSTANCE.setTableOverviewController(this);
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
 
     //manually fix new columns
@@ -1862,11 +1929,16 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().add(tableView.getColumns().indexOf(columnPlaylists), columnRating);
     }
 
+    iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+    columnStatus.setPrefWidth(iScoredSettings != null && iScoredSettings.isEnabled() ? 75 : 55);
+
 
 //    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
     validationButtonGroup.managedProperty().bindBidirectional(validationButtonGroup.visibleProperty());
     importUploadButtonGroup.managedProperty().bindBidirectional(importUploadButtonGroup.visibleProperty());
     playlistManagerBtn.managedProperty().bindBidirectional(playlistManagerBtn.visibleProperty());
+    converterBtn.managedProperty().bindBidirectional(converterBtn.visibleProperty());
+    converterBtn.setVisible(false);
 
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
@@ -1971,7 +2043,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
-      SplitMenuButton playBtn = loader.load();
+      Parent playBtn = loader.load();
       playButtonController = loader.getController();
       int i = toolbar.getItems().indexOf(stopBtn);
       toolbar.getItems().add(i, playBtn);
@@ -2066,6 +2138,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else if (key.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
+    }
+    else if (key.equals(PreferenceNames.ISCORED_SETTINGS)) {
+      iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
+      if (client.getFrontendService().getFrontendType().supportCompetitions()) {
+        columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
+      }
     }
     else if (key.equals(PreferenceNames.IGNORED_VALIDATION_SETTINGS)) {
       ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);

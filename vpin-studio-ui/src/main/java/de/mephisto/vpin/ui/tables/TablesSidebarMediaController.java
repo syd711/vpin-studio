@@ -330,7 +330,7 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private void onDMDPosition() {
     if (game.isPresent()) {
-      TableDialogs.openDMDPositionDialog(game.get());
+      TableDialogs.openDMDPositionDialog(game.get(), null);
     }
   }
 
@@ -486,7 +486,7 @@ public class TablesSidebarMediaController implements Initializable {
       btn_edit_Audio.setText(" ");
       btn_edit_AudioLaunch.setText(" ");
       btn_edit_Topper.setText(" ");
-      btn_edit_Menu.setText(" ");
+//      btn_edit_Menu.setText("");//TODO
       btn_edit_BackGlass.setText(" ");
       btn_edit_Loading.setText(" ");
       btn_edit_GameInfo.setText(" ");

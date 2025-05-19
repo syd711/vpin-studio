@@ -204,7 +204,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         if (gameRepresentation.getHighscoreType() != null) {
-          HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
+          HighscoreType hsType = gameRepresentation.getHighscoreType();
 
           //try to open the actual highscore file
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
@@ -315,7 +315,12 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
           folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
         }
-        if (emulatorRepresentation.getAltColorDirectory() != null) {
+        if (folder.exists()) {
+          SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltSoundDirectory()));
+          return;
+        }
+
+        if (!folder.exists() && emulatorRepresentation.getAltColorDirectory() != null) {
           File file = new File(emulatorRepresentation.getAltColorDirectory());
           if (file.exists()) {
             SystemUtil.openFolder(folder, file);
@@ -582,7 +587,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
         Parent tablesRoot = loader.load();
         tablesSidebarPlaylistsController = loader.getController();
-        tablesSidebarPlaylistsController.setSidebarController(this);
+        tablesSidebarPlaylistsController.setTableOverviewController(this.getTableOverviewController());
         titledPanePlaylists.setContent(tablesRoot);
       }
       catch (IOException e) {
@@ -903,7 +908,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
     index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
 
-    tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+    tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isTablesSidebarVisible());
   }
 
   private int refreshSection(TitledPane section, boolean sectionAssets, int index) {

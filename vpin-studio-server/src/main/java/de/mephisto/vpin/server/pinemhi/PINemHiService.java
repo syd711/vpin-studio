@@ -3,8 +3,7 @@ package de.mephisto.vpin.server.pinemhi;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.server.emulators.EmulatorService;
-import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -39,11 +38,11 @@ public class PINemHiService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private EmulatorService emulatorService;
+  private MameService mameService;
 
 
   private boolean enabled = false;
-  
+
   public boolean getAutoStart() {
     return preferencesService.getPreferences().getPinemhiAutoStartEnabled();
   }
@@ -117,7 +116,7 @@ public class PINemHiService implements InitializingBean {
     }
     return settings;
   }
-  
+
   private static void saveIni(File ini, INIConfiguration iniConfiguration) throws IOException, ConfigurationException {
     try (FileWriter fileWriter = new FileWriter(ini)) {
       iniConfiguration.write(fileWriter);
@@ -132,7 +131,7 @@ public class PINemHiService implements InitializingBean {
 
     try (FileReader fileReader = new FileReader(ini)) {
       iniConfiguration.read(fileReader);
-    }  
+    }
     return iniConfiguration;
   }
 
@@ -201,9 +200,9 @@ public class PINemHiService implements InitializingBean {
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
 
-            GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
-            if(defaultGameEmulator != null) {
-              adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
+            File nvramFolder = mameService.getNvRamFolder();
+            if (nvramFolder != null && nvramFolder.exists()) {
+              adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
             }
           }
         }
@@ -228,9 +227,9 @@ public class PINemHiService implements InitializingBean {
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
-    GameEmulator defaultGameEmulator = emulatorService.getDefaultGameEmulator();
-    if(defaultGameEmulator != null) {
-      adjustVPPathForEmulator(defaultGameEmulator.getNvramFolder(), getPinemhiIni(), true);
+    File nvramFolder = mameService.getNvRamFolder();
+    if (nvramFolder != null && nvramFolder.exists()) {
+      adjustVPPathForEmulator(nvramFolder, getPinemhiIni(), true);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
@@ -238,6 +237,7 @@ public class PINemHiService implements InitializingBean {
   /**
    * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
    * and save
+   *
    * @param emulator The GameEmulator to get the path
    */
   public static void adjustVPPathForEmulator(File nvRamFolder, File ini, boolean forcePath) {
@@ -250,7 +250,7 @@ public class PINemHiService implements InitializingBean {
         if (forcePath || !vp.exists() || !vpPath.endsWith("/")) {
           vp = new File(nvRamFolder.getAbsolutePath());
           iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
-          
+
           saveIni(ini, iniConfiguration);
           LOG.info("Changed VP path to " + vp.getAbsolutePath());
         }

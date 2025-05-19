@@ -148,7 +148,7 @@ public class Updater {
         }
       }).start();
     }
-    else if(OSUtil.isLinux()) {
+    else if (OSUtil.isLinux()) {
       try {
         String cmds = "#!/bin/bash\nsleep 4\nunzip -o vpin-studio-ui-jar.zip\nrm vpin-studio-ui-jar.zip\n./VPin-Studio.sh &";
         File file = FileUtils.writeBatch("update-client.sh", cmds);
@@ -171,15 +171,17 @@ public class Updater {
             LOG.info("Exiting Studio");
             Thread.sleep(2000);
             System.exit(0);
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             //ignore
           }
         }).start();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to execute update: " + e.getMessage(), e);
       }
     }
-    else if(OSUtil.isMac()) {
+    else if (OSUtil.isMac()) {
       // For the macOS we'll use our startup bash to perform our upgrade.
       try {
         // Create update-client script.
@@ -229,6 +231,10 @@ public class Updater {
   }
 
   public static boolean isLargerVersionThan(String versionA, String versionB) {
+    if (versionA == null || versionB == null) {
+      return false;
+    }
+
     List<Integer> versionASegments = Arrays.asList(versionA.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
     List<Integer> versionBSegments = Arrays.asList(versionB.split("\\.")).stream().map(Integer::parseInt).collect(Collectors.toList());
 
@@ -245,7 +251,7 @@ public class Updater {
 
   public static File getWriteableBaseFolder() {
     if (!OSUtil.isMac()) {
-      LOG.info("Setting Base Path for Windows Download to ./");
+      LOG.info("Setting Base Path for Download to ./");
       return new File("./");
     }
     else {

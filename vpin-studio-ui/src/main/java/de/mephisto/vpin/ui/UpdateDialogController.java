@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -61,8 +62,10 @@ public class UpdateDialogController implements Initializable, DialogController {
 
   private boolean updateServer = false;
   private boolean updateClient = false;
-  
-  /** The client that needs to be updated */
+
+  /**
+   * The client that needs to be updated
+   */
   private VPinStudioClient client;
 
   @Override
@@ -92,7 +95,7 @@ public class UpdateDialogController implements Initializable, DialogController {
     else {
       String os = System.getProperty("os.name");
       boolean winUpdate = os.contains("Windows");
-      if(winUpdate) {
+      if (winUpdate) {
         clientLabel.setText("Downloading " + String.format(Updater.BASE_URL, latestVersion) + Updater.UI_ZIP);
       }
       else {
@@ -136,7 +139,8 @@ public class UpdateDialogController implements Initializable, DialogController {
       if (remoteClientService != null && remoteClientService.isRunning()) {
         remoteClientService.cancel();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Failed to cancel update services: " + e.getMessage());
     }
 
@@ -173,7 +177,13 @@ public class UpdateDialogController implements Initializable, DialogController {
               serverProgress.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
             });
 
-            client.getSystemService().installServerUpdate();
+            boolean b = client.getSystemService().installServerUpdate();
+            if (!b) {
+              Platform.runLater(() -> {
+                WidgetFactory.showAlert(Studio.stage, "Error", "Server update failed, restart the server and client and try again.", "In case this fails too, check the github Wiki how to update manually.");
+              });
+              return null;
+            }
             Thread.sleep(5000);
 
             while (true) {
@@ -271,7 +281,8 @@ public class UpdateDialogController implements Initializable, DialogController {
     if (clientVersion != null && clientVersion.equals(newVersion)) {
       try {
         Thread.sleep(2000);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
       return;
@@ -334,7 +345,8 @@ public class UpdateDialogController implements Initializable, DialogController {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       uiSettings.setHideUpdateInfo(false);
       client.getPreferenceService().setJsonPreference(uiSettings);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset update info: " + e.getMessage(), e);
     }
   }

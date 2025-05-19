@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -31,18 +31,20 @@ public class TabOverviewController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<ComponentRepresentation> components = client.getComponentService().getComponents();
-    for (ComponentRepresentation component : components) {
-      try {
-        FXMLLoader loader = new FXMLLoader(ComponentShortSummaryController.class.getResource("component-short-summary-panel.fxml"));
-        Parent builtInRoot = loader.load();
-        ComponentShortSummaryController controller = loader.getController();
-        controller.refresh(component);
-        componentList.getChildren().add(builtInRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed to load tab: " + e.getMessage(), e);
-      }
-    }
+    JFXFuture.supplyAsync(() -> client.getComponentService().getComponents())
+      .thenAcceptLater(components -> {
+        for (ComponentRepresentation component : components) {
+          try {
+            FXMLLoader loader = new FXMLLoader(ComponentShortSummaryController.class.getResource("component-short-summary-panel.fxml"));
+            Parent builtInRoot = loader.load();
+            ComponentShortSummaryController controller = loader.getController();
+            controller.refresh(component);
+            componentList.getChildren().add(builtInRoot);
+          }
+          catch (IOException e) {
+            LOG.error("Failed to load tab: " + e.getMessage(), e);
+          }
+        }
+      });
   }
 }

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -10,8 +11,8 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -21,14 +22,32 @@
             <center>
                 <StackPane fx:id="tableStack">
                     <children>
-                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                        <TableView fx:id="tableView" onMouseClicked="#onMouseClick" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                             <columns>
-                        <TableColumn fx:id="statusColumn" prefWidth="110.39997100830078" style="-fx-alignment: CENTER;" text="Status" />
-                        <TableColumn fx:id="visibilityColumn" sortable="false" style="-fx-alignment: CENTER;" text="Visibility" />
-                        <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: CENTER;" text="Your Table" />
-                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="GameRoom" />
+                        <TableColumn fx:id="settingsColumn" prefWidth="140.0" sortable="false" style="-fx-alignment: CENTER;" text="Game Settings" />
+                        <TableColumn fx:id="tableColumn" prefWidth="350.0" style="-fx-alignment: BASELINE_LEFT;">
+                           <graphic>
+                              <HBox alignment="CENTER" spacing="6.0">
+                                 <children>
+                                    <Label text="Your Table" />
+                                    <Label fx:id="publicReadAPIHint1" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only the first table match is shown here. Multiple tables might be applicable for the game room game. Check the table overview for details." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </graphic></TableColumn>
+                        <TableColumn fx:id="gameRoomColumn" prefWidth="250.0" style="-fx-alignment: CENTER;" text="Game Room" />
                         <TableColumn fx:id="vpsTableColumn" minWidth="0.0" prefWidth="250.0" text="Virtual Pinball Spreadsheet Table" />
-                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" text="Table Version" />
+                        <TableColumn fx:id="vpsTableVersionColumn" prefWidth="400.0" sortable="false" text="Table Version" />
+                        <TableColumn fx:id="creationDateColumn" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Creation Date" />
                             </columns>
                         </TableView>
                     </children>
@@ -44,11 +63,14 @@
                             <graphic>
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
+                     <tooltip>
+                        <Tooltip text="Reload and invalidate game room caches." />
+                     </tooltip>
                         </Button>
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
-                              <TextField fx:id="textfieldSearch" prefWidth="200.0" promptText="Subscription Search...">
+                              <TextField fx:id="textfieldSearch" prefWidth="180.0" promptText="Subscription Search...">
                                   <font>
                                       <Font size="14.0" />
                                   </font>
@@ -64,35 +86,88 @@
                      </children>
                   </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
+                  <Label styleClass="default-text" text="Game Room: " />
+                  <ComboBox fx:id="gameRoomsCombo" prefWidth="280.0" />
+                  <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSync" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2s-sync" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Synchronize the iScored game room games with the ones of your cabinet." />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="editBtn" layoutX="640.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEdit" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit game room settings." />
+                     </tooltip>
+                  </Button>
+                  <Separator layoutX="809.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onGameRooms" text="Game Rooms" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Open game room preferences." />
+                     </tooltip>
+                  </Button>
+                  <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                             </graphic>
-                        </Button>
-                  <Separator layoutX="272.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="eventLogBtn" layoutX="288.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" text="Event Log" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-clock-alert-outline" iconSize="18" />
-                     </graphic>
                      <tooltip>
-                        <Tooltip text="Shows the recorded events of the last play session." />
+                        <Tooltip text="Create a new competition for the selected game room game." />
                      </tooltip>
-                  </Button>
-                        <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                        </Button>
+                        <Button fx:id="deleteBtn" layoutX="464.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                             <font>
                                 <Font size="14.0" />
                             </font>
                             <graphic>
                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                             </graphic>
+                     <tooltip>
+                        <Tooltip text="Delete the selected competition. Note that it might get re-created during the next game room synchronization." />
+                     </tooltip>
                         </Button>
+                  <Separator layoutX="867.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit table data" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Show table in table overview" />
+                     </tooltip>
+                  </Button>
                     </items>
                 </ToolBar>
             </top>
@@ -101,42 +176,6 @@
                     <BorderPane.margin>
                         <Insets bottom="6.0" />
                     </BorderPane.margin>
-                    <center>
-                        <BorderPane fx:id="validationError">
-                            <left>
-                                <VBox BorderPane.alignment="CENTER">
-                                    <BorderPane.margin>
-                                        <Insets bottom="3.0" left="12.0" top="3.0" />
-                                    </BorderPane.margin>
-                                    <children>
-                                        <Label fx:id="validationErrorLabel" text="Loading IScored Subscriptions..." textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="validationErrorText" textFill="WHITE">
-                                            <font>
-                                                <Font name="System" size="14.0" />
-                                            </font>
-                                        </Label>
-                                    </children>
-                                </VBox>
-                            </left>
-                            <right>
-                                <VBox BorderPane.alignment="TOP_RIGHT">
-                                    <BorderPane.margin>
-                                        <Insets right="6.0" />
-                                    </BorderPane.margin>
-                                    <children>
-
-                                    </children>
-                                </VBox>
-                            </right>
-                     <BorderPane.margin>
-                        <Insets top="6.0" />
-                     </BorderPane.margin>
-                        </BorderPane>
-                    </center>
                 </BorderPane>
             </bottom>
         </BorderPane>

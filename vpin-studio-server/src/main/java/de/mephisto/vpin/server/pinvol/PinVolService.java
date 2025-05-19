@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileChangeListener;
 import de.mephisto.vpin.commons.utils.FileMonitoringThread;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.pinvol.PinVolUpdate;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -50,6 +52,9 @@ public class PinVolService implements InitializingBean, FileChangeListener {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
 
   private boolean enabled = false;
   private PinVolPreferences preferences = null;
@@ -223,11 +228,15 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   }
 
   private void initListener() {
-    FileMonitoringThread monitoringThread = new FileMonitoringThread(this, getPinVolTablesIniFile(), true);
-    monitoringThread.startMonitoring();
+    File pinvolTablesFile = getPinVolTablesIniFile();
+    if (pinvolTablesFile.exists()) {
+      FileMonitoringThread monitoringThread = new FileMonitoringThread(this, pinvolTablesFile, true);
+      monitoringThread.startMonitoring();
+    }
 
-    if (getPinVolSettingsIniFile().exists()) {
-      FileMonitoringThread settingsThread = new FileMonitoringThread(this, getPinVolSettingsIniFile(), true);
+    File pincolSettingsFile = getPinVolSettingsIniFile();
+    if (pincolSettingsFile.exists()) {
+      FileMonitoringThread settingsThread = new FileMonitoringThread(this, pincolSettingsFile, true);
       settingsThread.startMonitoring();
     }
   }
@@ -252,6 +261,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
           entry.applyValues(update.getTableVolume());
           preferences.getTableEntries().add(entry);
         }
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PINVOL, null);
       }
     }
 
@@ -298,6 +308,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
       pinVolTablePreferences.getTableEntries().remove(entry);
       saveIniFile(pinVolTablePreferences);
       LOG.info("Deleted {}", entry);
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PINVOL, null);
     }
   }
 

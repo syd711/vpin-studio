@@ -12,7 +12,7 @@ import de.mephisto.vpin.connectors.mania.model.TournamentSearchResultItem;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
+import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchTableSummary;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchText;
 import de.mephisto.vpin.ui.util.AvatarFactory;

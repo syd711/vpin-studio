@@ -2,32 +2,23 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController;
 import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class Directb2sUploadController extends BaseUploadController {
@@ -116,7 +107,7 @@ public class Directb2sUploadController extends BaseUploadController {
   }
 
   @Override
-  public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public void setFile(Stage stage, File file, UploaderAnalysis analysis, Runnable finalizer) {
     super.setFile(stage, file, analysis, finalizer);
   }
 

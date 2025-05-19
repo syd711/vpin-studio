@@ -1,11 +1,13 @@
 package de.mephisto.vpin.ui.recorder;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -13,12 +15,12 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -27,8 +29,9 @@ import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -50,8 +53,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,9 +92,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private VBox recordingOptions;
-
-  @FXML
-  private Button recordBtn;
 
   @FXML
   private Button reloadBtn;
@@ -328,19 +326,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       doReload(false);
     }
 
-    Platform.runLater(() -> {
-      refreshScreens();
-    });
+    Platform.runLater(this::refreshScreens);
 
     this.active = true;
     Thread screenRefresher = new Thread(() -> {
       try {
         LOG.info("Launched preview refresh thread.");
         while (active) {
-          Platform.runLater(() -> {
-            refreshScreens();
-          });
-
+          Platform.runLater(this::refreshScreens);
           Thread.sleep(1000);
         }
       }
@@ -393,7 +386,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     });
 
     client.getPreferenceService().addListener(this);
-    NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
+    NavigationController.setBreadCrumb(List.of("Media Recorder"));
 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
     super.loadPlaylistCombo();
@@ -429,7 +422,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     client.getPreferenceService().setJsonPreference(recorderSettings);
 
 
-    /**
+    /*
      * Configure columns after creating the screen panels, the settings are only initialized then
      */
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
@@ -537,11 +530,35 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         }
 
         if (newValue != null) {
-          EventManager.getInstance().notifyTableSelectionChanged(Arrays.asList(newValue.getGame()));
+          EventManager.getInstance().notifyTableSelectionChanged(Collections.singletonList(newValue.getGame()));
         }
       }
     });
 
+    refreshScreenMenu();
+
+    labelCount.setText("No tables selected");
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      Parent playBtnRoot = loader.load();
+      playButtonController = loader.getController();
+      playButtonController.setDisable(true);
+      int i = toolbar.getItems().indexOf(stopBtn);
+      toolbar.getItems().add(i, playBtnRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load play button: " + e.getMessage(), e);
+    }
+
+    EventManager.getInstance().addListener(this);
+  }
+
+  private void refreshScreenMenu() {
+    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    List<FrontendPlayerDisplay> recordingScreens = client.getRecorderService().getRecordingScreens();
+
+    screenMenuButton.getItems().clear();
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       VPinScreen screen = recordingScreen.getScreen();
       CustomMenuItem item = new CustomMenuItem();
@@ -554,9 +571,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       item.setContent(checkBox);
       item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
       item.setOnAction(actionEvent -> {
-        RecorderSettings r = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        r.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
-        client.getPreferenceService().setJsonPreference(r);
+        RecorderSettings rSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        rSettings.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
+        client.getPreferenceService().setJsonPreference(rSettings);
 
         TableColumn<?, ?> column = screenColumns.get(screen);
         if (column != null) {
@@ -564,28 +581,17 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         }
         refreshSelection();
       });
+
+      TableColumn<?, ?> column = screenColumns.get(screen);
+      if (column != null) {
+        column.setVisible(recorderSettings.getRecordingScreenOption(recordingScreen).isEnabled());
+      }
+
       screenMenuButton.getItems().add(item);
     }
-
-    this.recordBtn.setDisable(true);
-    labelCount.setText("No tables selected");
-
-    try {
-      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
-      SplitMenuButton playBtn = loader.load();
-      playButtonController = loader.getController();
-      int i = toolbar.getItems().indexOf(stopBtn);
-      toolbar.getItems().add(i, playBtn);
-      playBtn.setDisable(true);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load play button: " + e.getMessage(), e);
-    }
-
-    EventManager.getInstance().addListener(this);
   }
 
-  @NotNull
+  @NonNull
   private RecordingData createRecordingData(int id) {
     RecordingData recordingData = new RecordingData();
     recordingData.setGameId(id);
@@ -593,7 +599,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     return recordingData;
   }
 
-  @NotNull
+  @NonNull
   private HBox createScreenCell(GameRepresentation value, GameRepresentationModel model, VPinScreen screen) {
     HBox column = new HBox(3);
     column.setAlignment(Pos.CENTER);
@@ -662,7 +668,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
 
-    this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
+    playButtonController.setDisable(selection.isEmpty() || !hasEnabledRecording);
     labelCount.setText("No tables selected");
     if (!this.selection.isEmpty()) {
       if (this.selection.size() == 1) {
@@ -716,12 +722,31 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
   }
 
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (PreferenceType.validationSettings.equals(preferenceType)) {
+      Platform.runLater(() -> {
+        refreshSelection();
+        refreshScreenMenu();
+      });
+    }
+  }
 
-  //----------------------- Model classes ------------------------------------------------------------------------------
+  @Override
+  public void tablesChanged() {
+    Platform.runLater(() -> {
+      tableView.refresh();
+    });
+  }
+
+
+
+//----------------------- Model classes ------------------------------------------------------------------------------
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override
     public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      selection.clear();
       // callback to filter tables, once the data has been reloaded
       Platform.runLater(() -> {
         // just reload from cache

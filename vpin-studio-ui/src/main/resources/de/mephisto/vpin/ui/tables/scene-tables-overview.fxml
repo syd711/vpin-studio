@@ -31,7 +31,7 @@
                         <children>
                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                               <columns>
-                                 <TableColumn fx:id="columnStatus" minWidth="32.79998779296875" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
+                                 <TableColumn fx:id="columnStatus" minWidth="50" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Status" />
                                  <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                  <TableColumn fx:id="columnVersion" minWidth="60.0" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Version" />
                                  <TableColumn fx:id="columnVPS" minWidth="60.0" prefWidth="105.0" style="-fx-alignment: CENTER;" text="VPS Status" />
@@ -302,6 +302,29 @@
                   <Tooltip text="Edit Table Data (Ctrl+O)" />
                </tooltip>
             </Button>
+            <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Edit Table Data (Ctrl+O)" />
+               </tooltip>
+            </Button>
+            <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+            <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+               <font>
+                     <Font size="14.0" />
+               </font>
+               <graphic>
+                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+               </graphic>
+               <tooltip>
+                     <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+               </tooltip>
+            </Button>
             <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
                <children>
                   <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
@@ -417,18 +440,6 @@
                   </Button>
                </children>
             </HBox>
-            <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-            <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
-               <font>
-                     <Font size="14.0" />
-               </font>
-               <graphic>
-                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
-               </graphic>
-               <tooltip>
-                     <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
-               </tooltip>
-            </Button>
             <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
                <children>
                   <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />

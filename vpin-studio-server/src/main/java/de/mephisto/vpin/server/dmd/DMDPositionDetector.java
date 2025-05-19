@@ -94,11 +94,11 @@ public class DMDPositionDetector {
       List<List<Point2D_I32>> polylines = contourToPolylines(contours, 6);
 
       //printPolylines(polylines);
-//      drawPolylines(buffered, polylines, "contours.png");
+      //drawPolylines(buffered, polylines, "contours.png");
 
       List<Integer> dmd = polylinesToBiggestRectangle(polylines, buffered.getWidth() * buffered.getHeight());
       
-//      drawDMD(buffered, dmd, "outcome.png");
+      //drawDMD(buffered, dmd, "outcome.png");
       
       long after = System.nanoTime();
       timeInSeconds = (after - before)*1e-9;

@@ -86,7 +86,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private void initBaseFolders() throws VPinStudioException {
     try {
-      PropertiesStore store = PropertiesStore.create(SystemService.RESOURCES, systemProperties);
+      PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
       this.archiveType = ArchiveType.VPA;
 
       //check test run
@@ -132,7 +132,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
       }
 
-      this.backupFolder = new File(SystemInfo.RESOURCES, "backups");
+      this.backupFolder = new File(RESOURCES, "backups");
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
         LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
       }
@@ -303,7 +303,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public List<String> getCompetitionBadges() {
-    File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
+    File folder = new File(RESOURCES, COMPETITION_BADGES);
     File[] files = folder.listFiles((dir, name) -> name.endsWith("png"));
     if (files != null) {
       return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
@@ -326,7 +326,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public File getBadgeFile(String badge) {
-    File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
+    File folder = new File(RESOURCES, COMPETITION_BADGES);
     return new File(folder, badge + ".png");
   }
 
@@ -561,7 +561,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   private static File getScoringDBFile() {
-    return new File(SystemInfo.RESOURCES, ScoringDB.SCORING_DB_NAME);
+    return new File(RESOURCES, ScoringDB.SCORING_DB_NAME);
   }
 
   @Override

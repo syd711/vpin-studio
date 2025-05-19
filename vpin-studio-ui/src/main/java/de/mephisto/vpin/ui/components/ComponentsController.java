@@ -1,8 +1,12 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
+import de.mephisto.vpin.restclient.components.ComponentInstallation;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -24,15 +28,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -85,6 +93,12 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   private Tab emulatorsTab;
+
+  @FXML
+  private Label loaderLabel;
+
+  @FXML
+  private VBox componentLoader;
 
   @FXML
   private Pane hint;
@@ -174,6 +188,12 @@ public class ComponentsController implements Initializable, StudioFXController, 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
+    tabPane.managedProperty().bindBidirectional(tabPane.visibleProperty());
+    componentLoader.managedProperty().bindBidirectional(componentLoader.visibleProperty());
+    tabPane.setVisible(false);
+
+    tabPane.setTabMaxWidth(100);
+    tabPane.setTabMinWidth(100);
 
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
 
@@ -263,15 +283,41 @@ public class ComponentsController implements Initializable, StudioFXController, 
     updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
 
     if (!initialized) {
-      ComponentChecksProgressModel model = new ComponentChecksProgressModel(false);
-      ProgressDialog.createProgressDialog(model);
+      tabPane.setVisible(false);
+      componentLoader.setVisible(true);
+      List<ComponentType> list = Arrays.asList(ComponentType.getValues());
+
+      JFXFuture.runAsync(() -> {
+        try {
+          for (ComponentType componentType : list) {
+            ComponentInstallation install = new ComponentInstallation();
+            install.setComponent(componentType);
+            install.setReleaseTag("-latest-");
+            install.setArtifactName("-latest-");
+            install.setTargetFolder("-any-");
+            ComponentActionLogRepresentation check = client.getComponentService().check(install, false);
+            if (!StringUtils.isEmpty(check.getStatus())) {
+              LOG.error("Failed to check component " + componentType + ": " + check.getStatus());
+            }
+            EventManager.getInstance().notify3rdPartyVersionUpdate(componentType);
+          }
+        }
+        catch (Exception e) {
+          LOG.error("Component update check failed: {}", e.getMessage(), e);
+        }
+      }).thenLater(() -> {
+        componentLoader.setVisible(false);
+        tabPane.setVisible(true);
+      });
       initialized = true;
     }
 
-    if(options != null && options.getModel() instanceof GameEmulatorRepresentation) {
-      rootTabPane.getSelectionModel().select(TAB_EMULATORS);
-      if (emulatorsController != null) {
-        emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
+    if (options != null) {
+      if (options.getModel() instanceof GameEmulatorRepresentation) {
+        rootTabPane.getSelectionModel().select(TAB_EMULATORS);
+        if (emulatorsController != null) {
+          emulatorsController.setSelection(Optional.of((GameEmulatorRepresentation) options.getModel()));
+        }
       }
     }
   }
@@ -279,13 +325,16 @@ public class ComponentsController implements Initializable, StudioFXController, 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      hint.setVisible(!uiSettings.isHideComponentWarning());
+      JFXFuture.supplyAsync(() -> client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class))
+        .thenAcceptLater(uiSettings -> {
+          hint.setVisible(!uiSettings.isHideComponentWarning());
+        });
     }
     if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
-      Platform.runLater(() -> {
-        client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
-        if (client.getDofLinxService().isValid()) {
+        //client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
+      JFXFuture.supplyAsync(() -> client.getDofLinxService().isValid())
+      .thenAcceptLater(isDofLinxValid -> {
+        if (isDofLinxValid) {
           if (!tabPane.getTabs().contains(doflinxTab)) {
             tabPane.getTabs().add(doflinxTab);
           }

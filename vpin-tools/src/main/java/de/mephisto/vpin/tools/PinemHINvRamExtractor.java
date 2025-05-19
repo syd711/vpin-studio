@@ -1,5 +1,6 @@
 package de.mephisto.vpin.tools;
 
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -11,10 +12,15 @@ public class PinemHINvRamExtractor {
 
   public static void main(String[] args) throws IOException {
 
-    List<String> strings = FileUtils.readLines(new File("C:\\Users\\syd71\\Downloads\\pinemhi\\list.txt"), Charset.defaultCharset());
+    ScoringDB db = ScoringDB.load();
+    List<String> strings = FileUtils.readLines(new File("C:\\workspace\\vpin-studio-next\\resources\\pinemhi\\list.txt"), Charset.defaultCharset());
     for (String string : strings) {
       string = string.trim();
-      System.out.println("\"" + string + "\",");
+      if (!string.isEmpty()) {
+        if (!db.getSupportedNvRams().contains(string)) {
+          System.out.println("\"" + string + "\",");
+        }
+      }
     }
 
   }

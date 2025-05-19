@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
@@ -37,11 +39,10 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class VpsEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsEntry.class);
 
-  private final String tableId;
-  private final String versionId;
+  private final VpsTable table;
+  private final VpsTableVersion tableVersion;
   private final GameRepresentation game;
   private final VpsDiffTypes type;
-  private final String tableFormat;
   private final String version;
   private final List<String> authors;
   private final String link;
@@ -50,13 +51,13 @@ public class VpsEntry extends HBox {
   private final boolean installed;
   private final boolean isFiltered;
 
-  public VpsEntry(GameRepresentation game, VpsDiffTypes type,
-                  String tableId, String versionId, String tableFormat,
+  public VpsEntry(GameRepresentation game, VpsDiffTypes type, VpsTable table, VpsTableVersion tableVersion,  
                   String version, List<String> authors, String link,
                   long changeDate, String update, boolean installed, boolean isFiltered) {
     this.game = game;
     this.type = type;
-    this.tableFormat = tableFormat;
+    this.table = table;
+    this.tableVersion = tableVersion;
     this.version = version;
     this.authors = authors;
     this.link = link;
@@ -66,10 +67,7 @@ public class VpsEntry extends HBox {
     this.isFiltered = isFiltered;
     this.setAlignment(Pos.CENTER_LEFT);
 
-    this.tableId = tableId;
-    this.versionId = versionId;
-
-    if (tableId != null) {
+    if (table != null) {
       this.setStyle("-fx-padding: 3px 0 0 0;");
     }
     else {
@@ -80,7 +78,7 @@ public class VpsEntry extends HBox {
     versionBox.setPrefWidth(100);
     versionBox.setAlignment(Pos.CENTER_LEFT);
 
-    if (Features.MANIA_ENABLED && tableId != null) {
+    if (Features.MANIA_ENABLED && table != null && tableVersion != null) {
       Button copyBtn = new Button();
       FontIcon icon = WidgetFactory.createIcon("mdi2c-content-copy");
       icon.setIconSize(12);
@@ -88,7 +86,7 @@ public class VpsEntry extends HBox {
       copyBtn.setOnAction(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-          String vpsTableUrl = VPS.getVpsTableUrl(tableId, versionId);
+          String vpsTableUrl = VPS.getVpsTableUrl(table.getId(), tableVersion.getId());
           javafx.scene.input.Clipboard clipboard = Clipboard.getSystemClipboard();
           ClipboardContent content = new ClipboardContent();
           content.putString(vpsTableUrl);
@@ -113,14 +111,14 @@ public class VpsEntry extends HBox {
     authorBox.setPrefWidth(266);
     this.getChildren().add(authorBox);
 
-    if (tableId != null) {
+    if (tableVersion != null) {
       Label typeLabel = new Label();
       typeLabel.setMinWidth(34);
-      if (tableFormat != null) {
+      if (tableVersion.getTableFormat() != null) {
         typeLabel.setTextAlignment(TextAlignment.CENTER);
         typeLabel.setAlignment(Pos.CENTER);
-        typeLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 12px; -fx-text-fill: #FFFFFF;-fx-background-color: " + VpsUtil.getColor(tableFormat) + ";");
-        typeLabel.setText(tableFormat);
+        typeLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 12px; -fx-text-fill: #FFFFFF;-fx-background-color: " + VpsUtil.getColor(tableVersion.getTableFormat()) + ";");
+        typeLabel.setText(tableVersion.getTableFormat());
       }
       authorBox.getChildren().add(typeLabel);
     }
@@ -157,8 +155,8 @@ public class VpsEntry extends HBox {
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
         if (Features.AUTO_INSTALLER) {
-          if (tableId != null) {
-            VpsInstallerUtils.installTable(game, link, tableId, versionId, version);
+          if (table != null && tableVersion != null) {
+            VpsInstallerUtils.installTable(game, link, table.getId(), tableVersion.getId(), version);
           }
           else {
             VpsInstallerUtils.installOrBrowse(game, link, type);
@@ -190,25 +188,31 @@ public class VpsEntry extends HBox {
       menu.getItems().add(copyItem);
 
       if (game != null) {
-        MenuItem addTodoItem = new MenuItem("Add //TODO");
+        MenuItem addTodoItem = new MenuItem("Add //TODO Link");
         addTodoItem.setOnAction(actionEvent -> {
-          String notes = game.getComment();
-          if (notes != null && notes.length() > 0) {
+          String notes = StringUtils.defaultString(game.getComment());
+          if (notes.length() > 0) {
             notes = notes + "\n";
-          }
-          else {
-            notes = "";
           }
           notes += "//TODO " + link;
           game.setComment(notes);
-          try {
-            client.getGameService().saveGame(game);
-            EventManager.getInstance().notifyTableChange(game.getId(), null);
-          }
-          catch (Exception e) {
-            LOG.error("Cannot save notes for game " + game.getId() + ", " + e.getMessage());
-          }
+          client.getGameService().saveGame(game);
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
         });
+        menu.getItems().add(addTodoItem);
+      }
+      else if (table != null) {
+        MenuItem addTodoItem = new MenuItem("Add //TODO Link");
+        addTodoItem.setOnAction(actionEvent -> {
+          String notes = StringUtils.defaultString(table.getComment());
+          if (notes.length() > 0) {
+            notes = notes + "\n";
+          }
+          notes += "//TODO " + link;
+          table.setComment(notes);
+          client.getVpsService().saveVpsData(table);
+          EventManager.getInstance().notifyVpsTableChange(table.getId());
+        });  
         menu.getItems().add(addTodoItem);
       }
       button.setContextMenu(menu);
@@ -272,11 +276,18 @@ public class VpsEntry extends HBox {
     if (this == object) return true;
     if (object == null || getClass() != object.getClass()) return false;
     VpsEntry vpsEntry = (VpsEntry) object;
-    return changeDate == vpsEntry.changeDate && installed == vpsEntry.installed && isFiltered == vpsEntry.isFiltered && Objects.equals(tableId, vpsEntry.tableId) && Objects.equals(versionId, vpsEntry.versionId) && Objects.equals(game, vpsEntry.game) && type == vpsEntry.type && Objects.equals(tableFormat, vpsEntry.tableFormat) && Objects.equals(version, vpsEntry.version) && Objects.equals(authors, vpsEntry.authors) && Objects.equals(link, vpsEntry.link) && Objects.equals(update, vpsEntry.update);
+    return changeDate == vpsEntry.changeDate && installed == vpsEntry.installed && isFiltered == vpsEntry.isFiltered
+        && Objects.equals(table != null ? table.getId() : null, vpsEntry.table != null ? vpsEntry.table.getId() : null) 
+        && Objects.equals(tableVersion != null ? tableVersion.getId() : null, vpsEntry.tableVersion != null ? vpsEntry.tableVersion.getId() : null) 
+        && Objects.equals(tableVersion != null ? tableVersion.getTableFormat() : null, vpsEntry.tableVersion != null ? vpsEntry.tableVersion.getTableFormat() : null) 
+        && Objects.equals(game, vpsEntry.game) && type == vpsEntry.type && Objects.equals(version, vpsEntry.version) 
+        && Objects.equals(authors, vpsEntry.authors) && Objects.equals(link, vpsEntry.link) && Objects.equals(update, vpsEntry.update);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(tableId, versionId, game, type, tableFormat, version, authors, link, changeDate, update, installed, isFiltered);
+    return Objects.hash(table != null ? table.getId() : null, tableVersion != null ? tableVersion.getId() : null, 
+                        game, type, tableVersion != null ? tableVersion.getTableFormat() : null, version, authors, link, 
+                        changeDate, update, installed, isFiltered);
   }
 }

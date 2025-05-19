@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.frontend;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -19,12 +18,12 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +50,9 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Autowired
   protected PreferencesService preferencesService;
+
+  @Autowired
+  protected SystemService systemService;
 
   /**
    * the loaded and cached emulators
@@ -601,7 +603,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return getPlaylist(id);
   }
 
-  @NotNull
+  @NonNull
   @Override
   public Playlist getPlaylistTree() {
     Playlist artificialRoot = new Playlist();
@@ -829,7 +831,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public FrontendControl getFunction(@NonNull String description) {
+  public FrontendControl getFrontendControl(@NonNull String description) {
     FrontendControl f = null;
     return f;
   }
@@ -842,7 +844,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public FrontendControl getPinUPControlFor(VPinScreen screen) {
+  public FrontendControl getFrontendControlFor(VPinScreen screen) {
     return null;
   }
 
@@ -857,14 +859,13 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract String getFrontendExe();
 
   protected File resolveExe(EmulatorType type) {
-    SystemInfo si = new SystemInfo();
     switch (type) {
       case VisualPinball:
-        return si.resolveVpx64Exe();
+        return systemService.resolveVpx64Exe();
       case VisualPinball9:
-        return si.resolveVptExe();
+        return systemService.resolveVptExe();
       case FuturePinball:
-        return si.resolveFpExe();
+        return systemService.resolveFpExe();
       default:
         return null;
     }

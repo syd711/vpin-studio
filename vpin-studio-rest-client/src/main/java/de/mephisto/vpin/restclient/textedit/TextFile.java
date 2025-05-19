@@ -9,6 +9,7 @@ public class TextFile {
   private Date lastModified;
   private String path;
   private int fileId;
+  private int emulatorId;
   private long size;
 
   public TextFile(VPinFile vPinFile) {
@@ -26,6 +27,14 @@ public class TextFile {
 
   public TextFile() {
 
+  }
+
+  public int getEmulatorId() {
+    return emulatorId;
+  }
+
+  public void setEmulatorId(int emulatorId) {
+    this.emulatorId = emulatorId;
   }
 
   public String getPath() {

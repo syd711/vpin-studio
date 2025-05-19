@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -58,6 +59,8 @@ public class Game {
   private boolean altSoundAvailable;
   private AltColorTypes altColorType;
 
+  private List<CompetitionType> competitionTypes = new ArrayList<>();
+
   private int nbDirectB2S;
 
   private boolean defaultBackgroundAvailable;
@@ -88,6 +91,14 @@ public class Game {
   private int rating = 0;
 
   public Game() {
+  }
+
+  public List<CompetitionType> getCompetitionTypes() {
+    return competitionTypes;
+  }
+
+  public void setCompetitionTypes(List<CompetitionType> competitionTypes) {
+    this.competitionTypes = competitionTypes;
   }
 
   public String getPatchVersion() {

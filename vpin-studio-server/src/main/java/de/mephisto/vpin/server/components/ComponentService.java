@@ -113,13 +113,13 @@ public class ComponentService implements InitializingBean {
     return false;
   }
 
-  public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean forceDownload) {
+  public ReleaseArtifactActionLog check(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, 
+        String targetDirectory, boolean forceDownload) {
     Component component = getComponent(type);
     ComponentFacade componentFacade = getComponentFacade(type);
-    if (componentFacade.getTargetFolder() != null) {
+    if (targetDirectory != null) {
       if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
         loadReleases(component);
-
 
         ReleaseArtifactActionLog install = null;
         List<GithubRelease> githubReleases = getCached(component);
@@ -131,7 +131,7 @@ public class ComponentService implements InitializingBean {
 
         if (githubRelease != null) {
           ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
-          File targetFolder = componentFacade.getTargetFolder();
+          File targetFolder = new File(targetDirectory);
 
           File folder = systemService.getComponentArchiveFolder(type);
           File artifactArchive = new File(folder, releaseArtifact.getName());
@@ -182,7 +182,8 @@ public class ComponentService implements InitializingBean {
   }
 
   @NonNull
-  public ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean simulate) {
+  public ReleaseArtifactActionLog install(@NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, 
+        String targetDirectory, boolean simulate) {
     Component component = getComponent(type);
     List<GithubRelease> githubReleases = getCached(component);
     Optional<GithubRelease> first = githubReleases.stream().filter(g -> g.getTag().equals(tag)).findFirst();
@@ -191,7 +192,7 @@ public class ComponentService implements InitializingBean {
       GithubRelease githubRelease = first.get();
       ReleaseArtifact releaseArtifact = githubRelease.getArtifacts().stream().filter(a -> a.getName().equals(artifact)).findFirst().orElse(null);
       ComponentFacade componentFacade = getComponentFacade(type);
-      File targetFolder = componentFacade.getTargetFolder();
+      File targetFolder = new File(targetDirectory);
       if (simulate) {
         return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       }

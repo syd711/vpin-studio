@@ -18,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StreamUtils;
 
-import de.mephisto.vpin.restclient.directb2s.DirectB2SAndVersions;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -30,24 +32,27 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
 
   @Autowired
   protected BackglassService backglassService;
+  
+  @Autowired
+  protected BackglassValidationService backglassValidationService;
 
   @Autowired
   private EmulatorService emulatorService;
 
   @Test
   public void testGetBackglasses() {
-    List<DirectB2SAndVersions> b2s = backglassService.getBackglasses();
-    assertEquals(4, b2s.size());
+    List<DirectB2S> b2s = backglassService.getBackglasses();
+    assertEquals(5, b2s.size());
 
-    DirectB2SAndVersions b2s1 = b2s.get(0);
+    DirectB2S b2s1 = b2s.get(0);
     assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s1.getFileName());
     assertEquals(1, b2s1.getNbVersions());
 
-    DirectB2SAndVersions b2s2 = b2s.get(1);
+    DirectB2S b2s2 = b2s.get(1);
     assertEquals("Baseball (1970).directb2s", b2s2.getFileName());
     assertEquals(1, b2s2.getNbVersions());
 
-    DirectB2SAndVersions b2s3 = b2s.get(3);
+    DirectB2S b2s3 = b2s.get(4);
     assertEquals("Twister (1996).directb2s", b2s3.getFileName());
     assertEquals(2, b2s3.getNbVersions());
   }
@@ -56,10 +61,9 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   public void testGetBackglass() {
     Game g = gameService.getGameByBaseFilename(1, "Twister (1996)");
     assertNotNull(g);
-    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(g);
+    DirectB2S b2s = backglassService.getDirectB2SAndVersions(g);
     assertEquals("Twister (1996).directb2s", b2s.getFileName());
     assertEquals(2, b2s.getNbVersions());
-    assertTrue(b2s.isGameAvailable());
 
     DirectB2SData data = backglassService.getDirectB2SData(g);
     assertNotNull(data);
@@ -76,7 +80,6 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
 
     b2s = backglassService.getDirectB2SAndVersions(1, "250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s");
     assertEquals("250 cc (Inder 1992)" + File.separatorChar + "250 cc (Inder 1992).directb2s", b2s.getFileName());
-    assertTrue(b2s.isGameAvailable());
   }
 
   @Test
@@ -88,7 +91,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
   }
 
   public void doAllTests(String directb2s, int nbVersions) throws Exception {
-    DirectB2SAndVersions b2s = backglassService.getDirectB2SAndVersions(1, directb2s + ".directb2s");
+    DirectB2S b2s = backglassService.getDirectB2SAndVersions(1, directb2s + ".directb2s");
     assertEquals(directb2s + ".directb2s", b2s.getFileName());
     assertEquals(nbVersions, b2s.getNbVersions());
     assertTrue(b2s.isEnabled());
@@ -100,7 +103,7 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     long size = Files.size(Path.of(emu.getGamesDirectory(), f));
 
     // Duplicate first version
-    DirectB2SAndVersions b2stest = backglassService.duplicate(emu.getId(), f);
+    DirectB2S b2stest = backglassService.duplicate(emu.getId(), f);
     assertNotNull(b2stest);
 
     assertEquals(nbVersions + 1, b2stest.getNbVersions());
@@ -157,7 +160,20 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     }
   
     // also verify we did not corrupt the cache
-    List<DirectB2SAndVersions> allb2s = backglassService.getBackglasses();
-    assertEquals(4, allb2s.size());
+    List<DirectB2S> allb2s = backglassService.getBackglasses();
+    assertEquals(5, allb2s.size());
+  }
+
+
+  public void testBackglassValidations() throws Exception {
+
+    Game g = gameService.getGameByBaseFilename(1, "Twister (1996)");
+    DirectB2SDetail detail = backglassService.getBackglassDetail(1, "Twister (1996).directb2s", g);
+    List<ValidationState> validations = backglassValidationService.validate(detail, g, null, null, false);
+    assertTrue(validations.isEmpty());
+
+    detail = backglassService.getBackglassDetail(1, " Counterforce (Gottlieb 1980).directb2s", g);
+    validations = backglassValidationService.validate(detail, null, null, null, false);
+    assertEquals(2, validations.size());
   }
 }

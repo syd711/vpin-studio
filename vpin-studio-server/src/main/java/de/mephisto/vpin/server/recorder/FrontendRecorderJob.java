@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -9,6 +10,7 @@ import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import java.util.List;
 public class FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendRecorderJob.class);
 
+  final GameLifecycleService gameLifecycleService;
   final DMDPositionService dmdPositionService;
   final GameService gameService;
   final FrontendConnector frontend;
@@ -29,7 +32,8 @@ public class FrontendRecorderJob implements Job {
 
   GameRecorder gameRecorder;
 
-  public FrontendRecorderJob(DMDPositionService dmdPositionService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+  public FrontendRecorderJob(GameLifecycleService gameLifecycleService, DMDPositionService dmdPositionService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+    this.gameLifecycleService = gameLifecycleService;
     this.dmdPositionService = dmdPositionService;
     this.gameService = gameService;
     this.frontend = frontend;
@@ -110,6 +114,8 @@ public class FrontendRecorderJob implements Job {
       }
       finally {
         frontend.endFrontendRecording();
+        gameRecorder.finalizeRecordings();
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
     LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");

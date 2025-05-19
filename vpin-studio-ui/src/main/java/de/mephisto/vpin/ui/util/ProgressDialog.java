@@ -14,7 +14,7 @@ public class ProgressDialog {
       stage = Dialogs.createStudioDialogStage("dialog-progress.fxml", model.getTitle());
     }
     else {
-      stage = Dialogs.createStudioDialogStage(parentStage, ProgressDialogController.class, "dialog-progress.fxml", model.getTitle());
+      stage = Dialogs.createStudioDialogStage(parentStage, ProgressDialogController.class, "dialog-progress.fxml", model.getTitle(), null);
     }
     stage.setAlwaysOnTop(true);
     ProgressDialogController controller = (ProgressDialogController) stage.getUserData();

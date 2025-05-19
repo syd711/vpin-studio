@@ -115,20 +115,6 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox fx:id="maniaBtn" alignment="CENTER" layoutX="28.0" layoutY="430.0" onMousePressed="#onManiaClick" styleClass="navigation-button">
-                     <children>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@mania.png" />
-                           </image>
-                        </ImageView>
-                        <Label text="VPin Mania" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
               </children>
                <BorderPane.margin>
                   <Insets top="12.0" />

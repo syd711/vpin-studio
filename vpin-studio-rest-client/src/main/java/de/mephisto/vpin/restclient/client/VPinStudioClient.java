@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.CompetitionsServiceClient;
 import de.mephisto.vpin.restclient.components.ComponentServiceClient;
+import de.mephisto.vpin.restclient.converter.MediaConversionServiceClient;
 import de.mephisto.vpin.restclient.directb2s.BackglassServiceClient;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
@@ -51,7 +52,6 @@ import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.restclient.video.VideoConversionServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
@@ -115,7 +115,7 @@ public class VPinStudioClient implements OverlayClient {
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
   private final PlaylistMediaServiceClient playlistMediaServiceClient;
-  private final VideoConversionServiceClient videoConversionServiceClient;
+  private final MediaConversionServiceClient mediaConversionServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
@@ -167,7 +167,7 @@ public class VPinStudioClient implements OverlayClient {
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
     this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
-    this.videoConversionServiceClient = new VideoConversionServiceClient(this);
+    this.mediaConversionServiceClient = new MediaConversionServiceClient(this);
     this.tournamentsServiceClient = new TournamentsServiceClient(this);
   }
 
@@ -199,8 +199,8 @@ public class VPinStudioClient implements OverlayClient {
     return recorderServiceClient;
   }
 
-  public VideoConversionServiceClient getVideoConversionService() {
-    return videoConversionServiceClient;
+  public MediaConversionServiceClient getMediaConversionService() {
+    return mediaConversionServiceClient;
   }
 
   public ManiaServiceClient getManiaService() {
@@ -409,10 +409,10 @@ public class VPinStudioClient implements OverlayClient {
       File folder;
 
       if (!OSUtil.isMac()) {
-         folder = new File("./resources/cache/" + cache + "/");
+        folder = new File("./resources/cache/" + cache + "/");
       }
       else {
-         folder =new File(System.getProperty("MAC_WRITE_PATH") + "resources/cache/" + cache + "/");
+        folder = new File(System.getProperty("MAC_WRITE_PATH") + "resources/cache/" + cache + "/");
       }
 
       if (!folder.exists()) {
@@ -455,6 +455,11 @@ public class VPinStudioClient implements OverlayClient {
       return table.getTableVersionById(versionId);
     }
     return null;
+  }
+
+  @Override
+  public GameRepresentation getGameByVpsId(@Nullable String vpsTableId, @Nullable String vpsTableVersionId) {
+    return getGameService().getGameByVpsTable(vpsTableId, vpsTableVersionId);
   }
 
   @Override

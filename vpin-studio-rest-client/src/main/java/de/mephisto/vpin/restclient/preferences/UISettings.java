@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.LaunchConfiguration;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ public class UISettings extends JsonSettings {
 
   private boolean autoApplyVpsData = true;
 
+  /** Whether DMD position are auto-saved */
+  private boolean autoSaveDmdPosition = true;
+
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
   private String justAddedColor = "#FFFFFF";
@@ -65,7 +69,9 @@ public class UISettings extends JsonSettings {
   private boolean sectionVps = true;
   private boolean sectionVPinMAME = true;
 
-  private boolean sidebarVisible = true;
+  private boolean tableSidebarVisible = true;
+  private boolean competitionsSidebarVisible = true;
+  private boolean tournamentsSidebarVisible = true;
 
   //columns
   private boolean columnAltColor = true;
@@ -88,6 +94,24 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
   private boolean columnPatchVersion = false;
+
+  private LaunchConfiguration launchConfiguration;
+
+  public LaunchConfiguration getLaunchConfiguration() {
+    return launchConfiguration;
+  }
+
+  public void setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
+    this.launchConfiguration = launchConfiguration;
+  }
+
+  public boolean isTournamentsSidebarVisible() {
+    return tournamentsSidebarVisible;
+  }
+
+  public void setTournamentsSidebarVisible(boolean tournamentsSidebarVisible) {
+    this.tournamentsSidebarVisible = tournamentsSidebarVisible;
+  }
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
 
@@ -195,12 +219,20 @@ public class UISettings extends JsonSettings {
     this.columnPatchVersion = columnPatchVersion;
   }
 
-  public boolean isSidebarVisible() {
-    return sidebarVisible;
+  public boolean isTablesSidebarVisible() {
+    return tableSidebarVisible;
   }
 
-  public void setSidebarVisible(boolean sidebarVisible) {
-    this.sidebarVisible = sidebarVisible;
+  public void setTablesSidebarVisible(boolean sidebarVisible) {
+    this.tableSidebarVisible = sidebarVisible;
+  }
+
+  public boolean isCompetitionsSidebarVisible() {
+    return competitionsSidebarVisible;
+  }
+
+  public void setCompetitionsSidebarVisible(boolean competitionsSidebarVisible) {
+    this.competitionsSidebarVisible = competitionsSidebarVisible;
   }
 
   public boolean isSectionScriptDetails() {
@@ -461,6 +493,14 @@ public class UISettings extends JsonSettings {
 
   public void setAutoApplyVpsData(boolean autoApplyVpsData) {
     this.autoApplyVpsData = autoApplyVpsData;
+  }
+
+  public boolean isAutoSaveDmdPosition() {
+    return autoSaveDmdPosition;
+  }
+
+  public void setAutoSaveDmdPosition(boolean autoSaveDmdPosition) {
+    this.autoSaveDmdPosition = autoSaveDmdPosition;
   }
 
   public boolean isPropperAuthorField() {

@@ -3,16 +3,18 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
-import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.mania.VPinManiaScoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.dialogs.HighscoreBackupProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -76,6 +78,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button maniaBtn;
 
   @FXML
+  private Button maniaSyncBtn;
+
+  @FXML
   private SplitMenuButton scanHighscoreBtn;
 
   @FXML
@@ -118,9 +123,6 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button vpSaveEditBtn;
 
   @FXML
-  private Button eventLogBtn;
-
-  @FXML
   private ImageView cardImage;
 
   @FXML
@@ -144,15 +146,23 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private void onManiaTable() {
     if (this.game.isPresent() && !StringUtils.isEmpty(this.game.get().getExtTableId())) {
-      NavigationController.navigateTo(NavigationItem.Mania, new NavigationOptions(this.game.get().getExtTableId()));
+      Studio.browse(ManiaUrlFactory.createTableUrl(this.game.get().getExtTableId(), this.game.get().getExtTableVersionId()));
     }
   }
 
-
   @FXML
-  private void onEventLog() {
-    if (this.game.isPresent()) {
-      TableDialogs.openEventLogDialog(this.game.get());
+  private void onManiaTableSync() {
+    if (!this.games.isEmpty()) {
+      List<VpsTable> tables = new ArrayList<>();
+      for (GameRepresentation gameRepresentation : this.games) {
+        VpsTable vpsTable = client.getVpsService().getTableById(gameRepresentation.getExtTableId());
+        if (vpsTable != null) {
+          tables.add(vpsTable);
+        }
+      }
+      if (!tables.isEmpty()) {
+        ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel(tables));
+      }
     }
   }
 
@@ -285,12 +295,11 @@ public class TablesSidebarHighscoresController implements Initializable {
     cardBtn.setDisable(true);
     resetBtn.setDisable(games.size() != 1);
 
-    backupBtn.setDisable(games.size() != 1);
+    backupBtn.setDisable(games.isEmpty());
     restoreBtn.setDisable(games.size() != 1);
     restoreBtn.setText("Restore");
 
     cardsEnabledCheckbox.setDisable(true);
-    eventLogBtn.setDisable(true);
 
     this.multiSelectionPane.setVisible(games.size() > 1);
     this.statusPane.setVisible(games.size() == 1);
@@ -305,11 +314,6 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       cardsEnabledCheckbox.setDisable(false);
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
-
-
-      HighscoreEventLog eventLog = client.getGameService().getEventLog(game.getId());
-      eventLogBtn.setDisable(eventLog == null);
-
       List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
       Long templateId = g.get().getTemplateId();
       Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(templateId)).findFirst();
@@ -435,14 +439,14 @@ public class TablesSidebarHighscoresController implements Initializable {
     vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_ENABLED);
+    maniaSyncBtn.managedProperty().bindBidirectional(maniaSyncBtn.visibleProperty());
+    maniaSyncBtn.setVisible(Features.MANIA_ENABLED);
 
     Image imageMania = new Image(Studio.class.getResourceAsStream("mania.png"));
     ImageView iconMania = new ImageView(imageMania);
     iconMania.setFitWidth(18);
     iconMania.setFitHeight(18);
     maniaBtn.setGraphic(iconMania);
-
-    eventLogBtn.setDisable(true);
 
     cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override

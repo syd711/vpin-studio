@@ -178,7 +178,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/eventlog/" + gameId, HighscoreEventLog.class);
   }
 
-  //TODO there is no method to get a single cached game???
   public GameRepresentation getGameCached(int id) {
     Collection<List<GameRepresentation>> values = allGames.values();
     for (List<GameRepresentation> value : values) {
@@ -281,6 +280,25 @@ public class GamesServiceClient extends VPinStudioClientService {
     return hit;
   }
 
+  @NonNull
+  public List<GameRepresentation> getGamesByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
+    List<GameRepresentation> gamesCached = getVpxGamesCached();
+    List<GameRepresentation> hits = new ArrayList<>();
+    for (GameRepresentation game : gamesCached) {
+      if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
+        if (vpsTableVersionId == null) {
+          hits.add(game);
+          continue;
+        }
+
+        if (!StringUtils.isEmpty(game.getExtTableVersionId()) && game.getExtTableVersionId().equals(vpsTableVersionId)) {
+          hits.add(game);
+        }
+      }
+    }
+    return hits;
+  }
+
   public List<Integer> getGameIds() {
     try {
       final RestTemplate restTemplate = new RestTemplate();
@@ -328,7 +346,7 @@ public class GamesServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "games/highscorefiles/" + gameId, HighscoreFiles.class);
   }
 
-  public GameRepresentation saveGame(GameRepresentation game) throws Exception {
+  public GameRepresentation saveGame(GameRepresentation game) {
     try {
       return getRestClient().post(API + "games/save", game, GameRepresentation.class);
     }
@@ -373,7 +391,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   private List<GameRepresentation> getGamesCached(int emulatorId) {
-    //TODO try to avoid this! We should never fetch games for ALL emulators at once
+    //TRY TO AVOID THIS! WE SHOULD NEVER FETCH GAMES FOR ALL EMULATORS AT ONCE!!!
     if (emulatorId == -1) {
       LOG.warn("******************************** Bulk Game Refresh Call *********************************************");
       List<GameRepresentation> games = new ArrayList<>();

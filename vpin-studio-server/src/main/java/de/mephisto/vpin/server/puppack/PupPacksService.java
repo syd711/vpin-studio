@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
-import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
@@ -42,6 +43,9 @@ public class PupPacksService implements InitializingBean {
   @Autowired
   private JobService jobService;
 
+  @Autowired
+  private GameLifecycleService gameLifecycleService;
+
   private final Map<String, PupPack> pupPackCache = new ConcurrentHashMap<>();
 
   /**
@@ -67,6 +71,7 @@ public class PupPacksService implements InitializingBean {
       if (pupPack.delete()) {
         LOG.info("Deleting " + pupPack.getPupPackFolder().getAbsolutePath());
         clearCache();
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, pupPack.getName());
       }
     }
     return false;
@@ -154,11 +159,15 @@ public class PupPacksService implements InitializingBean {
 
   public JobDescriptor option(Game game, String option) {
     PupPack pupPack = getPupPack(game);
-    return pupPack.executeOption(option);
+    JobDescriptor jobDescriptor = pupPack.executeOption(option);
+    gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, pupPack.getName());
+    return jobDescriptor;
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
-    return frontendService.setPupPackEnabled(game, enable);
+    boolean b = frontendService.setPupPackEnabled(game, enable);
+    gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, game.getRom());
+    return b;
   }
 
   public boolean isPupPackDisabled(@Nullable Game game) {
@@ -175,6 +184,7 @@ public class PupPacksService implements InitializingBean {
           if (!hideNextFile.exists()) {
             FileUtils.touch(hideNextFile);
             LOG.info("Written PUPHideNext.txt for " + game.getRom());
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, pupPack.getName());
           }
           else {
             LOG.info("PUPHideNext.txt already exists for " + game.getRom());
@@ -188,6 +198,11 @@ public class PupPacksService implements InitializingBean {
   }
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
+    FrontendType frontendType = frontendService.getFrontendType();
+    if (!frontendType.supportPupPacks()) {
+      return;
+    }
+
     File tempFile = new File(uploadDescriptor.getTempFilename());
     File pupVideosFolder = getPupPackFolder();
     if (!pupVideosFolder.exists()) {
@@ -273,6 +288,7 @@ public class PupPacksService implements InitializingBean {
           loadPupPack(pupPackFolder);
         }
       }
+      gameLifecycleService.notifyGameAssetsChanged(AssetType.PUP_PACK, rom);
     }
   }
 
@@ -291,7 +307,7 @@ public class PupPacksService implements InitializingBean {
     try {
       File pupPackScreenTweakerExe = new File(systemService.getPinupInstallationFolder(), PUP_PACK_TWEAKER_EXE);
       if (!pupPackScreenTweakerExe.exists()) {
-        File source = new File(SystemInfo.RESOURCES, PUP_PACK_TWEAKER_EXE);
+        File source = new File(SystemService.RESOURCES, PUP_PACK_TWEAKER_EXE);
         FileUtils.copyFile(source, pupPackScreenTweakerExe);
         LOG.info("Copied {}", pupPackScreenTweakerExe.getAbsolutePath());
       }

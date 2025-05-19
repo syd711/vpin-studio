@@ -122,7 +122,6 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
     return new ByteArrayInputStream(bytes);
   }
 
-  //TODO mpf
   @Override
   public InputStream getPersistentCachedUrlImage(String cache, String url) {
     try {
@@ -197,6 +196,15 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
     return vpsService.getVpsVersion(tableId, versionId);
+  }
+
+  @Override
+  public GameRepresentation getGameByVpsId(@Nullable String vpsTableId, @Nullable String vpsTableVersionId) {
+    Game game = gameService.getGameByVpsTable(vpsTableId, vpsTableVersionId);
+    if (game == null) {
+      return null;
+    }
+    return getGame(game.getId());
   }
 
   @Override

@@ -37,6 +37,8 @@ public class GameRecorder {
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
   private final List<ScreenRecorder> screenRecorders = new ArrayList<>();
 
+  private final List<RecordingResult> recordingResults = new ArrayList<>();
+
   private int totalTime;
 
   public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, RecordingData recordingData, JobDescriptor jobDescriptor, List<FrontendPlayerDisplay> recordingScreens) {
@@ -75,11 +77,15 @@ public class GameRecorder {
               recorderSettings.getRecordingScreenOption(screen);
               ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
               screenRecorders.add(screenRecorder);
+
               RecordingResult result = screenRecorder.record(option);
-              finalizeGameRecorder(game, screen, option.getRecordMode(), recordingTempFile);
+              result.setGame(game);
+              result.setScreen(screen);
+              result.setRecordingScreenOptions(option);
+              result.setRecordingTempFile(recordingTempFile);
 
               int count = (int) jobDescriptor.getUserData();
-              jobDescriptor.setUserData((count+1));
+              jobDescriptor.setUserData((count + 1));
 
               return result;
             }
@@ -102,6 +108,7 @@ public class GameRecorder {
       try {
         for (Future<RecordingResult> future : futures) {
           RecordingResult recordingResult = future.get();
+          recordingResults.add(recordingResult);
           LOG.info("Recording finished: {}", recordingResult.toString());
         }
       }
@@ -169,7 +176,19 @@ public class GameRecorder {
     return tempFile;
   }
 
-  private void finalizeGameRecorder(Game game, VPinScreen screen, RecordingWriteMode recordingWriteMode, File recordingTempFile) {
+  public void finalizeRecordings() {
+    for (RecordingResult recordingResult : recordingResults) {
+      finalizeGameRecorder(recordingResult);
+    }
+  }
+
+  private void finalizeGameRecorder(@NonNull RecordingResult result) {
+    VPinScreen screen = result.getScreen();
+    File recordingTempFile = result.getRecordingTempFile();
+    RecordingWriteMode recordingWriteMode = result.getRecordingScreenOptions().getRecordMode();
+
+    LOG.info("Finalizing temporary recording file {} for screen {}", recordingTempFile.getAbsolutePath(), screen.name());
+
     try {
       // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4
       File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
@@ -230,7 +249,7 @@ public class GameRecorder {
       if (!target.canWrite()) {
         target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
         FileUtils.copyFile(recordingTempFile, target);
-        LOG.info("Appending instead of overwriting existing media file {} of screen {} with {} (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+        LOG.info("Appending instead of overwriting existing media file \"{}\" of screen {} with \"{}\" (original file was locked).", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
       }
       else {
         FileUtils.copyFile(recordingTempFile, target);

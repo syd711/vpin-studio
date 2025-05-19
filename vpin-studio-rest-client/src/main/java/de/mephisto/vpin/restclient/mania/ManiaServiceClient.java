@@ -6,9 +6,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /*********************************************************************************************************************
  * Mania
  ********************************************************************************************************************/
@@ -23,8 +20,12 @@ public class ManiaServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "mania/config", ManiaConfig.class);
   }
 
-  public ManiaTableSyncResult synchronize(String vpsTableId) {
+  public ManiaTableSyncResult synchronizeTable(String vpsTableId) {
     return getRestClient().get(API + "mania/synchronize/table/" + vpsTableId, ManiaTableSyncResult.class);
+  }
+
+  public boolean synchronizeTables() {
+    return getRestClient().get(API + "mania/synchronize/tables", Boolean.class);
   }
 
   public ManiaRegistration register(@NonNull ManiaRegistration registration) {

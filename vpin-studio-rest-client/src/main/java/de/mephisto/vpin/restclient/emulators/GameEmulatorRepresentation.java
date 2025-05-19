@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GameEmulatorRepresentation {
@@ -31,6 +30,8 @@ public class GameEmulatorRepresentation {
 
   private GameEmulatorScript launchScript;
   private GameEmulatorScript exitScript;
+
+  public String[] vpsEmulatorFeatures;
 
   private List<ValidationState> validationStates = new ArrayList<>();
 
@@ -206,29 +207,13 @@ public class GameEmulatorRepresentation {
     this.altColorDirectory = altColorDirectory;
   }
 
-  public List<String> getVpsEmulatorFeatures() {
-    if (this.getType() != null) {
-      switch (this.type) {
-        case VisualPinball: {
-          return Arrays.asList(VpsFeatures.VPX);
-        }
-        case FuturePinball: {
-          return Arrays.asList(VpsFeatures.FP);
-        }
-        case ZenFX: {
-          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
-        }
-        case ZenFX2: {
-          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
-        }
-        case ZenFX3: {
-          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX2, VpsFeatures.FX3);
-        }
-      }
-    }
-
-    return Arrays.asList(VpsFeatures.VPX);
+  public String[] getVpsEmulatorFeatures() {
+    return vpsEmulatorFeatures;
   }
+
+  public void setVpsEmulatorFeatures(String[] vpsEmulatorFeatures) {
+    this.vpsEmulatorFeatures = vpsEmulatorFeatures;
+  } 
 
   @Override
   public boolean equals(Object o) {

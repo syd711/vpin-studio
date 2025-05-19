@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.ManiaPrivacySettingsController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+               <children>
+                  <Label styleClass="preference-title" text="PRIVACY SETTINGS" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Data Submission" />
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="submitAllCheckbox" mnemonicParsing="false" text="Submit All Highscores">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="Submit your highscores to rank them on vpin-mania.net." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="The highscore submission to vpin-mania.net is mandatory for tournaments." textFill="WHITE" />
+                        <Button fx:id="syncScoresBtn" mnemonicParsing="false" onAction="#onHighscoreSync" text="Synchronize Highscores" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="25.0" top="4.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <CheckBox fx:id="submitTablesCheckbox" mnemonicParsing="false" text="Submit Installed Tables">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="The will push the list of all your installed VPX tables to VPin Mania." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="It allows you a quicker access to the corresponding highscores of yours." textFill="WHITE" />
+                        <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="Synchronize Tables" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="25.0" top="4.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <CheckBox fx:id="submitAllRatingsCheckbox" mnemonicParsing="false" text="Submit All Table Ratings">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
+                  <CheckBox fx:id="submitPlayedCountCheckbox" mnemonicParsing="false" text="Submit Play Count">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
+                  <CheckBox fx:id="registrationCheckbox11" disable="true" mnemonicParsing="false" selected="true" text="Synchronize Cabinet Name &amp; Avatar">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Your vpin-mania.net account is bound to your cabinet, including the cabinet name and avatar." textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Activities">
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="24.0" />
+                     </VBox.margin></Label>
+                  <CheckBox fx:id="showOnlineStatusCheckbox" layoutX="34.0" layoutY="116.0" mnemonicParsing="false" text="Show Online Status">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="Your friends can see if your cabinet is online." textFill="WHITE" />
+                  <CheckBox fx:id="showActiveGameCheckbox" layoutX="34.0" layoutY="257.0" mnemonicParsing="false" text="Share Activity Status">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="277.0" styleClass="checkbox-description" text="Your friends can see which table you are playing right now." textFill="WHITE" />
+                  <CheckBox fx:id="searchableCheckbox" layoutX="34.0" layoutY="182.0" mnemonicParsing="false" text="Cabinet Search Enabled">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="202.0" styleClass="checkbox-description" text="Other people can search for your cabinet id to send an invite to you." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Players Privacy">
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="playersBox" prefWidth="850.0" />
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="subpanel-tabbed" />
+   </styleClass>
+</BorderPane>

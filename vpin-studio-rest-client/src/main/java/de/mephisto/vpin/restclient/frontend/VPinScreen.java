@@ -123,6 +123,14 @@ public enum VPinScreen {
     return ArrayUtils.contains(codesArray, Integer.toString(screen.getCode()));
   }
 
+  public static String keepDisplaysAddScreen(String codes, VPinScreen screen) {
+    String[] codesArray = codes != null ? StringUtils.split(codes, ",") : new String[0];
+    if (!ArrayUtils.contains(codesArray, Integer.toString(screen.getCode()))) {
+      return codes != null ? codes + "," + screen.getCode() : Integer.toString(screen.getCode());
+    }
+    return codes;
+  }
+
   public static String toString(VPinScreen[] screens) {
     StringBuilder sb = new StringBuilder();
     for (VPinScreen screen : screens) {

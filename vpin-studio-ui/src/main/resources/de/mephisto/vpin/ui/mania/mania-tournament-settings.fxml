@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TournamentPreferencesController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox>
+               <children>
+                  <Label styleClass="preference-title" text="TOURNAMENTS" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Tournaments Settings">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="preferencesPanel">
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label layoutX="10.0" layoutY="172.0" styleClass="preference-description" text="If you want to organize tournaments, you can set some pre-configured values here." textFill="WHITE" />
+                        <CheckBox fx:id="tournamentsCheckbox" layoutX="10.0" layoutY="215.0" mnemonicParsing="false" text="Tournaments Enabled">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="235.0" styleClass="checkbox-description" text="Tournaments are hidden by default, you can enable the menu entry here." textFill="WHITE" />
+                        <Label styleClass="default-headline" text="Dashboard URL">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="Configures the default dashboard URL that is used for new tournaments here (e.g. iscored.info)." textFill="WHITE" />
+                        <GridPane alignment="BASELINE_RIGHT" prefWidth="708.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="450.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="183.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label styleClass="preference-label" text="Dashboard URL:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="startupTimeLabel1" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="dashboardUrl" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <HBox alignment="CENTER_LEFT" layoutX="535.0" layoutY="44.0" GridPane.columnIndex="2" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="136.0" styleClass="default-headline" text="Website">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="156.0" styleClass="preference-description" text="Add a website link that tells something more about your tournaments." textFill="WHITE" />
+                        <GridPane alignment="BASELINE_RIGHT" layoutX="10.0" layoutY="184.0" prefWidth="708.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="450.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="183.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label styleClass="preference-label" text="Website URL:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="startupTimeLabel12" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="websiteLink" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <HBox alignment="CENTER_LEFT" layoutX="535.0" layoutY="44.0" GridPane.columnIndex="2" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="default-headline" text="Discord Invite Link">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="Add the invite link of your Discord server here. " textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="169.0" styleClass="preference-description" text="It will be added to your tournaments so that people can join your server." textFill="WHITE" />
+                        <GridPane alignment="BASELINE_RIGHT" layoutX="10.0" layoutY="88.0" prefWidth="708.0" vgap="3.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="450.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="183.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label styleClass="preference-label" text="Discord Invite Link:" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="startupTimeLabel11" textFill="WHITE" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="discordLink" prefHeight="30.0" prefWidth="417.0" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <HBox alignment="CENTER_LEFT" layoutX="535.0" layoutY="44.0" GridPane.columnIndex="2" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </GridPane>
+                        <Label layoutX="10.0" layoutY="131.0" styleClass="default-headline" text="Tournament Description">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="169.0" styleClass="preference-description" text="Write a nice welcome text here which is used as default description for every new tournament." textFill="WHITE" />
+                        <Label layoutX="10.0" layoutY="191.0" styleClass="preference-description" text="You can still adapt the text when creating a new tournament." textFill="WHITE" />
+                        <VBox prefWidth="100.0">
+                           <children>
+                              <TextArea fx:id="descriptionText">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </TextArea>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="notRegisteredPane">
+                     <children>
+                        <Label styleClass="default-headline" text="Cabinet not registered.">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="You need to register your cabinet on VPin Mania to use these services." textFill="WHITE" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

@@ -19,7 +19,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.restclient.video.VideoConversionCommand;
+import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -880,7 +880,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         boolean atleastone = false;
         for (MenuItem item : conversionMenu.getItems()) {
-          VideoConversionCommand cmd = (VideoConversionCommand) item.getUserData();
+          MediaConversionCommand cmd = (MediaConversionCommand) item.getUserData();
           boolean visible = cmd.isActiveForType(baseType);
           atleastone |= visible;
           item.setVisible(visible);
@@ -924,9 +924,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     conversionMenu.managedProperty().bindBidirectional(conversionMenu.visibleProperty());
     conversionMenu.setDisable(true);
-    List<VideoConversionCommand> commandList = client.getVideoConversionService().getCommandList();
+    List<MediaConversionCommand> commandList = client.getMediaConversionService().getCommandList();
     conversionMenu.setVisible(!commandList.isEmpty());
-    for (VideoConversionCommand command : commandList) {
+    for (MediaConversionCommand command : commandList) {
       MenuItem item = new MenuItem(command.getName());
       item.setUserData(command);
       conversionMenu.getItems().add(item);
@@ -943,7 +943,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
             if (selectedItems.size() == 1) {
               name = "Video Conversion " + "\"" + selectedItems.get(0).getName() + "\"";
             }
-            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VideoConversionProgressModel(name, game.getId(), screen, selectedItems, command));
+            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new MediaConversionProgressModel(name, game.getId(), screen, selectedItems, command));
             List<Object> results = progressDialog.getResults();
 
             Platform.runLater(() -> {
@@ -1023,14 +1023,32 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         this.serverAudioMediaPlayer.getMediaPlayer().stop();
         this.serverAudioMediaPlayer.getMediaPlayer().dispose();
       }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage());
+    }
+
+    try {
       if (this.serverVideoMediaPlayer != null && this.serverVideoMediaPlayer.getMediaPlayer() != null) {
         this.serverVideoMediaPlayer.getMediaPlayer().stop();
         this.serverVideoMediaPlayer.getMediaPlayer().dispose();
       }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage());
+    }
+
+    try {
       if (this.assetVideoMediaPlayer != null && this.assetVideoMediaPlayer.getMediaPlayer() != null) {
         this.assetVideoMediaPlayer.getMediaPlayer().stop();
         this.assetVideoMediaPlayer.getMediaPlayer().dispose();
       }
+    }
+    catch (Exception e) {
+      LOG.error("Media disposal failed: {}", e.getMessage());
+    }
+
+    try {
       if (this.assetAudioMediaPlayer != null && this.assetAudioMediaPlayer.getMediaPlayer() != null) {
         this.assetAudioMediaPlayer.getMediaPlayer().stop();
         this.assetAudioMediaPlayer.getMediaPlayer().dispose();

@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -28,6 +27,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -47,6 +49,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import org.apache.commons.io.FilenameUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -269,7 +272,7 @@ public class WidgetFactory {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
     fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
-    fontIcon.setIconLiteral("bi-exclamation-circle");
+    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
     return fontIcon;
   }
 
@@ -284,7 +287,7 @@ public class WidgetFactory {
   public static FontIcon createExclamationIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconLiteral("bi-exclamation-circle");
+    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
     fontIcon.setIconColor(Paint.valueOf("#FF3333"));
     if (color != null) {
       fontIcon.setIconColor(Paint.valueOf(color));
@@ -363,39 +366,118 @@ public class WidgetFactory {
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
-      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+      fontIcon.setIconLiteral("mdi2d-database-clock");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getJustAddedColor()));
     }
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
-      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
       fontIcon.setIconColor(Paint.valueOf(uiSettings.getMostPlayedColor()));
     }
     else if (playlist.getName().contains("Visual Pinball X")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      // fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-vpx_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-vpx_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().contains("VPX")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      //fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-vpx_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-vpx_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().contains("Future")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+      //   fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-futurepinball_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-futurepinball_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().contains("FX3")) {
-      fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
+      //fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-fx3_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-fx3_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().contains("Just Added")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+      fontIcon.setIconLiteral("mdi2d-database-clock");
+    }
+    else if (playlist.getName().contains(" Added")) {
+      fontIcon.setIconLiteral("mdi2d-database-clock");
     }
     else if (playlist.getName().contains("Most Played")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      fontIcon.setIconLiteral("mdi2p-play-box-multiple-outline");
+    }
+    else if (playlist.getName().contains("Recently Played")) {
+      try {
+        fontIcon.setIconLiteral("customicon-recentlyplayed_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-recentlyplayed_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().contains("Home")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-h-circle");
+      fontIcon.setIconLiteral("mdi2h-home-circle");
     }
     else if (playlist.getName().contains("VPW")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+      // fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-vpw_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-vpw_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
     }
     else if (playlist.getName().endsWith(" M")) {
-      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      // fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      try {
+        fontIcon.setIconLiteral("customicon-pinballm_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-pinballm_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
+    }
+    else if (playlist.getName().contains(" Updated")) {
+      fontIcon.setIconLiteral("mdi2u-update");
+    }
+    else if (playlist.getName().contains(" FX")) {
+      //fontIcon.setIconLiteral("mdi2s-steam");
+      try {
+        fontIcon.setIconLiteral("customicon-fx_icon");
+      }
+      catch (Exception e) {
+        LOG.error("Error loading customicon-fx_icon: " + e.getMessage(), e);
+        ;
+        throw new RuntimeException(e);
+      }
+    }
+    else {
+      // LOG.info("Setting Alpha Playlist Icon:" + playlist.getName().toLowerCase() + ":Letter:" + playlist.getName().toLowerCase().charAt(0));
+      fontIcon.setIconLiteral("mdi2a-alpha-" + playlist.getName().toLowerCase().charAt(0) + "-circle");
     }
 
     if (disabled) {
@@ -414,11 +496,13 @@ public class WidgetFactory {
 
   public static Stage createDialogStage(Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return createDialogStage(fxmlLoader, owner, title, null);
+    String stateId = FilenameUtils.getBaseName(fxml);
+    return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 
-  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title) {
-    return createDialogStage(fxmlLoader, owner, title, null);
+  public static Stage createDialogStage(String stateId, Class clazz, Stage owner, String title, String fxml) {
+    FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
+    return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 
   public static void addToTextListener(Label label) {
@@ -466,11 +550,11 @@ public class WidgetFactory {
     });
   }
 
-  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
-    return createDialogStage(fxmlLoader, owner, title, stateId, null);
+  public static Stage createDialogStage(String stateId, FXMLLoader fxmlLoader, Stage owner, String title) {
+    return createDialogStage(stateId, fxmlLoader, owner, title, null);
   }
 
-  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId, String modalStateId) {
+  public static Stage createDialogStage(String stateId, FXMLLoader fxmlLoader, Stage owner, String title, String modalStateId) {
     Parent root = null;
 
     try {
@@ -503,6 +587,7 @@ public class WidgetFactory {
       DialogHeaderResizeableController dialogHeaderController = (DialogHeaderResizeableController) userData;
       dialogHeaderController.setStateId(stateId);
       dialogHeaderController.setTitle(title);
+      dialogHeaderController.setMaximizeable(LocalUISettings.isMaximizeable(stateId));
     }
 
     if (modalStateId != null && !LocalUISettings.isModal(modalStateId)) {
@@ -523,15 +608,11 @@ public class WidgetFactory {
       Rectangle position = LocalUISettings.getPosition(stateId);
       if (position != null) {
         //let dialog open on the screen the main window is
-        if (owner == null) {
-          stage.setX(position.getX());
-          stage.setY(position.getY());
-        }
+        stage.setX(position.getX());
+        stage.setY(position.getY());
 
-        if (owner == null || (position.getWidth() > 0 && position.getWidth() < owner.getWidth())) {
+        if (position.getWidth() > 0 && position.getHeight() > 0) {
           stage.setWidth(position.getWidth());
-        }
-        if (position.getHeight() > 0) {
           stage.setHeight(position.getHeight());
         }
       }
@@ -581,7 +662,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmationWithOption(Stage owner, String text, String help1, String help2, String btnText, String optionText) {
-    Stage stage = createDialogStage(ConfirmationDialogWithOptionController.class, owner, "Confirmation", "dialog-confirmation-with-option.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithOptionController.class, owner, "Confirmation", "dialog-confirmation-with-option.fxml");
     ConfirmationDialogWithOptionController controller = (ConfirmationDialogWithOptionController) stage.getUserData();
     controller.initDialog(stage, optionText, btnText, text, help1, help2);
     stage.showAndWait();
@@ -589,11 +670,28 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showConfirmation(Stage owner, String text, String help1, String help2, String btnText) {
-    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Confirmation", "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.initDialog(stage, null, btnText, text, help1, help2);
     stage.showAndWait();
     return controller.getResult();
+  }
+
+  public static Optional<ButtonType> showYesNoConfirmation(Stage owner, String text, String help) {
+    return showYesNoConfirmation(owner, text, help, null);
+  }
+
+  public static Optional<ButtonType> showYesNoConfirmation(Stage owner, String text, String help1, String help2) {
+    Optional<ButtonType> result = showConfirmationWithOption(owner, text, help1, help2, "Yes", "No");
+    if (result.isPresent()) {
+      if (ButtonType.APPLY.equals(result.get())) {
+        return Optional.of(ButtonType.NO);
+      }
+      else if (ButtonType.OK.equals(result.get())) {
+        return Optional.of(ButtonType.YES);
+      }
+    }
+    return result;
   }
 
   public static Optional<ButtonType> showInformation(Stage owner, String text, String help1) {
@@ -601,7 +699,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showInformation(Stage owner, String text, String help1, String help2) {
-    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Information", "dialog-confirmation.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Information", "dialog-confirmation.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, text, help1, help2);
@@ -618,7 +716,7 @@ public class WidgetFactory {
   }
 
   public static void showAlert(Stage owner, String msg, String help1, String help2) {
-    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Information", "dialog-alert.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Information", "dialog-alert.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, msg, help1, help2);
@@ -626,7 +724,7 @@ public class WidgetFactory {
   }
 
   public static Optional<ButtonType> showAlertOption(Stage owner, String msg, String altOptionText, String okText, String help1, String help2) {
-    Stage stage = createDialogStage(ConfirmationDialogController.class, owner, "Information", "dialog-alert-option.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogController.class, owner, "Information", "dialog-alert-option.fxml");
     ConfirmationDialogController controller = (ConfirmationDialogController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2);
@@ -639,7 +737,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showAlertOptionWithCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText, boolean checked) {
-    Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2, checkBoxText);
@@ -649,7 +747,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showConfirmationWithCheckbox(Stage owner, String msg, String okText, String help1, String help2, String checkBoxText, boolean checked) {
-    Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, null, okText, msg, help1, help2, checkBoxText);
@@ -659,7 +757,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showConfirmationWithCheckbox(Stage owner, String msg, String okText, String altText, String help1, String help2, String checkBoxText, boolean checked) {
-    Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altText, okText, msg, help1, help2, checkBoxText);
@@ -669,7 +767,7 @@ public class WidgetFactory {
   }
 
   public static ConfirmationResult showAlertOptionWithMandatoryCheckbox(Stage owner, String msg, String altOptionText, String okText, String help1, String help2, String checkBoxText) {
-    Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
+    Stage stage = createDialogStage("defaultModal", ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-alert-option-with-checkbox.fxml");
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, altOptionText, okText, msg, help1, help2, checkBoxText);
@@ -679,7 +777,7 @@ public class WidgetFactory {
   }
 
   public static String showInputDialog(Stage owner, String dialogTitle, String innerTitle, String description, String helpText, String defaultValue) {
-    Stage stage = createDialogStage(InputDialogController.class, owner, dialogTitle, "dialog-input.fxml");
+    Stage stage = createDialogStage("defaultModal", InputDialogController.class, owner, dialogTitle, "dialog-input.fxml");
     InputDialogController controller = (InputDialogController) stage.getUserData();
     controller.initDialog(stage, innerTitle, description, helpText, defaultValue);
     stage.showAndWait();
@@ -692,7 +790,7 @@ public class WidgetFactory {
   }
 
   public static void showOutputDialog(Stage owner, String dialogTitle, String innerTitle, String description, String defaultValue) {
-    Stage stage = createDialogStage(OutputDialogController.class, owner, dialogTitle, "dialog-output.fxml");
+    Stage stage = createDialogStage("textoutput", OutputDialogController.class, owner, dialogTitle, "dialog-output.fxml");
     OutputDialogController controller = (OutputDialogController) stage.getUserData();
     controller.initDialog(stage, innerTitle, description, defaultValue);
     stage.showAndWait();

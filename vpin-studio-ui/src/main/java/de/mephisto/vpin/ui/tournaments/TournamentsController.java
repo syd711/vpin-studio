@@ -1,30 +1,42 @@
 package de.mephisto.vpin.ui.tournaments;
 
+import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.mania.ManiaAvatarCache;
+import de.mephisto.vpin.ui.mania.ManiaSettingsController;
+import de.mephisto.vpin.ui.mania.util.ManiaAvatarCache;
 import de.mephisto.vpin.ui.players.WidgetPlayerScoreController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +54,9 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentsController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsController.class);
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private TabPane tabPane;
@@ -133,6 +148,16 @@ public class TournamentsController implements Initializable, StudioFXController 
 
   private String lastDashboardUrl;
 
+  @FXML
+  private Button toggleSidebarBtn;
+
+  @FXML
+  private Button tournamentSettingsBtn;
+
+  private boolean sidebarVisible = true;
+  private Node sidePanelRoot;
+
+
   // Add a public no-args constructor
   public TournamentsController() {
   }
@@ -196,6 +221,57 @@ public class TournamentsController implements Initializable, StudioFXController 
   public void onViewActivated(NavigationOptions options) {
     maniaController.onViewActivated(options);
     setTournament(this.tournamentTreeModel);
+  }
+
+  @FXML
+  private void onTournamentSettings() {
+    ManiaSettingsController.open("tournament-settings");
+  }
+
+  @FXML
+  private void toggleSidebar() {
+    sidebarVisible = !sidebarVisible;
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings.setCompetitionsSidebarVisible(sidebarVisible);
+    client.getPreferenceService().setJsonPreference(uiSettings, true);
+
+    setSidebarVisible(sidebarVisible);
+  }
+
+  public void setSidebarVisible(boolean b) {
+    if (b && sidePanelRoot.isVisible()) {
+      return;
+    }
+    if (!b && !sidePanelRoot.isVisible()) {
+      return;
+    }
+
+    sidebarVisible = b;
+    if (!sidebarVisible) {
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, 612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          sidePanelRoot.setVisible(false);
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-left");
+          toggleSidebarBtn.setGraphic(icon);
+        }
+      });
+      t.play();
+    }
+    else {
+      sidePanelRoot.setVisible(true);
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, PauseMenuUIDefaults.SCROLL_OFFSET, -612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
+          toggleSidebarBtn.setGraphic(icon);
+        }
+      });
+      t.play();
+    }
   }
 
   public void setTournament(Optional<TreeItem<TournamentTreeModel>> model) {
@@ -403,6 +479,10 @@ public class TournamentsController implements Initializable, StudioFXController 
     updateSelection(Optional.empty());
     accordion.setExpandedPane(metaDataPane);
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
+
+
+    sidePanelRoot = root.getRight();
+    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
 
     metaDataPane.expandedProperty().addListener((observable, oldValue, newValue) -> updateSelection(tournamentTreeModel));
     tournamentMembersPane.expandedProperty().addListener((observable, oldValue, newValue) -> updateSelection(tournamentTreeModel));

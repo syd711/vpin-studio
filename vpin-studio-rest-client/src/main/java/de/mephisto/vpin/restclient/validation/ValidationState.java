@@ -48,4 +48,13 @@ public class ValidationState {
     }
     return ignoredIds;
   }
+
+  public static boolean contains(List<ValidationState> validations, int code) {
+    for (ValidationState validation : validations) {
+      if (validation.code == code) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

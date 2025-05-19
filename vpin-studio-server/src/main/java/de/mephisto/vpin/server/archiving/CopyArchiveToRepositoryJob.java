@@ -64,7 +64,6 @@ public class CopyArchiveToRepositoryJob implements Job {
       }
 
 
-      //TODO well, this whole method should be cleaned up a bit
       File descriptorTarget = new File(archiveTarget.getParentFile(), FilenameUtils.getBaseName(archiveDescriptor.getFilename()) + ".json");
       temp = new File(descriptorTarget.getParentFile(), descriptorTarget.getName() + ".bak");
       if (temp.exists()) {
