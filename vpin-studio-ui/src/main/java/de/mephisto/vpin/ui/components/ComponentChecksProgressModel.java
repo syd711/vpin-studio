@@ -81,7 +81,8 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
       }
 
       EventManager.getInstance().notify3rdPartyVersionUpdate(next.getComponent());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       progressResultModel.getResults().add(e.getMessage());
       LOG.error("Failed to fetch component data: " + e.getMessage(), e);
     }
@@ -96,8 +97,9 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentInstall
   public void finalizeModel(ProgressResultModel progressResultModel) {
     List<String> collect = progressResultModel.getResults().stream().filter(Objects::nonNull).map(r -> r + "\n").collect(Collectors.toList());
     if (!collect.isEmpty()) {
+      LOG.error("Failed to retrieve some component information: {}", String.join("\n", collect));
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "Failed retrieve component information:\n\n" + String.join("\n", collect));
+        WidgetFactory.showAlert(Studio.stage, "Component Check Failed", "The component update check failed for one or more components.");
       });
     }
   }

@@ -1,6 +1,9 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
@@ -27,6 +30,7 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +86,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
+
+  @Autowired
+  private VpsService vpsService;
 
   private ValidationSettings validationSettings;
   private IgnoredValidationSettings ignoredValidationSettings;
@@ -178,6 +185,52 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
         if (findFirst) {
           return result;
+        }
+      }
+      else {
+        VpsTable vpsTable = vpsService.getTableById(game.getExtTableId());
+        if (vpsTable != null) {
+          if (game.getAltColorType() == null) {
+            List<VpsAuthoredUrls> altColorFiles = vpsTable.getAltColorFiles();
+            for (VpsAuthoredUrls altColorFile : altColorFiles) {
+              if (altColorFile.getUrls().isEmpty() || !altColorFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
+                continue;
+              }
+              result.add(ValidationStateFactory.create(CODE_VPS_ALTCOLOR_MISSING));
+              if (findFirst) {
+                return result;
+              }
+              break;
+            }
+          }
+
+          if (!game.isAltSoundAvailable()) {
+            List<VpsAuthoredUrls> altSoundFiles = vpsTable.getAltSoundFiles();
+            for (VpsAuthoredUrls altSoundFile : altSoundFiles) {
+              if (altSoundFile.getUrls().isEmpty() || !altSoundFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
+                continue;
+              }
+              result.add(ValidationStateFactory.create(CODE_VPS_ALTSOUND_MISSING));
+              if (findFirst) {
+                return result;
+              }
+              break;
+            }
+          }
+
+          if (game.getPupPack() == null) {
+            List<VpsAuthoredUrls> pupPackFiles = vpsTable.getPupPackFiles();
+            for (VpsAuthoredUrls pupPackFile : pupPackFiles) {
+              if (pupPackFile.getUrls().isEmpty() || !pupPackFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
+                continue;
+              }
+              result.add(ValidationStateFactory.create(CODE_VPS_PUPPACK_MISSING));
+              if (findFirst) {
+                return result;
+              }
+              break;
+            }
+          }
         }
       }
     }
