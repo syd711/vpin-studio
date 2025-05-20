@@ -414,6 +414,12 @@
       "rom": "JungleQueen",
       "tableName": "",
       "textFile": ""
+    },
+    {
+      "scannedRom": "miss_o_1969",
+      "rom": "MissO",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [
