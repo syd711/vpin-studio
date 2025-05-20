@@ -2,14 +2,12 @@ package de.mephisto.vpin.ui.playlistmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.PlaylistOrder;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -166,6 +164,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    onClose();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -450,6 +449,10 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
   @Override
   public void onDialogCancel() {
+    onClose();
+  }
+
+  private void onClose() {
 
   }
 
@@ -895,6 +898,10 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           if (update.isSqlPlayList()) {
             errorLabel.setText(update.getSqlError());
             errorContainer.setVisible(!StringUtils.isEmpty(update.getSqlError()));
+          }
+          List<PlaylistGame> games = update.getGames();
+          for (PlaylistGame playlistGame : games) {
+            EventManager.getInstance().notifyTableChange(playlistGame.getId(), null);
           }
         });
       }
