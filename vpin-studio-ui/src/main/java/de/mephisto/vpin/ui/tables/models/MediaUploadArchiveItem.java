@@ -119,12 +119,12 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
     }
 
-    String musicFolder = uploaderAnalysis.getMusicFolder();
-    if (musicFolder != null) {
+    if (uploaderAnalysis.isMusic()) {
+      String musicFolder = uploaderAnalysis.getMusicFolder();
       //check if we have the musicFolder bundle here
       if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
-        targetDisplayName = emulator.getGamesDirectory();
+        targetDisplayName = emulator.getInstallationDirectory() + "\\Music\\" + uploaderAnalysis.getRelativeMusicPath(false).replaceAll("/", "\\\\");
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 
