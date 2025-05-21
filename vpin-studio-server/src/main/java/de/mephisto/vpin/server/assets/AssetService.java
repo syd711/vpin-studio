@@ -201,16 +201,14 @@ public class AssetService {
     }
 
     Game game = gameService.getGame(gameId);
-
-    File croppedDefaultPicture = defaultPictureService.getCroppedDefaultPicture(game);
-    File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-
-    if (game == null || rawDefaultPicture == null || croppedDefaultPicture == null) {
+    if (game == null) {
       LOG.error("Invalid game data.");
       return false;
     }
 
     defaultPictureService.deleteDefaultPictures(game);
+
+    File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
 
     LOG.info("Uploading " + rawDefaultPicture.getAbsolutePath());
     return UploadUtil.upload(file, rawDefaultPicture);

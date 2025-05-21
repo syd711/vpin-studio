@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -123,7 +124,7 @@ public class DMDPositionController implements Initializable, DialogController {
   @FXML
   private CheckBox disableBGScoreCheckbox;
   @FXML
-  private Button _resetToScoresBtn;
+  private Button resetToScoresBtn;
 
   @FXML
   private HBox romPane;
@@ -236,6 +237,13 @@ public class DMDPositionController implements Initializable, DialogController {
     }
   }
 
+  /**
+   * Start th espinning indicator OR Stop spinning and display the image back
+   */
+  public void setWait(boolean on) {
+    parentpane.setCenter(on ? progressIndicator : imagepane);
+  }
+
   private void clearGame() {
     headerController.setDirty(false);
     titleLabel.setText("loading...");
@@ -250,7 +258,7 @@ public class DMDPositionController implements Initializable, DialogController {
   private void switchGame(int gameId) {
     JFXFuture.supplyAsync(() -> client.getGame(gameId))
     .thenAcceptLater(game -> {
-      if (game != null && !game.equals(this.game)) {
+      if (game != null) {
         setGame(game, backglassMgrController);
       }
     });
@@ -292,6 +300,9 @@ public class DMDPositionController implements Initializable, DialogController {
           if (onSuccess != null) {
             onSuccess.run();
           }
+        })
+        .onErrorLater(e -> {
+          WidgetFactory.showAlert(headerController.getStage(), "Cannot save DMD Position", e.getMessage());
         });
   }
 
@@ -329,6 +340,7 @@ public class DMDPositionController implements Initializable, DialogController {
       LOG.info("Autoposition dmdinfo for game {}", game.getGameFileName());
       // set the margin for auto positioning
       selectedZone.setMargin(marginSpinner.getValue());
+      selectedZone.setOnScreen(loadedVpinScreen);
 
       disableAll();
       JFXFuture.supplyAsync(() -> client.getDmdPositionService().autoPositionDMDInfo(dmdinfo.getGameId(), selectedZone))
@@ -381,12 +393,31 @@ public class DMDPositionController implements Initializable, DialogController {
   private void onFullDMDMediaUse() {
     DMDInfo movedDmdinfo = fillDmdInfo();
     disableAll();
+    setWait(true);
     JFXFuture.supplyAsync(() -> client.getDmdPositionService().useFrontendFullDMDMedia(movedDmdinfo))
         .thenAcceptLater(dmd -> {
+          setWait(false);
           setDmdInfo(dmd, false, false);
           loadImage(loadedVpinScreen, true);
         });
   }
+
+  @FXML
+  private void onFullDMDMediaGrab() {
+    DMDInfo movedDmdinfo = fillDmdInfo();
+    disableAll();
+    setWait(true);
+    JFXFuture.supplyAsync(() -> client.getDmdPositionService().grabFrontendFullDMDMedia(movedDmdinfo))
+        .thenAcceptLater(dmd -> {
+          setWait(false);
+          setDmdInfo(dmd, false, false);
+          loadImage(loadedVpinScreen, true);
+
+          // also notify other components
+          EventManager.getInstance().notifyTableChange(dmd.getGameId(), dmd.getGameRom());
+        });
+  }
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -569,10 +600,14 @@ public class DMDPositionController implements Initializable, DialogController {
     nextButton.setVisible(backglassMgrController != null);
 
     disableAll();
+    setWait(true);
     JFXFuture.supplyAllAsync(
       () -> client.getBackglassServiceClient().getScreenRes(game.getEmulatorId(), game.getGameFileName(), false),
       () -> client.getDmdPositionService().getDMDInfo(game.getId()))
     .thenAcceptLater((objs) -> {
+      // stop spinning and display the image back
+      setWait(false);
+
       this.screenres = (DirectB2sScreenRes) objs[0];
       setDmdInfo((DMDInfo) objs[1], true, false);
     })
@@ -590,10 +625,12 @@ public class DMDPositionController implements Initializable, DialogController {
     _disableButtons(true);
     _disableSidebar(true);
     disableForZone(true);
+    tabPane.setDisable(true);
   }
   private void enableDmd() {
     _disableButtons(false);
     _disableSidebar(false);
+    tabPane.setDisable(false);
   }
   private void _disableButtons(boolean disabled) {
     saveLocallyBtn.setDisable(disabled);
@@ -717,8 +754,6 @@ public class DMDPositionController implements Initializable, DialogController {
     final double fitWidth = adjustWidth ? 768.0 * screenWidth / screenHeight : 1024.0;
     final double fitHeight = adjustWidth ? 768.0 : 1024.0 * screenHeight / screenWidth;
 
-    noFullDMDPane.setVisible(false);
-
     if (onScreen == null) {
       fullDMDImage.setImage(null);
       // add an empty background to simulate an image 
@@ -726,13 +761,13 @@ public class DMDPositionController implements Initializable, DialogController {
       emptyImage.setWidth(fitWidth);
       emptyImage.setHeight(fitHeight);
       imagepane.getChildren().add(0, emptyImage);
-
       parentpane.setCenter(imagepane);
       loadedVpinScreen = null;
     }
     else if (forceRefresh || !onScreen.equals(loadedVpinScreen)) {
-      parentpane.setCenter(progressIndicator);
+      setWait(true);
 
+      noFullDMDPane.setVisible(false);
 
       JFXFuture.supplyAsync(() -> {
         ByteArrayInputStream is =  client.getDmdPositionService().getPicture(dmdinfo.getGameId(), onScreen);
@@ -745,8 +780,8 @@ public class DMDPositionController implements Initializable, DialogController {
         //  return;
         //}
 
-        // stop spinning and display th image back
-        parentpane.setCenter(imagepane);
+        // stop spinning and display the image back
+        setWait(false);
 
         if (image == null || image.isError()) {
           fullDMDImage.setImage(null);

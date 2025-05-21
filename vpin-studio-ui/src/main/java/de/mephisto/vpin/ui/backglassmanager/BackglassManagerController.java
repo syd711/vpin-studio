@@ -573,10 +573,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       DirectB2S b2s = client.getBackglassServiceClient().getDirectB2S(id);
       reloadItem(b2s);
     }
-
-    if (selection != null && selection.getGameId() == id) {
-      refreshView(selection);
-    }
+    //FIXME OLE refresehd twice ?
+    //if (selection != null && selection.getGameId() == id) {
+    //  refreshView(selection);
+    //}
   }
 
   @Override

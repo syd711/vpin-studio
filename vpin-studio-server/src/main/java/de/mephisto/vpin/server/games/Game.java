@@ -785,14 +785,6 @@ public class Game {
 
   @NonNull
   @JsonIgnore
-  public File getDirectB2SFile() {
-    String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(getGameFile().getParentFile(), baseName + ".directb2s");
-  }
-
-
-  @NonNull
-  @JsonIgnore
   public File getBAMCfgFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
     return new File(emulator.getInstallationFolder(), "BAM/cfg/" + baseName + ".cfg");
@@ -800,10 +792,16 @@ public class Game {
 
   @NonNull
   @JsonIgnore
-  public String getDirectB2SFilename() {
+  public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    File folder = new File(getGameFileName()).getParentFile();
-    return new File(folder, baseName + ".directb2s").toString();
+    return new File(getGameFile().getParentFile(), baseName + ".directb2s");
+  }
+
+  @NonNull
+  @JsonIgnore
+  public String getDirectB2SFilename() {
+    String baseName = FilenameUtils.removeExtension(this.getGameFileName());
+    return baseName + ".directb2s";
   }
 
   public int getNbDirectB2S() {

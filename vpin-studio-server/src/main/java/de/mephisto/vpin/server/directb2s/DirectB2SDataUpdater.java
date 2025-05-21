@@ -133,16 +133,16 @@ public class DirectB2SDataUpdater extends DefaultHandler {
 
     File destination = new File(directB2SFile.getAbsolutePath() + ".tmp");
 
-    try (FileReader reader = new FileReader(directB2SFile);
-      FileWriter writer = new FileWriter(destination)) {
-
-      SAXParserFactory factory = SAXParserFactory.newInstance();
-      SAXParser saxParser = factory.newSAXParser();
-      XMLReader xmlreader = saxParser.getXMLReader();
-      filter.setParent(xmlreader);
-      Source src = new SAXSource(filter, new InputSource(reader));
-      Result res = new StreamResult(writer);
-      TransformerFactory.newInstance().newTransformer().transform(src, res);
+    try (FileReader reader = new FileReader(directB2SFile)) {
+      try (FileWriter writer = new FileWriter(destination)) {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser = factory.newSAXParser();
+        XMLReader xmlreader = saxParser.getXMLReader();
+        filter.setParent(xmlreader);
+        Source src = new SAXSource(filter, new InputSource(reader));
+        Result res = new StreamResult(writer);
+        TransformerFactory.newInstance().newTransformer().transform(src, res);
+      }
     }
     catch (Exception e) {
       // error so simply delete temp file that is possibly corrupted

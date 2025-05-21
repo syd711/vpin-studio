@@ -60,6 +60,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
 
   public static final String DEFAULT_BACKGROUND = "background.png";
+  public static final String PREVIEW = "preview.png";
   public static final String DMD = "dmd.png";
 
   private File pinupInstallationFolder;

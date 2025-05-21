@@ -1,26 +1,18 @@
 package de.mephisto.vpin.server.dmd;
 
-import com.google.common.io.Files;
-
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDataScore;
-import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.dmd.DMDType;
-import de.mephisto.vpin.restclient.frontend.FrontendMedia;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.util.MimeTypeUtil;
-import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
@@ -30,7 +22,7 @@ import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.converter.MediaConverterService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
@@ -43,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -62,15 +54,13 @@ public class DMDPositionService {
   @Autowired
   private MameService mameService;
   @Autowired
-  private FrontendService frontendService;
-  @Autowired
-  private MediaConverterService mediaConverterService;
-  @Autowired
   private VPinScreenService screenService;
   @Autowired
   private PreferencesService preferenceService;
   @Autowired
   private GameLifecycleService gameLifecycleService;
+  @Autowired
+  private DefaultPictureService defaultPictureService;
 
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
@@ -240,12 +230,12 @@ public class DMDPositionService {
             dmdDisplay = FrontendPlayerDisplay.valueOfScreen(screenResDisplays, screen);
           }
 
-          double x = dmdDisplay.getX();
-          double y = dmdDisplay.getY();
+          double x = VPinScreen.Menu.equals(screen)? screenres.getDmdMinX() : screenres.getBackglassMinX();
+          double y = VPinScreen.Menu.equals(screen)? screenres.getDmdMinY() : screenres.getBackglassMinY();
 
-          double ratioX = VPinScreen.Menu.equals(screen)? screenres.getDmdWidth() : screenres.getFullBackglassWidth();
+          double ratioX = VPinScreen.Menu.equals(screen)? screenres.getDmdWidth() : screenres.getBackglassWidth();
           ratioX /= imageWidth;
-          double ratioY = VPinScreen.Menu.equals(screen)? screenres.getDmdHeight() : screenres.getFullBackglassHeight();
+          double ratioY = VPinScreen.Menu.equals(screen)? screenres.getDmdHeight() : screenres.getBackglassHeight();
           ratioY /= imageHeight;
 
           DMDInfoZone zone = new DMDInfoZone(screen, (int) (score.getX() * ratioX + x), (int) (score.getY() * ratioY + y), 
@@ -379,13 +369,7 @@ public class DMDPositionService {
     if (display != null) {
       double factorX = display.getWidth(), factorY = display.getHeight();
 
-      byte[] image = null;
-      if (VPinScreen.BackGlass.equals(dmdinfo.getOnScreen())) {
-        image = backglassService.getPreviewBackground(game, false);
-      }
-      else if (VPinScreen.Menu.equals(dmdinfo.getOnScreen())) {
-        image = backglassService.getPreviewDmd(game);
-      }
+      byte[] image = defaultPictureService.getPicture(game, dmdinfo.getOnScreen());
 
       if (image != null) {
         try {
@@ -451,6 +435,9 @@ public class DMDPositionService {
       if (dmdinfo.isDisableInVpinMame()) {
         setMameOptions(rom, false, false);
       }
+
+      // recativate scores if they were disabled
+      backglassService.upddateScoresDisplayState(game, false);
 
       // also persist preference for next dmd
       try {
@@ -745,88 +732,5 @@ public class DMDPositionService {
 
   private boolean safeGetBoolean(SubnodeConfiguration conf, String key, boolean defValue) {
     return conf != null && !conf.isEmpty() && conf.containsKey(key) ? conf.getBoolean(key) : defValue;
-  }
-
-  public DMDInfo useFrontendFullDMDMedia(DMDInfo dmdInfo) {
-    TableDetails tableDetails = frontendService.getTableDetails(dmdInfo.getGameId());
-    if (tableDetails != null) {
-      String keepDisplays = VPinScreen.keepDisplaysAddScreen(tableDetails.getKeepDisplays(), VPinScreen.Menu);
-      tableDetails.setKeepDisplays(keepDisplays);
-      frontendService.saveTableDetails(dmdInfo.getGameId(), tableDetails);
-    }
-    return dmdInfo;
-  }
-
-  public byte[] getPicture(int gameId, VPinScreen onScreen) {
-    Game game = gameService.getGame(gameId);
-    if (VPinScreen.BackGlass.equals(onScreen)) {
-      return backglassService.getPreviewBackground(game, true);
-    }
-    else if (VPinScreen.Menu.equals(onScreen)) {
-      DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
-      String base64 = backglassService.getDmdBase64(game.getEmulatorId(), game.getDirectB2SFilename());
-
-      // use B2S DMD image if present and not hidden
-      if (base64 != null && !(tableSettings != null && tableSettings.isHideB2SDMD())) {
-        return DatatypeConverter.parseBase64Binary(base64);
-      }
-      else {
-        TableDetails tableDetails = frontendService.getTableDetails(gameId);
-        String keepDisplays = tableDetails != null ? tableDetails.getKeepDisplays() : null;
-        if (StringUtils.isNotEmpty(keepDisplays)) {
-          boolean keepFullDmd = VPinScreen.keepDisplaysContainsScreen(keepDisplays, VPinScreen.Menu);
-          if (keepFullDmd) {
-            FrontendMedia frontendMedia = frontendService.getGameMedia(gameId);
-            FrontendMediaItem item = frontendMedia.getDefaultMediaItem(VPinScreen.Menu);
-            if (item != null) {
-              String baseType = MimeTypeUtil.determineBaseType(item.getMimeType());
-              if ("video".equals(baseType)) {
-                return extractFrame(item.getFile());
-              }
-              else if ("image".equals(baseType)) {
-                return extractImage(item.getFile());
-              }
-            }
-          }
-        }
-      }
-    }
-    // else all other cases
-    return null;
-  }
-
-  /**
-   * Extracts a frame from a video file.
-   * ffmpeg -i vido.mp4 -ss 00:00:05 -vframes 1 frame_out.jpg
-   *
-   * @param file the video file
-   */
-  private byte[] extractFrame(File file) {
-    MediaConversionCommand cmd = new MediaConversionCommand("Extract Frame").setFFmpegArgs("-ss 00:00:01 -vframes 1");
-    File targetFile = null;
-    try {
-      targetFile = File.createTempFile("ef_", ".png");
-      mediaConverterService.convertWithFfmpeg(cmd, file, targetFile);
-      return Files.toByteArray(targetFile);
-    }
-    catch (Exception e) {
-      LOG.error("Cannot extract frame from video", e);
-    }
-    finally {
-      if (targetFile != null) {
-        targetFile.delete();
-      }
-    }
-    return null;
-  }
-
-  private byte[] extractImage(File file) {
-    try {
-      return Files.toByteArray(file);
-    }
-    catch (IOException e) {
-      LOG.error("Cannot read image file", e);
-    }
-    return null;
   }
 }

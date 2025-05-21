@@ -144,6 +144,12 @@
                                  <Font size="14.0" />
                               </font>
                            </Button>
+                           <Label fx:id="grabFullDMDMediaDescr" styleClass="preference-description" text="Or you can grab the full DMD/Apron frontend image or one of its video frame and copy it within the backglass." textFill="WHITE" />
+                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="Grab Frontend Image">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
                         </children>
                         <VBox.margin>
                            <Insets bottom="12.0" left="12.0" right="12.0" />
