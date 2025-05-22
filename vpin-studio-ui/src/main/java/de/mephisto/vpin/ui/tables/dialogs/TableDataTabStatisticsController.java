@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.alx.AlxDialogs;
 import de.mephisto.vpin.ui.tables.alx.AlxTileEntryController;
 import de.mephisto.vpin.ui.util.FrontendUtil;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -64,7 +65,7 @@ public class TableDataTabStatisticsController implements Initializable {
     this.stage = stage;
     this.game = game;
     this.tableDetails = tableDetails;
-    refreshView();
+    Platform.runLater(() -> refreshView());
   }
 
   private void refreshView() {
