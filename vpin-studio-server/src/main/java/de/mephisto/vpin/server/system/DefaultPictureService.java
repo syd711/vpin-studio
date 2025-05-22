@@ -463,19 +463,29 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     List<Integer> gameIds = frontendService.getGameIds();
 
     for (File f : org.apache.commons.io.FileUtils.listFiles(systemService.getRawImageExtractionFolder(), null, false)) {
-      Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
-      String type = StringUtils.substringAfter(f.getName(), "_");
-      if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND) || type.equals(SystemService.DMD) || type.equals(SystemService.PREVIEW))) {
-        f.delete();
+      try {
+        Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
+        String type = StringUtils.substringAfter(f.getName(), "_");
+        if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND) || type.equals(SystemService.DMD) || type.equals(SystemService.PREVIEW))) {
+          f.delete();
+        }
+      }
+      catch (NumberFormatException e) {
+        LOG.warn("Failed to clean up backglass media file {}", f.getAbsolutePath());
       }
     }
     LOG.info("Folder '{}' cleaned", systemService.getRawImageExtractionFolder().getAbsolutePath());
 
     for (File f : org.apache.commons.io.FileUtils.listFiles(systemService.getCroppedImageFolder(), null, false)) {
-      Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
-      String type = StringUtils.substringAfter(f.getName(), "_");
-      if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND))) {
-        f.delete();
+      try {
+        Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
+        String type = StringUtils.substringAfter(f.getName(), "_");
+        if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND))) {
+          f.delete();
+        }
+      }
+      catch (NumberFormatException e) {
+        LOG.warn("Failed to clean up cropped backglass media file {}", f.getAbsolutePath());
       }
     }
     LOG.info("Folder '{}' cleaned", systemService.getCroppedImageFolder().getAbsolutePath());
