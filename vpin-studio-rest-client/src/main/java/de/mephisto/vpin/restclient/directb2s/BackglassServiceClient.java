@@ -102,8 +102,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public InputStream getDirectB2sBackground(DirectB2SData directB2S) throws IOException {
-    String url = getRestClient().getBaseUrl() + API + "directb2s/background/" + directB2S.getEmulatorId() + "/"
-        + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    String url = getDirectB2sBackgroundUrl(directB2S.getEmulatorId(), directB2S.getFilename());
     return new URL(url).openStream();
   }
 
@@ -117,8 +116,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   }
 
   public InputStream getDirectB2sDmd(DirectB2SData directB2S) throws IOException {
-    String url = getRestClient().getBaseUrl() + API + "directb2s/dmdimage/" + directB2S.getEmulatorId() + "/"
-        + URLEncoder.encode(URLEncoder.encode(directB2S.getFilename(), StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    String url = getDirectB2sDmdUrl(directB2S.getEmulatorId(), directB2S.getFilename());
     return new URL(url).openStream();
   }
 
@@ -131,6 +129,11 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().getBaseUrl() + API + "directb2s/previewBackground/" + emulatorId + "/"
         + URLEncoder.encode(URLEncoder.encode(filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8) + ".png"
         + (includeFrame ? "?includeFrame=true" : "");
+  }
+
+  public InputStream getDirectB2sPreviewBackground(DirectB2SData directB2S, boolean includeFrame) throws IOException {
+    String url = getDirectB2sPreviewBackgroundUrl(directB2S.getEmulatorId(), directB2S.getFilename(), includeFrame);
+    return new URL(url).openStream();
   }
 
 
