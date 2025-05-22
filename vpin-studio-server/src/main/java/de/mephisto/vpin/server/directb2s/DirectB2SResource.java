@@ -256,7 +256,8 @@ public class DirectB2SResource {
   public boolean deleteBackglass(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
     boolean b = backglassService.deleteBackglass(emulatorId, fileName);
     if (b) {
-      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
+      DirectB2S b2s = backglassService.getDirectB2SAndVersions(emulatorId, fileName);
+      gameLifecycleService.notifyGameAssetsChanged(b2s.getGameId(), AssetType.DIRECTB2S, fileName);
     }
     return b;
   }
@@ -266,23 +267,27 @@ public class DirectB2SResource {
     int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
+    DirectB2S directb2s = null;
     try {
       if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
-        return backglassService.rename(emulatorId, fileName, newName);
+        directb2s = backglassService.rename(emulatorId, fileName, newName);
       }
       else if (values.containsKey("setVersionAsDefault")) {
-        return backglassService.setAsDefault(emulatorId, fileName);
+        directb2s = backglassService.setAsDefault(emulatorId, fileName);
       }
       else if (values.containsKey("disable")) {
-        return backglassService.disable(emulatorId, fileName);
+        directb2s = backglassService.disable(emulatorId, fileName);
       }
       else if (values.containsKey("deleteVersion")) {
-        return backglassService.deleteVersion(emulatorId, fileName);
+        directb2s = backglassService.deleteVersion(emulatorId, fileName);
       }
-      return null;
+      return directb2s;
     }
     finally {
-      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
+      // generate a game event
+      if (directb2s != null) {
+        gameLifecycleService.notifyGameAssetsChanged(directb2s.getGameId(), AssetType.DIRECTB2S, fileName);
+      }
     }
   }
 
