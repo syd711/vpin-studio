@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FrontendStatusService implements InitializingBean, ApplicationListener<ApplicationReadyEvent> {
+public class FrontendStatusService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
 
   private final List<TableStatusChangeListener> tableStatusChangeListeners = new ArrayList<>();
@@ -294,13 +294,5 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
     LOG.info("{} initialization finished, running frontend version {}", this.getClass().getSimpleName(), frontendService.getVersion());
-  }
-
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-//    LOG.info("-----------------------------TableStatusChangeListener Summary ----------------------------------------");
-//    for (TableStatusChangeListener listener : tableStatusChangeListeners) {
-//      LOG.info("TableStatusChangeListener: {}", listener.getClass().getSimpleName() + "/" + listener.getPriority());
-//    }
   }
 }

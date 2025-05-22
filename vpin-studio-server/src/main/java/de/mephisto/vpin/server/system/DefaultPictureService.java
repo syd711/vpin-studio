@@ -453,12 +453,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-    //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
-    clearImages();
-  }
-
   private void clearImages() {
     List<Integer> gameIds = frontendService.getGameIds();
 
@@ -491,4 +485,9 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     LOG.info("Folder '{}' cleaned", systemService.getCroppedImageFolder().getAbsolutePath());
   }
 
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+    //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
+    clearImages();
+  }
 }

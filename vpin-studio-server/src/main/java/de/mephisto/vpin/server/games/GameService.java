@@ -617,6 +617,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
     //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
-    clearMameCaches();
+    List<Integer> unknownGames = getUnknownGames();
+    if (unknownGames.isEmpty()) {
+      clearMameCaches();
+    }
   }
 }
