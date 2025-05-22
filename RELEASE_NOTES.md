@@ -35,6 +35,7 @@
   - Added possibility to remove the table specific 'Run as Exe' value and use the server default.
   - Added option to set "Simple LEDs" as default in the backglass server preferences.
   - When Backglass and/or B2S DMD is hidden, the corresponding preview is translucent, reflecting the hidden state while still showing an image is present within the backglass
+  - Added button in the matching table toolbar to launch the game from the backglass. Only default launcher is supported from there.
 
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/backglass-validators.png?raw=true" width="300" />
   
@@ -85,7 +86,9 @@
   - Fixed issue existing recordings couldn't be overwritten by new ones. To avoid the file lock, the copy process for the recordings is executed after the emulator/frontend has been closed now.
   - Fixed issue that the media overview was not properly refreshed after a recording was finished.
   - Changed the Media Recorder view to a split view, so that the vertical splitter can be resized. 
-- **Backglass Management**: In frame editor, use the backglass image without the grill when it is hidden.
+- **Backglass Management**: 
+- In frame editor, use the backglass image without the grill when it is hidden.
+- Fixed possibility to activate / deactivate backglass when there is only one, which wasn't possible before
 - **DMD Position Tool**: Fixed issue when rom contains a dot like PiratesLife, positions were not properly saved. The rom name in the dmddevice.ini has to be escaped.
 - **Default Emulator Resolving**: More of a technical detail: On several occasions the first VPX emulator was used instead of providing an actual selection or using the one that belongs to the corresponding game. Especially for people running multiple VPX emulators, this may have caused issues.
 - **MAME Settings**: Fixed missing displaying of MAME related errors in the MAME sidepanel.

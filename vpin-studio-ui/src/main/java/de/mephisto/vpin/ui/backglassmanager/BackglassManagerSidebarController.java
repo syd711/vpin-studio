@@ -233,6 +233,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private Button tableNavigateBtn;
 
+  @FXML
+  private Button gameLaunchBtn;
 
   //-------------
   private GameRepresentation game;
@@ -761,6 +763,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   
       this.dataManagerBtn.setDisable(true);
       this.tableNavigateBtn.setDisable(true);
+      this.gameLaunchBtn.setDisable(true);
   }
 
   protected void setGame(@Nullable GameRepresentation game, boolean gameAvailable) {
@@ -783,6 +786,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
       dataManagerBtn.setDisable(false);
       tableNavigateBtn.setDisable(false);
+      gameLaunchBtn.setDisable(false);
     }
     else if (gameAvailable) {
       gameFilenameLabel.setText("(Available, but not installed)");
