@@ -14,7 +14,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.directb2s.BackglassService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -291,6 +290,7 @@ public class DMDPositionService {
       if (display.contains(dmdinfo.getCenterX(), dmdinfo.getCenterY())) {
         fillScreenInfo(dmdinfo, display);
         ondisplay = true;
+        break;
       }
     }
 
