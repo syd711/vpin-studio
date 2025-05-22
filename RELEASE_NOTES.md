@@ -106,7 +106,7 @@ The VPin Mania integration has undergone a complete overhaul. The whole "VPin Ma
 - The preferences section "My Cabinet" has been duplicated for the VPin Mania preferences to highlight that these changes are reflected on the new website too.
 - The tournaments view has a quick-preferences and sidebar toggle button now, so it matches with the tables and competitions view now.
 - The tournaments dialog was revisited and adapted to the new iScored integration. Several bugs have been fixed and performance optimizations been added.
-- The playlist manager has now also a SQL template for tournament tables now.
+- The playlist manager also has a SQL template for tournament tables now.
 
 ## VPin Mania Webapp
 <img src="https://app.vpin-mania.net/android-icon-144x144.png" width="80" />
