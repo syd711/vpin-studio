@@ -282,13 +282,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       if (selection != null && selectedVersion != null) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selectedVersion + "\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          DirectB2S b2s = client.getBackglassServiceClient().deleteBackglassVersion(selection.getEmulatorId(), selectedVersion);
-          if (b2s != null) {
-            backglassManagerController.reloadItem(b2s);
-          }
-          else {
-             backglassManagerController.delete(selection);
-          }
+          client.getBackglassServiceClient().deleteBackglassVersion(getEmulatorId(), selectedVersion);
+          BackglassManagerControllerUtils.notifyChange(getEmulatorId(), selectedVersion, game);
         }
       }
     }
@@ -300,7 +295,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private void onBackglassDownload() {
     if (tableData != null && tableData.isBackgroundAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sPreviewBackground(tableData, true)) {
         export(in);
       }
       catch (IOException ioe) {
@@ -337,13 +332,8 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   @FXML
   private void onBackglassUseAsMedia() {
     if (tableData != null && tableData.isBackgroundAvailable() && game != null) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sPreviewBackground(tableData, false)) {
         Image img = new Image(in);
-        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
-          PixelReader reader = img.getPixelReader();
-          img = new WritableImage(reader, 0, 0, (int) img.getWidth(), (int) (img.getHeight() - tableData.getGrillHeight()));
-        }
-
         uploadImageAsMedia(game, VPinScreen.BackGlass, "Backglass", img);
       }
       catch (IOException ioe) {
@@ -424,7 +414,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       JFXFuture
           .supplyAsync(() -> client.getBackglassServiceClient().setBackglassAsDefault(selectedItem.getEmulatorId(), selectedVersion))
           .thenAcceptLater((b2s) -> {
-            backglassManagerController.reloadItem(b2s);
+            BackglassManagerControllerUtils.notifyChange(b2s);
           })
           .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + selectedVersion + " as default", e.getMessage()));
     }
@@ -437,7 +427,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       JFXFuture
           .supplyAsync(() -> client.getBackglassServiceClient().disableBackglass(selectedItem.getEmulatorId(), selectedVersion))
           .thenAcceptLater((b2s) -> {
-            backglassManagerController.reloadItem(b2s);
+            BackglassManagerControllerUtils.notifyChange(b2s);
           })
           .onErrorLater((e) -> WidgetFactory.showAlert(stage, "Error", "Cannot set " + selectedVersion + " as default", e.getMessage()));
     }
@@ -997,28 +987,21 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
   public void setVisible(boolean visible) {
   }
 
-  private void debounceAndSave(String debounceKey, Runnable r) {
+  private void debounceAndSave(String debounceKey, Runnable modifications) {
     debouncer.debounce(debounceKey, () -> {
-      save(r);
+      save(modifications);
     }, DEBOUNCE_MS);
   }
 
-  private void save(Runnable r) {
+  private void save(Runnable modifications) {
     if (this.game != null) {
-      try {
-        r.run();
-        client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
-        //DirectB2SModel selectedItem = getSelection();
-        //if (selectedItem != null) {
-        Platform.runLater(() -> {
-          //this.refresh(selectedItem.getBacklass());
-          EventManager.getInstance().notifyTableChange(game.getId(), null);
+      modifications.run();
+      JFXFuture.runAsync(() -> client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings))
+        .thenLater(() -> BackglassManagerControllerUtils.notifyChange(getEmulatorId(), getSelectedVersion(), game))
+        .onErrorLater(e -> {
+          LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage());
+          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
         });
-      }
-      catch (Exception e) {
-        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage());
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
-      }
     }
   }
 

@@ -230,13 +230,13 @@ public class BackglassServiceClient extends VPinStudioClientService {
     }
   }
 
-  public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws Exception {
+  public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) {
     try {
       return getRestClient().post(API + "directb2s/tablesettings/" + gameId, settings, DirectB2STableSettings.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save b2s table settings: " + e.getMessage(), e);
-      throw new Exception("Table not supported (" + settings.getRom() + ")");
+      throw e;
     }
   }
 

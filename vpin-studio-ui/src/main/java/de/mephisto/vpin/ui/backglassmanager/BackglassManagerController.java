@@ -563,20 +563,22 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
-
-    DirectB2SModel selection = getSelectedModel();
-
     // tab should have been initialized to support reload
     if (id > 0 && models != null) {
       // When a game is updated or added, the associated backglass in table + view should be updated
       // If it is a new game, this backglass sis discovered and added into the table as a new row
       DirectB2S b2s = client.getBackglassServiceClient().getDirectB2S(id);
-      reloadItem(b2s);
+      if (b2s != null) {
+        reloadItem(b2s);
+      }
+      else {
+        // detection of deletion for a table
+        Optional<DirectB2SModel> model = models.stream().filter(m -> m.getGameId() == id).findFirst();
+        if (model.isPresent()) {    
+          models.remove(model.get());
+        }
+      }
     }
-    //FIXME OLE refresehd twice ?
-    //if (selection != null && selection.getGameId() == id) {
-    //  refreshView(selection);
-    //}
   }
 
   @Override

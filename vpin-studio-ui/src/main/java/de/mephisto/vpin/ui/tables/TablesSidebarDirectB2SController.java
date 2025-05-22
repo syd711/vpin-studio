@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
@@ -28,8 +29,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -492,15 +491,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
           if (tableData.isBackgroundAvailable()) {
             resolutionLabel.setText("Loading...");
-            new Thread(() -> {
-              try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
-                Image image = new Image(in);
-                if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
-                  PixelReader reader = image.getPixelReader();
-                  image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
-                }
-                final Image imageToLoad = image;
-                Platform.runLater(() -> {
+            JFXFuture.supplyAsync(() -> new Image(client.getBackglassServiceClient().getDirectB2sPreviewBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename(), true), false))
+              .thenAcceptLater(imageToLoad -> {
                   thumbnailImage.setImage(imageToLoad);
                   if (tableSettings.isHideB2SBackglass()) {
                     resolutionLabel.setText("Backglass Hidden.");
@@ -510,11 +502,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                     resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
                   }
                 });
-              }
-              catch (IOException ioe) {
-                LOG.error("Cannot load background Image for game " + g.get().getId(), ioe);
-              }
-            }, "B2S Image Loader").start();
           }
           else {
             thumbnailImage.setImage(null);
@@ -523,10 +510,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
           if (tableData.isDmdImageAvailable()) {
             dmdResolutionLabel.setText("Loading...");
-            new Thread(() -> {
-              try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
-                Image image = new Image(in);
-                Platform.runLater(() -> {
+            JFXFuture.supplyAsync(() -> new Image(client.getBackglassServiceClient().getDirectB2sDmdUrl(tableData.getEmulatorId(), tableData.getFilename()), false))
+              .thenAcceptLater(image -> {
                   dmdThumbnailImage.setImage(image);
                   if (tableSettings.isHideB2SDMD()) {
                     dmdResolutionLabel.setText("B2S DMD Hidden");
@@ -535,11 +520,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                     dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
                   }
                 });
-              }
-              catch (IOException ioe) {
-                LOG.error("Cannot load DMD Image for game " + g.get().getId(), ioe);
-              }
-            }, "B2S DMD Loader").start();
           }
           else {
             dmdResolutionLabel.setText("No DMD background available.");
