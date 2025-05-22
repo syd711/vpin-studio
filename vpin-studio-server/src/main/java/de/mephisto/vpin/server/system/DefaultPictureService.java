@@ -377,7 +377,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   @NonNull
   @JsonIgnore
   public File getDefaultPreview(Game game) {
-    return new File(systemService.getCroppedImageFolder(), game.getId() + "_" + SystemService.PREVIEW);
+    return new File(systemService.getRawImageExtractionFolder(), game.getId() + "_" + SystemService.PREVIEW);
   }
 
   @NonNull
@@ -465,7 +465,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     for (File f : org.apache.commons.io.FileUtils.listFiles(systemService.getRawImageExtractionFolder(), null, false)) {
       Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
       String type = StringUtils.substringAfter(f.getName(), "_");
-      if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND) || type.equals(SystemService.DMD))) {
+      if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND) || type.equals(SystemService.DMD) || type.equals(SystemService.PREVIEW))) {
         f.delete();
       }
     }
@@ -474,7 +474,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     for (File f : org.apache.commons.io.FileUtils.listFiles(systemService.getCroppedImageFolder(), null, false)) {
       Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
       String type = StringUtils.substringAfter(f.getName(), "_");
-      if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND) || type.equals(SystemService.PREVIEW))) {
+      if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND))) {
         f.delete();
       }
     }
