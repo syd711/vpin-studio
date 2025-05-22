@@ -95,7 +95,9 @@
 - **Pause Menu**: The navigation glitch that lead to wrong scaled items or selection positioning has been fixed.
 - **Drop-In Folder**: Fixed "Open" button for unsupported filetypes.
 - **PinVol**: Preferences are reloaded before saved, so manually changes won't be overwritten again.
-- **Universal Uploader**: Fixed and improved detection of music packs, e.g. "Beastie Boys" ('cos you gotta fight...!).
+- **Universal Uploader**: 
+  - Fixed and improved detection of music packs, e.g. "Beastie Boys" ('cos you gotta fight...!).
+  - Fixed extraction of .nv files when archived in .7z or .rar files.
 
 ## VPin Mania
 
