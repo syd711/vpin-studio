@@ -86,6 +86,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
+  private Cabinet cabinet;
 
   public ManiaTableSyncResult synchronize(String vpsTableId) {
     ManiaTableSyncResult result = new ManiaTableSyncResult();
@@ -214,7 +215,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   public boolean clearCache() {
     this.contacts = null;
-    this.maniaClient.getCabinetClient().getCabinet();
+    this.cabinet = this.maniaClient.getCabinetClient().getCabinet();
     return maniaServiceCache.clear();
   }
 
@@ -425,7 +426,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public boolean synchronizeTables() {
     try {
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
       if (maniaSettings.isSubmitTables()) {
         if (cabinet != null) {
           long start = System.currentTimeMillis();
@@ -502,6 +502,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.MANIA_SETTINGS)) {
       maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
+      cabinet = maniaClient.getCabinetClient().getCabinet();
     }
   }
 
@@ -603,6 +604,8 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
         maniaServiceCache.setManiaService(this);
         ServerFX.maniaClient = maniaClient;
+
+        cabinet = maniaClient.getCabinetClient().getCabinet();
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
