@@ -590,9 +590,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
       try {
-        preferencesService.addChangeListener(this);
-        preferenceChanged(PreferenceNames.MANIA_SETTINGS, null, null);
-
         LOG.info("Initializing VPin Mania Service, using unique id: {}", SystemUtil.getUniqueSystemId());
         frontendStatusService.addFrontendStatusChangeListener(this);
         frontendStatusService.addTableStatusChangeListener(this);
@@ -606,6 +603,9 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         ServerFX.maniaClient = maniaClient;
 
         cabinet = maniaClient.getCabinetClient().getCabinet();
+
+        preferencesService.addChangeListener(this);
+        preferenceChanged(PreferenceNames.MANIA_SETTINGS, null, null);
       }
       catch (Exception e) {
         LOG.error("Failed to init mania services: {}", e.getMessage(), e);
