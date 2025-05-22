@@ -72,7 +72,7 @@
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/bulk-conversion.png?raw=true" width="450" />
 - **Preferences Hooks**: Added support for .vbs files. Also, the ROM name and the table filename from the selected table in the table overview are passed as parameters to the script. (https://github.com/syd711/vpin-studio/wiki/Preferences-Hooks)
 - **Window Management**: All positions and sizes of resizeable dialogs are stored now. In case something is messed up, the settings can be resetted in the client preferences.
-- **IOS and Linux Support**: A very draft support of IOS and linux for the server part and a first step forward a VPX-standalone support. The server can be installed manually and start without error. The is still a lot of work to do and many Windows function still need to be implemented for the other operating systems. 
+- **IOS and Linux Support**: A very draft support of IOS and linux for the server part and a first step forward a VPX-standalone support. The server can be installed manually and start without error. There is still a lot of work to do and many Windows function still need to be implemented for the other operating systems. 
 - **PINemHi 3.6.6 Update** (releases notes taken from PINemHi):
   - Comes with new support for the ROMs "robo_a29" and "robo_a30".
   - robo_a34 (Robocop) Initials not handled correctly, making PINemHi crash (happened when you put your initials in the hiscore table)  
