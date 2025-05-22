@@ -106,6 +106,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Button stopBtn;
 
   @FXML
+  private Button recordBtn;
+
+  @FXML
   private MenuButton screenMenuButton;
 
   @FXML
@@ -537,6 +540,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     refreshScreenMenu();
 
+    this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
 
     try {
@@ -668,6 +672,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
 
+    this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
     playButtonController.setDisable(selection.isEmpty() || !hasEnabledRecording);
     labelCount.setText("No tables selected");
     if (!this.selection.isEmpty()) {
