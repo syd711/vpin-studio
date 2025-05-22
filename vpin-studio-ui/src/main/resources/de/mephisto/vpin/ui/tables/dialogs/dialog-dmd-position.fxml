@@ -17,11 +17,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -68,7 +69,7 @@
                   </Label>
                </left>
                <right>
-                  <HBox spacing="3.0" alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+                  <HBox alignment="BASELINE_RIGHT" spacing="3.0" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
                            <font>
@@ -92,11 +93,6 @@
                               <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
                      </children>
                   </HBox>
                   </right>
@@ -105,13 +101,25 @@
          <center>
             <VBox>
                <children>
-                  <TabPane fx:id="tabPane">
-                     <tabs>
-                        <Tab fx:id="playfieldTab" closable="false" text="Playfield" />
-                        <Tab fx:id="backglassTab" closable="false" text="Backglass" />
-                        <Tab fx:id="dmdTab" closable="false" text="DMD" />
-                     </tabs>
-                  </TabPane>
+                  <StackPane>
+                     <children>
+                        <TabPane fx:id="tabPane">
+                           <tabs>
+                              <Tab fx:id="playfieldTab" closable="false" text="Playfield" />
+                              <Tab fx:id="backglassTab" closable="false" text="Backglass" />
+                              <Tab fx:id="dmdTab" closable="false" text="DMD" />
+                           </tabs>
+                        </TabPane>
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE" StackPane.alignment="TOP_RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <StackPane.margin>
+                              <Insets right="12.0" top="10.0" />
+                           </StackPane.margin>
+                        </CheckBox>
+                     </children>
+                  </StackPane>
 
       <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
          <center>
@@ -222,7 +230,7 @@
                         </HBox>
                         <VBox fx:id="backglassScorePane" spacing="3.0">
                            <children>
-                              <HBox >
+                              <HBox>
                                  <children>
                                     <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="Turn Backglass Scores off" textFill="WHITE">
                                        <font>
