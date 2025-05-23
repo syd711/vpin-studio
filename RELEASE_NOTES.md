@@ -1,3 +1,11 @@
+## Release Notes 4.0.1
+
+## Changes
+
+- Fixed ignoring of the new VPS validators for ALT sound, ALT color and PUP packs.
+
+---
+
 ## Release Notes 4.0.0
 
 ## Changes
