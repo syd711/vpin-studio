@@ -253,7 +253,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
 
 
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
     if (cabinet != null) {
       List<CabinetContact> contacts = getContacts();
 
@@ -615,6 +614,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
     highscoreService.setManiaService(this);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+  public Cabinet getCabinet() {
+    return this.cabinet;
   }
 
   @Override

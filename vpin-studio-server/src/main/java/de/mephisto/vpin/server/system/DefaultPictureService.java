@@ -466,6 +466,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       }
       catch (NumberFormatException e) {
         LOG.warn("Failed to clean up backglass media file {}", f.getAbsolutePath());
+        f.delete();
       }
     }
     LOG.info("Folder '{}' cleaned", systemService.getRawImageExtractionFolder().getAbsolutePath());
@@ -480,6 +481,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       }
       catch (NumberFormatException e) {
         LOG.warn("Failed to clean up cropped backglass media file {}", f.getAbsolutePath());
+        f.delete();
       }
     }
     LOG.info("Folder '{}' cleaned", systemService.getCroppedImageFolder().getAbsolutePath());

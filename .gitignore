@@ -63,7 +63,7 @@ java-runtime-osx-x64/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /resources/vbs/*.vbs
-/resources/vpin-studio.db1
+/resources/vpin-studio.db
 /resources/vpin-studio.db.bak
 /resources/vpin-studio.sqbpro
 /resources/b2s-raw/

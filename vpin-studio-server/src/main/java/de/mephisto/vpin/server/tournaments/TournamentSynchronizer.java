@@ -58,7 +58,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
 
   public synchronized boolean synchronize(TournamentMetaData metaData) {
     VPinManiaClient maniaClient = maniaService.getClient();
-    if (maniaClient.getCabinetClient().getCabinet() != null) {
+    if (maniaService.getCabinet() != null) {
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (maniaSettings.isTournamentsEnabled()) {
         List<Game> knownGames = gameService.getKnownGames(-1);
@@ -106,7 +106,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (maniaSettings.isTournamentsEnabled()) {
         VPinManiaClient maniaClient = maniaService.getClient();
-        Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
+        Cabinet cabinet = maniaService.getCabinet();
         if (cabinet != null) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           synchronize(tournaments);
@@ -121,7 +121,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
   private void synchronize(List<Tournament> tournaments) {
     try {
       VPinManiaClient maniaClient = maniaService.getClient();
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      Cabinet cabinet = maniaService.getCabinet();
       if (cabinet == null) {
         return;
       }
