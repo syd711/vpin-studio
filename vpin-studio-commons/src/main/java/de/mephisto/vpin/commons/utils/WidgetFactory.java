@@ -395,77 +395,121 @@ public class WidgetFactory {
     return label;
   }
 
-  private static String determineIconLiteral(String nameLower) {
-    Map<String, String> keywordToIcon = Map.ofEntries(
-            Map.entry("visual pinball x", "customicon-vpx_icon"),
-            Map.entry("vpx", "customicon-vpx_icon"),
-            Map.entry("future", "customicon-futurepinball_icon"),
-            Map.entry("just added", "mdi2d-database-clock"),
-            Map.entry(" added", "mdi2d-database-clock"),
-            Map.entry("most played", "mdi2p-play-box-multiple-outline"),
-            Map.entry("recently played", "customicon-recentlyplayed_icon"),
-            Map.entry("home", "mdi2h-home-circle"),
-            Map.entry("vpw", "customicon-vpw_icon"),
-            Map.entry(" updated", "mdi2u-update"),
-            Map.entry("music", "customicon-music_icon"),
-            Map.entry("movie", "customicon-movie_icon"),
-            Map.entry("star wars", "customicon-star_wars_icon"),
-            Map.entry("adult", "customicon-adult_icon"),
-            Map.entry("top 10", "customicon-top_10_icon"),
-            Map.entry("pup", "customicon-pup_icon"),
-            Map.entry("soccer", "customicon-soccer_icon"),
-            Map.entry("nfozzy", "customicon-nfozzy_icon"),
-            Map.entry("super", "customicon-superhero_icon"),
-            Map.entry("tv", "mdi2t-television-classic"),
-            Map.entry("television", "mdi2t-television-classic"),
-            Map.entry("mame", "customicon-mame_icon"),
-            Map.entry("bally", "customicon-bally_icon"),
-            Map.entry("atari", "customicon-atari_icon"),
-            Map.entry("sega", "customicon-sega_icon"),
-            Map.entry("zaccaria", "customicon-zaccaria_icon"),
-            Map.entry("east", "customicon-dataeast_icon"),
-            Map.entry("midway", "customicon-midway_icon"),
-            Map.entry("gottlieb", "customicon-gottlieb_icon"),
-            Map.entry("williams", "customicon-williams_icon"),
-            Map.entry("stern", "customicon-stern_icon"),
-            Map.entry("chicago", "customicon-chicago_icon"),
-            Map.entry("50", "customicon-fifties_icon"),
-            Map.entry("fift", "customicon-fifties_icon"),
-            Map.entry("60", "customicon-sixties_icon"),
-            Map.entry("sixt", "customicon-sixties_icon"),
-            Map.entry("70", "customicon-seventies_icon"),
-            Map.entry("seven", "customicon-seventies_icon"),
-            Map.entry("80", "customicon-eighties_icon"),
-            Map.entry("eight", "customicon-eighties_icon"),
-            Map.entry("90", "customicon-nineties_icon"),
-            Map.entry("nine", "customicon-nineties_icon"),
-            Map.entry("00", "customicon-aughts_icon"),
-            Map.entry("aught", "customicon-aughts_icon"),
-            Map.entry(" fx", "customicon-fx_icon"),
-            Map.entry("fx3", "customicon-fx3_icon"),
-            Map.entry("vr", "customicon-vr_icon"),
-            Map.entry("capcom", "customicon-capcom_icon"),
-            Map.entry("black", "customicon-bw_icon"),
-            Map.entry("b&w", "customicon-bw_icon"),
-            Map.entry("kids", "customicon-kids_icon"),
-            Map.entry("under 18", "customicon-kids_icon"),
-            Map.entry("children", "customicon-kids_icon"),
-            Map.entry("mod", "customicon-mod_icon"),
-            Map.entry("solid", "customicon-ss_icon"),
-            Map.entry("ss", "customicon-ss_icon"),
-            Map.entry("em", "customicon-em_icon"),
-            Map.entry("electro", "customicon-em_icon"),
-            Map.entry("iscore", "customicon-iscored_icon"),
-            Map.entry("tourn", "mdi2t-trophy-variant"),
-            Map.entry("compet", "mdi2t-trophy-variant"),
-            Map.entry(" m", "customicon-pinballm_icon")
-            );
+  public static enum MatchType {
+    EXACT, PREFIX,ANYWHERE
+  }
 
- //use regex to avoid overlap (FX3/FX and catch thinks like Pinball M better)
-     for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {
-      String regex = "\\b" + Pattern.quote(entry.getKey()) + "\\b";
-      if (Pattern.compile(regex).matcher(nameLower).find()) {
-        return entry.getValue();
+  public static class KeywordRule {
+    private final String keyword;
+    private final String icon;
+    private final MatchType type;
+
+    public KeywordRule(String keyword, String icon, MatchType type) {
+      this.keyword = keyword;
+      this.icon = icon;
+      this.type = type;
+    }
+
+    public String getKeyword() {
+      return keyword;
+    }
+
+    public String getIcon() {
+      return icon;
+    }
+
+    public MatchType getType() {
+      return type;
+    }
+  }
+
+  private static final List<KeywordRule> keywordRules = List.of(
+          new KeywordRule("visual pinball x", "customicon-vpx_icon", MatchType.EXACT),
+          new KeywordRule("vpx", "customicon-vpx_icon", MatchType.EXACT),
+          new KeywordRule("future", "customicon-futurepinball_icon", MatchType.PREFIX),
+          new KeywordRule("just added", "mdi2d-database-clock", MatchType.EXACT),
+          new KeywordRule("added", "mdi2d-database-clock", MatchType.ANYWHERE),
+          new KeywordRule("most played", "mdi2p-play-box-multiple-outline", MatchType.EXACT),
+          new KeywordRule("recently played", "customicon-recentlyplayed_icon", MatchType.EXACT),
+          new KeywordRule("home", "mdi2h-home-circle", MatchType.EXACT),
+          new KeywordRule("vpw", "customicon-vpw_icon", MatchType.EXACT),
+          new KeywordRule("updated", "mdi2u-update", MatchType.ANYWHERE),
+          new KeywordRule("music", "customicon-music_icon", MatchType.EXACT),
+          new KeywordRule("movie", "customicon-movie_icon", MatchType.EXACT),
+          new KeywordRule("star wars", "customicon-star_wars_icon", MatchType.EXACT),
+          new KeywordRule("adult", "customicon-adult_icon", MatchType.EXACT),
+          new KeywordRule("over 18", "customicon-adult_icon", MatchType.EXACT),
+          new KeywordRule("top 10", "customicon-top_10_icon", MatchType.EXACT),
+          new KeywordRule("pup", "customicon-pup_icon", MatchType.EXACT),
+          new KeywordRule("soccer", "customicon-soccer_icon", MatchType.EXACT),
+          new KeywordRule("nfozzy", "customicon-nfozzy_icon", MatchType.EXACT),
+          new KeywordRule("super", "customicon-superhero_icon", MatchType.PREFIX),
+          new KeywordRule("tv", "mdi2t-television-classic", MatchType.EXACT),
+          new KeywordRule("television", "mdi2t-television-classic", MatchType.EXACT),
+          new KeywordRule("mame", "customicon-mame_icon", MatchType.EXACT),
+          new KeywordRule("bally", "customicon-bally_icon", MatchType.EXACT),
+          new KeywordRule("atari", "customicon-atari_icon", MatchType.EXACT),
+          new KeywordRule("sega", "customicon-sega_icon", MatchType.EXACT),
+          new KeywordRule("zaccaria", "customicon-zaccaria_icon", MatchType.EXACT),
+          new KeywordRule("east", "customicon-dataeast_icon", MatchType.ANYWHERE),
+          new KeywordRule("midway", "customicon-midway_icon", MatchType.EXACT),
+          new KeywordRule("gottlieb", "customicon-gottlieb_icon", MatchType.EXACT),
+          new KeywordRule("williams", "customicon-williams_icon", MatchType.EXACT),
+          new KeywordRule("stern", "customicon-stern_icon", MatchType.EXACT),
+          new KeywordRule("chicago", "customicon-chicago_icon", MatchType.EXACT),
+          new KeywordRule("50", "customicon-fifties_icon", MatchType.PREFIX),
+          new KeywordRule("fift", "customicon-fifties_icon", MatchType.PREFIX),
+          new KeywordRule("60", "customicon-sixties_icon", MatchType.PREFIX),
+          new KeywordRule("sixt", "customicon-sixties_icon", MatchType.PREFIX),
+          new KeywordRule("70", "customicon-seventies_icon", MatchType.PREFIX),
+          new KeywordRule("seven", "customicon-seventies_icon", MatchType.PREFIX),
+          new KeywordRule("80", "customicon-eighties_icon", MatchType.PREFIX),
+          new KeywordRule("eight", "customicon-eighties_icon", MatchType.PREFIX),
+          new KeywordRule("90", "customicon-nineties_icon", MatchType.PREFIX),
+          new KeywordRule("nine", "customicon-nineties_icon", MatchType.PREFIX),
+          new KeywordRule("00", "customicon-aughts_icon", MatchType.PREFIX),
+          new KeywordRule("aught", "customicon-aughts_icon", MatchType.PREFIX),
+          new KeywordRule("fx3", "customicon-fx3_icon", MatchType.EXACT),
+          new KeywordRule("fx", "customicon-fx_icon", MatchType.EXACT),
+          new KeywordRule("vr", "customicon-vr_icon", MatchType.EXACT),
+          new KeywordRule("capcom", "customicon-capcom_icon", MatchType.EXACT),
+          new KeywordRule("black", "customicon-bw_icon", MatchType.PREFIX),
+          new KeywordRule("b&w", "customicon-bw_icon", MatchType.EXACT),
+          new KeywordRule("kids", "customicon-kids_icon", MatchType.EXACT),
+          new KeywordRule("under 18", "customicon-kids_icon", MatchType.EXACT),
+          new KeywordRule("children", "customicon-kids_icon", MatchType.EXACT),
+          new KeywordRule("mod", "customicon-mod_icon", MatchType.PREFIX),
+          new KeywordRule("solid", "customicon-ss_icon", MatchType.PREFIX),
+          new KeywordRule("ss", "customicon-ss_icon", MatchType.EXACT),
+          new KeywordRule("em", "customicon-em_icon", MatchType.EXACT),
+          new KeywordRule("electro", "customicon-em_icon", MatchType.PREFIX),
+          new KeywordRule("iscore", "customicon-iscored_icon", MatchType.PREFIX),
+          new KeywordRule("tourn", "mdi2t-trophy-variant", MatchType.PREFIX),
+          new KeywordRule("compet", "mdi2t-trophy-variant", MatchType.PREFIX),
+          new KeywordRule("pinball m", "customicon-pinballm_icon", MatchType.EXACT),
+          new KeywordRule(" m", "customicon-pinballm_icon", MatchType.ANYWHERE)
+  );
+
+  private static String determineIconLiteral(String nameLower) {
+    for (KeywordRule rule : keywordRules) {
+      String pattern;
+
+      switch (rule.getType()) {
+        case EXACT:
+          pattern = "\\b" + Pattern.quote(rule.getKeyword()) + "\\b";
+          break;
+        case PREFIX:
+          pattern = "\\b" + Pattern.quote(rule.getKeyword());
+          break;
+        case ANYWHERE:
+          pattern = Pattern.quote(rule.getKeyword());
+          break;
+        default:
+          throw new IllegalStateException("Unexpected match type: " + rule.getType());
+      }
+
+      if (Pattern.compile(pattern).matcher(nameLower).find()) {
+        return rule.getIcon();
       }
     }
 
