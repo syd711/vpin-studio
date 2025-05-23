@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -63,6 +64,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
+import java.util.regex.Pattern;
+
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -438,8 +441,8 @@ public class WidgetFactory {
             Map.entry("nine", "customicon-nineties_icon"),
             Map.entry("00", "customicon-aughts_icon"),
             Map.entry("aught", "customicon-aughts_icon"),
+            Map.entry(" fx", "customicon-fx_icon"),
             Map.entry("fx3", "customicon-fx3_icon"),
-            Map.entry("fx", "customicon-fx_icon"),
             Map.entry("vr", "customicon-vr_icon"),
             Map.entry("capcom", "customicon-capcom_icon"),
             Map.entry("black", "customicon-bw_icon"),
@@ -454,17 +457,16 @@ public class WidgetFactory {
             Map.entry("electro", "customicon-em_icon"),
             Map.entry("iscore", "customicon-iscored_icon"),
             Map.entry("tourn", "mdi2t-trophy-variant"),
-            Map.entry("compet", "mdi2t-trophy-variant")
+            Map.entry("compet", "mdi2t-trophy-variant"),
+            Map.entry(" m", "customicon-pinballm_icon")
             );
 
-    for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {
-      if (nameLower.contains(entry.getKey())) {
+ //use regex to avoid overlap (FX3/FX and catch thinks like Pinball M better)
+     for (Map.Entry<String, String> entry : keywordToIcon.entrySet()) {
+      String regex = "\\b" + Pattern.quote(entry.getKey()) + "\\b";
+      if (Pattern.compile(regex).matcher(nameLower).find()) {
         return entry.getValue();
       }
-    }
-
-    if (nameLower.endsWith(" m")) {
-      return "customicon-pinballm_icon";
     }
 
     // Default fallback: alphabet letter
