@@ -154,7 +154,11 @@ public class LocalUISettings {
   }
 
   public static boolean isModal(String stateId) {
-    return store.getBoolean(stateId + "_modality");
+    String key = stateId + "_modality";
+    if (store.containsKey(key)) {
+      return store.getBoolean(key);
+    }
+    return true;
   }
 
   public static boolean isMaximizeable(String stateId) {

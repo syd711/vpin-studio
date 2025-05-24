@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
+import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -56,6 +57,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Autowired
   private ScreenshotService screenshotService;
+
+  @Autowired
+  private GameStatusService gameStatusService;
 
   @Autowired
   private JobQueue queue;
@@ -175,6 +179,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     }
     else {
       ServerFX.getInstance().exitPauseMenu();
+      gameStatusService.getStatus().finishPause();
     }
   }
 

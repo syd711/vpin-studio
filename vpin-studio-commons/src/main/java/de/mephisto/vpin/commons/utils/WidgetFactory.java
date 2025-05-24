@@ -27,9 +27,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -54,8 +51,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -63,7 +58,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 
@@ -354,7 +348,7 @@ public class WidgetFactory {
     return createPlaylistIcon(playlist, uiSettings, false);
   }
 
- public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
+  public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
@@ -367,26 +361,28 @@ public class WidgetFactory {
     if (playlist.getId() == PlaylistRepresentation.PLAYLIST_FAVORITE_ID) {
       iconLiteral = "mdi2s-star";
       iconColor = uiSettings.getLocalFavsColor();
-    } else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_GLOBALFAV_ID) {
       iconLiteral = "mdi2s-star";
       iconColor = uiSettings.getGlobalFavsColor();
-    } else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_JUSTADDED_ID) {
       iconLiteral = "mdi2d-database-clock";
       iconColor = uiSettings.getJustAddedColor();
-    } else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
+    }
+    else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
       iconLiteral = "mdi2p-play-box-multiple-outline";
       iconColor = uiSettings.getMostPlayedColor();
-    } else {
-      iconLiteral = determineIconLiteral(nameLower);
     }
 
-      try {
-        fontIcon.setIconLiteral(iconLiteral);
-      }
-      catch (Exception e) {
+    try {
+      iconLiteral = determineIconLiteral(nameLower);
+      fontIcon.setIconLiteral(iconLiteral);
+    }
+    catch (Exception e) {
       LOG.error("Error loading icon literal: " + iconLiteral, e);
-
-      throw new RuntimeException(e);
+      iconLiteral = "mdi2v-view-list";
+      fontIcon.setIconLiteral(iconLiteral);
     }
 
     fontIcon.setIconColor(Paint.valueOf(disabled ? WidgetFactory.DISABLED_COLOR : iconColor));
@@ -396,7 +392,7 @@ public class WidgetFactory {
   }
 
   public static enum MatchType {
-    EXACT, PREFIX,ANYWHERE
+    EXACT, PREFIX, ANYWHERE
   }
 
   public static class KeywordRule {
@@ -424,76 +420,76 @@ public class WidgetFactory {
   }
 
   private static final List<KeywordRule> keywordRules = List.of(
-          new KeywordRule("visual pinball x", "customicon-vpx_icon", MatchType.EXACT),
-          new KeywordRule("vpx", "customicon-vpx_icon", MatchType.EXACT),
-          new KeywordRule("future", "customicon-futurepinball_icon", MatchType.PREFIX),
-          new KeywordRule("just added", "mdi2d-database-clock", MatchType.EXACT),
-          new KeywordRule("added", "mdi2d-database-clock", MatchType.ANYWHERE),
-          new KeywordRule("most played", "mdi2p-play-box-multiple-outline", MatchType.EXACT),
-          new KeywordRule("recently played", "customicon-recentlyplayed_icon", MatchType.EXACT),
-          new KeywordRule("home", "mdi2h-home-circle", MatchType.EXACT),
-          new KeywordRule("vpw", "customicon-vpw_icon", MatchType.EXACT),
-          new KeywordRule("updated", "mdi2u-update", MatchType.ANYWHERE),
-          new KeywordRule("music", "customicon-music_icon", MatchType.EXACT),
-          new KeywordRule("movie", "customicon-movie_icon", MatchType.PREFIX),
-          new KeywordRule("star wars", "customicon-star_wars_icon", MatchType.EXACT),
-          new KeywordRule("adult", "customicon-adult_icon", MatchType.EXACT),
-          new KeywordRule("over 18", "customicon-adult_icon", MatchType.EXACT),
-          new KeywordRule("top 10", "customicon-top_10_icon", MatchType.EXACT),
-          new KeywordRule("pup", "customicon-pup_icon", MatchType.PREFIX),
-          new KeywordRule("soccer", "customicon-soccer_icon", MatchType.EXACT),
-          new KeywordRule("nfozzy", "customicon-nfozzy_icon", MatchType.EXACT),
-          new KeywordRule("super", "customicon-superhero_icon", MatchType.PREFIX),
-          new KeywordRule("tv", "mdi2t-television-classic", MatchType.EXACT),
-          new KeywordRule("television", "mdi2t-television-classic", MatchType.EXACT),
-          new KeywordRule("mame", "customicon-mame_icon", MatchType.EXACT),
-          new KeywordRule("bally", "customicon-bally_icon", MatchType.EXACT),
-          new KeywordRule("atari", "customicon-atari_icon", MatchType.EXACT),
-          new KeywordRule("sega", "customicon-sega_icon", MatchType.EXACT),
-          new KeywordRule("zaccaria", "customicon-zaccaria_icon", MatchType.EXACT),
-          new KeywordRule("east", "customicon-dataeast_icon", MatchType.ANYWHERE),
-          new KeywordRule("midway", "customicon-midway_icon", MatchType.EXACT),
-          new KeywordRule("gottlieb", "customicon-gottlieb_icon", MatchType.EXACT),
-          new KeywordRule("williams", "customicon-williams_icon", MatchType.EXACT),
-          new KeywordRule("stern", "customicon-stern_icon", MatchType.EXACT),
-          new KeywordRule("chicago", "customicon-chicago_icon", MatchType.EXACT),
-          new KeywordRule("50", "customicon-fifties_icon", MatchType.PREFIX),
-          new KeywordRule("fift", "customicon-fifties_icon", MatchType.PREFIX),
-          new KeywordRule("60", "customicon-sixties_icon", MatchType.PREFIX),
-          new KeywordRule("sixt", "customicon-sixties_icon", MatchType.PREFIX),
-          new KeywordRule("70", "customicon-seventies_icon", MatchType.PREFIX),
-          new KeywordRule("seven", "customicon-seventies_icon", MatchType.PREFIX),
-          new KeywordRule("80", "customicon-eighties_icon", MatchType.PREFIX),
-          new KeywordRule("eight", "customicon-eighties_icon", MatchType.PREFIX),
-          new KeywordRule("90", "customicon-nineties_icon", MatchType.PREFIX),
-          new KeywordRule("nine", "customicon-nineties_icon", MatchType.PREFIX),
-          new KeywordRule("00", "customicon-aughts_icon", MatchType.PREFIX),
-          new KeywordRule("aught", "customicon-aughts_icon", MatchType.PREFIX),
-          new KeywordRule("fx3", "customicon-fx3_icon", MatchType.EXACT),
-          new KeywordRule("fx", "customicon-fx_icon", MatchType.EXACT),
-          new KeywordRule("vr", "customicon-vr_icon", MatchType.EXACT),
-          new KeywordRule("capcom", "customicon-capcom_icon", MatchType.EXACT),
-          new KeywordRule("black", "customicon-bw_icon", MatchType.PREFIX),
-          new KeywordRule("b&w", "customicon-bw_icon", MatchType.EXACT),
-          new KeywordRule("kids", "customicon-kids_icon", MatchType.EXACT),
-          new KeywordRule("under 18", "customicon-kids_icon", MatchType.EXACT),
-          new KeywordRule("children", "customicon-kids_icon", MatchType.EXACT),
-          new KeywordRule("mod", "customicon-mod_icon", MatchType.PREFIX),
-          new KeywordRule("solid", "customicon-ss_icon", MatchType.PREFIX),
-          new KeywordRule("ss", "customicon-ss_icon", MatchType.EXACT),
-          new KeywordRule("em", "customicon-em_icon", MatchType.EXACT),
-          new KeywordRule("electro", "customicon-em_icon", MatchType.PREFIX),
-          new KeywordRule("iscore", "customicon-iscored_icon", MatchType.PREFIX),
-          new KeywordRule("tourn", "mdi2t-trophy-variant", MatchType.PREFIX),
-          new KeywordRule("compet", "mdi2t-trophy-variant", MatchType.PREFIX),
-          new KeywordRule("pinball m", "customicon-pinballm_icon", MatchType.EXACT),
-          new KeywordRule(" m", "customicon-pinballm_icon", MatchType.ANYWHERE),
-          new KeywordRule("a to z", "customicon-atoz_icon", MatchType.EXACT),
-          new KeywordRule("atoz", "customicon-atoz_icon", MatchType.EXACT),
-          new KeywordRule("a2z", "customicon-atoz_icon", MatchType.EXACT),
-          new KeywordRule("a-z", "customicon-atoz_icon", MatchType.EXACT),
-          new KeywordRule("a - z", "customicon-atoz_icon", MatchType.EXACT),
-          new KeywordRule("alphabet", "customicon-atoz_icon", MatchType.PREFIX)
+      new KeywordRule("visual pinball x", "customicon-vpx_icon", MatchType.EXACT),
+      new KeywordRule("vpx", "customicon-vpx_icon", MatchType.EXACT),
+      new KeywordRule("future", "customicon-futurepinball_icon", MatchType.PREFIX),
+      new KeywordRule("just added", "mdi2d-database-clock", MatchType.EXACT),
+      new KeywordRule("added", "mdi2d-database-clock", MatchType.ANYWHERE),
+      new KeywordRule("most played", "mdi2p-play-box-multiple-outline", MatchType.EXACT),
+      new KeywordRule("recently played", "customicon-recentlyplayed_icon", MatchType.EXACT),
+      new KeywordRule("home", "mdi2h-home-circle", MatchType.EXACT),
+      new KeywordRule("vpw", "customicon-vpw_icon", MatchType.EXACT),
+      new KeywordRule("updated", "mdi2u-update", MatchType.ANYWHERE),
+      new KeywordRule("music", "customicon-music_icon", MatchType.EXACT),
+      new KeywordRule("movie", "customicon-movie_icon", MatchType.PREFIX),
+      new KeywordRule("star wars", "customicon-star_wars_icon", MatchType.EXACT),
+      new KeywordRule("adult", "customicon-adult_icon", MatchType.EXACT),
+      new KeywordRule("over 18", "customicon-adult_icon", MatchType.EXACT),
+      new KeywordRule("top 10", "customicon-top_10_icon", MatchType.EXACT),
+      new KeywordRule("pup", "customicon-pup_icon", MatchType.PREFIX),
+      new KeywordRule("soccer", "customicon-soccer_icon", MatchType.EXACT),
+      new KeywordRule("nfozzy", "customicon-nfozzy_icon", MatchType.EXACT),
+      new KeywordRule("super", "customicon-superhero_icon", MatchType.PREFIX),
+      new KeywordRule("tv", "mdi2t-television-classic", MatchType.EXACT),
+      new KeywordRule("television", "mdi2t-television-classic", MatchType.EXACT),
+      new KeywordRule("mame", "customicon-mame_icon", MatchType.EXACT),
+      new KeywordRule("bally", "customicon-bally_icon", MatchType.EXACT),
+      new KeywordRule("atari", "customicon-atari_icon", MatchType.EXACT),
+      new KeywordRule("sega", "customicon-sega_icon", MatchType.EXACT),
+      new KeywordRule("zaccaria", "customicon-zaccaria_icon", MatchType.EXACT),
+      new KeywordRule("east", "customicon-dataeast_icon", MatchType.ANYWHERE),
+      new KeywordRule("midway", "customicon-midway_icon", MatchType.EXACT),
+      new KeywordRule("gottlieb", "customicon-gottlieb_icon", MatchType.EXACT),
+      new KeywordRule("williams", "customicon-williams_icon", MatchType.EXACT),
+      new KeywordRule("stern", "customicon-stern_icon", MatchType.EXACT),
+      new KeywordRule("chicago", "customicon-chicago_icon", MatchType.EXACT),
+      new KeywordRule("50", "customicon-fifties_icon", MatchType.PREFIX),
+      new KeywordRule("fift", "customicon-fifties_icon", MatchType.PREFIX),
+      new KeywordRule("60", "customicon-sixties_icon", MatchType.PREFIX),
+      new KeywordRule("sixt", "customicon-sixties_icon", MatchType.PREFIX),
+      new KeywordRule("70", "customicon-seventies_icon", MatchType.PREFIX),
+      new KeywordRule("seven", "customicon-seventies_icon", MatchType.PREFIX),
+      new KeywordRule("80", "customicon-eighties_icon", MatchType.PREFIX),
+      new KeywordRule("eight", "customicon-eighties_icon", MatchType.PREFIX),
+      new KeywordRule("90", "customicon-nineties_icon", MatchType.PREFIX),
+      new KeywordRule("nine", "customicon-nineties_icon", MatchType.PREFIX),
+      new KeywordRule("00", "customicon-aughts_icon", MatchType.PREFIX),
+      new KeywordRule("aught", "customicon-aughts_icon", MatchType.PREFIX),
+      new KeywordRule("fx3", "customicon-fx3_icon", MatchType.EXACT),
+      new KeywordRule("fx", "customicon-fx_icon", MatchType.EXACT),
+      new KeywordRule("vr", "customicon-vr_icon", MatchType.EXACT),
+      new KeywordRule("capcom", "customicon-capcom_icon", MatchType.EXACT),
+      new KeywordRule("black", "customicon-bw_icon", MatchType.PREFIX),
+      new KeywordRule("b&w", "customicon-bw_icon", MatchType.EXACT),
+      new KeywordRule("kids", "customicon-kids_icon", MatchType.EXACT),
+      new KeywordRule("under 18", "customicon-kids_icon", MatchType.EXACT),
+      new KeywordRule("children", "customicon-kids_icon", MatchType.EXACT),
+      new KeywordRule("mod", "customicon-mod_icon", MatchType.PREFIX),
+      new KeywordRule("solid", "customicon-ss_icon", MatchType.PREFIX),
+      new KeywordRule("ss", "customicon-ss_icon", MatchType.EXACT),
+      new KeywordRule("em", "customicon-em_icon", MatchType.EXACT),
+      new KeywordRule("electro", "customicon-em_icon", MatchType.PREFIX),
+      new KeywordRule("iscore", "customicon-iscored_icon", MatchType.PREFIX),
+      new KeywordRule("tourn", "mdi2t-trophy-variant", MatchType.PREFIX),
+      new KeywordRule("compet", "mdi2t-trophy-variant", MatchType.PREFIX),
+      new KeywordRule("pinball m", "customicon-pinballm_icon", MatchType.EXACT),
+      new KeywordRule(" m", "customicon-pinballm_icon", MatchType.ANYWHERE),
+      new KeywordRule("a to z", "customicon-atoz_icon", MatchType.EXACT),
+      new KeywordRule("atoz", "customicon-atoz_icon", MatchType.EXACT),
+      new KeywordRule("a2z", "customicon-atoz_icon", MatchType.EXACT),
+      new KeywordRule("a-z", "customicon-atoz_icon", MatchType.EXACT),
+      new KeywordRule("a - z", "customicon-atoz_icon", MatchType.EXACT),
+      new KeywordRule("alphabet", "customicon-atoz_icon", MatchType.PREFIX)
   );
 
   private static String determineIconLiteral(String nameLower) {
