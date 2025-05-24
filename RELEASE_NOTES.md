@@ -1,3 +1,11 @@
+## Release Notes 4.0.2
+
+## Changes
+
+- **Pause Menu**: The time amount the game is paused through the pause menu is now substracted from the overall play time of game. So you don't falsify your stats anymore, when you let your cabinet alone in pause mode.
+
+---
+
 ## Release Notes 4.0.1
 
 ## Changes
