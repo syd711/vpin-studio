@@ -487,7 +487,13 @@ public class WidgetFactory {
           new KeywordRule("tourn", "mdi2t-trophy-variant", MatchType.PREFIX),
           new KeywordRule("compet", "mdi2t-trophy-variant", MatchType.PREFIX),
           new KeywordRule("pinball m", "customicon-pinballm_icon", MatchType.EXACT),
-          new KeywordRule(" m", "customicon-pinballm_icon", MatchType.ANYWHERE)
+          new KeywordRule(" m", "customicon-pinballm_icon", MatchType.ANYWHERE),
+          new KeywordRule("a to z", "customicon-atoz_icon", MatchType.EXACT),
+          new KeywordRule("atoz", "customicon-atoz_icon", MatchType.EXACT),
+          new KeywordRule("a2z", "customicon-atoz_icon", MatchType.EXACT),
+          new KeywordRule("a-z", "customicon-atoz_icon", MatchType.EXACT),
+          new KeywordRule("a - z", "customicon-atoz_icon", MatchType.EXACT),
+          new KeywordRule("alphabet", "customicon-atoz_icon", MatchType.PREFIX)
   );
 
   private static String determineIconLiteral(String nameLower) {
