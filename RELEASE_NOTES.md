@@ -3,7 +3,7 @@
 ## Changes
 
 - Fixed ignoring of the new VPS validators for ALT sound, ALT color and PUP packs.
-- Fixed Pinball FX3 playlist icon.
+- Fixed Pinball FX3 playlist icon and errors during playlist icon resolution.
 - Fixed "modal" mode for dialogs.
 
 ---
