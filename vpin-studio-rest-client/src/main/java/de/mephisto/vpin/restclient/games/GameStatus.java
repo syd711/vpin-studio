@@ -17,6 +17,7 @@ public class GameStatus {
     if (this.pauseTime != null) {
       this.pauseDuration += (System.currentTimeMillis() - this.pauseTime.getTime());
     }
+    this.pauseTime = null;
   }
 
   public long getPauseDurationMs() {
@@ -44,6 +45,9 @@ public class GameStatus {
   }
 
   public void setGameId(int gameId) {
+    if (gameId == -1) {
+      this.pauseDuration = 0;
+    }
     if (gameId == -1 && this.gameId != -1) {
       this.lastActiveId = this.gameId;
     }

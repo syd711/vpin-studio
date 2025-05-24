@@ -202,11 +202,6 @@ public class FrontendStatusService implements InitializingBean {
     return onGameExit(game);
   }
 
-  public boolean onGameExit(int gameId) {
-    Game game = gameService.getGame(gameId);
-    return onGameExit(game);
-  }
-
   private boolean onGameExit(@NonNull Game game) {
     new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
@@ -223,7 +218,7 @@ public class FrontendStatusService implements InitializingBean {
         gameService.saveEventLog(highscoreEventLog);
       }
     }).start();
-    return game != null;
+    return true;
   }
 
   public void augmentWheel(Game game, String badge) {

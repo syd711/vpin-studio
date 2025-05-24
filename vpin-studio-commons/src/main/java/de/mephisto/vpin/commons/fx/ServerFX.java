@@ -65,8 +65,6 @@ public class ServerFX extends Application {
 
   private boolean overlayVisible = false;
 
-  private FrontendScreenController highscoreCardController;
-
   public static ServerFX getInstance() {
     return INSTANCE;
   }

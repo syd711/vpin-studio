@@ -159,6 +159,9 @@ public class PauseMenu extends Application {
     PauseMenu.test = test;
 
     if (!visible) {
+      if (!test) {
+        status = client.getGameStatusService().startPause();
+      }
       try {
         if (status == null) {
           status = client.getGameStatusService().getStatus();
@@ -247,6 +250,10 @@ public class PauseMenu extends Application {
   }
 
   public static void exitPauseMenu() {
+    if (!PauseMenu.test) {
+      client.getGameStatusService().finishPause();
+    }
+
     StateMananger.getInstance().exit();
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 

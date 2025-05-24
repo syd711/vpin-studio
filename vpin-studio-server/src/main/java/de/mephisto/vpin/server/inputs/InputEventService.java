@@ -59,9 +59,6 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   private ScreenshotService screenshotService;
 
   @Autowired
-  private GameStatusService gameStatusService;
-
-  @Autowired
   private JobQueue queue;
 
   private boolean overlayVisible;
@@ -179,7 +176,6 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     }
     else {
       ServerFX.getInstance().exitPauseMenu();
-      gameStatusService.getStatus().finishPause();
     }
   }
 
