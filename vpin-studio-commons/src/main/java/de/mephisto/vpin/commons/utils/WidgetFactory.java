@@ -373,18 +373,16 @@ public class WidgetFactory {
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
       iconLiteral = "mdi2p-play-box-multiple-outline";
       iconColor = uiSettings.getMostPlayedColor();
+    }else {
+      try {
+        iconLiteral = determineIconLiteral(nameLower);
+       } catch (Exception e) {
+        LOG.error("Error loading icon literal: " + iconLiteral, e);
+        iconLiteral = "mdi2v-view-list";
+      }
     }
 
-    try {
-      iconLiteral = determineIconLiteral(nameLower);
-      fontIcon.setIconLiteral(iconLiteral);
-    }
-    catch (Exception e) {
-      LOG.error("Error loading icon literal: " + iconLiteral, e);
-      iconLiteral = "mdi2v-view-list";
-      fontIcon.setIconLiteral(iconLiteral);
-    }
-
+    fontIcon.setIconLiteral(iconLiteral);
     fontIcon.setIconColor(Paint.valueOf(disabled ? WidgetFactory.DISABLED_COLOR : iconColor));
     label.setGraphic(fontIcon);
     label.setTooltip(new Tooltip(playlist.getName()));
