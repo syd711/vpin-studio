@@ -487,7 +487,8 @@ public class WidgetFactory {
       new KeywordRule("a2z", "customicon-atoz_icon", MatchType.EXACT),
       new KeywordRule("a-z", "customicon-atoz_icon", MatchType.EXACT),
       new KeywordRule("a - z", "customicon-atoz_icon", MatchType.EXACT),
-      new KeywordRule("alphabet", "customicon-atoz_icon", MatchType.PREFIX)
+      new KeywordRule("alphabet", "customicon-atoz_icon", MatchType.PREFIX),
+      new KeywordRule("#", "mdi2m-music-accidental-sharp", MatchType.ANYWHERE)
   );
 
   private static String determineIconLiteral(String nameLower) {
@@ -513,8 +514,19 @@ public class WidgetFactory {
       }
     }
 
-    // Default fallback: alphabet letter
-    return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
+    char firstChar = nameLower.charAt(0);
+    // Default fallback: alphabet letter, number, or standard list
+    if (Character.isLetter(firstChar)) {
+      return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
+    } else if (Character.isDigit(firstChar)) {
+      return "mdi2n-numeric-" + nameLower.charAt(0) + "-circle";
+    } else {
+      // Do something for symbols, punctuation, etc.
+      return "mdi2v-view-list";
+    }
+
+
+
   }
 
   public static Stage createStage() {
