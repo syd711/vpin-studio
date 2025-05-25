@@ -88,7 +88,7 @@ public class HeaderResizeableController implements Initializable {
     }
 
     if (cabinet == null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services to connect your cabinet with friends.", null, "Register Cabinet");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Registration Required", "You need to register your cabinet for the VPin Mania services.", null, "Register Cabinet");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         boolean register = ManiaHelper.register();
         if (register) {

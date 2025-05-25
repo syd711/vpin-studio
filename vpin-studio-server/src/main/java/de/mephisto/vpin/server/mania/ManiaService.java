@@ -546,14 +546,14 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   private void updateTableRating(@NonNull GameDataChangedEvent event) {
     ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
     Game game = gameService.getGame(event.getGameId());
-    if (maniaSettings.isSubmitRatings() && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+    if (maniaSettings.isSubmitRatings() && game != null && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
       if (cabinet != null) {
         int oldRating = event.getOldData().getGameRating() != null ? event.getOldData().getGameRating() : 0;
         int newRating = event.getNewData().getGameRating() != null ? event.getNewData().getGameRating() : 1;
-
         LOG.info("Updating mania rating for \"{}\" from {} to {}", game.getGameDisplayName(), oldRating, newRating);
         if (oldRating != newRating) {
+          synchronizeInitialRating(game);
           new Thread(() -> {
             maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), oldRating, newRating);
           }).start();
