@@ -168,9 +168,7 @@ public class UniversalUploadService {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
           JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
           uploadDescriptor.setError(jobExecutionResult.getError());
-          if (game != null) {
-            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-          }
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
@@ -204,9 +202,7 @@ public class UniversalUploadService {
       case PUP_PACK: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
           pupPacksService.installPupPack(uploadDescriptor, analysis, uploadDescriptor.isAsync());
-          if (game != null) {
-            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-          }
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
@@ -243,27 +239,21 @@ public class UniversalUploadService {
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
           mameService.installRom(uploadDescriptor, gameEmulator, tempFile, analysis);
-          if (game != null) {
-            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-          }
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
           mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
-          if (game != null) {
-            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-          }
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
           mameService.installCfg(uploadDescriptor, gameEmulator, tempFile, analysis);
-          if (game != null) {
-            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-          }
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
