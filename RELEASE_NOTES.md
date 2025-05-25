@@ -4,6 +4,7 @@
 
 - **Pause Menu**: The time amount the game is paused through the pause menu is now substracted from the overall play time of game. So you don't falsify your stats anymore, when you let your cabinet alone in pause mode.
 - **Uploads**: Fixed issue for uploads that were not related to a game, e.g. ROM files.
+- **Playlists**: Fixed favorites icon.
 - **VPin Mania**: 
   - Fixed rating submission. The initial value for ratings was not always synchronized properly which led to a wrong total rating count which then again falsified the rating a bit.
   - Fixed possible endless refresh in the client during registration.
