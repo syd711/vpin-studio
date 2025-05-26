@@ -2,10 +2,12 @@
 
 ## Changes
 
+- **Table Data Manager**: Fixed icon loading issue blocking the dialog.
+- **Confirmation Dialogs**: Fixed sizing issues.
 - **Preferences**: Fixed refresh of Avatar when uploading a new image
 - **DMD Position Tool**: 
-  - Show watermark when DMD image comes from frontend or PupPack
-  - Fixed message when B2S DMD is hidden, instead of uploading an Image, propose to show the image
+  - Show watermark when DMD image comes from frontend or PupPack.
+  - Fixed message when B2S DMD is hidden, instead of uploading an Image, propose to show the image.
 
 ---
 

@@ -373,10 +373,12 @@ public class WidgetFactory {
     else if (playlist.getId() == PlaylistRepresentation.PLAYLIST_MOSTPLAYED_ID) {
       iconLiteral = "mdi2p-play-box-multiple-outline";
       iconColor = uiSettings.getMostPlayedColor();
-    }else {
+    }
+    else {
       try {
         iconLiteral = determineIconLiteral(nameLower);
-       } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error loading icon literal: " + iconLiteral, e);
         iconLiteral = "mdi2v-view-list";
       }
@@ -520,13 +522,14 @@ public class WidgetFactory {
     // Default fallback: alphabet letter, number, or standard list
     if (Character.isLetter(firstChar)) {
       return "mdi2a-alpha-" + nameLower.charAt(0) + "-circle";
-    } else if (Character.isDigit(firstChar)) {
+    }
+    else if (Character.isDigit(firstChar)) {
       return "mdi2n-numeric-" + nameLower.charAt(0) + "-circle";
-    } else {
+    }
+    else {
       // Do something for symbols, punctuation, etc.
       return "mdi2v-view-list";
     }
-
 
 
   }
@@ -645,7 +648,7 @@ public class WidgetFactory {
     stage.setTitle(title);
     stage.setUserData(controller);
 
-    if (stateId != null) {
+    if (stateId != null && !isIgnoredState(stateId)) {
       stage.setResizable(true);
 
       Rectangle position = LocalUISettings.getPosition(stateId);
@@ -690,6 +693,17 @@ public class WidgetFactory {
     );
 
     return stage;
+  }
+
+  private static boolean isIgnoredState(String stateId) {
+    if (stateId == null) {
+      return true;
+    }
+
+    if ("defaultModal".equals(stateId)) {
+      return true;
+    }
+    return false;
   }
 
   public static Optional<ButtonType> showConfirmation(Stage owner, String text) {

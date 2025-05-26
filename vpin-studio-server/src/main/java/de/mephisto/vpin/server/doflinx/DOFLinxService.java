@@ -135,6 +135,9 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
         startDOFLinx();
         LOG.info("Auto-started DOFLinx");
       }
+      else {
+        LOG.info("Autostart for DOFLinx not enabled.");
+      }
     }
     catch (Exception e) {
       LOG.error("DOFLinx service initialization failed: {}", e.getMessage(), e);
