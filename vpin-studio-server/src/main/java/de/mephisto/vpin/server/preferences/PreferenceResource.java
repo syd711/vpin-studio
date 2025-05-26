@@ -1,22 +1,6 @@
 package de.mephisto.vpin.server.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.dof.DOFSettings;
-import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
-import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.restclient.preferences.*;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.mania.ManiaSettings;
-import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
-import de.mephisto.vpin.restclient.validation.ValidationSettings;
-import de.mephisto.vpin.restclient.vpf.VPFSettings;
-import de.mephisto.vpin.restclient.vpu.VPUSettings;
-import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,3 +1,11 @@
+## Release Notes 4.0.3
+
+## Changes
+
+- **Preferences**: Fixed refresh of Avatar when uploading a new image
+
+---
+
 ## Release Notes 4.0.2
 
 ## Changes

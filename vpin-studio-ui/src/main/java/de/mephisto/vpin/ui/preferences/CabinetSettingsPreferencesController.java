@@ -52,7 +52,7 @@ public class CabinetSettingsPreferencesController implements Initializable {
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
       ProgressDialog.createProgressDialog(new AvatarUploadProgressModel(selection));
-      refreshAvatar();
+      refreshAvatar(true);
     }
   }
 
@@ -86,11 +86,11 @@ public class CabinetSettingsPreferencesController implements Initializable {
     }
 
     PreferenceBindingUtil.bindTextField(vpinNameText, PreferenceNames.SYSTEM_NAME, UIDefaults.VPIN_NAME);
-    refreshAvatar();
+    refreshAvatar(false);
   }
 
-  private void refreshAvatar() {
-    InputStream av = client.getAssetService().getAvatar(false);
+  private void refreshAvatar(boolean forceRefresh) {
+    InputStream av = client.getAssetService().getAvatar(forceRefresh);
     if (av == null) {
       av = ServerFX.class.getResourceAsStream("avatar-default.png");
     }
