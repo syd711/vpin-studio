@@ -214,7 +214,7 @@
                                           <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
                                        </graphic>
                                        <GridPane.margin>
-                                          <Insets right="90.0" />
+                                          <Insets right="60.0" />
                                        </GridPane.margin>
                                     </Label>
                                     <Label layoutX="10.0" layoutY="168.0" text="Authors:" textFill="WHITE" GridPane.rowIndex="7">

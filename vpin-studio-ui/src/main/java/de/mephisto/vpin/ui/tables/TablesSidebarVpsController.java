@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -302,20 +303,32 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
-      VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
-      if (tableById != null) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
-        String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
-        refreshTableView(tableById, tableFormats);
-        if (!StringUtils.isEmpty(vpsTableVersionId)) {
-          VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
-          tableVersionsCombo.setValue(version);
-        }
+      if (StringUtils.isNotEmpty(vpsTableId)) {
+        // parallel and async get
+        JFXFuture
+          .supplyAllAsync(
+            () -> client.getVpsService().getTableById(vpsTableId),
+            () -> client.getFrontendService().getFrontendMedia(game.getId()),
+            () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()))
+          .thenAcceptLater(objs -> {
+            VpsTable tableById = (VpsTable) objs[0];
+            FrontendMediaRepresentation frontendMedia = (FrontendMediaRepresentation) objs[1];
+            GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) objs[2];
+
+            if (tableById != null) {
+              String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
+              refreshTableView(tableById, frontendMedia, tableFormats);
+              if (!StringUtils.isEmpty(vpsTableVersionId)) {
+                VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
+                tableVersionsCombo.setValue(version);
+              }
+            }
+          });
       }
     }
   }
 
-  private void refreshTableView(VpsTable vpsTable, String[] tableFormats) {
+  private void refreshTableView(VpsTable vpsTable, FrontendMediaRepresentation frontendMedia, String[] tableFormats) {
     versionAuthorsLabel.setText("-");
     versionAuthorsLabel.setTooltip(new Tooltip(null));
 
@@ -384,8 +397,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsSound(), null);
 
-
-    FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
     List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(VPinScreen.Topper);
     if (!doFilter || items.isEmpty()) {
       addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsToppper(), null);
