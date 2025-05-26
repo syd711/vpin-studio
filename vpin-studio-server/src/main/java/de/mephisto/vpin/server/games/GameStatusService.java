@@ -2,11 +2,13 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.server.alx.AlxService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,6 +29,10 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
   public void setForceActive(boolean active) {
     this.forceActive = active;
   }
+
+  @Autowired
+  private AlxService alxService;
+
 
   public GameStatus getStatus() {
     return status;
@@ -71,6 +77,11 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
   }
 
   public void resetStatus() {
+    status.finishPause();
+    if (status.getGameId() != -1) {
+      long pauseDurationMs = getStatus().getPauseDurationMs();
+      alxService.substractPlayTimeForGame(status.getGameId(), pauseDurationMs);
+    }
     status.setGameId(-1);
     SLOG.info("Resetted active game status");
   }

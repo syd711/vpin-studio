@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.fp;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
@@ -48,7 +49,7 @@ public class FPService {
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
-      ZipUtil.unzipTargetFile(tempFile, out, bamCfgFile);
+      PackageUtil.unpackTargetFile(tempFile, out, bamCfgFile);
       LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
     else {

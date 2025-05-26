@@ -1241,10 +1241,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
 
       if (value.getAltColorType() != null) {
-        //set AltColorType in text of label
-        AltColor altColor;
-        altColor = Studio.client.getAltColorService().getAltColor(value.getId());
-        Label label = new Label(altColor.getAltColorType().name());
+        Label label = new Label(value.getAltColorType().name());
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
 

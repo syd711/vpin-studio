@@ -117,7 +117,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (game != null) {
       List<Game> games = allGames.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
       games.remove(game);
-      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
+//      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
     }
     return getGame(gameId);
   }

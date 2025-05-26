@@ -17,11 +17,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1340.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.DMDPositionController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -68,7 +69,7 @@
                   </Label>
                </left>
                <right>
-                  <HBox spacing="3.0" alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+                  <HBox alignment="BASELINE_RIGHT" spacing="3.0" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
                            <font>
@@ -92,11 +93,6 @@
                               <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
                            </tooltip>
                         </Button>
-                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
                      </children>
                   </HBox>
                   </right>
@@ -105,13 +101,25 @@
          <center>
             <VBox>
                <children>
-                  <TabPane fx:id="tabPane">
-                     <tabs>
-                        <Tab fx:id="playfieldTab" closable="false" text="Playfield" />
-                        <Tab fx:id="backglassTab" closable="false" text="Backglass" />
-                        <Tab fx:id="dmdTab" closable="false" text="DMD" />
-                     </tabs>
-                  </TabPane>
+                  <StackPane>
+                     <children>
+                        <TabPane fx:id="tabPane">
+                           <tabs>
+                              <Tab fx:id="playfieldTab" closable="false" text="Playfield" />
+                              <Tab fx:id="backglassTab" closable="false" text="Backglass" />
+                              <Tab fx:id="dmdTab" closable="false" text="DMD" />
+                           </tabs>
+                        </TabPane>
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE" StackPane.alignment="TOP_RIGHT">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <StackPane.margin>
+                              <Insets right="12.0" top="10.0" />
+                           </StackPane.margin>
+                        </CheckBox>
+                     </children>
+                  </StackPane>
 
       <BorderPane fx:id="parentpane" BorderPane.alignment="CENTER">
          <center>
@@ -120,11 +128,25 @@
                </ImageView>
                <VBox fx:id="noFullDMDPane">
                   <children>
-                     <VBox spacing="3">
+                     <VBox fx:id="uploadFullDMDImagePane" spacing="3" >
                         <children>
                            <Label fx:id="noFullDMDLabel" styleClass="default-text" text="No Full DMD Image present in the backglass !" textFill="WHITE" />
                            <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="You can upload or drop a Full DMD image here. Please note the backglass will be modified and will be enhanced with the uploaded image." />
                            <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
+                        </VBox.margin>
+                     </VBox>
+                     <VBox fx:id="activateFullDMDImagePane" spacing="3" >
+                        <children>
+                           <Label fx:id="activateDMDImageLabel" styleClass="default-text" text="The Full DMD Image present in the backglass is Hidden !" textFill="WHITE" />
+                           <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="You can show the backglass DMD image" />
+                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="Show B2S DMD">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -140,6 +162,12 @@
                            <Label fx:id="useFullDMDMediaLabel" styleClass="default-text" text="... or Use Full DMD Media :" textFill="WHITE" />
                            <Label fx:id="useFullDMDMediaDescr" styleClass="preference-description" text="Full DMD Media is present. You can keep the full DMD/Apron frontend screen on to use it." textFill="WHITE" />
                            <Button fx:id="useFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaUse" prefHeight="26.0" prefWidth="200.0" text="Keep Frontend Full DMD On">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                           <Label fx:id="grabFullDMDMediaDescr" styleClass="preference-description" text="Or you can grab the full DMD/Apron frontend image or one of its video frame and copy it within the backglass." textFill="WHITE" />
+                           <Button fx:id="grabFullDMDMediaBtn" mnemonicParsing="false" onAction="#onFullDMDMediaGrab" prefHeight="26.0" prefWidth="200.0" text="Grab Frontend Image">
                               <font>
                                  <Font size="14.0" />
                               </font>
@@ -216,7 +244,7 @@
                         </HBox>
                         <VBox fx:id="backglassScorePane" spacing="3.0">
                            <children>
-                              <HBox >
+                              <HBox>
                                  <children>
                                     <CheckBox fx:id="disableBGScoreCheckbox" mnemonicParsing="false" text="Turn Backglass Scores off" textFill="WHITE">
                                        <font>

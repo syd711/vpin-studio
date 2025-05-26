@@ -1,4 +1,5 @@
 <B2STableSettings>
+  <UsedLEDType>0</UsedLEDType>
   <ArePluginsOn>1</ArePluginsOn>
   <DefaultStartMode>2</DefaultStartMode>
   <DisableFuzzyMatching>0</DisableFuzzyMatching>

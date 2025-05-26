@@ -331,7 +331,8 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
           DirectB2SData data = client.getBackglassServiceClient().getDirectB2SData(emulatorId, fileName);
           if (data != null) {
             try {
-              return client.getBackglassServiceClient().getDirectB2sBackground(data);
+              // get the preview image without grill if hidden but without frame
+              return client.getBackglassServiceClient().getDirectB2sPreviewBackground(data, false);
             }
             catch (IOException ioe) {
               LOG.error("Cannot get background for backglass {} of emulator {} : {}",

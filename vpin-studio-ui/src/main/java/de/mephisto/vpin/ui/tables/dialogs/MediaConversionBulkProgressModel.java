@@ -23,7 +23,6 @@ public class MediaConversionBulkProgressModel extends ProgressModel<GameRepresen
   private final static Logger LOG = LoggerFactory.getLogger(MediaConversionBulkProgressModel.class);
 
   private final Iterator<GameRepresentation> iterator;
-  @org.jetbrains.annotations.NotNull
   private final List<GameRepresentation> games;
   private final VPinScreen screen;
   private final MediaConversionCommand command;

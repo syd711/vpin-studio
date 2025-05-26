@@ -4,6 +4,10 @@ import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.dmd.DMDType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +35,16 @@ public class DMDPositionResource {
   private final static Logger LOG = LoggerFactory.getLogger(DMDPositionResource.class);
 
   @Autowired
+  private GameService gameService;
+
+  @Autowired
+  private BackglassService backglassService;
+
+  @Autowired
   private DMDPositionService dmdPositionService;
+
+  @Autowired
+  private DefaultPictureService defaultPictureService;
 
   @GetMapping("/{gameId}")
   public DMDInfo getDMD(@PathVariable("gameId") int gameId) {
@@ -40,7 +53,8 @@ public class DMDPositionResource {
 
   @GetMapping("/picture/{gameId}/{onScreen}.png")
   public ResponseEntity<Resource> getPicture(@PathVariable("gameId") int gameId, @PathVariable("onScreen") String onScreen) {
-    return download(dmdPositionService.getPicture(gameId, VPinScreen.valueOf(onScreen)), onScreen + ".png", false);
+    Game game = gameService.getGame(gameId);
+    return download(defaultPictureService.getPicture(game, VPinScreen.valueOf(onScreen)), onScreen + ".png", false);
   }
 
   @PostMapping("/switch")
@@ -55,7 +69,17 @@ public class DMDPositionResource {
 
   @PostMapping("/useFrontendFullDMDMedia")
   public DMDInfo useFrontendFullDMDMedia(@RequestBody DMDInfo dmdInfo) {
-    return dmdPositionService.useFrontendFullDMDMedia(dmdInfo);
+    backglassService.useFrontendFullDMDMedia(dmdInfo.getGameId());
+    return dmdInfo;
+  }
+
+  @PostMapping("/grabFrontendFullDMDMedia")
+  public DMDInfo grabFrontendFullDMDMedia(@RequestBody DMDInfo dmdInfo) {
+    Game game = gameService.getGame(dmdInfo.getGameId());
+    if (game != null) {
+      backglassService.grabFrontendFullDMDMedia(game);
+    }
+    return dmdInfo;
   }
 
   @PostMapping("/{gameId}/move")

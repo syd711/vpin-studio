@@ -62,7 +62,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     }
 
     VPinManiaClient maniaClient = maniaService.getClient();
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    Cabinet cabinet = maniaService.getCabinet();
 
     if (cabinet != null) {
       try {

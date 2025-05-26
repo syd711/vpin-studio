@@ -53,6 +53,12 @@ public class ServiceInstallationProgressModel extends ProgressModel<Integer> {
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    Studio.client.getMameService().clearCache();
+    super.finalizeModel(progressResultModel);
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, Integer next) {
     try {
       GameRepresentation gameRepresentation = Studio.client.getGameService().scanGame(next);

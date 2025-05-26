@@ -584,19 +584,6 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
-    try {
-      highscoreService.setGameService(this);
-    }
-    catch (Exception e) {
-      LOG.error("Error initializing GameService: " + e.getMessage(), e);
-    }
-    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
-
   public boolean clearMameCaches() {
     List<Game> games = getKnownGames(-1);
     vpsService.update(games);
@@ -616,7 +603,24 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    try {
+      highscoreService.setGameService(this);
+    }
+    catch (Exception e) {
+      LOG.error("Error initializing GameService: " + e.getMessage(), e);
+    }
+    LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+
     //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
-    clearMameCaches();
+    List<Integer> unknownGames = getUnknownGames();
+    if (unknownGames.isEmpty()) {
+      clearMameCaches();
+    }
   }
 }

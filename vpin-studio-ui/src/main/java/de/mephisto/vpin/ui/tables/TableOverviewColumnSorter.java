@@ -54,7 +54,7 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
             return o2.getGame().getDateAdded() == null ? 0 : 1;
           }
           else {
-            return o2.getGame().getDateAdded() == null ? -1 : o1.getGame().getDateAdded().compareTo(o2.getGame().getDateAdded());
+            return o2.getGame().getDateAdded() == null ? 1 : TableOverviewController.dateFormat.format(o1.getGame().getDateAdded()).compareTo(TableOverviewController.dateFormat.format(o2.getGame().getDateAdded()));
           }
         };
       }
@@ -64,7 +64,7 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
             return o2.getGame().getModified() == null ? 0 : -1;
           }
           else {
-            return o2.getGame().getModified() == null ? 1 : o1.getGame().getModified().compareTo(o2.getGame().getModified());
+            return o2.getGame().getModified() == null ? 1 : TableOverviewController.dateFormat.format(o1.getGame().getModified()).compareTo(TableOverviewController.dateFormat.format(o2.getGame().getModified()));
           }
         };
       }

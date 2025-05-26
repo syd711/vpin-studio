@@ -58,11 +58,10 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
     List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
 
-    List<GameRepresentation> filtered = gamesCached.stream().filter(g -> g.getHighscoreType() != null).collect(Collectors.toList());
-    tablesCombo.setItems(FXCollections.observableList(filtered));
+    tablesCombo.setItems(FXCollections.observableList(gamesCached));
     tablesCombo.getSelectionModel().select(0);
 
-    for (GameRepresentation gameRepresentation : filtered) {
+    for (GameRepresentation gameRepresentation : gamesCached) {
       if (gameRepresentation.getId() == pauseMenuSettings.getTestGameId()) {
         tablesCombo.setValue(gameRepresentation);
         break;
@@ -85,7 +84,7 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
       }
     });
 
-    testBtn.setDisable(filtered.isEmpty());
+    testBtn.setDisable(gamesCached.isEmpty());
   }
 
   @Override

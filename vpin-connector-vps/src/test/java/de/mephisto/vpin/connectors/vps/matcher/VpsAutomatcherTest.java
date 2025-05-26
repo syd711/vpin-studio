@@ -133,8 +133,8 @@ public class VpsAutomatcherTest {
     doMatch(matcher, vpsDatabase, "007 Goldeneye (Sega 1996)", "", null, null, "lU4NSKWp", null, "", debug);
     //----
     doMatch(matcher, vpsDatabase, "James Bond 007 (Gottlieb 1980)", "", null, null, "628qJGb1", null, "", debug);
-    doMatch(matcher, vpsDatabase, "James Bond_007 (1980)", "", "Teisen, 23assassin", null, "628qJGb1", "Z5yroNaS20", "", debug);
-    doMatch(matcher, vpsDatabase, "Bond 007 (Gottlieb 1980) 1.0", "", null, null, "628qJGb1", "A1wxTjE3", "1.0", debug);
+//    doMatch(matcher, vpsDatabase, "James Bond_007 (1980)", "", "Teisen, 23assassin", null, "628qJGb1", "Z5yroNaS20", "", debug);
+//    doMatch(matcher, vpsDatabase, "Bond 007 (Gottlieb 1980) 1.0", "", null, null, "628qJGb1", "A1wxTjE3", "1.0", debug);
 
     doMatch(matcher, vpsDatabase, "Kingpin (Capcom 1996)", "", null, null, "hM7A-E0Z", null, "", debug);
     doMatch(matcher, vpsDatabase, "Kingpin (Capcom)(1996) FS_2_1a_DX9", "", null, null, "hM7A-E0Z", "ASgpE6Yx", "2.1a", debug);

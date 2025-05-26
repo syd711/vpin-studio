@@ -22,6 +22,8 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SDetail;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.validation.BackglassValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
@@ -66,6 +68,11 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     assertEquals(2, b2s.getNbVersions());
 
     DirectB2SData data = backglassService.getDirectB2SData(g);
+    assertNotNull(data);
+    assertEquals(3, data.getTableType());
+    assertEquals("STAT, Wildman, bassgeige", data.getAuthor());
+
+    data = backglassService.getDirectB2SData(1, "Twister (1996) (1).directb2s");
     assertNotNull(data);
     assertEquals(2, data.getTableType());
     assertEquals("RetroBASH", data.getAuthor());
@@ -164,16 +171,58 @@ public class BackglassServiceTest extends AbstractVPinServerTest {
     assertEquals(5, allb2s.size());
   }
 
-
+  @Test
   public void testBackglassValidations() throws Exception {
 
     Game g = gameService.getGameByBaseFilename(1, "Twister (1996)");
     DirectB2SDetail detail = backglassService.getBackglassDetail(1, "Twister (1996).directb2s", g);
-    List<ValidationState> validations = backglassValidationService.validate(detail, g, null, null, false);
-    assertTrue(validations.isEmpty());
+    List<ValidationState> validations = detail.getValidations();
+    assertEquals(1, validations.size());
+    assertEquals(0, validations.get(0).getCode());
 
-    detail = backglassService.getBackglassDetail(1, " Counterforce (Gottlieb 1980).directb2s", g);
-    validations = backglassValidationService.validate(detail, null, null, null, false);
+    detail = backglassService.getBackglassDetail(1, "Counterforce (Gottlieb 1980).directb2s", g);
+    validations = detail.getValidations();
+    assertEquals(1, validations.size());
+    assertEquals(BackglassValidationCode.CODE_NO_GAME, validations.get(0).getCode());
+   
+    // rerun but get all
+    DirectB2ServerSettings serverSettings = backglassService.getServerSettings();
+    DirectB2STableSettings tableSettings = backglassService.getTableSettings(g);
+    validations = backglassValidationService.validate(detail, g, tableSettings, serverSettings, false);
     assertEquals(2, validations.size());
+
+
+    detail = backglassService.getBackglassDetail(1, "Jaws.directb2s", g);
+    validations = detail.getValidations();
+    assertEquals(1, validations.size());
+    assertEquals(BackglassValidationCode.CODE_NO_FULLDMD, validations.get(0).getCode());
+    tableSettings = backglassService.getTableSettings(g);
+    validations = backglassValidationService.validate(detail, g, tableSettings, serverSettings, false);
+    assertEquals(1, validations.size());
   }
+
+  @Test
+  public void testFullDMDManipulations() throws Exception {
+    String b2sFilename = "Jaws.directb2s";
+    
+    //Game g = gameService.getGameByBaseFilename(1, );
+
+    // first check backglass does not contain a full dmd
+    String base64 = backglassService.getDmdBase64(1, b2sFilename);
+    assertNull(base64);
+
+    // upload a dummy image
+    String dummyBase64 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+    backglassService.setDmdImage(1, b2sFilename, "backglass_test.png", dummyBase64);
+
+    // re-extract and compare
+    base64 = backglassService.getDmdBase64(1, b2sFilename);
+    assertEquals(dummyBase64, base64);
+
+    // empty full dmd
+    backglassService.setDmdImage(1, b2sFilename, null, null);
+    base64 = backglassService.getDmdBase64(1, b2sFilename);
+    assertNull(base64);
+  }
+
 }

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
@@ -309,7 +310,7 @@ public class MameService implements InitializingBean {
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
-      ZipUtil.unzipTargetFile(tempFile, out, nvFileName);
+      PackageUtil.unpackTargetFile(tempFile, out, nvFileName);
       LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
     else {

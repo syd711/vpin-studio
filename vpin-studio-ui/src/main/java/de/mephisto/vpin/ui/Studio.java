@@ -227,7 +227,6 @@ public class Studio extends Application {
 
             // reinitialize a new EventManager each time application starts
             EventManager.initialize();
-            LocalUISettings.initialize();
           })
           .thenLater(() -> {
             Studio.stage = stage;

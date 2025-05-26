@@ -597,13 +597,7 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeleteDirectB2s()) {
-          if (!FileUtils.delete(defaultPictureService.getCroppedDefaultPicture(game))) {
-            success = false;
-          }
-          if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
-            success = false;
-          }
-          if (!FileUtils.delete(defaultPictureService.getDMDPicture(game))) {
+          if (!defaultPictureService.deleteAllPictures(game)) {
             success = false;
           }
           if (!FileUtils.delete(game.getDirectB2SFile())) {

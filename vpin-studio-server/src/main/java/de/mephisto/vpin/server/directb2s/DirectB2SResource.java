@@ -256,7 +256,10 @@ public class DirectB2SResource {
   public boolean deleteBackglass(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
     boolean b = backglassService.deleteBackglass(emulatorId, fileName);
     if (b) {
-      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
+      Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
+      if (game != null) {
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, fileName);
+      }
     }
     return b;
   }
@@ -266,23 +269,35 @@ public class DirectB2SResource {
     int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
+    DirectB2S directb2s = null;
+    Game game = null;
     try {
       if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
-        return backglassService.rename(emulatorId, fileName, newName);
+        directb2s = backglassService.rename(emulatorId, fileName, newName);
       }
       else if (values.containsKey("setVersionAsDefault")) {
-        return backglassService.setAsDefault(emulatorId, fileName);
+        directb2s = backglassService.setAsDefault(emulatorId, fileName);
       }
       else if (values.containsKey("disable")) {
-        return backglassService.disable(emulatorId, fileName);
+        directb2s = backglassService.disable(emulatorId, fileName);
       }
       else if (values.containsKey("deleteVersion")) {
-        return backglassService.deleteVersion(emulatorId, fileName);
+        directb2s = backglassService.deleteVersion(emulatorId, fileName);
+        // last version deleted, so cannot get game from there
+        if (directb2s == null) {
+          game = gameService.getGameByDirectB2S(emulatorId, fileName);
+        }
       }
-      return null;
+      return directb2s;
     }
     finally {
-      gameLifecycleService.notifyGameAssetsChanged(AssetType.DIRECTB2S, fileName);
+      // generate a game event
+      if (directb2s != null) {
+        gameLifecycleService.notifyGameAssetsChanged(directb2s.getGameId(), AssetType.DIRECTB2S, fileName);
+      }
+      else if (game != null) {
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, fileName);
+      }
     }
   }
 
@@ -339,10 +354,12 @@ public class DirectB2SResource {
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();
 
+      // FIXME OLE not really needed anymore as defaultPictureService auto detect missing images
       Game game = gameService.getGame(gameId);
       if (game != null) {
         defaultPictureService.extractDefaultPicture(game);
       }
+
       return descriptor;
     }
     catch (Exception e) {
@@ -382,7 +399,9 @@ public class DirectB2SResource {
     boolean success = backglassService.setDmdImage(emulatorId, fileName, originalFileName, base64);
     if (success && FileUtils.isMainFilename(fileName)) {
       Game game = gameService.getGameByDirectB2S(emulatorId, fileName);
-      defaultPictureService.updateGame(game);
+      if (game != null) {
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, null);
+      }
     }
     return success;
   }
@@ -414,6 +433,9 @@ public class DirectB2SResource {
     try {
       Game game = gameService.getGameByDirectB2S(screenres.getEmulatorId(), screenres.getB2SFileName());
       backglassService.saveScreenRes(screenres, game);
+      if (game != null) {
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, null);
+      }
       return null;
     }
     catch (IOException ioe) {
@@ -430,7 +452,16 @@ public class DirectB2SResource {
       return null;
     }
     try {
-      return backglassService.setScreenResFrame(emulatorId, b2sFilename, file.getOriginalFilename(), file.getInputStream());
+      String frame = backglassService.setScreenResFrame(emulatorId, b2sFilename, file.getOriginalFilename(), file.getInputStream());
+
+      if (frame != null)  {
+        Game game = gameService.getGameByDirectB2S(emulatorId, b2sFilename);
+        if (game != null) {
+          gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, null);
+        }
+      }
+
+      return frame;
     }
     catch (IOException ioe) {
       LOG.error("Error while converting image into base64 representation", ioe);
@@ -442,6 +473,14 @@ public class DirectB2SResource {
   public boolean removeScreenResFrame(@RequestParam("emuid") int emuId, @RequestParam("filename") String b2sFilename) throws Exception {
     try {
       String filedeleted = backglassService.setScreenResFrame(emuId, b2sFilename, null, null);
+
+      if (filedeleted != null) {
+        Game game = gameService.getGameByDirectB2S(emuId, b2sFilename);
+        if (game != null) {
+          gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.DIRECTB2S, null);
+        }
+      }
+
       return filedeleted != null;
     }
     catch (IOException ioe) {
