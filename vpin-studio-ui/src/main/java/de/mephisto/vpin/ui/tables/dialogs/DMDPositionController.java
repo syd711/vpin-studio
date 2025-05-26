@@ -1,13 +1,13 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.dmd.DMDType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
@@ -60,6 +60,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -179,6 +180,10 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private VBox noFullDMDPane;
+  @FXML
+  private VBox uploadFullDMDImagePane;
+  @FXML
+  private VBox activateFullDMDImagePane;
   @FXML
   private VBox useFullDMDMediaPane;
 
@@ -390,31 +395,39 @@ public class DMDPositionController implements Initializable, DialogController {
   }
 
   @FXML
+  private void onActivateDMDImageSelect(ActionEvent event) {
+    doPerformImageAction(dmd -> {
+        DirectB2STableSettings tableSettings = client.getBackglassServiceClient().getTableSettings(dmd.getGameId());
+        tableSettings.setHideB2SDMD(false);
+        client.getBackglassServiceClient().saveTableSettings(dmd.getGameId(), tableSettings);
+        return dmd;
+      }, true);
+  }
+
+  @FXML
   private void onFullDMDMediaUse() {
-    DMDInfo movedDmdinfo = fillDmdInfo();
-    disableAll();
-    setWait(true);
-    JFXFuture.supplyAsync(() -> client.getDmdPositionService().useFrontendFullDMDMedia(movedDmdinfo))
-        .thenAcceptLater(dmd -> {
-          setWait(false);
-          setDmdInfo(dmd, false, false);
-          loadImage(loadedVpinScreen, true);
-        });
+    doPerformImageAction(dmd -> client.getDmdPositionService().useFrontendFullDMDMedia(dmd), false);
   }
 
   @FXML
   private void onFullDMDMediaGrab() {
+    doPerformImageAction(dmd -> client.getDmdPositionService().grabFrontendFullDMDMedia(dmd), true);
+  }
+
+  private void doPerformImageAction(Function<DMDInfo, DMDInfo> action, boolean notifyTableChange) {
     DMDInfo movedDmdinfo = fillDmdInfo();
     disableAll();
     setWait(true);
-    JFXFuture.supplyAsync(() -> client.getDmdPositionService().grabFrontendFullDMDMedia(movedDmdinfo))
+    JFXFuture.supplyAsync(() -> action.apply(movedDmdinfo))
         .thenAcceptLater(dmd -> {
           setWait(false);
           setDmdInfo(dmd, false, false);
           loadImage(loadedVpinScreen, true);
 
           // also notify other components
-          EventManager.getInstance().notifyTableChange(dmd.getGameId(), dmd.getGameRom());
+          if (notifyTableChange) {
+            EventManager.getInstance().notifyTableChange(dmd.getGameId(), null);
+          }
         });
   }
 
@@ -794,9 +807,22 @@ public class DMDPositionController implements Initializable, DialogController {
 
           if (VPinScreen.Menu.equals(onScreen)) {
             noFullDMDPane.setVisible(true);
+
+            // check presence of image in backglass
+            JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(dmdinfo.getGameId()))
+              .thenAcceptLater(data -> {
+                activateFullDMDImagePane.setVisible(data.isDmdImageAvailable());
+                activateFullDMDImagePane.setManaged(data.isDmdImageAvailable());
+
+                uploadFullDMDImagePane.setVisible(!data.isDmdImageAvailable());
+                uploadFullDMDImagePane.setManaged(!data.isDmdImageAvailable());
+              });
+
             // check presence of media asset
-            FrontendMediaItemRepresentation item = client.getFrontendService().getDefaultFrontendMediaItem(dmdinfo.getGameId(), VPinScreen.Menu);
-            useFullDMDMediaPane.setVisible(item != null);
+            JFXFuture.supplyAsync(() -> client.getFrontendService().getDefaultFrontendMediaItem(dmdinfo.getGameId(), VPinScreen.Menu))
+              .thenAcceptLater(item -> {
+                useFullDMDMediaPane.setVisible(item != null);
+              });
           }
         }
         else {

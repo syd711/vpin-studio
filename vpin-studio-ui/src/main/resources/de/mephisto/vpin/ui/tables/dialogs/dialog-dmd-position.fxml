@@ -128,11 +128,25 @@
                </ImageView>
                <VBox fx:id="noFullDMDPane">
                   <children>
-                     <VBox spacing="3">
+                     <VBox fx:id="uploadFullDMDImagePane" spacing="3" >
                         <children>
                            <Label fx:id="noFullDMDLabel" styleClass="default-text" text="No Full DMD Image present in the backglass !" textFill="WHITE" />
                            <Label fx:id="noFullDMDDescr" styleClass="preference-description" text="You can upload or drop a Full DMD image here. Please note the backglass will be modified and will be enhanced with the uploaded image." />
                            <Button mnemonicParsing="false" onAction="#onFullDMDFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                              <font>
+                                 <Font size="14.0" />
+                              </font>
+                           </Button>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="36.0" />
+                        </VBox.margin>
+                     </VBox>
+                     <VBox fx:id="activateFullDMDImagePane" spacing="3" >
+                        <children>
+                           <Label fx:id="activateDMDImageLabel" styleClass="default-text" text="The Full DMD Image present in the backglass is Hidden !" textFill="WHITE" />
+                           <Label fx:id="activateDMDImageDescr" styleClass="preference-description" text="You can show the backglass DMD image" />
+                           <Button mnemonicParsing="false" onAction="#onActivateDMDImageSelect" prefHeight="26.0" prefWidth="125" text="Show B2S DMD">
                               <font>
                                  <Font size="14.0" />
                               </font>

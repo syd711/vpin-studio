@@ -159,12 +159,14 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
     FrontendMediaItem backGlassItem = frontendService.getDefaultMediaItem(game, VPinScreen.BackGlass);
     if (extractFromFrontendMedia(backGlassItem, target)) {
+      addWatermark(target, "from " + frontendService.getFrontendName());
       return;
     }
 
     PupPack pupPack = game.getPupPack();
     if (pupPack != null) {
       pupPackService.exportDefaultPicture(pupPack, target);
+      addWatermark(target, "from PupPack");
       return;
     }
 
@@ -197,6 +199,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
         FrontendMedia frontendMedia = frontendService.getGameMedia(game.getId());
         FrontendMediaItem item = frontendMedia.getDefaultMediaItem(VPinScreen.Menu);
         if (extractFromFrontendMedia(item, target)) {
+          addWatermark(target, "from " + frontendService.getFrontendName());
           return;
         }
       }
@@ -223,7 +226,16 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     }
     return false;
   }
-  
+
+  private void addWatermark(File target, String watermark) {
+    try {
+      ImageUtil.drawWatermark(target, watermark, Color.CYAN);
+    }
+    catch (IOException ioe) {
+      LOG.warn("Cannot add watermark on {}", target.getAbsolutePath());
+    }
+  }
+
   private byte[] extractBytes(File file) {
     try {
       if (file.exists()) {
@@ -235,7 +247,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     }
     return null;
   }
-
 
   public boolean deleteDefaultPictures(@NonNull Game game) {
     boolean success = true;
