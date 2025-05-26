@@ -61,7 +61,7 @@
                   <Insets right="12.0" top="12.0" />
                </VBox.margin>
                <children>
-                  <CheckBox fx:id="displayNameCheckBox" mnemonicParsing="false" text="Screen Name:" textFill="WHITE">
+                  <CheckBox fx:id="displayNameCheckBox" mnemonicParsing="false" text="Display Name:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

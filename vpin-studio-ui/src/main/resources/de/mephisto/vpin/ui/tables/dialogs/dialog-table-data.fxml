@@ -84,7 +84,7 @@
                                                             <Tooltip text="Every table will be added to the first playlist that is found." />
                                                          </tooltip>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Screen Name:" textFill="WHITE">
+                                                      <Label styleClass="default-text" text="Display Name:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -183,7 +183,7 @@
                                                          <children>
                                                             <Label>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="If enabled, the screen name will be updated on table version selection." wrapText="true" />
+                                                                  <Tooltip prefWidth="300.0" text="If enabled, the display name will be updated on table version selection." wrapText="true" />
                                                                </tooltip>
                                                                <font>
                                                                   <Font size="14.0" />
