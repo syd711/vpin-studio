@@ -1487,6 +1487,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+   // columnPlaylists.setStyle(columnPlaylists.getStyle() + " -fx-label-padding:25;");
     columnPlaylists.setSortable(false);
     BaseLoadingColumn.configureColumn(columnPlaylists, (value, model) -> {
       HBox box = new HBox();
@@ -1515,6 +1516,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             Button plButton = new Button("", playlistIcon.getGraphic());
             plButton.setTooltip(tooltip);
             plButton.getStyleClass().add("ghost-button-tiny");
+            plButton.setStyle(plButton.getStyle() + "-fx-padding: 0 0 0 3;");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
               public void handle(ActionEvent event) {
@@ -1531,6 +1533,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           continue;
         }
 
+        //This adds overflow text
+
         Label label = new Label("+" + (matches.size() - count));
         label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
         label.getStyleClass().add("default-text");
@@ -1538,6 +1542,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         box.getChildren().add(label);
         break;
       }
+      //This is the box that contains the data for each item
       box.setStyle("-fx-padding: 3 0 0 0;");
       return box;
     }, this, true);
