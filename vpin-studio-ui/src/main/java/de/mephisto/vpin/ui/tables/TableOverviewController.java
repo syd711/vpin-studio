@@ -1487,10 +1487,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
-   // columnPlaylists.setStyle(columnPlaylists.getStyle() + " -fx-label-padding:25;");
     columnPlaylists.setSortable(false);
     BaseLoadingColumn.configureColumn(columnPlaylists, (value, model) -> {
-      HBox box = new HBox();
+      HBox box = new HBox(3);
       List<PlaylistRepresentation> matches = new ArrayList<>();
       List<PlaylistRepresentation> playlists = getPlaylists();
       if (playlists != null) {
@@ -1516,7 +1515,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             Button plButton = new Button("", playlistIcon.getGraphic());
             plButton.setTooltip(tooltip);
             plButton.getStyleClass().add("ghost-button-tiny");
-            plButton.setStyle(plButton.getStyle() + "-fx-padding: 0 0 0 3;");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
               public void handle(ActionEvent event) {
