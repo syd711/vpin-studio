@@ -160,6 +160,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox columnVersion;
   @FXML
   private CheckBox columnVpsStatus;
+  @FXML
+  private CheckBox uiHideCustomIcons;
 
   @FXML
   private VBox networkSettings;
@@ -256,6 +258,14 @@ public class ClientSettingsPreferencesController implements Initializable {
     uiShowVersion.setSelected(!uiSettings.isHideVersions());
     uiShowVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setHideVersions(!t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    uiHideCustomIcons.setSelected(uiSettings.isHideCustomIcons());
+
+    uiHideCustomIcons.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setHideCustomIcons(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
@@ -358,6 +368,7 @@ public class ClientSettingsPreferencesController implements Initializable {
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
+
 
     winNetworkShare.setText(uiSettings.getWinNetworkShare());
     winNetworkShare.setDisable(!supportsNetworkShare);

@@ -351,8 +351,9 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(24);
 
+    //basic settings
+    fontIcon.setIconSize(24);
     String nameLower = playlist.getName().toLowerCase();
     String iconLiteral = "mdi2v-view-list";
     String iconColor = hexColor(playlist.getMenuColor());
@@ -375,15 +376,17 @@ public class WidgetFactory {
       iconColor = uiSettings.getMostPlayedColor();
     }
     else {
-      try {
-        iconLiteral = determineIconLiteral(nameLower);
-      }
-      catch (Exception e) {
-        LOG.error("Error loading icon literal: " + iconLiteral, e);
-        iconLiteral = "mdi2v-view-list";
+      if (!(uiSettings.isHideCustomIcons())) {
+        try {
+          iconLiteral = determineIconLiteral(nameLower);
+        } catch (Exception e) {
+          LOG.error("Error loading icon literal: " + iconLiteral, e);
+          iconLiteral = "mdi2v-view-list";
+        }
       }
     }
 
+    //set the icon
     fontIcon.setIconLiteral(iconLiteral);
     fontIcon.setIconColor(Paint.valueOf(disabled ? WidgetFactory.DISABLED_COLOR : iconColor));
     label.setGraphic(fontIcon);
