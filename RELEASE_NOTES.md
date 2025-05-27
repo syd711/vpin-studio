@@ -1,3 +1,11 @@
+## Release Notes 4.0.4
+
+## Changes
+
+- **Playlist Icons**: Added option to switch back to legacy icons.
+
+---
+
 ## Release Notes 4.0.3
 
 ## Changes

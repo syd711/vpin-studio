@@ -379,9 +379,39 @@ public class WidgetFactory {
       if (!(uiSettings.isHideCustomIcons())) {
         try {
           iconLiteral = determineIconLiteral(nameLower);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Error loading icon literal: " + iconLiteral, e);
           iconLiteral = "mdi2v-view-list";
+        }
+      }
+      else {
+        if (playlist.getName().contains("Visual Pinball X")) {
+          iconLiteral = "mdi2a-alpha-x-circle";
+        }
+        else if (playlist.getName().contains("VPX")) {
+          iconLiteral = "mdi2a-alpha-x-circle";
+        }
+        else if (playlist.getName().contains("Future")) {
+          iconLiteral = "mdi2a-alpha-f-circle";
+        }
+        else if (playlist.getName().contains("FX3")) {
+          iconLiteral = "mdi2n-numeric-3-circle";
+        }
+        else if (playlist.getName().contains("Just Added")) {
+          iconLiteral = "mdi2a-alpha-j-circle";
+        }
+        else if (playlist.getName().contains("Most Played")) {
+          iconLiteral = "mdi2a-alpha-m-circle";
+        }
+        else if (playlist.getName().contains("Home")) {
+          iconLiteral = "mdi2a-alpha-h-circle";
+        }
+        else if (playlist.getName().contains("VPW")) {
+          iconLiteral = "mdi2a-alpha-v-circle";
+        }
+        else if (playlist.getName().endsWith(" M")) {
+          iconLiteral = "mdi2a-alpha-m-circle";
         }
       }
     }

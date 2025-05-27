@@ -317,6 +317,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   /**
    * In case the Studio has been re-installed, the players of the VPin Mania accounts should be restored too.
+   * //TODO
    */
   private void checkPlayerRestoring() {
     List<Account> accounts = maniaClient.getAccountClient().getAccounts();
