@@ -2,7 +2,12 @@
 
 ## Changes
 
+- **Table Overview**: 
+  - Duplicated the uploads drop-down menu with a table into the side section "Table Data". This way, the menu is available without overflow for smaller screens too. Also, it is somehow expected there.
+  - Re-added actions "Table Scan" and "Reset VPS Updates" to the table overview's context menu.
+  - Added shortcut support for "Reset VPS Updates" (Ctrl+W).
 - **Playlist Icons**: Added option to switch back to legacy icons.
+- **Auto-Connect**: Re-enabled auto-connect. (The feature got lost by accident during the 4.0 creation).
 
 ---
 

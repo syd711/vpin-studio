@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<HBox fx:id="root" alignment="CENTER_LEFT" spacing="2.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.UploadsButtonController">
+   <children>
+      <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
+         <items>
+            <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="Upload ALT Color File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="altSoundUploadItem" mnemonicParsing="false" onAction="#onAltSoundUpload" text="Upload ALT Sound Pack">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="backglassUploadItem" mnemonicParsing="false" onAction="#onBackglassUpload" text="Upload Backglass">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="bamCfgUploadItem" mnemonicParsing="false" onAction="#onBamCfgUpload" text="Upload BAM .cfg File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="cfgUploadItem" mnemonicParsing="false" onAction="#onCfgUpload" text="Upload .cfg File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="patchItem" mnemonicParsing="false" onAction="#onPatchUpload" text="Upload .dif File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="dmdUploadItem" mnemonicParsing="false" onAction="#onDMDUpload" text="Upload DMD Pack">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="iniUploadMenuItem" mnemonicParsing="false" onAction="#onIniUpload" text="Upload .ini File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="mediaUploadItem" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload Media Pack">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="musicUploadItem" mnemonicParsing="false" onAction="#onMusicUpload" text="Upload Music Pack">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="nvUploadMenuItem" mnemonicParsing="false" onAction="#onNvRamUpload" text="Upload .nv File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="povItem" mnemonicParsing="false" onAction="#onPOVUpload" text="Upload .pov File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="resItem" mnemonicParsing="false" onAction="#onResUpload" text="Upload .res File">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="Upload PUP Pack">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+            <MenuItem fx:id="romsUploadItem" mnemonicParsing="false" onAction="#onRomsUpload" text="Upload ROMs">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+            </MenuItem>
+         </items>
+         <font>
+            <Font size="14.0" />
+         </font>
+         <tooltip>
+            <Tooltip text="Upload game files to [Frontend]" />
+         </tooltip>
+         <graphic>
+            <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+         </graphic>
+      </SplitMenuButton>
+   </children>
+</HBox>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -17,7 +18,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarTableDetailsController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarTableDetailsController">
     <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -591,8 +592,9 @@
         <Insets left="1.0" right="1.0" />
     </padding>
     <top>
-        <ToolBar BorderPane.alignment="CENTER">
+        <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
             <items>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" text="Edit" textFill="WHITE">
                     <font>
                         <Font size="14.0" />
@@ -616,7 +618,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                </graphic>
             </SplitMenuButton>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -628,4 +630,8 @@
             </items>
         </ToolBar>
     </top>
+   <styleClass>
+      <String fx:value="accordion-container" />
+      <String fx:value="base-component" />
+   </styleClass>
 </BorderPane>
