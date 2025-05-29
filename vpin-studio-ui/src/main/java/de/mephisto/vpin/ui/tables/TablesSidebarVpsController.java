@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -170,7 +170,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onAutoMatchAll() {
-    TableDialogs.openAutoMatchAll();
+    List<GameRepresentation> games = tablesSidebarController.getTableOverviewController().getTableView().getItems().stream().map(g -> g.getGame()).collect(Collectors.toList());
+    TableDialogs.openAutoMatchAll(new ArrayList<>(games));
   }
 
   @FXML
@@ -306,24 +307,24 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (StringUtils.isNotEmpty(vpsTableId)) {
         // parallel and async get
         JFXFuture
-          .supplyAllAsync(
-            () -> client.getVpsService().getTableById(vpsTableId),
-            () -> client.getFrontendService().getFrontendMedia(game.getId()),
-            () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()))
-          .thenAcceptLater(objs -> {
-            VpsTable tableById = (VpsTable) objs[0];
-            FrontendMediaRepresentation frontendMedia = (FrontendMediaRepresentation) objs[1];
-            GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) objs[2];
+            .supplyAllAsync(
+                () -> client.getVpsService().getTableById(vpsTableId),
+                () -> client.getFrontendService().getFrontendMedia(game.getId()),
+                () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()))
+            .thenAcceptLater(objs -> {
+              VpsTable tableById = (VpsTable) objs[0];
+              FrontendMediaRepresentation frontendMedia = (FrontendMediaRepresentation) objs[1];
+              GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) objs[2];
 
-            if (tableById != null) {
-              String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
-              refreshTableView(tableById, frontendMedia, tableFormats);
-              if (!StringUtils.isEmpty(vpsTableVersionId)) {
-                VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
-                tableVersionsCombo.setValue(version);
+              if (tableById != null) {
+                String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
+                refreshTableView(tableById, frontendMedia, tableFormats);
+                if (!StringUtils.isEmpty(vpsTableVersionId)) {
+                  VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
+                  tableVersionsCombo.setValue(version);
+                }
               }
-            }
-          });
+            });
       }
     }
   }

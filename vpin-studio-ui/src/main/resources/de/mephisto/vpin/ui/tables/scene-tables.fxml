@@ -114,7 +114,7 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Open Screen Validators Settings" />
+                                <Tooltip text="Open Settings" />
                             </tooltip>
                             <StackPane.margin>
                                 <Insets right="43.0" top="6.0" />
