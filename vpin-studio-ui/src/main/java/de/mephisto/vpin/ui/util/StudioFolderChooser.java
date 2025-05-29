@@ -20,7 +20,8 @@ public class StudioFolderChooser {
       if (lastFolderSelection != null && lastFolderSelection.exists() && !lastFolderSelection.isFile()) {
         folderChooser.setInitialDirectory(lastFolderSelection);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error creating folder chooser: " + e.getMessage(), e);
     }
   }
@@ -29,6 +30,9 @@ public class StudioFolderChooser {
     this.folderChooser.setTitle(title);
   }
 
+  public void setInitialDirectory(File folder) {
+    folderChooser.setInitialDirectory(folder);
+  }
 
   public File showOpenDialog(Stage stage) {
     try {
@@ -38,7 +42,8 @@ public class StudioFolderChooser {
       }
 
       return file;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error saving file location: " + e.getMessage(), e);
     }
     return null;

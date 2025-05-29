@@ -459,6 +459,12 @@ public class EmulatorsController implements Initializable {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     StudioFolderChooser chooser = new StudioFolderChooser();
     chooser.setTitle("Select Folder");
+
+    String value = field.getText();
+    if(!StringUtils.isEmpty(value) && new File(value).exists()) {
+      chooser.setInitialDirectory(new File(value));
+    }
+
     File targetFolder = chooser.showOpenDialog(stage);
 
     if (targetFolder != null) {
