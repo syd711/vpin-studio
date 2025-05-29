@@ -6,6 +6,9 @@
   - Duplicated the uploads drop-down menu with a table into the side section "Table Data". This way, the menu is available without overflow for smaller screens too. Also, it is somehow expected there.
   - Re-added actions "Table Scan" and "Reset VPS Updates" to the table overview's context menu.
   - Added shortcut support for "Reset VPS Updates" (Ctrl+W).
+  - Added context menu entry and shortcut to **reload** the selected tables (Ctrl+R). In addition to that, the "Table Data" section has also a "Reload" button now.
+  - Fixed VPinMAME initialization, so the alias mapping is initially shown correct now again.
+  - Fixed alias mapping caching issue: After editing the **VPMAlias.txt** file, the matching games are invalidated now (client + server).
 - **Playlist Icons**: Added option to switch back to legacy icons.
 - **Auto-Connect**: Re-enabled auto-connect. (The feature got lost by accident during the 4.0 creation).
 

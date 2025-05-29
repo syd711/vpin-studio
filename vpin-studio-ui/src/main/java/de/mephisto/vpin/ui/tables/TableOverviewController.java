@@ -295,9 +295,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
   }
 
-  @FXML
-  public void onBackglassManager(GameRepresentation game) {
-    tablesController.switchToBackglassManagerTab(game);
+  public void onTableReload() {
+    List<GameRepresentation> selections = getSelections();
+    for (GameRepresentation selection : selections) {
+      client.getGameService().reload(selection.getId());
+      EventManager.getInstance().notifyTableChange(selection.getId(), null);
+    }
   }
 
   @FXML
@@ -866,8 +869,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion()
             + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
-            + "Update the table, correct the selected VPS table or fix the version in the \"[Frontend] Table Settings\" section.");
-        FrontendUtil.replaceName(tt, frontend);
+            + "Update the table, correct the selected VPS table or fix the version in the \"Table Data\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
@@ -1954,6 +1956,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onPlay() {
     playButtonController.onPlay();
   }
+
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
     @Override

@@ -75,7 +75,7 @@
                               <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="Ctrl+U" GridPane.rowIndex="17" />
                               <Label layoutX="10.0" layoutY="220.0" styleClass="default-text" text="Ctrl+R" GridPane.rowIndex="15" />
                               <Label layoutX="247.0" layoutY="186.0" styleClass="default-text" text="Upload and import table." GridPane.columnIndex="1" GridPane.rowIndex="17" />
-                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Upload and replace table." GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Force reload of selected tables." GridPane.columnIndex="1" GridPane.rowIndex="15" />
                               <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+L" GridPane.rowIndex="12" />
                               <Label layoutX="247.0" layoutY="253.0" styleClass="default-text" text="Launches the table." GridPane.columnIndex="1" GridPane.rowIndex="12" />
                               <Label layoutX="10.0" layoutY="288.0" styleClass="default-text" text="Delete" GridPane.rowIndex="19" />

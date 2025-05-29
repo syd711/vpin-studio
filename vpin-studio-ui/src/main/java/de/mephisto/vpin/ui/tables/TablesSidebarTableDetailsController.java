@@ -46,6 +46,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Button fixVersionBtn;
 
   @FXML
+  private Button reloadBtn;
+
+  @FXML
   private SplitMenuButton autoFillBtn;
 
   @FXML
@@ -239,6 +242,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
   }
 
   @FXML
+  private void onReload() {
+    if (this.game.isPresent()) {
+      client.getGameService().reload(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    }
+  }
+
+  @FXML
   private void onAutoFillAll() {
     List<GameRepresentation> vpxGamesCached = client.getGameService().getVpxGamesCached();
     TableDialogs.openAutoFillSettingsDialog(Studio.stage, vpxGamesCached, null);
@@ -270,6 +281,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
     this.tableEditBtn.setDisable(g.isEmpty());
     this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
+    this.reloadBtn.setDisable(g.isEmpty());
     this.autoFillBtn.setDisable(g.isEmpty());
 
     GameRepresentation game = g.orElse(null);

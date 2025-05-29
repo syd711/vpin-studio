@@ -179,7 +179,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onVPMAlias() {
     try {
-      if(game.isPresent()) {
+      if (game.isPresent()) {
         GameRepresentation gameRepresentation = game.get();
 
         TextFile textFile = new TextFile(VPinFile.VPMAliasTxt);
@@ -187,10 +187,9 @@ public class TablesSidebarMameController implements Initializable {
         boolean b = Dialogs.openTextEditor(textFile, "VPMAlias.txt");
         if (b) {
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
-          if(!StringUtils.isEmpty(gameRepresentation.getRomAlias())) {
+          if (!StringUtils.isEmpty(gameRepresentation.getRomAlias())) {
             EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRomAlias());
           }
-
         }
       }
     }

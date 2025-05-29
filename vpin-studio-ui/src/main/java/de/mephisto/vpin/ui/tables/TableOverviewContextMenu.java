@@ -227,6 +227,14 @@ public class TableOverviewContextMenu {
 
     if (game.isVpxGame()) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
+
+      MenuItem reloadItem = new MenuItem("Reload");
+      KeyCombination reloadItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
+      reloadItem.setAccelerator(reloadItemKey);
+      reloadItem.setGraphic(WidgetFactory.createIcon("mdi2r-refresh"));
+      reloadItem.setOnAction(actionEvent -> tableOverviewController.onTableReload());
+      ctxMenu.getItems().add(reloadItem);
+
       MenuItem scanItem = new MenuItem("Scan");
       KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
       scanItem.setAccelerator(scanItemKey);
@@ -267,8 +275,6 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(uploadAndImportTableItem);
 
       MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
-      KeyCombination uploadAndReplaceTableItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
-      uploadAndReplaceTableItem.setAccelerator(uploadAndReplaceTableItemKey);
       uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       uploadAndReplaceTableItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().openUploadDialogWithCheck(UploadType.uploadAndReplace));
       ctxMenu.getItems().add(uploadAndReplaceTableItem);

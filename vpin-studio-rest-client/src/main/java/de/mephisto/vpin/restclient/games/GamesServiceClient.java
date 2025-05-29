@@ -66,6 +66,10 @@ public class GamesServiceClient extends VPinStudioClientService {
     getRestClient().get(API + "games/reload", Boolean.class);
   }
 
+  public GameRepresentation reload(int gameId) {
+    return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
+  }
+
   public void playGame(int id, String altExe, String option) {
     try {
       Map<String, Object> params = new HashMap<>();

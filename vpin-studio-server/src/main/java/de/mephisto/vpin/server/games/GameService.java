@@ -165,6 +165,13 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return true;
   }
 
+  /**
+   * Pre-reload triggered before an actual manual table reload (server service cache reset)
+   */
+  public Game reload(int gameId) {
+    return gameCachingService.invalidate(gameId);
+  }
+
   @SuppressWarnings("unused")
   public List<Integer> getUnknownGames() {
     List<Integer> gameIds = new ArrayList<>(getGameIds());
