@@ -1277,7 +1277,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           if (match.getId() >= 0) {
             Button plButton = new Button("", playlistIcon.getGraphic());
             plButton.setTooltip(tooltip);
-            plButton.getStyleClass().add("ghost-button-tiny");
+            plButton.getStyleClass().add("playlist-button");
             plButton.setOnAction(new EventHandler<ActionEvent>() {
               @Override
               public void handle(ActionEvent event) {

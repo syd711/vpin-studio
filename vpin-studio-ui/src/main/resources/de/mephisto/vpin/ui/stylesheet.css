@@ -272,6 +272,28 @@
 }
 
 .ghost-button-tiny {
+    -fx-max-width: 14px;
+    -fx-max-height: 14px;
+    -fx-padding: 0px;
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-tiny:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.playlist-button {
+    -fx-max-width: 14px;
+    -fx-max-height: 14px;
     -fx-padding: 0px;
     -fx-font-color: -fx-font-2;
     -fx-background-color: transparent;
@@ -279,7 +301,9 @@
     -fx-text-fill: -fx-font-2;
 }
 
-.ghost-button-tiny:hover {
+.playlist-button:hover {
+    -fx-max-width: 14px;
+    -fx-max-height: 14px;
     -fx-font-color: #fff8f8;
     -fx-font-size : 14px;
     -fx-background-color: transparent;
