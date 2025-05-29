@@ -33,6 +33,7 @@ import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
+import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
@@ -1192,7 +1193,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Label label = new Label();
         label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star", getIconColor(value));
-        icon.setIconSize(20);
+        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE+2);
         label.setGraphic(icon);
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
@@ -1205,7 +1206,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline", getIconColor(value));
         label.setGraphic(icon);
-        icon.setIconSize(20);
+        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE+2);
         icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
@@ -1294,7 +1295,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         }
 
         //This adds overflow text
-
         Label label = new Label("+" + (matches.size() - count));
         label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
         label.getStyleClass().add("default-text");

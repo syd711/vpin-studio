@@ -23,7 +23,8 @@ public class VpsTableColumn extends HBox {
   public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, @Nullable VPSChanges updates, UISettings uiSettings) {
     super(3);
     try {
-      int iconSize = 14;
+
+      int iconSize = WidgetFactory.DEFAULT_ICON_SIZE;
 
       this.setAlignment(Pos.CENTER_LEFT);
 

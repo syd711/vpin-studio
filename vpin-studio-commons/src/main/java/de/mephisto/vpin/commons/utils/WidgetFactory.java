@@ -77,6 +77,7 @@ public class WidgetFactory {
   public static final String OK_COLOR = "#66FF66";
   public static final String OK_STYLE = "-fx-font-color: " + OK_COLOR + ";-fx-text-fill:" + OK_COLOR + ";";
   public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
+  public static final int DEFAULT_ICON_SIZE = 18;
 
 
   public static Font scoreFont;
@@ -138,7 +139,7 @@ public class WidgetFactory {
 
   public static FontIcon createCheckIcon() {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf("#66FF66"));
     fontIcon.setIconLiteral("bi-check-circle");
     return fontIcon;
@@ -159,7 +160,7 @@ public class WidgetFactory {
 
   public static FontIcon createUpdateIcon() {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
     return fontIcon;
@@ -170,7 +171,7 @@ public class WidgetFactory {
     Label label = new Label();
     label.setTooltip(new Tooltip(tooltip));
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
     label.setGraphic(createUpdateIcon());
@@ -180,7 +181,7 @@ public class WidgetFactory {
 
   public static FontIcon createCheckIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconLiteral("bi-check-circle");
     fontIcon.setIconColor(Paint.valueOf("#66FF66"));
     if (color != null) {
@@ -191,7 +192,7 @@ public class WidgetFactory {
 
   public static FontIcon createBotIcon() {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf("#5865F2"));
     fontIcon.setIconLiteral("mdi2r-robot");
     return fontIcon;
@@ -199,7 +200,7 @@ public class WidgetFactory {
 
   public static FontIcon createAlertIcon(String s) {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
@@ -207,7 +208,7 @@ public class WidgetFactory {
 
   public static FontIcon createGreenIcon(String s) {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf("#66FF66"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
@@ -219,7 +220,7 @@ public class WidgetFactory {
 
   public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
     fontIcon.setIconLiteral(s);
     return fontIcon;
@@ -235,7 +236,7 @@ public class WidgetFactory {
 
   public static FontIcon createCheckboxIcon() {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
     fontIcon.setIconLiteral("bi-check-circle");
     return fontIcon;
@@ -244,7 +245,7 @@ public class WidgetFactory {
 
   public static FontIcon createCheckboxIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconLiteral("bi-check-circle");
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
     if (color != null) {
@@ -257,7 +258,7 @@ public class WidgetFactory {
     Label label = new Label();
     label.setTooltip(new Tooltip(tooltip));
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconLiteral("bi-check-circle");
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
     if (color != null) {
@@ -269,7 +270,7 @@ public class WidgetFactory {
 
   public static FontIcon createExclamationIcon() {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
     fontIcon.setIconLiteral("bi-exclamation-circle-fill");
     return fontIcon;
@@ -277,7 +278,7 @@ public class WidgetFactory {
 
   public static FontIcon createUnsupportedIcon() {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf("#FF9933"));
     fontIcon.setIconLiteral("bi-x-circle");
     return fontIcon;
@@ -285,7 +286,7 @@ public class WidgetFactory {
 
   public static FontIcon createExclamationIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconLiteral("bi-exclamation-circle-fill");
     fontIcon.setIconColor(Paint.valueOf("#FF3333"));
     if (color != null) {
@@ -334,7 +335,7 @@ public class WidgetFactory {
   public static void createHelpIcon(Label label, String tooltip) {
     label.setText("");
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(18);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
     fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
     fontIcon.setIconLiteral("mdi2h-help-circle-outline");
     Tooltip tt = new Tooltip(tooltip);
@@ -351,9 +352,8 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE+1);
 
-    //basic settings
-    fontIcon.setIconSize(24);
     String nameLower = playlist.getName().toLowerCase();
     String iconLiteral = "mdi2v-view-list";
     String iconColor = hexColor(playlist.getMenuColor());
