@@ -586,11 +586,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
 
   public boolean clearMameCaches() {
     List<Game> games = getKnownGames(-1);
-    boolean result = mameService.clearGamesCache(games);
-
-    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-    result &= mameService.clearValidationsCache(gameEmulators);
-    return result;
+    return mameService.clearGamesCache(games);
   }
 
   public boolean clearMameCacheFor(String rom) {
@@ -627,6 +623,9 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         List<Game> games = getKnownGames(-1);
         vpsService.update(games);
         clearMameCaches();
+
+        List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
+        mameService.clearValidationsCache(gameEmulators);
       }).start();
     }
   }
