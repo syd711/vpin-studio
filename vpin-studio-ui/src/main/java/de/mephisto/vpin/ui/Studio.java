@@ -216,6 +216,7 @@ public class Studio extends Application {
       Studio.client = client;
       ServerFX.client = Studio.client;
 
+      Platform.setImplicitExit(false);
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
