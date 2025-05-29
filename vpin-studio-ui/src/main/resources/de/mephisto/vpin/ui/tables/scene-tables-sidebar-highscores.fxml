@@ -279,18 +279,21 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                </graphic>
             </SplitMenuButton>
-            <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-            <Button fx:id="backupBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
+            <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
+            <SplitMenuButton fx:id="backupBtn" mnemonicParsing="false" onAction="#onBackup" text="Backup">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#onBackAll" text="Backup All" />
+              </items>
                <font>
                   <Font size="14.0" />
                </font>
-            </Button>
+            </SplitMenuButton>
             <Button fx:id="restoreBtn" layoutX="183.0" layoutY="11.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+            <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="3.0" />
                 <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" textFill="WHITE">
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="18" />
@@ -302,7 +305,6 @@
                   <Tooltip text="Open Highscore Card Editor" />
                </tooltip>
                 </Button>
-            <Separator layoutX="262.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="maniaBtn" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />

@@ -9,6 +9,8 @@
   - Added context menu entry and shortcut to **reload** the selected tables (Ctrl+R). In addition to that, the "Table Data" section has also a "Reload" button now.
   - Fixed VPinMAME initialization, so the alias mapping is initially shown correct now again.
   - Fixed alias mapping caching issue: After editing the **VPMAlias.txt** file, the matching games are invalidated now (client + server).
+  - Added "Backup All" to the "Highscores" section. Note that this only works on the current table data view and ignores the ones from other (VPX) emulators that are not selected.
+- **Table Uploader**: Fixed issue that .pov files were detected as ROM files (RobbyKingPin tables). These files are simply excluded from the import now. 
 - **Playlist Icons**: Added option to switch back to legacy icons.
 - **Auto-Connect**: Re-enabled auto-connect. (The feature got lost by accident during the 4.0 creation).
 
