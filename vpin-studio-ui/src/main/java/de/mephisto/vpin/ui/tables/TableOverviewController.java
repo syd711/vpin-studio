@@ -33,7 +33,6 @@ import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
-import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
@@ -678,7 +677,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onReload() {
-    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel(true));
     this.doReload();
   }
 

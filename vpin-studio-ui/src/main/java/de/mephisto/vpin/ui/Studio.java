@@ -216,7 +216,7 @@ public class Studio extends Application {
       Studio.client = client;
       ServerFX.client = Studio.client;
 
-      Platform.setImplicitExit(false);
+//      Platform.setImplicitExit(false);
       stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
@@ -246,7 +246,7 @@ public class Studio extends Application {
             if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
               LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
               ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
-              ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
+              ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel(false));
             }
 
             UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
