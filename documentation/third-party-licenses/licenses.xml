@@ -14,7 +14,6 @@
         <license>
           <name>GNU Lesser General Public License</name>
           <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
-          <file>gnu lesser general public license - lgpl-2.1.html</file>
         </license>
       </licenses>
     </dependency>
@@ -241,7 +240,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.4</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -249,7 +248,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.4</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -257,7 +256,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.4</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -265,7 +264,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.4</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -281,7 +280,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.4</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -297,7 +296,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>4.0.0</version>
+      <version>4.0.4</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
