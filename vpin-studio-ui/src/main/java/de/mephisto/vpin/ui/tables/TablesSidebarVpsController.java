@@ -425,7 +425,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       List<VpsUrl> authoredUrlUrls = authoredUrl.getUrls();
       if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
         String version = authoredUrl.getVersion();
-        long updatedAt = authoredUrl.getUpdatedAt();
+        long updatedAt = authoredUrl.getCreatedAt();
         List<String> authors = authoredUrl.getAuthors();
 
         String updateText = null;
@@ -489,7 +489,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       for (VpsTableVersion vpsTableVersion : tableVersions) {
         List<VpsUrl> authoredUrlUrls = vpsTableVersion.getUrls();
         String version = vpsTableVersion.getVersion();
-        long updatedAt = vpsTableVersion.getUpdatedAt();
+        long updatedAt = vpsTableVersion.getCreatedAt();
         List<String> authors = vpsTableVersion.getAuthors();
 
         String updateText = null;

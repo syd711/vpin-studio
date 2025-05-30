@@ -73,7 +73,7 @@ public class VpsTableVersion extends VpsAuthoredUrls {
       builder.append("Version ");
       builder.append(getVersion());
       builder.append(", ");
-      builder.append(DateFormat.getDateInstance().format(new Date(getUpdatedAt())));
+      builder.append(DateFormat.getDateInstance().format(new Date(getCreatedAt())));
       builder.append(")");
     }
 

@@ -43,8 +43,8 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
       builder.append("\n");
     }
 
-    builder.append("- Updated At: ");
-    builder.append(DateFormat.getDateTimeInstance().format(new Date(getUpdatedAt())));
+    builder.append("- Created At: ");
+    builder.append(DateFormat.getDateTimeInstance().format(new Date(getCreatedAt())));
     return builder.toString();
   }
 

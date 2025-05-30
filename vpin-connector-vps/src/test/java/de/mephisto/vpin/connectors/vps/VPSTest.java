@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,27 +82,27 @@ public class VPSTest {
   }
 
 
-//  @Test
-//  public void testDiff3() throws Exception {
-//    VPS vpsNew = loadInstance(new FileInputStream(new File("C:\\Users\\matth\\AppData\\Roaming\\JetBrains\\IdeaIC2023.2\\scratches\\vpsdb.json")));
-//    VPS vpsOld = loadInstance(new FileInputStream(new File("E:\\Development\\workspace\\vpin-studio\\resources/vpsdb.json")));
-//
-//    assertNotNull(vpsNew);
-//    assertNotNull(vpsOld);
-//    assertFalse(vpsNew.getTables().isEmpty());
-//    assertFalse(vpsOld.getTables().isEmpty());
-//
-//    List<VpsTableDiff> diff = vpsNew.diff(vpsOld, Arrays.asList("IItQ56T8b1"));
-//    System.out.println(diff.size());
-//    assertFalse(diff.isEmpty());
-//    for (VpsTableDiff diffEntry : diff) {
-//      if (!diffEntry.getDifferences().contains(VpsDiffTypes.tutorial)) {
-//        continue;
-//      }
-//
-//      System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
-//    }
-//  }
+  @Test
+  public void testDiff3() throws Exception {
+    try (InputStream in1 = VPSTest.class.getResourceAsStream("vps-diff-1.json");
+         InputStream in2 = VPSTest.class.getResourceAsStream("vps-diff-2.json")) {
+      VPS vpsOld = newInstance(in1);
+      VPS vpsNew = newInstance(in2);
+
+      List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
+      assertFalse(diff.isEmpty());
+      assertEquals(2, diff.size());
+
+      VpsDiffer diffTable1 = diff.get(1);
+      VPSChanges tableChanges = diffTable1.getTableChanges();
+      assertFalse(tableChanges.isEmpty());
+
+      List<VPSChange> changes = tableChanges.getChanges();
+      assertEquals(2, changes.size());
+      assertTrue(changes.stream().filter(c -> c.getDiffType().equals(VpsDiffTypes.tableVersionUpdate)).findFirst().isPresent());
+      assertEquals(1, changes.stream().filter(c -> c.getDiffType().equals(VpsDiffTypes.b2s)).collect(Collectors.toList()).size());
+    }
+  }
 
   @Test
   public void testUpdates() {

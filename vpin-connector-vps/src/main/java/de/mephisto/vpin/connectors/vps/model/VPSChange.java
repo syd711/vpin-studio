@@ -41,7 +41,7 @@ public class VPSChange {
             return VpsDiffTypes.altColor + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case altSound: {
         if (tableById.getAltSoundFiles() != null) {
@@ -50,7 +50,7 @@ public class VPSChange {
             return VpsDiffTypes.altSound + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case b2s: {
         if(tableById.getB2sFiles() != null) {
@@ -59,7 +59,7 @@ public class VPSChange {
             return VpsDiffTypes.b2s + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case pov: {
         if (tableById.getPovFiles() != null) {
@@ -68,7 +68,7 @@ public class VPSChange {
             return VpsDiffTypes.pov + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case rom: {
         if (tableById.getRomFiles() != null) {
@@ -77,7 +77,7 @@ public class VPSChange {
             return VpsDiffTypes.rom + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case sound: {
         if (tableById.getSoundFiles() != null) {
@@ -86,7 +86,7 @@ public class VPSChange {
             return VpsDiffTypes.sound + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case pupPack: {
         if (tableById.getPupPackFiles() != null) {
@@ -95,7 +95,7 @@ public class VPSChange {
             return VpsDiffTypes.pupPack + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case wheel: {
         if (tableById.getWheelArtFiles() != null) {
@@ -104,7 +104,7 @@ public class VPSChange {
             return VpsDiffTypes.wheel + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case tutorial: {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
@@ -114,15 +114,22 @@ public class VPSChange {
             return VpsDiffTypes.tutorial + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
       case tableNewVPX: {
         return VpsDiffTypes.tableNewVPX + ":\n- " + tableById.toString();
       }
+      case tableVersionUpdate: {
+        VpsTableVersion version = tableById.getTableVersionById(this.getId());
+        if (version != null) {
+          return VpsDiffTypes.tableNewVersion + ":\n- " + version;
+        }
+        return null;
+      }
       case tableNewVersionVPX: {
         VpsTableVersion version = tableById.getTableVersionById(this.getId());
         if (version != null) {
-          return VpsDiffTypes.tableNewVersionVPX + ":\n- " + version;
+          return VpsDiffTypes.tableNewVersion + ":\n- " + version;
         }
         return null;
       }
@@ -133,7 +140,7 @@ public class VPSChange {
             return VpsDiffTypes.topper + ":\n" + first.get();
           }
         }
-        break;
+        return null;
       }
     }
     LOG.warn("No toString representation found for " + diffType + " and table " + tableById);

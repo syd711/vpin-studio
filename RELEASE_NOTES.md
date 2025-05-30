@@ -7,14 +7,21 @@
   - Re-added actions "Table Scan" and "Reset VPS Updates" to the table overview's context menu.
   - Added shortcut support for "Reset VPS Updates" (Ctrl+W).
   - Added context menu entry and shortcut to **reload** the selected tables (Ctrl+R). In addition to that, the "Table Data" section has also a "Reload" button now.
+  - Added "Backup All" to the "Highscores" section. Note that this only works on the current table data view and ignores the ones from other (VPX) emulators that are not selected.-
+  - Fixed loading of non-VPX games, like FX(3) and Pinball M.
   - Fixed VPinMAME initialization, so the alias mapping is initially shown correct now again.
   - Fixed alias mapping caching issue: After editing the **VPMAlias.txt** file, the matching games are invalidated now (client + server).
-  - Added "Backup All" to the "Highscores" section. Note that this only works on the current table data view and ignores the ones from other (VPX) emulators that are not selected.
-  - VPS Automatcher: The behaviour of the "Automatch All" action has been changed so that "all" here means all tables that are currently filtered in the table overview. This way, it is more flexible to match specific tables or games for a specific emulator.
-- **Table Uploader**: Fixed issue that .pov files were detected as ROM files (RobbyKingPin tables). These files are simply excluded from the import now.
-- **VPS Tables**: Fixed issue for Future Pinball and other emulators that games were not shown as "installed".
+  - Changed VPS Automatcher: The behaviour of the "Automatch All" action has been changed so that "all" here means all tables from the table overview. This way, it is more flexible to match specific tables or games for a specific emulator.
+- **Virtual Pinball Spreadsheet Integration**: 
+  - Fixed issue for Future Pinball and other emulators that games were not shown as "installed".
+  - Switched from the "Updated At" date to the "Created At" when reading data from the spreadsheet for table sorting and filtering. According to the VPS team, that field is more meaningful.
+  - Improved VPS matching: When a new version of a table or table version is released on VPS, this won't be interpreted as update arrow in the status column. Instead, only version updates are indicated here. This way you won't receive update notifications of tables from authors you are not interested in.
+  - Improved VPS asset update descriptions: The update icon tooltip describes better what update it has received: Either a newer version of the existing asset or a complete new asset for the given category (e.g. ALT sound or PUP packs).
+- **Table Uploader**: Fixed issue that .pov files were detected as ROM files (RobbyKingPin tables). These files are simply excluded from the import now as a detection of zip files in zip files is not planned. 
 - **Playlist Icons**: Added option to switch back to legacy icons.
+- **Notifications**: Notification will have the window title "PinUP Popper" now when running on PinUP Popper and PinVOL is enabled. This way, no volume change is triggered for them. 
 - **Auto-Connect**: Re-enabled auto-connect. (The feature got lost by accident during the 4.0 creation).
+- **DMD Positioner**: Fixed number format error for floating point values.
 
 ---
 

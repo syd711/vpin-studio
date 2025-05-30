@@ -867,9 +867,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Frontend frontend = client.getFrontendService().getFrontendCached();
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion()
+        String ttText = "The table version in [Frontend] is \"" + value.getVersion()
             + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
-            + "Update the table, correct the selected VPS table or fix the version in the \"Table Data\" section.");
+            + "Update the table, correct the selected VPS table or fix the version in the \"Table Data\" section.";
+        ttText = FrontendUtil.replaceName(ttText, frontend);
+        Tooltip tt = new Tooltip(ttText);
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
@@ -936,14 +938,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           icon = WidgetFactory.createCheckIcon(value.isDisabled() ? DISABLED_COLOR : "#FFFFFF");
         }
         if (hasUpdate) {
-          return WidgetFactory.addUpdateIcon(icon, "New backglass updates available");
+          return WidgetFactory.addUpdateIcon(icon, "A new backglass version or an update for the existing one is available");
         }
         else {
           return WidgetFactory.wrapIcon(icon, value.getDirectB2SPath());
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("New backglass updates available");
+        return WidgetFactory.createUpdateIcon("A new backglass version or an update for the existing one is available");
       }
       return null;
     }, this, true);
@@ -957,14 +959,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
+          return WidgetFactory.createCheckAndUpdateIcon("A new POV file or an update for the existing one is available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPovPath());
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("New POV updates available");
+        return WidgetFactory.createUpdateIcon("A new POV file or an update for the existing one is available");
       }
       return null;
     }, this, true);
@@ -987,14 +989,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
+          return WidgetFactory.createCheckAndUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("New ALT sound updates available");
+        return WidgetFactory.createUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
       }
       return null;
     }, this, true);
@@ -1009,18 +1011,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
         if (hasUpdate) {
           //add update icon
-          label.setGraphic(WidgetFactory.createUpdateIcon("New ALT color updates available"));
-          //return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
+          label.setGraphic(WidgetFactory.createUpdateIcon("A new ALT color or an update for the existing one is available"));
         }
         return label;
-        //tooltip and checkbox
-        //else {
-        // return WidgetFactory.createCheckboxIcon(getIconColor(value),altColor.getAltColorType().name());
-        //}
       }
       else if (hasUpdate) {
         //We don't have a type, so just show the update.
-        return WidgetFactory.createUpdateIcon("New ALT color updates available");
+        return WidgetFactory.createUpdateIcon("A new ALT color or an update for the existing one is available");
       }
       return null;
     }, this, true);
@@ -1029,14 +1026,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackPath() != null) {
         if (hasUpdate) {
-          return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
+          return WidgetFactory.createCheckAndUpdateIcon("A new PUP pack or an update for the existing one is available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
         }
       }
       else if (hasUpdate) {
-        return WidgetFactory.createUpdateIcon("New PUP pack updates available");
+        return WidgetFactory.createUpdateIcon("A new PUP pack or an update for the existing one is available");
       }
       return null;
     }, this, true);

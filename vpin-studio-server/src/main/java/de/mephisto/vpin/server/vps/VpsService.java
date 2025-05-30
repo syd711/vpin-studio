@@ -212,7 +212,7 @@ public class VpsService implements InitializingBean {
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
-            VPSChanges changes = tableDiff.getChanges();
+            VPSChanges changes = tableDiff.getTableChanges();
             String json = changes.toJson();
             List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
