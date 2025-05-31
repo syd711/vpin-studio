@@ -1,3 +1,11 @@
+## Release Notes 4.0.6
+
+## Changes
+
+- Fixed possible SQL error during reading playlists.
+
+---
+
 ## Release Notes 4.0.5
 
 ## Changes
