@@ -254,7 +254,7 @@
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="6.0">
                                                    <children>
                                                       <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
                                                          <items>
@@ -293,7 +293,21 @@
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
+                                                         <HBox.margin>
+                                                            <Insets left="12.0" />
+                                                         </HBox.margin>
                                                       </CheckBox>
+                                                      <Label>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="300.0" text="If enabled applying the the new table or table version will immdiately write the changes to the server. Otherwise, only the VPS mapping will change, not the table's meta data." wrapText="true" />
+                                                         </tooltip>
+                                                      </Label>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="12.0" />
