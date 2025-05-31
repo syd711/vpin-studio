@@ -23,7 +23,8 @@ public class VpsTableColumn extends HBox {
   public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, @Nullable VPSChanges updates, UISettings uiSettings) {
     super(3);
     try {
-      int iconSize = 14;
+
+      int iconSize = WidgetFactory.DEFAULT_ICON_SIZE;
 
       this.setAlignment(Pos.CENTER_LEFT);
 
@@ -80,14 +81,18 @@ public class VpsTableColumn extends HBox {
             continue;
           }
           changeCounter++;
-          builder.append(change.toString(vpsTable));
-          builder.append("\n");
+          String changeValue = change.toString(vpsTable);
+          if (changeValue != null) {
+            builder.append(changeValue);
+            builder.append("\n");
+          }
         }
 
         if (changeCounter > 0) {
           FontIcon updateIcon = WidgetFactory.createUpdateIcon();
           if (disabled) {
-            updateIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));;
+            updateIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+            ;
           }
           label.setGraphic(updateIcon);
 

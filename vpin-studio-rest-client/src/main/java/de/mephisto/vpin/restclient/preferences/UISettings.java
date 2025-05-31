@@ -33,6 +33,9 @@ public class UISettings extends JsonSettings {
   private boolean hideUpdateInfo;
   private boolean hideRatingSyncInfo;
 
+  //Hide/Show Unique Custom Vpin Studio Icons
+  private boolean hideCustomIcons;
+
   private boolean autoApplyVpsData = true;
 
   /** Whether DMD position are auto-saved */
@@ -96,6 +99,8 @@ public class UISettings extends JsonSettings {
   private boolean columnPatchVersion = false;
 
   private LaunchConfiguration launchConfiguration;
+
+
 
   public LaunchConfiguration getLaunchConfiguration() {
     return launchConfiguration;
@@ -677,6 +682,14 @@ public class UISettings extends JsonSettings {
 
   public void setHideRatingSyncInfo(boolean hideRatingSyncInfo) {
     this.hideRatingSyncInfo = hideRatingSyncInfo;
+  }
+
+  public boolean isHideCustomIcons() {
+    return hideCustomIcons;
+  }
+
+  public void setHideCustomIcons(boolean hideCustomIcons) {
+    this.hideCustomIcons = hideCustomIcons;
   }
 
   @Override

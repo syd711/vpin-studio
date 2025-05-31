@@ -70,7 +70,7 @@ public class TableVersionMatcher {
       // distance on lastUpdate (nb days between the lastupdate of the Game and the date in VPS)
       double dLastUpdate = 10000;
       if (lastUpdate != null) {
-        dLastUpdate = Math.abs(tableVersion.getUpdatedAt() - lastUpdate) / 1000.0 / 60.0 / 60.0 / 24.0;
+        dLastUpdate = Math.abs(tableVersion.getCreatedAt() - lastUpdate) / 1000.0 / 60.0 / 60.0 / 24.0;
       }
 
       // distance on version

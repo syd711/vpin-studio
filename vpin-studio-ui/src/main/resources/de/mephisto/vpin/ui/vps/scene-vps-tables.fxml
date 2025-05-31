@@ -31,7 +31,7 @@
                         <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="Installed" />
                         <TableColumn fx:id="commentColumn" prefWidth="90.0" style="-fx-alignment: BASELINE_LEFT;" text="Comment" />
                         <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                        <TableColumn fx:id="statusColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Status" />
+                        <TableColumn fx:id="statusColumn" prefWidth="110.0" style="-fx-alignment: BASELINE_CENTER;" text="Status" />
                         <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Updated" />
                         <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="Versions" />
                         <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />

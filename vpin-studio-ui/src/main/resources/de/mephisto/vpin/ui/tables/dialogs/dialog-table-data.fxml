@@ -84,7 +84,7 @@
                                                             <Tooltip text="Every table will be added to the first playlist that is found." />
                                                          </tooltip>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Screen Name:" textFill="WHITE">
+                                                      <Label styleClass="default-text" text="Display Name:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -183,7 +183,7 @@
                                                          <children>
                                                             <Label>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="If enabled, the screen name will be updated on table version selection." wrapText="true" />
+                                                                  <Tooltip prefWidth="300.0" text="If enabled, the display name will be updated on table version selection." wrapText="true" />
                                                                </tooltip>
                                                                <font>
                                                                   <Font size="14.0" />
@@ -254,7 +254,7 @@
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="6.0">
                                                    <children>
                                                       <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
                                                          <items>
@@ -293,7 +293,21 @@
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
+                                                         <HBox.margin>
+                                                            <Insets left="12.0" />
+                                                         </HBox.margin>
                                                       </CheckBox>
+                                                      <Label>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="300.0" text="If enabled applying the the new table or table version will immdiately write the changes to the server. Otherwise, only the VPS mapping will change, not the table's meta data." wrapText="true" />
+                                                         </tooltip>
+                                                      </Label>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="12.0" />
@@ -357,36 +371,43 @@
                                                                <HBox.margin>
                                                                   <Insets />
                                                                </HBox.margin>
+                                                               <tooltip>
+                                                                  <Tooltip text="Open Virtual Pinball Spreadsheet entry" />
+                                                               </tooltip>
                                                             </Button>
                                                          </children>
                                                       </HBox>
                                                       <HBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
-                                                               </graphic>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
+                                                            <VBox spacing="3.0">
                                                                <HBox.margin>
                                                                   <Insets />
                                                                </HBox.margin>
-                                                               <tooltip>
-                                                                  <Tooltip text="Download Table" />
-                                                               </tooltip>
-                                                            </Button>
-                                                            <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
-                                                               </graphic>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <tooltip>
-                                                                  <Tooltip text="Copy VPS Table Version URL" />
-                                                               </tooltip>
-                                                            </Button>
+                                                               <children>
+                                                                  <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                                                     </graphic>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <tooltip>
+                                                                        <Tooltip text="Copy VPS Table Version URL" />
+                                                                     </tooltip>
+                                                                  </Button>
+                                                                  <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
+                                                                     <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                                                                     </graphic>
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                     <tooltip>
+                                                                        <Tooltip text="Download Table" />
+                                                                     </tooltip>
+                                                                  </Button>
+                                                               </children>
+                                                            </VBox>
                                                          </children>
                                                       </HBox>
                                                    </children>

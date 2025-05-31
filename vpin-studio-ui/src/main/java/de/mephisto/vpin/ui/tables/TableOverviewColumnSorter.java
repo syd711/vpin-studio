@@ -60,11 +60,11 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnDateModified)) {
         comp = (o1, o2) -> {
-          if (o1.getGame().getModified() == null) {
-            return o2.getGame().getModified() == null ? 0 : -1;
+          if (o1.getGame().getDateUpdated() == null) {
+            return o2.getGame().getDateUpdated() == null ? 0 : -1;
           }
           else {
-            return o2.getGame().getModified() == null ? 1 : TableOverviewController.dateFormat.format(o1.getGame().getModified()).compareTo(TableOverviewController.dateFormat.format(o2.getGame().getModified()));
+            return o2.getGame().getDateUpdated() == null ? 1 : TableOverviewController.dateFormat.format(o1.getGame().getDateUpdated()).compareTo(TableOverviewController.dateFormat.format(o2.getGame().getDateUpdated()));
           }
         };
       }

@@ -15,9 +15,9 @@ public class ManiaSettings extends JsonSettings {
   private String defaultWebsite;
 
   private boolean submitAllScores = true;
-  private boolean submitRatings = false;
-  private boolean submitPlayed = false;
-  private boolean submitTables = false;
+  private boolean submitRatings = true;
+  private boolean submitPlayed = true;
+  private boolean submitTables = true;
   private boolean showOnlineStatus = true;
   private boolean showActiveGameStatus = true;
 

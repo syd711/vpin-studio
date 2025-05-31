@@ -179,12 +179,18 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onVPMAlias() {
     try {
-      TextFile textFile = new TextFile(VPinFile.VPMAliasTxt);
-      textFile.setEmulatorId(game.get().getEmulatorId());
-      boolean b = Dialogs.openTextEditor(textFile, "VPMAlias.txt");
-      if (b) {
-        client.getMameService().clearCache();
-        EventManager.getInstance().notifyTablesChanged();
+      if (game.isPresent()) {
+        GameRepresentation gameRepresentation = game.get();
+
+        TextFile textFile = new TextFile(VPinFile.VPMAliasTxt);
+        textFile.setEmulatorId(gameRepresentation.getEmulatorId());
+        boolean b = Dialogs.openTextEditor(textFile, "VPMAlias.txt");
+        if (b) {
+          EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
+          if (!StringUtils.isEmpty(gameRepresentation.getRomAlias())) {
+            EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRomAlias());
+          }
+        }
       }
     }
     catch (Exception e) {
