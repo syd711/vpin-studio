@@ -2,7 +2,8 @@
 
 ## Changes
 
-- Changed overlay titleto 
+- Changed overlay window title to avoid volume issues for PinVOL.
+- Fixed issue in VPS update detection leading to false positives for a lot of table assets.
 
 ---
 
