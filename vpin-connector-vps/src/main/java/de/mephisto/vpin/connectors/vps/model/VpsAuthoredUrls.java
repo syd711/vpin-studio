@@ -100,7 +100,7 @@ public class VpsAuthoredUrls implements VPSEntity {
   public boolean containsUpdatedVersion(List<? extends VpsAuthoredUrls> urls) {
     for (VpsAuthoredUrls url : urls) {
       if (this.getId() != null && url.getId() != null) {
-        if (url.getId().equals(this.getId()) && !String.valueOf(url.getVersion()).equals(this.getVersion())) {
+        if (url.getId().equals(this.getId()) && this.getVersion() != null && !String.valueOf(url.getVersion()).equals(this.getVersion())) {
           return true;
         }
       }
