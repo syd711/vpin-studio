@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -93,7 +92,7 @@ public class ServerFX extends Application {
       }
     }
     catch (InterruptedException e) {
-      e.printStackTrace();
+      LOG.warn("Overlay wating failed: {}", e.getMessage());
     }
   }
 
@@ -330,10 +329,13 @@ public class ServerFX extends Application {
     overlayStage.setFullScreenExitHint("");
     overlayStage.setAlwaysOnTop(true);
     overlayStage.setFullScreen(true);
-    overlayStage.setTitle("VPin Studio Overlay");
     overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
     PauseMenu.loadPauseMenu();
     latch.countDown();
+  }
+
+  public Stage getOverlayStage() {
+    return overlayStage;
   }
 }
