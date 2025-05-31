@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -324,6 +325,8 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
     ServerFX.client = overlayClient;
     ServerFX.waitForOverlay();
+    ServerFX.getInstance().getOverlayStage().setTitle(
+        frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
     LOG.info("Finished initialization of OverlayWindowFX");
 
     new VPinStudioServerTray();

@@ -58,13 +58,8 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
   public void finalizeModel(ProgressResultModel progressResultModel) {
     super.finalizeModel(progressResultModel);
 
-    if (games.size() > MAX_REFRESH_COUNT) {
-      EventManager.getInstance().notifyTablesChanged();
-    }
-    else {
-      for (GameRepresentation game : games) {
-        EventManager.getInstance().notifyTableChange(game.getId(), null);
-      }
+    for (GameRepresentation game : games) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 

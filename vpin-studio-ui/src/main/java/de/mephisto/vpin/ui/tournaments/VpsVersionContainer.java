@@ -69,7 +69,7 @@ public class VpsVersionContainer extends VBox {
       titleLabel = new Label("VPS Update:");
       titleLabel.setPrefWidth(TITLE_WIDTH);
       titleLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;-fx-font-weight : bold;" + customStyle);
-      valueLabel = new Label(DateFormat.getDateInstance().format(new Date(item.getUpdatedAt())));
+      valueLabel = new Label(DateFormat.getDateInstance().format(new Date(item.getCreatedAt())));
       valueLabel.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
       row.getChildren().addAll(titleLabel, valueLabel);
       this.getChildren().add(row);

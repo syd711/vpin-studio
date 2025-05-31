@@ -1,5 +1,5 @@
 {
-  "pinemhiVersion": "3.6.5",
+  "pinemhiVersion": "3.6.6",
   "highscoreTitles": [
     "MASTER MAGICIAN", "CHAMPION", "GRAND CHAMPION", "WORLD RECORD", "GREATEST VAMPIRE HUNTER", "GREATEST TIME LORD", "RIVER MASTER", "CLUB CHAMPION", "HIGHEST SCORES", "THE BEST DUDE", "ACE WINGER"
   ],
@@ -414,6 +414,12 @@
       "rom": "JungleQueen",
       "tableName": "",
       "textFile": ""
+    },
+    {
+      "scannedRom": "miss_o_1969",
+      "rom": "MissO",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [
@@ -467,8 +473,6 @@
     "panther7",
     "Premier",
     "play_a24",
-    "Pink_Floyd_np",
-    "Pink_Floyd",
     "Polic_L4",
     "Playboy",
     "polar",
@@ -501,6 +505,7 @@
     "ZoneFuryVPX"
   ],
   "notSupported": [
+    "cybrnaut",
     "mtl_180hc",
     "mtl_170hc",
     "bloodmach",
@@ -1588,6 +1593,7 @@
     "sc_17n",
     "sc_18",
     "sc_18n",
+    "sc_18s11",
     "sc_18s2",
     "scrpn_l1",
     "scrpn_t1",
@@ -1997,6 +2003,7 @@
     "xmn_151h",
     "xmn_151hc",
     "xsandos",
+    "xsandosa",
     "eatpm_3g",
     "eatpm_f1",
     "eballdld",

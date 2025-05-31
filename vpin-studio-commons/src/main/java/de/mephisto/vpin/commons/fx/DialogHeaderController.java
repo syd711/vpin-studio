@@ -94,6 +94,10 @@ public class DialogHeaderController implements Initializable {
     this.stage = stage;
   }
 
+  public Stage getStage() {
+    return stage;
+  }
+
   public void setTitle(String title) {
     titleLabel.setText(title);
   }

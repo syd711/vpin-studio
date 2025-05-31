@@ -362,7 +362,7 @@ class VpsTablesPredicateFactory {
         }
 
         if (lastUpdateDate != null) {
-          LocalDate updated = Instant.ofEpochMilli(version.getUpdatedAt())
+          LocalDate updated = Instant.ofEpochMilli(version.getCreatedAt())
               .atZone(ZoneId.systemDefault()).toLocalDate();
           if (lastUpdateDate.compareTo(updated) > 0) {
             return false;

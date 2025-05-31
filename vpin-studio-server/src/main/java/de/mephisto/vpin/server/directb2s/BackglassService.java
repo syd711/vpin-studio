@@ -2,14 +2,20 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.restclient.directb2s.*;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -85,15 +91,31 @@ public class BackglassService implements InitializingBean {
     return getDirectB2SData(b2sFile, emuId, filename);
   }
 
-  public DirectB2SData getDirectB2SData(Game game) {
-    if (game != null && game.getDirectB2SPath() != null) {
-      File directB2SFile = game.getDirectB2SFile();
-      String directB2SFileName = game.getDirectB2SFilename();
-      return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+  /**
+   * Manage case where no B2SFile is active for a game, then take first one
+   */
+  public DirectB2SData getDirectB2SData(@NonNull Game game) {
+    if (game != null) {
+      String baseName = FilenameUtils.removeExtension(game.getGameFileName()).trim();
+      DirectB2S b2s = cacheDirectB2SVersion.get(game.getEmulatorId() + "@" + baseName);
+      if (b2s == null) {
+        b2s = reloadDirectB2SAndVersions(game.getEmulator(), game.getGameFileName());
+      }
+      if (b2s != null) {
+        if (b2s.isEnabled()) {
+          File directB2SFile = game.getDirectB2SFile();
+          String directB2SFileName = game.getDirectB2SFilename();
+          return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+        }
+        else {
+          String directB2SFileName = b2s.getVersion(0);
+          File directB2SFile = new File(game.getGameFile().getParentFile(), directB2SFileName);
+          return getDirectB2SData(directB2SFile, game.getEmulatorId(), directB2SFileName);
+        }
+      }
     }
-    else {
-      return new DirectB2SData();
-    }
+    //else
+    return new DirectB2SData();
   }
 
   private DirectB2SData getDirectB2SData(@NonNull File directB2SFile, int emulatorId, String filename) {
@@ -969,6 +991,50 @@ public class BackglassService implements InitializingBean {
       LOG.error("Cannot create _frames Folder " + emulator.getGamesDirectory());
       return null;
     }
+  }
+
+  //----------------------------------- FrontendFullMedia manipulation ---
+
+  public void useFrontendFullDMDMedia(int gameId) {
+    TableDetails tableDetails = frontendService.getTableDetails(gameId);
+    if (tableDetails != null) {
+      String keepDisplays = VPinScreen.keepDisplaysAddScreen(tableDetails.getKeepDisplays(), VPinScreen.Menu);
+      tableDetails.setKeepDisplays(keepDisplays);
+      frontendService.saveTableDetails(gameId, tableDetails);
+    }
+  }
+
+  public void grabFrontendFullDMDMedia(Game game) {
+    FrontendMedia frontendMedia = frontendService.getGameMedia(game.getId());
+    FrontendMediaItem item = frontendMedia.getDefaultMediaItem(VPinScreen.Menu);
+    try {
+      byte[] img = grabFromFrontendMedia(item);
+      if (img != null) {
+        String base64 = DatatypeConverter.printBase64Binary(img);
+        setDmdImage(game.getEmulatorId(), game.getDirectB2SFilename(), item.getFile().getName(), base64);
+      }
+    }
+    catch (Exception ioe) {
+      LOG.error("Error while grabbing image from frontendmedia", ioe);
+    }
+  }
+
+  public byte[] grabFromFrontendMedia(FrontendMediaItem item) {
+    if (item != null && item.getFile().exists()) {
+      String baseType = MimeTypeUtil.determineBaseType(item.getMimeType());
+      if ("image".equals(baseType)) {
+        try {
+          return Files.readAllBytes(item.getFile().toPath());
+        }
+        catch (IOException e) {
+          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
+        }
+      }
+      else if ("video".equals(baseType)) {
+        return JCodec.grab(item.getFile());
+      }
+    }
+    return null;
   }
 
   //-------------------------------------------- PREVIEWS in BYTES[] ---

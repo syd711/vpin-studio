@@ -130,6 +130,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   public void refreshView() {
     refreshView(games);
   }
+
   public void refreshView(List<GameRepresentation> games) {
     dataBox.getChildren().removeAll(dataBox.getChildren());
 
@@ -218,7 +219,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           Button plyButton = new Button();
           plyButton.setGraphic(playlistIcon.getGraphic());
           plyButton.setTooltip(playlistTooltip);
-          plyButton.getStyleClass().add("ghost-button-tiny");
+          plyButton.getStyleClass().add("playlist-button");
           plyButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -359,25 +360,15 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
     if (updateAll) {
       List<PlaylistGame> games = playlist.getGames();
-      if (games.size() > UIDefaults.DEFAULT_MAX_REFRESH_COUNT) {
-        EventManager.getInstance().notifyTablesChanged();
-      }
-      else {
-        for (PlaylistGame playlistGame : games) {
-          EventManager.getInstance().notifyTableChange(playlistGame.getId(), null);
-        }
+      for (PlaylistGame playlistGame : games) {
+        EventManager.getInstance().notifyTableChange(playlistGame.getId(), null);
       }
     }
     // also update the game if it has not been updated previously
     if (!this.games.isEmpty()) {
-      if (games.size() > UIDefaults.DEFAULT_MAX_REFRESH_COUNT) {
-        EventManager.getInstance().notifyTablesChanged();
-      }
-      else {
-        for (GameRepresentation game : this.games) {
-          int gameId = game.getId();
-          EventManager.getInstance().notifyTableChange(gameId, null);
-        }
+      for (GameRepresentation game : this.games) {
+        int gameId = game.getId();
+        EventManager.getInstance().notifyTableChange(gameId, null);
       }
     }
   }

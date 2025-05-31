@@ -173,11 +173,9 @@ public class UploaderAnalysis {
       if (pupPackFolder != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
         continue;
       }
-      if (filenameWithPath.toLowerCase().contains("music/")) {
-        String folder = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/"));
-        if (path == null || folder.length() > path.length()) {
-          path = folder;
-        }
+      if (filenameWithPath.contains("/")) {
+        path = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/"));
+        break;
       }
     }
     return path;
@@ -476,7 +474,7 @@ public class UploaderAnalysis {
         return "This archive does not not contain a .res file.";
       }
       case ROM: {
-        if (isRom() || hasFileWithSuffixAndNot("zip", "pup")) {
+        if (isRom() || hasFileWithSuffixAndNot("zip", "pup", "pov")) {
           return null;
         }
         return "This archive does not not contain a ROM file.";
@@ -610,7 +608,7 @@ public class UploaderAnalysis {
       result.add(AssetType.DMD_PACK);
     }
 
-    if (!isAltSound() && isMusic()) {
+    if (isMusic()) {
       result.add(AssetType.MUSIC);
     }
 
@@ -736,17 +734,7 @@ public class UploaderAnalysis {
   }
 
   public boolean isMusic() {
-    for (String filenameWithPath : getFilteredFilenamesWithPath()) {
-      String suffix = FilenameUtils.getExtension(filenameWithPath);
-      if (!musicSuffixes.contains(suffix)) {
-        continue;
-      }
-      if (getPupPackRootDirectory() != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
-        continue;
-      }
-      return true;
-    }
-    return false;
+    return !isAltSound() && getMusicFolder() != null;
   }
 
   public boolean isDMD() {
@@ -763,25 +751,32 @@ public class UploaderAnalysis {
       }
 
       String suffix = FilenameUtils.getExtension(filenameWithPath);
-      if (acceptAllAudio) {
-        if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3")) {
+
+      if (suffix.equalsIgnoreCase("ogg") || suffix.equalsIgnoreCase("mp3")) {
+        if (acceptAllAudio) {
           if (filenameWithPath.contains("/")) {
             filenameWithPath = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
           }
           return filenameWithPath;
         }
-      }
 
-      if (!acceptAllAudio && filenameWithPath.toLowerCase().contains("music/")) {
-        String path = filenameWithPath.substring(filenameWithPath.toLowerCase().indexOf("music/") + "music/".length());
-        if (path.contains("/")) {
-          path = path.substring(0, path.lastIndexOf("/") + 1);
+        if (filenameWithPath.toLowerCase().contains("music/")) {
+          String path = filenameWithPath.substring(filenameWithPath.toLowerCase().indexOf("music/") + "music/".length());
+          if (path.contains("/")) {
+            path = path.substring(0, path.lastIndexOf("/") + 1);
+          }
+          return path;
         }
-
-        if (path.toLowerCase().endsWith(".mp3") || path.toLowerCase().endsWith(".ogg")) {
-          return null;
+        else if (filenameWithPath.contains("/")) {
+          String path = filenameWithPath.substring(0, filenameWithPath.lastIndexOf("/") + 1);
+          while (StringUtils.countMatches(path, "/") > 1) {
+            path = path.substring(path.indexOf("/") + 1);
+          }
+          return path;
         }
-        return path;
+        else {
+          return "/";
+        }
       }
     }
     return null;
@@ -885,6 +880,10 @@ public class UploaderAnalysis {
     }
 
     return false;
+  }
+
+  private boolean isValidRomName(String fileName) {
+    return fileName.length() < 16 && !fileName.toLowerCase().contains("pov");
   }
 
   public String getPupPackRootDirectory() {

@@ -124,7 +124,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
   public boolean uploadVPinAvatar(File file) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "preferences/avatar";
-      HttpEntity upload = createUpload(file, -1, null, AssetType.VPIN_AVATAR, null);
+      HttpEntity<?> upload = createUpload(file, -1, null, AssetType.VPIN_AVATAR, null);
       new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       finalizeUpload(upload);
       return true;

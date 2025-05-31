@@ -109,12 +109,12 @@ public class NvRamOutputToScoreTextTest {
    * Test DefaultAdapter
    */
   @Test
-  public void test_HS_14() throws Exception {
-    doTestSingle("hs_l4.nv",
-        "#1 DAD   4,811,550\r\n" + //
-            "#2 DAD   4,286,630\r\n" + //
-            "#3 DAD   4,066,230\r\n" + //
-            "#4 SSR   4,000,000");
+  public void test_Single() throws Exception {
+    doTestSingle("robo_a34.nv",
+        "#1 JJJ   9,540,810\r\n" + //
+            "#2 AAA   1,098,360\r\n" + //
+            "#3 AAA   588,560\r\n" + //
+            "#4 AAA   277,620");
   }
 
   /**

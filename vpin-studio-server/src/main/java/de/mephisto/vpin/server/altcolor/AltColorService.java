@@ -166,7 +166,7 @@ public class AltColorService implements InitializingBean {
     setAltColorEnabled(game.getRom(), true);
   }
 
-  public JobDescriptor installAltColor(Game game, File out) {
+  public JobDescriptor installAltColor(@NonNull Game game, File out) {
     File folder = game.getAltColorFolder();
     if (folder != null) {
       String name = out.getName();

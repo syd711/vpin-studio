@@ -280,9 +280,6 @@ public class NavigationController implements Initializable, StudioEventListener,
     if (PreferenceNames.MANIA_SETTINGS.equals(key)) {
       ManiaSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       tournamentsBtn.setVisible(settings.isEnabled() && settings.isTournamentsEnabled());
-      if (!tournamentsBtn.isVisible()) {
-        navigateTo(NavigationItem.Tables);
-      }
     }
   }
 

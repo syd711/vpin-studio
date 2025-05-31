@@ -33,6 +33,10 @@ public class DMDPositionServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "dmdposition/useFrontendFullDMDMedia", dmdInfo, DMDInfo.class);
   }
 
+  public DMDInfo grabFrontendFullDMDMedia(DMDInfo dmdInfo) {
+    return getRestClient().post(API + "dmdposition/grabFrontendFullDMDMedia", dmdInfo, DMDInfo.class);
+  }
+
 
   public boolean saveDMDInfo(DMDInfo dmdInfo) {
     return getRestClient().post(API + "dmdposition/save", dmdInfo, Boolean.class);

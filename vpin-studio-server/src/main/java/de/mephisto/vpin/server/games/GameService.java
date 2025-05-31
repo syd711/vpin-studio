@@ -165,6 +165,13 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return true;
   }
 
+  /**
+   * Pre-reload triggered before an actual manual table reload (server service cache reset)
+   */
+  public Game reload(int gameId) {
+    return gameCachingService.invalidate(gameId);
+  }
+
   @SuppressWarnings("unused")
   public List<Integer> getUnknownGames() {
     List<Integer> gameIds = new ArrayList<>(getGameIds());
@@ -584,6 +591,25 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
   }
 
+  public boolean clearMameCaches() {
+    mameRomAliasService.clearCache(emulatorService.getVpxGameEmulators());
+    List<Game> games = getKnownGames(-1);
+    return mameService.clearGamesCache(games);
+  }
+
+  public boolean clearMameCacheFor(String rom) {
+    return mameService.clearCacheFor(rom);
+  }
+
+  public boolean clearAliasCache() {
+    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
+    return mameRomAliasService.clearCache(gameEmulators);
+  }
+
+  @Override
+  public void onApplicationEvent(ApplicationReadyEvent event) {
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     preferencesService.addChangeListener(this);
@@ -594,29 +620,21 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     catch (Exception e) {
       LOG.error("Error initializing GameService: " + e.getMessage(), e);
     }
+    clearAliasCache();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
-  }
 
-  public boolean clearMameCaches() {
-    List<Game> games = getKnownGames(-1);
-    vpsService.update(games);
-    boolean result = mameService.clearGamesCache(games);
-
-    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-    result &= mameService.clearValidationsCache(gameEmulators);
-    result &= mameRomAliasService.clearCache(gameEmulators);
-    return result;
-  }
-
-  public boolean clearMameCacheFor(String rom) {
-    List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
-    mameRomAliasService.clearCache(gameEmulators);
-    return mameService.clearCacheFor(rom);
-  }
-
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
     //ALWAYS AVOID CALLING GETKNOWNGAMES DURING THE INITILIZATION PHASE OF THE SERVER
-    clearMameCaches();
+    List<Integer> unknownGames = getUnknownGames();
+    if (unknownGames.isEmpty()) {
+      new Thread(() -> {
+        Thread.currentThread().setName("Game Service Initializer");
+        List<Game> games = getKnownGames(-1);
+        vpsService.update(games);
+        clearMameCaches();
+
+        List<GameEmulator> gameEmulators = emulatorService.getValidGameEmulators();
+        mameService.clearValidationsCache(gameEmulators);
+      }).start();
+    }
   }
 }

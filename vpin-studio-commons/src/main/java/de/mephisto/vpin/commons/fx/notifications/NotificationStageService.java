@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

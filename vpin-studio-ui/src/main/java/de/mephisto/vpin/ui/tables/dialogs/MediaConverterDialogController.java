@@ -65,7 +65,7 @@ public class MediaConverterDialogController implements Initializable, DialogCont
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     ObservableList<String> screenNames = FXCollections.observableList(new ArrayList<>());
-    screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name(), VPinScreen.PlayField.name(), VPinScreen.Loading.name(), VPinScreen.Topper.name(), VPinScreen.DMD.name(), VPinScreen.Menu.name());
+    screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name(), VPinScreen.PlayField.name(), VPinScreen.BackGlass.name(), VPinScreen.Loading.name(), VPinScreen.Topper.name(), VPinScreen.DMD.name(), VPinScreen.Menu.name());
     screensCombo.setItems(screenNames);
     saveBtn.setDisable(true);
 

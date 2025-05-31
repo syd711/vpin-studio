@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.util.ZipUtil;
@@ -224,42 +225,42 @@ public class MameService implements InitializingBean {
     return !romValidationCache.containsKey(name);
   }
 
-  public boolean validateRom(GameEmulator gameEmulator, String name) {
-    try {
-      File romFolder = gameEmulator.getRomFolder();
-      File romFile = new File(romFolder, name + ".zip");
-      if (romFile.exists()) {
-        File mameExe = getMameExe(gameEmulator.getMameFolder());
-        if (mameExe != null) {
-          List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms", name);
-          LOG.info("Executing ROM validation: " + String.join(" ", cmds));
-          SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
-          executor.setDir(mameExe.getParentFile());
-          executor.executeCommand();
-          StringBuilder out = executor.getStandardOutputFromCommand();
-          if (out != null) {
-            String result = out.toString();
-            return result.contains("1 were OK");
-          }
-
-          LOG.error("MAME command failed: " + executor.getStandardErrorFromCommand());
-        }
-        else {
-          LOG.error("MAME exe not found.");
-          return false;
-        }
-      }
-      else {
-        LOG.error("ROM file \"" + romFile.getAbsolutePath() + "\" not found.");
-        return false;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("ROM validation failed: " + e.getMessage(), e);
-      return false;
-    }
-    return false;
-  }
+//  public boolean validateRom(GameEmulator gameEmulator, String name) {
+//    try {
+//      File romFolder = gameEmulator.getRomFolder();
+//      File romFile = new File(romFolder, name + ".zip");
+//      if (romFile.exists()) {
+//        File mameExe = getMameExe(gameEmulator.getMameFolder());
+//        if (mameExe != null) {
+//          List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms", name);
+//          LOG.info("Executing ROM validation: " + String.join(" ", cmds));
+//          SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
+//          executor.setDir(mameExe.getParentFile());
+//          executor.executeCommand();
+//          StringBuilder out = executor.getStandardOutputFromCommand();
+//          if (out != null) {
+//            String result = out.toString();
+//            return result.contains("1 were OK");
+//          }
+//
+//          LOG.error("MAME command failed: " + executor.getStandardErrorFromCommand());
+//        }
+//        else {
+//          LOG.error("MAME exe not found.");
+//          return false;
+//        }
+//      }
+//      else {
+//        LOG.error("ROM file \"" + romFile.getAbsolutePath() + "\" not found.");
+//        return false;
+//      }
+//    }
+//    catch (Exception e) {
+//      LOG.error("ROM validation failed: " + e.getMessage(), e);
+//      return false;
+//    }
+//    return false;
+//  }
 
   public void validateRoms(@NonNull File mameFolder) {
     try {
@@ -309,7 +310,7 @@ public class MameService implements InitializingBean {
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
-      ZipUtil.unzipTargetFile(tempFile, out, nvFileName);
+      PackageUtil.unpackTargetFile(tempFile, out, nvFileName);
       LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
     else {

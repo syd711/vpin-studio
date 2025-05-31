@@ -20,9 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -57,12 +58,17 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
   public void initialize(URL url, ResourceBundle resourceBundle) {
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
     List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
+    Collections.sort(gamesCached, new Comparator<GameRepresentation>() {
+      @Override
+      public int compare(GameRepresentation o1, GameRepresentation o2) {
+        return o1.getGameDisplayName().compareTo(o2.getGameDisplayName());
+      }
+    });
 
-    List<GameRepresentation> filtered = gamesCached.stream().filter(g -> g.getHighscoreType() != null).collect(Collectors.toList());
-    tablesCombo.setItems(FXCollections.observableList(filtered));
+    tablesCombo.setItems(FXCollections.observableList(gamesCached));
     tablesCombo.getSelectionModel().select(0);
 
-    for (GameRepresentation gameRepresentation : filtered) {
+    for (GameRepresentation gameRepresentation : gamesCached) {
       if (gameRepresentation.getId() == pauseMenuSettings.getTestGameId()) {
         tablesCombo.setValue(gameRepresentation);
         break;
@@ -85,7 +91,7 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
       }
     });
 
-    testBtn.setDisable(filtered.isEmpty());
+    testBtn.setDisable(gamesCached.isEmpty());
   }
 
   @Override

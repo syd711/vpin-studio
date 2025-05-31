@@ -197,7 +197,7 @@ public class VpsTable implements VPSEntity {
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
-    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getUpdatedAt()));
+    Collections.sort(tableFiles, Comparator.comparingLong((VpsTableVersion o) -> o.getCreatedAt()));
     Collections.reverse(tableFiles);
     this.tableFiles = tableFiles;
   }

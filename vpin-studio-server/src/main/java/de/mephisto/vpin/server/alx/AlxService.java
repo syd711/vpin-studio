@@ -8,6 +8,8 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.highscores.HighscoreVersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class AlxService {
+  private final static Logger LOG = LoggerFactory.getLogger(AlxService.class);
 
   @Autowired
   private FrontendService frontendService;
@@ -98,14 +101,27 @@ public class AlxService {
     return frontendService.getFrontendConnector().updateSecondsPlayedForGame(gameId, seconds);
   }
 
-  //---------- Helper --------------------
+  public void substractPlayTimeForGame(int gameId, long pauseDurationMs) {
+    AlxSummary alxSummary = getAlxSummary(gameId);
+    if (alxSummary != null && pauseDurationMs > 0 && !alxSummary.getEntries().isEmpty()) {
+      long durationSec = pauseDurationMs / 1000;
+      TableAlxEntry tableAlxEntry = alxSummary.getEntries().get(0);
+      if (tableAlxEntry.getTimePlayedSecs() > durationSec) {
+        tableAlxEntry.setTimePlayedSecs((int) (tableAlxEntry.getTimePlayedSecs() - durationSec));
+        updateSecondsPlayedForGame(gameId, tableAlxEntry.getTimePlayedSecs());
+        LOG.info("Substracted {}ms of playtime from {}, new total playtime is {} seconds", pauseDurationMs, gameId, tableAlxEntry.getTimePlayedSecs());
+      }
+    }
+  }
 
+  //---------- Helper --------------------
   private void deleteNumberOfPlaysForEmu(int emulatorId) {
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulatorId);
     for (Game game : gamesByEmulator) {
       updateNumberOfPlaysForGame(game.getId(), 0);
     }
   }
+
   private void deleteTimePlayedForEmu(int emulatorId) {
     List<Game> gamesByEmulator = frontendService.getGamesByEmulator(emulatorId);
     for (Game game : gamesByEmulator) {

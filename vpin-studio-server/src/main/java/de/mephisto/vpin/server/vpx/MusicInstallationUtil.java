@@ -27,7 +27,7 @@ public class MusicInstallationUtil {
       LOG.error("Music upload failed, no music folder found for default emulator.");
     }
 
-    LOG.info("Extracting music pack into \"" + musicFolder.getAbsolutePath() + "\" with ROM value \"" + rom + "\"");
+    LOG.info("Extracting music pack into \"" + musicFolder.getAbsolutePath() + "\" with ROM value \"" + rom + "\", relative path: {}", relativePath);
     String suffix = FilenameUtils.getExtension(archiveFile.getName());
     if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
       unzipIntoMusicFolder(archiveFile, musicFolder, analysis, rom, relativePath);

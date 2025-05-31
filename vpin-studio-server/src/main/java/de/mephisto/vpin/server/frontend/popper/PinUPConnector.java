@@ -1627,7 +1627,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
-      LOG.info("Update of TimePlayedSecs for '" + gameId + "' successful.");
+      LOG.info("Update of TimePlayedSecs to {} for {} successful.", seconds, gameId);
     }
     catch (Exception e) {
       LOG.error("Failed to update TimePlayedSecs for " + gameId + " [" + sql + "]: " + e.getMessage(), e);

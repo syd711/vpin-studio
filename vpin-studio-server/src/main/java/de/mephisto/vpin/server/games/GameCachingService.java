@@ -117,9 +117,20 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     if (game != null) {
       List<Game> games = allGames.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
       games.remove(game);
-      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
+//      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
     }
     return getGame(gameId);
+  }
+
+  public void invalidateByRom(int emulatorId, @NonNull String rom) {
+    List<Game> games = allGames.computeIfAbsent(emulatorId, k -> new ArrayList<>());
+    for (Game game : new ArrayList<>(games)) {
+      if (rom.trim().equals(game.getRom()) || rom.trim().equals(game.getRomAlias())) {
+        games.remove(game);
+        getGame(game.getId());
+//        LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
+      }
+    }
   }
 
   @Nullable
@@ -548,7 +559,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    mameRomAliasService.setGameCachingService(this);
+
     serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
     preferencesService.addChangeListener(this);
     gameLifecycleService.addGameLifecycleListener(this);
     gameLifecycleService.addGameDataChangedListener(this);

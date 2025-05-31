@@ -41,7 +41,7 @@ public class NotificationStage {
   public NotificationStage(Notification notification) {
     this.notification = notification;
     stage = new Stage();
-    stage.setTitle("VPin UI");
+    stage.setTitle(notification.getWindowTitle());
     stage.initStyle(StageStyle.TRANSPARENT);
     stage.setAlwaysOnTop(true);
     Scene scene = null;

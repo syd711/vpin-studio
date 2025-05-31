@@ -22,6 +22,7 @@ import eu.hansolo.tilesfx.Tile;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -40,6 +41,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -87,7 +90,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button cardBtn;
 
   @FXML
-  private Button backupBtn;
+  private SplitMenuButton backupBtn;
 
   @FXML
   private Button restoreBtn;
@@ -197,6 +200,16 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(client.getGameService().getVpxGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
+    }
+  }
+
+  @FXML
+  private void onBackAll() {
+    List<GameRepresentationModel> items = new ArrayList<>(tablesSidebarController.getTableOverviewController().getTableView().getItems());
+    List<GameRepresentation> allGames = items.stream().map(g -> g.getGame()).collect(Collectors.toList());
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Create highscore backup for all currently selected " + allGames.size() + " tables?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ProgressDialog.createProgressDialog(new HighscoreBackupProgressModel(allGames));
     }
   }
 

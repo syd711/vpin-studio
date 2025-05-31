@@ -1,0 +1,73 @@
+[
+  {
+    "id": "--xQTsPe33",
+    "updatedAt": 1745823539995,
+    "manufacturer": "Original",
+    "name": "Rise Against",
+    "year": 2025,
+    "theme": [
+      "Music"
+    ],
+    "designers": [],
+    "type": "SS",
+    "players": 4,
+    "tableFiles": [
+      {
+        "id": "idST46Zk60",
+        "createdAt": 1744675200000,
+        "updatedAt": 1745823539995,
+        "urls": [
+          {
+            "url": "https://vpuniverse.com/files/file/24896-rise-against/",
+            "broken": false
+          }
+        ],
+        "authors": [
+          "Larouillas",
+          "JPSalas"
+        ],
+        "features": [
+          "MOD",
+          "incl. B2S",
+          "Music",
+          "incl. Art"
+        ],
+        "tableFormat": "VPX",
+        "comment": "Retheme of Count-Down by JPSalas",
+        "version": "1.0.0",
+        "imgUrl": "https://virtualpinballspreadsheet.github.io/vps-db/img/idST46Zk60_1745823504738.webp",
+        "game": {
+          "id": "--xQTsPe33",
+          "name": "Rise Against"
+        }
+      }
+    ],
+    "b2sFiles": [
+      {
+        "id": "HOPSI2etbP",
+        "createdAt": 1744675200000,
+        "updatedAt": 1745823586508,
+        "urls": [
+          {
+            "url": "https://vpuniverse.com/files/file/24896-rise-against/",
+            "broken": false
+          }
+        ],
+        "authors": [
+          "Larouillas"
+        ],
+        "features": [
+          "2Screens"
+        ],
+        "imgUrl": "https://virtualpinballspreadsheet.github.io/vps-db/img/HOPSI2etbP_1745823556782.webp",
+        "comment": "Included with table",
+        "version": "1.0.0",
+        "game": {
+          "id": "--xQTsPe33",
+          "name": "Rise Against"
+        }
+      }
+    ],
+    "lastCreatedAt": 1744675200000
+  }
+]

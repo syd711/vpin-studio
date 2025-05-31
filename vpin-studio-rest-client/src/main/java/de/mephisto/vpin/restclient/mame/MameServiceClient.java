@@ -97,8 +97,4 @@ public class MameServiceClient extends VPinStudioClientService {
   public MameOptions saveOptions(MameOptions options) throws Exception {
     return getRestClient().post(API + "mame/options/", options, MameOptions.class);
   }
-
-  public void deleteOptions(String rom) throws Exception {
-    getRestClient().delete(API + "mame/options/" + rom);
-  }
 }

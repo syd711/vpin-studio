@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FrontendStatusService implements InitializingBean, ApplicationListener<ApplicationReadyEvent> {
+public class FrontendStatusService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
 
   private final List<TableStatusChangeListener> tableStatusChangeListeners = new ArrayList<>();
@@ -202,11 +202,6 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
     return onGameExit(game);
   }
 
-  public boolean onGameExit(int gameId) {
-    Game game = gameService.getGame(gameId);
-    return onGameExit(game);
-  }
-
   private boolean onGameExit(@NonNull Game game) {
     new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
@@ -223,7 +218,7 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
         gameService.saveEventLog(highscoreEventLog);
       }
     }).start();
-    return game != null;
+    return true;
   }
 
   public void augmentWheel(Game game, String badge) {
@@ -294,13 +289,5 @@ public class FrontendStatusService implements InitializingBean, ApplicationListe
     frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
     LOG.info("{} initialization finished, running frontend version {}", this.getClass().getSimpleName(), frontendService.getVersion());
-  }
-
-  @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-//    LOG.info("-----------------------------TableStatusChangeListener Summary ----------------------------------------");
-//    for (TableStatusChangeListener listener : tableStatusChangeListeners) {
-//      LOG.info("TableStatusChangeListener: {}", listener.getClass().getSimpleName() + "/" + listener.getPriority());
-//    }
   }
 }

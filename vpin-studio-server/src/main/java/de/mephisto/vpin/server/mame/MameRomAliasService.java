@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.mame;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -11,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -26,6 +29,11 @@ public class MameRomAliasService implements InitializingBean {
   private final static String VPM_ALIAS = VPinFile.VPMAliasTxt.toString();
 
   private final Map<Integer, Map<String, String>> aliasNamToRom = new HashMap<>();
+
+  private GameCachingService gameCachingService;
+
+  @Autowired
+  private EmulatorService emulatorService;
 
   @NonNull
   @JsonIgnore
@@ -65,7 +73,8 @@ public class MameRomAliasService implements InitializingBean {
         textFile.setLastModified(new Date(vpmAliasFile.lastModified()));
         textFile.setContent(FileUtils.readFileToString(vpmAliasFile, Charset.defaultCharset()));
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return textFile;
@@ -83,9 +92,26 @@ public class MameRomAliasService implements InitializingBean {
         text = text.replaceAll("\n", "\r\n");
         FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
         LOG.info("Written " + vpmAliasFile.getAbsolutePath());
+
+        clearCache(emulatorService.getVpxGameEmulators());
+        invalidateAliasMappings();
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error saving " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
+    }
+  }
+
+  private void invalidateAliasMappings() {
+    for (Map.Entry<Integer, Map<String, String>> entry : aliasNamToRom.entrySet()) {
+      int emulatorId = entry.getKey();
+      Map<String, String> mapping = entry.getValue();
+      for (String s : mapping.keySet()) {
+        gameCachingService.invalidateByRom(emulatorId, s);
+      }
+      for (String s : mapping.values()) {
+        gameCachingService.invalidateByRom(emulatorId, s);
+      }
     }
   }
 
@@ -110,7 +136,8 @@ public class MameRomAliasService implements InitializingBean {
           }
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error loading " + vpmAliasFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return aliasToRomMapping;
@@ -133,5 +160,9 @@ public class MameRomAliasService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
+  }
+
+  public void setGameCachingService(GameCachingService gameCachingService) {
+    this.gameCachingService = gameCachingService;
   }
 }

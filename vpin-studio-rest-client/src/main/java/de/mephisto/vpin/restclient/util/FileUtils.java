@@ -23,7 +23,7 @@ public class FileUtils {
   public static String replaceWindowsChars(String name) {
     for (Character invalidWindowsSpecificChar : INVALID_WINDOWS_SPECIFIC_CHARS) {
       if (name.contains(String.valueOf(invalidWindowsSpecificChar))) {
-        name = name.replaceAll(String.valueOf(invalidWindowsSpecificChar), "-");
+        name = name.replaceAll(Pattern.quote(String.valueOf(invalidWindowsSpecificChar)), "-");
       }
     }
     return name;

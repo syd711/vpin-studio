@@ -18,7 +18,6 @@ public class LocalUISettings {
   private final static Logger LOG = LoggerFactory.getLogger(LocalUISettings.class);
 
   public static final String LAST_FOLDER_SELECTION = "lastFolderSelection";
-  public static final String LAST_ISCORED_SELECTION = "iscoredUrl";
   public static final String DROP_IN_FOLDER = "dropInFolder";
   public static final String DROP_IN_FOLDER_ENABLED = "dropInFolderEnabled";
 
@@ -29,7 +28,11 @@ public class LocalUISettings {
   private static Map<String, Object> jsonSettingsCache = new HashMap<>();
   private static File propertiesFile;
 
-  public static void initialize() {
+  static {
+    initialize();
+  }
+
+  private static void initialize() {
     File basePath = Updater.getWriteableBaseFolder();
     propertiesFile = new File(basePath, "config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
@@ -151,7 +154,11 @@ public class LocalUISettings {
   }
 
   public static boolean isModal(String stateId) {
-    return store.getBoolean(stateId + "_modality");
+    String key = stateId + "_modality";
+    if (store.containsKey(key)) {
+      return store.getBoolean(key);
+    }
+    return true;
   }
 
   public static boolean isMaximizeable(String stateId) {

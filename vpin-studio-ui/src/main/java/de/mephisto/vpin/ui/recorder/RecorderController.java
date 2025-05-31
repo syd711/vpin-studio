@@ -106,6 +106,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Button stopBtn;
 
   @FXML
+  private Button recordBtn;
+
+  @FXML
   private MenuButton screenMenuButton;
 
   @FXML
@@ -168,13 +171,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private void onReload() {
-    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
-    this.doReload(true);
-  }
-
-  @FXML
-  private void onReload(ActionEvent e) {
-    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel(true));
     this.doReload(true);
   }
 
@@ -537,6 +534,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     refreshScreenMenu();
 
+    this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
 
     try {
@@ -668,6 +666,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
 
+    this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
     playButtonController.setDisable(selection.isEmpty() || !hasEnabledRecording);
     labelCount.setText("No tables selected");
     if (!this.selection.isEmpty()) {

@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
@@ -48,31 +49,31 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   private FrontendService frontendService;
 
   private NotificationSettings notificationSettings;
+  private boolean pinVolAutostart = false;
 
   public void showNotification(Notification notification) {
-    //no support for standalone
-    if (frontendService.getFrontendType().isNotStandalone()) {
-      if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
-        notification.setDesktopMode(notificationSettings.isDesktopMode());
-        notification.setDurationSec(notificationSettings.getDurationSec());
-
-        boolean vpxRunning = systemService.isPinballEmulatorRunning();
-        NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
-      }
-    }
-    else {
-      LOG.info("Notifications not supported in standalone mode.");
-    }
+    showNotification(notification, true);
   }
 
   public void showNotificationNow(Notification notification) {
+    showNotification(notification, false);
+  }
+
+  private void showNotification(Notification notification, boolean checkEmulator) {
     //no support for standalone
     if (frontendService.getFrontendType().isNotStandalone()) {
       if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
+        notification.setWindowTitle(frontendService.getFrontendType().equals(FrontendType.Popper) && pinVolAutostart ? "PinUP Popper" : "VPin Studio Notification");
 
-        NotificationStageService.getInstance().queueNotification(notification, true);
+        if (checkEmulator) {
+          boolean vpxRunning = systemService.isPinballEmulatorRunning();
+          NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
+        }
+        else {
+          NotificationStageService.getInstance().queueNotification(notification, true);
+        }
       }
     }
     else {
@@ -84,6 +85,9 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
       notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+    }
+    if (propertyName.equals(PreferenceNames.PINVOL_AUTOSTART_ENABLED)) {
+      pinVolAutostart = preferencesService.getPreferences().getPinVolAutoStartEnabled();
     }
   }
 
@@ -160,6 +164,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         highscoreService.addHighscoreChangeListener(this);
         frontendStatusService.addFrontendStatusChangeListener(this);
         preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
+        preferenceChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null, null);
       }
     }
     catch (Exception e) {

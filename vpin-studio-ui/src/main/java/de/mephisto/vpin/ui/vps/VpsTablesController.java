@@ -441,7 +441,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     @Override
     public void load() {
-      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(bean, null);
+      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(-1, bean, null);
       installed = (gameByVpsTable != null);
       versionId = (gameByVpsTable != null) ? gameByVpsTable.getExtTableVersionId() : null;
       updates = (gameByVpsTable != null) ? gameByVpsTable.getVpsUpdates() : null;

@@ -22,4 +22,16 @@ public class GameStatusResource {
   public GameStatus getStatus() {
     return gameStatusService.getStatus();
   }
+
+  @GetMapping("paused")
+  public GameStatus startPause() {
+    gameStatusService.getStatus().startPause();
+    return gameStatusService.getStatus();
+  }
+
+  @GetMapping("unpaused")
+  public GameStatus endPause() {
+    gameStatusService.getStatus().finishPause();
+    return gameStatusService.getStatus();
+  }
 }

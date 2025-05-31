@@ -168,6 +168,7 @@ public class UniversalUploadService {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
           JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
           uploadDescriptor.setError(jobExecutionResult.getError());
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
@@ -176,28 +177,41 @@ public class UniversalUploadService {
           String suffix = FilenameUtils.getExtension(tempFile.getName());
           if (PackageUtil.isSupportedArchive(suffix)) {
             altColorService.installAltColorFromArchive(analysis, game, tempFile);
+            if (game != null) {
+              gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+            }
             break;
           }
-          JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
-          uploadDescriptor.setError(jobExecutionResult.getError());
+          if (game != null) {
+            JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
+            uploadDescriptor.setError(jobExecutionResult.getError());
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+          }
         }
         break;
       }
       case DMD_PACK: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
-          dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), game.getGameFile());
+          if (game != null) {
+            dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), game.getGameFile());
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+          }
         }
         break;
       }
       case PUP_PACK: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
           pupPacksService.installPupPack(uploadDescriptor, analysis, uploadDescriptor.isAsync());
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case FRONTEND_MEDIA: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null) {
           gameMediaService.installMediaPack(uploadDescriptor, analysis);
+          if (game != null) {
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+          }
         }
         break;
       }
@@ -211,6 +225,9 @@ public class UniversalUploadService {
             File musicFolder = gameEmulator.getMusicFolder();
             if (musicFolder.exists()) {
               vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+              if (game != null) {
+                gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+              }
             }
             else {
               LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder.getAbsolutePath());
@@ -222,24 +239,30 @@ public class UniversalUploadService {
       case ROM: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
           mameService.installRom(uploadDescriptor, gameEmulator, tempFile, analysis);
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case NV: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
           mameService.installNvRam(uploadDescriptor, gameEmulator, tempFile, analysis);
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
           mameService.installCfg(uploadDescriptor, gameEmulator, tempFile, analysis);
+          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
         }
         break;
       }
       case BAM_CFG: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.BAM_CFG) == null) {
           fpService.installBAMCfg(uploadDescriptor, game, gameEmulator, tempFile, analysis);
+          if (game != null) {
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
+          }
         }
         break;
       }
@@ -247,7 +270,6 @@ public class UniversalUploadService {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
     }
-    gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
   }
 
   public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
