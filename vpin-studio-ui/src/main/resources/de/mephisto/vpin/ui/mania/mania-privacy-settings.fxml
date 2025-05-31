@@ -49,6 +49,22 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="The will push the list of all your installed VPX tables to VPin Mania." textFill="WHITE" />
                         <Label layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="It allows you a quicker access to the corresponding highscores of yours." textFill="WHITE" />
+                        <VBox styleClass="checkbox-description">
+                           <children>
+                              <CheckBox fx:id="submitAllRatingsCheckbox" mnemonicParsing="false" text="Submit Table Ratings">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </VBox>
                         <Button fx:id="syncTablesBtn" mnemonicParsing="false" onAction="#onTablesSync" text="Synchronize Tables" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -62,15 +78,6 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
-                  <CheckBox fx:id="submitAllRatingsCheckbox" mnemonicParsing="false" text="Submit All Table Ratings">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label styleClass="checkbox-description" text="This anonymized data will contribute to the global table ratings on vpin-mania.net." textFill="WHITE" />
                   <CheckBox fx:id="submitPlayedCountCheckbox" mnemonicParsing="false" text="Submit Play Count">
                      <font>
                         <Font size="14.0" />

@@ -35,9 +35,6 @@ public class GameDetails {
   @Column(length = 1024)
   public String updates;
 
-  @Column(name = "extRating", nullable = false, columnDefinition = "integer default 0")
-  private int extRating = 0;
-
   private String notes;
 
   private String eventLog;
@@ -262,13 +259,5 @@ public class GameDetails {
 
   public void setNvOffset(int nvOffset) {
     this.nvOffset = nvOffset;
-  }
-
-  public int getExtRating() {
-    return extRating;
-  }
-
-  public void setExtRating(int extRating) {
-    this.extRating = extRating;
   }
 }

@@ -81,11 +81,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   private PreferencesService preferencesService;
 
   private List<CabinetContact> contacts;
-
   private ManiaSettings maniaSettings;
-
-  @Autowired
-  private GameDetailsRepository gameDetailsRepository;
   private Cabinet cabinet;
 
   public ManiaTableSyncResult synchronize(String vpsTableId) {
@@ -106,7 +102,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
 
     synchronizeHighscores(result, game, vpsTable);
-    synchronizeInitialRating(game);
     return result;
   }
 
@@ -169,37 +164,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
 
     LOG.info("Highscore sync finished for \"" + vpsTable.getDisplayName() + ": " + result.getTableScores().size() + " scores have been submitted.");
-  }
-
-  /**
-   * Used for the initial sync
-   *
-   * @param game
-   */
-  private void synchronizeInitialRating(@NonNull Game game) {
-    if (!maniaSettings.isSubmitRatings()) {
-      return;
-    }
-
-    int rating = game.getRating();
-    if (rating > 0 && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-
-      //not saved or there the initial rating was already done
-      if (gameDetails == null) {
-        return;
-      }
-
-      if (gameDetails.getExtRating() != 0) {
-        return;
-      }
-
-      gameDetails.setExtRating(game.getRating());
-      gameDetailsRepository.saveAndFlush(gameDetails);
-
-      //We want to push the initial value here, so start from 0
-      maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), 0, game.getRating());
-    }
   }
 
   public VPinManiaClient getClient() {
@@ -436,6 +400,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
               InstalledTable installedTable = new InstalledTable();
               installedTable.setVpsTableId(game.getExtTableId());
               installedTable.setVpsVersionId(game.getExtTableVersionId());
+
+              if (maniaSettings.isSubmitRatings()) {
+                installedTable.setRating(game.getRating());
+              }
               installedTables.add(installedTable);
             }
           }
@@ -535,32 +503,13 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   @Override
   public void gameDataChanged(@NonNull GameDataChangedEvent event) {
     if (Features.MANIA_ENABLED) {
-      updateTableRating(event);
+      synchronizeTables();
     }
   }
 
   @Override
   public void gameAssetChanged(@NonNull GameAssetChangedEvent changedEvent) {
     //not of interest
-  }
-
-  private void updateTableRating(@NonNull GameDataChangedEvent event) {
-    ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
-    Game game = gameService.getGame(event.getGameId());
-    if (maniaSettings.isSubmitRatings() && game != null && !StringUtils.isEmpty(game.getExtTableId()) && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinetCached();
-      if (cabinet != null) {
-        int oldRating = event.getOldData().getGameRating() != null ? event.getOldData().getGameRating() : 0;
-        int newRating = event.getNewData().getGameRating() != null ? event.getNewData().getGameRating() : 1;
-        LOG.info("Updating mania rating for \"{}\" from {} to {}", game.getGameDisplayName(), oldRating, newRating);
-        if (oldRating != newRating) {
-          synchronizeInitialRating(game);
-          new Thread(() -> {
-            maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), oldRating, newRating);
-          }).start();
-        }
-      }
-    }
   }
 
 
@@ -614,6 +563,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     }
 
     highscoreService.setManiaService(this);
+    setOnline();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 

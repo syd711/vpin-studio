@@ -130,11 +130,13 @@ public class ManiaPrivacySettingsController implements Initializable {
     });
 
     syncTablesBtn.setDisable(!settings.isSubmitTables());
+
     submitTablesCheckbox.setSelected(settings.isSubmitTables());
     submitTablesCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
+          submitAllRatingsCheckbox.setDisable(!newValue);
           syncTablesBtn.setDisable(!newValue);
           settings.setSubmitTables(newValue);
           client.getPreferenceService().setJsonPreference(settings);
@@ -163,6 +165,7 @@ public class ManiaPrivacySettingsController implements Initializable {
     submitAllRatingsCheckbox.setSelected(settings.isSubmitRatings());
     submitPlayedCountCheckbox.setSelected(settings.isSubmitPlayed());
     submitAllCheckbox.setSelected(settings.isSubmitAllScores());
+    submitAllRatingsCheckbox.setDisable(submitTablesCheckbox.isDisable());
 
     syncScoresBtn.setDisable(!settings.isSubmitAllScores());
     submitAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
