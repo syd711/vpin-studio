@@ -219,7 +219,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           Button plyButton = new Button();
           plyButton.setGraphic(playlistIcon.getGraphic());
           plyButton.setTooltip(playlistTooltip);
-          plyButton.getStyleClass().add("ghost-button-tiny");
+          plyButton.getStyleClass().add("playlist-button");
           plyButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

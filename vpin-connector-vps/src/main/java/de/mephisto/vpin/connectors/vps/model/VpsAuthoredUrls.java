@@ -10,7 +10,7 @@ public class VpsAuthoredUrls implements VPSEntity {
 
   private List<String> authors = new ArrayList<>();
   private String version;
-  private long updatedAt;
+  private long createdAt;
   private String id;
 
   @Override
@@ -22,14 +22,14 @@ public class VpsAuthoredUrls implements VPSEntity {
       builder.append("\n");
     }
 
-    if(version != null) {
+    if (version != null) {
       builder.append("- Version: ");
       builder.append(version);
       builder.append("\n");
     }
 
-    builder.append("- Updated At: ");
-    builder.append(DateFormat.getDateTimeInstance().format(new Date(updatedAt)));
+    builder.append("- Created At: ");
+    builder.append(DateFormat.getDateTimeInstance().format(new Date(createdAt)));
     return builder.toString();
   }
 
@@ -57,12 +57,12 @@ public class VpsAuthoredUrls implements VPSEntity {
     this.version = version;
   }
 
-  public long getUpdatedAt() {
-    return updatedAt;
+  public long getCreatedAt() {
+    return createdAt;
   }
 
-  public void setUpdatedAt(long updatedAt) {
-    this.updatedAt = updatedAt;
+  public void setCreatedAt(long createdAt) {
+    this.createdAt = createdAt;
   }
 
   public List<VpsUrl> getUrls() {
@@ -96,6 +96,18 @@ public class VpsAuthoredUrls implements VPSEntity {
     return false;
   }
 
+
+  public boolean containsUpdatedVersion(List<? extends VpsAuthoredUrls> urls) {
+    for (VpsAuthoredUrls url : urls) {
+      if (this.getId() != null && url.getId() != null) {
+        if (url.getId().equals(this.getId()) && this.getVersion() != null && !String.valueOf(url.getVersion()).equals(this.getVersion())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -105,7 +117,7 @@ public class VpsAuthoredUrls implements VPSEntity {
     if (!String.valueOf(version).equals(String.valueOf(that.version))) return false;
     if (urls == null && that.urls != null) return false;
     if (urls != null && that.urls == null) return false;
-    if (updatedAt != that.updatedAt) return false;
+    if (createdAt != that.createdAt) return false;
     if (urls != null && that.urls != null && !urls.equals(that.urls)) return false;
     return true;
   }
@@ -115,7 +127,7 @@ public class VpsAuthoredUrls implements VPSEntity {
     int result = urls.hashCode();
     result = 31 * result + authors.hashCode();
     result = 31 * result + version.hashCode();
-    result = 31 * result + (int) (updatedAt ^ (updatedAt >>> 32));
+    result = 31 * result + (int) (createdAt ^ (createdAt >>> 32));
     return result;
   }
 }

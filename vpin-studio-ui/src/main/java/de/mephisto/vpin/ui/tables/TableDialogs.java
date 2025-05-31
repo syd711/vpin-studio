@@ -504,22 +504,22 @@ public class TableDialogs {
     return controller.getTableDetails();
   }
 
-  public static void openAutoMatchAll() {
+  public static void openAutoMatchAll(List<GameRepresentation> games) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
+        ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + games.size() + " tables?",
             "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
         if (!result.isApplyClicked()) {
-          ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked(), false));
+          ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, result.isChecked(), false));
           EventManager.getInstance().notifyTablesChanged();
         }
       }
     }
     else {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + games.size() + " tables?",
           "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
       if (!result.isApplyClicked()) {
-        ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked(), false));
+        ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, result.isChecked(), false));
         EventManager.getInstance().notifyTablesChanged();
       }
     }

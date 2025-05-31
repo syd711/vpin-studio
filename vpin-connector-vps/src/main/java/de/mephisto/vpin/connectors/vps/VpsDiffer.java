@@ -23,11 +23,22 @@ public class VpsDiffer {
     return new Date(newTable.getUpdatedAt());
   }
 
+  public VPSChanges getTableChanges() {
+    return getChanges(true);
+  }
+
   public VPSChanges getChanges() {
+    return getChanges(false);
+  }
+
+  private VPSChanges getChanges(boolean skipNewEvents) {
     VPSChanges changes = new VPSChanges();
     List<VPSChange> differences = changes.getChanges();
+
     if (oldTable == null) {
-      differences.add(new VPSChange(newTable, VpsDiffTypes.tableNewVPX));
+      if (!skipNewEvents) {
+        differences.add(new VPSChange(newTable, VpsDiffTypes.tableNewVPX));
+      }
       return changes;
     }
 
@@ -41,12 +52,13 @@ public class VpsDiffer {
     diffUrls(oldTable.getWheelArtFiles(), newTable.getWheelArtFiles(), VpsDiffTypes.wheel, differences);
     diffUrls(oldTable.getB2sFiles(), newTable.getB2sFiles(), VpsDiffTypes.b2s, differences);
     diffTutorials(oldTable.getTutorialFiles(), newTable.getTutorialFiles(), differences);
-    diffTables(oldTable.getTableFiles(), newTable.getTableFiles(), differences);
+    diffTables(oldTable.getTableFiles(), newTable.getTableFiles(), differences, skipNewEvents);
 
     return changes;
   }
 
-  private void diffTables(List<VpsTableVersion> oldFiles, List<VpsTableVersion> newFiles, List<VPSChange> differences) {
+  private void diffTables
+      (List<VpsTableVersion> oldFiles, List<VpsTableVersion> newFiles, List<VPSChange> differences, boolean skipNewEvents) {
     if ((newFiles == null || newFiles.isEmpty()) && (oldFiles == null || oldFiles.isEmpty())) {
       return;
     }
@@ -60,21 +72,27 @@ public class VpsDiffer {
     }
 
     for (VpsTableVersion newVersionFile : newFiles) {
-      Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t ->t.getId() != null &&  t.getId().equals(newVersionFile.getId())).findFirst();
+      Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t -> t.getId() != null && t.getId().equals(newVersionFile.getId())).findFirst();
       if (versionInOtherList.isPresent()) {
         VpsTableVersion version = versionInOtherList.get();
         if (version.getVersion() == null && newVersionFile.getVersion() == null) {
           continue;
         }
 
-        if (!String.valueOf(version.getVersion()).equals(newVersionFile.getVersion()) && newVersionFile.getTableFormat() != null && newVersionFile.getTableFormat().equals("VPX")) {
-          differences.add(new VPSChange(newVersionFile, VpsDiffTypes.tableNewVersionVPX));
+        String version1 = String.valueOf(version.getVersion());
+        String version2 = newVersionFile.getVersion();
+        if (!version1.equals(version2) && version.getId().equals(newVersionFile.getId())) {
+          differences.add(new VPSChange(newVersionFile, VpsDiffTypes.tableVersionUpdate));
+        }
+        else if (!version.getId().equals(newVersionFile.getId()) && !skipNewEvents) {
+          differences.add(new VPSChange(newVersionFile, VpsDiffTypes.tableNewVersion));
         }
       }
     }
   }
 
-  private void diffTutorials(List<VpsTutorialUrls> oldUrls, List<VpsTutorialUrls> newUrls, List<VPSChange> differences) {
+  private void diffTutorials
+      (List<VpsTutorialUrls> oldUrls, List<VpsTutorialUrls> newUrls, List<VPSChange> differences) {
     if ((newUrls == null || newUrls.isEmpty()) && (oldUrls == null || oldUrls.isEmpty())) {
       return;
     }
@@ -95,7 +113,8 @@ public class VpsDiffer {
     }
   }
 
-  private void diffUrls(List<? extends VpsAuthoredUrls> oldUrls, List<? extends VpsAuthoredUrls> newUrls, VpsDiffTypes diffType, List<VPSChange> differences) {
+  private void diffUrls(List<? extends VpsAuthoredUrls> oldUrls, List<? extends
+      VpsAuthoredUrls> newUrls, VpsDiffTypes diffType, List<VPSChange> differences) {
     if ((newUrls == null || newUrls.isEmpty()) && (oldUrls == null || oldUrls.isEmpty())) {
       return;
     }
@@ -109,9 +128,9 @@ public class VpsDiffer {
     }
 
     for (VpsAuthoredUrls newUrl : newUrls) {
-      if (!newUrl.isContainedIn(oldUrls)) {
+      if (newUrl.containsUpdatedVersion(oldUrls) || !newUrl.isContainedIn(oldUrls)) {
         differences.add(new VPSChange(newUrl, diffType));
-        break;
+        return;
       }
     }
   }

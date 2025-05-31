@@ -58,7 +58,7 @@ public class MameResource {
 
   @GetMapping("/clearcachefor/{rom}")
   public boolean clearCacheFor(@PathVariable("rom") String rom) {
-    return gameService.clearMameCacheFor(rom);
+    return gameService.clearMameCacheFor(rom) && gameService.clearAliasCache();
   }
 
 

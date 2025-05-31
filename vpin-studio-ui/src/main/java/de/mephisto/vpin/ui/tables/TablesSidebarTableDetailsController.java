@@ -10,22 +10,23 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
+import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -36,10 +37,16 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private VBox tableDataBox;
 
   @FXML
+  private ToolBar toolbar;
+
+  @FXML
   private Button tableEditBtn;
 
   @FXML
   private Button fixVersionBtn;
+
+  @FXML
+  private Button reloadBtn;
 
   @FXML
   private SplitMenuButton autoFillBtn;
@@ -183,6 +190,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
+  private UploadsButtonController uploadsButtonController;
 
   // Add a public no-args constructor
   public TablesSidebarTableDetailsController() {
@@ -234,6 +242,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
   }
 
   @FXML
+  private void onReload() {
+    if (this.game.isPresent()) {
+      client.getGameService().reload(this.game.get().getId());
+      EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    }
+  }
+
+  @FXML
   private void onAutoFillAll() {
     List<GameRepresentation> vpxGamesCached = client.getGameService().getVpxGamesCached();
     TableDialogs.openAutoFillSettingsDialog(Studio.stage, vpxGamesCached, null);
@@ -246,6 +262,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     this.game = g;
 
+    if (g.isEmpty()) {
+      uploadsButtonController.setData(Collections.emptyList(), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
+    }
+    else {
+      uploadsButtonController.setData(Arrays.asList(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
+    }
+
+
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     if (!frontendType.supportStandardFields()) {
@@ -257,6 +281,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
     this.tableEditBtn.setDisable(g.isEmpty());
     this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
+    this.reloadBtn.setDisable(g.isEmpty());
     this.autoFillBtn.setDisable(g.isEmpty());
 
     GameRepresentation game = g.orElse(null);
@@ -306,8 +331,8 @@ public class TablesSidebarTableDetailsController implements Initializable {
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
-      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" : 
-        VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
+      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" :
+          VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
       gameRating.setText(tableDetails.getGameRating() == null ? "-" : String.valueOf(tableDetails.getGameRating()));
       dof.setText(StringUtils.isEmpty(tableDetails.getDof()) ? "-" : tableDetails.getDof());
       IPDBNum.setText(StringUtils.isEmpty(tableDetails.getIPDBNum()) ? "-" : tableDetails.getIPDBNum());
@@ -398,5 +423,16 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     popperRuntimeFields.setVisible(frontendType.supportExtendedFields());
+
+    try {
+      FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));
+      Parent uploadsButton = loader.load();
+      uploadsButtonController = loader.getController();
+      uploadsButtonController.setCompact(false);
+      toolbar.getItems().add(0, uploadsButton);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load uploads button: " + e.getMessage(), e);
+    }
   }
 }

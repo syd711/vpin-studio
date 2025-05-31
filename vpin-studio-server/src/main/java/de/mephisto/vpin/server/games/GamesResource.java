@@ -70,6 +70,11 @@ public class GamesResource {
     return gameService.reload();
   }
 
+  @GetMapping("/reload/{id}")
+  public Game reloadGame(@PathVariable("id") int gameId) {
+    return gameService.reload(gameId);
+  }
+
   @GetMapping("/unknowns")
   public List<Integer> getUnknownGameIds() {
     return gameService.getUnknownGames();

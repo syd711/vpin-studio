@@ -78,6 +78,7 @@ public class VpsService implements InitializingBean {
 
   /**
    * Match game and return a GameVpsMatch with the VPS Database mapping
+   *
    * @return GameVpsMatch of ids
    */
   public VpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
@@ -91,17 +92,23 @@ public class VpsService implements InitializingBean {
     if (useDisplayName) {
       gameFileName = game.getGameDisplayName();
     }
-    gameFileName = FilenameUtils.getBaseName(gameFileName);
+    try {
+      gameFileName = FilenameUtils.getBaseName(gameFileName);
+    }
+    catch (Exception e) {
+      //may happen for FX games
+      LOG.warn("Failed to determine base name: {}", e.getMessage());
+    }
 
     String[] tableFormats = game.getEmulator().getVpsEmulatorFeatures();
     File gamefile = game.getGameFile();
-    long lastmodified = gamefile != null && gamefile.exists() ? gamefile.lastModified() : null;
+    long lastmodified = gamefile != null && gamefile.exists() ? gamefile.lastModified() : -1;
 
-    automatcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, game.getRom(), 
-      tableInfo!=null? tableInfo.getTableName(): null, 
-      tableInfo!=null? tableInfo.getAuthorName(): null,
-      tableInfo!=null? tableInfo.getTableVersion(): null,
-      lastmodified, overwrite);
+    automatcher.autoMatch(vpsMatch, vpsDatabase, tableFormats, gameFileName, game.getRom(),
+        tableInfo != null ? tableInfo.getTableName() : null,
+        tableInfo != null ? tableInfo.getAuthorName() : null,
+        tableInfo != null ? tableInfo.getTableVersion() : null,
+        lastmodified, overwrite);
     return vpsMatch;
   }
 
@@ -205,7 +212,7 @@ public class VpsService implements InitializingBean {
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
-            VPSChanges changes = tableDiff.getChanges();
+            VPSChanges changes = tableDiff.getTableChanges();
             String json = changes.toJson();
             List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));

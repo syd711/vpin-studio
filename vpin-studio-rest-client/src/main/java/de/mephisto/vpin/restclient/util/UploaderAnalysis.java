@@ -474,7 +474,7 @@ public class UploaderAnalysis {
         return "This archive does not not contain a .res file.";
       }
       case ROM: {
-        if (isRom() || hasFileWithSuffixAndNot("zip", "pup")) {
+        if (isRom() || hasFileWithSuffixAndNot("zip", "pup", "pov")) {
           return null;
         }
         return "This archive does not not contain a ROM file.";
@@ -880,6 +880,10 @@ public class UploaderAnalysis {
     }
 
     return false;
+  }
+
+  private boolean isValidRomName(String fileName) {
+    return fileName.length() < 16 && !fileName.toLowerCase().contains("pov");
   }
 
   public String getPupPackRootDirectory() {

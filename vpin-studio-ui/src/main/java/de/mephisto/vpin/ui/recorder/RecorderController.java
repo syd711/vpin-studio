@@ -171,13 +171,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private void onReload() {
-    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
-    this.doReload(true);
-  }
-
-  @FXML
-  private void onReload(ActionEvent e) {
-    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel(true));
     this.doReload(true);
   }
 

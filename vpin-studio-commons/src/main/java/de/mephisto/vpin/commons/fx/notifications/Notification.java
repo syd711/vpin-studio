@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class Notification {
 
+  private String windowTitle;
   private Image image;
   private String title1;
   private String title2;
@@ -13,6 +14,14 @@ public class Notification {
   private long durationSec;
   private boolean desktopMode;
   private boolean showOnEmulatorExit = true;
+
+  public String getWindowTitle() {
+    return windowTitle;
+  }
+
+  public void setWindowTitle(String windowTitle) {
+    this.windowTitle = windowTitle;
+  }
 
   public boolean isShowOnEmulatorExit() {
     return showOnEmulatorExit;

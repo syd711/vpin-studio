@@ -66,6 +66,10 @@ public class GamesServiceClient extends VPinStudioClientService {
     getRestClient().get(API + "games/reload", Boolean.class);
   }
 
+  public GameRepresentation reload(int gameId) {
+    return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
+  }
+
   public void playGame(int id, String altExe, String option) {
     try {
       Map<String, Object> params = new HashMap<>();
@@ -236,7 +240,7 @@ public class GamesServiceClient extends VPinStudioClientService {
       return emulatorGames;
     }
     catch (Exception e) {
-      LOG.error("Failed to read known games: " + e.getMessage(), e);
+      LOG.error("Failed to read known games (" + API + "games/knowns/" + emulatorId + "): " + e.getMessage(), e);
     }
     return Collections.emptyList();
   }
@@ -261,8 +265,18 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   @Nullable
+  public GameRepresentation getGameByVpsTable(int emulatorId, @NonNull VpsTable vpsTable, @Nullable VpsTableVersion vpsTableVersion) {
+    List<GameRepresentation> gamesCached = getGamesCached(emulatorId);
+    return getGameByVpsTableId(gamesCached, vpsTable.getId(), vpsTableVersion != null ? vpsTableVersion.getId() : null);
+  }
+
+  @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
     List<GameRepresentation> gamesCached = getVpxGamesCached();
+    return getGameByVpsTableId(gamesCached, vpsTableId, vpsTableVersionId);
+  }
+
+  private GameRepresentation getGameByVpsTableId(List<GameRepresentation> gamesCached, @NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
     GameRepresentation hit = null;
     for (GameRepresentation game : gamesCached) {
       if (!StringUtils.isEmpty(game.getExtTableId()) && game.getExtTableId().equals(vpsTableId)) {
@@ -393,7 +407,7 @@ public class GamesServiceClient extends VPinStudioClientService {
   private List<GameRepresentation> getGamesCached(int emulatorId) {
     //TRY TO AVOID THIS! WE SHOULD NEVER FETCH GAMES FOR ALL EMULATORS AT ONCE!!!
     if (emulatorId == -1) {
-      LOG.warn("******************************** Bulk Game Refresh Call *********************************************");
+//      LOG.warn("******************************** Bulk Game Refresh Call *********************************************");
       List<GameRepresentation> games = new ArrayList<>();
       List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getValidatedGameEmulators();
       for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
