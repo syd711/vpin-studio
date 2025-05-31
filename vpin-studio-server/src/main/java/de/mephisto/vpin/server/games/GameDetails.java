@@ -74,6 +74,11 @@ public class GameDetails {
 
   private Boolean vrRoomEnabled = false;
 
+  private String dmdType;
+  private String dmdGameName;
+  private String dmdProjectFolder;
+
+
   public Boolean getVrRoomSupport() {
     return vrRoomSupport;
   }
@@ -270,5 +275,29 @@ public class GameDetails {
 
   public void setExtRating(int extRating) {
     this.extRating = extRating;
+  }
+
+  public String getDMDType() {
+    return dmdType;
+  }
+
+  public void setDMDType(String dmdType) {
+    this.dmdType = dmdType;
+  }
+
+  public String getDMDGameName() {
+    return dmdGameName;
+  }
+
+  public void setDMDGameName(String dmdGameName) {
+    this.dmdGameName = dmdGameName;
+  }
+
+  public String getDMDProjectFolder() {
+    return dmdProjectFolder;
+  }
+
+  public void setDMDProjectFolder(String dmdProjectFolder) {
+    this.dmdProjectFolder = dmdProjectFolder;
   }
 }

@@ -17,9 +17,11 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.tables.ClearCacheProgressModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -221,7 +223,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onClearCache() {
-    client.clearCache();
+    ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
   }
 
   @FXML

@@ -1,9 +1,11 @@
 package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +16,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +50,8 @@ public class VPXFileScanner {
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
   private static final Pattern TXT_FILENAME_PATTERN = Pattern.compile(".*\".*\\.txt\".*");
 
+  private static final Pattern VAR_PATTERN = Pattern.compile("(?:Set *)?(\\w*)\\s*=\\s*(.*)");
+
   VPXFileScanner() {
     //force scan method
   }
@@ -53,18 +60,23 @@ public class VPXFileScanner {
     long start = System.currentTimeMillis();
     ScanResult result = new ScanResult();
 
-    String l = null;
     String script = VPXUtil.readScript(gameFile);
 
     result.setFoundControllerStop(script.toLowerCase().contains("controller.stop"));
     result.setFoundTableExit(script.toLowerCase().contains("table1_exit"));
 
     List<String> allLines = new ArrayList<>();
+    script = script.replaceAll("\r\n", "\n");
     script = script.replaceAll("\r", "\n");
 
     allLines.addAll(Arrays.asList(script.split("\n")));
     Collections.reverse(allLines);
-    scanLines(result, allLines);
+    scanLines(gameFile, result, allLines);
+
+    // force GameName
+    if (!StringUtils.isEmpty(result.getGameName())) {
+      result.setRom(result.getGameName());
+    }
 
     //apply table name as ROM name, e.g. for EM tables
     if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
@@ -187,21 +199,101 @@ public class VPXFileScanner {
     }
   }
 
-  private static void scanLines(ScanResult result, List<String> split) {
-    String l;
-    for (String line : split) {
-      l = line;
+  public static void scanLines(File gameFile, ScanResult result, List<String> split) {
+    EvaluationContext evalctxt = new EvaluationContext();
+    // so that curDir can be resolved 
+    evalctxt.setVarValue("curdir", ".");
+    // simulate Table1 object
+    Map<String, String> table1 = new HashMap<>();
+    table1.put("Filename", FilenameUtils.getBaseName(gameFile.getName()));
+    evalctxt.setVarValue("Table1", table1);
 
-      lineSearchRom(result, line);
-      lineSearchPupPack(result, line);
-      lineSearchTableName(result, line);
-      lineSearchNvOffset(result, line);
-      lineSearchHsFileName(result, line);
-      lineSearchTextFileName(result, line);
-      lineSearchVRRoom(result, line);
+    int nbline = split.size();
+    for (String fulline : split) {
+      String[] statements = stripComments(fulline);
+      for (String line : statements) {
+        try {
+          lineDetectWith(result, line, evalctxt);
+          lineEvaluateVars(line, evalctxt);
+          lineSearchGameName(result, line, evalctxt);
+          lineSearchRom(result, line);
+          lineSearchPupPack(result, line);
+          lineSearchTableName(result, line);
+          lineSearchNvOffset(result, line);
+          lineSearchHsFileName(result, line);
+          lineSearchTextFileName(result, line);
+          lineSearchVRRoom(result, line);
+          lineSearchDMDType(result, line);
+          lineSearchInitUltraDmd(result, line, evalctxt);
+          lineSearchDMDProjectFolder(result, line, evalctxt);
+        } catch (Exception e) {
+          LOG.error("error on line "+nbline, e);
+        }
+      }
+      nbline--;
     }
   }
 
+  /**
+   * Complex case 
+   * Const tableName = "ex""'otic" & " 'and' " & "com'""plex" ' with a "comment" at the end
+   * => ex"'otic 'and' com'"plex
+   */
+  public static String[] stripComments(String line) {
+    ArrayList<String> statements = new ArrayList<>();
+    int idx = 0;
+    boolean inString = false;
+    StringBuilder bld = new StringBuilder();
+    while (idx < line.length()) {
+      char c = line.charAt(idx);
+      if (c == '\'' && !inString) {
+        // start of comment then end of statements
+        break;
+      }
+      // detection of a column outside a string => capture statement and re-init buffer
+      if (c == ':' && !inString) {
+        String statement = bld.toString().trim();
+        if (statement.length() > 0) {
+          statements.add(statement);
+        }
+        bld.setLength(0);
+      }
+      else {
+        // this is a character to keep
+        if (c == '\"') {
+          // detection of String
+          inString = !inString; 
+        }
+        bld.append(c);
+      }
+      idx++;
+    }
+    // end of the line, capture latest statement
+    String statement = bld.toString().trim();
+    if (statement.length() > 0) {
+      statements.add(statement);
+    }
+    return statements.toArray(new String[0]);
+  }
+
+  private static void lineEvaluateVars(String line, EvaluationContext evalctxt) {
+    if (StringUtils.startsWithIgnoreCase(line, "const ")) {
+      final String varargs = line.substring(6);
+      evalctxt.onEvaluateList("TO_ARRAY(" + varargs + ")", list -> {
+        //LOG.info("line parsed {}", varargs);
+      });
+    } 
+    else {
+      Matcher matcher = VAR_PATTERN.matcher(line);
+      if (matcher.matches()) {
+        String var = matcher.group(1);
+        String varExp = matcher.group(2).trim();
+        if (evalctxt.isUndefinedVar(var)) {
+          evalctxt.setVarExpression(var, varExp);
+        }
+      }
+    }
+  }
 
   private static void lineSearchNvOffset(@NonNull ScanResult result, @NonNull String line) {
     if (result.getNvOffset() > 0) {
@@ -260,6 +352,71 @@ public class VPXFileScanner {
     }
   }
 
+  private static void lineDetectWith(@NonNull ScanResult result, @NonNull String line, EvaluationContext evalctxt) {
+    if (line.startsWith("With ")) {
+      String object = null;
+      if (StringUtils.startsWithIgnoreCase(line, "With Controller")) {
+        object = "Controller";
+      }
+      else if (StringUtils.startsWithIgnoreCase(line, "With FlexDMD")) {
+        object = "FlexDMD";
+      }
+      // if a value is already known, set it
+      String value = evalctxt.removeTempValue("withGameName_Value");
+      if (value != null && object != null) {
+        setGameNameForObject(result, object, value);
+      }
+      else {
+        String current = evalctxt.removeTempValue("withGameName");
+        if (current != null && object != null) {
+          evalctxt.setTempValue("withGameName_" + current, object);
+        }
+      }
+    }
+  }
+
+  /**
+   * Single line eval for rom name
+   */
+  private static void lineSearchGameName(@NonNull ScanResult result, @NonNull String line, EvaluationContext evalctxt) {
+    if (line.contains(".GameName")) {
+      String gameName = extractAfterPatternsValue(line, ".GameName", "=");
+      gameName = StringUtils.substringBefore(gameName, ":");
+      String object = StringUtils.substringBefore(line, ".GameName").trim();
+      // Marker to identify current assignment
+      String rnd = Integer.toString(RandomUtils.nextInt());
+      if (StringUtils.isEmpty(object)) {
+        // object is not specified, need to wait for the With Object statement 
+        evalctxt.setTempValue("withGameName", rnd);
+      }
+      else {
+        // object is known, register it now 
+        evalctxt.setTempValue("withGameName_" + rnd, object);
+      }
+
+      // handler when gameName is computed
+      evalctxt.onEvaluateString(gameName, res -> {
+        String with = evalctxt.removeTempValue("withGameName_" + rnd);
+        // gameName is evaluated before With Object is identified
+        if (with == null) {
+          // with object is not known yet, add the value so that it is added later
+          evalctxt.setTempValue("withGameName_Value", res);
+        } else {
+          setGameNameForObject(result, with, res);
+        }
+      });
+    }
+  }
+
+  private static void setGameNameForObject(ScanResult result, String object, String value) {
+    if ("Controller".equalsIgnoreCase(object)) {
+      result.setGameName(value);
+    }
+    else if ("FlexDMD".equalsIgnoreCase(object)) {
+      result.setDMDGameName(value);
+    }
+  }
+
   /**
    * Single line eval for rom name
    */
@@ -296,6 +453,53 @@ public class VPXFileScanner {
     }
   }
 
+  private static void lineSearchDMDType(ScanResult result, String line) {
+    if (StringUtils.containsIgnoreCase(line, "CreateObject(\"UltraDMD.DMDObject\")")) {
+      result.setDMDType("UltraDMD");
+    }
+    else if (StringUtils.containsIgnoreCase(line, "CreateObject(\"FlexDMD.FlexDMD\")")) {
+      result.setDMDType("FlexDMD");
+    }
+  }
+
+  private static void lineSearchInitUltraDmd(ScanResult result, String line, EvaluationContext evalctxt) {
+    if (StringUtils.startsWithIgnoreCase(line, "InitUltraDMD")) {
+      int idx = line.indexOf(",");
+      String folder = line.substring(12, idx);
+      //String tableName = line.substring(idx + 1);
+
+      // cf UltraDMD_Options.vbs
+      result.setDMDType("UltraDMD");
+      evalctxt.onEvaluateString(folder, res -> result.setDMDProjectFolder(res + ".UltraDMD"));
+    } 
+  }
+
+  private static void lineSearchDMDProjectFolder(ScanResult result, String line, EvaluationContext evalctxt) {
+    String prjFolder = null;
+    if (StringUtils.containsIgnoreCase(line, ".SetProjectFolder")) {
+      prjFolder = extractAfterPatternsValue(line, ".SetProjectFolder");
+    }
+    else if (StringUtils.containsIgnoreCase(line, ".ProjectFolder")) {
+      prjFolder = extractAfterPatternsValue(line, ".ProjectFolder", "=");
+    }
+
+    if (prjFolder != null) {
+      evalctxt.onEvaluateString(prjFolder, res -> {
+        if (res.startsWith(".\\")) {
+          res = StringUtils.substring(res, 2);
+          res = StringUtils.removeEnd(res, "\\");
+        }
+        else if (res.startsWith("./")) {
+          res = StringUtils.substring(res, 2);
+          res = StringUtils.removeEnd(res, "/");
+        }
+        result.setDMDProjectFolder(res);
+      });
+    }
+  }
+
+  //------------------------------------------------------------
+
   private static String extractLineValue(String line, String pattern) {
     //check if pattern match is behind a comment, then we ignore the line
     if (line.contains("'") && line.trim().indexOf("'") < line.indexOf(pattern)) {
@@ -314,6 +518,19 @@ public class VPXFileScanner {
       value = value.substring(0, end).trim();
     }
     return value;
+  }
+
+  private static String extractAfterPatternsValue(String line, String... patterns) {
+    String extract = line;
+    for (String pattern : patterns) {
+      int idx = StringUtils.indexOfIgnoreCase(extract, pattern);
+      // pattern not found
+      if (idx < 0) {
+        return extract;
+      }
+      extract = extract.substring(idx + pattern.length()).trim();
+    }
+    return extract;
   }
 
   private static int matchesPatterns(List<Pattern> patternList, String line) {
