@@ -1291,7 +1291,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
         //This adds overflow text
         Label label = new Label("+" + (matches.size() - count));
-        label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
+        label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 3 0 0 0;");
         label.getStyleClass().add("default-text");
 
         box.getChildren().add(label);

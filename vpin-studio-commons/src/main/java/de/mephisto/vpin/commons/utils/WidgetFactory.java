@@ -352,7 +352,7 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE+1);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE+2);
 
     String nameLower = playlist.getName().toLowerCase();
     String iconLiteral = "mdi2v-view-list";

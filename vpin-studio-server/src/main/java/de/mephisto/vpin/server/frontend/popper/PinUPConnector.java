@@ -1317,11 +1317,11 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     Connection connect = this.connect();
     try {
       //maybe recursive deletion in the future?
-        PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Emulators WHERE EMUID = ?");
-        preparedStatement.setInt(1, emulatorId);
-        preparedStatement.executeUpdate();
-        preparedStatement.close();
-        LOG.info("Deleted emulator {}", emulatorId);
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Emulators WHERE EMUID = ?");
+      preparedStatement.setInt(1, emulatorId);
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Deleted emulator {}", emulatorId);
       return true;
     }
     catch (SQLException e) {
@@ -1334,37 +1334,38 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   /**
-   * 	"EMUID"	INTEGER NOT NULL,
-   * 	"EmuName"	VARCHAR(100) NOT NULL COLLATE NOCASE,
-   * 	"Description"	VARCHAR(200),
-   * 	"DirGames"	VARCHAR(250),
-   * 	"DirMedia"	VARCHAR(255),
-   * 	"EmuDisplay"	VARCHAR(200) COLLATE NOCASE,
-   * 	"Visible"	INTEGER DEFAULT (1),
-   * 	"DirRoms"	VARCHAR(250),
-   * 	"EmuLaunchDir"	VARCHAR(250),
-   * 	"HideScreens"	INTEGER,
-   * 	"GamesExt"	VARCHAR(200),
-   * 	"ImageExt"	VARCHAR(25),
-   * 	"VideoExt"	VARCHAR(25),
-   * 	"EscapeKeyCode"	INTEGER,
-   * 	"LaunchScript"	TEXT,
-   * 	"PostScript"	TEXT,
-   * 	"KeepDisplays"	VARCHAR(20),
-   * 	"ProcessName"	VARCHAR(50),
-   * 	"WinTitle"	VARCHAR(50),
-   * 	"SkipScan"	INTEGER,
-   * 	"emuVolume"	INTEGER DEFAULT (-1),
-   * 	"DirGamesShare"	VARCHAR(250),
-   * 	"DirRomsShare"	VARCHAR(250),
-   * 	"DirMediaShare"	VARCHAR(250),
-   * 	"CanPause"	INTEGER DEFAULT 0,
-   * 	"CoreFile"	VARCHAR(250),
-   * 	"HelpScript"	TEXT,
-   * 	"AutoScanStartup"	INTEGER DEFAULT 0,
-   * 	"IgnoreFileScan"	TEXT,
-   * 	"SafeLaunch"	INTEGER DEFAULT 0,
-   * 	"SafeReturn"	INTEGER DEFAULT 0,
+   * "EMUID"	INTEGER NOT NULL,
+   * "EmuName"	VARCHAR(100) NOT NULL COLLATE NOCASE,
+   * "Description"	VARCHAR(200),
+   * "DirGames"	VARCHAR(250),
+   * "DirMedia"	VARCHAR(255),
+   * "EmuDisplay"	VARCHAR(200) COLLATE NOCASE,
+   * "Visible"	INTEGER DEFAULT (1),
+   * "DirRoms"	VARCHAR(250),
+   * "EmuLaunchDir"	VARCHAR(250),
+   * "HideScreens"	INTEGER,
+   * "GamesExt"	VARCHAR(200),
+   * "ImageExt"	VARCHAR(25),
+   * "VideoExt"	VARCHAR(25),
+   * "EscapeKeyCode"	INTEGER,
+   * "LaunchScript"	TEXT,
+   * "PostScript"	TEXT,
+   * "KeepDisplays"	VARCHAR(20),
+   * "ProcessName"	VARCHAR(50),
+   * "WinTitle"	VARCHAR(50),
+   * "SkipScan"	INTEGER,
+   * "emuVolume"	INTEGER DEFAULT (-1),
+   * "DirGamesShare"	VARCHAR(250),
+   * "DirRomsShare"	VARCHAR(250),
+   * "DirMediaShare"	VARCHAR(250),
+   * "CanPause"	INTEGER DEFAULT 0,
+   * "CoreFile"	VARCHAR(250),
+   * "HelpScript"	TEXT,
+   * "AutoScanStartup"	INTEGER DEFAULT 0,
+   * "IgnoreFileScan"	TEXT,
+   * "SafeLaunch"	INTEGER DEFAULT 0,
+   * "SafeReturn"	INTEGER DEFAULT 0,
+   *
    * @param emulator
    * @return
    */
@@ -1861,16 +1862,24 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE PlayListID = " + id);
 
       while (rs.next()) {
-        PlaylistGame game = new PlaylistGame();
-        int gameId = rs.getInt("GameID");
-        game.setId(gameId);
+        try {
+          PlaylistGame game = new PlaylistGame();
+          int gameId = rs.getInt("GameID");
+          game.setId(gameId);
 
-        int favMode = rs.getInt(IS_FAV);
-        game.setFav(favMode == 1);
-        game.setGlobalFav(favMode == 2);
-        game.setPlayed(true);
+          Integer favMode = rs.getInt(IS_FAV);
+          if (rs.wasNull()) {
+            favMode = 0;
+          }
+          game.setFav(favMode == 1);
+          game.setGlobalFav(favMode == 2);
+          game.setPlayed(true);
 
-        result.put(gameId, game);
+          result.put(gameId, game);
+        }
+        catch (SQLException e) {
+          LOG.error("Failed to read playlist {}: {}", id, e.getMessage(), e);
+        }
       }
 
       rs.close();
