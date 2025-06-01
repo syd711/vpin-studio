@@ -94,6 +94,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.ezylang</groupId>
+            <artifactId>EvalEx</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-popper-client</artifactId>
             <version>1.1.0</version>

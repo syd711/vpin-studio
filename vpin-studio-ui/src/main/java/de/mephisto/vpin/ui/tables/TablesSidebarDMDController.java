@@ -58,6 +58,9 @@ public class TablesSidebarDMDController implements Initializable {
   private Label bundleSizeLabel;
 
   @FXML
+  private Label dmdFolderLabel;
+
+  @FXML
   private Label bundleTypeLabel;
 
   @FXML
@@ -185,11 +188,11 @@ public class TablesSidebarDMDController implements Initializable {
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
     bundleSizeLabel.setText("-");
+    dmdFolderLabel.setText("-");
     lastModifiedLabel.setText("-");
 
     boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null;
     dmdPositionBtn.setDisable(g.isEmpty() || !directb2sAvailable);
-
 
     errorBox.setVisible(false);
 
@@ -204,9 +207,14 @@ public class TablesSidebarDMDController implements Initializable {
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
 
       if (packageAvailable) {
-        bundleSizeLabel.setText(FileUtils.readableFileSize(dmdPackage.getSize()));
+        dmdFolderLabel.setText(dmdPackage.getName());
         bundleTypeLabel.setText(dmdPackage.getDmdPackageTypes().name());
-        lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(dmdPackage.getModificationDate()));
+        if (dmdPackage.getSize() > 0) {
+          bundleSizeLabel.setText(FileUtils.readableFileSize(dmdPackage.getSize()));
+        }
+        if (dmdPackage.getModificationDate() != null) {
+          lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(dmdPackage.getModificationDate()));
+        }
 
         List<ValidationState> validationStates = dmdPackage.getValidationStates();
         errorBox.setVisible(!validationStates.isEmpty());

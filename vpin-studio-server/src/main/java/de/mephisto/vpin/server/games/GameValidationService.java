@@ -160,6 +160,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DMDFOLDER)) {
+      File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ? 
+        new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder()) : null;
+      if (dmdProjectFolder != null && !dmdProjectFolder.exists()) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
     if (Features.SCREEN_VALIDATOR && isValidationEnabled(game, CODE_SCREEN_SIZE_ISSUE)) {
       //TODO add impl
       result.add(ValidationStateFactory.create(GameValidationCode.CODE_SCREEN_SIZE_ISSUE));

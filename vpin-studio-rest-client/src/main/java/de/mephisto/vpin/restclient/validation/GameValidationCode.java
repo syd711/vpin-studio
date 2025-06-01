@@ -12,6 +12,7 @@ public interface GameValidationCode {
 
   int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
   int CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED = 21;
+  int CODE_NO_DMDFOLDER = 22;
 
   int CODE_NO_AUDIO = 30;
   int CODE_NO_AUDIO_LAUNCH = 31;

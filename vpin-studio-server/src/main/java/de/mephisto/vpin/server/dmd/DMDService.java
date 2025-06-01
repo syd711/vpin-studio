@@ -4,6 +4,8 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
+import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -50,57 +52,42 @@ public class DMDService implements InitializingBean {
 
   @Nullable
   public DMDPackage getDMDPackage(@NonNull Game game) {
-    String rom = String.valueOf(game.getRom());
-    String tableName = String.valueOf(game.getTableName());
 
-    List<String> folderNames = Arrays.asList(rom.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
-        rom.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase(),
-        tableName.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
-        tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
-
-    File dmdFolder = null;
-    File[] subFolders = game.getEmulator().getGamesFolder().listFiles(File::isDirectory);
-    for (File folder : subFolders) {
-      if (folderNames.contains(folder.getName().toLowerCase())) {
-        dmdFolder = folder;
-        break;
+    if (StringUtils.isNotEmpty(game.getDMDType())) {
+      DMDPackageTypes packageTypes = DMDPackageTypes.Unknown;
+      if (StringUtils.equalsIgnoreCase(game.getDMDType(), DMDPackageTypes.FlexDMD.name())) {
+        packageTypes = DMDPackageTypes.FlexDMD;
       }
-      String name = folder.getName().toLowerCase();
-      if (!StringUtils.isEmpty(game.getRom()) && name.contains(game.getRom().toLowerCase()) && name.contains("dmd")) {
-        dmdFolder = folder;
-        break;
+      else if (StringUtils.equalsIgnoreCase(game.getDMDType(), DMDPackageTypes.UltraDMD.name())) {
+        packageTypes = DMDPackageTypes.UltraDMD;
       }
 
-      if (!StringUtils.isEmpty(game.getTableName()) && name.contains(game.getTableName().toLowerCase()) && name.contains("dmd")) {
-        dmdFolder = folder;
-        break;
-      }
-    }
-
-    if (dmdFolder == null) {
-      return null;
-    }
-
-    String folderName = dmdFolder.getName().toLowerCase();
-    DMDPackageTypes packageTypes = DMDPackageTypes.Unknown;
-    if (folderName.contains(DMDPackageTypes.FlexDMD.name().toLowerCase())) {
-      packageTypes = DMDPackageTypes.FlexDMD;
-    }
-    else if (folderName.contains(DMDPackageTypes.UltraDMD.name().toLowerCase())) {
-      packageTypes = DMDPackageTypes.UltraDMD;
-    }
-
-    DMDPackage dmdPackage = new DMDPackage();
-    File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
-    if (dmdFiles != null && dmdFiles.length > 0) {
-      dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+      DMDPackage dmdPackage = new DMDPackage();
       dmdPackage.setDmdPackageTypes(packageTypes);
-      dmdPackage.setName(dmdFolder.getName());
-      dmdPackage.setFiles(Arrays.stream(dmdFiles).map(File::getName).collect(Collectors.toList()));
-      Arrays.stream(dmdFiles).forEach(f -> dmdPackage.setSize(dmdPackage.getSize() + f.length()));
+
+      if (StringUtils.isNotEmpty(game.getDMDProjectFolder())) {
+        dmdPackage.setName(game.getDMDProjectFolder());
+
+        File dmdFolder = new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder());
+        if (dmdFolder.exists()) {
+          dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+          File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
+          if (dmdFiles != null && dmdFiles.length > 0) {
+            dmdPackage.setFiles(Arrays.stream(dmdFiles).map(File::getName).collect(Collectors.toList()));
+            Arrays.stream(dmdFiles).forEach(f -> dmdPackage.setSize(dmdPackage.getSize() + f.length()));
+          }
+        }
+        else {
+          ValidationState st = new ValidationState();
+          st.setCode(GameValidationCode.CODE_NO_DMDFOLDER);
+          dmdPackage.getValidationStates().add(st);
+        }
+      }
+      else {
+        dmdPackage.setName("Not Used");
+      }
       return dmdPackage;
     }
-
     return null;
   }
 

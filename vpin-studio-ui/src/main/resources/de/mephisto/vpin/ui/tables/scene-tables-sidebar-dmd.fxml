@@ -46,37 +46,50 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Last Modified:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label text="DMD Type:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Bundle Size (unpacked):" textFill="WHITE" GridPane.rowIndex="1">
+                        <Label fx:id="bundleTypeLabel" text="-" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="DMD Type:" textFill="WHITE">
+
+                        <Label text="DMD Folder:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="bundleSizeLabel" layoutX="10.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="dmdFolderLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lastModifiedLabel" layoutX="182.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+
+                        <Label text="Bundle Size (unpacked):" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label fx:id="bundleTypeLabel" layoutX="174.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="bundleSizeLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+
+                        <Label text="Last Modified:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lastModifiedLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>

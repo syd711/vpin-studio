@@ -546,23 +546,6 @@ public class VPinStudioClient implements OverlayClient {
     return segment;
   }
 
-  public void clearCache() {
-    getManiaService().clearCache();
-    getHooksService().clearCache();
-    getNvRamsService().clearCache();
-    getPinVolService().clearCache();
-    getBackglassServiceClient().clearCache();
-    getDiscordService().clearCache();
-    getImageCache().clearCache();
-    getGameService().clearCache();
-    getSystemService().clearCache();
-    getMameService().clearCache();
-    getPupPackService().clearCache();
-    getDmdService().clearCache();
-    getFrontendService().clearCache();
-    getEmulatorService().clearCache();
-  }
-
   public void clearWheelCache() {
     getImageCache().clearWheelCache();
   }

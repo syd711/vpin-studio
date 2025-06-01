@@ -48,6 +48,10 @@
                   <CheckBox fx:id="pref_7" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;VR Room&quot; Check" />
                   <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the script contains a variable for VR room settings and if it is enabled." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="793.0" styleClass="checkbox-description" text="Disable this validator if you do not use VR." textFill="WHITE" />
+                  <CheckBox fx:id="pref_22" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;DMD Folder&quot; Check" />
+                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the script loads the UltraDMD or FlexDMD object." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="If yes, Check if the associated DMD folder exists." textFill="WHITE" />
+
                   <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="MAME Settings Validators">
                      <VBox.margin>
                         <Insets top="12.0" />

@@ -554,7 +554,7 @@ public class TableDialogs {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title,
         "Scanning will try to resolve ROM and highscore file names of the selected tables.", null, "Start Scan");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.clearCache();
+      ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
       ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", games));
       return true;
     }

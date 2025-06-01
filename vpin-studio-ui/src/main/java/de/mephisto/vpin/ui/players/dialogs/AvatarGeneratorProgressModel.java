@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
 public class AvatarGeneratorProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(AvatarGeneratorProgressModel.class);
 
@@ -68,7 +66,6 @@ public class AvatarGeneratorProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File file) {
     try {
-      client.clearCache();
       FutureTask<Object> futureTask = new FutureTask<>(() -> {
         try {
           this.avatarFile = AvatarImageUtil.createAvatar(file);

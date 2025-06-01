@@ -297,6 +297,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         gameDetails.setVrRoomEnabled(!scanResult.isVrRoomDisabled());
         gameDetails.setVrRoomSupport(scanResult.isVrRoomSupport());
 
+        gameDetails.setDMDType(scanResult.getDMDType());
+        gameDetails.setDMDGameName(scanResult.getDMDGameName());
+        gameDetails.setDMDProjectFolder(scanResult.getDMDProjectFolder());
+
         gameDetails.setPupPack(scanResult.getPupPackName());
         gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
       }
@@ -358,6 +362,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setVrRoomSupport(gameDetails.getVrRoomSupport() != null ? gameDetails.getVrRoomSupport() : false);
     game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
     game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
+
+    game.setDMDType(gameDetails.getDMDType());
+    game.setDMDGameName(gameDetails.getDMDGameName());
+    game.setDMDProjectFolder(gameDetails.getDMDProjectFolder());
 
     game.setNvOffset(gameDetails.getNvOffset());
     game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());

@@ -37,7 +37,7 @@ public class DMDResource {
     if (game != null) {
       return dmdService.getDMDPackage(game);
     }
-    return new DMDPackage();
+    return null;
   }
 
   @GetMapping("/clearcache")

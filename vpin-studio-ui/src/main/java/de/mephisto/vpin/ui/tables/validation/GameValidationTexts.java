@@ -84,6 +84,11 @@ public class GameValidationTexts {
         text = "The table does not have a backglass and the PUP pack is not enabled.";
         break;
       }
+      case CODE_NO_DMDFOLDER: {
+        label = "DMD Folder not found.";
+        text = "The table uses UltraDMD or FlexDMD but the needed DMD folder is not found.";
+        break;
+      }
       case CODE_NO_AUDIO: {
         label = invalidAssetMessage("Audio");
         text = NO_MEDIA_TEXT;

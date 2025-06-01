@@ -9,7 +9,7 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.ClearCacheProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -156,6 +156,10 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   private void refreshAvatar() {
     if (this.avatarFile != null) {
+
+      //FIXME was in AvatarGeneratorProgressModel so moved here but is it really needed ???
+      ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
+
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new AvatarGeneratorProgressModel(avatar, this.avatarFile));
       this.avatarFile = (File) progressDialog.getResults().get(0);
       this.initialsOverlayLabel.setText("");
