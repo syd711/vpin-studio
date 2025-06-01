@@ -3,6 +3,9 @@ package de.mephisto.vpin.server.mame;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.games.GameCachingService;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.File;
+import java.util.List;
 
 @RestController
 @RequestMapping(API_SEGMENT + "mame")
@@ -29,7 +33,13 @@ public class MameResource {
   private MameService mameService;
 
   @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private GameCachingService gameCachingService;//TODO cyclic wise workaround
 
   @GetMapping("/folder")
   public File getMameFolder() {
@@ -43,7 +53,12 @@ public class MameResource {
 
   @PostMapping("/options")
   public MameOptions saveOptions(@RequestBody MameOptions options) {
-    return mameService.saveOptions(options);
+    MameOptions mameOptions = mameService.saveOptions(options);
+    List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
+    for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
+      gameCachingService.invalidateByRom(vpxGameEmulator.getId(), options.getRom());
+    }
+    return mameOptions;
   }
 
   @DeleteMapping("/options/{rom}")
