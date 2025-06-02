@@ -17,6 +17,9 @@ public class DirectB2sScreenRes {
   /** Whether this instance represent the global screenres.txt (true) or a per table one (false) */
   private boolean global;
 
+  /** Wether screenres is version 2 */
+  private String version;
+
   /** The path to the screenres that is represented in that bean */
   private String screenresFilePath;
 
@@ -118,7 +121,7 @@ public class DirectB2sScreenRes {
 
   @JsonIgnore
   public boolean isBackglassCentered() {
-    return getBackgroundWidth() > 0 && getBackgroundHeight() > 0;
+    return isVersion2() && getBackgroundWidth() > 0 && getBackgroundHeight() > 0;
   }
 
   @JsonIgnore
@@ -184,6 +187,19 @@ public class DirectB2sScreenRes {
 
   public void setGlobal(boolean global) {
     this.global = global;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  // see https://github.com/vpinball/b2s-backglass/blob/7adc7d10b026863529ac3399b6e7235134cb80d0/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L93
+  public boolean isVersion2() {
+    return version.replace(" ", "").startsWith("#V2");
   }
 
   public int getPlayfieldWidth() {

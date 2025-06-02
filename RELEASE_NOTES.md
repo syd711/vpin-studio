@@ -3,6 +3,8 @@
 ## Changes
 
 - Fixed possible SQL error during reading playlists.
+- Fixed DMD position when screenres does not contain V2 version
+- Fixed DMD position with frames
 
 ---
 
