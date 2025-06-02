@@ -427,8 +427,8 @@ public class VPinScreenService {
         // override the name
         fulldmd.setName("FullDMD");
         // DMD is relative to backglass so use prevously calculated coordinate
-        fulldmd.setX(backglass.getX() + screenres.getDmdX());
-        fulldmd.setY(backglass.getY() + screenres.getDmdY());
+        fulldmd.setX(screenres.getBackglassX() + screenres.getDmdX());
+        fulldmd.setY(screenres.getBackglassY() + screenres.getDmdY());
         fulldmd.setWidth(screenres.getDmdWidth());
         fulldmd.setHeight(screenres.getDmdHeight());
         displays.add(fulldmd);

@@ -791,7 +791,7 @@ public class UploaderAnalysis {
 
       String[] split = filenameWithPath.split("/");
       for (String segment : split) {
-        if (segment.contains("UltraDMD")) {
+        if (segment.contains("UltraDMD") || segment.contains("FlexDMD")) {
           return filenameWithPath.substring(0, filenameWithPath.indexOf(segment) + segment.length());
         }
 

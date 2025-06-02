@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.games.Game;
@@ -33,11 +34,17 @@ public class DMDService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
+  private File getDmdFolder(Game game) {
+    File tablesFolder = game.getGameFile().getParentFile();
+    return new File(tablesFolder, game.getDMDProjectFolder());
+  }
+
+
   public boolean delete(@NonNull Game game) {
     try {
       DMDPackage dmdPackage = getDMDPackage(game);
       if (dmdPackage != null) {
-        File dir = new File(game.getEmulator().getAltColorFolder(), dmdPackage.getName());
+        File dir = getDmdFolder(game);
         if (dir.exists()) {
           FileUtils.deleteDirectory(dir);
           return true;
@@ -68,7 +75,7 @@ public class DMDService implements InitializingBean {
       if (StringUtils.isNotEmpty(game.getDMDProjectFolder())) {
         dmdPackage.setName(game.getDMDProjectFolder());
 
-        File dmdFolder = new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder());
+        File dmdFolder = getDmdFolder(game);
         if (dmdFolder.exists()) {
           dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
           File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
@@ -91,15 +98,18 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public void installDMDPackage(@NonNull File archive, @Nullable String dmdPath, @NonNull File gameFile) {
-    if (dmdPath != null) {
-      File tablesFolder = gameFile.getParentFile();
+  public void installDMDPackage(@NonNull File archive, UploaderAnalysis analysis, @NonNull Game game) {
+    File dmdFolder = game.getDMDProjectFolder() != null ? getDmdFolder(game):
+      analysis.getDMDPath() != null ? new File(game.getGameFile().getParentFile(), analysis.getDMDPath()):
+      null;
+
+    if (dmdFolder != null) {
       String extension = FilenameUtils.getExtension(archive.getName()).toLowerCase();
       if (extension.equals(PackageUtil.ARCHIVE_ZIP)) {
-        DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
+        DMDInstallationUtil.unzip(archive, dmdFolder);
       }
       else if (extension.equals(PackageUtil.ARCHIVE_7Z) || extension.equals(PackageUtil.ARCHIVE_RAR)) {
-        DMDInstallationUtil.unrar(archive, tablesFolder, dmdPath);
+        DMDInstallationUtil.unrar(archive, dmdFolder);
       }
       else {
         throw new UnsupportedOperationException("Unsupported archive format for DMD pack " + archive.getName());

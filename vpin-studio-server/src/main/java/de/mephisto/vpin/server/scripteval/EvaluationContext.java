@@ -79,7 +79,7 @@ public class EvaluationContext {
       if (subtree != null) {
         for (String var : getAllVariablesForNode(subtree)) {
           if (dataAccessor.getData(var) == null && !onEvalVars.contains(var)) {
-            undefinedVars.add(var);
+            addUndefinedVar(var);
             LOG.info("-> Variable or constant value for '{}' not found", var);
           }
         }
@@ -142,9 +142,20 @@ public class EvaluationContext {
     return !undefinedVars.isEmpty();
   }
 
+  /**
+   * Check presence of an undefinedVars, in a case insentive way
+   */
   public boolean isUndefinedVar(String var) {
     return undefinedVars.contains(var);
   }
+
+  /**
+   * Public method so that caller can specify a specific variable to capture
+   */
+  public boolean addUndefinedVar(String var) {
+    return undefinedVars.add(var);
+  }
+
 
   @SuppressWarnings("unchecked")
   public <T> T getVarValue(String var) {
@@ -231,7 +242,7 @@ public class EvaluationContext {
       //LOG.info("Cannot evaluate subtree");
       for (String var : getAllVariablesForNode(subtree)) {
         if (dataAccessor.getData(var) == null && !onEvalVars.contains(var) && !undefinedVars.contains(var)) {
-          undefinedVars.add(var);
+          addUndefinedVar(var);
           //LOG.info("-> Variable or constant value for '{}' not found", var);
         }
       }

@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.scripteval.EvaluationContext;
 
 import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -32,13 +34,8 @@ public class VPXFileScannerTest {
           .filter(p -> p.getFileName().toString().endsWith("vpx"))
           .forEach(p -> {
             ScanResult scan = VPXFileScanner.scan(p.toFile());
-            if (!StringUtils.equals(scan.getRom(), scan.getGameName())) {
-              bld.append("For " + p.toString() + ", rom = " + scan.getRom() + ", gameName = " + scan.getGameName());
-            }
-            if (scan.getDMDType() != null) {
-              bld.append("For " + p.toString() + ", " + scan.getDMDType() + ", " + scan.getDMDGameName() + ", " + scan.getDMDProjectFolder());
-              bld.append("\n");
-            }
+
+            compare(bld, p, scan);
           });
         fw.append(bld);
         fw.flush();
@@ -48,11 +45,44 @@ public class VPXFileScannerTest {
     }
   }
 
+  private void compare(StringBuilder bld, Path p, ScanResult scan) {
+
+    //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
+    EvaluationContext evalctxt = scan.evalctxt;
+
+    if (scan.getGameName() != null) {
+      diff(bld, p, "Rom", scan.getRom(), scan.getGameName());
+    }
+
+    diff(bld, p, "TableName", scan.getTableName(), evalctxt.getVarValue("B2STableName"));
+    diff(bld, p, "pGameName", scan.getPupPackName(), evalctxt.getVarValue("pGameName"));
+
+    Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
+    if (vrroom != null ||  scan.isVrRoomSupport()) {
+      String oldvrromm = scan.isVrRoomSupport() + " / " + scan.isVrRoomDisabled();
+      String newvrroom = (vrroom != null) + " / " + (vrroom != null && vrroom.toString().equals("0"));
+      diff(bld, p, "vrroom", oldvrromm, newvrroom);
+    }
+
+    if (scan.getDMDType() != null) {
+    //  bld.append("For " + p.toString() + ", " + scan.getDMDType() + ", " + scan.getDMDGameName() + ", " + scan.getDMDProjectFolder());
+    //  bld.append("\n");
+    }
+  }
+
+  private void diff(StringBuilder bld, Path p, String name, String oldWay, String newWay) {
+    if (!StringUtils.equals(oldWay, newWay)) {
+      bld.append("For " + p.toString() + ", " + name +  " = " + newWay + " vs/old " + oldWay);
+      bld.append("\n");
+    }
+  }
+
+
   @Test
   public void testSingleScan() {
 //    File f = new File("C:\\vPinball\\VisualPinball\\Tables\\MF DOOM (GOILL773 2024) v1.1.vpx");
     //File f = new File(folder,"Twister (1996).vpx");
-    File f = new File(folder,"Agents 777 (Game Plan 1984) hsm.vpx");
+    File f = new File(folder,"007 Goldeneye (Sega 1996).vpx");
 
     if(f.exists()) {
       ScanResult scan = VPXFileScanner.scan(f);
@@ -60,9 +90,9 @@ public class VPXFileScannerTest {
       assertNotNull(scan.getRom());
 //      assertTrue(scan.isFoundTableExit());
 
-      if (!StringUtils.equals(scan.getRom(), scan.getGameName())) {
-        System.out.println("For " + f.toString() + ", rom = " + scan.getRom() + ", gameName = " + scan.getGameName());
-      }
+      StringBuilder bld = new StringBuilder();
+      compare(bld, f.toPath(), scan);
+      System.out.println(bld.toString());
     }
   }
 

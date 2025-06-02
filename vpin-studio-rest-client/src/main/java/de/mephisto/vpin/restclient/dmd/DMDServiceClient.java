@@ -27,10 +27,10 @@ public class DMDServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "dmd/" + gameId, DMDPackage.class);
   }
 
-  public UploadDescriptor uploadDMDPackage(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadDMDPackage(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "dmd/upload";
-      HttpEntity upload = createUpload(file, emulatorId, null, AssetType.DMD_PACK, listener);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.DMD_PACK, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();

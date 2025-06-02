@@ -27,6 +27,7 @@ public class ScriptTest {
   public void checkExotic() {
     ScanResult result = doScan("Exotic GameName");
     assertEquals("rab_320", result.getGameName());
+    assertEquals("ex\"'otic 'and' com'\"plex", result.getTableName());
   }
 
   @Test

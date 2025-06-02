@@ -7,6 +7,8 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +22,14 @@ import java.util.zip.ZipInputStream;
 public class DMDInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(DMDInstallationUtil.class);
 
-  public static void unzip(@NonNull File archiveFile, @NonNull File tablesFolder, @NonNull String dmdFolder) {
+  public static void unzip(@NonNull File archiveFile, @NonNull File dmdFolder) {
     try {
-      if (dmdFolder.endsWith("/")) {
-        dmdFolder.substring(0, dmdFolder.length() - 1);
-      }
 
-      String dmdFolderName = dmdFolder;
-      if (dmdFolderName.contains("/")) {
-        dmdFolderName = dmdFolderName.substring(dmdFolderName.lastIndexOf("/") + 1);
+      if (dmdFolder.exists() && !dmdFolder.delete()) {
+        LOG.error("Failed to delete existing DMD file " + dmdFolder.getAbsolutePath());
       }
+      dmdFolder.mkdirs();
+      String dmdFolderName = dmdFolder.getName();
 
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -44,23 +44,21 @@ public class DMDInstallationUtil {
         }
 
         String name = zipEntry.getName().replaceAll("\\\\", "/");
-        if (name.contains(dmdFolder)) {
-          String subPath = name.substring(name.indexOf(dmdFolderName));
-          File targetFile = new File(tablesFolder, subPath);
-          targetFile.getParentFile().mkdirs();
-          if (targetFile.exists() && !targetFile.delete()) {
-            LOG.error("Failed to delete existing DMD file " + targetFile.getAbsolutePath());
-            continue;
-          }
-
-          FileOutputStream fos = new FileOutputStream(targetFile);
-          int len;
-          while ((len = zis.read(buffer)) > 0) {
-            fos.write(buffer, 0, len);
-          }
-          fos.close();
-          LOG.info("Written " + targetFile.getAbsolutePath());
+        if (name.contains(dmdFolderName)) {
+          name = StringUtils.substringAfter(name, dmdFolderName);
         }
+        if (name.startsWith("/")) {
+          name = name.substring(1);
+        }
+
+        File targetFile = new File(dmdFolder, name);
+        FileOutputStream fos = new FileOutputStream(targetFile);
+        int len;
+        while ((len = zis.read(buffer)) > 0) {
+          fos.write(buffer, 0, len);
+        }
+        fos.close();
+        LOG.info("Written " + targetFile.getAbsolutePath());
 
         zis.closeEntry();
         zipEntry = zis.getNextEntry();
@@ -74,17 +72,15 @@ public class DMDInstallationUtil {
     }
   }
 
-  public static void unrar(File archiveFile, File tablesFolder, String dmdFolder) {
-    if (dmdFolder.endsWith("/")) {
-      dmdFolder.substring(0, dmdFolder.length() - 1);
-    }
-
-    String dmdFolderName = dmdFolder;
-    if (dmdFolderName.contains("/")) {
-      dmdFolderName = dmdFolderName.substring(dmdFolderName.lastIndexOf("/") + 1);
-    }
-
+  public static void unrar(File archiveFile, File dmdFolder) {
     try {
+
+      if (dmdFolder.exists() && !dmdFolder.delete()) {
+        LOG.error("Failed to delete existing DMD file " + dmdFolder.getAbsolutePath());
+      }
+      dmdFolder.mkdirs();
+      String dmdFolderName = dmdFolder.getName();
+
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
       IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
@@ -95,22 +91,20 @@ public class DMDInstallationUtil {
         }
 
         String name = item.getPath().replaceAll("\\\\", "/");
-        if (name.contains(dmdFolder)) {
-          String subPath = name.substring(name.indexOf(dmdFolderName));
-          File targetFile = new File(tablesFolder, subPath);
-          targetFile.getParentFile().mkdirs();
-          if (targetFile.exists() && !targetFile.delete()) {
-            LOG.error("Failed to delete existing DMD file " + targetFile.getAbsolutePath());
-            continue;
-          }
-
-          RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
-          RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
-          ExtractOperationResult result = item.extractSlow(fos);
-          LOG.info("Unrar \"" + targetFile.getAbsolutePath() + "\":" + result.name());
-          fos.close();
-          rafOut.close();
+        if (name.contains(dmdFolderName)) {
+          name = StringUtils.substringAfter(name, dmdFolderName);
         }
+        if (name.startsWith("/")) {
+          name = name.substring(1);
+        }
+
+        File targetFile = new File(dmdFolder, name);
+        RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
+        RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
+        ExtractOperationResult result = item.extractSlow(fos);
+        LOG.info("Unrar \"" + targetFile.getAbsolutePath() + "\":" + result.name());
+        fos.close();
+        rafOut.close();
       }
       inArchive.close();
       randomAccessFileStream.close();

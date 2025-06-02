@@ -5,7 +5,13 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mephisto.vpin.server.scripteval.EvaluationContext;
+
 public class ScanResult {
+  
+  //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
+  public EvaluationContext evalctxt;
+  
   private int nvOffset = 0;
 
   private String rom;

@@ -193,7 +193,7 @@ public class UniversalUploadService {
       case DMD_PACK: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
           if (game != null) {
-            dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), game.getGameFile());
+            dmdService.installDMDPackage(tempFile, analysis, game);
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }

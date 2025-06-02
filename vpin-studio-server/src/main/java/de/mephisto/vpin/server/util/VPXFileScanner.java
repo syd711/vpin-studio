@@ -73,10 +73,10 @@ public class VPXFileScanner {
     Collections.reverse(allLines);
     scanLines(gameFile, result, allLines);
 
-    // force GameName
-    if (!StringUtils.isEmpty(result.getGameName())) {
-      result.setRom(result.getGameName());
-    }
+    // FIXME force GameName? Removed for the sake of comparison
+    //if (!StringUtils.isEmpty(result.getGameName())) {
+    //  result.setRom(result.getGameName());
+    //}
 
     //apply table name as ROM name, e.g. for EM tables
     if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
@@ -208,6 +208,16 @@ public class VPXFileScanner {
     table1.put("Filename", FilenameUtils.getBaseName(gameFile.getName()));
     evalctxt.setVarValue("Table1", table1);
 
+    // for detection of these special variables (case insensitive)
+    evalctxt.addUndefinedVar("B2STableName");
+    evalctxt.addUndefinedVar("GameName");
+    evalctxt.addUndefinedVar("cGameName");
+    evalctxt.addUndefinedVar("pGameName");
+    evalctxt.addUndefinedVar("RomSet1");
+
+    evalctxt.addUndefinedVar("vrroom");
+    evalctxt.addUndefinedVar("vr_room");
+
     int nbline = split.size();
     for (String fulline : split) {
       String[] statements = stripComments(fulline);
@@ -232,6 +242,9 @@ public class VPXFileScanner {
       }
       nbline--;
     }
+
+    //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
+    result.evalctxt = evalctxt;
   }
 
   /**

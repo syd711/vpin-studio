@@ -5,10 +5,11 @@
 '===============================================================
 ' Exotic GameName
 
-Const myExoticName = "rab_320"
-Const tableName = "ex""'otic" & " 'and' " & "com'""plex" ' with a "comment" at the end"   ' with a "comment"
-Const BallSize = 54
-Const UseSolenoids  = True
+' use _ to split const on several lines
+Const myExoticName = "rab_320", _
+			tableName = "ex""'otic" & " 'and' " & "com'""plex", _ ' with a "comment" at the end"   ' with a "comment"
+			BallSize = 54, _
+			UseSolenoids  = True
 
  With Controller
 	 .GameName = myExoticName
