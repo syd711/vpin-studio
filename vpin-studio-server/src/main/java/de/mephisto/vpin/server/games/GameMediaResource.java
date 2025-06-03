@@ -167,19 +167,72 @@ public class GameMediaResource {
       }
 
       if (frontendMediaItem != null) {
-        File file = frontendMediaItem.getFile();
-        FileInputStream in = new FileInputStream(file);
-        byte[] bytes = IOUtils.toByteArray(in);
-        ByteArrayResource bytesResource = new ByteArrayResource(bytes);
-        in.close();
 
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
-        responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
-        responseHeaders.set("Access-Control-Allow-Origin", "*");
-        responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
-        responseHeaders.set("Cache-Control", "public, max-age=3600");
-        return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+        File file = frontendMediaItem.getFile();
+
+        if (frontendMediaItem.getMimeType().contains("apng")){
+          //This is an animated file, deliver a GIF instead of the actual file
+          // Create temporary GIF file
+          File gifFile;
+
+          //I tried putting this in a try/catch but it would say gifFile wasn't initialized.
+          gifFile = File.createTempFile("converted-", ".gif");
+
+          //Set to delete on exit in case we don't make it to the delete call later.
+          gifFile.deleteOnExit();
+
+
+          // Run ffmpeg command: ffmpeg -i input.apng output.gif
+          //Is the location of ffmpeg stores somewhere?
+          //Can we use MediaConverterService.convertWithFfmpeg?
+          ProcessBuilder pb = new ProcessBuilder(
+                  "C:\\vPinball\\VPin-Studio\\resources\\ffmpeg.exe", "-y",
+                  "-i", file.getAbsolutePath(),
+                  gifFile.getAbsolutePath()
+          );
+
+          pb.redirectErrorStream(true); // Merge stdout and stderr
+          try {
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+              LOG.error("ffmpeg conversion failed (code " + exitCode + ").");
+            }
+          } catch (IOException | InterruptedException e) {
+            LOG.error("Failed to run ffmpeg: " + e.getMessage());
+          }
+          FileInputStream in = new FileInputStream(gifFile);
+          byte[] bytes = IOUtils.toByteArray(in);
+          ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+          in.close();
+          gifFile.delete();
+          HttpHeaders responseHeaders = new HttpHeaders();
+          responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+          responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+          responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+          responseHeaders.set("Cache-Control", "public, max-age=3600");
+          return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+        }
+        else{
+          FileInputStream in = new FileInputStream(file);
+          byte[] bytes = IOUtils.toByteArray(in);
+          ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+          in.close();
+
+          HttpHeaders responseHeaders = new HttpHeaders();
+          responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+          responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+          responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+          responseHeaders.set("Cache-Control", "public, max-age=3600");
+          return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+        }
+
+
+
+
+
       }
     }
 
