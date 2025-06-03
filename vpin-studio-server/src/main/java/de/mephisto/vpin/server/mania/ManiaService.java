@@ -198,7 +198,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       gameDetailsRepository.saveAndFlush(gameDetails);
 
       //We want to push the initial value here, so start from 0
-      maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), 0, game.getRating());
+//      maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), 0, game.getRating());
     }
   }
 
@@ -554,10 +554,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         int newRating = event.getNewData().getGameRating() != null ? event.getNewData().getGameRating() : 1;
         LOG.info("Updating mania rating for \"{}\" from {} to {}", game.getGameDisplayName(), oldRating, newRating);
         if (oldRating != newRating) {
-          synchronizeInitialRating(game);
-          new Thread(() -> {
-            maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), oldRating, newRating);
-          }).start();
+//          synchronizeInitialRating(game);
+//          new Thread(() -> {
+//            maniaClient.getVpsTableClient().updateRating(game.getExtTableId(), game.getExtTableVersionId(), oldRating, newRating);
+//          }).start();
         }
       }
     }
