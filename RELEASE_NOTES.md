@@ -7,7 +7,7 @@
 - Fixed additional MAME caching issues.
 - Fixed DMD position when screenres does not contain V2 version.
 - Fixed DMD position with frames.
-- Fixed VPS Sidebar Section:
+- Fixed VPS sidebar section:
   - Added checkbox there for the "Auto-Apply" of data too.
   - Fixed data update on version change.
   - Fixed missing update issue after first selection of a version.
