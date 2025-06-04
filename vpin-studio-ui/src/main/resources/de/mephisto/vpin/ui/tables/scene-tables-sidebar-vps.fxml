@@ -182,31 +182,35 @@
                                     <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <children>
                                           <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
-                                          <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
-                                             </graphic>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
+                                          <VBox spacing="3.0">
                                              <HBox.margin>
                                                 <Insets />
                                              </HBox.margin>
-                                             <tooltip>
-                                                <Tooltip text="Download Table" />
-                                             </tooltip>
-                                          </Button>
-                                          <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
-                                             </graphic>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Copy VPS Table Version URL" />
-                                             </tooltip>
-                                          </Button>
+                                             <children>
+                                                <Button fx:id="openTableVersionBtn" mnemonicParsing="false" onAction="#onTableOpen" styleClass="link-component">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                   </graphic>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <tooltip>
+                                                      <Tooltip text="Download Table" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                                   </graphic>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <tooltip>
+                                                      <Tooltip text="Copy VPS Table Version URL" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </VBox>
                                        </children>
                                     </HBox>
                                     <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
@@ -292,7 +296,7 @@
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" />
-            <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" text="Reset" textFill="WHITE">
+            <Button fx:id="vpsLinkResetBtn" mnemonicParsing="false" onAction="#onVpsLinkReset" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -303,7 +307,7 @@
                   <Tooltip text="Resets the assigned VPS table mapping." />
                </tooltip>
             </Button>
-            <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset Updates" textFill="WHITE">
+            <Button fx:id="vpsResetUpdatesBtn" mnemonicParsing="false" onAction="#onVpsReset" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -332,11 +336,19 @@
                   <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
                </tooltip>
             </SplitMenuButton>
-            <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" />
+            <Separator layoutX="130.0" layoutY="10.0" orientation="VERTICAL" prefWidth="6.0" />
             <CheckBox fx:id="filterCheckbox" mnemonicParsing="false" text="Filter Existing Assets" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
+            </CheckBox>
+            <CheckBox fx:id="autoApplyCheckbox" layoutX="278.0" layoutY="15.0" mnemonicParsing="false" text="Auto-Apply Data" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <padding>
+                  <Insets left="6.0" />
+               </padding>
             </CheckBox>
         </items>
       </ToolBar>

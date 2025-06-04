@@ -289,7 +289,7 @@
                                                             <Tooltip text="Resets the assigned VPS table mapping." />
                                                          </tooltip>
                                                       </Button>
-                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Meta Data" textFill="WHITE">
+                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Data" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>

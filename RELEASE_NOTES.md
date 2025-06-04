@@ -5,8 +5,12 @@
 - Fixed possible SQL error during reading playlists.
 - Fixed auto-apply of Virtual Pinball Spreadsheet metadata for new uploads. Only metadata of the VPX file has been applied before.
 - Fixed additional MAME caching issues.
-- Fixed DMD position when screenres does not contain V2 version
-- Fixed DMD position with frames
+- Fixed DMD position when screenres does not contain V2 version.
+- Fixed DMD position with frames.
+- Fixed VPS Sidebar:
+  - Added checkbox there for the "Auto-Apply" of data too.
+  - Fixed data update on version change.
+  - Fixed missing update issue after first selection of a version.
 
 ---
 

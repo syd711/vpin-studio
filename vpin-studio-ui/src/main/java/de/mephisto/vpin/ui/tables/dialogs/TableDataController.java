@@ -605,7 +605,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         tableDetails.setGameVersion(gameVersion.getText());
         tableDetails = client.getFrontendService().saveTableDetails(this.tableDetails, game.getId());
       }
-      client.getFrontendService().vpsLink(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
+      client.getFrontendService().saveVpsMapping(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
 
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 

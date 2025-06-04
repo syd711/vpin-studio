@@ -466,11 +466,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     gameDetails.setExtTableId(extTableId);
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepository.saveAndFlush(gameDetails);
-    gameLifecycleService.notifyGameUpdated(gameId);
-    LOG.info("Linked game " + gameId + " to " + extTableId);
-
+    LOG.info("Linked game " + gameId + " to " + extTableId + "/" + extTableVersionId);
     // update the table in the frontend
     frontendService.vpsLink(gameId, extTableId, extTableVersionId);
+
+    gameLifecycleService.notifyGameUpdated(gameId);
     return true;
   }
 
