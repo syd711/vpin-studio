@@ -39,10 +39,18 @@ public class ApngFrameControl
     this.blendOp = blendOp;
   }
 
+  /**
+   * delay_num and delay_den define the numerator and denominator of the delay fraction; 
+   * indicating the time to display the current frame, in seconds. If the denominator is 0, it is to be treated 
+   * as if it were 100 (that is, delay_num then specifies 1/100ths of a second). If the the value of the numerator 
+   * is 0 the decoder should render the next frame as quickly as possible, though viewers may impose a reasonable 
+   * lower bound. They are encoded as two-byte unsigned integers.
+   * @return
+   */
   public int getDelayMillis() {
     int num = Math.max(0, Math.min(65535, delayNum));
-    int den = delayDen == 0 ? 100 : Math.max(1, Math.min(1000, delayDen));
-    return (int) (1000d / den * num);
+    int den = delayDen == 0 ? 100 : Math.max(1, Math.min(65535, delayDen));
+    return (int) (1000.0 * num / den);
   }
 
   //--------------------------------------
