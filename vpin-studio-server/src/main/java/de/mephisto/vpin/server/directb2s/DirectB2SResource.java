@@ -117,8 +117,13 @@ public class DirectB2SResource {
   }
 
   @PostMapping("/versions")
-  public DirectB2S getVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
-    return backglassService.getDirectB2SAndVersions(emulatorId, fileName);
+  public DirectB2S reloadVersionsByName(@JsonArg("emulatorId") int emulatorId, @JsonArg("fileName") String fileName) {
+    DirectB2S b2s = backglassService.getDirectB2SAndVersions(emulatorId, fileName);
+    if (b2s != null && b2s.getGameId() > 0) {
+      Game game = gameService.getGame(b2s.getGameId());
+      defaultPictureService.deleteAllPictures(game);
+    }
+    return b2s;
   }
 
   @GetMapping("/clearcache")
@@ -191,13 +196,13 @@ public class DirectB2SResource {
   //-------
   // download utilities
 
-  protected ResponseEntity<Resource> download(String base64, String filename) {
+  private ResponseEntity<Resource> download(String base64, String filename) {
     byte[] image = base64 != null ? DatatypeConverter.parseBase64Binary(base64) : null;
     //TODO check impact if we turn to false
     return download(image, filename, true);
   }
 
-  protected ResponseEntity<Resource> download(byte[] image, String name, boolean forceDownload) {
+  private ResponseEntity<Resource> download(byte[] image, String name, boolean forceDownload) {
     if (image == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

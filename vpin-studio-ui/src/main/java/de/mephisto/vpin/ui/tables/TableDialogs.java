@@ -532,18 +532,19 @@ public class TableDialogs {
     }
   }
 
-  public static void openAutoMatch(List<GameRepresentation> games) {
+  public static boolean openAutoMatch(List<GameRepresentation> games) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        onOpenAutoMatch(games);
+        return onOpenAutoMatch(games);
       }
     }
     else {
-      onOpenAutoMatch(games);
+      return onOpenAutoMatch(games);
     }
+    return false;
   }
 
-  private static void onOpenAutoMatch(List<GameRepresentation> games) {
+  private static boolean onOpenAutoMatch(List<GameRepresentation> games) {
     String title = "Auto-Match table and version for " + games.size() + " tables?";
     if (games.size() == 1) {
       title = "Auto-Match table and version for \"" + games.get(0).getGameDisplayName() + "\"?";
@@ -553,7 +554,9 @@ public class TableDialogs {
         "This will overwrite the existing mapping.", "This action will overwrite the VPS table and version IDs fields.", "Auto-Match");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(games, true, false));
+      return true;
     }
+    return false;
   }
 
   public static boolean openScanAllDialog(List<GameRepresentation> games) {

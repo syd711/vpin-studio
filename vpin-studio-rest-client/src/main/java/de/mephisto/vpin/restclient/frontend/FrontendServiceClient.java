@@ -154,7 +154,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableDetails autoFillTableDetails(int gameId, TableDetails tableDetails, String vpsTableId, String vpsVersionId) throws Exception {
+  public TableDetails autoFillTableDetailsSimulated(int gameId, TableDetails tableDetails, String vpsTableId, String vpsVersionId) throws Exception {
     try {
       if (StringUtils.isEmpty(vpsTableId)) {
         vpsTableId = "-";
@@ -179,7 +179,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public void vpsLink(int gameId, String extTableId, String extTableVersionId) throws Exception {
+  public void saveVpsMapping(int gameId, String extTableId, String extTableVersionId) throws Exception {
     VpsMatch vpsMatch = new VpsMatch();
     vpsMatch.setGameId(gameId);
     vpsMatch.setExtTableId(extTableId);

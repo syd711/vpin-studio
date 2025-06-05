@@ -27,7 +27,7 @@ public class VpsInstallerUtils {
       if (game != null) {
         // If table has been installed, auto link it to VPS entry and force fix version
         try {
-          client.getFrontendService().vpsLink(game.getId(), tableId, versionId);
+          client.getFrontendService().saveVpsMapping(game.getId(), tableId, versionId);
           client.getFrontendService().fixVersion(game.getId(), version);
         }
         catch (Exception e) {

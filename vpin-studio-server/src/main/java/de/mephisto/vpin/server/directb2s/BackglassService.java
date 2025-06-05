@@ -740,6 +740,8 @@ public class BackglassService implements InitializingBean {
     res.setScreenresFilePath(lines.remove(0));
     res.setGlobal(b2sFile == null || StringUtils.containsIgnoreCase(res.getScreenresFilePath(), b2sFile.getName()));
 
+    res.setVersion(lines.remove(0));
+
     // cf https://github.com/vpinball/b2s-backglass/blob/7842b3638b62741e21ebb511e2a886fa2091a40f/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L105
     res.setPlayfieldWidth(parseIntSafe(lines.get(0)));
     res.setPlayfieldHeight(parseIntSafe(lines.get(1)));
@@ -827,7 +829,23 @@ public class BackglassService implements InitializingBean {
     lines.add(target.getAbsolutePath());
     try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
       String line;
+      boolean firstline = true;
       while ((line = reader.readLine()) != null) {
+        // detection of version
+        if (firstline) {
+          firstline = false;
+          // see https://github.com/vpinball/b2s-backglass/blob/7adc7d10b026863529ac3399b6e7235134cb80d0/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L93
+          if (line.replace(" ", "").startsWith("#V2")) {
+            lines.add(line);
+            // do not add line again
+            continue;
+          }
+          else {
+            // add a dummy comment
+            lines.add("# V1");
+          }
+        }
+
         if (withComment || !line.startsWith("#")) {
           lines.add(line.trim());
         }
@@ -849,6 +867,7 @@ public class BackglassService implements InitializingBean {
       throw new IOException("Cannot find an existing table nor table .res");
     }
     String templateName = lines.remove(0);
+
     // if already a table file exists, replace it 
     File screenresFile = StringUtils.containsIgnoreCase(templateName, FilenameUtils.getBaseName(screenres.getB2SFileName())) ?
         new File(templateName) : new File(emulator.getGamesDirectory(), StringUtils.replaceIgnoreCase(screenres.getB2SFileName(), ".directb2s", ".res"));
@@ -856,14 +875,17 @@ public class BackglassService implements InitializingBean {
     if (!screenresFile.exists() || screenresFile.delete()) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(screenresFile))) {
 
-        // generate version number in case it is not in th eoriginal file
-        if (!lines.get(0).replace(" ", "").toLowerCase().startsWith("#v2")) {
+        // check version number in case it is not in the original file
+        String version = lines.remove(0);
+        if (!version.replace(" ", "").startsWith("#V2")) {
           // fetch the b2s version from the file itself
           File b2sServerExe = new File(getBackglassServerFolder(), "B2SBackglassServerEXE.exe");
           String b2sVersion = FileVersion.fetch(b2sServerExe);
-          writer.write("# V" + b2sVersion);
-          writer.write(System.lineSeparator());
+          version = "# V" + b2sVersion;
         }
+        writer.write(version);
+        writer.write(System.lineSeparator());
+
         int currentLine = 0;
         while (lines.size() <= 16) {
           lines.add("");
