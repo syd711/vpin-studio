@@ -350,9 +350,16 @@ public class TableDialogs {
     TableHighscoresAdminController controller = (TableHighscoresAdminController) stage.getUserData();
     controller.setGame(game);
     controller.setTableSidebarController(tablesSidebarController);
-
     stage.showAndWait();
+    return true;
+  }
 
+  public static boolean openAltColorAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
+    Stage stage = Dialogs.createStudioDialogStage(TableAltColorAdminController.class, "dialog-altcolor-admin.fxml", "ALT Colors for \"" + game.getGameDisplayName() + "\"");
+    TableAltColorAdminController controller = (TableAltColorAdminController) stage.getUserData();
+    controller.setGame(game);
+    controller.setTableSidebarController(tablesSidebarController);
+    stage.showAndWait();
     return true;
   }
 

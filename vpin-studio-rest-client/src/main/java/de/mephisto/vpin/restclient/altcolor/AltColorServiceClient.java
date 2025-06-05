@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.util.HashMap;
 
 /*********************************************************************************************************************
  * Alt Color
@@ -30,6 +31,14 @@ public class AltColorServiceClient extends VPinStudioClientService {
 
   public boolean delete(int gameId) {
     return getRestClient().delete(API + "altcolor/" + gameId);
+  }
+
+  public boolean restore(int gameId, String filename) throws Exception {
+    return getRestClient().put(API + "altcolor/restore/" + gameId + "/" + filename, new HashMap<>(), Boolean.class);
+  }
+
+  public boolean deleteBackup(int gameId, String filename) {
+    return getRestClient().delete(API + "altcolor/" + gameId + "/" + filename);
   }
 
   public UploadDescriptor uploadAltColor(File file, int gameId, FileUploadProgressListener listener) throws Exception {

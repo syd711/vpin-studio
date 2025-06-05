@@ -9,12 +9,16 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Collections;
+import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -43,6 +47,17 @@ public class AltColorResource {
       return getAltColor(game);
     }
     return new AltColor();
+  }
+
+  @DeleteMapping("/{id}/{filename}")
+  public boolean deleteBackup(@PathVariable("id") int id, @PathVariable("filename") String filename) {
+    return altColorService.deleteBackup(gameService.getGame(id), filename);
+  }
+
+  @PutMapping("restore/{gameId}/{filename}")
+  public boolean restore(@PathVariable("gameId") int gameId, @PathVariable("filename") String filename) {
+    Game game = gameService.getGame(gameId);
+    return altColorService.restore(game, filename);
   }
 
   @DeleteMapping("{id}")

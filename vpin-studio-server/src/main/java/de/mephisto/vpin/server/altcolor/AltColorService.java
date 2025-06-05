@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -131,9 +132,14 @@ public class AltColorService implements InitializingBean {
 
       File backupFolder = new File(altColorFolder, "backups/");
       if (backupFolder.exists()) {
-        String[] list = backupFolder.list();
+        String[] list = backupFolder.list(new FilenameFilter() {
+          @Override
+          public boolean accept(File dir, String name) {
+            return name.contains("[");
+          }
+        });
         if (list != null) {
-          altColor.setBackedUpFiles(list.length);
+          altColor.setBackedUpFiles(Arrays.asList(list));
         }
       }
       return altColor;
@@ -246,6 +252,60 @@ public class AltColorService implements InitializingBean {
       }
     }
 
+  }
+
+  public boolean restore(Game game, String filename) {
+    String suffix = FilenameUtils.getExtension(filename);
+    File folder = game.getAltColorFolder();
+    if (folder.exists()) {
+      try {
+        switch (suffix) {
+          case UploaderAnalysis.PAC_SUFFIX: {
+            backupFolder(folder, UploaderAnalysis.PAC_SUFFIX);
+            break;
+          }
+          case UploaderAnalysis.VNI_SUFFIX:
+          case UploaderAnalysis.PAL_SUFFIX: {
+            backupFolder(folder, UploaderAnalysis.PAC_SUFFIX);
+            backupFolder(folder, UploaderAnalysis.VNI_SUFFIX);
+            break;
+          }
+          case UploaderAnalysis.SERUM_SUFFIX: {
+            backupFolder(folder, UploaderAnalysis.SERUM_SUFFIX);
+            break;
+          }
+        }
+
+
+        File backupFile = new File(folder, "backups/" + filename);
+        if (backupFile.exists()) {
+          String name = FilenameUtils.getBaseName(filename);
+          String ext = FilenameUtils.getExtension(filename);
+          name = name.substring(0, name.indexOf("["));
+          File target = new File(folder, name + "." + ext);
+          FileUtils.copyFile(backupFile, target);
+          LOG.info("Restored backup {} to {}", backupFile.getAbsolutePath(), target.getAbsolutePath());
+        }
+      }
+      catch (Exception e) {
+        LOG.error("ALT color backup creation failed: {}", e.getMessage(), e);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public boolean deleteBackup(Game game, String filename) {
+    File folder = game.getAltColorFolder();
+    if (folder.exists()) {
+      File file = new File(folder, filename);
+      if (file.exists() && file.delete()) {
+        LOG.info("Deleted " + file.getAbsolutePath());
+        gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, folder.getName());
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

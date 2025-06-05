@@ -41,6 +41,9 @@ public class TablesSidebarAltColorController implements Initializable {
   private Button deleteBtn;
 
   @FXML
+  private Button restoreBtn;
+
+  @FXML
   private Label lastModifiedLabel;
 
   @FXML
@@ -76,6 +79,7 @@ public class TablesSidebarAltColorController implements Initializable {
   private AltColor altColor;
   private ValidationState validationState;
 
+  private TablesSidebarController tablesSidebarController;
   private Optional<GameRepresentation> game = Optional.empty();
 
   // Add a public no-args constructor
@@ -86,6 +90,14 @@ public class TablesSidebarAltColorController implements Initializable {
   private void onUpload() {
     if (game.isPresent()) {
       TableDialogs.openAltColorUploadDialog(game.get(), null, null, null);
+    }
+  }
+
+
+  @FXML
+  private void onRestore() {
+    if (game.isPresent()) {
+      TableDialogs.openAltColorAdminDialog(tablesSidebarController, game.get());
     }
   }
 
@@ -128,6 +140,7 @@ public class TablesSidebarAltColorController implements Initializable {
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     dataBox.setVisible(false);
+    restoreBtn.setDisable(true);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
     deleteBtn.setDisable(true);
@@ -138,10 +151,16 @@ public class TablesSidebarAltColorController implements Initializable {
     this.refreshView(game);
   }
 
+
+  public void setSidebarController(TablesSidebarController tablesSidebarController) {
+    this.tablesSidebarController = tablesSidebarController;
+  }
+
   public void refreshView(Optional<GameRepresentation> g) {
     this.altColor = null;
     this.validationState = null;
     reloadBtn.setDisable(g.isEmpty());
+    restoreBtn.setDisable(g.isEmpty());
 
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
@@ -160,6 +179,7 @@ public class TablesSidebarAltColorController implements Initializable {
       GameRepresentation game = g.get();
       boolean altColorAvailable = game.getAltColorType() != null && !game.getAltColorType().equals(AltColorTypes.mame);
 
+      restoreBtn.setDisable(!altColorAvailable);
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);
 
@@ -172,7 +192,7 @@ public class TablesSidebarAltColorController implements Initializable {
         typeLabel.setText(altColor.getAltColorType().name());
         nameLabel.setText(altColor.getName());
         altColor = Studio.client.getAltColorService().getAltColor(game.getId());
-        backupsLabel.setText(String.valueOf(altColor.getBackedUpFiles()));
+        backupsLabel.setText(String.valueOf(altColor.getBackedUpFiles().size()));
 
         List<String> files = altColor.getFiles();
         filesLabel.setText(String.join(", ", files));
