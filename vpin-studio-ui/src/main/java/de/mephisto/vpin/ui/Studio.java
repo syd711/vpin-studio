@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.OSUtil;
+import de.mephisto.vpin.ui.apng.ApngImageLoaderFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
@@ -90,6 +91,7 @@ public class Studio extends Application {
     }
 
     runOperatingSystemChecks();
+    runExtensionsInstallation();
 
     LOG.info("Studio Starting...");
     LOG.info("Locale: " + Locale.getDefault().getDisplayName());
@@ -162,6 +164,11 @@ public class Studio extends Application {
       //Set path for writing stuff
       System.setProperty("MAC_WRITE_PATH", System.getProperty("user.home") + "/Library/Application Support/VPin-Studio/");
     }
+  }
+
+  private void runExtensionsInstallation() {
+    // install our APNGImageLoader
+    ApngImageLoaderFactory.install();
   }
 
   public static HostServices getStudioHostServices() {
