@@ -192,11 +192,11 @@ public class MediaConverterService implements InitializingBean {
     //LOG.info("Conversion failed: {}", standardErrorFromCommand);
     //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
     //LOG.info("Video conversion output: {}", standardOutputFromCommand);
+
   }
-
   public void convertWithFfmpeg(File mediaFile, File targetFile) throws Exception {
-    // "%_curloc%\ffmpeg" -y -i %1 -vf "transpose=1" "%2"
-
+    // "%_curloc%\ffmpeg" -y -i %1 "%2"
+    //Simple convert (can be used to convert apng (Animated PNG) to gif (Animated GIF))
 
     File resources = new File(SystemService.RESOURCES);
     if (!resources.exists()) {
@@ -225,6 +225,7 @@ public class MediaConverterService implements InitializingBean {
     //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
     //LOG.info("Video conversion output: {}", standardOutputFromCommand);
   }
+
   private void convertWithImageUtils(MediaOperationResult result, String command, File mediaFile) {
     try {
       BufferedImage img = ImageUtil.loadImage(mediaFile);

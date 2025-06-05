@@ -4,13 +4,11 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.assets.TableAssetsService;
-import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -169,42 +167,11 @@ public class GameMediaResource {
       }
 
       if (frontendMediaItem != null) {
-
         File file = frontendMediaItem.getFile();
-        ByteArrayResource bytesResource;
-        FileInputStream in;
-
-        if (frontendMediaItem.getMimeType().contains("apng")){
-          //This is an animated file, deliver a GIF instead of the actual file
-          // Create temporary GIF file
-         File gifFile;
-         gifFile = File.createTempFile("converted-", ".gif");
-
-         //Set to delete on exit in case we don't make it to the delete call later.
-          gifFile.deleteOnExit();
-
-          // Run ffmpeg command: ffmpeg -i input.apng output.gif
-          MediaConverterService mediaConverterService = new MediaConverterService();
-
-         try {
-           mediaConverterService.convertWithFfmpeg(file ,gifFile);
-         } catch (Exception e) {
-           throw new RuntimeException(e);
-         }
-
-          in = new FileInputStream(gifFile);
-          byte[] bytes = IOUtils.toByteArray(in);
-          bytesResource = new ByteArrayResource(bytes);
-          in.close();
-          //Now that we've created the byteresource, we don't need the file anymore, get rid of it.
-          gifFile.delete();
-        }
-        else{
-          in = new FileInputStream(file);
-          byte[] bytes = IOUtils.toByteArray(in);
-          bytesResource = new ByteArrayResource(bytes);
-          in.close();
-        }
+        FileInputStream in = new FileInputStream(file);
+        byte[] bytes = IOUtils.toByteArray(in);
+        ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+        in.close();
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
@@ -387,9 +354,5 @@ public class GameMediaResource {
     out.close();
     return true;
   }
-
-
-
-
 
 }
