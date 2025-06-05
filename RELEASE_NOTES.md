@@ -1,3 +1,11 @@
+## Release Notes 4.0.7
+
+## Changes
+
+- Fixed settings MAME settings.
+
+---
+
 ## Release Notes 4.0.6
 
 ## Changes

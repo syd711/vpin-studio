@@ -183,9 +183,10 @@ public class SystemInfo {
       WinRegistry.setUserIntValue(path, key, value);
     }
   }
+
   public void createUserKey(@NonNull String key) {
     if (OSUtil.isWindows()) {
-      WinRegistry.getCurrentUserKeys(key);
+      WinRegistry.createUserKey(key);
     }
   }
 
