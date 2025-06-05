@@ -10,23 +10,23 @@ public class ApngFrameDecoderTrueColor extends ApngFrameDecoder
   }
 
   @Override
-  public void write(ApngFrame dest, byte[] src, int srcIdx, int offsX, int stepX, int line, boolean composeAlpha) {
+  public void write(ApngFrame dest, byte[] src, int srcIdx, int offsX, int widthX, int stepX, int line, boolean composeAlpha) {
     final long[] pixels = dest.getPixels();
-    final int width = dest.getWidth();
+    final int destOffset = line * dest.getWidth();
 
     int transparentColor = stream.getTransparentColor();
 
     if (colorType.hasAlpha()) {
       switch (bitDepth) {
       case 8:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           int nR = src[srcIdx++] & 0xff;
           int nG = src[srcIdx++] & 0xff;
           int nB = src[srcIdx++] & 0xff;
           int nA = src[srcIdx++] & 0xff;
 
           if (composeAlpha) {
-            int color = (int) pixels[line * width + nX];
+            int color = (int) pixels[destOffset + nX];
             int nAbg = (color >> 24) & 0xff;
             int nAf = (int) (nA + nAbg * (255 - nA) / 255.0);
             nR = composeAlpha((color >> 16) & 0xff, nR, nAbg, nA, nAf);
@@ -35,13 +35,13 @@ public class ApngFrameDecoderTrueColor extends ApngFrameDecoder
             nA = nAf;
           }
 
-          pixels[line * width + nX] = nA << 24 | nR << 16 | nG << 8 | nB;
+          pixels[destOffset + nX] = nA << 24 | nR << 16 | nG << 8 | nB;
         }
         break;
 
       case 16:
         // TODO: Warning for quality loss in App
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           int nR = src[srcIdx++] & 0xff;
           srcIdx++;
           int nG = src[srcIdx++] & 0xff;
@@ -52,7 +52,7 @@ public class ApngFrameDecoderTrueColor extends ApngFrameDecoder
           srcIdx++;
 
           if (composeAlpha) {
-            int color = (int) pixels[line * width + nX];
+            int color = (int) pixels[destOffset + nX];
             int nAbg = (color >> 24) & 0xff;
             int nAf = (int) (nA + nAbg * (255 - nA) / 255.0);
             nR = composeAlpha((color >> 16) & 0xff, nR, nAbg, nA, nAf);
@@ -61,7 +61,7 @@ public class ApngFrameDecoderTrueColor extends ApngFrameDecoder
             nA = nAf;
           }
 
-          pixels[line * width + nX] = nA << 24 | nR << 16 | nG << 8 | nB;
+          pixels[destOffset + nX] = nA << 24 | nR << 16 | nG << 8 | nB;
         }
         break;
 
@@ -73,24 +73,24 @@ public class ApngFrameDecoderTrueColor extends ApngFrameDecoder
     {
       switch (bitDepth) {
       case 8:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           final int nR = src[srcIdx++] & 0xff;
           final int nG = src[srcIdx++] & 0xff;
           final int nB = src[srcIdx++] & 0xff;
           final int nRGB = nR << 16 | nG << 8 | nB;
 
           if (nRGB == transparentColor) {
-            pixels[line * width + nX] = 0;
+            pixels[destOffset + nX] = 0;
           }
           else {
-            pixels[line * width + nX] = 0xff000000 | nR << 16 | nG << 8 | nB;
+            pixels[destOffset + nX] = 0xff000000 | nR << 16 | nG << 8 | nB;
           }
         }
         break;
 
       case 16:
         // TODO: Warning for quality loss in App
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           final int nR = src[srcIdx++] & 0xff;
           final int nR1 = src[srcIdx++] & 0xff;
           final int nG = src[srcIdx++] & 0xff;
@@ -100,10 +100,10 @@ public class ApngFrameDecoderTrueColor extends ApngFrameDecoder
           final int nRGB16 = nR << 40 | nR1 << 32 | nG << 24 | nG1 << 16 | nB << 8 | nB1;
 
           if (nRGB16 == transparentColor) {
-            pixels[line * width + nX] = 0;
+            pixels[destOffset + nX] = 0;
           }
           else {
-            pixels[line * width + nX] = 0xff000000 | nR << 16 | nG << 8 | nB;
+            pixels[destOffset + nX] = 0xff000000 | nR << 16 | nG << 8 | nB;
           }
         }
         break;

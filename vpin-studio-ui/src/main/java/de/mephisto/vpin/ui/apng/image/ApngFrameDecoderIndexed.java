@@ -42,10 +42,9 @@ public class ApngFrameDecoderIndexed extends ApngFrameDecoder
   }
 
   @Override
-  public void write(ApngFrame dest, byte[] src, int srcIdx, int offsX, int stepX, int line, boolean composeAlpha) {
-
+  public void write(ApngFrame dest, byte[] src, int srcIdx, int offsX, int widthX, int stepX, int line, boolean composeAlphacomposeAlpha) {
     final long[] pixels = dest.getPixels();
-    final int width = dest.getWidth();
+    final int destOffset = line * dest.getWidth();
 
     if (palette == null) {
       palette = stream.getPalette();
@@ -60,9 +59,9 @@ public class ApngFrameDecoderIndexed extends ApngFrameDecoder
     case 4:
       int nBit = maxBit;
 
-      for (int nX = offsX; nX < width; nX += stepX) {
+      for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
         final int nIdx = (src[srcIdx] >> shifts[nBit]) & bitMask;
-        pixels[line * width + nX] = palette.get(nIdx);
+        pixels[destOffset + nX] = palette.get(nIdx);
 
         if (nBit == 0) {
           srcIdx++;
@@ -75,9 +74,9 @@ public class ApngFrameDecoderIndexed extends ApngFrameDecoder
       break;
 
     case 8:
-      for (int nX = offsX; nX < width; nX += stepX) {
+      for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
         final int nIdx = src[srcIdx++] & 0xff;
-        pixels[line * width + nX] = palette.get(nIdx);
+        pixels[destOffset + nX] = palette.get(nIdx);
       }
       break;
 

@@ -24,7 +24,14 @@ public abstract class ApngFrameDecoder implements Closeable {
   private int appFrameDecoded = 0;
   private ApngFrame prevImage = null;
   private ApngFrame currentImage = null;
- 
+
+  // FOR DEBUG PURPOSES: in order to understand how a specific frame is decoded, 
+  // force max frame to that frame number and forceMaxLoops to 1, and the image will stop on that frame
+  // override the number of frames in the PNG and stop parsing after forceMaxFrames. -1 values are for PROD use
+  private int forceMaxFrames = -1;
+  // override the number of loops in ACTL chunk
+  private int forceMaxLoops = -1;
+
   // keep the current frameControl so that the disposal to be done after rendering this frame, can be applied before next image generation
   // disposeOp specifies how the output buffer should be changed at the end of the delay (before rendering the next frame).
   private ApngFrameControl currentFrameControl;
@@ -47,6 +54,10 @@ public abstract class ApngFrameDecoder implements Closeable {
   }
 
   public ApngFrame nextFrame() throws IOException {
+    // interrupt the APNG sequence on a given frame
+    if (forceMaxFrames > 0 && forceMaxFrames == appFrameDecoded) {
+      return null;
+    }
 
     // read the next image / frame
     byte[] frameData = stream.nextDat();
@@ -123,7 +134,7 @@ public abstract class ApngFrameDecoder implements Closeable {
   }
 
   public int getAnimationNumPlays() {
-    return stream.getAnimationLoops();
+    return forceMaxLoops > 0 ? forceMaxLoops : stream.getAnimationLoops();
   }
 
   public void close() throws IOException {
@@ -208,7 +219,7 @@ public abstract class ApngFrameDecoder implements Closeable {
 
         revertFilter(_buffer, _prevLine, bytesPerLine);
 
-        write(dest, _buffer, 1, ctrl.getXOffset() + offsX, stepX, ctrl.getYOffset() + line * stepY + offsY, composeAlpha);
+        write(dest, _buffer, 1, ctrl.getXOffset() + offsX, ctrl.getWidth(), stepX, ctrl.getYOffset() + line * stepY + offsY, composeAlpha);
       }
 
       if (nPass == 0 || nPass == 7) {
@@ -224,7 +235,7 @@ public abstract class ApngFrameDecoder implements Closeable {
   /**
    * Writes a line of the frame to the destination
    */
-  public abstract void write(ApngFrame dest, byte[] source, int sourceIdx, int offsetX, int nStepX, int nLine, boolean composeAlpha) throws IOException;
+  public abstract void write(ApngFrame dest, byte[] source, int sourceIdx, int offsetX, int widthX, int nStepX, int nLine, boolean composeAlpha) throws IOException;
 
   //------------------------------------ DISPOSE -------------
 

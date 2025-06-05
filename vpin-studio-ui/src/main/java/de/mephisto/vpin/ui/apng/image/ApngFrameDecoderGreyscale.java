@@ -21,9 +21,9 @@ public class ApngFrameDecoderGreyscale extends ApngFrameDecoder
   }
 
   @Override
-  public void write(ApngFrame dest, byte[] src, int srcIdx, int offsX, int stepX, int line, boolean composeAlpha) throws IOException {
+  public void write(ApngFrame dest, byte[] src, int srcIdx, int offsX, int widthX, int stepX, int line, boolean composeAlphacomposeAlpha) throws IOException {
     final long[] pixels = dest.getPixels();
-    final int width = dest.getWidth();
+    final int destOffset = line * dest.getWidth();
 
     int  transparentColor = stream.getTransparentColor();
 
@@ -31,33 +31,33 @@ public class ApngFrameDecoderGreyscale extends ApngFrameDecoder
     {
       switch (bitDepth) {
       case 4:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           // Upper nibble = luminance index, lower nibble = alpha index
           final int nIdx = src[srcIdx++];
           final int nL = GREY4[(nIdx >> 4) & 0x0f];
           final int nA = GREY4[nIdx & 0x0f];
 
-          pixels[line * width + nX] = nA << 24 | nL << 16 | nL << 8 | nL;
+          pixels[destOffset + nX] = nA << 24 | nL << 16 | nL << 8 | nL;
         }
         break;
 
       case 8:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           final int nL = src[srcIdx++] & 0xff;
           final int nA = src[srcIdx++] & 0xff;
 
-          pixels[line * width + nX] = nA << 24 | nL << 16 | nL << 8 | nL;
+          pixels[destOffset + nX] = nA << 24 | nL << 16 | nL << 8 | nL;
         }
         break;
 
       case 16:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           final int nL = src[srcIdx++] & 0xff;
           srcIdx++;
           final int nA = src[srcIdx++] & 0xff;
           srcIdx++;
 
-          pixels[line * width + nX] = nA << 24 | nL << 16 | nL << 8 | nL;
+          pixels[destOffset + nX] = nA << 24 | nL << 16 | nL << 8 | nL;
         }
         break;
 
@@ -69,25 +69,25 @@ public class ApngFrameDecoderGreyscale extends ApngFrameDecoder
     {
       switch (bitDepth) {
       case 8:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           final int nL0 = (src[srcIdx++] & 0xff);
           final boolean b = transparentColor == nL0;
           final int nL = b ? 0 : nL0;
           final int nA = b ? 0 : 0xff000000;
 
-          pixels[line * width + nX] = nA | nL << 16 | nL << 8 | nL;
+          pixels[destOffset + nX] = nA | nL << 16 | nL << 8 | nL;
         }
         break;
 
       case 16:
-        for (int nX = offsX; nX < width; nX += stepX) {
+        for (int nX = offsX; nX < offsX + widthX; nX += stepX) {
           final int nL0 = (src[srcIdx++] & 0xff);
           final int nL1 = (src[srcIdx++] & 0xff);
           final boolean b = transparentColor == ((nL0 << 8) | nL1);
           final int nL = b ? 0 : nL0;
           final int nA = b ? 0 : 0xff000000;
 
-          pixels[line * width + nX] = nA | nL << 16 | nL << 8 | nL;
+          pixels[destOffset + nX] = nA | nL << 16 | nL << 8 | nL;
         }
         break;
 
