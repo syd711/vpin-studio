@@ -4,13 +4,11 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.assets.TableAssetsService;
-import de.mephisto.vpin.server.converter.MediaConverterService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -171,48 +169,70 @@ public class GameMediaResource {
       if (frontendMediaItem != null) {
 
         File file = frontendMediaItem.getFile();
-        ByteArrayResource bytesResource;
-        FileInputStream in;
 
         if (frontendMediaItem.getMimeType().contains("apng")){
           //This is an animated file, deliver a GIF instead of the actual file
           // Create temporary GIF file
-         File gifFile;
-         gifFile = File.createTempFile("converted-", ".gif");
+          File gifFile;
 
-         //Set to delete on exit in case we don't make it to the delete call later.
+          //I tried putting this in a try/catch but it would say gifFile wasn't initialized.
+          gifFile = File.createTempFile("converted-", ".gif");
+
+          //Set to delete on exit in case we don't make it to the delete call later.
           gifFile.deleteOnExit();
 
+
           // Run ffmpeg command: ffmpeg -i input.apng output.gif
-          MediaConverterService mediaConverterService = new MediaConverterService();
+          //Is the location of ffmpeg stores somewhere?
+          //Can we use MediaConverterService.convertWithFfmpeg?
+          ProcessBuilder pb = new ProcessBuilder(
+                  "C:\\vPinball\\VPin-Studio\\resources\\ffmpeg.exe", "-y",
+                  "-i", file.getAbsolutePath(),
+                  gifFile.getAbsolutePath()
+          );
 
-         try {
-           mediaConverterService.convertWithFfmpeg(file ,gifFile);
-         } catch (Exception e) {
-           throw new RuntimeException(e);
-         }
-
-          in = new FileInputStream(gifFile);
+          pb.redirectErrorStream(true); // Merge stdout and stderr
+          try {
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+              LOG.error("ffmpeg conversion failed (code " + exitCode + ").");
+            }
+          } catch (IOException | InterruptedException e) {
+            LOG.error("Failed to run ffmpeg: " + e.getMessage());
+          }
+          FileInputStream in = new FileInputStream(gifFile);
           byte[] bytes = IOUtils.toByteArray(in);
-          bytesResource = new ByteArrayResource(bytes);
+          ByteArrayResource bytesResource = new ByteArrayResource(bytes);
           in.close();
-          //Now that we've created the byteresource, we don't need the file anymore, get rid of it.
           gifFile.delete();
+          HttpHeaders responseHeaders = new HttpHeaders();
+          responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+          responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+          responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+          responseHeaders.set("Cache-Control", "public, max-age=3600");
+          return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
         }
         else{
-          in = new FileInputStream(file);
+          FileInputStream in = new FileInputStream(file);
           byte[] bytes = IOUtils.toByteArray(in);
-          bytesResource = new ByteArrayResource(bytes);
+          ByteArrayResource bytesResource = new ByteArrayResource(bytes);
           in.close();
+
+          HttpHeaders responseHeaders = new HttpHeaders();
+          responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
+          responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+          responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+          responseHeaders.set("Cache-Control", "public, max-age=3600");
+          return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
         }
 
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
-        responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
-        responseHeaders.set("Access-Control-Allow-Origin", "*");
-        responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
-        responseHeaders.set("Cache-Control", "public, max-age=3600");
-        return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+
+
+
+
       }
     }
 
@@ -387,9 +407,5 @@ public class GameMediaResource {
     out.close();
     return true;
   }
-
-
-
-
 
 }
