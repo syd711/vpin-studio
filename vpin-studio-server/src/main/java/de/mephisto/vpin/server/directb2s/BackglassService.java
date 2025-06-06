@@ -825,31 +825,29 @@ public class BackglassService implements InitializingBean {
       return null;
     }
 
-    List<String> lines = new ArrayList<>();
-    lines.add(target.getAbsolutePath());
     try (BufferedReader reader = new BufferedReader(new FileReader(target))) {
+      String version = null;
+
+      List<String> lines = new ArrayList<>();
       String line;
-      boolean firstline = true;
       while ((line = reader.readLine()) != null) {
         // detection of version
-        if (firstline) {
-          firstline = false;
-          // see https://github.com/vpinball/b2s-backglass/blob/7adc7d10b026863529ac3399b6e7235134cb80d0/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L93
-          if (line.replace(" ", "").startsWith("#V2")) {
-            lines.add(line);
-            // do not add line again
-            continue;
-          }
-          else {
-            // add a dummy comment
-            lines.add("# V1");
-          }
+        // see https://github.com/vpinball/b2s-backglass/blob/7adc7d10b026863529ac3399b6e7235134cb80d0/b2s_screenresidentifier/b2s_screenresidentifier/module.vb#L93
+        if (line.replace(" ", "").startsWith("#V2")) {
+          version = line;
+          // remove the line from the file, as we will reinsert proper version on top
+          continue;
         }
-
         if (withComment || !line.startsWith("#")) {
           lines.add(line.trim());
         }
       }
+      if (version == null) {
+        version = "# V1";
+      }
+      // insert additional information
+      lines.add(0, version);
+      lines.add(0, target.getAbsolutePath());
       return lines;
     }
     catch (Exception e) {

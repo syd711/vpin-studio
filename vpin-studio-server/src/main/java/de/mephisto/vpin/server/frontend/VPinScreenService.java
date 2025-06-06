@@ -426,9 +426,13 @@ public class VPinScreenService {
         FrontendPlayerDisplay fulldmd = new FrontendPlayerDisplay(VPinScreen.Menu);
         // override the name
         fulldmd.setName("FullDMD");
-        // DMD is relative to backglass so use prevously calculated coordinate
+        // DMD is relative to backglass, not background so cannot use prevously calculated coordinates
         fulldmd.setX(screenres.getBackglassX() + screenres.getDmdX());
         fulldmd.setY(screenres.getBackglassY() + screenres.getDmdY());
+        if (monitor != null) {
+          fulldmd.setX((int) monitor.getX() + fulldmd.getX());
+          fulldmd.setY((int) monitor.getY() + fulldmd.getY());
+        }
         fulldmd.setWidth(screenres.getDmdWidth());
         fulldmd.setHeight(screenres.getDmdHeight());
         displays.add(fulldmd);
