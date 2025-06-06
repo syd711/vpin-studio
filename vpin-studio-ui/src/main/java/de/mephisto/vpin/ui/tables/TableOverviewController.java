@@ -1513,7 +1513,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void reloadItem(GameRepresentation refreshedGame) {
     // reload only if the emulator is matching
     GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
+    if (value != null && (value.getId() == refreshedGame.getEmulatorId())) {
       super.reloadItem(refreshedGame);
     }
   }
