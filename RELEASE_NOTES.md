@@ -10,3 +10,7 @@
 - **Table Overview**:
   - **Tutorial Column**: Added new column "Tutorials". The column shows the available tutorials for the given table. Note that the **Kongedam** tutorials have an additional color indicator. (This indicator has a technical reason too. It ensures that all the latest and greatest from him are available in the pause menu too). 
   - **ALT Color Backups**: Added dialog for backups to the ALT color section. Note that you may already have some backups available since the actual backup support for the backend was already build a year ago. The dialog allows you to restore these files now.
+
+## VPin Mania
+
+- Fixed rating submissions. Instead of incremental ratings they are calculated by a scheduled bulk operation. Make sure to to enable the rating submissions in your privacy settings of VPin Mania. 
