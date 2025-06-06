@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.restclient.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class HttpUtils {
    * @return true if the file exists and is accessible (HTTP 200 OK), false otherwise.
    * Returns false if there's a network error, invalid URL, or non-200 response code.
    */
-  public static boolean doesFileExist(String fileUrl) {
+  public static boolean check(String fileUrl) {
     HttpURLConnection connection = null;
     try {
       URL url = new URL(fileUrl);

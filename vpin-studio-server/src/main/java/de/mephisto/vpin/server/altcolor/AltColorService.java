@@ -12,7 +12,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +43,7 @@ public class AltColorService implements InitializingBean {
   @Autowired
   private GameLifecycleService gameLifecycleService;
 
-  public boolean setAltColorEnabled(@NonNull String rom, boolean b) {
+  public void setAltColorEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
       options.setColorizeDmd(b);
@@ -52,12 +51,11 @@ public class AltColorService implements InitializingBean {
       mameService.saveOptions(options);
       gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, rom);
     }
-    return b;
   }
 
   public AltColorTypes getAltColorType(@NonNull Game game) {
     AltColor altColor = getAltColor(game);
-    if (altColor != null) {
+    if (altColor.isAvailable()) {
       return altColor.getAltColorType();
     }
     return null;
@@ -66,10 +64,17 @@ public class AltColorService implements InitializingBean {
   public boolean delete(@NonNull Game game) {
     try {
       AltColor altColor = getAltColor(game);
-      if (altColor != null) {
+      if (altColor.isAvailable()) {
         File dir = new File(game.getEmulator().getAltColorFolder(), altColor.getName());
         if (dir.exists()) {
-          FileUtils.deleteDirectory(dir);
+          File[] files = dir.listFiles();
+          if (files != null) {
+            for (File file : files) {
+              if (file.isFile() && !file.delete()) {
+                LOG.error("Failed to delete ALT color file {}", file.getAbsolutePath());
+              }
+            }
+          }
           gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, altColor.getName());
           return true;
         }
@@ -81,8 +86,9 @@ public class AltColorService implements InitializingBean {
     return false;
   }
 
-  @Nullable
+  @NonNull
   public AltColor getAltColor(@NonNull Game game) {
+    AltColor altColor = new AltColor();
     String rom = game.getRom();
     String tableName = game.getTableName();
 
@@ -98,16 +104,15 @@ public class AltColorService implements InitializingBean {
       altColorFolder = new File(game.getEmulator().getAltColorFolder(), tableName);
     }
 
-
     if (altColorFolder == null || !altColorFolder.exists()) {
-      return null;
+      return altColor;
     }
 
     File[] altColorFiles = altColorFolder.listFiles((dir, name) -> new File(dir, name).isFile());
     if (altColorFiles != null && altColorFiles.length > 0) {
-      AltColor altColor = new AltColor();
       altColor.setModificationDate(new Date(altColorFolder.lastModified()));
       altColor.setName(altColorFolder.getName());
+      altColor.setAvailable(true);
       altColor.setFiles(Arrays.stream(altColorFiles).map(File::getName).collect(Collectors.toList()));
 
       AltColorTypes type = AltColorTypes.mame;
@@ -127,25 +132,23 @@ public class AltColorService implements InitializingBean {
         altColor.setModificationDate(new Date(crzFile.get().lastModified()));
         type = AltColorTypes.serum;
       }
-
       altColor.setAltColorType(type);
-
-      File backupFolder = new File(altColorFolder, "backups/");
-      if (backupFolder.exists()) {
-        String[] list = backupFolder.list(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-            return name.contains("[");
-          }
-        });
-        if (list != null) {
-          altColor.setBackedUpFiles(Arrays.asList(list));
-        }
-      }
-      return altColor;
     }
 
-    return null;
+    File backupFolder = new File(altColorFolder, "backups/");
+    if (backupFolder.exists()) {
+      String[] list = backupFolder.list(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          return name.contains("[");
+        }
+      });
+      if (list != null) {
+        altColor.setBackedUpFiles(Arrays.asList(list));
+      }
+    }
+
+    return altColor;
   }
 
   public void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, Game game, File out) throws IOException {
@@ -257,17 +260,19 @@ public class AltColorService implements InitializingBean {
   public boolean restore(Game game, String filename) {
     String suffix = FilenameUtils.getExtension(filename);
     File folder = game.getAltColorFolder();
-    if (folder.exists()) {
+    if (folder != null && folder.exists()) {
       try {
         switch (suffix) {
           case UploaderAnalysis.PAC_SUFFIX: {
             backupFolder(folder, UploaderAnalysis.PAC_SUFFIX);
             break;
           }
-          case UploaderAnalysis.VNI_SUFFIX:
-          case UploaderAnalysis.PAL_SUFFIX: {
-            backupFolder(folder, UploaderAnalysis.PAC_SUFFIX);
+          case UploaderAnalysis.VNI_SUFFIX: {
             backupFolder(folder, UploaderAnalysis.VNI_SUFFIX);
+            break;
+          }
+          case UploaderAnalysis.PAL_SUFFIX: {
+            backupFolder(folder, UploaderAnalysis.PAL_SUFFIX);
             break;
           }
           case UploaderAnalysis.SERUM_SUFFIX: {
@@ -282,7 +287,8 @@ public class AltColorService implements InitializingBean {
           String name = FilenameUtils.getBaseName(filename);
           String ext = FilenameUtils.getExtension(filename);
           name = name.substring(0, name.indexOf("["));
-          File target = new File(folder, name + "." + ext);
+          String targetName = name + "." + ext;
+          File target = new File(folder, targetName);
           FileUtils.copyFile(backupFile, target);
           LOG.info("Restored backup {} to {}", backupFile.getAbsolutePath(), target.getAbsolutePath());
         }
@@ -297,10 +303,11 @@ public class AltColorService implements InitializingBean {
 
   public boolean deleteBackup(Game game, String filename) {
     File folder = game.getAltColorFolder();
+    folder = new File(folder, "backups/");
     if (folder.exists()) {
       File file = new File(folder, filename);
       if (file.exists() && file.delete()) {
-        LOG.info("Deleted " + file.getAbsolutePath());
+        LOG.info("Deleted ALT color file {}", file.getAbsolutePath());
         gameLifecycleService.notifyGameAssetsChanged(AssetType.ALT_COLOR, folder.getName());
         return true;
       }

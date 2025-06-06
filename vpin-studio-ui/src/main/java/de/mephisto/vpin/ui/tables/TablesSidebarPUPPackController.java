@@ -200,8 +200,9 @@ public class TablesSidebarPUPPackController implements Initializable {
       this.reloadBtn.setDisable(true);
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new PupPackRefreshProgressModel(this.game.get()));
+        Studio.client.getGameService().reload(this.game.get().getId());
         this.reloadBtn.setDisable(false);
-        this.refreshView(this.game);
+        EventManager.getInstance().notifyTableChange(game.get().getId(), null);
       });
     }
   }

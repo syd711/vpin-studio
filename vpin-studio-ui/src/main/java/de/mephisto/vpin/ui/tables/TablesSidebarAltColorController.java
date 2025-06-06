@@ -117,7 +117,7 @@ public class TablesSidebarAltColorController implements Initializable {
     Platform.runLater(() -> {
       new Thread(() -> {
         Studio.client.getDmdService().clearCache();
-
+        Studio.client.getGameService().reload(this.game.get().getId());
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
 
         Platform.runLater(() -> {
@@ -172,14 +172,20 @@ public class TablesSidebarAltColorController implements Initializable {
     nameLabel.setText("-");
     typeLabel.setText("-");
     filesLabel.setText("-");
-
+    restoreBtn.setText("Restore");
     errorBox.setVisible(false);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      boolean altColorAvailable = game.getAltColorType() != null && !game.getAltColorType().equals(AltColorTypes.mame);
 
-      restoreBtn.setDisable(!altColorAvailable);
+      AltColor altColor = Studio.client.getAltColorService().getAltColor(game.getId());
+      boolean altColorAvailable = altColor.isAvailable();
+
+      restoreBtn.setDisable(altColor.getBackedUpFiles().isEmpty());
+      if (!altColor.getBackedUpFiles().isEmpty()) {
+        restoreBtn.setText("Restore (" + altColor.getBackedUpFiles().size() + ")");
+      }
+
       dataBox.setVisible(altColorAvailable);
       emptyDataBox.setVisible(!altColorAvailable);
 
@@ -187,7 +193,6 @@ public class TablesSidebarAltColorController implements Initializable {
       deleteBtn.setDisable(!altColorAvailable);
 
       if (altColorAvailable) {
-        altColor = Studio.client.getAltColorService().getAltColor(game.getId());
         lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(altColor.getModificationDate()));
         typeLabel.setText(altColor.getAltColorType().name());
         nameLabel.setText(altColor.getName());

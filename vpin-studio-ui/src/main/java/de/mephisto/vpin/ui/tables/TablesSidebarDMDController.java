@@ -144,6 +144,7 @@ public class TablesSidebarDMDController implements Initializable {
 
     Platform.runLater(() -> {
       new Thread(() -> {
+        Studio.client.getGameService().scanGame(this.game.get().getId());
         this.game.ifPresent(gameRepresentation -> EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom()));
       }).start();
     });

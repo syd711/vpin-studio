@@ -9,16 +9,12 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Collections;
-import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -51,18 +47,29 @@ public class AltColorResource {
 
   @DeleteMapping("/{id}/{filename}")
   public boolean deleteBackup(@PathVariable("id") int id, @PathVariable("filename") String filename) {
-    return altColorService.deleteBackup(gameService.getGame(id), filename);
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      return altColorService.deleteBackup(game, filename);
+    }
+    return false;
   }
 
   @PutMapping("restore/{gameId}/{filename}")
   public boolean restore(@PathVariable("gameId") int gameId, @PathVariable("filename") String filename) {
     Game game = gameService.getGame(gameId);
-    return altColorService.restore(game, filename);
+    if (game != null) {
+      return altColorService.restore(game, filename);
+    }
+    return false;
   }
 
   @DeleteMapping("{id}")
   public boolean delete(@PathVariable("id") int id) {
-    return altColorService.delete(gameService.getGame(id));
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      return altColorService.delete(game);
+    }
+    return false;
   }
 
   @PostMapping("/upload")
@@ -78,14 +85,15 @@ public class AltColorResource {
     catch (Exception e) {
       LOG.error(AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       descriptor.finalizeUpload();
     }
   }
 
   private AltColor getAltColor(@NonNull Game game) {
     AltColor altColor = altColorService.getAltColor(game);
-    if (altColor != null) {
+    if (altColor.isAvailable()) {
       altColor.setValidationStates(validationService.validateAltColor(game));
     }
     return altColor;

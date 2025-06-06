@@ -8,13 +8,11 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -32,12 +30,6 @@ public class TableAltColorAdminController implements Initializable, DialogContro
   private final static Logger LOG = LoggerFactory.getLogger(TableAltColorAdminController.class);
 
   @FXML
-  private VBox scorePane;
-
-  @FXML
-  private Label scoreLabel;
-
-  @FXML
   private Button restoreBtn;
 
   @FXML
@@ -47,6 +39,7 @@ public class TableAltColorAdminController implements Initializable, DialogContro
   private ListView<String> backupList;
 
   private GameRepresentation game;
+
   private TablesSidebarController tablesSidebarController;
 
   @FXML
@@ -74,11 +67,14 @@ public class TableAltColorAdminController implements Initializable, DialogContro
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    String selectedItem = backupList.getSelectionModel().getSelectedItem();
-    if (selectedItem != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete backup from " + selectedItem + "?");
+    List<String> selectedItems = backupList.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete " + selectedItems.size() + " backup(s)?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getAltColorService().deleteBackup(game.getId(), selectedItem);
+        for (String selectedItem : selectedItems) {
+          client.getAltColorService().deleteBackup(game.getId(), selectedItem);
+        }
+        refresh();
         EventManager.getInstance().notifyTableChange(this.game.getId(), game.getRom());
       }
     }
@@ -94,20 +90,11 @@ public class TableAltColorAdminController implements Initializable, DialogContro
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.deleteBtn.setDisable(true);
     this.restoreBtn.setDisable(true);
-    scoreLabel.setFont(getScoreFontText());
+    this.backupList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     this.backupList.getSelectionModel().selectedItemProperty().addListener((observableValue, highscoreBackup, t1) -> {
       deleteBtn.setDisable(t1 == null);
       restoreBtn.setDisable(t1 == null);
-
-      scoreLabel.setText("");
-
-      if (t1 != null) {
-        scoreLabel.setText(t1);
-      }
-      else {
-        scoreLabel.setText("No backup selected.");
-      }
     });
   }
 
@@ -125,14 +112,12 @@ public class TableAltColorAdminController implements Initializable, DialogContro
     AltColor altColor = client.getAltColorService().getAltColor(this.game.getId());
     List<String> backupList = altColor.getBackedUpFiles();
     this.backupList.setItems(FXCollections.observableList(backupList));
-    scoreLabel.setText("");
-
     if (!backupList.isEmpty()) {
       this.backupList.getSelectionModel().select(0);
     }
-    else {
-      scoreLabel.setText("No backups found.");
-    }
+
+    this.deleteBtn.setDisable(this.backupList.getSelectionModel().getSelectedItem() == null);
+    this.restoreBtn.setDisable(this.backupList.getSelectionModel().getSelectedItem() == null);
   }
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {

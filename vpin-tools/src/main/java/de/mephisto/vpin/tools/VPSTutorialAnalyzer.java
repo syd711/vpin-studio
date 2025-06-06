@@ -3,6 +3,7 @@ package de.mephisto.vpin.tools;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
+import de.mephisto.vpin.restclient.util.HttpUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -18,22 +19,19 @@ public class VPSTutorialAnalyzer {
   public static void main(String[] args) {
     VPS vps = new VPS();
     vps.reload();
-
-    File[] files = new File(VIDEO_PATH).listFiles(new FileFilter() {
-      @Override
-      public boolean accept(File pathname) {
-        return pathname.getName().endsWith(".mp4");
-      }
-    });
-
-    List<String> collect = Arrays.stream(files).map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
-
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
       List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
       for (VpsTutorialUrls tutorialFile : tutorialFiles) {
-        if (tutorialFile.getAuthors().contains("Kongedam") && !collect.contains(table.getId())) {
-          System.out.println("Table: " + table.getName() + " / " + table.getId());
+        if (tutorialFile.getAuthors().contains("Kongedam")) {
+          String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + table.getId() + ".mp4";
+          boolean check = HttpUtils.check(videoUrl);
+          if (!check) {
+            System.out.println("failed to load " + table.getName());
+          }
+          else {
+            System.out.println(table.getName() + " [OK]");
+          }
         }
       }
     }
