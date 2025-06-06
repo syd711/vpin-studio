@@ -1,3 +1,11 @@
+## Release Notes 4.0.8
+
+## Changes
+
+- Fixed stand-alone PUP pack uploading.
+
+---
+
 ## Release Notes 4.0.7
 
 ## Changes

@@ -810,6 +810,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.emulatorCombo.setDisable(true);
     JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings))
         .thenAcceptLater(filtered -> {
+          this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
           this.emulatorCombo.setItems(FXCollections.observableList(filtered));
           this.emulatorCombo.setDisable(false);
 

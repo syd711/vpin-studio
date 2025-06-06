@@ -20,17 +20,20 @@ public class PupPackInstallerJob implements Job {
   @NonNull
   private final String rom;
 
-  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
+  private final boolean async;
+
+  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String pupPackFolderInArchive, @NonNull String rom, boolean async) {
     this.pupPacksService = pupPacksService;
     this.pupTmpArchive = pupTmpArchive;
     this.pupVideosFolder = pupVideosFolder;
     this.pupPackFolderInArchive = pupPackFolderInArchive;
     this.rom = rom;
+    this.async = async;
   }
 
   @Override
   public void execute(JobDescriptor result) {
-  LOG.info("Starting PUP pack installation of '" + pupTmpArchive.getAbsolutePath() + "' to '" + pupVideosFolder.getAbsolutePath() + "', using archive root folder + '" + pupPackFolderInArchive + "' and ROM '" + rom + "'");
+    LOG.info("Starting PUP pack installation of '" + pupTmpArchive.getAbsolutePath() + "' to '" + pupVideosFolder.getAbsolutePath() + "', using archive root folder + '" + pupPackFolderInArchive + "' and ROM '" + rom + "'");
     PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, pupPackFolderInArchive, rom, new UnzipChangeListener() {
       @Override
       public boolean unzipping(String name, int index, int total) {
@@ -51,6 +54,11 @@ public class PupPackInstallerJob implements Job {
     if (!result.isCancelled()) {
       result.setProgress(1);
     }
+
+    if (async && pupTmpArchive.exists() & pupTmpArchive.delete()) {
+      LOG.error("Delete temporary PUP pack archive {}", pupTmpArchive.getAbsolutePath());
+    }
+
     pupPacksService.loadPupPack(rom);
   }
 }
