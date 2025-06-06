@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -141,6 +142,20 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       }
     }
 
+    for (TableColumn<M, ?> column : new ArrayList<>(tableView.getColumns())) {
+      String id = column.getId();
+      if (!columnOrder.contains(id)) {
+        int index = getPreferredColumnIndex(id);
+        if (index != -1) {
+          if (index < tableView.getColumns().size()) {
+            tableView.getColumns().remove(column);
+            tableView.getColumns().add(index, column);
+          }
+        }
+      }
+    }
+
+
     tableView.getColumns().addListener(new ListChangeListener<TableColumn<M, ?>>() {
       @Override
       public void onChanged(Change<? extends TableColumn<M, ?>> c) {
@@ -151,6 +166,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     });
 
     registerKeyPressed();
+  }
+
+  protected int getPreferredColumnIndex(@NonNull String columnId) {
+    return -1;
   }
 
   protected void loadFilterPanel(Class<?> clazz, String resource) {

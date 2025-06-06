@@ -1,17 +1,22 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.pinvol.PinVolPreferences;
 import de.mephisto.vpin.restclient.pinvol.PinVolTableEntry;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -88,6 +93,19 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnPOV)) {
         comp = Comparator.comparing(o -> o.getGame().getPovPath() != null);
+      }
+      else if (column.equals(tableOverviewController.columnTutorials)) {
+        comp = Comparator.comparing(o -> {
+          VpsTable vpsTable = Studio.client.getVpsService().getTableById(o.getGame().getExtTableId());
+          if (vpsTable == null) {
+            return -1;
+          }
+          List<VpsTutorialUrls> tutorialFiles = vpsTable.getTutorialFiles();
+          if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
+            return 1;
+          }
+          return -1;
+        });
       }
       else if (column.equals(tableOverviewController.columnRES)) {
         comp = Comparator.comparing(o -> o.getGame().getResPath() != null);
