@@ -335,12 +335,12 @@ public class HighscoreService implements InitializingBean {
         summary.getScores().addAll(scores);
       }
     }
-
+    Collections.sort(summary.getScores(), (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
     if (Features.MANIA_ENABLED) {
       List<Score> scores = maniaService.getFriendsScoresFor(game);
       summary.mergeExternalScores(scores);
     }
-
+    Collections.sort(summary.getScores(), (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
     return summary;
   }
 

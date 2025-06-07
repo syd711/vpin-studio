@@ -51,7 +51,7 @@ public class ScoreSummary {
         this.scores.add(externalScore);
       }
     }
-    Collections.sort(scores, (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
+    Collections.sort(scores, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
     for (int i = 1; i <= scores.size(); i++) {
       Score score = scores.get(i - 1);
       score.setPosition(i);
