@@ -5,8 +5,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobType;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class JobDescriptor {

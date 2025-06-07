@@ -37,16 +37,17 @@ public class FPCommandLineService implements ApplicationContextAware {
 
   public boolean execute(@NonNull Game game, @Nullable String altExe) {
     File gameFile = game.getGameFile();
-    File fpExe = game.getEmulator().getExe();
+    GameEmulator emulator = game.getEmulator();
+    File fpExe = emulator.getExe();
 
     FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (altExe != null) {
-      fpExe = new File(game.getEmulator().getInstallationFolder(), altExe);
+      fpExe = new File(emulator.getInstallationFolder(), altExe);
     }
     else if (!StringUtils.isEmpty(altLaunchExe)) {
-      fpExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
+      fpExe = new File(emulator.getInstallationFolder(), altLaunchExe);
     }
 
     try {
@@ -70,14 +71,16 @@ public class FPCommandLineService implements ApplicationContextAware {
 
   public File export(@NonNull Game game, @NonNull String commandParam, @NonNull String fileSuffix) {
     File gameFile = game.getGameFile();
-    File vpxExe = game.getEmulator().getExe();
+
+    GameEmulator emulator = game.getEmulator();
+    File fpExe = emulator.getExe();
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
+      List<String> strings = Arrays.asList(fpExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
       LOG.info("Executing FP " + commandParam + "command: " + String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
-      executor.setDir(vpxExe.getParentFile());
+      executor.setDir(fpExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();

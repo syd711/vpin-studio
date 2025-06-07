@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -33,16 +34,17 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
   public boolean execute(@NonNull Game game, @Nullable String altExe, @NonNull String... commandParams) {
     File gameFile = game.getGameFile();
-    File vpxExe = game.getEmulator().getExe();
+    GameEmulator emulator = game.getEmulator(); 
+    File vpxExe = emulator.getExe();
 
     FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (altExe != null) {
-      vpxExe = new File(game.getEmulator().getInstallationFolder(), altExe);
+      vpxExe = new File(emulator.getInstallationFolder(), altExe);
     }
     else if (!StringUtils.isEmpty(altLaunchExe)) {
-      vpxExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
+      vpxExe = new File(emulator.getInstallationFolder(), altLaunchExe);
     }
 
     try {
@@ -72,7 +74,8 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
   public File export(@NonNull Game game, @NonNull String commandParam, @NonNull String fileSuffix) {
     File gameFile = game.getGameFile();
-    File vpxExe = game.getEmulator().getExe();
+    GameEmulator emulator = game.getEmulator();
+    File vpxExe = emulator.getExe();
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {

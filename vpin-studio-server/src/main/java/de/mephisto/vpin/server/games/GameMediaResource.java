@@ -84,11 +84,8 @@ public class GameMediaResource {
 
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
-    EmulatorType emulatorType = EmulatorType.VisualPinball;
     Game game = frontendService.getOriginalGame(search.getGameId());
-    if (game != null) {
-      emulatorType = game.getEmulator().getType();
-    }
+    EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
     List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
     search.setResult(result);
@@ -133,7 +130,7 @@ public class GameMediaResource {
                                                         @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = frontendService.getOriginalGame(gameId);
-    EmulatorType emulatorType = game.getEmulator().getType();
+    EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
