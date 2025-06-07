@@ -108,7 +108,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
 
     Game game = event.getGame();
     if (notificationSettings.isHighscoreUpdatedNotification()) {
-      Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
+      Notification notification = NotificationFactory.createNotification(frontendService.getWheelImage(game),
           game.getGameDisplayName(), "A new highscore has been created!",
           event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
       showNotification(notification);
@@ -118,7 +118,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
       if (!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
-        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Scores have been published on Discord!");
+        Notification notification = NotificationFactory.createNotification(frontendService.getWheelImage(game), game.getGameDisplayName(), "Scores have been published on Discord!");
         showNotification(notification);
       }
     }

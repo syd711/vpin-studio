@@ -35,7 +35,7 @@ public class AssetFactory {
   }
 
 
-  public static byte[] createSubscriptionCard(@NonNull Asset asset, @NonNull Game game, @NonNull Competition competition) {
+  public static byte[] createSubscriptionCard(@NonNull Asset asset, @NonNull Game game, @Nullable File wheelFile, @NonNull Competition competition) {
     final int HEADLINE_SIZE = 18;
     final int SEPARATOR = 30;
 
@@ -84,7 +84,6 @@ public class AssetFactory {
       graphics.setFont(font);
       graphics.drawString(game.getRom(), xOffset, yOffset += HEADLINE_SIZE + 12);
 
-      File wheelFile = game.getWheelImage();
       if (wheelFile != null && wheelFile.exists()) {
         BufferedImage image = ImageUtil.loadImage(wheelFile);
         BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
@@ -98,7 +97,7 @@ public class AssetFactory {
     return null;
   }
 
-  public static byte[] createCompetitionStartedCard(@NonNull Asset asset, @NonNull Game game, @NonNull Competition competition) {
+  public static byte[] createCompetitionStartedCard(@NonNull Asset asset, @NonNull Game game, @Nullable File wheelFile, @NonNull Competition competition) {
     final int HEADLINE_SIZE = 18;
     final int SEPARATOR = 30;
 
@@ -165,7 +164,6 @@ public class AssetFactory {
       graphics.setFont(font);
       graphics.drawString(DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()), xOffset, yOffset += HEADLINE_SIZE + 12);
 
-      File wheelFile = game.getWheelImage();
       if (wheelFile != null && wheelFile.exists()) {
         BufferedImage image = ImageUtil.loadImage(wheelFile);
         BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
@@ -179,7 +177,7 @@ public class AssetFactory {
     return null;
   }
 
-  public static byte[] createCompetitionFinishedCard(Asset asset, @NonNull Game game, @NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary summary) {
+  public static byte[] createCompetitionFinishedCard(Asset asset, @NonNull Game game, @Nullable File wheelFile, @NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary summary) {
     final int SEPARATOR = 10;
     final int IMAGE_WIDTH = 180;
 
@@ -209,7 +207,6 @@ public class AssetFactory {
       }
 
       //wheel icon
-      File wheelFile = game.getWheelImage();
       if (wheelFile != null && wheelFile.exists()) {
         BufferedImage image = ImageUtil.loadImage(wheelFile);
         BufferedImage resizedImage = ImageUtil.resizeImage(image, IMAGE_WIDTH);

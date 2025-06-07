@@ -240,17 +240,20 @@ public class AssetService {
 
   public byte[] getSubscriptionCard(@NonNull Competition competition, @NonNull Game game) {
     Asset asset = getCompetitionBackground(competition.getGameId());
-    return AssetFactory.createSubscriptionCard(asset, game, competition);
+    File wheelFile = frontendService.getWheelImage(game);
+    return AssetFactory.createSubscriptionCard(asset, game, wheelFile, competition);
   }
 
   public byte[] getCompetitionStartedCard(@NonNull Competition competition, @NonNull Game game) {
     Asset asset = getCompetitionBackground(competition.getGameId());
-    return AssetFactory.createCompetitionStartedCard(asset, game, competition);
+    File wheelFile = frontendService.getWheelImage(game);
+    return AssetFactory.createCompetitionStartedCard(asset, game, wheelFile, competition);
   }
 
   public byte[] getCompetitionFinishedCard(@NonNull Competition competition, @NonNull Game game, @Nullable Player winner, @NonNull ScoreSummary summary) {
     Asset asset = getCompetitionBackground(competition.getGameId());
-    return AssetFactory.createCompetitionFinishedCard(asset, game, competition, winner, summary);
+    File wheelFile = frontendService.getWheelImage(game);
+    return AssetFactory.createCompetitionFinishedCard(asset, game, wheelFile, competition, winner, summary);
   }
 
   public Asset getByUuid(String uuid) {

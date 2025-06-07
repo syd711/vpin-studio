@@ -333,6 +333,10 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return getGameByBaseFilename(emuId, basefileName);
   }
 
+  public File getWheelImage(@NonNull Game game) {
+    return frontendService.getWheelImage(game);
+  }
+
   public GameList getImportableTables(int emuId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emuId);
     if (emulator == null) {

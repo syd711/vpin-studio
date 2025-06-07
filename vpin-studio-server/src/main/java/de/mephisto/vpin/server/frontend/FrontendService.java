@@ -134,15 +134,16 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
       if (emulator != null) {
         game.setEmulator(emulator);
+      //  game.setEmulatorName(emulator.getName());
       }
       else {
         LOG.info("No emulator found for {}/{}/{}/{}", game, game.getId(), game.getEmulatorId(), game.getGameFilePath());
       }
 
-      FrontendMediaItem frontendMediaItem = getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
-      if (frontendMediaItem != null) {
-        game.setWheelImage(frontendMediaItem.getFile());
-      }
+      //FrontendMediaItem frontendMediaItem = getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
+      //if (frontendMediaItem != null) {
+      //  game.setWheelImage(frontendMediaItem.getFile());
+      //}
     }
     return game;
   }
@@ -571,10 +572,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @NonNull
   public List<File> getMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    if (mediaStrategy != null && game.getEmulator() != null) {
-      return mediaStrategy.getScreenMediaFiles(game, screen);
-    }
-    return Collections.emptyList();
+    return mediaStrategy != null ? mediaStrategy.getScreenMediaFiles(game, screen) : Collections.emptyList();
   }
 
   public FrontendMediaItem getMediaItem(@NonNull Game game, @NonNull VPinScreen screen, String name) {
@@ -589,8 +587,18 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public List<FrontendMediaItem> getMediaItems(@NonNull Game game, @NonNull VPinScreen screen) {
-    FrontendMedia media = getGameMedia(game);
-    return media.getMediaItems(screen);
+      List<FrontendMediaItem> itemList = new ArrayList<>();
+      List<File> mediaFiles = getMediaFiles(game, screen);
+      for (File file : mediaFiles) {
+        FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
+        itemList.add(item);
+      }
+      return itemList;
+    }
+
+  public File getWheelImage(Game game) {
+    List<File> mediaFiles = getMediaFiles(game, VPinScreen.Wheel);
+    return mediaFiles.isEmpty()? null : mediaFiles.get(0);
   }
 
   /**

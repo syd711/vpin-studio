@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -13,7 +12,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.server.alx.AlxService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.frontend.*;
 import de.mephisto.vpin.server.games.*;
@@ -23,6 +21,9 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import javafx.application.Platform;
+
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -141,7 +142,8 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
 
     if (notificationSettings.isHighscoreCheckedNotification()) {
-      Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Highscore scan finished!");
+      File wheelImage = frontendService.getWheelImage(game);
+      Notification notification = NotificationFactory.createNotification(wheelImage, game.getGameDisplayName(), "Highscore scan finished!");
       notificationService.showNotification(notification);
     }
   }

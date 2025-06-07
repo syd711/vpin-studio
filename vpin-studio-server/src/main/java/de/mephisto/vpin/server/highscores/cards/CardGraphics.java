@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
@@ -40,12 +41,16 @@ public class CardGraphics {
 
   private final DefaultPictureService directB2SService;
   private final HighscoreCardResolution highscoreCardResolution;
+  private final FrontendService frontendService;
+
   private final ScoreSummary summary;
   private final CardTemplate template;
   private final Game game;
 
-  public CardGraphics(DefaultPictureService directB2SService, HighscoreCardResolution highscoreCardResolution, CardTemplate template, Game game, ScoreSummary summary) {
+  public CardGraphics(DefaultPictureService directB2SService, FrontendService frontendService, 
+      HighscoreCardResolution highscoreCardResolution, CardTemplate template, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
+    this.frontendService = frontendService;
     this.highscoreCardResolution = highscoreCardResolution;
     this.template = template;
     this.game = game;
@@ -287,7 +292,7 @@ public class CardGraphics {
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
-      File wheelIconFile = game.getWheelImage();
+      File wheelIconFile = frontendService.getWheelImage(game);
       if (wheelIconFile != null && wheelIconFile.exists()) {
         WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
         if (augmenter.getBackupWheelIcon().exists()) {
@@ -386,7 +391,7 @@ public class CardGraphics {
 
     int x = 0;
     //file exists && there is place to render it
-    File wheelIconFile = game.getWheelImage();
+    File wheelIconFile = frontendService.getWheelImage(game);
     if (wheelIconFile != null && wheelIconFile.exists() && template.isRenderWheelIcon()) {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
       if (augmenter.getBackupWheelIcon().exists()) {

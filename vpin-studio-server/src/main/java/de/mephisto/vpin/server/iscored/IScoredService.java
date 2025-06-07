@@ -14,7 +14,6 @@ import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
@@ -28,7 +27,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.io.File;
 
 @Service
 public class IScoredService implements PreferenceChangedListener, InitializingBean {
@@ -99,8 +98,8 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
 
       if (Features.NOTIFICATIONS_ENABLED && result.isSent() && notificationSettings.isiScoredNotification()) {
         Game game = gameService.getGame(newScore.getGameId());
-
-        Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
+        File wheelImage = gameService.getWheelImage(game);
+        Notification notification = NotificationFactory.createNotification(wheelImage,
             game.getGameDisplayName(), "An iScored highscore has been posted!",
             newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
         notificationService.showNotification(notification);

@@ -168,7 +168,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         //sample card are always generated
         if (generateSampleCard) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
+          BufferedImage bufferedImage = new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
             return true;
@@ -179,7 +179,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
           if (!game.isCardDisabled()) {
-            BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
+            BufferedImage bufferedImage = new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
             if (bufferedImage != null) {
               File highscoreCard = getCardFile(game, screenName);
               ImageUtil.write(bufferedImage, highscoreCard);

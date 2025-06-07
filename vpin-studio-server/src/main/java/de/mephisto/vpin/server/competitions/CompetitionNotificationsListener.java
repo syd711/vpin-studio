@@ -11,6 +11,9 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,7 +41,8 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
     if (isEnabled()) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Competition \"" + competition.getName() + "\" started.");
+        File wheelfile = gameService.getWheelImage(game);
+        Notification notification = NotificationFactory.createNotification(wheelfile, game.getGameDisplayName(), "Competition \"" + competition.getName() + "\" started.");
         notificationService.showNotification(notification);
       }
     }
@@ -59,7 +63,8 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
     if (isEnabled()) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Competition \"" + competition.getName() + "\" finished.");
+        File wheelfile = gameService.getWheelImage(game);
+        Notification notification = NotificationFactory.createNotification(wheelfile, game.getGameDisplayName(), "Competition \"" + competition.getName() + "\" finished.");
         notificationService.showNotification(notification);
       }
     }

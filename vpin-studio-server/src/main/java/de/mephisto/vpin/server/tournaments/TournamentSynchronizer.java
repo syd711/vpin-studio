@@ -26,9 +26,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -213,7 +211,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
   private void finishTable(List<Game> knownGames, TournamentTableInfo tournamentTableInfo) {
     Game game = gameService.getGameByVpsTable(knownGames, tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      File wheelFile = game.getWheelImage();
+      File wheelFile = gameService.getWheelImage(game);
       if (wheelFile != null && wheelFile.exists()) {
         new WheelAugmenter(wheelFile).deAugment();
         new WheelIconDelete(wheelFile).delete();
@@ -227,7 +225,7 @@ public class TournamentSynchronizer implements ApplicationListener<ApplicationRe
   private void startTable(List<Game> knownGames, Tournament tournament, TournamentTableInfo tournamentTableInfo, TournamentMetaData metaData) {
     Game game = gameService.getGameByVpsTable(knownGames, tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      File wheelFile = game.getWheelImage();
+      File wheelFile = gameService.getWheelImage(game);
       if (wheelFile != null && wheelFile.exists()) {
         if (!StringUtils.isEmpty(metaData.getBadge())) {
           File badgeFile = systemService.getBadgeFile(metaData.getBadge());
