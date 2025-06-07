@@ -9,13 +9,8 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
-import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.notifications.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,25 +18,23 @@ import java.util.List;
 
 public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(InGameRecorderJob.class);
-  private final GameLifecycleService gameLifecycleService;
-  private final NotificationService notificationService;
+
   private final NotificationSettings notificationSettings;
 
-  public InGameRecorderJob(GameLifecycleService gameLifecycleService, DMDPositionService dmdPositionService, NotificationService notificationService, GameService gameService, FrontendConnector frontend,
-                           FrontendStatusService frontendStatusService, RecorderSettings settings,
-                           NotificationSettings notificationSettings, RecordingDataSummary recordingDataSummary,
-                           List<FrontendPlayerDisplay> recordingScreens) {
-    super(gameLifecycleService, dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
-    this.gameLifecycleService = gameLifecycleService;
-    this.notificationService = notificationService;
+  public InGameRecorderJob(RecorderService recorderService, NotificationSettings notificationSettings,  
+                           RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+    super(recorderService, settings, recordingDataSummary, recordingScreens);
     this.notificationSettings = notificationSettings;
   }
 
   @Override
   public void execute(JobDescriptor jobDescriptor) {
+    FrontendConnector frontend = recorderService.getFrontendConnector();
+
     LOG.info("***************************** In-Game Recording Log ******************************************************");
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
-      Game game = gameService.getGame(data.getGameId());
+      Game game = recorderService.getGame(data);
+
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
         if (showStartNotification(jobDescriptor, data)) {
@@ -82,7 +75,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
         jobDescriptor.setProgress(1);
         jobDescriptor.setGameId(-1);
-        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
+        recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
 
@@ -92,7 +85,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
   private void showEndNotification(JobDescriptor jobDescriptor, RecordingData data) {
     if (notificationSettings.isRecordingEndNotification()) {
       Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder End", "The recording has been finished.");
-      notificationService.showNotificationNow(notification);
+      recorderService.showNotificationNow(notification);
     }
   }
 
@@ -114,7 +107,7 @@ public class InGameRecorderJob extends FrontendRecorderJob implements Job {
         notification.setDurationSec(seconds - 1);
       }
 
-      notificationService.showNotificationNow(notification);
+      recorderService.showNotificationNow(notification);
 
       while (seconds > 0) {
         Thread.sleep(1000);

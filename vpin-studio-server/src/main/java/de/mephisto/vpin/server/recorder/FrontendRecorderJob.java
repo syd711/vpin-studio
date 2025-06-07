@@ -6,12 +6,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.recorder.*;
-import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,23 +17,17 @@ import java.util.List;
 public class FrontendRecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendRecorderJob.class);
 
-  final GameLifecycleService gameLifecycleService;
-  final DMDPositionService dmdPositionService;
-  final GameService gameService;
-  final FrontendConnector frontend;
-  final FrontendStatusService frontendStatusService;
+  final RecorderService recorderService;
   final RecorderSettings recorderSettings;
   final RecordingDataSummary recordingDataSummary;
   final List<FrontendPlayerDisplay> recordingScreens;
 
+  // currently recording game
   GameRecorder gameRecorder;
 
-  public FrontendRecorderJob(GameLifecycleService gameLifecycleService, DMDPositionService dmdPositionService, GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
-    this.gameLifecycleService = gameLifecycleService;
-    this.dmdPositionService = dmdPositionService;
-    this.gameService = gameService;
-    this.frontend = frontend;
-    this.frontendStatusService = frontendStatusService;
+  public FrontendRecorderJob(RecorderService recorderService, RecorderSettings settings, 
+                             RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+    this.recorderService = recorderService;
     this.recorderSettings = settings;
     this.recordingDataSummary = recordingDataSummary;
     this.recordingScreens = recordingScreens;
@@ -45,10 +35,13 @@ public class FrontendRecorderJob implements Job {
 
   @Override
   public void execute(JobDescriptor jobDescriptor) {
+    FrontendConnector frontend = recorderService.getFrontendConnector();
+
     LOG.info("***************************** Game Recording Log ******************************************************");
-    frontendStatusService.setEventsEnabled(false);
+    recorderService.setFrontedEventsEnabled(false);
+
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
-      Game game = gameService.getGame(data.getGameId());
+      Game game = recorderService.getGame(data);
       boolean recordingRequired = isRecordingRequired(game);
       if (!recordingRequired) {
         LOG.info("Required assets have been found for \"{}\" or the overwrite option was not enabled, skipping recording.", game.getGameDisplayName());
@@ -114,15 +107,17 @@ public class FrontendRecorderJob implements Job {
       }
       finally {
         frontend.endFrontendRecording();
-        gameRecorder.finalizeRecordings();
-        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
+        if (gameRecorder != null) {
+          gameRecorder.finalizeRecordings();
+        }
+        recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
     LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 
-    frontendStatusService.setEventsEnabled(true);
+    recorderService.setFrontedEventsEnabled(true);
     LOG.info("***************************** /Game Recording Log *****************************************************");
   }
 
@@ -141,6 +136,7 @@ public class FrontendRecorderJob implements Job {
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
+    FrontendConnector frontend = recorderService.getFrontendConnector();
     frontend.killFrontend();
     LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.recordingDataSummary.size() + " processed.");
     if (gameRecorder != null) {
@@ -155,6 +151,7 @@ public class FrontendRecorderJob implements Job {
   }
 
   protected boolean isRecordingRequired(Game game) {
+    FrontendConnector frontend = recorderService.getFrontendConnector();
     RecordingData recordingData = recordingDataSummary.get(game.getId());
     if (recordingData != null) {
       List<VPinScreen> screens = recordingData.getScreens();

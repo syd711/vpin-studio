@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameStatus;
@@ -10,11 +12,12 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
-import de.mephisto.vpin.server.dmd.DMDPositionService;
 import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.VPinScreenService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
@@ -22,6 +25,9 @@ import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +77,6 @@ public class RecorderService {
   private FPService fpService;
 
   @Autowired
-  private DMDPositionService dmdPositionService;
-
-  @Autowired
   private NotificationService notificationService;
 
   @Autowired
@@ -86,10 +89,10 @@ public class RecorderService {
 
     Job job = null;
     if (settings.getRecordingMode() == null || settings.getRecordingMode().equals(RecordingMode.emulator)) {
-      job = new EmulatorRecorderJob(gameLifecycleService, dmdPositionService, gameService, vpxService, fpService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+      job = new EmulatorRecorderJob(this, settings, recordingData, getRecordingScreens());
     }
     else {
-      job = new FrontendRecorderJob(gameLifecycleService, dmdPositionService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+      job = new FrontendRecorderJob(this, settings, recordingData, getRecordingScreens());
     }
 
     jobDescriptor = new JobDescriptor(JobType.RECORDER);
@@ -136,7 +139,7 @@ public class RecorderService {
 
     if (!recordingDataEntry.getScreens().isEmpty()) {
       NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      FrontendRecorderJob job = new InGameRecorderJob(gameLifecycleService, dmdPositionService, notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
+      FrontendRecorderJob job = new InGameRecorderJob(this, notificationSettings, settings, recordingData, getRecordingScreens());
       jobDescriptor = new JobDescriptor(JobType.RECORDER);
       jobDescriptor.setTitle("In-Game Screen Recorder");
       jobDescriptor.setJob(job);
@@ -189,4 +192,51 @@ public class RecorderService {
     }
     return null;
   }
+
+  //-----------------------------------------------
+  // Package methods used by jobs, all jobs to get access to services
+
+  Game getGame(RecordingData data) {
+    return gameService.getGame(data.getGameId());
+  }
+
+  FrontendConnector getFrontendConnector() {
+    return frontendService.getFrontendConnector();
+  }
+
+  void setFrontedEventsEnabled(boolean enabled) {
+    frontendStatusService.setEventsEnabled(enabled);
+  }
+
+
+  void notifyGameAssetsChanged(int gameId, @NonNull AssetType assetType, @Nullable Object asset) {
+    gameLifecycleService.notifyGameAssetsChanged(gameId, assetType, asset);
+  }
+
+  void showNotificationNow(Notification notification) {
+    notificationService.showNotificationNow(notification);
+  }
+
+  void launchGame(Game game, RecorderSettings recorderSettings) {
+    String altExe = recorderSettings.getCustomLauncher();
+    if (!recorderSettings.isCustomLauncherEnabled()) {
+      altExe = null;
+    }
+
+    if (game.isVpxGame()) {
+      if(recorderSettings.isPrimaryParam()) {
+        vpxService.play(game, altExe, "primary");
+      }
+      else {
+        vpxService.play(game, altExe, null);
+      }
+    }
+    else if (game.isFpGame()) {
+      fpService.play(game, altExe);
+    }
+    else {
+      throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
+    }
+  }
+
 }

@@ -1,21 +1,16 @@
 package de.mephisto.vpin.server.recorder;
 
-import de.mephisto.vpin.commons.utils.NirCmd;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.server.dmd.DMDPositionService;
-import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameLifecycleService;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.util.WindowsUtil;
-import de.mephisto.vpin.server.vpx.VPXService;
+import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,26 +18,24 @@ import java.util.List;
 
 public class EmulatorRecorderJob extends FrontendRecorderJob {
   private final static Logger LOG = LoggerFactory.getLogger(EmulatorRecorderJob.class);
+
   public static final int EMULATOR_WAITING_TIMEOUT_SECONDS = 60;
-  private final GameLifecycleService gameLifecycleService;
-  private final VPXService vpxService;
-  private final FPService fpService;
 
-  GameRecorder gameRecorder;
-
-  public EmulatorRecorderJob(GameLifecycleService gameLifecycleService, DMDPositionService dmdPositionService, GameService gameService, VPXService vpxService, FPService fpService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
-    super(gameLifecycleService, dmdPositionService, gameService, frontend, frontendStatusService, settings, recordingDataSummary, recordingScreens);
-    this.gameLifecycleService = gameLifecycleService;
-    this.vpxService = vpxService;
-    this.fpService = fpService;
+  public EmulatorRecorderJob(RecorderService recorderService, RecorderSettings settings, 
+                             RecordingDataSummary recordingDataSummary, List<FrontendPlayerDisplay> recordingScreens) {
+    super(recorderService, settings, recordingDataSummary, recordingScreens);
   }
 
   @Override
   public void execute(JobDescriptor jobDescriptor) {
+    FrontendConnector frontend = recorderService.getFrontendConnector();
+
     LOG.info("***************************** Game Recording Log ******************************************************");
-    frontendStatusService.setEventsEnabled(false);
+    recorderService.setFrontedEventsEnabled(false);
+ 
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
-      Game game = gameService.getGame(data.getGameId());
+      Game game = recorderService.getGame(data);
+
       boolean recordingRequired = isRecordingRequired(game);
       if (!recordingRequired) {
         LOG.info("Required assets have been found for \"{}\" or the overwrite option was not enabled, skipping recording.", game.getGameDisplayName());
@@ -76,25 +69,7 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
 
         jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
 
-        String altExe = recorderSettings.getCustomLauncher();
-        if (!recorderSettings.isCustomLauncherEnabled()) {
-          altExe = null;
-        }
-
-        if (game.getEmulator().isVpxEmulator()) {
-          if(recorderSettings.isPrimaryParam()) {
-            vpxService.play(game, altExe, "primary");
-          }
-          else {
-            vpxService.play(game, altExe, null);
-          }
-        }
-        else if (game.getEmulator().isFpEmulator()) {
-          fpService.play(game, altExe);
-        }
-        else {
-          throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
-        }
+        recorderService.launchGame(game, recorderSettings);
 
         int secondToWait = EMULATOR_WAITING_TIMEOUT_SECONDS;
         while (!WindowsUtil.isProcessRunning("Future Pinball", "Visual Pinball Player") && secondToWait > 0) {
@@ -127,19 +102,20 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         //this will kill the emulators too
         frontend.killFrontend();
         gameRecorder.finalizeRecordings();
-        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
+        recorderService.notifyGameAssetsChanged(game.getId(), AssetType.FRONTEND_MEDIA, null);
       }
     }
     LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 
-    frontendStatusService.setEventsEnabled(true);
+    recorderService.setFrontedEventsEnabled(true);
     LOG.info("***************************** /Game Recording Log *****************************************************");
   }
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
+    FrontendConnector frontend = recorderService.getFrontendConnector();
     frontend.killFrontend();
     super.cancel(jobDescriptor);
   }
