@@ -401,7 +401,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setPupPackName(gameDetails.getPupPack());
     PupPack pupPack = pupPacksService.getPupPackCached(game);
     if (pupPack != null) {
-      game.setPupPack(pupPack);
       game.setPupPackName(pupPack.getName());
     }
 

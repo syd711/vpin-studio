@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -170,8 +171,21 @@ public class PupPacksService implements InitializingBean {
     return b;
   }
 
+  public boolean hasPupPack(Game game) {
+    return getCachedPupPack(game) != null;
+  }
+
   public boolean isPupPackDisabled(@Nullable Game game) {
-    return frontendService.isPupPackDisabled(game);
+    return game.isPupPackDisabled();
+  }
+
+
+  public List<String> getMissingResources(Game game) {
+    PupPack puppack = getCachedPupPack(game);
+    if (puppack != null) {
+      return puppack.getMissingResources();
+    }
+    return null;
   }
 
   public void writePUPHideNext(Game game) {
@@ -246,7 +260,12 @@ public class PupPacksService implements InitializingBean {
     }
   }
 
-  public void exportDefaultPicture(@NonNull PupPack pupPack, @NonNull File target) {
+  public void exportDefaultPicture(@NonNull Game game, @NonNull File target) {
+    PupPack pupPack = getPupPack(game);
+    if (pupPack == null) {
+      return;
+    }
+
     File defaultPicture = new File(target.getParentFile(), SystemService.DEFAULT_BACKGROUND);
     if (defaultPicture.exists() && defaultPicture.length() > 0) {
       return;

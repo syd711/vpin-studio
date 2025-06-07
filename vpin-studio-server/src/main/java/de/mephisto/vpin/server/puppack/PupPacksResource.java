@@ -80,8 +80,8 @@ public class PupPacksResource {
     return null;
   }
 
-  @GetMapping("/enabled/{rom}")
-  public boolean enable(@PathVariable("id") int id) {
+  @GetMapping("/enabled/{id}")
+  public boolean enabled(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     return !pupPacksService.isPupPackDisabled(game);
   }

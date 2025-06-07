@@ -24,7 +24,6 @@ import de.mephisto.vpin.server.games.GameDataChangedListener;
 import de.mephisto.vpin.server.games.GameLifecycleService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -163,9 +162,8 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       return;
     }
 
-    PupPack pupPack = game.getPupPack();
-    if (pupPack != null) {
-      pupPackService.exportDefaultPicture(pupPack, target);
+    if (pupPackService.hasPupPack(game)) {
+      pupPackService.exportDefaultPicture(game, target);
       addWatermark(target, "from PupPack");
       return;
     }
