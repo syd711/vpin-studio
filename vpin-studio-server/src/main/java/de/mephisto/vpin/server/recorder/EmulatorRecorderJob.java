@@ -62,6 +62,8 @@ public class EmulatorRecorderJob extends FrontendRecorderJob {
         }
 
         frontend.killFrontend();
+        //killing the frontend will also show the taskbar, so give nircmd a little time.
+        Thread.sleep(500);
         NirCmd.setTaskBarVisible(false);
 
         jobDescriptor.setGameId(game.getId());
