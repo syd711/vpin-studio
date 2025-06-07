@@ -20,10 +20,10 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -49,9 +49,6 @@ public class UniversalUploadService {
   private GameService gameService;
 
   @Autowired
-  private VPXService vpxService;
-
-  @Autowired
   private DMDService dmdService;
 
   @Autowired
@@ -65,6 +62,9 @@ public class UniversalUploadService {
 
   @Autowired
   private AltSoundService altSoundService;
+
+  @Autowired
+  private MusicService musicService;
 
   @Autowired
   private GameMediaService gameMediaService;
@@ -221,17 +221,9 @@ public class UniversalUploadService {
           if (game != null) {
             rom = game.getRom();
           }
-          if (gameEmulator != null) {
-            File musicFolder = gameEmulator.getMusicFolder();
-            if (musicFolder.exists()) {
-              vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
-              if (game != null) {
-                gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
-              }
-            }
-            else {
-              LOG.warn("Skipped installation of music bundle, no music folder {} found.", musicFolder.getAbsolutePath());
-            }
+          musicService.installMusic(tempFile, uploadDescriptor.getEmulatorId(), analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+          if (game != null) {
+            gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
         }
         break;

@@ -3,13 +3,10 @@ package de.mephisto.vpin.server.vpx;
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
-import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.configuration2.Configuration;
@@ -296,11 +293,6 @@ public class VPXService implements InitializingBean {
       LOG.error("No game found reading checksum");
     }
     return null;
-  }
-
-  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
-    return true;
   }
 
   //------------------------------------------

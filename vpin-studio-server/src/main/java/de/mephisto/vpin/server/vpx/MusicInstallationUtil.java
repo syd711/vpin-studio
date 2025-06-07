@@ -19,6 +19,7 @@ import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+//TODO move in MusicService
 public class MusicInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(MusicInstallationUtil.class);
 
@@ -116,7 +117,6 @@ public class MusicInstallationUtil {
 
   private static void unrarIntoMusicFolder(@NonNull File archiveFile, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, @Nullable String relativePath) throws IOException {
     int count = 0;
-    File destinationDir = archiveFile.getParentFile();
     try {
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
