@@ -2,6 +2,9 @@ package de.mephisto.vpin.server.vpsdb;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,6 +21,11 @@ public class VpsEntryService implements InitializingBean {
   public VpsDbEntry getVpsEntry(@NonNull String vpsTableId) {
     return vpsEntriesRepository.findByVpsTableId(vpsTableId);
   }
+
+  public List<VpsDbEntry> getAllVpsEntries() {
+    return vpsEntriesRepository.findAll();
+  }
+
 
   public void save(VpsTable vpsTable) {
     VpsDbEntry vpsEntry = getVpsEntry(vpsTable.getId());

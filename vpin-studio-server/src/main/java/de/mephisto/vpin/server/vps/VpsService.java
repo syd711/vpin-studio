@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -157,7 +158,8 @@ public class VpsService implements InitializingBean {
       return null;
     }
 
-    augmentTable(vpsTable);
+    // Not needed ?
+    //augmentTable(vpsTable);
 
     VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsVersionId);
     if (tableVersion == null || StringUtils.isEmpty(tableVersion.getVersion())) {
@@ -167,23 +169,23 @@ public class VpsService implements InitializingBean {
     return tableVersion;
   }
 
-  private void augmentTable(VpsTable vpsTable) {
-    if (vpsTable != null) {
-      VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(vpsTable.getId());
-      if (vpsDbEntry != null) {
-        vpsTable.setComment(vpsDbEntry.getComment());
-      }
+  private void augmentTable(VpsTable vpsTable, VpsDbEntry vpsDbEntry) {
+    if (vpsTable != null && vpsDbEntry != null) {
+      vpsTable.setComment(vpsDbEntry.getComment());
     }
   }
 
   public List<VpsTable> getTables() {
-    vpsDatabase.getTables().forEach(this::augmentTable);
+    List<VpsDbEntry> entries = vpsEntryService.getAllVpsEntries();
+    Map<String, VpsDbEntry> entriesById = entries.stream().collect(Collectors.toMap(v -> v.getVpsTableId(), v -> v));
+    vpsDatabase.getTables().forEach(v -> augmentTable(v, entriesById.get(v.getId())));
     return vpsDatabase.getTables();
   }
 
   public VpsTable getTableById(String extTableId) {
     VpsTable tableById = vpsDatabase.getTableById(extTableId);
-    augmentTable(tableById);
+    VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(tableById.getId());
+    augmentTable(tableById, vpsDbEntry);
     return tableById;
   }
 
