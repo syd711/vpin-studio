@@ -71,10 +71,10 @@ public class ApngTests extends Application {
   @Test
   public void testOneImage() throws Exception {
     // pick one test (starting by 1)
-    int testIdx = 50;
+    int testIdx = 13;
 
     LinkedHashMap<String, String> tests = getTests();
-    Map.Entry<String, String> test = findTest(tests, testIdx - 1);
+    Map.Entry<String, String> test = findTest(tests, testIdx);
     runtest(test);
   }
 
@@ -94,8 +94,8 @@ public class ApngTests extends Application {
       imgfile = imgfile.substring(2);
     }
     System.out.println("Running test " + imgfile + ": " + test.getValue());
-    try (InputStream img = getClass().getResourceAsStream(imgfile)) {
-      ApngFrameDecoder decoder = ApngFrameDecoder.getDecoderFor(img);
+    try (InputStream img = getClass().getResourceAsStream(imgfile);
+          ApngFrameDecoder decoder = new ApngFrameDecoder(img)) {
       // process all frames
       ApngFrame frame;
       int nbFramesDecoded = 0;
@@ -107,7 +107,7 @@ public class ApngTests extends Application {
       
       // if no ACTL chunk in the image, getNbAvailableFrames() return -1 and it is normal
       int availFrames = decoder.getNbAvailableFrames();
-      if (availFrames >= 0) {
+      if (availFrames > 0) {
         assertEquals(availFrames, nbFramesDecoded);
       }
 

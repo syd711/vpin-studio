@@ -15,18 +15,44 @@ public class ApngChunkDataInputStream extends DataInputStream {
 
   public static final byte[] APNG_SIGNATURE = new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 
+  public static final int IHDR = 'I' << 24 | 'H' << 16 | 'D' << 8 | 'R'; // 1229472850
+  public static final int PLTE = 'P' << 24 | 'L' << 16 | 'T' << 8 | 'E'; // 1347179589
+  public static final int gAMA = 'g' << 24 | 'A' << 16 | 'M' << 8 | 'A'; // 1732332865
+  public static final int bKGD = 'b' << 24 | 'K' << 16 | 'G' << 8 | 'D'; // 1649100612
+  public static final int tRNS = 't' << 24 | 'R' << 16 | 'N' << 8 | 'S'; // 1951551059
+  public static final int acTL = 'a' << 24 | 'c' << 16 | 'T' << 8 | 'L'; // 1633899596
+  public static final int fcTL = 'f' << 24 | 'c' << 16 | 'T' << 8 | 'L'; // 1717785676
+  public static final int IDAT = 'I' << 24 | 'D' << 16 | 'A' << 8 | 'T'; // 1229209940
+  public static final int fdAT = 'f' << 24 | 'd' << 16 | 'A' << 8 | 'T'; // 1717846356
+  public static final int cHRM = 'c' << 24 | 'H' << 16 | 'R' << 8 | 'M'; // 1665684045
+  public static final int iCCP = 'i' << 24 | 'C' << 16 | 'C' << 8 | 'P'; // 1766015824
+  public static final int sBIT = 's' << 24 | 'B' << 16 | 'I' << 8 | 'T'; // 1933723988
+  public static final int sRGB = 's' << 24 | 'R' << 16 | 'G' << 8 | 'B'; // 1934772034
+  public static final int hIST = 'h' << 24 | 'I' << 16 | 'S' << 8 | 'T'; // 1749635924
+  public static final int pHYs = 'p' << 24 | 'H' << 16 | 'Y' << 8 | 's'; // 1883789683
+  public static final int sPLT = 's' << 24 | 'P' << 16 | 'L' << 8 | 'T'; // 1934642260
+  public static final int tIME = 't' << 24 | 'I' << 16 | 'M' << 8 | 'E'; // 1950960965
+  public static final int iTXt = 'i' << 24 | 'T' << 16 | 'X' << 8 | 't'; // 1767135348
+  public static final int tEXt = 't' << 24 | 'E' << 16 | 'X' << 8 | 't'; // 1950701684
+  public static final int zTXt = 'z' << 24 | 'T' << 16 | 'X' << 8 | 't'; // 2052348020
+  public static final int IEND = 'I' << 24 | 'E' << 16 | 'N' << 8 | 'D'; // 1229278788
+
+  
   private ApngHeader header;
   private ApngPalette palette;
-  private int transparentColor;
+
+	private boolean tRNS_present = false;
+  private int[] transparentColor;
+
   //private int gamma;
 
   /** The current FrameControl that goes along side the nextFrame() */
-  private ApngFrameControl fcTL;
+  private ApngFrameControl frameControl;
 
   /** Number of animated frames contained in the image, -1 means not set as no ACTL chunk present */
-  private int availableFrames = -1;
+  private int availableFrames = 0;
   /* how many loop to play, 0 means repeat infinitely */
-  private int numLoops = -1;
+  private int numLoops = 0;
 
   // For integrity checks
   private CRC32 crc = new CRC32();
@@ -58,8 +84,19 @@ public class ApngChunkDataInputStream extends DataInputStream {
     return header;
   }
 
-  public ApngColorType getColorType() {
+  public int getColorType() {
     return header.getColorType();
+  }
+
+  public boolean hasTransparency() {
+    return tRNS_present;
+  }
+
+  public int[] getTransparentColor() {
+    return transparentColor;
+  }
+  public int getTransparentColorint() {
+    return -1;
   }
 
   public int getAvailableFrames() {
@@ -70,23 +107,19 @@ public class ApngChunkDataInputStream extends DataInputStream {
     return numLoops;
   }
 
-  public int getTransparentColor() {
-    return transparentColor;
-  }
-
   public ApngPalette getPalette() {
     return palette;
   }
 
   public ApngFrameControl getLastFrameControl() {
-    return fcTL;
+    return frameControl;
   }
 
   //--------------------------------------
 
   public byte[] nextDat() throws IOException {
     // comes again after end has been reached
-    if (chunkType == ApngChunkType.IEND) {
+    if (chunkType == IEND) {
       return null;
     }
 
@@ -94,14 +127,14 @@ public class ApngChunkDataInputStream extends DataInputStream {
       processChunk();
       readNextChunk();
     }
-    while (chunkType != ApngChunkType.fcTL && chunkType != ApngChunkType.IEND);
+    while (chunkType != fcTL && chunkType != IEND);
 
     if (frameData.size() > 0) {
       byte[] dat = frameData.toByteArray();
       frameData.reset();
       return dat;
     }
-    else if (chunkType != ApngChunkType.IEND) {
+    else if (chunkType != IEND) {
       // case where first FCTL is before IDAT, then we just consumed previous chunks; then go to next FCTL
       return nextDat();
     }
@@ -117,12 +150,9 @@ public class ApngChunkDataInputStream extends DataInputStream {
     if (remainingLength < 0) {
       throw new EOFException("Unexpected end of file encountered in readNextChunk()");
     }
-    if (remainingLength > 0xfffff) {
-      throw new IOException("Wrong length for chunk");
-    }
 
     this.chunkType = readInt();
-    if (header == null && chunkType != ApngChunkType.IHDR) {
+    if (header == null && chunkType != IHDR) {
       throw new IOException("Chunk found before Header");
     }
   }
@@ -140,43 +170,43 @@ public class ApngChunkDataInputStream extends DataInputStream {
     crcUpdateInt(chunkType);
 
     switch (chunkType) {
-    case ApngChunkType.IHDR:
+    case IHDR:
       processIHDR();
       break;
 
-    case ApngChunkType.acTL:
+    case acTL:
       processACTL();
       break;
 
-    case ApngChunkType.fcTL:
+    case fcTL:
       processFCTL();
       break;
 
-    case ApngChunkType.IDAT:
+    case IDAT:
       processIDAT();
       break;
 
-    case ApngChunkType.fdAT:
+    case fdAT:
       processFDAT();
       break;
 
-    case ApngChunkType.bKGD:
+    case bKGD:
       processBKGD();
       break;
 
-    case ApngChunkType.gAMA:
+    case gAMA:
       processGAMA();
       break;
 
-    case ApngChunkType.tRNS:
+    case tRNS:
       processTRNS();
       break;
 
-    case ApngChunkType.PLTE:
+    case PLTE:
       processPLTE();
       break;
 
-    case ApngChunkType.IEND:
+    case IEND:
       break;
 
     default:
@@ -218,15 +248,44 @@ public class ApngChunkDataInputStream extends DataInputStream {
    * Reads the initial header chunk (IHDR).
    */
   void processIHDR() throws IOException {
-    this.header = new ApngHeader(
-        crcReadInt(),                       // Width
-        crcReadInt(),                       // Height
-        crcReadByte(),                      // Bit depth
-        ApngColorType.byType(crcReadByte()), // Color type
-        crcReadByte(),                      // Compression method
-        crcReadByte(),                      // Filter method
-        crcReadByte()                       // Interlace method
-      );  
+    int width = crcReadInt();
+    int height = crcReadInt();
+    if (width <= 0) {
+      throw new IOException("Bad PNG image width, must be > 0!");
+    }
+    if (height <= 0) {
+      throw new IOException("Bad PNG image height, must be > 0!");
+    }
+    if (width >= (Integer.MAX_VALUE / height)) {
+      throw new IOException("Bad PNG image size!");
+    }
+
+    byte bitDepth = crcReadByte();
+    if (bitDepth != 1 && bitDepth != 2 && bitDepth != 4 && bitDepth != 8 && bitDepth != 16) {
+      throw new IOException("Bad PNG bit depth");
+    }
+
+    byte colorType = crcReadByte();
+    if (colorType > 6 || colorType == 1 || colorType == 5) {
+      throw new IOException("Bad PNG color type");
+    }
+    byte compressionMethod = crcReadByte();
+    if (compressionMethod != 0) {
+        throw new IOException("Bad PNG comression!");
+    }
+
+    byte filterMethod = crcReadByte();
+    if (filterMethod != 0) {
+        throw new IOException("Bad PNG filter method!");
+    }
+
+    byte interlaceMethod = crcReadByte();
+    if (interlaceMethod != 0 && interlaceMethod != 1) {
+        throw new IOException("Unknown interlace method (not 0 or 1)!");
+    }
+
+    this.header = new ApngHeader(width, height, bitDepth, colorType,
+        compressionMethod, filterMethod, interlaceMethod);  
   }
 
   /**
@@ -241,11 +300,36 @@ public class ApngChunkDataInputStream extends DataInputStream {
    * Reads the transparency chunk (tRNS).
    */
   void processTRNS() throws IOException {
-    byte[] TRNS = new byte[remainingLength];
-    crcReadFully(TRNS);
-    this.transparentColor = ApngPalette.fromTRNS(header.getColorType(), header.getBitDepth(), TRNS);
-    if (this.palette != null) {
-      palette.applyTransparency(TRNS);
+    switch (header.getColorType()) {
+      case ApngDecoder.PNG_COLOR_PALETTE:
+        if (palette == null) {
+            emitWarning("tRNS chunk without prior PLTE chunk, ignoring it.");
+            return;
+        }
+        byte[] TRNS = new byte[remainingLength];
+        crcReadFully(TRNS);
+        palette.applyTransparency(TRNS);
+        tRNS_present = true;
+        break;
+      case ApngDecoder.PNG_COLOR_GRAY:
+        if (remainingLength == 2) {
+          transparentColor = new int[3];
+          transparentColor[1] = crcReadUnsignedShort();
+          tRNS_present = true;
+        }
+        break;
+      case ApngDecoder.PNG_COLOR_RGB:
+        if (remainingLength == 6) {
+          transparentColor = new int[3];
+          transparentColor[0] = crcReadUnsignedShort();
+          transparentColor[1] = crcReadUnsignedShort();
+          transparentColor[2] = crcReadUnsignedShort();
+          tRNS_present = true;
+        }
+        break;
+      default:
+        emitWarning("TransparencyChunk may not present when alpha explicitly defined");
+        ignoreChunkType();
     }
   }
 
@@ -269,13 +353,27 @@ public class ApngChunkDataInputStream extends DataInputStream {
    * Reads the palette chunk (PLTE).
    */
   void processPLTE() throws IOException {
-    byte[] abPLTE = new byte[remainingLength];
-    crcReadFully(abPLTE);
-    this.palette = ApngPalette.createPalette(abPLTE);
+    if (palette != null) {
+      emitWarning("A PNG image may not contain more than one PLTE chunk.\n" + "The chunk wil be ignored.");
+      ignoreChunkType();
+      return;
+    }
+    switch (header.getColorType()) {
+      case ApngDecoder.PNG_COLOR_PALETTE:
+        byte[] abPLTE = new byte[remainingLength];
+        crcReadFully(abPLTE);
+        this.palette = ApngPalette.createPalette(abPLTE, header.getBitDepth());
+        return;
+      case ApngDecoder.PNG_COLOR_GRAY:
+      case ApngDecoder.PNG_COLOR_GRAY_ALPHA:
+        emitWarning("A PNG gray or gray alpha image cannot have a PLTE chunk.\n" + "The chunk wil be ignored.");
+      // silently ignore palette for RGB
+      default:
+        ignoreChunkType();
+    }
   }
 
-  
-  /**
+	/**
    * Reads the frame control chunk (fcTL).
    */
   void processFCTL() throws IOException {
@@ -285,7 +383,7 @@ public class ApngChunkDataInputStream extends DataInputStream {
     }
     frameSequenceExpected++;
 
-    this.fcTL = new ApngFrameControl(
+    this.frameControl = new ApngFrameControl(
         crcReadInt(),             // Width
         crcReadInt(),             // Height
         crcReadInt(),             // Offset x
@@ -339,6 +437,14 @@ public class ApngChunkDataInputStream extends DataInputStream {
   public void close() throws IOException {
     super.close();
   }
+
+  /**
+   * 
+   * @param warning
+   */
+  private void emitWarning(String warning) {
+    // apngImageLoader.emitWarning(warning);
+	}
 
   //----------------------------------- READ / CRC UTILITIES ---
 
@@ -417,4 +523,5 @@ public class ApngChunkDataInputStream extends DataInputStream {
     crc.update((n >> 8) & 0xff);
     crc.update(n & 0xff);
   }
+
 }

@@ -8,13 +8,13 @@ public class ApngHeader
 {
   final int width;
   final int height;
-  final ApngColorType colorType;
+  final int colorType;
   final int bitDepth;
   final int compressionMethod;
   final int filterMethod;
   final int interlaceMethod;
 
-  public ApngHeader(int width, int height, int bitDepth, ApngColorType colorType, int compressionMethod, int filterMethod, int interlaceMethod) {
+  public ApngHeader(int width, int height, int bitDepth, int colorType, int compressionMethod, int filterMethod, int interlaceMethod) {
     this.width = width;
     this.height = height;
     this.bitDepth = bitDepth;
@@ -49,7 +49,7 @@ public class ApngHeader
   /**
    * colorType used in the image
    */
-  public ApngColorType getColorType() {
+  public int getColorType() {
     return colorType;
   }
 

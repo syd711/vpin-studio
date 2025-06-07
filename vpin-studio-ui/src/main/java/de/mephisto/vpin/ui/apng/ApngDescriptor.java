@@ -9,15 +9,15 @@ import de.mephisto.vpin.ui.apng.chunks.ApngChunkDataInputStream;
  */
 public class ApngDescriptor extends ImageDescriptor {
 
-  private static final String formatName = "APNG";
+  private static final String formatName = "PNG";
 
-  private static final String[] extensions = { "apng" };
+  private static final String[] extensions = { "png" };
 
   private static final Signature[] signatures = {
     new Signature(ApngChunkDataInputStream.APNG_SIGNATURE)
   };
 
-  private static final String[] mimeSubtypes = { "apng" };
+  private static final String[] mimeSubtypes = { "png", "x-png", "apng" };
 
   private static ImageDescriptor theInstance = null;
 

@@ -50,7 +50,8 @@ public class ApngFrameControl
   public int getDelayMillis() {
     int num = Math.max(0, Math.min(65535, delayNum));
     int den = delayDen == 0 ? 100 : Math.max(1, Math.min(65535, delayDen));
-    return (int) (1000.0 * num / den);
+    int time = (int) (1000.0 * num / den);
+    return num == 0? (den == 0 ? 0 : 1) : time;
   }
 
   //--------------------------------------
