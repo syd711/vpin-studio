@@ -71,6 +71,7 @@ public class TablesSidebarIniController implements Initializable {
   @FXML
   private void onReload() {
     if (this.game.isPresent()) {
+      Studio.client.getGameService().reload(this.game.get().getId());
       EventManager.getInstance().notifyTableChange(game.get().getId(), null);
     }
   }

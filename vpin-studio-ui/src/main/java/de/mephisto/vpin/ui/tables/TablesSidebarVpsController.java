@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -83,6 +83,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private CheckBox filterCheckbox;
 
   @FXML
+  private CheckBox autoApplyCheckbox;
+
+  @FXML
   private Button copyTableVersionBtn;
 
   @FXML
@@ -141,7 +144,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (!games.isEmpty()) {
       try {
         GameRepresentation gameRepresentation = this.games.get(0);
-        client.getFrontendService().vpsLink(gameRepresentation.getId(), null, null);
+        client.getFrontendService().saveVpsMapping(gameRepresentation.getId(), null, null);
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }
       catch (Exception e) {
@@ -164,7 +167,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   @FXML
   private void onAutoMatch() {
     if (!this.games.isEmpty()) {
-      TableDialogs.openAutoMatch(this.games);
+      boolean matched = TableDialogs.openAutoMatch(this.games);
+      if (matched && autoApplyCheckbox.isSelected()) {
+        TableDialogs.openAutoFillSettingsDialog(Studio.stage, this.games, null, null, null);
+      }
     }
   }
 
@@ -240,7 +246,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (selectedEntry.isPresent()) {
         GameRepresentation gameRepresentation = this.games.get(0);
         VpsTable vpsTable = selectedEntry.get();
-        client.getFrontendService().vpsLink(gameRepresentation.getId(), vpsTable.getId(), null);
+        client.getFrontendService().saveVpsMapping(gameRepresentation.getId(), vpsTable.getId(), null);
+        if (autoApplyCheckbox.isSelected()) {
+          TableDialogs.openAutoFillSettingsDialog(Studio.stage, this.games, null, null, null);
+        }
       }
       this.tableVersionsCombo.valueProperty().addListener(this);
       EventManager.getInstance().notifyTableChange(this.games.get(0).getId(), null);
@@ -304,27 +313,16 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
-      if (StringUtils.isNotEmpty(vpsTableId)) {
-        // parallel and async get
-        JFXFuture
-            .supplyAllAsync(
-                () -> client.getVpsService().getTableById(vpsTableId),
-                () -> client.getFrontendService().getFrontendMedia(game.getId()),
-                () -> client.getEmulatorService().getGameEmulator(game.getEmulatorId()))
-            .thenAcceptLater(objs -> {
-              VpsTable tableById = (VpsTable) objs[0];
-              FrontendMediaRepresentation frontendMedia = (FrontendMediaRepresentation) objs[1];
-              GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) objs[2];
-
-              if (tableById != null) {
-                String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
-                refreshTableView(tableById, frontendMedia, tableFormats);
-                if (!StringUtils.isEmpty(vpsTableVersionId)) {
-                  VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
-                  tableVersionsCombo.setValue(version);
-                }
-              }
-            });
+      VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
+      if (tableById != null) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+        String[] tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
+        refreshTableView(tableById, frontendMedia, tableFormats);
+        if (!StringUtils.isEmpty(vpsTableVersionId)) {
+          VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
+          tableVersionsCombo.setValue(version);
+        }
       }
     }
   }
@@ -581,8 +579,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         // check value of
         String extTableId = gameRepresentation.getExtTableId();
         String extVersionId = gameRepresentation.getExtTableVersionId();
-        if (!StringUtils.equals(updatedId, extVersionId)) {
-          client.getFrontendService().vpsLink(gameRepresentation.getId(), extTableId, updatedId);
+        client.getFrontendService().saveVpsMapping(gameRepresentation.getId(), extTableId, updatedId);
+
+        if (autoApplyCheckbox.isSelected()) {
+          gameRepresentation = client.getGame(gameRepresentation.getId());
+          TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(gameRepresentation), null);
+        }
+        else {
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
         }
       }
@@ -595,6 +598,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
     Image image2 = new Image(Studio.class.getResourceAsStream("vps-checked.png"));
     ImageView iconVpsReset = new ImageView(image2);
     iconVpsReset.setFitWidth(18);
@@ -621,6 +626,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       this.tableVersionsCombo.valueProperty().removeListener(this);
       refreshView(games);
       this.tableVersionsCombo.valueProperty().addListener(this);
+    });
+
+    autoApplyCheckbox.setSelected(uiSettings.isAutoApplyVpsData());
+    autoApplyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      uiSettings.setAutoApplyVpsData(newValue);
+      client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
     List<VpsTable> tables = client.getVpsService().getTables();

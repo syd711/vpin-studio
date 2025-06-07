@@ -35,7 +35,7 @@ public class NVRamSynchronizer {
       "| Table | ROM | Available | Submitted By |\n" +
       "| ----- | --- | --------- |--------------|\n";
 
-  private static String AUTHOR = "Buffdriver";
+  private static String AUTHOR = "Gorgatron";
 
   public static void main(String[] args) throws Exception {
     synchonizeNVRamRepo();

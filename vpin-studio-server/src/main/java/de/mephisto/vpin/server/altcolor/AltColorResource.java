@@ -45,9 +45,31 @@ public class AltColorResource {
     return new AltColor();
   }
 
+  @DeleteMapping("/{id}/{filename}")
+  public boolean deleteBackup(@PathVariable("id") int id, @PathVariable("filename") String filename) {
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      return altColorService.deleteBackup(game, filename);
+    }
+    return false;
+  }
+
+  @PutMapping("restore/{gameId}/{filename}")
+  public boolean restore(@PathVariable("gameId") int gameId, @PathVariable("filename") String filename) {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return altColorService.restore(game, filename);
+    }
+    return false;
+  }
+
   @DeleteMapping("{id}")
   public boolean delete(@PathVariable("id") int id) {
-    return altColorService.delete(gameService.getGame(id));
+    Game game = gameService.getGame(id);
+    if (game != null) {
+      return altColorService.delete(game);
+    }
+    return false;
   }
 
   @PostMapping("/upload")
@@ -63,14 +85,15 @@ public class AltColorResource {
     catch (Exception e) {
       LOG.error(AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_COLOR.name() + " upload failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       descriptor.finalizeUpload();
     }
   }
 
   private AltColor getAltColor(@NonNull Game game) {
     AltColor altColor = altColorService.getAltColor(game);
-    if (altColor != null) {
+    if (altColor.isAvailable()) {
       altColor.setValidationStates(validationService.validateAltColor(game));
     }
     return altColor;

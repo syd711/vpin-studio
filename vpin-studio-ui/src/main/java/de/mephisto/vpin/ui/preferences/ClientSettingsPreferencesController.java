@@ -151,6 +151,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnPov;
   @FXML
+  private CheckBox columnTutorials;
+  @FXML
   private CheckBox columnRes;
   @FXML
   private CheckBox columnPupPack;
@@ -610,6 +612,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPov.setSelected(uiSettings.isColumnPov());
     columnPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnPov(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(uiSettings);
+    });
+
+    columnTutorials.setSelected(uiSettings.isColumnTutorials());
+    columnTutorials.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnTutorials(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });

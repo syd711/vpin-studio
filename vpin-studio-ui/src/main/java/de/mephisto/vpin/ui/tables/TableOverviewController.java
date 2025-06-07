@@ -38,6 +38,7 @@ import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
+import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -67,6 +68,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +136,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPOV;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTutorials;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnINI;
@@ -954,6 +959,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), uiSettings);
     });
 
+    BaseLoadingColumn.configureLoadingColumn(columnTutorials, "Loading...", (value, model) -> {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      return new VpsTutorialColumn(model.getGame().getExtTableId(), uiSettings);
+    });
+
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
@@ -1188,7 +1198,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Label label = new Label();
         label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star", getIconColor(value));
-        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE+2);
+        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE + 2);
         label.setGraphic(icon);
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
@@ -1201,7 +1211,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline", getIconColor(value));
         label.setGraphic(icon);
-        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE+2);
+        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE + 2);
         icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
@@ -1291,7 +1301,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
         //This adds overflow text
         Label label = new Label("+" + (matches.size() - count));
-        label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
+        label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 3 0 0 0;");
         label.getStyleClass().add("default-text");
 
         box.getChildren().add(label);
@@ -1887,6 +1897,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
+    columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorials());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
@@ -1932,6 +1943,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getSelectionModel().clearSelection();
       tableView.getSelectionModel().select((selectedIndex + 1));
     }
+  }
+
+  @Override
+  protected int getPreferredColumnIndex(@NotNull String columnId) {
+    if (columnId.equals(columnTutorials.getId())) {
+      return 13;
+    }
+    return -1;
   }
 
   public TablesController getTablesController() {

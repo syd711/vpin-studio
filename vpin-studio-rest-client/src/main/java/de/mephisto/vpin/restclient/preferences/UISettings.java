@@ -90,6 +90,7 @@ public class UISettings extends JsonSettings {
   private boolean columnRes = true;
   private boolean columnPlaylists = true;
   private boolean columnPov = false;
+  private boolean columnTutorials = false;
   private boolean columnPinVol = false;
   private boolean columnPupPack = true;
   private boolean columnRom = true;
@@ -438,6 +439,14 @@ public class UISettings extends JsonSettings {
 
   public void setColumnPov(boolean columnPov) {
     this.columnPov = columnPov;
+  }
+
+  public boolean isColumnTutorials() {
+    return columnTutorials;
+  }
+
+  public void setColumnTutorials(boolean columnTutorials) {
+    this.columnTutorials = columnTutorials;
   }
 
   public boolean isColumnPupPack() {

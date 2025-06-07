@@ -340,7 +340,7 @@ public class HighscoreService implements InitializingBean {
       List<Score> scores = maniaService.getFriendsScoresFor(game);
       summary.mergeExternalScores(scores);
     }
-
+    Collections.sort(summary.getScores(), (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
     return summary;
   }
 

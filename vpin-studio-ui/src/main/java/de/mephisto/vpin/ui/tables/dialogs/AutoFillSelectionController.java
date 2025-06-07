@@ -96,7 +96,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
     else {
       GameRepresentation game = this.games.get(0);
       try {
-        tableDetails = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails, vpsTableId, vpsVersionId);
+        tableDetails = client.getFrontendService().autoFillTableDetailsSimulated(game.getId(), tableDetails, vpsTableId, vpsVersionId);
       }
       catch (Exception ex) {
         LOG.error("Failed to fill table details: " + ex.getMessage(), ex);

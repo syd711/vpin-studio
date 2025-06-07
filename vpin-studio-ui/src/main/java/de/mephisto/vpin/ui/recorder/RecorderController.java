@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -16,6 +18,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -140,6 +143,53 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
 
   @FXML
+  private void onAutoSelect(ActionEvent e) {
+    selection.clear();
+
+    ValidationSettings validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
+    ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
+    List<GameRepresentationModel> items = tableView.getItems();
+
+    Set<VPinScreen> vPinScreens = screenColumns.keySet();
+
+    for (GameRepresentationModel item : items) {
+      FrontendMediaRepresentation gameMedia = client.getGameMediaService().getGameMedia(item.getGameId());
+      RecordingData data = null;
+      List<VPinScreen> screens = new ArrayList<>();
+
+      for (VPinScreen screen : vPinScreens) {
+        TableColumn<GameRepresentationModel, GameRepresentationModel> column = screenColumns.get(screen);
+        if (!column.isVisible()) {
+          continue;
+        }
+
+        ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
+        ValidatorMedia media = config.getMedia();
+
+        if (media.equals(ValidatorMedia.image) || media.equals(ValidatorMedia.audio)) {
+          continue;
+        }
+
+        FrontendMediaItemRepresentation defaultMediaItem = gameMedia.getDefaultMediaItem(screen);
+        if (defaultMediaItem == null && config.getOption().equals(ValidatorOption.mandatory)) {
+          if (data == null) {
+            data = new RecordingData();
+            data.setGameId(item.getGameId());
+          }
+          screens.add(screen);
+        }
+      }
+      if (data != null) {
+        data.setScreens(screens);
+        selection.add(data);
+      }
+    }
+
+    this.doReload(false);
+  }
+
+
+  @FXML
   private void onOpenTable(ActionEvent e) {
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
@@ -243,12 +293,17 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           this.reloadBtn.setDisable(false);
           tableView.requestFocus();
 
+
           if (selectedItem == null) {
             tableView.getSelectionModel().select(0);
           }
           else {
             tableView.getSelectionModel().select(selectedItem);
           }
+
+          RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+          boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
+          this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
           endReload();
         });
   }
@@ -737,7 +792,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       tableView.refresh();
     });
   }
-
 
 
 //----------------------- Model classes ------------------------------------------------------------------------------

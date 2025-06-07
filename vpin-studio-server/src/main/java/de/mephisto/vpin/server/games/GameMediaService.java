@@ -104,6 +104,9 @@ public class GameMediaService {
     VpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
     if (vpsMatch != null && !simulate) {
       gameService.vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
+      //immediately re-apply the new match since the post processing access it
+      game.setExtTableId(vpsMatch.getExtTableId());
+      game.setExtTableVersionId(vpsMatch.getExtTableVersionId());
       if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {
         fixGameVersion(game.getId(), vpsMatch.getVersion(), false);
       }

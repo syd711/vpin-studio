@@ -12,13 +12,22 @@ public class AltColor {
   private Date modificationDate;
   private List<ValidationState> validationStates;
   private List<String> files = new ArrayList<>();
-  private int backedUpFiles = 0;
+  private List<String> backedUpFiles = new ArrayList<>();
+  private boolean available = false;
 
-  public int getBackedUpFiles() {
+  public boolean isAvailable() {
+    return available;
+  }
+
+  public void setAvailable(boolean available) {
+    this.available = available;
+  }
+
+  public List<String> getBackedUpFiles() {
     return backedUpFiles;
   }
 
-  public void setBackedUpFiles(int backedUpFiles) {
+  public void setBackedUpFiles(List<String> backedUpFiles) {
     this.backedUpFiles = backedUpFiles;
   }
 
