@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
@@ -26,13 +27,13 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.pinvol.PinVolService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.puppack.PupPack;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,6 +75,9 @@ public class GameMediaService {
   private GameService gameService;
 
   @Autowired
+  private PupPacksService pupPacksService;
+
+  @Autowired
   private GameLifecycleService gameLifecycleService;
 
   @Autowired
@@ -90,6 +94,12 @@ public class GameMediaService {
 
   @Autowired
   private AltSoundService altSoundService;
+
+  @Autowired
+  private AltColorService altColorService;
+
+  @Autowired
+  private MusicService musicService;
 
   @Autowired
   private CardService cardService;
@@ -585,17 +595,12 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeleteHighscores()) {
-          highscoreService.resetHighscore(game);
+          highscoreService.deleteHighscore(game);
         }
 
         if (descriptor.isDeleteTable()) {
           if (!FileUtils.delete(game.getGameFile())) {
             success = false;
-          }
-
-          File highscoreIniFile = game.getHighscoreIniFile();
-          if (highscoreIniFile != null && highscoreIniFile.exists()) {
-            highscoreIniFile.delete();
           }
         }
 
@@ -615,7 +620,8 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeleteBAMCfg()) {
-          if (!FileUtils.delete(game.getBAMCfgFile())) {
+          File BAMCfgFile = game.getBAMCfgFile();
+          if (!FileUtils.delete(BAMCfgFile)) {
             success = false;
           }
         }
@@ -639,8 +645,7 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeletePupPack()) {
-          PupPack pupPack = game.getPupPack();
-          if (pupPack != null && !pupPack.delete()) {
+          if (!pupPacksService.delete(game)) {
             success = false;
           }
         }
@@ -659,20 +664,20 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeleteAltSound()) {
-          if (altSoundService.delete(game)) {
+          if (!altSoundService.delete(game)) {
             success = false;
           }
         }
 
         if (descriptor.isDeleteAltColor()) {
-          if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
+          if (!altColorService.delete(game)) {
             success = false;
           }
         }
 
         //cfg files belong to MAME
         if (descriptor.isDeleteCfg()) {
-          if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
+          if (!mameService.deleteCfg(game)) {
             success = false;
           }
 
@@ -684,7 +689,7 @@ public class GameMediaService {
         }
 
         if (descriptor.isDeleteMusic()) {
-          if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
+          if (!musicService.delete(game)) {
             success = false;
           }
         }

@@ -23,6 +23,7 @@ import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
@@ -80,6 +81,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private HighscoreResolver highscoreResolver;
 
   @Autowired
   private MameRomAliasService mameRomAliasService;
@@ -145,15 +149,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
-      if (game.getDirectB2SPath() == null && game.getPupPackPath() == null) {
+      if (game.getDirectB2SPath() == null && !pupPacksService.hasPupPack(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
-        if (findFirst) {
-          return result;
-        }
-      }
-
-      if (game.getDirectB2SPath() == null && game.getPupPack() != null && pupPacksService.isPupPackDisabled(game)) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED));
         if (findFirst) {
           return result;
         }
@@ -182,14 +179,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       return screenValidationResult;
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.getPupPackPath() != null && !game.getPupPack().getMissingResources().isEmpty()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
+    if (isVPX) {
+      List<ValidationState> validationStates = validatePupPack(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
         if (findFirst) {
           return result;
         }
       }
-    }
+    } 
 
     if (fptOrVpx && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
@@ -229,7 +227,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             }
           }
 
-          if (isValidationEnabled(game, CODE_VPS_PUPPACK_MISSING) && game.getPupPack() == null) {
+          if (isValidationEnabled(game, CODE_VPS_PUPPACK_MISSING) && !pupPacksService.hasPupPack(game)) {
             List<VpsAuthoredUrls> pupPackFiles = vpsTable.getPupPackFiles();
             for (VpsAuthoredUrls pupPackFile : pupPackFiles) {
               if (pupPackFile.getUrls().isEmpty() || pupPackFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
@@ -489,10 +487,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       return Collections.emptyList();
     }
 
-    File dmdDevicedll = new File(game.getEmulator().getMameFolder(), "DmdDevice.dll");
-    File dmdDevice64dll = new File(game.getEmulator().getMameFolder(), "DmdDevice64.dll");
-    File dmdextexe = new File(game.getEmulator().getMameFolder(), "dmdext.exe");
-    File dmdDeviceIni = new File(game.getEmulator().getMameFolder(), "DmdDevice.ini");
+    //File mameFolder = mameService.getMameFolder();
+    File mameFolder = game.getEmulator().getMameFolder();
+    File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
+    File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
+    File dmdextexe = new File(mameFolder, "dmdext.exe");
+    File dmdDeviceIni = new File(mameFolder, "DmdDevice.ini");
 
     if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
       if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
@@ -574,13 +574,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.getPupPack() != null && !game.getPupPack().getMissingResources().isEmpty()) {
-        ValidationState validationState = ValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
-        result.add(validationState);
+      List<String> missingResources =  pupPacksService.getMissingResources(game);
+      if (missingResources != null && !missingResources.isEmpty()) {
+        result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, missingResources));
       }
     }
 
-    if (game.getDirectB2SPath() == null && game.getPupPack() != null && pupPacksService.isPupPackDisabled(game)) {
+    if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && !pupPacksService.isPupPackDisabled(game)) {
       ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
       result.add(validationState);
     }
@@ -715,8 +715,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       return validation;
     }
 
+    File nvRamFile = highscoreResolver.getNvRamFile(game);
+
     //not played and the ROM VPReg.stg entry not found
-    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
+    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !nvRamFile.exists()) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
@@ -760,7 +762,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(rom.toLowerCase()) && !vpRegEntries.contains(tableName) && !nvRamFile.exists()) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
