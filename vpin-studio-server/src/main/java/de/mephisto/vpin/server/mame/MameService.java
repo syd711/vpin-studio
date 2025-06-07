@@ -4,10 +4,10 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
@@ -210,6 +210,15 @@ public class MameService implements InitializingBean {
     }
     return 0;
   }
+
+  //---------------------------------
+
+  public boolean deleteCfg(@NonNull Game game) {
+    File cfgFile = game.getCfgFile();
+    return cfgFile != null && cfgFile.exists() && FileUtils.delete(cfgFile);
+  }
+
+  //--------------------------------
 
   public void installRom(UploadDescriptor uploadDescriptor, GameEmulator gameEmulator, File tempFile, UploaderAnalysis analysis) throws IOException {
     File romFolder = gameEmulator != null ? gameEmulator.getRomFolder() : getRomsFolder();

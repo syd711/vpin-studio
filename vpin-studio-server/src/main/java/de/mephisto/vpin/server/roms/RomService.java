@@ -23,7 +23,7 @@ public class RomService {
 
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
-    if (game.getEmulator().isVpxEmulator()) {
+    if (game.isVpxGame()) {
       if (game.getGameFile().exists()) {
         ScanResult scan = VPXFileScanner.scan(game.getGameFile());
         if (!StringUtils.isEmpty(scan.getRom())) {

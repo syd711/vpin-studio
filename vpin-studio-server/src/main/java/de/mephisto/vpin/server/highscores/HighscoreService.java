@@ -81,8 +81,9 @@ public class HighscoreService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
 
-    if (game.getEmulator().getVPRegFile().exists()) {
-      VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
+    File vpRegFile = game.getEmulator().getVPRegFile();
+    if (vpRegFile.exists()) {
+      VPReg reg = new VPReg(vpRegFile);
       highscoreFiles.setVpRegEntries(reg.getEntries());
     }
 
@@ -94,7 +95,7 @@ public class HighscoreService implements InitializingBean {
       }
     }
 
-    File nvramFolder = game.getEmulator().getNvramFolder();
+    File nvramFolder =  highscoreResolver.getNvRamFile(game);
     if (nvramFolder.exists()) {
       File[] files = nvramFolder.listFiles((dir, name) -> name.endsWith(".nv"));
       if (files != null) {
@@ -119,7 +120,8 @@ public class HighscoreService implements InitializingBean {
             break;
           }
           case NVRam: {
-            result = !game.getNvRamFile().exists() || game.getNvRamFile().delete();
+            File nvRamFile = highscoreResolver.getNvRamFile(game);
+            result = nvRamFile == null || !nvRamFile.exists() || nvRamFile.delete();
             break;
           }
           case Ini: {
@@ -143,7 +145,8 @@ public class HighscoreService implements InitializingBean {
       //always check nvram in case the highscore type was not determined
       NVRamList nvRamList = nvRamService.getResettedNVRams();
       if (nvRamList.contains(game.getRom()) || nvRamList.contains(game.getTableName())) {
-        if (!nvRamService.copyResettedNvRam(game.getNvRamFile())) {
+        File nvRamFile = highscoreResolver.getNvRamFile(game);
+        if (nvRamFile != null && nvRamFile.exists() && !nvRamService.copyResettedNvRam(nvRamFile)) {
           result = false;
         }
       }
@@ -155,6 +158,21 @@ public class HighscoreService implements InitializingBean {
       LOG.error("Failed to reset highscore: " + e.getMessage(), e);
     }
     return false;
+  }
+
+
+  public void deleteHighscore(Game game) {
+    resetHighscore(game);
+
+    File highscoreTextFile = highscoreResolver.getHighscoreTextFile(game);
+    if (highscoreTextFile != null && highscoreTextFile.exists()) {
+      highscoreTextFile.delete();
+    }
+
+    File highscoreIniFile = highscoreResolver.getHighscoreIniFile(game);
+    if (highscoreIniFile != null && highscoreIniFile.exists()) {
+      highscoreIniFile.delete();
+    }
   }
 
   @NonNull

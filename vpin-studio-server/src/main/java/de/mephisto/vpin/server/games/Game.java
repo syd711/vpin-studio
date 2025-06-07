@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.puppack.PupPack;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -47,8 +46,6 @@ public class Game {
 
   private File gameFile;
 
-  private File wheelImageFile;
-
   private ValidationState validationState;
   private boolean hasMissingAssets;
   private boolean hasOtherIssues;
@@ -65,8 +62,6 @@ public class Game {
 
   private boolean defaultBackgroundAvailable;
   private boolean eventLogAvailable;
-  private PupPack pupPack;
-  private List<Integer> playlists = new ArrayList<>();
 
   private String pupPackName;
   private Long templateId;
@@ -75,7 +70,7 @@ public class Game {
   private String extVersion;
   private String comment;
   private String launcher;
-  private Long numberPlayed;
+  private long numberPlayed = -1;
 
   //internal value not exposed
   private String altLauncherExe;
@@ -137,20 +132,11 @@ public class Game {
     this.vrRoomEnabled = vrRoomEnabled;
   }
 
+  @JsonIgnore
   public boolean isPlayed() {
-    return numberPlayed != null && numberPlayed > 0;
+    return numberPlayed > 0;
   }
 
-  @JsonIgnore
-  public boolean isPupPackDisabled() {
-    return pupPackDisabled;
-  }
-
-  public void setPupPackDisabled(boolean pupPackDisabled) {
-    this.pupPackDisabled = pupPackDisabled;
-  }
-
-  @JsonIgnore
   public long getNumberPlayed() {
     return numberPlayed;
   }
@@ -193,10 +179,20 @@ public class Game {
   }
 
   public String getPupPackName() {
-    if (this.pupPack != null) {
-      return this.pupPack.getName();
-    }
     return pupPackName;
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
+
+  @JsonIgnore
+  public boolean isPupPackDisabled() {
+    return pupPackDisabled;
+  }
+
+  public void setPupPackDisabled(boolean pupPackDisabled) {
+    this.pupPackDisabled = pupPackDisabled;
   }
 
   public boolean isDefaultBackgroundAvailable() {
@@ -233,10 +229,6 @@ public class Game {
 
   public boolean isFxGame() {
     return this.emulator.isFxEmulator();
-  }
-
-  public void setPupPackName(String pupPackName) {
-    this.pupPackName = pupPackName;
   }
 
   public Long getTemplateId() {
@@ -277,14 +269,6 @@ public class Game {
 
   public void setGameName(String gameName) {
     this.gameName = gameName;
-  }
-
-  public List<Integer> getPlaylists() {
-    return playlists;
-  }
-
-  public void setPlaylists(List<Integer> playlists) {
-    this.playlists = playlists;
   }
 
   public String getExtTableId() {
@@ -337,56 +321,9 @@ public class Game {
     this.foundTableExit = foundTableExit;
   }
 
-  @JsonIgnore
-  public File getWheelImage() {
-    return wheelImageFile;
-  }
+  // getWheelImage() -> moved in frontendService
 
-  public void setWheelImage(File wheelFile) {
-    this.wheelImageFile = wheelFile;
-  }
-
-   /*
-  @JsonIgnore
-  public Image getWheelImage() {
-    FrontendMediaItem frontendMediaItem = getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-    Image image = null;
-    if (frontendMediaItem != null) {
-      try {
-        BufferedImage bufferedImage = ImageUtil.loadImage(frontendMediaItem.getFile());
-        image = SwingFXUtils.toFXImage(bufferedImage, null);
-      }
-      catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
-    return image;
-  }
-  */
-
-  @JsonIgnore
-  @Nullable
-  public PupPack getPupPack() {
-    return pupPack;
-  }
-
-  public void setPupPack(PupPack pupPack) {
-    this.pupPack = pupPack;
-  }
-
-  public String getPupPackPath() {
-    if (pupPack != null && pupPack.getPupPackFolder().exists()) {
-      return pupPack.getPupPackFolder().getAbsolutePath();
-    }
-    return null;
-  }
-
-  public long getGameFileSize() {
-    if (this.getGameFile().exists()) {
-      return this.getGameFile().length();
-    }
-    return -1;
-  }
+  // getPupPack() -> moved in puppacksService
 
   public String getVersion() {
     return version;
@@ -394,14 +331,6 @@ public class Game {
 
   public void setVersion(String version) {
     this.version = version;
-  }
-
-  public HighscoreType getHighscoreType() {
-    return highscoreType;
-  }
-
-  public void setHighscoreType(HighscoreType highscoreType) {
-    this.highscoreType = highscoreType;
   }
 
   public String getTableName() {
@@ -447,46 +376,7 @@ public class Game {
     this.ignoredValidations = ignoredValidations;
   }
 
-  @JsonIgnore
-  @Nullable
-  public File getHighscoreFile() {
-    HighscoreType highscoreType = getHighscoreType();
-    if (highscoreType != null) {
-      switch (highscoreType) {
-        case EM: {
-          return getHighscoreTextFile();
-        }
-        case VPReg: {
-          return getEmulator().getVPRegFile();
-        }
-        case NVRam: {
-          return getNvRamFile();
-        }
-      }
-    }
-    return null;
-  }
-
-  @JsonIgnore
-  @Nullable
-  public File getHighscoreTextFile() {
-    if (!StringUtils.isEmpty(this.getHsFileName())) {
-      return new File(emulator.getUserFolder(), this.getHsFileName());
-    }
-    return null;
-  }
-
-  @JsonIgnore
-  @Nullable
-  public File getAlternateHighscoreTextFile(@NonNull String name) {
-    if (!StringUtils.isEmpty(name)) {
-      if (!name.endsWith(".txt")) {
-        name = name + ".txt";
-      }
-      return new File(emulator.getUserFolder(), name);
-    }
-    return null;
-  }
+  // File getHighscoreFile -> moved in HighscoreResolution
 
   @NonNull
   @JsonIgnore
@@ -501,31 +391,7 @@ public class Game {
     return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getHighscoreIniFile() {
-    File iniFile = null;
-    if (!StringUtils.isEmpty(getRom())) {
-      String iniScoreName = FilenameUtils.getBaseName(getRom()) + "_glf.ini";
-      iniFile = new File(getGameFile().getParentFile(), iniScoreName);
-    }
-
-    if (iniFile == null || !iniFile.exists()) {
-      if (!StringUtils.isEmpty(getTableName())) {
-        String iniScoreName = FilenameUtils.getBaseName(getTableName()) + "_glf.ini";
-        iniFile = new File(getGameFile().getParentFile(), iniScoreName);
-      }
-    }
-    return iniFile;
-  }
-
-  public String getHighscoreIniFilename() {
-    File iniFile = getHighscoreIniFile();
-    if (iniFile != null && iniFile.exists()) {
-      return iniFile.getAbsolutePath();
-    }
-    return null;
-  }
+  // getHighscoreIniFile moved in HighscoreResolution
 
   @NonNull
   @JsonIgnore
@@ -545,8 +411,15 @@ public class Game {
     return gameFile;
   }
 
-  public boolean isRomRequired() {
-    return getHighscoreType() != null && HighscoreType.NVRam.equals(getHighscoreType());
+  public void setGameFile(@NonNull File gameFile) {
+    this.gameFile = gameFile;
+  }
+
+  public long getGameFileSize() {
+    if (this.getGameFile().exists()) {
+      return this.getGameFile().length();
+    }
+    return -1;
   }
 
   public Date getModified() {
@@ -577,18 +450,6 @@ public class Game {
     return null;
   }
 
-  public void setGameFile(@NonNull File gameFile) {
-    this.gameFile = gameFile;
-  }
-
-  public String getRom() {
-    return rom;
-  }
-
-  public void setRom(String rom) {
-    this.rom = rom;
-  }
-
   public String getDirectB2SPath() {
     if (getDirectB2SFile().exists()) {
       return getDirectB2SFile().getAbsolutePath();
@@ -601,22 +462,6 @@ public class Game {
       return this.getGameFile().getAbsolutePath();
     }
     return null;
-  }
-
-  public String getHsFileName() {
-    return hsFileName;
-  }
-
-  public void setHsFileName(String hsFileName) {
-    this.hsFileName = hsFileName;
-  }
-
-  public String getScannedHsFileName() {
-    return scannedHsFileName;
-  }
-
-  public void setScannedHsFileName(String scannedHsFileName) {
-    this.scannedHsFileName = scannedHsFileName;
   }
 
   public String getGameDisplayName() {
@@ -633,6 +478,14 @@ public class Game {
 
   public void setGameFileName(String gameFileName) {
     this.gameFileName = gameFileName;
+  }
+
+  public String getRom() {
+    return rom;
+  }
+
+  public void setRom(String rom) {
+    this.rom = rom;
   }
 
   public int getId() {
@@ -699,6 +552,35 @@ public class Game {
     this.dmdProjectFolder = dmdProjectFolder;
   }
 
+  public boolean isRomRequired() {
+    return getHighscoreType() != null && HighscoreType.NVRam.equals(getHighscoreType());
+  }
+
+  //---------------------------
+
+  public HighscoreType getHighscoreType() {
+    return highscoreType;
+  }
+
+  public void setHighscoreType(HighscoreType highscoreType) {
+    this.highscoreType = highscoreType;
+  }
+
+  public String getHsFileName() {
+    return hsFileName;
+  }
+
+  public void setHsFileName(String hsFileName) {
+    this.hsFileName = hsFileName;
+  }
+
+  public String getScannedHsFileName() {
+    return scannedHsFileName;
+  }
+
+  public void setScannedHsFileName(String scannedHsFileName) {
+    this.scannedHsFileName = scannedHsFileName;
+  }
 
   public ValidationState getValidationState() {
     return validationState;
@@ -732,15 +614,6 @@ public class Game {
     this.validScoreConfiguration = validScoreConfiguration;
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getRomFile() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(emulator.getRomFolder(), this.getRom() + ".zip");
-    }
-    return null;
-  }
-
   public AltColorTypes getAltColorType() {
     return altColorType;
   }
@@ -749,25 +622,23 @@ public class Game {
     this.altColorType = altColorType;
   }
 
+  public boolean isAltSoundAvailable() {
+    return altSoundAvailable;
+  }
+
   public void setAltSoundAvailable(boolean altSoundAvailable) {
     this.altSoundAvailable = altSoundAvailable;
   }
 
-  public boolean isAltSoundAvailable() {
-    return this.altSoundAvailable;
-  }
+  // getCfgFile() -> moved in mameService
 
-  @Nullable
-  @JsonIgnore
-  public File getAltSoundFolder() {
-    if (!StringUtils.isEmpty(this.getRomAlias()) && emulator != null) {
-      return new File(emulator.getAltSoundFolder(), this.getRomAlias());
-    }
-    if (!StringUtils.isEmpty(this.getRom()) && emulator != null) {
-      return new File(emulator.getAltSoundFolder(), this.getRom());
-    }
-    return null;
-  }
+  // getAltSoundFolder() -> moved in altSoundService
+
+  // getAltColorFolder() -> moved in altColorService
+
+  // getMusicFolder() -> moved in musicService
+
+  // File getBAMCfgFile() -> MOVED IN fpService
 
 
   @Nullable
@@ -800,16 +671,20 @@ public class Game {
     }
     return null;
   }
+  
+  @Nullable
+  @JsonIgnore
+  public File getRomFile() {
+    if (!StringUtils.isEmpty(this.getRom()) && emulator.getRomDirectory() != null) {
+      return new File(emulator.getRomDirectory(), this.getRom() + ".zip");
+    }
+    return null;
+  }
+
 
   public boolean isRomExists() {
-    if (!StringUtils.isEmpty(this.getRom()) && emulator.getRomDirectory() != null) {
-      File romFile = new File(emulator.getRomFolder(), this.getRom() + ".zip");
-      if (romFile.exists()) {
-        return true;
-      }
-    }
-
-    return false;
+    File romFile = getRomFile();
+    return romFile != null && romFile.exists();
   }
 
   @NonNull
@@ -841,31 +716,7 @@ public class Game {
     this.nbDirectB2S = nbDirectB2S;
   }
 
-  @NonNull
-  @JsonIgnore
-  public File getNvRamFile() {
-    File nvRamFolder = new File(emulator.getMameFolder(), "nvram");
-
-    String rom = getRom();
-    File defaultNvRam = new File(nvRamFolder, rom + ".nv");
-    if (defaultNvRam.exists() && getNvOffset() == 0) {
-      return defaultNvRam;
-    }
-
-    //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
-    File versionTextFile = new File(nvRamFolder, getRom() + " v" + getNvOffset() + ".txt");
-    if (versionTextFile.exists()) {
-      return defaultNvRam;
-    }
-
-    //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
-    File nvOffsettedNvRam = new File(nvRamFolder, rom + " v" + getNvOffset() + ".nv");
-    if (nvOffsettedNvRam.exists()) {
-      return nvOffsettedNvRam;
-    }
-
-    return defaultNvRam;
-  }
+  // File getNvRamFile() -> MOVED IN mameService
 
   @Override
   public String toString() {

@@ -947,18 +947,17 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   private boolean launchGame(Game game, boolean wait) {
-    GameEmulator emu = game.getEmulator();
-    if (emu.isVpxEmulator()) {
+    if (game.isVpxGame()) {
       if (vpxService.play(game, null, null)) {
         return !wait ? true : vpxService.waitForPlayer();
       }
       return false;
     }
-    else if (emu.isFpEmulator()) {
+    else if (game.isFpGame()) {
       return fpService.play(game, null);
     }
     else {
-      LOG.error("Emulator {} for Game \"{}\" cannot be started", emu.getName(), game.getGameFileName());
+      LOG.error("Emulator {} for Game \"{}\" cannot be started", game.getEmulator(), game.getGameFileName());
       return false;
     }
   }
