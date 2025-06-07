@@ -157,6 +157,10 @@ public class VpbmService implements InitializingBean {
     return "Unable to determine version, check log for details.";
   }
 
+  public File getWheelImage(Game game) {
+    return frontendService.getWheelImage(game);
+  }
+
   private SystemCommandOutput executeVPBM(List<String> options) {
     SystemCommandOutput out = new SystemCommandOutput();
     long start = System.currentTimeMillis();

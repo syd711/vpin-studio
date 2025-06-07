@@ -8,5 +8,9 @@ import de.mephisto.vpin.restclient.jobs.Job;
  */
 public interface TableBackupAdapter extends Job {
 
+  default void execute(JobDescriptor jobDescriptor) {
+    createBackup(jobDescriptor);
+  }
+  
   void createBackup(JobDescriptor result);
 }

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableBackupAdapterVpa;
+import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.TableBackupAdapterVpbm;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.Game;
@@ -23,6 +24,9 @@ public class TableBackupAdapterFactory {
   private FrontendService frontendService;
 
   @Autowired
+  private VpaService vpaService;
+
+  @Autowired
   private VpbmService vpbmService;
 
   public TableBackupAdapter createAdapter(@NonNull ArchiveSourceAdapter archiveSourceAdapter, @NonNull Game game) {
@@ -31,7 +35,7 @@ public class TableBackupAdapterFactory {
 
     switch (archiveType) {
       case VPA: {
-        return new TableBackupAdapterVpa(frontendService, archiveSourceAdapter, game, tableDetails);
+        return new TableBackupAdapterVpa(vpaService, archiveSourceAdapter, game, tableDetails);
       }
       case VPBM: {
         return new TableBackupAdapterVpbm(vpbmService, archiveSourceAdapter, game, tableDetails);

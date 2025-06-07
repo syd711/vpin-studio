@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.archiving.adapters.vpbm;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Date;
 
-public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
+public class TableBackupAdapterVpbm implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpbm.class);
 
   private final VpbmService vpbmService;
@@ -32,10 +31,6 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
     this.game = game;
     this.archiveSourceAdapter = archiveSourceAdapter;
     this.tableDetails = tableDetails;
-  }
-
-  public void execute(JobDescriptor jobDescriptor) {
-    createBackup(jobDescriptor);
   }
 
   @Override
@@ -56,8 +51,7 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     archiveDescriptor.setSource(archiveSourceAdapter.getArchiveSource());
 
-    File wheelIcon = game.getWheelImage();
-
+    File wheelIcon = vpbmService.getWheelImage(game);
     ArchivePackageInfo packageInfo = VpbmArchiveUtil.generatePackageInfo(archiveFile, wheelIcon);
 
     archiveDescriptor.setCreatedAt(new Date());
