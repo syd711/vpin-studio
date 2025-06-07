@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.altsound;
 
-import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +12,7 @@ import java.io.IOException;
 public class AltSoundBackupService {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundBackupService.class);
 
-  public void synchronizeBackup(@NonNull Game game) {
-    File altSoundFolder = game.getAltSoundFolder();
+  public void synchronizeBackup(@NonNull File altSoundFolder) {
     File csvFile = new File(altSoundFolder, "altsound.csv");
     checkBackup(csvFile);
 
@@ -36,8 +34,7 @@ public class AltSoundBackupService {
     }
   }
 
-  public void restore(@NonNull Game game) {
-    File altSoundFolder = game.getAltSoundFolder();
+  public void restore(@NonNull File altSoundFolder) {
     File csvFile = new File(altSoundFolder, "altsound.csv");
     restoreBackup(csvFile);
 

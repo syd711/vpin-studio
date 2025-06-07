@@ -65,7 +65,7 @@ public class AltColorService implements InitializingBean {
     try {
       AltColor altColor = getAltColor(game);
       if (altColor.isAvailable()) {
-        File dir = new File(game.getEmulator().getAltColorFolder(), altColor.getName());
+        File dir = new File(getAltColorFolder(game), altColor.getName());
         if (dir.exists()) {
           File[] files = dir.listFiles();
           if (files != null) {
@@ -86,24 +86,28 @@ public class AltColorService implements InitializingBean {
     return false;
   }
 
-  @NonNull
-  public AltColor getAltColor(@NonNull Game game) {
-    AltColor altColor = new AltColor();
-    String rom = game.getRom();
-    String tableName = game.getTableName();
-
+  //public File getAltColorFolder() {
+  //  return new File(mameService.getMameFolder(), "altcolor");
+  //}
+  
+  public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
-    if (!StringUtils.isEmpty(game.getRomAlias())) {
+    if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
       altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRomAlias());
     }
-    else if (!StringUtils.isEmpty(rom)) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), rom);
+    else if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getRom());
     }
-
-    if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(tableName)) {
-      altColorFolder = new File(game.getEmulator().getAltColorFolder(), tableName);
+    if ((altColorFolder == null || !altColorFolder.exists()) && !StringUtils.isEmpty(game.getTableName()) && game.getEmulator() != null) {
+      altColorFolder = new File(game.getEmulator().getAltColorFolder(), game.getTableName());
     }
+    return altColorFolder;
+  }
 
+  public AltColor getAltColor(@NonNull Game game) {
+    AltColor altColor = new AltColor();
+
+    File altColorFolder = getAltColorFolder(game);
     if (altColorFolder == null || !altColorFolder.exists()) {
       return altColor;
     }
@@ -152,31 +156,33 @@ public class AltColorService implements InitializingBean {
   }
 
   public void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, Game game, File out) throws IOException {
+    File gameAltColorFolder = getAltColorFolder(game);
+
     String assetFileName = analysis.getFileNameForAssetType(AssetType.PAC);
     if (assetFileName != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pac"), assetFileName);
+      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pac"), assetFileName);
     }
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.PAL);
     if (assetFileName != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.pal"), assetFileName);
+      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pal"), assetFileName);
     }
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.VNI);
     if (assetFileName != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), "pin2dmd.vni"), assetFileName);
+      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.vni"), assetFileName);
     }
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.CRZ);
     if (assetFileName != null) {
-      PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
+      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
     }
 
     setAltColorEnabled(game.getRom(), true);
   }
 
   public JobDescriptor installAltColor(@NonNull Game game, File out) {
-    File folder = game.getAltColorFolder();
+    File folder = getAltColorFolder(game);
     if (folder != null) {
       String name = out.getName();
       if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {

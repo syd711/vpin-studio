@@ -48,7 +48,23 @@ public class AltSoundService implements InitializingBean {
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
-    return game.getAltSoundFolder() != null && altSoundFolder2AltSound.containsKey(game.getAltSoundFolder().getAbsolutePath().toLowerCase());
+    File gameAltSoundFolder = getAltSoundFolder(game);
+    return gameAltSoundFolder != null && altSoundFolder2AltSound.containsKey(gameAltSoundFolder.getAbsolutePath().toLowerCase());
+  }
+
+  //public File getAltSoundFolder() {
+  //  return new File(mameService.getMameFolder(), "altsound");
+  //}
+
+  @Nullable
+  public File getAltSoundFolder(@NonNull Game game) {
+    if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
+      return new File(game.getEmulator().getAltSoundFolder(), game.getRomAlias());
+    }
+    if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
+      return new File(game.getEmulator().getAltSoundFolder(), game.getRom());
+    }
+    return null;
   }
 
   public boolean delete(@NonNull Game game) {
@@ -56,7 +72,7 @@ public class AltSoundService implements InitializingBean {
     if (!StringUtils.isEmpty(game.getRom())) {
       File folder = new File(emulator.getAltSoundFolder(), game.getRom());
       if (folder.exists()) {
-        altSoundFolder2AltSound.remove(game.getAltSoundFolder().getAbsolutePath().toLowerCase());
+        altSoundFolder2AltSound.remove(getAltSoundFolder(game).getAbsolutePath().toLowerCase());
         LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
         if (FileUtils.deleteFolder(folder)) {
           return clearCache();
@@ -64,13 +80,13 @@ public class AltSoundService implements InitializingBean {
         gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
       }
     }
-    return false;
+    return true;
   }
 
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     if (isAltSoundAvailable(game)) {
-      String folder = game.getAltSoundFolder().getAbsolutePath();
+      String folder = getAltSoundFolder(game).getAbsolutePath();
       AltSound altSound = altSoundFolder2AltSound.get(folder.toLowerCase());
       altSound.setFolder(folder);
       altSound = AltSoundLoaderFactory.load(altSound);
@@ -81,13 +97,14 @@ public class AltSoundService implements InitializingBean {
   }
 
   public AltSound save(@NonNull Game game, @NonNull AltSound altSound) {
-    altSoundBackupService.synchronizeBackup(game);
+    File altSoundFolder = getAltSoundFolder(game);
+    altSoundBackupService.synchronizeBackup(altSoundFolder);
     if (game.isAltSoundAvailable()) {
       if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
-        new AltSound2Writer(game.getAltSoundFolder()).write(altSound);
+        new AltSound2Writer(altSoundFolder).write(altSound);
       }
       else {
-        new AltSoundWriter(game.getAltSoundFolder()).write(altSound);
+        new AltSoundWriter(altSoundFolder).write(altSound);
       }
       createAltSound(new File(altSound.getFolder()), altSound.getEmulatorId());
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
@@ -130,7 +147,8 @@ public class AltSoundService implements InitializingBean {
 
   public AltSound restore(Game game) {
     if (game != null) {
-      this.altSoundBackupService.restore(game);
+      File altSoundFolder = getAltSoundFolder(game);
+      this.altSoundBackupService.restore(altSoundFolder);
       gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
       return getAltSound(game);
     }
@@ -157,7 +175,7 @@ public class AltSoundService implements InitializingBean {
         }
       }
     }
-    LOG.info("Loading of " + altSoundFolder2AltSound.size() + " ALTSounds finished, took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("Clearing cache of " + altSoundFolder2AltSound.size() + " ALTSounds finished, took " + (System.currentTimeMillis() - start) + "ms.");
     return true;
   }
 

@@ -189,7 +189,7 @@ public class FileUtils {
   }
 
   public static boolean deleteFolder(File folder) {
-    if (!folder.exists()) {
+    if (folder == null || !folder.exists()) {
       return true;
     }
     try {
