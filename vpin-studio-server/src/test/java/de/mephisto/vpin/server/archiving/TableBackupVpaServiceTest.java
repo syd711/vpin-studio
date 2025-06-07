@@ -45,4 +45,5 @@ public class TableBackupVpaServiceTest extends AbstractVPinServerTest {
       fail(ioe);
     }
   }
+
 }
