@@ -22,7 +22,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.RecorderController">
    <center>
       <SplitPane dividerPositions="0.5">
@@ -101,6 +100,17 @@
                         <Tooltip text="Reload all table data" />
                     </tooltip>
                 </Button>
+            <Button fx:id="reloadBtn1" layoutX="52.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAutoSelect" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18"/>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Auto-select all mandatory and missing video screens" />
+               </tooltip>
+            </Button>
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                 <StackPane alignment="CENTER_RIGHT">
                     <children>
@@ -146,7 +156,7 @@
                 </tooltip>
                 </Button>
                 <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start Recording" textFill="#ff3333">
+                <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start" textFill="#ff3333">
                 <font>
                     <Font size="14.0" />
                 </font>

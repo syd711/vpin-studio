@@ -30,8 +30,8 @@ public class RecordingDataSummary {
   }
 
   public boolean contains(int id) {
-    for (RecordingData recordingDatum : recordingData) {
-      if (recordingDatum.getGameId() == id) {
+    for (RecordingData data : recordingData) {
+      if (data.getGameId() == id) {
         return true;
       }
     }
