@@ -368,6 +368,10 @@ public class UploaderAnalysis {
     if (!directory) {
       String fileName = formattedName;
       fileNamesWithPath.add(fileName);
+      if (fileName.endsWith(".zip")) {
+        excludedFiles.add(fileName);
+      }
+
       if (fileName.contains("/")) {
         String dir = fileName.substring(0, fileName.lastIndexOf("/"));
         if (!StringUtils.isEmpty(dir) && !foldersWithPath.contains(dir)) {

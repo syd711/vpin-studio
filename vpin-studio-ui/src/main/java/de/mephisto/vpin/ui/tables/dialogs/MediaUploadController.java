@@ -28,15 +28,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -369,6 +372,20 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setText(model.getAssetType().toString());
+
+      if (model.getAssetType().equals(AssetType.ROM.toString())) {
+        HBox hBox = new HBox(3);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().add(label);
+        Tooltip tt = new Tooltip("Please check manually if this file is an actual ROM.");
+        FontIcon icon = WidgetFactory.createIcon("mdi2h-help-circle-outline");
+        icon.setIconSize(18);
+        Label iconLabel = new Label();
+        iconLabel.setGraphic(icon);
+        iconLabel.setTooltip(tt);
+        hBox.getChildren().add(iconLabel);
+        return hBox;
+      }
       return label;
     }, this, true);
 

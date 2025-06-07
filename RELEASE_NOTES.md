@@ -2,7 +2,9 @@
 
 ## Changes
 
-- Fixed stand-alone PUP pack uploading.
+- Fixed critical issue stand-alone PUP pack uploading that may have resulted in an endless loading loop between client and server. 
+- Fixed critical issue in DMD positioner.
+- ROM files are excluded by default from bundles now. You have to manually enable the import of detected ROM files since no additional check is made if the file is an actual ROM.
 
 ---
 
