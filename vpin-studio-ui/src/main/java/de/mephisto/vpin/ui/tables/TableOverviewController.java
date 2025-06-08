@@ -138,9 +138,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPOV;
 
   @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTutorials;
-
-  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnINI;
 
   @FXML
@@ -957,11 +954,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), uiSettings);
-    });
-
-    BaseLoadingColumn.configureLoadingColumn(columnTutorials, "Loading...", (value, model) -> {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      return new VpsTutorialColumn(model.getGame().getExtTableId(), uiSettings);
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
@@ -1897,7 +1889,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
-    columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorials());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
@@ -1947,9 +1938,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   protected int getPreferredColumnIndex(@NotNull String columnId) {
-    if (columnId.equals(columnTutorials.getId())) {
-      return 13;
-    }
     return -1;
   }
 

@@ -225,11 +225,6 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnTutorials" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="Tutorials" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
                               <CheckBox fx:id="columnVersion" mnemonicParsing="false" text="Version" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

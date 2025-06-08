@@ -94,19 +94,6 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnPOV)) {
         comp = Comparator.comparing(o -> o.getGame().getPovPath() != null);
       }
-      else if (column.equals(tableOverviewController.columnTutorials)) {
-        comp = Comparator.comparing(o -> {
-          VpsTable vpsTable = Studio.client.getVpsService().getTableById(o.getGame().getExtTableId());
-          if (vpsTable == null) {
-            return -1;
-          }
-          List<VpsTutorialUrls> tutorialFiles = vpsTable.getTutorialFiles();
-          if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
-            return 1;
-          }
-          return -1;
-        });
-      }
       else if (column.equals(tableOverviewController.columnRES)) {
         comp = Comparator.comparing(o -> o.getGame().getResPath() != null);
       }

@@ -5,7 +5,9 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -15,6 +17,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
+import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -295,8 +298,10 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
         VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
-    BaseLoadingColumn.configureColumn(tutorialColumn, (value, model) ->
-        VpsUtil.isDataAvailable(value.getTutorialFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
+    BaseLoadingColumn.configureLoadingColumn(tutorialColumn, "Loading...", (value, model) -> {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      return new VpsTutorialColumn(value.getId(), uiSettings);
+    });
 
     BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {
       Label label = new Label(dateFormat.format(new Date(value.getUpdatedAt())));
