@@ -630,44 +630,17 @@ public class Game {
     this.altSoundAvailable = altSoundAvailable;
   }
 
-  // getCfgFile() -> moved in mameService
-
   // getAltSoundFolder() -> moved in altSoundService
 
   // getAltColorFolder() -> moved in altColorService
 
   // getMusicFolder() -> moved in musicService
 
-  // File getBAMCfgFile() -> MOVED IN fpService
-
-
   @Nullable
   @JsonIgnore
   public File getCfgFile() {
     if (!StringUtils.isEmpty(this.getRom())) {
       return new File(new File(emulator.getMameFolder(), "cfg"), this.getRom() + ".cfg");
-    }
-    return null;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public File getAltColorFolder() {
-    if (!StringUtils.isEmpty(this.getRomAlias()) && emulator != null) {
-      return new File(new File(emulator.getMameFolder(), "altcolor"), this.getRomAlias());
-    }
-    if (!StringUtils.isEmpty(this.getRom()) && emulator != null) {
-      return new File(new File(emulator.getMameFolder(), "altcolor"), this.getRom());
-    }
-    return null;
-  }
-
-
-  @Nullable
-  @JsonIgnore
-  public File getMusicFolder() {
-    if (!StringUtils.isEmpty(this.getRom())) {
-      return new File(emulator.getMusicFolder(), this.getRom());
     }
     return null;
   }
@@ -716,7 +689,7 @@ public class Game {
     this.nbDirectB2S = nbDirectB2S;
   }
 
-  // File getNvRamFile() -> MOVED IN mameService
+  // File getNvRamFile() -> MOVED IN highscoreResolver
 
   @Override
   public String toString() {

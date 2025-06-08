@@ -265,7 +265,7 @@ public class AltColorService implements InitializingBean {
 
   public boolean restore(Game game, String filename) {
     String suffix = FilenameUtils.getExtension(filename);
-    File folder = game.getAltColorFolder();
+    File folder = getAltColorFolder(game);
     if (folder != null && folder.exists()) {
       try {
         switch (suffix) {
@@ -308,7 +308,7 @@ public class AltColorService implements InitializingBean {
   }
 
   public boolean deleteBackup(Game game, String filename) {
-    File folder = game.getAltColorFolder();
+    File folder = getAltColorFolder(game);
     folder = new File(folder, "backups/");
     if (folder.exists()) {
       File file = new File(folder, filename);
