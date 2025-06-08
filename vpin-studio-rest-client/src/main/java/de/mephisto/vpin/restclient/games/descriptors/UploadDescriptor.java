@@ -35,7 +35,7 @@ public class UploadDescriptor {
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
 
-  private List<File> tempFiles = new ArrayList<>();
+  private final List<File> tempFiles = new ArrayList<>();
 
   public String getPatchVersion() {
     return patchVersion;
@@ -97,7 +97,7 @@ public class UploadDescriptor {
 
   public void finalizeUpload() {
     File tempFile = new File(getTempFilename());
-    if (tempFile.exists()) {
+    if (tempFile.exists() && !isAsync()) {
       if (tempFile.delete()) {
         LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
       }

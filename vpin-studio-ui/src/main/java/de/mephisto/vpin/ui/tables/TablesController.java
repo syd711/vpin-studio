@@ -535,10 +535,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     for (Integer gameId : refreshList) {
       GameRepresentation game = client.getGameService().getGame(gameId);
-      this.tableOverviewController.reloadItem(game);
-      // recorderController may be null when recording is not supported
-      if (recorderController != null) {
-        this.recorderController.reloadItem(game);
+      if (game != null) {
+        this.tableOverviewController.reloadItem(game);
+        if (recorderController != null) {
+          this.recorderController.reloadItem(game);
+        }
       }
     }
 

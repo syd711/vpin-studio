@@ -811,6 +811,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.emulatorCombo.setDisable(true);
     JFXFuture.supplyAsync(() -> client.getEmulatorService().getFilteredEmulatorsWithAllVpx(uiSettings))
         .thenAcceptLater(filtered -> {
+          this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
           this.emulatorCombo.setItems(FXCollections.observableList(filtered));
           this.emulatorCombo.setDisable(false);
 
@@ -1524,7 +1525,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void reloadItem(GameRepresentation refreshedGame) {
     // reload only if the emulator is matching
     GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getType().equals(value.getType()))) {
+    if (value != null && (value.getId() == refreshedGame.getEmulatorId())) {
       super.reloadItem(refreshedGame);
     }
   }

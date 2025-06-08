@@ -1060,6 +1060,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     EventManager.getInstance().removeListener(this);
     if ((this.game != null)) {
+      client.getGameService().reload(this.game.getId());
       EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
     }
   }
