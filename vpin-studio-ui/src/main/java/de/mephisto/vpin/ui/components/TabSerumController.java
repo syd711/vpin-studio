@@ -33,10 +33,9 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   @FXML
   private void onDmdDevice() {
-    File folder = client.getMameService().getMameFolder();
-    if (client.getSystemService().isLocal() && folder != null && folder.exists()) {
-      File exe = new File(folder, "DmdDevice.ini");
-      super.editFile(exe);
+    if (client.getSystemService().isLocal()) {
+      File ini = client.getMameService().getDmdDeviceIni();
+      super.editFile(ini);
     }
     else {
       try {

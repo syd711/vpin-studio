@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.fp.FPService;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +162,12 @@ public class GamesResource {
   @GetMapping("/highscorefiles/{id}")
   public HighscoreFiles getHighscoreFiles(@PathVariable("id") int id) {
     return gameService.getHighscoreFiles(id);
+  }
+
+  @GetMapping("/highscorefile/{id}/fileinfo")
+  public FileInfo getHighscoreFileInfo(@PathVariable("id") int gameId) {
+    File hsfile = gameService.getHighscoreFile(gameId);
+    return hsfile != null? FileInfo.file(hsfile, hsfile.getParentFile()) : null;
   }
 
   @GetMapping("/scorehistory/{id}")

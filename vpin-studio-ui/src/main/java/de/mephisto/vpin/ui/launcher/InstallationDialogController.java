@@ -82,16 +82,16 @@ public class InstallationDialogController implements Initializable, DialogContro
     LOG.info("*******************************************************************************************************");
 
     if (radioA.isSelected()) {
-      store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+      store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR, installationFolder.getAbsolutePath());
     }
     else if (radioB.isSelected()) {
-      store.set(SystemInfo.PINBALLX_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+      store.set(SystemInfo.PINBALLX_INSTALLATION_DIR, installationFolder.getAbsolutePath());
     }
     else if (radioC.isSelected()) {
-      store.set(SystemInfo.PINBALLY_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+      store.set(SystemInfo.PINBALLY_INSTALLATION_DIR, installationFolder.getAbsolutePath());
     }
     else if (radioD.isSelected()) {
-      store.set(SystemInfo.STANDALONE_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+      store.set(SystemInfo.STANDALONE_INSTALLATION_DIR, installationFolder.getAbsolutePath());
     }
 
     result = true;

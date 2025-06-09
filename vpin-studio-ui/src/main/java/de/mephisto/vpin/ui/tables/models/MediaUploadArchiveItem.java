@@ -110,7 +110,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     if (altSoundFolder != null) {
       if (altSoundFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
         assetType = AssetType.ALT_SOUND;
-        targetDisplayName = emulator.getMameDirectory();
+        targetDisplayName = "VPin MAME \"altsound\" folder";  //emulator.getMameDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
 

@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
@@ -92,9 +91,8 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private void onDmdDevice() {
-    File folder = client.getMameService().getMameFolder();
-    if (client.getSystemService().isLocal() && folder != null && folder.exists()) {
-      File ini = new File(folder, "DmdDevice.ini");
+    if (client.getSystemService().isLocal()) {
+      File ini = client.getMameService().getDmdDeviceIni();
       Dialogs.editFile(ini);
     }
     else {
@@ -115,19 +113,12 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onFlexDMDUI() {
     if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
-      if (emulatorRepresentation.getMameDirectory() != null) {
-        File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          Studio.open(file);
-        }
+      File file = client.getMameService().getFlexSetupFile();
+      if (file == null || !file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The FlexDMDUI.exe file was not found.");
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "No matching VPinMAME installation found.");
+        Studio.open(file);
       }
     }
   }

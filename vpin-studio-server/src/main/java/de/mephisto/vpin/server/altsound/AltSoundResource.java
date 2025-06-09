@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.*;
@@ -56,6 +57,12 @@ public class AltSoundResource {
       return getAltSound(game);
     }
     return new AltSound();
+  }
+
+  @GetMapping("{id}/fileinfo")
+  public FileInfo getAltSoundFolder(@PathVariable("id") int id) {
+    Game game = gameService.getGame(id);
+    return game != null ? FileInfo.folder(altSoundService.getAltSoundFolder(game), game.getEmulator().getAltSoundFolder()) : null;
   }
 
   @DeleteMapping("{id}")

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.util;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.Studio;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,6 +34,23 @@ public class SystemUtil {
   public static boolean isFolderActionSupported() {
     return isLocal() || (!StringUtils.isEmpty(publicUrl) && (isWindows() || isMac()));
   }
+
+  public static void open(FileInfo fileInfo) {
+    if (fileInfo != null) {
+      if (fileInfo.isFile()) {
+        if (fileInfo.getFile() != null && fileInfo.getFile().exists()) {
+          openFile(fileInfo.getFile());
+        }
+        else {
+          openFolder(fileInfo.getFallback());
+        }
+      }
+      else {
+        openFolder(fileInfo.getFile(), fileInfo.getFallback());
+      }
+    }
+  }
+      
 
   public static void openFolder(File folder) {
     openFolder(folder, null);

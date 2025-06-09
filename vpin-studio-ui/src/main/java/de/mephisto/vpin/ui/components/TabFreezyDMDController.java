@@ -41,10 +41,9 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFlexDMD() {
-    File folder = client.getMameService().getMameFolder();
-    File file = new File(folder, "FlexDMDUI.exe");
-    if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+    File file = client.getMameService().getFlexSetupFile();
+    if (file == null || !file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
     }
     else {
       Studio.open(file);
@@ -54,9 +53,8 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @FXML
   private void onDmdDevice() {
     if (client.getSystemService().isLocal()) {
-      File folder = client.getMameService().getMameFolder();
-      File exe = new File(folder, "DmdDevice.ini");
-      super.editFile(exe);
+      File ini = client.getMameService().getDmdDeviceIni();
+      super.editFile(ini);
     }
     else {
       try {

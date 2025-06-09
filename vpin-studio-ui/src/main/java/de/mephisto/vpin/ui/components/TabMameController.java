@@ -32,20 +32,12 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onMameSetup() {
-    File mameFolder = client.getMameService().getMameFolder();
-
-    if (mameFolder != null && mameFolder.exists()) {
-      File file = new File(mameFolder, "Setup64.exe");
-
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-      }
-      else {
-        Studio.open(file);
-      }
+    File file = client.getMameService().getSetupFile();
+    if (file == null || !file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file was not found.");
     }
     else {
-      WidgetFactory.showAlert(Studio.stage, "VPinMAME folder invalid", "The server couldn't determine the PinMAME installation folder.");
+      Studio.open(file);
     }
   }
 

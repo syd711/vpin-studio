@@ -78,6 +78,10 @@ public class HighscoreService implements InitializingBean {
   private final List<String> vpRegEntries = new ArrayList<>();
   private final List<String> highscoreFiles = new ArrayList<>();
 
+  public File getHighscoreFile(@NonNull Game game) {
+    return highscoreResolver.getHighscoreFile(game);
+  }
+
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
 

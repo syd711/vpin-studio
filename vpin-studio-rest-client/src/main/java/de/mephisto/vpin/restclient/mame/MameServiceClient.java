@@ -35,6 +35,18 @@ public class MameServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "mame/folder", File.class);
   }
 
+  public File getDmdDeviceIni() {
+    return getRestClient().get(API + "mame/dmddevice.ini", File.class);
+  }
+
+  public File getSetupFile() {
+    return getRestClient().get(API + "mame/setup", File.class);
+  }
+
+  public File getFlexSetupFile() {
+    return getRestClient().get(API + "mame/flexsetup", File.class);
+  }
+
   public boolean clearCache() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "mame/clearcache", Boolean.class);

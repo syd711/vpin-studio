@@ -386,6 +386,30 @@ public class MameService implements InitializingBean {
     return exe.exists() ? exe : null;
   }
 
+  @Nullable
+  public File getSetupExe() {
+    File mameFolder = getMameFolder();
+    File exe = new File(mameFolder, "Setup64.exe");
+    if (!exe.exists()) {
+      exe = new File(mameFolder, "Setup.exe");
+    }
+    return exe;
+  }
+
+  @Nullable
+  public File getFlexSetupExe() {
+    File mameFolder = getMameFolder();
+    File exe = new File(mameFolder, "FlexDMDUI.exe");
+    return exe;
+  }
+
+  public File getDmdDeviceIni() {
+    File mameFolder = getMameFolder();
+    File ini = new File(mameFolder, "DMDDevice.ini");
+    return ini;
+  }
+
+
   @Override
   public void afterPropertiesSet() {
   }

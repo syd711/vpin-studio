@@ -9,11 +9,11 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
@@ -203,48 +203,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     try {
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
-        if (gameRepresentation.getHighscoreType() != null) {
-          HighscoreType hsType = gameRepresentation.getHighscoreType();
-
-          //try to open the actual highscore file
-          if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
-            GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-            String hsName = gameRepresentation.getHsFileName();
-            File installationFolder = new File(emulatorRepresentation.getInstallationDirectory());
-            File userFolder = new File(installationFolder, "User");
-            if (!StringUtils.isEmpty(hsName)) {
-              File hsFile = new File(userFolder, gameRepresentation.getHsFileName());
-              if (hsFile.exists()) {
-                SystemUtil.openFile(hsFile);
-                return;
-              }
-              if (hsFile.getAbsoluteFile().getParentFile().exists()) {
-                SystemUtil.openFolder(hsFile.getAbsoluteFile().getParentFile());
-                return;
-              }
-            }
-            SystemUtil.openFolder(userFolder);
-            return;
-          }
-          else if (hsType.equals(HighscoreType.Ini)) {
-            String hsName = gameRepresentation.getHighscoreIniFilename();
-            if (hsName != null) {
-              File hsFile = new File(hsName);
-              SystemUtil.openFile(hsFile);
-              return;
-            }
-          }
-        }
-
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File nvRamFolder = new File(emulatorRepresentation.getNvramDirectory());
-        File nvRamFile = new File(nvRamFolder, gameRepresentation.getRom() + ".nv");
-        if (nvRamFile.exists()) {
-          SystemUtil.openFile(nvRamFile);
-        }
-        else {
-          SystemUtil.openFolder(nvRamFolder);
-        }
+        FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
+        SystemUtil.open(hsFileInfo);
       }
     }
     catch (Exception e) {
@@ -291,12 +251,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private void onAltSound() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
-        if (!altSoundFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
-          altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRomAlias());
-        }
-        SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
+        FileInfo altSoundFolder = client.getAltSoundService().getAltSoundFolderInfo(game.get().getId());
+        SystemUtil.open(altSoundFolder);
       }
     }
     catch (
@@ -310,25 +266,10 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private void onAltColor() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
-        if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
-          folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
-        }
-        if (folder.exists()) {
-          SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltSoundDirectory()));
-          return;
-        }
+        FileInfo altColorFolder = client.getAltColorService().getAltColorFolderInfo(game.get().getId());
+        SystemUtil.open(altColorFolder);
 
-        if (!folder.exists() && emulatorRepresentation.getAltColorDirectory() != null) {
-          File file = new File(emulatorRepresentation.getAltColorDirectory());
-          if (file.exists()) {
-            SystemUtil.openFolder(folder, file);
-            return;
-          }
-        }
-
-        WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for emulator \"" + emulatorRepresentation.getName() + "\".");
+        WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
       }
     }
     catch (Exception e) {
@@ -391,18 +332,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private void onDMD() {
     try {
       if (this.game.isPresent()) {
-        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
-        if (dmdPackage != null) {
-          GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-          File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
-          File dmdFolder = new File(tablesFolder, dmdPackage.getName());
-          SystemUtil.openFolder(dmdFolder);
-          return;
-        }
-      }
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
+        File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
 
-      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-      SystemUtil.openFolder(new File(emulatorRepresentation.getGamesDirectory()));
+        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
+        File dmdFolder = dmdPackage != null ? new File(tablesFolder, dmdPackage.getName()) : null;
+        SystemUtil.openFolder(dmdFolder, tablesFolder);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);

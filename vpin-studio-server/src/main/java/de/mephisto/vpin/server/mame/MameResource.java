@@ -46,6 +46,21 @@ public class MameResource {
     return mameService.getMameFolder();
   }
 
+  @GetMapping("/dmddevice.ini") 
+  public File getDmdDeviceIni() {
+    return mameService.getDmdDeviceIni();
+  }
+
+  @GetMapping("/setup")
+  public File getSetupFile() {
+    return mameService.getSetupExe();
+  }
+
+  @GetMapping("/flexsetup")
+  public File getFlexSetupFile() {
+    return mameService.getFlexSetupExe();
+  }
+
   @GetMapping("/options/{rom}")
   public MameOptions getOptions(@PathVariable("rom") String rom) {
     return mameService.getOptions(rom);

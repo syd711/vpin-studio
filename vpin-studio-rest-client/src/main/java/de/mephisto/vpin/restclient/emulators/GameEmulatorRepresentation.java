@@ -1,6 +1,5 @@
 package de.mephisto.vpin.restclient.emulators;
 
-import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
@@ -14,7 +13,6 @@ public class GameEmulatorRepresentation {
   private String description;
   private String installationDirectory;
   private String gamesDirectory;
-  private String mameDirectory;
   private String mediaDirectory;
   private String romDirectory;
   private int id;
@@ -23,10 +21,6 @@ public class GameEmulatorRepresentation {
   private String exeName;
   private String exeParameters;
   private String gameExt;
-
-  private String altSoundDirectory;
-  private String altColorDirectory;
-  private String nvramDirectory;
 
   private GameEmulatorScript launchScript;
   private GameEmulatorScript exitScript;
@@ -119,14 +113,6 @@ public class GameEmulatorRepresentation {
     this.type = type;
   }
   
-  public String getMameDirectory() {
-    return mameDirectory;
-  }
-
-  public void setMameDirectory(String mameDirectory) {
-    this.mameDirectory = mameDirectory;
-  }
-
   public String getMediaDirectory() {
     return mediaDirectory;
   }
@@ -181,30 +167,6 @@ public class GameEmulatorRepresentation {
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  public String getNvramDirectory() {
-    return nvramDirectory;
-  }
-
-  public void setNvramDirectory(String nvramDirectory) {
-    this.nvramDirectory = nvramDirectory;
-  }
-
-  public String getAltSoundDirectory() {
-    return altSoundDirectory;
-  }
-
-  public void setAltSoundDirectory(String altSoundDirectory) {
-    this.altSoundDirectory = altSoundDirectory;
-  }
-
-  public String getAltColorDirectory() {
-    return altColorDirectory;
-  }
-
-  public void setAltColorDirectory(String altColorDirectory) {
-    this.altColorDirectory = altColorDirectory;
   }
 
   public String[] getVpsEmulatorFeatures() {

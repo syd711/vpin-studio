@@ -24,10 +24,9 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
 
   @FXML
   private void onFlexDMD() {
-    File folder = client.getMameService().getMameFolder();
-    File file = new File(folder, "FlexDMDUI.exe");
-    if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+    File file = client.getMameService().getFlexSetupFile();
+    if (file == null || !file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
     }
     else {
       Studio.open(file);
