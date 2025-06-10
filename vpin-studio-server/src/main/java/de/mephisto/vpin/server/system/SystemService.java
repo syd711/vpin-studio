@@ -4,6 +4,7 @@ import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
@@ -68,7 +69,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private File pinupInstallationFolder;
   private File pinballXInstallationFolder;
   private File pinballYInstallationFolder;
+
   private File standaloneInstallationFolder;
+  private File standaloneConfigFile;
+  private File standaloneTablesFolder;
 
   private File backglassServerFolder;
 
@@ -101,25 +105,36 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
       // Determination of the installed Frontend
       //Standalone Folder
-      if (store.containsKey(STANDALONE_INSTALLATION_DIR) && !StringUtils.isEmpty(store.get(STANDALONE_INSTALLATION_DIR))) {
+      if (store.containsNonEmptyKey(STANDALONE_INSTALLATION_DIR)) {
         this.standaloneInstallationFolder = new File(store.get(STANDALONE_INSTALLATION_DIR));
         frontendType = FrontendType.Standalone;
+
+        if (store.containsNonEmptyKey(STANDALONE_CONFIG_FILE)) {
+          this.standaloneConfigFile = new File(store.get(STANDALONE_CONFIG_FILE));
+        }
+        if (store.containsNonEmptyKey(STANDALONE_TABLES_DIR)) {
+          this.standaloneTablesFolder = new File(store.get(STANDALONE_TABLES_DIR));
+        }
       }
+
       //PinballX Folder
-      if (store.containsKey(PINBALLX_INSTALLATION_DIR) && !StringUtils.isEmpty(store.get(PINBALLX_INSTALLATION_DIR))) {
+      if (store.containsNonEmptyKey(PINBALLX_INSTALLATION_DIR)) {
         this.pinballXInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR));
         frontendType = FrontendType.PinballX;
       }
       //PinballY Folder
-      if (store.containsKey(PINBALLY_INSTALLATION_DIR) && !StringUtils.isEmpty(store.get(PINBALLY_INSTALLATION_DIR))) {
+      if (store.containsNonEmptyKey(PINBALLY_INSTALLATION_DIR)) {
         this.pinballYInstallationFolder = new File(store.get(PINBALLY_INSTALLATION_DIR));
         frontendType = FrontendType.PinballY;
       }
       //PinUP Popper Folder
-      if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR))) {
+      if (store.containsNonEmptyKey(PINUP_SYSTEM_INSTALLATION_DIR)) {
         this.pinupInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR));
         frontendType = FrontendType.Popper;
       }
+
+      // now that frontend is determined, activate or deactivate features
+      activateFeaturesForFrontend(frontendType);
 
       if (!getRawImageExtractionFolder().exists()) {
         boolean mkdirs = getRawImageExtractionFolder().mkdirs();
@@ -140,17 +155,27 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
       }
 
-      if (store.containsKey(B2SSERVER_INSTALLATION_DIR) && !StringUtils.isEmpty(store.get(B2SSERVER_INSTALLATION_DIR))) {
-        this.backglassServerFolder = new File(store.get(B2SSERVER_INSTALLATION_DIR));
-      }
-      else {
-        this.backglassServerFolder = resolveBackglassServerFolder();
+      // B2S Server is not installed in Standalone mode
+      if (!frontendType.equals(FrontendType.Standalone)) {
+
+        if (store.containsKey(B2SSERVER_INSTALLATION_DIR) && !StringUtils.isEmpty(store.get(B2SSERVER_INSTALLATION_DIR))) {
+          this.backglassServerFolder = new File(store.get(B2SSERVER_INSTALLATION_DIR));
+        }
+        else {
+          this.backglassServerFolder = resolveBackglassServerFolder();
+        }
       }
     }
     catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
+    }
+  }
+
+  private void activateFeaturesForFrontend(FrontendType frontendType) {
+    if (frontendType.equals(FrontendType.Standalone)) {
+      Features.IS_STANDALONE = true;      
     }
   }
 
@@ -179,6 +204,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
     if (standaloneInstallationFolder != null) {
       LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
+      LOG.info(formatPathLog("Standalone Config File", this.standaloneConfigFile));
+      LOG.info(formatPathLog("Standalone Tables Folder", this.standaloneTablesFolder));
     }
     LOG.info(formatPathLog("B2S Server", this.getBackglassServerFolder()));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
@@ -268,6 +295,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getStandaloneInstallationFolder() {
     return standaloneInstallationFolder;
+  }
+
+  public File getStandaloneConfigFile() {
+    return standaloneConfigFile;
+  }
+
+  public File getStandaloneTablesFolder() {
+    return standaloneTablesFolder;
   }
 
   /**
@@ -624,4 +659,5 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
+
 }
