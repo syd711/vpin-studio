@@ -41,12 +41,8 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFlexDMD() {
-    File file = client.getMameService().getFlexSetupFile();
-    if (file == null || !file.exists()) {
+    if (!client.getMameService().runFlexSetup()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
-    }
-    else {
-      Studio.open(file);
     }
   }
 

@@ -113,12 +113,8 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onFlexDMDUI() {
     if (this.game.isPresent()) {
-      File file = client.getMameService().getFlexSetupFile();
-      if (file == null || !file.exists()) {
+      if (!client.getMameService().runFlexSetup()) {
         WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The FlexDMDUI.exe file was not found.");
-      }
-      else {
-        Studio.open(file);
       }
     }
   }

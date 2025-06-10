@@ -27,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
@@ -206,12 +205,8 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onMameSetup() {
     if (this.game.isPresent()) {
-      File file = client.getMameService().getSetupFile();
-      if (file == null || !file.exists()) {
+      if (!client.getMameService().runSetup()) {
         WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The setup.exe file was not found.");
-      }
-      else {
-        Studio.open(file);
       }
     }
   }

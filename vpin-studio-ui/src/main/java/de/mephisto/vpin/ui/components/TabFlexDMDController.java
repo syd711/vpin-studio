@@ -10,7 +10,6 @@ import javafx.scene.control.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,12 +23,8 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
 
   @FXML
   private void onFlexDMD() {
-    File file = client.getMameService().getFlexSetupFile();
-    if (file == null || !file.exists()) {
+    if (!client.getMameService().runFlexSetup()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file was not found.");
-    }
-    else {
-      Studio.open(file);
     }
   }
 

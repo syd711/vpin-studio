@@ -32,12 +32,8 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onMameSetup() {
-    File file = client.getMameService().getSetupFile();
-    if (file == null || !file.exists()) {
+    if (!client.getMameService().runSetup()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file was not found.");
-    }
-    else {
-      Studio.open(file);
     }
   }
 

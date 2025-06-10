@@ -20,6 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -387,20 +388,39 @@ public class MameService implements InitializingBean {
   }
 
   @Nullable
-  public File getSetupExe() {
+  public Boolean runSetupExe() {
     File mameFolder = getMameFolder();
     File exe = new File(mameFolder, "Setup64.exe");
     if (!exe.exists()) {
       exe = new File(mameFolder, "Setup.exe");
     }
-    return exe;
+    // not run it
+    return runExe(exe);
   }
 
   @Nullable
-  public File getFlexSetupExe() {
+  public Boolean runFlexSetupExe() {
     File mameFolder = getMameFolder();
     File exe = new File(mameFolder, "FlexDMDUI.exe");
-    return exe;
+    // not run it
+    return runExe(exe);
+  }
+
+  private Boolean runExe(File exe) {
+    if (!exe.exists()) {
+      return false;
+    }
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        desktop.open(exe);
+        return true;
+      }
+      catch (IOException ioe) {
+        LOG.error("Error while executing {}", exe.getAbsolutePath(), ioe);
+      }
+    }
+    return true;
   }
 
   public File getDmdDeviceIni() {
