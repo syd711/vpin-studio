@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TabFlexDMDController extends AbstractComponentTab implements Initializable {
@@ -43,6 +44,9 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
+
+    flexDMDBtn.managedProperty().bind(flexDMDBtn.visibleProperty());
+    flexDMDBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   @Override

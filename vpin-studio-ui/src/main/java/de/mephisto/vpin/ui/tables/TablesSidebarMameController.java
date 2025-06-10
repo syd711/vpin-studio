@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
@@ -259,6 +260,9 @@ public class TablesSidebarMameController implements Initializable {
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     invalidDataBox.setVisible(false);
+
+    mameBtn.managedProperty().bind(mameBtn.visibleProperty());
+    mameBtn.setVisible(!Features.IS_STANDALONE);
     mameBtn.setDisable(!client.getSystemService().isLocal());
 
     noInputDataBox.setVisible(false);

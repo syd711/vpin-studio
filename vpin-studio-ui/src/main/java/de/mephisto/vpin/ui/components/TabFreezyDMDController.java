@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TabFreezyDMDController extends AbstractComponentTab implements Initializable {
@@ -96,6 +97,12 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize();
     refreshCustomValues();
+
+    flexDMDBtn.managedProperty().bind(flexDMDBtn.visibleProperty());
+    flexDMDBtn.setVisible(!Features.IS_STANDALONE);
+
+    dmdDeviceBtn.managedProperty().bind(dmdDeviceBtn.visibleProperty());
+    dmdDeviceBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   @Override

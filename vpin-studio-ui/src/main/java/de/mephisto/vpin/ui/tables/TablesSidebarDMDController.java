@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarDMDController implements Initializable {
@@ -43,6 +44,9 @@ public class TablesSidebarDMDController implements Initializable {
 
   @FXML
   private Button flexDMDUIBtn;
+
+  @FXML
+  private Button dmdDeviceBtn;
 
   @FXML
   private Button dmdPositionBtn;
@@ -159,7 +163,11 @@ public class TablesSidebarDMDController implements Initializable {
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
 
-    flexDMDUIBtn.setVisible(Studio.client.getSystemService().isLocal());
+    flexDMDUIBtn.managedProperty().bind(flexDMDUIBtn.visibleProperty());
+    flexDMDUIBtn.setVisible(!Features.IS_STANDALONE);
+
+    dmdDeviceBtn.managedProperty().bind(dmdDeviceBtn.visibleProperty());
+    dmdDeviceBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
