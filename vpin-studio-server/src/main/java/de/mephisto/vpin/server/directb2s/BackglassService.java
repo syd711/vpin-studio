@@ -298,7 +298,7 @@ public class BackglassService implements InitializingBean {
   private void reloadTableSettings() {
     if (Features.IS_STANDALONE) {
       // try from VPinballX.ini
-      File ini = null; //systemService.getStandaloneConfigFile();
+      File ini = systemService.getStandaloneConfigFile();
       if (ini != null && ini.exists()) {
         B2STableSettingsParser parser = new B2STableSettingsParser();
         this.serverSettings = parser.parseServerSettingsIni(ini);
@@ -382,7 +382,7 @@ public class BackglassService implements InitializingBean {
   public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws VPinStudioException {
     try {
       if (Features.IS_STANDALONE) {
-        File ini = null; //systemService.getStandaloneConfigFile();
+        File ini = systemService.getStandaloneConfigFile();
         if (ini != null && ini.exists()) {
           B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
           serverSettingsSerializer.serializeIni(settings, new DirectB2ServerSettings(), ini);
