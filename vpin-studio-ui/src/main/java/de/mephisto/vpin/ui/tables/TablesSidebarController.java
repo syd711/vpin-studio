@@ -252,7 +252,12 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     try {
       if (this.game.isPresent()) {
         FileInfo altSoundFolder = client.getAltSoundService().getAltSoundFolderInfo(game.get().getId());
-        SystemUtil.open(altSoundFolder);
+        if (altSoundFolder != null) {
+          SystemUtil.open(altSoundFolder);
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT sound folder found for game \"" + game.get().getId() + "\".");
+        }
       }
     }
     catch (
@@ -267,9 +272,11 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     try {
       if (this.game.isPresent()) {
         FileInfo altColorFolder = client.getAltColorService().getAltColorFolderInfo(game.get().getId());
-        SystemUtil.open(altColorFolder);
-
-        WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
+        if (altColorFolder != null) {
+          SystemUtil.open(altColorFolder);
+        } else {
+          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
+        }
       }
     }
     catch (Exception e) {
