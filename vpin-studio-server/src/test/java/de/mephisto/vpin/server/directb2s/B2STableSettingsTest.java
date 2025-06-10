@@ -17,7 +17,8 @@ public class B2STableSettingsTest {
   public void testTable() {
     File b2sFolder = new File("../testsystem/vPinball/VisualPinball/Tables");
     File b2sFile = new File(b2sFolder, "B2STableSettings.xml");
-    B2STableSettingsParser parser = new B2STableSettingsParser(b2sFolder, b2sFile);
+    B2STableSettingsParser parser = new B2STableSettingsParser();
+    parser.parseSettingsXml(b2sFolder, b2sFile);
     DirectB2STableSettings settings = parser.getEntry("avr_200");
     Assertions.assertNotNull(settings);
 
@@ -31,12 +32,13 @@ public class B2STableSettingsTest {
     File b2sFile = new File(b2sFolder, "B2STableSettings.xml");
     String before = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
 
-    B2STableSettingsParser parser = new B2STableSettingsParser(b2sFolder, b2sFile);
+    B2STableSettingsParser parser = new B2STableSettingsParser();
+    parser.parseSettingsXml(b2sFolder, b2sFile);
     DirectB2STableSettings settings = parser.getEntry("avr_200");
     Assertions.assertNotNull(settings);
 
-    B2STableSettingsSerializer serializer = new B2STableSettingsSerializer(b2sFile);
-    serializer.serialize(settings);
+    B2STableSettingsSerializer serializer = new B2STableSettingsSerializer();
+    serializer.serializeXml(settings, b2sFile);
 
     String after = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
     Assertions.assertEquals(before, after);
@@ -46,8 +48,9 @@ public class B2STableSettingsTest {
   public void testSettingsParser() {
     File b2sFolder = new File("../testsystem/vPinball/VisualPinball/Tables");
     File b2sFile = new File(b2sFolder, "B2STableSettings.xml");
-    B2STableSettingsParser parser = new B2STableSettingsParser(b2sFolder, b2sFile);
-    DirectB2ServerSettings settings = parser.getSettings();
+    B2STableSettingsParser parser = new B2STableSettingsParser();
+    parser.parseSettingsXml(b2sFolder, b2sFile);
+    DirectB2ServerSettings settings = parser.getServerSettings();
     Assertions.assertNotNull(settings);
     Assertions.assertTrue(settings.isPluginsOn());
   }
@@ -58,12 +61,13 @@ public class B2STableSettingsTest {
     File b2sFile = new File(b2sFolder, "B2STableSettings.xml");
     String before = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
 
-    B2STableSettingsParser parser = new B2STableSettingsParser(b2sFolder, b2sFile);
-    DirectB2ServerSettings settings = parser.getSettings();
+    B2STableSettingsParser parser = new B2STableSettingsParser();
+    parser.parseSettingsXml(b2sFolder, b2sFile);
+    DirectB2ServerSettings settings = parser.getServerSettings();
     Assertions.assertNotNull(settings);
 
-    B2STableSettingsSerializer serializer = new B2STableSettingsSerializer(b2sFile);
-    serializer.serialize(settings);
+    B2STableSettingsSerializer serializer = new B2STableSettingsSerializer();
+    serializer.serializeXml(settings, b2sFile);
 
     String after = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
     Assertions.assertEquals(before, after);

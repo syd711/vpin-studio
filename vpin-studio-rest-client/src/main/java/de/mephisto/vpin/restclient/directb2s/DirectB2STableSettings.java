@@ -18,6 +18,7 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   private int startAsEXE = 2; // standard
   private int startBackground = 2; // standard
   private boolean disableFuzzyMatching = true;
+  private int dualMode = 2; //0 NotSet, 1 Authentic, 2 Fantasy
 
   /**
    * 0 => FormToBack = 1
@@ -172,5 +173,12 @@ public class DirectB2STableSettings implements DirectB2sConstants {
   }
   public void setHideDMDBoolean(boolean hideDMD) {
     this.hideDMD = hideDMD ? 1 : 0;
+  }
+
+  public int getDualMode() {
+    return dualMode;
+  }
+  public void setDualMode(int dualMode) {
+    this.dualMode = dualMode;
   }
 }

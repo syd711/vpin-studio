@@ -1,6 +1,9 @@
 package de.mephisto.vpin.commons.fx;
 
 public class Features {
+
+  public static boolean IS_STANDALONE = false;
+
   public static boolean MANIA_ENABLED = true;
   public static boolean MANIA_SOCIAL_ENABLED = true;
   public static boolean ISCORED_ENABLED = true;

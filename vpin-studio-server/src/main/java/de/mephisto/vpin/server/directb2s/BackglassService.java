@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.directb2s;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.restclient.directb2s.*;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
@@ -73,12 +74,14 @@ public class BackglassService implements InitializingBean {
 
   private final Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
 
-  private final Map<String, B2STableSettingsParser> cacheB2STableSettingsParser = new ConcurrentHashMap<>();
+  private DirectB2ServerSettings serverSettings;
+
+  private Map<String, DirectB2STableSettings> cacheB2STableSettings = new ConcurrentHashMap<>();
 
 
   public boolean clearCache() {
     reloadDirectB2SAndVersions();
-    cacheB2STableSettingsParser.clear();
+    reloadTableSettings();
     cacheDirectB2SData.clear();
     return true;
   }
@@ -288,31 +291,51 @@ public class BackglassService implements InitializingBean {
     return detail;
   }
 
-  //--------------------------------------
+  //-------------------------------------- B2STableSettings ---
 
-  private B2STableSettingsParser getTableSettingsParser() {
-    File settingsXml = getB2STableSettingsXml();
-    B2STableSettingsParser tableSettingsParser = cacheB2STableSettingsParser.get(settingsXml.getPath());
-    if (tableSettingsParser == null) {
-      if (settingsXml.exists()) {
-        tableSettingsParser = new B2STableSettingsParser(getBackglassServerFolder(), settingsXml);
-        cacheB2STableSettingsParser.put(settingsXml.getPath(), tableSettingsParser);
+  private void reloadTableSettings() {
+    if (Features.IS_STANDALONE) {
+      // try from VPinballX.ini
+      File ini = null; //systemService.getStandaloneConfigFile();
+      if (ini != null && ini.exists()) {
+        B2STableSettingsParser parser = new B2STableSettingsParser();
+        this.serverSettings = parser.parseServerSettingsIni(ini);
+        this.cacheB2STableSettings.clear();
       }
     }
-    return tableSettingsParser;
+    else {
+      File settingsXml = getB2STableSettingsXml();
+      if (settingsXml != null && settingsXml.exists()) {
+        B2STableSettingsParser parser = new B2STableSettingsParser();
+        parser.parseSettingsXml(getBackglassServerFolder(), settingsXml);
+        this.serverSettings = parser.getServerSettings();
+        this.cacheB2STableSettings = parser.getTableSettings();
+      }
+    }
   }
 
-  public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws VPinStudioException {
+  public DirectB2STableSettings saveTableSettings(Game game, DirectB2STableSettings settings) throws VPinStudioException {
     try {
-      File settingsXml = getB2STableSettingsXml();
-      B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
-      tableSettingsSerializer.serialize(settings);
-      // destroy cache, will be recreated on first access
-      cacheB2STableSettingsParser.remove(settingsXml.getPath());
+      if (Features.IS_STANDALONE) {
+        File ini = game.getIniFile();
+        if (ini != null && ini.exists()) {
+          B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
+          serverSettingsSerializer.serializeIni(settings, serverSettings, ini);
+          // add in cache
+          this.cacheB2STableSettings.put(settings.getRom(), settings);
+        }
+      }
+      else {
+        File settingsXml = getB2STableSettingsXml();
+        B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer();
+        tableSettingsSerializer.serializeXml(settings, settingsXml);
+        // recreate tableSettings cache
+        reloadTableSettings();
+      }
       return settings;
     }
     catch (VPinStudioException e) {
-      LOG.error("Failed to save table settings for \"" + gameId + "\": " + e.getMessage(), e);
+      LOG.error("Failed to save table settings for \"" + game.getId() + "\": " + e.getMessage(), e);
       throw e;
     }
   }
@@ -320,42 +343,58 @@ public class BackglassService implements InitializingBean {
   @Nullable
   public DirectB2STableSettings getTableSettings(Game game) {
     String rom = game.getRom();
-
-    B2STableSettingsParser tableSettingsParser = getTableSettingsParser();
-    if (tableSettingsParser != null && !StringUtils.isEmpty(rom)) {
-      DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
+    if (StringUtils.isNotEmpty(rom)) {
+      DirectB2STableSettings entry = cacheB2STableSettings.get(rom);
       if (entry == null && !StringUtils.isEmpty(game.getRomAlias())) {
-        entry = tableSettingsParser.getEntry(game.getRomAlias());
+        entry = cacheB2STableSettings.get(game.getRomAlias());
       }
 
       if (entry == null && !StringUtils.isEmpty(game.getTableName())) {
-        entry = tableSettingsParser.getEntry(game.getTableName());
+        entry = cacheB2STableSettings.get(game.getTableName());
       }
 
+      // for Standalone, load and cache on the fly
+      if (Features.IS_STANDALONE && entry == null) {
+        File ini = game.getIniFile();
+        if (ini != null && ini.exists()) {
+          B2STableSettingsParser parser = new B2STableSettingsParser();
+          entry = parser.parseTableSettingsIni(ini, rom);
+          this.cacheB2STableSettings.put(rom, entry);
+        }
+      }
+
+      // still null, create an empty one
       if (entry == null) {
         entry = new DirectB2STableSettings();
         entry.setRom(rom);
       }
       return entry;
     }
-
     return null;
   }
 
-  //-----------------------------
-
   public DirectB2ServerSettings getServerSettings() {
-    B2STableSettingsParser parser = getTableSettingsParser();
-    return parser != null ? parser.getSettings() : null;
+    return this.serverSettings;
   }
 
   public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws VPinStudioException {
     try {
-      File settingsXml = getB2STableSettingsXml();
-      B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
-      serverSettingsSerializer.serialize(settings);
-      // destroy cache, will be recreated on first access
-      cacheB2STableSettingsParser.remove(settingsXml.getPath());
+      if (Features.IS_STANDALONE) {
+        File ini = null; //systemService.getStandaloneConfigFile();
+        if (ini != null && ini.exists()) {
+          B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
+          serverSettingsSerializer.serializeIni(settings, new DirectB2ServerSettings(), ini);
+          // cache
+          this.serverSettings = settings;
+        }
+      }
+      else {
+        File settingsXml = getB2STableSettingsXml();
+        B2STableSettingsSerializer serverSettingsSerializer = new B2STableSettingsSerializer();
+        serverSettingsSerializer.serializeXml(settings, settingsXml);
+        // recreate cache
+        reloadTableSettings();
+      }
 
       return getServerSettings();
     }
@@ -364,6 +403,8 @@ public class BackglassService implements InitializingBean {
       throw e;
     }
   }
+
+  //-------------------------------------- Key Files ---
 
   @NonNull
   public File getBackglassServerFolder() {
@@ -989,7 +1030,7 @@ public class BackglassService implements InitializingBean {
         }
 
         if (hasToBeSaved) {
-          saveTableSettings(game.getId(), settings);
+          saveTableSettings(game, settings);
         }
       }
     }
@@ -1178,7 +1219,7 @@ public class BackglassService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     // force initialisation of table cache
-    reloadDirectB2SAndVersions();
+    clearCache();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
