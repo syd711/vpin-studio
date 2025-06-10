@@ -1,9 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -31,6 +28,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDeleteController implements Initializable, DialogController {
@@ -162,10 +160,8 @@ public class TableDeleteController implements Initializable, DialogController {
     validationDescription.managedProperty().bindBidirectional(validationDescription.visibleProperty());
     validationTitle.managedProperty().bindBidirectional(validationTitle.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-    this.frontendSelectionField.setVisible(frontendType.isNotStandalone());
-    this.pupPackCheckbox.setVisible(frontendType.supportPupPacks());
+    this.frontendSelectionField.setVisible(!Features.IS_STANDALONE);
+    this.pupPackCheckbox.setVisible(Features.PUPPACKS_ENABLED);
 
     this.deleteBtn.setDisable(true);
     vpxFileCheckbox.setSelected(true);
@@ -229,8 +225,7 @@ public class TableDeleteController implements Initializable, DialogController {
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     if (Features.BACKUP_VIEW_ENABLED) {
-      Frontend frontend = client.getFrontendService().getFrontendCached();
-      if (frontend.getFrontendType().supportArchive()) {
+      if (Features.ARCHIVE_ENABLED) {
         for (GameRepresentation selectedGame : selectedGames) {
           boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
           if (hasNoArchives) {

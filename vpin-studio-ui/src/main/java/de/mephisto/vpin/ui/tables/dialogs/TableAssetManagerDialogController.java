@@ -70,6 +70,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -693,9 +694,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       openDataManager.managedProperty().bindBidirectional(openDataManager.visibleProperty());
     }
 
-
-    Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
     TableAssetConf tableAssetConf = client.getGameMediaService().getTableAssetsConf();
 
     if (!isEmbeddedMode()) {
@@ -709,8 +707,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       tablesRadio.setToggleGroup(toggleGroup);
       tablesRadio.setSelected(true);
 
-      playlistsRadio.setDisable(!frontendType.supportPlaylists());
-      if (frontendType.supportPlaylists()) {
+      playlistsRadio.setDisable(!Features.PLAYLIST_ENABLED);
+      if (Features.PLAYLIST_ENABLED) {
         List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
         playlistCombo.setItems(FXCollections.observableList(playlists));
         if (!playlists.isEmpty()) {
@@ -758,6 +756,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       });
     }
 
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
     assetSearchBox.setVisible(tableAssetConf != null);
 
@@ -910,7 +909,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       assetList.prefHeightProperty().bind(root.prefHeightProperty());
     }
     else {
-      clearCacheBtn.setVisible(frontend.getFrontendType().isSupportMediaCache());
+      clearCacheBtn.setVisible(Features.MEDIA_CACHE);
 
       if (tableAssetConf != null && tableAssetConf.getAssetSearchIcon() != null) {
         frontendImage.setImage(new Image(Studio.class.getResourceAsStream(tableAssetConf.getAssetSearchIcon())));

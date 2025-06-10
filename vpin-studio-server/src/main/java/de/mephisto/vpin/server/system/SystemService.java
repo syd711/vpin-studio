@@ -4,7 +4,6 @@ import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
@@ -35,6 +34,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.*;
 import java.io.File;
@@ -134,7 +135,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       }
 
       // now that frontend is determined, activate or deactivate features
-      activateFeaturesForFrontend(frontendType);
+      frontendType.apply(Features);
 
       if (!getRawImageExtractionFolder().exists()) {
         boolean mkdirs = getRawImageExtractionFolder().mkdirs();
@@ -170,12 +171,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
-    }
-  }
-
-  private void activateFeaturesForFrontend(FrontendType frontendType) {
-    if (frontendType.equals(FrontendType.Standalone)) {
-      Features.IS_STANDALONE = true;      
     }
   }
 

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -49,6 +48,7 @@ import java.net.URL;
 import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 

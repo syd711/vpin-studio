@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
@@ -26,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -46,9 +46,6 @@ public class AltSoundResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   @GetMapping("{id}")
   public AltSound getAltSound(@PathVariable("id") int id) {
@@ -109,7 +106,7 @@ public class AltSoundResource {
     try {
       descriptor.upload();
 
-      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.supportPupPacks(), new File(descriptor.getTempFilename()));
+      UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, new File(descriptor.getTempFilename()));
       analysis.analyze();
 
       universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.ALT_SOUND);

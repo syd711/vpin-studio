@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.OSUtil;
@@ -31,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -241,16 +240,15 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPlaylists.managedProperty().bindBidirectional(columnPlaylists.visibleProperty());
     vpsPUPPack.managedProperty().bindBidirectional(vpsPUPPack.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    columnPupPack.setVisible(frontendType.supportPupPacks());
-    sectionPupPack.setVisible(frontendType.supportPupPacks());
-    vpsPUPPack.setVisible(frontendType.supportPupPacks());
+    columnPupPack.setVisible(Features.PUPPACKS_ENABLED);
+    sectionPupPack.setVisible(Features.PUPPACKS_ENABLED);
+    vpsPUPPack.setVisible(Features.PUPPACKS_ENABLED);
 
-    sectionPlaylists.setVisible(frontendType.supportPlaylists());
-    columnPlaylists.setVisible(frontendType.supportPlaylists());
-    columnRating.setVisible(frontendType.supportRating());
+    sectionPlaylists.setVisible(Features.PLAYLIST_ENABLED);
+    columnPlaylists.setVisible(Features.PLAYLIST_ENABLED);
+    columnRating.setVisible(Features.RATINGS);
 
-    sectionAssets.setVisible(frontendType.supportMedias());
+    sectionAssets.setVisible(Features.MEDIA_ENABLED);
     dropIns.setVisible(Features.DROP_IN_FOLDER);
 
     networkShareTestPath = client.getFrontendService().getFrontend().getInstallationDirectory();

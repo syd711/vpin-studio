@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
@@ -15,7 +14,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.layout.HBox;
@@ -27,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -312,14 +311,12 @@ public class UploadsButtonController implements Initializable {
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
-
     FrontendUtil.replaceName(uploadTableBtn.getTooltip(), frontend);
 
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       uploadTableBtn.getItems().remove(pupPackUploadItem);
     }
-    if (!frontendType.supportMedias()) {
+    if (!Features.MEDIA_ENABLED) {
       uploadTableBtn.getItems().remove(mediaUploadItem);
     }
   }

@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.CommentType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable, PreferenceChangeListener {
@@ -187,11 +187,10 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     notPlayedSettings.managedProperty().bindBidirectional(notPlayedSettings.visibleProperty());
     statusSettings.managedProperty().bindBidirectional(statusSettings.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    withPupPackCheckBox.setVisible(frontendType.supportPupPacks());
-    statusSettings.setVisible(!frontendType.equals(FrontendType.Standalone));
-    notPlayedSettings.setVisible(frontendType.supportStatistics());
-    missingAssetsCheckBox.setVisible(frontendType.supportMedias());
+    withPupPackCheckBox.setVisible(Features.PUPPACKS_ENABLED);
+    statusSettings.setVisible(!Features.IS_STANDALONE);
+    notPlayedSettings.setVisible(Features.STATISTICS_ENABLED);
+    missingAssetsCheckBox.setVisible(Features.MEDIA_ENABLED);
 
     filterSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
@@ -290,7 +289,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
       applyFilters();
     });
 
-    List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses(frontendType));
+    List<TableStatus> statuses = new ArrayList<>(TableDataController.supportedStatuses());
     statuses.add(0, null);
     statusCombo.setItems(FXCollections.observableList(statuses));
     if (filterSettings.getGameStatus() >= 0) {
@@ -338,9 +337,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.ISCORED_SETTINGS.equalsIgnoreCase(key)) {
       IScoredSettings iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-      iScoredCompetitionCheckBox.setVisible(iScoredSettings != null && iScoredSettings.isEnabled() && frontendType.supportCompetitions());
+      iScoredCompetitionCheckBox.setVisible(iScoredSettings != null && iScoredSettings.isEnabled() && Features.COMPETITIONS_ENABLED);
     }
   }
 }

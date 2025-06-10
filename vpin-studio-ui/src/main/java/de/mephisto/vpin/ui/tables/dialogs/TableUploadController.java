@@ -50,6 +50,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableUploadController implements Initializable, DialogController {
@@ -386,7 +387,7 @@ public class TableUploadController implements Initializable, DialogController {
         });
       }
       else {
-        this.uploaderAnalysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), this.selection);
+        this.uploaderAnalysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, this.selection);
         if (!selectMatchingEmulator()) {
           return;
         }
@@ -586,7 +587,7 @@ public class TableUploadController implements Initializable, DialogController {
         this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
       }
       else if (selection != null) {
-        UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), selection);
+        UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, selection);
         this.uploadBtn.setDisable(!analysis.getEmulatorType().equals(emulatorType));
       }
     });

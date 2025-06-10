@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
@@ -48,6 +47,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 /**
  * See ValidationTexts

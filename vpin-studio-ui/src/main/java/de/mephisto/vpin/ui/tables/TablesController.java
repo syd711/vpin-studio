@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -52,6 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
@@ -194,12 +193,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     EventManager.getInstance().addListener(this);
     sidePanelRoot = root.getRight();
 
-
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.supportStatistics()) {
+    if (!Features.STATISTICS_ENABLED) {
       tabPane.getTabs().remove(tablesStatisticsTab);
     }
-    if (!frontendType.supportArchive()) {
+    if (!Features.ARCHIVE_ENABLED) {
       tabPane.getTabs().remove(tableRepositoryTab);
     }
 

@@ -10,7 +10,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameList;
@@ -63,6 +62,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataController implements Initializable, DialogController, AutoCompleteTextFieldChangeListener, ChangeListener<VpsTableVersion> {
@@ -634,24 +634,21 @@ public class TableDataController implements Initializable, DialogController, Aut
     patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
     patchVersionPanel.managedProperty().bindBidirectional(patchVersionPanel.visibleProperty());
 
-    FrontendType frontendType = null;
     try {
-      frontendType = client.getFrontendService().getFrontendType();
-
-      if (!frontendType.supportStandardFields()) {
+      if (!Features.FIELDS_STANDARD) {
         tabPane.getTabs().remove(metaDataTab);
       }
 
-      if (!frontendType.supportExtendedFields()) {
+      if (!Features.FIELDS_EXTENDED) {
         tabPane.getTabs().remove(customizationTab);
         tabPane.getTabs().remove(extrasTab);
       }
 
-      if (!frontendType.supportMedias()) {
+      if (!Features.MEDIA_ENABLED) {
         buttonsBar.getChildren().remove(openAssetMgrBtn);
       }
 
-      if (!frontendType.supportPlaylists()) {
+      if (!Features.PLAYLIST_ENABLED) {
         tabPane.getTabs().remove(playlistsTab);
       }
 
@@ -669,7 +666,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       LOG.error("Failed to initialize table data manager: " + e.getMessage(), e);
     }
 
-    if (frontendType != null && frontendType.supportStatistics()) {
+    if (Features.STATISTICS_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
         Parent builtInRoot = loader.load();
@@ -686,8 +683,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private void loadTabs() {
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
       Parent builtInRoot = loader.load();
@@ -729,7 +724,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     try {
-      if (frontendType.supportPlaylists()) {
+      if (Features.PLAYLIST_ENABLED) {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPlaylistsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
         Parent playlistsRoot = loader.load();
         tablesSidebarPlaylistsController = loader.getController();
@@ -774,15 +769,13 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       boolean patchVersionEnabled = !StringUtils.isEmpty(serverSettings.getMappingPatchVersion());
       patchVersion.setDisable(!patchVersionEnabled);
-      patchVersionPanel.setVisible(client.getFrontendService().getFrontendType().supportExtendedFields() && patchVersionEnabled);
+      patchVersionPanel.setVisible(Features.FIELDS_EXTENDED && patchVersionEnabled);
 
       nextButton.setVisible(overviewController != null);
       prevButton.setVisible(overviewController != null);
       openAssetMgrBtn.setVisible(overviewController != null);
 
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
       Frontend frontend = client.getFrontendService().getFrontendCached();
-
 
       if (game.isVpxGame() || game.isFpGame()) {
         if (propperRenamingController != null) {
@@ -865,7 +858,7 @@ public class TableDataController implements Initializable, DialogController, Aut
             gameName.setText(oldValue);
           }
         });
-        gameName.setDisable(frontendType.isStandalone());
+        gameName.setDisable(Features.IS_STANDALONE);
 
         if (game.isVpxGame() || game.isFpGame()) {
           gameFileName.setText(tableDetails.getGameFileName());
@@ -902,12 +895,12 @@ public class TableDataController implements Initializable, DialogController, Aut
 
         gameDisplayName.setText(tableDetails.getGameDisplayName());
         gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
-        gameDisplayName.setDisable(frontendType.isStandalone());
+        gameDisplayName.setDisable(Features.IS_STANDALONE);
 
         //---------------
         // TAB Meta Data
 
-        List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+        List<TableStatus> statuses = TableDataController.supportedStatuses();
         statusCombo.setDisable(statuses.isEmpty());
         statusCombo.setItems(FXCollections.observableList(statuses));
         if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3 && !statuses.isEmpty()) {
@@ -1109,7 +1102,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
 
       initVpsStatus();
-      if (frontendType.supportStatistics() && tableStatisticsController != null) {
+      if (Features.STATISTICS_ENABLED && tableStatisticsController != null) {
         tableStatisticsController.setGame(stage, game, tableDetails);
       }
 
@@ -1312,7 +1305,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.tableVersionsCombo.valueProperty().addListener(this);
   }
 
-  public static List<TableStatus> supportedStatuses(FrontendType frontendType) {
-    return frontendType.supportExtendedStatuses() ? TABLE_STATUSES_FULL : frontendType.supportStatuses() ? TABLE_STATUSES_MINI : Collections.emptyList();
+  public static List<TableStatus> supportedStatuses() {
+    return Features.STATUS_EXTENDED ? TABLE_STATUSES_FULL : Features.STATUSES ? TABLE_STATUSES_MINI : Collections.emptyList();
   }
 }

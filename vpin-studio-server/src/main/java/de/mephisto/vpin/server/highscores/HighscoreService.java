@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
@@ -31,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.util.*;

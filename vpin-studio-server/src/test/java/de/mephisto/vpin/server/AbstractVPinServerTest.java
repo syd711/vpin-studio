@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -27,6 +26,8 @@ import de.mephisto.vpin.server.system.SystemService;
 import org.jcodec.common.logging.Logger;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.util.Arrays;

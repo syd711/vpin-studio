@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
@@ -440,8 +441,6 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   public void loadSidePanels() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
-
     FrontendUtil.replaceName(frontendConfigBtn.getTooltip(), frontend);
 
     try {
@@ -525,8 +524,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       tableAccordion.getPanes().remove(titledPaneMedia);
     }
 
-
-    if (frontendType.supportPlaylists()) {
+    if (Features.PLAYLIST_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
         Parent tablesRoot = loader.load();
@@ -575,7 +573,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    if (frontendType.supportPupPacks()) {
+    if (Features.PUPPACKS_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPUPPackController.class.getResource("scene-tables-sidebar-pup-pack.fxml"));
         Parent tablesRoot = loader.load();
@@ -834,14 +832,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   public void refreshSidebarSections() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     int index = 0;
-    index = refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && frontendType.supportMedias(), index);
+    index = refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && Features.MEDIA_ENABLED, index);
     index = refreshSection(titledPaneTableData, uiSettings.isSectionTableData(), index);
     index = refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass(), index);
     index = refreshSection(titledPaneDMD, uiSettings.isSectionDMD(), index);
-    index = refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && frontendType.supportPlaylists(), index);
+    index = refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && Features.PLAYLIST_ENABLED, index);
     index = refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound(), index);
     index = refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor(), index);
     index = refreshSection(titledPanePov, uiSettings.isSectionPov(), index);
@@ -850,7 +847,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     index = refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME(), index);
     index = refreshSection(titledPaneVps, uiSettings.isSectionVps(), index);
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
-    index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
+    index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && Features.PUPPACKS_ENABLED, index);
 
     tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isTablesSidebarVisible());
   }

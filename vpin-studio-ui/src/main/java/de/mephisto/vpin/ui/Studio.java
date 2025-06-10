@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
@@ -13,6 +12,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -66,6 +66,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
   private static final String MACOS_APP_NAME = "vpin-studio.app";
+
+  /** The static features activated, static for a simple access in code */
+  public static FeaturesInfo Features;
 
   public static Stage stage;
 
@@ -123,6 +126,7 @@ public class Studio extends Application {
 
     //replace the OverlayFX client with the Studio one
     Studio.client = new VPinStudioClient("localhost");
+    Studio.Features = client.getSystemService().getFeatures();
     ServerFX.client = Studio.client;
 
     String version = client.getSystemService().getVersion();
@@ -135,6 +139,7 @@ public class Studio extends Application {
       if (!connections.isEmpty()) {
         for (ConnectionEntry connection : connections) {
           Studio.client = new VPinStudioClient(connection.getIp());
+          Studio.Features = client.getSystemService().getFeatures();
           version = client.getSystemService().getVersion();
           if (!StringUtils.isEmpty(version)) {
             loadStudio(stage, Studio.client);
@@ -214,6 +219,8 @@ public class Studio extends Application {
 
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
+      Studio.Features = client.getSystemService().getFeatures();
+
       ServerFX.client = Studio.client;
 
 //      Platform.setImplicitExit(false);

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.FileVersion;
 import de.mephisto.vpin.restclient.directb2s.*;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
@@ -35,6 +34,9 @@ import org.springframework.util.StreamUtils;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.DatatypeConverter;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;

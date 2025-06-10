@@ -118,6 +118,10 @@ public class SystemServiceClient extends VPinStudioClientService {
     return null;
   }
 
+  public FeaturesInfo getFeatures() {
+    return getRestClient().get(API + "system/features", FeaturesInfo.class);
+  }
+
   public SystemId getSystemId() {
     try {
       return getRestClient().getCached(API + "system", SystemId.class);
