@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.mania;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
@@ -39,6 +38,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;

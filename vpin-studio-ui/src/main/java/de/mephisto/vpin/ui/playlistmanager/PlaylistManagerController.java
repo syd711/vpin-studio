@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlaylistManagerController implements Initializable, DialogController {
@@ -271,7 +272,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
       newPlayList.setMediaName("pl_" + FileUtils.replaceWindowsChars(value));
 
       //workaround for PinballX
-      if (!client.getFrontendService().getFrontend().getFrontendType().supportExtendedPlaylists()) {
+      if (!Features.PLAYLIST_EXTENDED) {
         newPlayList.setEmulatorId(getDefaultGameEmulator().getId());
       }
 
@@ -426,7 +427,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           TreeItem<PlaylistRepresentation> root = new TreeItem<>(playListRoot);
           buildTreeModel(root);
           treeView.setRoot(root);
-          treeView.setShowRoot(client.getFrontendService().getFrontendCached().getFrontendType().supportExtendedPlaylists());
+          treeView.setShowRoot(Features.PLAYLIST_EXTENDED);
           expandAll(root);
 
           if (playlist != null) {
@@ -479,7 +480,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     templateSelector.setVisible(frontendType.equals(FrontendType.Popper));
     hintLabel.setVisible(frontendType.equals(FrontendType.Popper));
 
-    settingsBox.setVisible(frontendType.supportExtendedPlaylists());
+    settingsBox.setVisible(Features.PLAYLIST_EXTENDED);
 //    assetManagerSeparator.setVisible(frontendType.supportPlaylists());
 //    assetManagerBtn.setVisible(frontendType.supportPlaylists());
 

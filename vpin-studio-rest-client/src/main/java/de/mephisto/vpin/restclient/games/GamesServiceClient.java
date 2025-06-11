@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
@@ -354,6 +355,10 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public GameRepresentation scanGame(int gameId) {
     return getRestClient().get(API + "games/scan/" + gameId, GameRepresentation.class);
+  }
+
+  public FileInfo getHighscoreFileInfo(int gameId) {
+    return getRestClient().get(API + "games/highscorefile/" + gameId + "/fileinfo", FileInfo.class);
   }
 
   public HighscoreFiles getHighscoreFiles(int gameId) {

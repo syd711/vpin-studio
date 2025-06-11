@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.vps;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
@@ -31,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.io.FileOutputStream;

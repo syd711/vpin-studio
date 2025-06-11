@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class UploadAnalysisDispatcher {
@@ -53,7 +54,7 @@ public class UploadAnalysisDispatcher {
   }
 
   public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, @Nullable Runnable finalizer) {
-    UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendType().supportPupPacks(), file);
+    UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, file);
     dispatchBySuffix(file, game, assetType, analysis, finalizer);
   }
 

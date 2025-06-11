@@ -1,9 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
@@ -26,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableOverviewContextMenu {
@@ -95,7 +94,6 @@ public class TableOverviewContextMenu {
   public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, List<GameRepresentationModel> games) {
     this.ctxMenu = ctxMenu;
     this.ctxMenu.getItems().clear();
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     boolean multiSelection = tableOverviewController.getSelections().size() > 1;
     if (games.isEmpty()) {
@@ -111,7 +109,7 @@ public class TableOverviewContextMenu {
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
 
-    if (frontendType.supportStandardFields()) {
+    if (Features.FIELDS_STANDARD) {
       boolean isDisabled = game.isDisabled();
       String txt = isDisabled ? "Enable Table(s)" : "Disable Table(s)";
       String icon = isDisabled ? "mdi2c-checkbox-marked-outline" : "mdi2c-checkbox-blank-off-outline";
@@ -123,7 +121,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(enableItem);
     }
 
-    if (frontendType.supportMedias()) {
+    if (Features.MEDIA_ENABLED) {
       MenuItem assetsItem = new MenuItem("Edit Table Assets");
       assetsItem.setGraphic(iconMedia);
       assetsItem.setDisable(multiSelection);
@@ -248,7 +246,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(validateItem);
     }
 
-//    if (frontendType.isNotStandalone()) {
+//    if (!Features.IS_STANDALONE) {
 //      ctxMenu.getItems().add(new SeparatorMenuItem());
 //      MenuItem importsItem = new MenuItem("Import Tables");
 //      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
@@ -317,7 +315,7 @@ public class TableOverviewContextMenu {
       iniItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onIniUpload());
       uploadMenu.getItems().add(iniItem);
 
-      if (frontendType.supportMedias()) {
+      if (Features.MEDIA_ENABLED) {
         MenuItem mediaItem = new MenuItem("Upload Media Pack");
         mediaItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
         mediaItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onMediaUpload());
@@ -340,7 +338,7 @@ public class TableOverviewContextMenu {
       povItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onPOVUpload());
       uploadMenu.getItems().add(povItem);
 
-      if (frontendType.supportPupPacks()) {
+      if (Features.PUPPACKS_ENABLED) {
         MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
         pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
         pupPackItem.setOnAction(actionEvent -> tableOverviewController.getUploadsButtonController().onPupPackUpload());
@@ -382,7 +380,7 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(launchItem);
 
       //decluttering
-      if (frontendType.supportArchive()) {
+      if (Features.ARCHIVE_ENABLED) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem exportItem = new MenuItem("Backup Table");

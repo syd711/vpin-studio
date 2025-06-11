@@ -44,7 +44,7 @@ public class HighscoreResolver implements InitializingBean {
   // Resolution of highscore files
 
   @Nullable
-  private File getHighscoreFile(Game game) {
+  public File getHighscoreFile(Game game) {
     HighscoreType highscoreType = game.getHighscoreType();
     if (highscoreType != null) {
       switch (highscoreType) {

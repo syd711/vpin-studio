@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
@@ -198,8 +199,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     if (this.playlistCombo != null) {
       this.playlistCombo.managedProperty().bindBidirectional(this.playlistCombo.visibleProperty());
 
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-      if (frontendType.supportPlaylists()) {
+      if (Features.PLAYLIST_ENABLED) {
         playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell());
         playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell());
         filterController.bindPlaylistField(playlistCombo);

@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -26,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 /**
@@ -47,9 +47,6 @@ public class PupPacksResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
-
-  @Autowired
-  private FrontendService frontendService;
 
 
   @DeleteMapping("{id}")
@@ -119,7 +116,7 @@ public class PupPacksResource {
       descriptor.upload();
 
       File tempFile = new File(descriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
+      UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
       analysis.analyze();
 
       descriptor.setAsync(true);

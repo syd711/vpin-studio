@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -36,6 +35,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class PreferencesController extends SettingsSceneController implements Initializable, StudioEventListener {
@@ -453,23 +453,23 @@ public class PreferencesController extends SettingsSceneController implements In
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    vpbmBtn.setVisible(frontendType.supportArchive());
+    vpbmBtn.setVisible(Features.ARCHIVE_ENABLED);
     repositoriesBtn.setVisible(false);
 //    repositoriesBtn.setVisible(frontendType.supportArchive());
 
     // activation of custom options according to installed frontend
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
     frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
 
-    notificationsButton.setVisible(frontendType.isNotStandalone() && Features.NOTIFICATIONS_ENABLED);
-    overlayBtn.setVisible(frontendType.isNotStandalone());
+    notificationsButton.setVisible(!Features.IS_STANDALONE && Features.NOTIFICATIONS_ENABLED);
+    overlayBtn.setVisible(!Features.IS_STANDALONE);
 
-    pauseMenuBtn.setVisible(frontendType.supportControls());
-    highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
-    validators_screensBtn.setVisible(frontendType.isNotStandalone());
-    validators_backglassBtn.setVisible(frontendType.isNotStandalone());
+    pauseMenuBtn.setVisible(Features.CONTROLS_ENABLED);
+    highscore_cardsBtn.setVisible(!Features.IS_STANDALONE);
+    validators_screensBtn.setVisible(!Features.IS_STANDALONE);
+    validators_backglassBtn.setVisible(!Features.IS_STANDALONE);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
     vpfBtn.setVisible(Features.VP_FORUMS);
