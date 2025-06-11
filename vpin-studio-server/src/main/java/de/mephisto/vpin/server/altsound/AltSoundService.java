@@ -19,6 +19,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
@@ -48,37 +50,52 @@ public class AltSoundService implements InitializingBean {
   private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
-    File gameAltSoundFolder = getAltSoundFolder(game);
-    return gameAltSoundFolder != null && altSoundFolder2AltSound.containsKey(gameAltSoundFolder.getAbsolutePath().toLowerCase());
+    File altSoundFolder = getAltSoundFolder(game);
+    if (altSoundFolder != null) {
+      String altSoundKey = altSoundFolder.getAbsolutePath().toLowerCase();
+
+      // auto discovery of non previously detected altSound
+      if (!altSoundFolder2AltSound.containsKey(altSoundKey)) {
+        AltSound altSound = AltSoundLoaderFactory.create(altSoundFolder, game.getEmulatorId());
+        altSoundFolder2AltSound.put(altSoundKey, altSound);
+      }
+      return altSoundFolder2AltSound.get(altSoundKey) != null;
+    }
+    return false;
   }
 
-  //public File getAltSoundFolder() {
-  //  return new File(mameService.getMameFolder(), "altsound");
-  //}
-
-  @Nullable
-  public File getAltSoundFolder(@NonNull Game game) {
-    if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
-      return new File(game.getEmulator().getAltSoundFolder(), game.getRomAlias());
+  private File getAltSoundFolder(@NonNull Game game, String subfolder) {
+    if (Features.IS_STANDALONE) {
+      return new File(game.getGameFolder(), "vpinmame/altsound/" + subfolder);
     }
-    if (!StringUtils.isEmpty(game.getRom()) && game.getEmulator() != null) {
-      return new File(game.getEmulator().getAltSoundFolder(), game.getRom());
+    else if (game.getEmulator() != null) {
+      return new File(game.getEmulator().getAltSoundFolder(), subfolder);
     }
+    // else
     return null;
   }
 
+  @Nullable
+  public File getAltSoundFolder(@NonNull Game game) {
+    File altSoundFolder = null;
+    if (StringUtils.isNotEmpty(game.getRom())) {
+      altSoundFolder = getAltSoundFolder(game, game.getRom());
+    }
+    if ((altSoundFolder == null || !altSoundFolder.exists()) && StringUtils.isNotEmpty(game.getRomAlias())) {
+      altSoundFolder = getAltSoundFolder(game, game.getRomAlias());
+    }
+    return (altSoundFolder == null || !altSoundFolder.exists()) ? null : altSoundFolder;
+  }
+
   public boolean delete(@NonNull Game game) {
-    GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
-    if (!StringUtils.isEmpty(game.getRom())) {
-      File folder = new File(emulator.getAltSoundFolder(), game.getRom());
-      if (folder.exists()) {
-        altSoundFolder2AltSound.remove(getAltSoundFolder(game).getAbsolutePath().toLowerCase());
-        LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
-        if (FileUtils.deleteFolder(folder)) {
-          return clearCache();
-        }
-        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
+    File altSoundFolder  = getAltSoundFolder(game);
+    if (altSoundFolder != null) {
+      altSoundFolder2AltSound.remove(altSoundFolder.getAbsolutePath().toLowerCase());
+      LOG.info("Deleting ALTSound folder " + altSoundFolder.getAbsolutePath());
+      if (FileUtils.deleteFolder(altSoundFolder)) {
+        return clearCache();
       }
+      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
     }
     return true;
   }
@@ -86,30 +103,33 @@ public class AltSoundService implements InitializingBean {
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     if (isAltSoundAvailable(game)) {
-      String folder = getAltSoundFolder(game).getAbsolutePath();
-      AltSound altSound = altSoundFolder2AltSound.get(folder.toLowerCase());
-      altSound.setFolder(folder);
+      File altSoundFolder = getAltSoundFolder(game);
+      String altSoundKey = altSoundFolder.getAbsolutePath().toLowerCase();
+      AltSound altSound = altSoundFolder2AltSound.get(altSoundKey);
+      altSound.setFolder(altSoundFolder.getAbsolutePath());
       altSound = AltSoundLoaderFactory.load(altSound);
-      altSoundFolder2AltSound.put(folder.toLowerCase(), altSound);
       return altSound;
     }
-    return new AltSound();
+    return null;
   }
 
-  public AltSound save(@NonNull Game game, @NonNull AltSound altSound) {
+  public boolean save(@NonNull Game game, @NonNull AltSound altSound) {
     File altSoundFolder = getAltSoundFolder(game);
-    altSoundBackupService.synchronizeBackup(altSoundFolder);
-    if (game.isAltSoundAvailable()) {
-      if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
-        new AltSound2Writer(altSoundFolder).write(altSound);
+    if (altSoundFolder != null) {
+      altSoundBackupService.synchronizeBackup(altSoundFolder);
+      if (game.isAltSoundAvailable()) {
+        if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
+          new AltSound2Writer(altSoundFolder).write(altSound);
+        }
+        else {
+          new AltSoundWriter(altSoundFolder).write(altSound);
+        }
+        createAltSound(new File(altSound.getFolder()), altSound.getEmulatorId());
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
+        return true;
       }
-      else {
-        new AltSoundWriter(altSoundFolder).write(altSound);
-      }
-      createAltSound(new File(altSound.getFolder()), altSound.getEmulatorId());
-      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
     }
-    return altSound;
+    return false;
   }
 
   public boolean setAltSoundEnabled(@NonNull String rom, boolean b) {
@@ -145,19 +165,22 @@ public class AltSoundService implements InitializingBean {
     return JobDescriptorFactory.empty();
   }
 
-  public AltSound restore(Game game) {
+  public boolean restore(Game game) {
     if (game != null) {
       File altSoundFolder = getAltSoundFolder(game);
-      this.altSoundBackupService.restore(altSoundFolder);
-      gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
-      return getAltSound(game);
+      if (altSoundFolder != null) {
+        this.altSoundBackupService.restore(altSoundFolder);
+        gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.ALT_SOUND, game.getRom());
+        return true;
+      }
     }
-    return new AltSound();
+    return false;
   }
 
   public boolean clearCache() {
     long start = System.currentTimeMillis();
     this.altSoundFolder2AltSound.clear();
+
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
       File altSoundFolder = vpxGameEmulator.getAltSoundFolder();
@@ -179,9 +202,9 @@ public class AltSoundService implements InitializingBean {
     return true;
   }
 
-  private void createAltSound(@Nullable File altSoundDir, int emualtorId) {
+  private void createAltSound(@Nullable File altSoundDir, int emulatorId) {
     if (altSoundDir != null) {
-      AltSound altSound = AltSoundLoaderFactory.create(altSoundDir, emualtorId);
+      AltSound altSound = AltSoundLoaderFactory.create(altSoundDir, emulatorId);
       if (altSound != null) {
         altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath().toLowerCase(), altSound);
       }

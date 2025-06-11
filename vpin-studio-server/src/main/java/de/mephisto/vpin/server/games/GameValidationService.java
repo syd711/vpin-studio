@@ -557,15 +557,17 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   public List<ValidationState> validateAltSound(Game game) {
     List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
-      if (game.isAltSoundAvailable() && altSoundService.getAltSoundMode(game) <= 0) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
+    if (game.isAltSoundAvailable()) {
+      if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
+        if (altSoundService.getAltSoundMode(game) <= 0) {
+          result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
+        }
       }
-    }
 
-    if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
-      if (game.isAltSoundAvailable() && altSoundService.getAltSound(game).isMissingAudioFiles()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
+      if (isValidationEnabled(game, CODE_ALT_SOUND_FILE_MISSING)) {
+        if (altSoundService.getAltSound(game).isMissingAudioFiles()) {
+          result.add(ValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_FILE_MISSING));
+        }
       }
     }
     return result;

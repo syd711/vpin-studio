@@ -77,17 +77,17 @@ public class AltSoundResource {
   }
 
   @PostMapping("/save/{id}")
-  public AltSound save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
+  public boolean save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
     Game game = gameService.getGame(id);
     if (game != null) {
       altSoundService.save(game, altSound);
-      return getAltSound(game);
+      return true;
     }
-    return new AltSound();
+    return false;
   }
 
   @GetMapping("/restore/{id}")
-  public AltSound restore(@PathVariable("id") int id) {
+  public boolean restore(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     return altSoundService.restore(game);
   }
@@ -149,7 +149,9 @@ public class AltSoundResource {
 
   private AltSound getAltSound(@NonNull Game game) {
     AltSound altSound = altSoundService.getAltSound(game);
-    altSound.setValidationStates(validationService.validateAltSound(game));
+    if (altSound != null) {
+      altSound.setValidationStates(validationService.validateAltSound(game));
+    }
     return altSound;
   }
 }
