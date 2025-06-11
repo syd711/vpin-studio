@@ -380,15 +380,22 @@ public class Game {
 
   @NonNull
   @JsonIgnore
+  public File getGameFolder() {
+    return getGameFile().getParentFile();
+  }
+
+
+  @NonNull
+  @JsonIgnore
   public File getPOVFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".pov");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
 
   @NonNull
   @JsonIgnore
   public File getIniFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".ini");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
   }
 
   // getHighscoreIniFile moved in HighscoreResolution
@@ -396,13 +403,13 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getVBSFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".vbs");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".vbs");
   }
 
   @NonNull
   @JsonIgnore
   public File getResFile() {
-    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".res");
+    return new File(getGameFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
   }
 
   @NonNull
@@ -671,7 +678,7 @@ public class Game {
   @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(getGameFile().getParentFile(), baseName + ".directb2s");
+    return new File(getGameFolder(), baseName + ".directb2s");
   }
 
   @NonNull
@@ -710,4 +717,5 @@ public class Game {
   public int hashCode() {
     return id;
   }
+
 }
