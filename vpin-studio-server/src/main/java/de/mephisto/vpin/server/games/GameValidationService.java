@@ -479,32 +479,32 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
     List<ValidationState> result = new ArrayList<>();
 
-    MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
-
     AltColor altColor = altColorService.getAltColor(game);
     AltColorTypes altColorType = altColor.getAltColorType();
     if (altColorType == null) {
       return Collections.emptyList();
     }
 
-    //File mameFolder = mameService.getMameFolder();
-    File mameFolder = game.getEmulator().getMameFolder();
-    File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
-    File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
-    File dmdextexe = new File(mameFolder, "dmdext.exe");
-    File dmdDeviceIni = new File(mameFolder, "DmdDevice.ini");
+    // skip this check in standalone as DmdDevice is part of the VPX bundle
+    if (!Features.IS_STANDALONE) {
+      File mameFolder = game.getEmulator().getMameFolder();
+      File dmdDevicedll = new File(mameFolder, "DmdDevice.dll");
+      File dmdDevice64dll = new File(mameFolder, "DmdDevice64.dll");
+      File dmdextexe = new File(mameFolder, "dmdext.exe");
+      File dmdDeviceIni = new File(mameFolder, "DmdDevice.ini");
 
-    if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
-      if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
-        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
-      }
+      if (isValidationEnabled(game, CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)) {
+        if (!dmdDevicedll.exists() && !dmdDevice64dll.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDevicedll.getName()));
+        }
 
-      if (!dmdextexe.exists()) {
-        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
-      }
+        if (!dmdextexe.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdextexe.getName()));
+        }
 
-      if (!dmdDeviceIni.exists()) {
-        result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+        if (!dmdDeviceIni.exists()) {
+          result.add(ValidationStateFactory.create(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING, dmdDeviceIni.getName()));
+        }
       }
     }
 
@@ -543,6 +543,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
       else {
+        MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+
         //no in registry, so check against defaults
         if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
           result.add(ValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
