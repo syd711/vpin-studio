@@ -209,10 +209,11 @@ public class VPXFileScanner {
     evalctxt.setVarValue("Table1", table1);
 
     // for detection of these special variables (case insensitive)
-    evalctxt.addUndefinedVar("B2STableName");
     evalctxt.addUndefinedVar("GameName");
     evalctxt.addUndefinedVar("cGameName");
     evalctxt.addUndefinedVar("pGameName");
+    evalctxt.addUndefinedVar("TableName");
+    evalctxt.addUndefinedVar("B2STableName");
     evalctxt.addUndefinedVar("RomSet1");
 
     evalctxt.addUndefinedVar("vrroom");

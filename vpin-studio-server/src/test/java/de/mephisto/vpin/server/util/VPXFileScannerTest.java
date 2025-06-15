@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.util;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.scripteval.EvaluationContext;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -45,22 +45,23 @@ public class VPXFileScannerTest {
     }
   }
 
+  //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
   private void compare(StringBuilder bld, Path p, ScanResult scan) {
 
-    //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
     EvaluationContext evalctxt = scan.evalctxt;
 
     if (scan.getGameName() != null) {
       diff(bld, p, "Rom", scan.getRom(), scan.getGameName());
     }
 
-    diff(bld, p, "TableName", scan.getTableName(), evalctxt.getVarValue("B2STableName"));
+    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
+    diff(bld, p, "TableName", scan.getTableName(), tableName);
     diff(bld, p, "pGameName", scan.getPupPackName(), evalctxt.getVarValue("pGameName"));
 
     Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
     if (vrroom != null ||  scan.isVrRoomSupport()) {
       String oldvrromm = scan.isVrRoomSupport() + " / " + scan.isVrRoomDisabled();
-      String newvrroom = (vrroom != null) + " / " + (vrroom != null && vrroom.toString().equals("0"));
+      String newvrroom = (vrroom != null) + " / " + (vrroom == null || vrroom.toString().equals("0"));
       diff(bld, p, "vrroom", oldvrromm, newvrroom);
     }
 
@@ -82,7 +83,8 @@ public class VPXFileScannerTest {
   public void testSingleScan() {
 //    File f = new File("C:\\vPinball\\VisualPinball\\Tables\\MF DOOM (GOILL773 2024) v1.1.vpx");
     //File f = new File(folder,"Twister (1996).vpx");
-    File f = new File(folder,"007 Goldeneye (Sega 1996).vpx");
+    //File f = new File(folder,"Austin Powers (Stern 2001).vpx");
+    File f = new File(folder,"Batman (Data East 1991).vpx");
 
     if(f.exists()) {
       ScanResult scan = VPXFileScanner.scan(f);
