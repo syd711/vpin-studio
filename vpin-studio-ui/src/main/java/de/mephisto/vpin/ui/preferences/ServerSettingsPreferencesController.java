@@ -1,10 +1,8 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -26,6 +24,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ServerSettingsPreferencesController implements Initializable {
@@ -122,9 +121,8 @@ public class ServerSettingsPreferencesController implements Initializable {
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
-    popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
-    launchOnExitOption.setVisible(frontendType.supportMedias());
+    popperDataMappingFields.setVisible(Features.FIELDS_EXTENDED);
+    launchOnExitOption.setVisible(Features.MEDIA_ENABLED);
     launchFrontendCheckbox.setText("Launch " + frontend.getName() +  " on maintenance exit.");
 
     Date startupTime = client.getSystemService().getStartupTime();

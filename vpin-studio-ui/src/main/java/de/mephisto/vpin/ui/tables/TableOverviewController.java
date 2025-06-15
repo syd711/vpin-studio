@@ -82,6 +82,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -1732,19 +1733,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
 
     FrontendUtil.replaceName(importBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
-    playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud());
+    playlistManagerBtn.setVisible(Features.PLAYLIST_CRUD);
 
-    if (frontendType.equals(FrontendType.Standalone)) {
+    if (Features.IS_STANDALONE) {
       importBtn.setVisible(false);
       columnEmulator.setVisible(false);
     }
 
-    if (!frontendType.supportMedias()) {
+    if (!Features.MEDIA_ENABLED) {
       this.assetManagerBtn.setVisible(false);
       this.assetManagerViewBtn.setVisible(false);
     }
@@ -1759,7 +1759,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     bindTable();
 
-    if (frontendType.supportPupPacks()) {
+    if (Features.PUPPACKS_ENABLED) {
       Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
       ImageView iconMedia = new ImageView(image3);
       iconMedia.setFitWidth(18);
@@ -1776,7 +1776,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       columnPUPPack.setVisible(false);
     }
 
-    columnPlaylists.setVisible(frontendType.supportPlaylists());
+    columnPlaylists.setVisible(Features.PLAYLIST_ENABLED);
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
@@ -1867,16 +1867,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
     boolean fpMode = newValue == null || newValue.isFpEmulator();
     boolean fxMode = newValue == null || newValue.isFxEmulator();
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
-    columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
+    columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && !Features.IS_STANDALONE && uiSettings.isColumnEmulator());
     columnVPS.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnPatchVersion.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnPatchVersion());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
-    columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportRating() && uiSettings.isColumnRating());
-    columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
+    columnRating.setVisible((vpxMode || fpMode) && !assetManagerMode && Features.RATINGS && uiSettings.isColumnRating());
+    columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && Features.PUPPACKS_ENABLED);
     columnPinVol.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPinVol());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
@@ -1888,7 +1887,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
     columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
     columnComment.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && uiSettings.isColumnComment());
-    columnPlaylists.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
+    columnPlaylists.setVisible((vpxMode || fpMode || fxMode) && !assetManagerMode && Features.PLAYLIST_ENABLED && uiSettings.isColumnPlaylists());
   }
 
   @Override
@@ -1902,7 +1901,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else if (key.equals(PreferenceNames.ISCORED_SETTINGS)) {
       iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
-      if (client.getFrontendService().getFrontendType().supportCompetitions()) {
+      if (Features.COMPETITIONS_ENABLED) {
         columnStatus.setPrefWidth(iScoredSettings.isEnabled() ? 75 : 55);
       }
     }

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -14,6 +13,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 

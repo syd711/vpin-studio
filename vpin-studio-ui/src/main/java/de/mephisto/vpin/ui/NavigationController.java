@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -9,7 +8,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -43,12 +41,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class NavigationController implements Initializable, StudioEventListener, PreferenceChangeListener {
@@ -296,8 +294,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    cardsBtn.setVisible(frontendType.supportMedias());
+    cardsBtn.setVisible(Features.MEDIA_ENABLED);
 
     tournamentsBtn.setVisible(false);
     try {

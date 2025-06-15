@@ -13,11 +13,15 @@ import java.util.Map;
 public class SystemInfo {
   public static String RESOURCES = "./resources/";
 
-  public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
-  public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";
-  public final static String PINBALLY_INSTALLATION_DIR_INST_DIR = "pinballY.installationDir";
-  public final static String STANDALONE_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
-  public final static String ARCHIVE_TYPE = "archive.type";
+  public final static String PINUP_SYSTEM_INSTALLATION_DIR = "pinupSystem.installationDir";
+  public final static String PINBALLX_INSTALLATION_DIR = "pinballX.installationDir";
+  public final static String PINBALLY_INSTALLATION_DIR = "pinballY.installationDir";
+
+  public final static String STANDALONE_INSTALLATION_DIR = "visualPinball.installationDir";
+  public final static String STANDALONE_CONFIG_FILE = "visualPinball.configFile";
+  public final static String STANDALONE_TABLES_DIR = "visualPinball.tablesFolder";
+
+  public final static String B2SSERVER_INSTALLATION_DIR = "B2SServer.installationDir";
 
   public final static String DOT_NET = "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP";
 

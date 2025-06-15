@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FPService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -35,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.*;
 import java.io.*;
@@ -82,9 +83,6 @@ public class UniversalUploadService {
   private PreferencesService preferencesService;
 
   @Autowired
-  private FrontendService frontendService;
-
-  @Autowired
   private EmulatorService emulatorService;
 
   @Autowired
@@ -123,7 +121,7 @@ public class UniversalUploadService {
 
       if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadDescriptorBundleFile.getName()))) {
         if (analysis == null) {
-          analysis = new UploaderAnalysis(frontendService.supportPupPacks(), temporaryUploadDescriptorBundleFile);
+          analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, temporaryUploadDescriptorBundleFile);
           analysis.analyze();
         }
 
@@ -155,7 +153,7 @@ public class UniversalUploadService {
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
+      analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
       analysis.analyze();
     }
 

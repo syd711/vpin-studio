@@ -20,6 +20,36 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * USes a table per structure folder :
+ *
+   - Table folder
+    - <table>.vpx
+    - <table>.vbs (if necessary)
+    - <table>.ini (if desired)
+    - <table>.directb2s (if desired)
+    - music (if table has music)
+       - *
+    - pupvideos (if table has pup)
+       - *
+    - pinmame
+       - roms
+          - <rom>.zip
+       - altcolor
+          - <rom>
+             - <rom>.cRZ (if you want)
+       - altsound
+          - <rom>
+             - * (if you want)
+       - nvram
+          - <rom>.nv (if you want)
+       - ini
+          - <rom>.ini (if you want)
+
+    also suport
+     https://github.com/superhac/vpinfe
+     https://github.com/superhac/vpinmediadb
+ */
 @Service("Standalone")
 public class StandaloneConnector extends BaseConnector {
   public final static String STANDALONE = FrontendType.Standalone.name();
@@ -69,6 +99,15 @@ public class StandaloneConnector extends BaseConnector {
     return systemService.getStandaloneInstallationFolder();
   }
 
+  @NonNull
+  public File getTablesFolder() {
+    File tablesFolder = systemService.getStandaloneTablesFolder();
+    if (tablesFolder == null) {
+      tablesFolder = new File(getInstallationFolder(), "Tables");
+    }
+    return tablesFolder;
+  }
+
   public Frontend getFrontend() {
     Frontend frontend = new Frontend();
     //frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
@@ -98,11 +137,10 @@ public class StandaloneConnector extends BaseConnector {
   @Override
   protected List<GameEmulator> loadEmulators() {
     List<GameEmulator> emulators = new ArrayList<>();
-
     // so far only VPX is supported in standalone mode
     File vpxInstallDir = getInstallationFolder();
-    File vpxTableDir = new File(vpxInstallDir, "Tables");
-    if (vpxTableDir.exists()) {
+    File vpxTableDir = getTablesFolder();
+    if (vpxInstallDir != null && vpxInstallDir.exists() && vpxTableDir != null && vpxTableDir.exists()) {
       LOG.info("VPX tables folder detected in " + vpxTableDir.getAbsolutePath());
       String emuName = vpxInstallDir.getName();
       GameEmulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
@@ -110,7 +148,7 @@ public class StandaloneConnector extends BaseConnector {
       emulators.add(vpxemu);
     }
     else {
-      LOG.error("No VPX installation found in folder \"" + vpxInstallDir.getAbsolutePath() + "\"");
+      LOG.error("No VPX installation found in folder \"" + vpxInstallDir + "\"");
     }
     return emulators;
   }

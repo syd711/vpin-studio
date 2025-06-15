@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables.vps;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -34,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsEntry extends HBox {

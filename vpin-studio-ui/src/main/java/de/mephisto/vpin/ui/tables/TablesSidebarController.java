@@ -9,11 +9,11 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.panels.BaseSideBarController;
@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarController extends BaseSideBarController<GameRepresentation> implements Initializable, PreferenceChangeListener {
@@ -203,48 +204,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     try {
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
-        if (gameRepresentation.getHighscoreType() != null) {
-          HighscoreType hsType = gameRepresentation.getHighscoreType();
-
-          //try to open the actual highscore file
-          if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
-            GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-            String hsName = gameRepresentation.getHsFileName();
-            File installationFolder = new File(emulatorRepresentation.getInstallationDirectory());
-            File userFolder = new File(installationFolder, "User");
-            if (!StringUtils.isEmpty(hsName)) {
-              File hsFile = new File(userFolder, gameRepresentation.getHsFileName());
-              if (hsFile.exists()) {
-                SystemUtil.openFile(hsFile);
-                return;
-              }
-              if (hsFile.getAbsoluteFile().getParentFile().exists()) {
-                SystemUtil.openFolder(hsFile.getAbsoluteFile().getParentFile());
-                return;
-              }
-            }
-            SystemUtil.openFolder(userFolder);
-            return;
-          }
-          else if (hsType.equals(HighscoreType.Ini)) {
-            String hsName = gameRepresentation.getHighscoreIniFilename();
-            if (hsName != null) {
-              File hsFile = new File(hsName);
-              SystemUtil.openFile(hsFile);
-              return;
-            }
-          }
-        }
-
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File nvRamFolder = new File(emulatorRepresentation.getNvramDirectory());
-        File nvRamFile = new File(nvRamFolder, gameRepresentation.getRom() + ".nv");
-        if (nvRamFile.exists()) {
-          SystemUtil.openFile(nvRamFile);
-        }
-        else {
-          SystemUtil.openFolder(nvRamFolder);
-        }
+        FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
+        SystemUtil.open(hsFileInfo);
       }
     }
     catch (Exception e) {
@@ -291,12 +252,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private void onAltSound() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
-        if (!altSoundFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
-          altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRomAlias());
+        FileInfo altSoundFolder = client.getAltSoundService().getAltSoundFolderInfo(game.get().getId());
+        if (altSoundFolder != null) {
+          SystemUtil.open(altSoundFolder);
         }
-        SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
+        else {
+          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT sound folder found for game \"" + game.get().getId() + "\".");
+        }
       }
     }
     catch (
@@ -310,25 +272,12 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private void onAltColor() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-        File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
-        if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
-          folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRomAlias());
+        FileInfo altColorFolder = client.getAltColorService().getAltColorFolderInfo(game.get().getId());
+        if (altColorFolder != null) {
+          SystemUtil.open(altColorFolder);
+        } else {
+          WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
         }
-        if (folder.exists()) {
-          SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltSoundDirectory()));
-          return;
-        }
-
-        if (!folder.exists() && emulatorRepresentation.getAltColorDirectory() != null) {
-          File file = new File(emulatorRepresentation.getAltColorDirectory());
-          if (file.exists()) {
-            SystemUtil.openFolder(folder, file);
-            return;
-          }
-        }
-
-        WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for emulator \"" + emulatorRepresentation.getName() + "\".");
       }
     }
     catch (Exception e) {
@@ -391,18 +340,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   private void onDMD() {
     try {
       if (this.game.isPresent()) {
-        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
-        if (dmdPackage != null) {
-          GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-          File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
-          File dmdFolder = new File(tablesFolder, dmdPackage.getName());
-          SystemUtil.openFolder(dmdFolder);
-          return;
-        }
-      }
+        GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
+        File tablesFolder = new File(emulatorRepresentation.getGamesDirectory());
 
-      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.get().getEmulatorId());
-      SystemUtil.openFolder(new File(emulatorRepresentation.getGamesDirectory()));
+        DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
+        File dmdFolder = dmdPackage != null ? new File(tablesFolder, dmdPackage.getName()) : null;
+        SystemUtil.openFolder(dmdFolder, tablesFolder);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -497,8 +441,6 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   public void loadSidePanels() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    FrontendType frontendType = frontend.getFrontendType();
-
     FrontendUtil.replaceName(frontendConfigBtn.getTooltip(), frontend);
 
     try {
@@ -582,8 +524,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       tableAccordion.getPanes().remove(titledPaneMedia);
     }
 
-
-    if (frontendType.supportPlaylists()) {
+    if (Features.PLAYLIST_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
         Parent tablesRoot = loader.load();
@@ -632,7 +573,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    if (frontendType.supportPupPacks()) {
+    if (Features.PUPPACKS_ENABLED) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPUPPackController.class.getResource("scene-tables-sidebar-pup-pack.fxml"));
         Parent tablesRoot = loader.load();
@@ -891,14 +832,13 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
 
   public void refreshSidebarSections() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     int index = 0;
-    index = refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && frontendType.supportMedias(), index);
+    index = refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && Features.MEDIA_ENABLED, index);
     index = refreshSection(titledPaneTableData, uiSettings.isSectionTableData(), index);
     index = refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass(), index);
     index = refreshSection(titledPaneDMD, uiSettings.isSectionDMD(), index);
-    index = refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && frontendType.supportPlaylists(), index);
+    index = refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && Features.PLAYLIST_ENABLED, index);
     index = refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound(), index);
     index = refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor(), index);
     index = refreshSection(titledPanePov, uiSettings.isSectionPov(), index);
@@ -907,7 +847,7 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
     index = refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME(), index);
     index = refreshSection(titledPaneVps, uiSettings.isSectionVps(), index);
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
-    index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
+    index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && Features.PUPPACKS_ENABLED, index);
 
     tablesController.setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isTablesSidebarVisible());
   }

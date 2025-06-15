@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class CardGenerationPreferencesController implements Initializable {
@@ -81,12 +82,12 @@ public class CardGenerationPreferencesController implements Initializable {
     popperScreenInfo.setVisible(frontendType.equals(FrontendType.Popper));
 
     ObservableList<String> screenNames = FXCollections.observableList(new ArrayList<>());
-    if (frontendType.supportPupPacks()) {
+    if (Features.PUPPACKS_ENABLED) {
       menuPupPack = client.getPupPackService().getMenuPupPack();
       screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name());
     }
     // for other frontends supporting medias (pinballX and pinballY)
-    else if (frontendType.supportMedias()) {
+    else if (Features.MEDIA_ENABLED) {
       screenNames.addAll("", VPinScreen.Topper.name(), VPinScreen.DMD.name(), VPinScreen.Menu.name());
     }
 
@@ -147,13 +148,12 @@ public class CardGenerationPreferencesController implements Initializable {
   }
 
   private void onScreenChange() {
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
     String selectedItem = cardTargetScreenCombo.getSelectionModel().getSelectedItem();
     highscoreCardDuration.setDisable(selectedItem == null);
 
     validationError.setVisible(false);
 
-    if(frontendType.supportControls()) {
+    if(Features.CONTROLS_ENABLED) {
       if (!StringUtils.isEmpty(selectedItem)) {
         FrontendControl fn = client.getFrontendService().getPinUPControlFor(VPinScreen.valueOf(selectedItem));
 

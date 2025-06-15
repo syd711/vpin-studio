@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -28,13 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
@@ -207,22 +206,8 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onMameSetup() {
     if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(g.getEmulatorId());
-      if (emulatorRepresentation.getMameDirectory() != null) {
-        File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
-        if (!file.exists()) {
-          file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
-        }
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          Studio.open(file);
-        }
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "No matching VPinMAME installation found.");
+      if (!client.getMameService().runSetup()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The setup.exe file was not found.");
       }
     }
   }
@@ -278,6 +263,9 @@ public class TablesSidebarMameController implements Initializable {
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     invalidDataBox.setVisible(false);
+
+    mameBtn.managedProperty().bind(mameBtn.visibleProperty());
+    mameBtn.setVisible(!Features.IS_STANDALONE);
     mameBtn.setDisable(!client.getSystemService().isLocal());
 
     noInputDataBox.setVisible(false);

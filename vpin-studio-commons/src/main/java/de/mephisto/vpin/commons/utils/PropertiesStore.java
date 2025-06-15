@@ -68,6 +68,10 @@ public class PropertiesStore {
     return this.properties.containsKey(key);
   }
 
+  public boolean containsNonEmptyKey(String key) {
+    return containsKey(key) && !StringUtils.isEmpty(get(key));
+  }
+
   public int getInt(String key, int defaultValue) {
     if (properties.containsKey(key)) {
       String value = properties.getProperty(key).trim();

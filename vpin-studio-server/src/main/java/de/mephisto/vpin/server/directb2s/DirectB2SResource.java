@@ -318,7 +318,8 @@ public class DirectB2SResource {
   @PostMapping("/tablesettings/{gameId}")
   public DirectB2STableSettings saveTableSettings(@PathVariable("gameId") int gameId, @RequestBody DirectB2STableSettings settings) {
     try {
-      return backglassService.saveTableSettings(gameId, settings);
+      Game game = gameService.getGame(gameId);
+      return backglassService.saveTableSettings(game, settings);
     }
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Save error: " + e.getMessage());

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 @Service

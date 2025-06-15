@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @RestController
 @RequestMapping(API_SEGMENT + "games")
@@ -21,9 +21,6 @@ public class UniversalUploadResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   @Autowired
   private GameMediaService gameMediaService;
@@ -58,7 +55,7 @@ public class UniversalUploadResource {
       universalUploadService.resolveLinks(uploadDescriptor);
 
       File tempFile = new File(uploadDescriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.supportPupPacks(), tempFile);
+      UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
       analysis.analyze();
       analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 

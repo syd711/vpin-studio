@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -19,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class ValidatorsVPXPreferencesController implements Initializable {
@@ -51,8 +50,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
 
     ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATION_SETTINGS, IgnoredValidationSettings.class);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    pupPackValidator.setVisible(frontendType.supportPupPacks());
+    pupPackValidator.setVisible(Features.PUPPACKS_ENABLED);
 
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();

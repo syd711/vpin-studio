@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
+
 /**
  * The different frontend supported.
  * Use feature control to activate or not components in the tool
@@ -75,59 +77,25 @@ public enum FrontendType {
 
   //----------
 
-  public boolean supportStandardFields() {
-    return !supportFields.equals(SupportType.NONE);
-  }
-  public boolean supportExtendedFields() {
-    return supportFields.equals(SupportType.FULL);
-  }
-
-  public boolean supportPlaylists() {
-    return !supportPlaylists.equals(SupportType.NONE);
-  }
-  public boolean supportExtendedPlaylists() {
-    return supportPlaylists.equals(SupportType.FULL);
-  }
-  public boolean supportPlaylistsCrud() {
-    return supportPlaylistsCrud;
-  }
-
-  public boolean supportStatuses() {
-    return !supportStatuses.equals(SupportType.NONE);
-  }
-  public boolean supportExtendedStatuses() {
-    return supportStatuses.equals(SupportType.FULL);
+  public void apply(FeaturesInfo features) {
+    features.FIELDS_STANDARD &= !supportFields.equals(SupportType.NONE);
+    features.FIELDS_EXTENDED &= supportFields.equals(SupportType.FULL);
+    features.PLAYLIST_ENABLED &= !supportPlaylists.equals(SupportType.NONE);
+    features.PLAYLIST_EXTENDED &= supportPlaylists.equals(SupportType.FULL);
+    features.PLAYLIST_CRUD &= supportPlaylistsCrud;
+    features.STATUSES &= !supportStatuses.equals(SupportType.NONE);
+    features.STATUS_EXTENDED &= supportStatuses.equals(SupportType.FULL);
+    features.MEDIA_ENABLED &= supportMedias;
+    features.PUPPACKS_ENABLED &= supportPupPacks;
+    features.STATISTICS_ENABLED &= supportStatistics;
+    features.ARCHIVE_ENABLED &= supportArchive;
+    features.CONTROLS_ENABLED &= supportControls;
+    features.RATINGS &= supportRating;
+    features.COMPETITIONS_ENABLED &= supportCompetitions;
+    features.EMULATORS_ENABLED &= !supportEmulators.equals(SupportType.NONE);
+    features.EMULATORS_CRUD &= supportEmulators.equals(SupportType.FULL);
+    features.MEDIA_CACHE &= supportMediaCache;
+    features.IS_STANDALONE = this.equals(Standalone);
   }
 
-  public boolean supportMedias() {
-    return supportMedias;
-  }
-  public boolean supportPupPacks() {
-    return supportPupPacks;
-  }
-  public boolean supportStatistics() {
-    return supportStatistics;
-  }
-  public boolean supportArchive() {
-    return supportArchive;
-  }
-  public boolean supportControls() {
-    return supportControls;
-  }
-  public boolean supportRating() { return supportRating; }
-  public boolean supportCompetitions() { return supportCompetitions; }
-  public boolean isSupportMediaCache() {
-    return supportMediaCache;
-  }
-  public boolean supportEmulators() {return !supportEmulators.equals(SupportType.NONE);}
-  public boolean supportEmulatorCreateDelete() {return supportEmulators.equals(SupportType.FULL);}
-
-  //----------
-
-  public boolean isStandalone() {
-    return this.equals(Standalone);
-  }
-  public boolean isNotStandalone() {
-    return !isStandalone();
-  }
 }

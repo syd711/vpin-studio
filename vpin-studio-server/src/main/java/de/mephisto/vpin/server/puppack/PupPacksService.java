@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -22,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,8 +117,7 @@ public class PupPacksService implements InitializingBean {
   }
 
   private void refresh() {
-    FrontendType frontendType = frontendService.getFrontendType();
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       return;
     }
 
@@ -212,8 +212,7 @@ public class PupPacksService implements InitializingBean {
   }
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
-    FrontendType frontendType = frontendService.getFrontendType();
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       return;
     }
 
@@ -318,8 +317,7 @@ public class PupPacksService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    FrontendType frontendType = frontendService.getFrontendType();
-    if (!frontendType.supportPupPacks()) {
+    if (!Features.PUPPACKS_ENABLED) {
       return;
     }
 

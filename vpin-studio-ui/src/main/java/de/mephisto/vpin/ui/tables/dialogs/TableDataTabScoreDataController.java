@@ -2,12 +2,12 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
@@ -111,9 +111,8 @@ public class TableDataTabScoreDataController implements Initializable {
 
   @FXML
   private void onEMHighscore() {
-    GameEmulatorRepresentation emulatorRepresentation = client.getEmulatorService().getGameEmulator(this.game.getEmulatorId());
-    File installationFolder = new File(emulatorRepresentation.getInstallationDirectory());
-    File userFolder = new File(installationFolder, "User");
+    FileInfo hsFileinfo = client.getGameService().getHighscoreFileInfo(this.game.getId());
+    File userFolder = hsFileinfo.getFallback();
     if (!userFolder.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file, \"User\" folder not found.");
       return;

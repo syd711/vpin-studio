@@ -30,14 +30,21 @@ public class ScoringDB {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
+  private static File getScoringDBFile() {
+    //TODO why not SystemService.RESOURCES ???
+    // OR SYstemService.getScoringDatabase()
+    File resFolder = new File("./resources/");
+    if (!resFolder.exists()) {
+      resFolder = new File("../resources/");
+    }
+    return new File(resFolder, SCORING_DB_NAME);
+  }
+
   public static ScoringDB load() {
     FileInputStream in = null;
     ScoringDB db = null;
     try {
-      File dbFile = new File("./resources/", SCORING_DB_NAME);
-      if (!dbFile.exists()) {
-        dbFile = new File("../resources/", SCORING_DB_NAME);
-      }
+      File dbFile = getScoringDBFile();
       in = new FileInputStream(dbFile);
       db = objectMapper.readValue(in, ScoringDB.class);
       LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
@@ -66,7 +73,8 @@ public class ScoringDB {
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
-      File tmp = new File("./resources/", SCORING_DB_NAME + ".tmp");
+      File dbFile = getScoringDBFile();
+      File tmp = new File(dbFile.getParentFile(), SCORING_DB_NAME + ".tmp");
       if (tmp.exists() && !tmp.delete()) {
         LOG.error("Failed to delete existing tmp file " + SCORING_DB_NAME + ".tmp");
         return;
@@ -81,7 +89,6 @@ public class ScoringDB {
       fileOutputStream.close();
 
       long oldSize = 0;
-      File dbFile = new File("./resources/", SCORING_DB_NAME);
       if (dbFile.exists()) {
         oldSize = dbFile.length();
       }
