@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.scripteval.EvaluationContext;
+import de.mephisto.vpin.server.vpx.VPXUtil;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,9 +38,7 @@ public class VPXFileScannerTest {
         walkStream
           .filter(p -> p.getFileName().toString().endsWith("vpx"))
           .forEach(p -> {
-            ScanResult scan = VPXFileScanner.scan(p.toFile());
-
-            compare(bld, p, scan);
+            compare(bld, p);
           });
         fw.append(bld);
         fw.flush();
@@ -46,9 +49,21 @@ public class VPXFileScannerTest {
   }
 
   //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
-  private void compare(StringBuilder bld, Path p, ScanResult scan) {
+  private void compare(StringBuilder bld, Path p) {
 
-    EvaluationContext evalctxt = scan.evalctxt;
+    ScanResult scan = new ScanResult();
+
+    String script = VPXUtil.readScript(p.toFile());
+
+    List<String> allLines = new ArrayList<>();
+    script = script.replaceAll("\r\n", "\n");
+    script = script.replaceAll("\r", "\n");
+    allLines.addAll(Arrays.asList(script.split("\n")));
+    Collections.reverse(allLines);
+
+    EvaluationContext evalctxt = new EvaluationContext();
+
+    VPXFileScanner.scanLines(p.toFile(), scan, evalctxt, allLines);
 
     if (scan.getGameName() != null) {
       diff(bld, p, "Rom", scan.getRom(), scan.getGameName());
@@ -93,7 +108,7 @@ public class VPXFileScannerTest {
 //      assertTrue(scan.isFoundTableExit());
 
       StringBuilder bld = new StringBuilder();
-      compare(bld, f.toPath(), scan);
+      compare(bld, f.toPath());
       System.out.println(bld.toString());
     }
   }

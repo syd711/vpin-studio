@@ -139,7 +139,10 @@ public class ScriptTest {
       if (scriptLines != null) {
         ScanResult result = new ScanResult();
         Collections.reverse(scriptLines);
-        VPXFileScanner.scanLines(new File("c:/fake/tables/", scenario + ".vpx"), result, scriptLines);
+
+        EvaluationContext evalctxt = new EvaluationContext();
+
+        VPXFileScanner.scanLines(new File("c:/fake/tables/", scenario + ".vpx"), result, evalctxt, scriptLines);
         return result;
       }
     }

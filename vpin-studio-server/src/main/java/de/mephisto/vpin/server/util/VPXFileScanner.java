@@ -68,10 +68,13 @@ public class VPXFileScanner {
     List<String> allLines = new ArrayList<>();
     script = script.replaceAll("\r\n", "\n");
     script = script.replaceAll("\r", "\n");
-
     allLines.addAll(Arrays.asList(script.split("\n")));
     Collections.reverse(allLines);
-    scanLines(gameFile, result, allLines);
+
+    // FIXME under evaluation
+    EvaluationContext evalctxt = new EvaluationContext();
+
+    scanLines(gameFile, result, evalctxt, allLines);
 
     // FIXME force GameName? Removed for the sake of comparison
     //if (!StringUtils.isEmpty(result.getGameName())) {
@@ -199,8 +202,7 @@ public class VPXFileScanner {
     }
   }
 
-  public static void scanLines(File gameFile, ScanResult result, List<String> split) {
-    EvaluationContext evalctxt = new EvaluationContext();
+  public static void scanLines(File gameFile, ScanResult result, EvaluationContext evalctxt, List<String> split) {
     // so that curDir can be resolved 
     evalctxt.setVarValue("curdir", ".");
     // simulate Table1 object
@@ -243,9 +245,6 @@ public class VPXFileScanner {
       }
       nbline--;
     }
-
-    //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
-    result.evalctxt = evalctxt;
   }
 
   /**
