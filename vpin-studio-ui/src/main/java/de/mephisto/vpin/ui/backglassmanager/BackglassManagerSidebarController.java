@@ -14,7 +14,6 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.models.*;
@@ -38,8 +37,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -790,6 +787,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
 
   protected void setData(@Nullable DirectB2S model) {
     this.directb2s = model;
+    this.refreshingCounter = 1;
 
     // maintain current selection if possible
     directB2SCombo.getItems().clear();
@@ -833,6 +831,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       refreshingCounter++;
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion()))
         .thenAcceptLater(data -> {
+          // Ignore this old answer as a new backglass is now selected
+          if (directb2s.getEmulatorId() != data.getEmulatorId() || !directb2s.getFileName().equals(data.getFilename())) {
+            return;
+          }
+
           this.tableData = data;
           refreshTableData(tableData);
           refreshingCounter--;
@@ -841,6 +844,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       refreshStatusCheckbox();
     }  
     refreshTableSettings(model != null ? model.getGameId() : -1);
+    this.refreshingCounter--;
   }
 
   protected void refreshTableSettings(int gameId) {
@@ -934,6 +938,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           return null;
         })
         .thenAcceptLater(_thumbnail -> {
+          // Ignore old answer when a new backglass has been selected
+          if (directb2s.getEmulatorId() != emulatorId || !directb2s.getFileName().equals(fileName)) {
+            return;
+          }
+
           if (_thumbnail != null) {
             thumbnailImage.setImage(_thumbnail);
             thumbnailImagePane.setCenter(thumbnailImage);
@@ -961,6 +970,11 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
           return null;
         })
         .thenAcceptLater(_dmdThumbnail -> {
+          // Ignore old answer when a new backglass has been selected
+          if (directb2s.getEmulatorId() != emulatorId || !directb2s.getFileName().equals(fileName)) {
+            return;
+          }
+
           uploadDMDBtn.setDisable(false);
           if (_dmdThumbnail != null) {
             dmdThumbnailImage.setImage(_dmdThumbnail);

@@ -483,6 +483,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       JFXFuture
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {
+            // Ignore old answer when a new backglass has been selected
+            if (model.getGameId() != game.getId()) {
+              return;
+            }
+
             if (game != null) {
               dmdPositionBtn.setDisable(false);
               resBtn.setDisable(false);
