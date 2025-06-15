@@ -59,22 +59,6 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   private boolean enabled = false;
   private PinVolPreferences preferences = null;
 
-  public boolean getPinVolAutoStart() {
-    return preferencesService.getPreferences().getPinVolAutoStartEnabled();
-  }
-
-  public boolean toggleAutoStart() {
-    try {
-      this.enabled = !enabled;
-      preferencesService.savePreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, enabled);
-      return enabled;
-    }
-    catch (Exception e) {
-      LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);
-    }
-    return false;
-  }
-
   public boolean isRunning() {
     return systemService.isProcessRunning("PinVol");
   }
@@ -348,7 +332,7 @@ public class PinVolService implements InitializingBean, FileChangeListener {
   @Override
   public void afterPropertiesSet() throws Exception {
     setSystemVolume();
-    this.enabled = getPinVolAutoStart();
+    this.enabled = preferencesService.getPreferences().getPinVolAutoStartEnabled();
 
     new Thread(() -> {
       if (enabled) {

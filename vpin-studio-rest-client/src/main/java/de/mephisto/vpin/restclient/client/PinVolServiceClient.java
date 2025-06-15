@@ -19,14 +19,6 @@ public class PinVolServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public boolean isAutoStartEnabled() {
-    return getRestClient().get(API + "pinvol/autostart", Boolean.class);
-  }
-
-  public boolean toggleAutoStart() {
-    return getRestClient().get(API + "pinvol/autostart/toggle", Boolean.class);
-  }
-
   public PinVolPreferences getPinVolTablePreferences() {
     if (pinVolTablePreferences == null) {
       pinVolTablePreferences = getRestClient().get(API + "pinvol/preferences", PinVolPreferences.class);

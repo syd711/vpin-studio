@@ -17,12 +17,6 @@ public class PinVolResource {
   @Autowired
   private PinVolService pinVolService;
 
-
-  @GetMapping("/autostart")
-  public boolean autostart() {
-    return pinVolService.getPinVolAutoStart();
-  }
-
   @GetMapping("/running")
   public boolean isProcessRunning() {
     return pinVolService.isRunning();
@@ -31,11 +25,6 @@ public class PinVolResource {
   @GetMapping("/restart")
   public boolean restart() {
     return pinVolService.restart();
-  }
-
-  @GetMapping("/autostart/toggle")
-  public boolean toggleAutoStart() {
-    return pinVolService.toggleAutoStart();
   }
 
   @GetMapping("/kill")

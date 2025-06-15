@@ -19,7 +19,9 @@
   - Improved refresh of backglass sidebar when multiple clics in list
 - **Media Recorder**:
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
+- **Main Window**:
+  - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.
 
 ## VPin Mania
 
-- Fixed rating submissions. Instead of incremental ratings they are calculated by a scheduled bulk operation. Make sure to enable the rating submissions in your privacy settings of VPin Mania. 
+- Fixed rating submissions. Instead of incremental ratings they are calculated by a scheduled bulk operation. Make sure to enable the rating submissions in your privacy settings of VPin Mania. The rating on https://app.vpin-mania.net will be re-enabled soon. 

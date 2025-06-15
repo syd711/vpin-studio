@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.hooks.HookCommand;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -82,6 +83,12 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private MenuItem shutdownMenuItem;
 
   @FXML
+  private MenuItem pinVolStartItem;
+
+  @FXML
+  private MenuItem pinVolStopItem;
+
+  @FXML
   private ToggleButton maintenanceBtn;
 
   @FXML
@@ -105,6 +112,28 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   // Add a public no-args constructor
   public ToolbarController() {
+  }
+
+  @FXML
+  private void onPinvolStart() {
+    client.getPinVolService().restart();
+    JFXFuture.supplyAsync(() -> {
+      try {
+        Thread.sleep(2000);
+      }
+      catch (InterruptedException e) {
+        //ignore
+      }
+      return true;
+    }).thenAcceptLater((b) -> {
+      preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
+    });
+  }
+
+  @FXML
+  private void onPinvolStop() {
+    client.getPinVolService().kill();
+    preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
   }
 
   @FXML
@@ -266,15 +295,6 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }
   }
 
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
-      DOFSettings settings = client.getDofService().getSettings();
-      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
-      dofSyncEntry.setDisable(!valid);
-    }
-  }
-
   private static void doDisconnect() {
     try {
       client.getSystemService().setMaintenanceMode(false);
@@ -365,9 +385,12 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     });
 
     client.getPreferenceService().addListener(this);
-    preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+
 
     JFXFuture.supplyAsync(() -> {
+      preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+      preferencesChanged(PreferenceNames.PINVOL_AUTOSTART_ENABLED, null);
+
       return client.getHooksService().getHookList();
     }).thenAcceptLater((hookList) -> {
       if (!hookList.getHooks().isEmpty()) {
@@ -426,5 +449,23 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   public void setTableOverviewController(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+      DOFSettings settings = client.getDofService().getSettings();
+      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
+      dofSyncEntry.setDisable(!valid);
+    }
+    else if (key.equals(PreferenceNames.PINVOL_AUTOSTART_ENABLED)) {
+      PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
+      pinVolStartItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
+      pinVolStopItem.setVisible(client.getSystemService().isLocal() && preference.getBooleanValue());
+
+      boolean running = client.getPinVolService().isRunning();
+      pinVolStartItem.setDisable(running);
+      pinVolStopItem.setDisable(!running);
+    }
   }
 }

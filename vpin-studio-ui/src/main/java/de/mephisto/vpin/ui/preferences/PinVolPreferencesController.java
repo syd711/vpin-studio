@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -70,18 +71,19 @@ public class PinVolPreferencesController implements Initializable {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     Frontend frontendCached = client.getFrontendService().getFrontend();
+    PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED);
 
-    boolean volConflict = client.getPinVolService().isAutoStartEnabled() && frontendCached.isSystemVolumeControlEnabled();
+    boolean volConflict = preference.getBooleanValue() && frontendCached.isSystemVolumeControlEnabled();
     errorContainer.setVisible(volConflict);
 
     openBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getPinVolService().isRunning());
 
-    toggleAutoStart.setSelected(client.getPinVolService().isAutoStartEnabled());
+    toggleAutoStart.setSelected(preference.getBooleanValue());
     toggleAutoStart.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-        client.getPinVolService().toggleAutoStart();
+        client.getPreferenceService().setPreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, t1);
 
         boolean volConflict = t1 && frontendCached.isSystemVolumeControlEnabled();
         errorContainer.setVisible(volConflict);
