@@ -77,7 +77,8 @@ public class VPSResetProgressModel extends ProgressModel<GameRepresentation> {
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
       game.setVpsUpdates(new VPSChanges());
-      client.getGameService().saveGame(game);
+      GameRepresentation updated = client.getGameService().saveGame(game);
+      LOG.info("Resetted VPS update of \"{}\" to: {} ", updated.getGameDisplayName() + "/" + updated.getId(), updated.getVpsUpdates().toJson());
     }
     catch (Exception e) {
       LOG.error("Failed to reset VPS indicator: " + e.getMessage(), e);
