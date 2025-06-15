@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -46,7 +47,7 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
     if (screen != null) {
       RecordingScreenOptions recordingScreenOption = recorderSettings.getRecordingScreenOption(screen);
-      if(recordingScreenOption != null) {
+      if (recordingScreenOption != null) {
         recordingScreenOption.setEnabled(checked);
         client.getPreferenceService().setJsonPreference(recorderSettings);
       }
@@ -108,18 +109,22 @@ public class ValidatorsScreensPreferencesController implements Initializable {
   @FXML
   private void onComboChange(ActionEvent event) {
     ComboBox comboBox = (ComboBox) event.getSource();
-    String id = comboBox.getId().substring(0, comboBox.getId().lastIndexOf("_"));
-    int validationCode = getValidationCode(id);
-    ComboBox<ValidatorMedia> mediaCombo = mediaCombos.get(id + MEDIA);
-    ComboBox<ValidatorOption> optionCombo = optionsCombos.get(id + OPTIONS);
 
-    ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(validationCode);
-    config.setMedia(mediaCombo.getValue());
-    config.setOption(optionCombo.getValue());
+    JFXFuture.runAsync(() -> {
+      String id = comboBox.getId().substring(0, comboBox.getId().lastIndexOf("_"));
+      int validationCode = getValidationCode(id);
+      ComboBox<ValidatorMedia> mediaCombo = mediaCombos.get(id + MEDIA);
+      ComboBox<ValidatorOption> optionCombo = optionsCombos.get(id + OPTIONS);
 
-    client.getPreferenceService().setJsonPreference(validationSettings);
-    PreferencesController.markDirty(PreferenceType.validationSettings);
+      ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
+      ValidationConfig config = defaultProfile.getOrCreateConfig(validationCode);
+      config.setMedia(mediaCombo.getValue());
+      config.setOption(optionCombo.getValue());
+
+      client.getPreferenceService().setJsonPreference(validationSettings);
+    }).thenLater(() -> {
+      PreferencesController.markDirty(PreferenceType.validationSettings);
+    });
   }
 
 

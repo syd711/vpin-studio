@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.system;
 
+import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -110,10 +111,10 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public String getVersion() {
     try {
-      final RestTemplate restTemplate = new RestTemplate();
+      final RestTemplate restTemplate = RestClient.createTimeoutBasedTemplate(2000);
       return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/version", String.class);
     } catch (Exception e) {
-      LOG.info("Get version failed for " + getRestClient().getBaseUrl());
+      LOG.info("Get version failed for {} ({})", getRestClient().getBaseUrl(), e.getMessage());
     }
     return null;
   }

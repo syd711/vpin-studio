@@ -1,3 +1,11 @@
+## Release Notes 4.0.9
+
+## Changes
+
+- Added timout of 2 seconds to the last connection check. This way, the client does not wait for too long when the cabinet has changed it's IP for some reason.
+
+---
+
 ## Release Notes 4.0.8
 
 ## Changes
