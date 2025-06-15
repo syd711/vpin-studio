@@ -1190,7 +1190,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         Label label = new Label();
         label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star", getIconColor(value));
-        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE+2);
+        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE + 2);
         label.setGraphic(icon);
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
@@ -1203,7 +1203,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.setUserData(index);
         FontIcon icon = WidgetFactory.createIcon("mdi2s-star-outline", getIconColor(value));
         label.setGraphic(icon);
-        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE+2);
+        icon.setIconSize(WidgetFactory.DEFAULT_ICON_SIZE + 2);
         icon.setIconColor(Paint.valueOf(DISABLED_COLOR));
         label.setCursor(Cursor.HAND);
         label.setOnMouseClicked(event -> setGameRating(value, (Integer) label.getUserData()));
@@ -1507,15 +1507,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Platform.runLater(() -> {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     });
-  }
-
-  @Override
-  public void reloadItem(GameRepresentation refreshedGame) {
-    // reload only if the emulator is matching
-    GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-    if (value != null && (value.getId() == refreshedGame.getEmulatorId())) {
-      super.reloadItem(refreshedGame);
-    }
   }
 
   /**

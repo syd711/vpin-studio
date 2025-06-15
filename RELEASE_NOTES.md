@@ -2,7 +2,8 @@
 
 ## Changes
 
-- Added timout of 2 seconds to the last connection check. This way, the client does not wait for too long when the cabinet has changed it's IP for some reason.
+- Added timeout of 2 seconds to the last connection check. This way, the client does not wait for too long when the cabinet has changed its IP address for some reason.
+- Fixed missing client refresh, e.g. after resetting VPS update indicators.
 
 ---
 
