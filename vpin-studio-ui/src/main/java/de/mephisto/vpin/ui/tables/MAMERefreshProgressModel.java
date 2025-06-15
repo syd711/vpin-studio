@@ -58,6 +58,7 @@ public class MAMERefreshProgressModel extends ProgressModel<GameRepresentation> 
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
       Studio.client.getMameService().clearCache();
+      Studio.client.getGameService().reload(game.getId());
       EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
     }
     catch (Exception e) {

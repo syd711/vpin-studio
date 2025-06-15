@@ -2,6 +2,8 @@
 
 ## Changes
 
+-**Media Manager**:
+- Added support of Animated PNG
 - **DMD Improvements**:
   - Improved parsing of script to detect usage of UltraDMD or FlexDMD and associated project folder.
   - Added validator to check DMD folder exists.

@@ -447,7 +447,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       gameDetails.setUpdates(json);
     }
     gameDetailsRepository.saveAndFlush(gameDetails);
-    LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
+    LOG.info("Saved \"{}\"/ID: {}", game.getGameDisplayName(), game.getId());
     gameLifecycleService.notifyGameUpdated(game.getId());
     return getGame(game.getId());
   }
