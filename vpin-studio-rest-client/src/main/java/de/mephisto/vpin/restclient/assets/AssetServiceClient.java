@@ -14,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 /*********************************************************************************************************************
  * Assets
@@ -53,11 +55,18 @@ public class AssetServiceClient extends VPinStudioClientService {
 
   @Nullable
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
+      return getGameMediaItem(id, screen, null);
+  }
+
+  @Nullable
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen, String name) {
     try {
       if (screen == null) {
         return null;
       }
 
+      //------------
+      // The Wheel is cached for performance reason
       //goes to the GameMediaResource, 404 is not a bug
       String url = API + "media/" + id + "/" + screen.name();
       if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
@@ -74,6 +83,12 @@ public class AssetServiceClient extends VPinStudioClientService {
           return null;
         }
         return new ByteArrayInputStream(imageBytes);
+      }
+      //------------
+      // other medias
+
+      if (name != null) {
+        url += "/" +  URLEncoder.encode(name, Charset.defaultCharset());
       }
 
       byte[] bytes = getRestClient().readBinary(url);

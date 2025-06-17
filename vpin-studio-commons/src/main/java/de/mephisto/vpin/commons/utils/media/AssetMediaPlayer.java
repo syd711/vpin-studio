@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +14,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-abstract public class AssetMediaPlayer extends BorderPane {
+abstract public class AssetMediaPlayer extends MediaViewPane {
   private final static Logger LOG = LoggerFactory.getLogger(AssetMediaPlayer.class);
 
   protected int retryCounter = 0;
-
-  @NonNull
-  protected final BorderPane parent;
 
   @NonNull
   protected final String url;
@@ -30,8 +26,7 @@ abstract public class AssetMediaPlayer extends BorderPane {
 
   protected final java.util.List<MediaPlayerListener> listeners = new ArrayList<>();
 
-  public AssetMediaPlayer(@NonNull BorderPane parent, @NonNull String url) {
-    this.parent = parent;
+  public AssetMediaPlayer(@NonNull String url) {
     this.url = url;
   }
 

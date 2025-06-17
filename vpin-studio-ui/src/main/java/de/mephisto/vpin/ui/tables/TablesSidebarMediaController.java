@@ -366,8 +366,9 @@ public class TablesSidebarMediaController implements Initializable {
     String screen = id.substring(id.lastIndexOf("_") + 1);
 
     GameRepresentation gameRepresentation = game.get();
-    FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(gameRepresentation.getId());
-    FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.valueOf(screen));
+
+    FrontendMediaItemRepresentation defaultMediaItem = client.getFrontendService().getDefaultFrontendMediaItem(
+        gameRepresentation.getId(), VPinScreen.valueOf(screen));
     if (defaultMediaItem != null) {
       TableDialogs.openMediaDialog(gameRepresentation, defaultMediaItem);
     }
@@ -381,8 +382,7 @@ public class TablesSidebarMediaController implements Initializable {
 
     VPinScreen vPinScreen = VPinScreen.valueOf(screen);
     GameRepresentation gameRepresentation = game.get();
-    FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(gameRepresentation.getId());
-    FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
+    FrontendMediaItemRepresentation defaultMediaItem = client.getFrontendService().getDefaultFrontendMediaItem(gameRepresentation.getId(), vPinScreen);
     if (defaultMediaItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete \"" + defaultMediaItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {

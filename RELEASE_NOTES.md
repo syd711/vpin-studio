@@ -3,10 +3,12 @@
 ## Changes
 
 -**Media Manager**:
-- Added support of Animated PNG
+  - Added support of Animated PNG
+  - The Asset Manager Dialog is now resizable
+  - Added ability to view fullscreen a media asset in the Asset Manager dialog and tab
 - **DMD Improvements**:
   - Improved parsing of script to detect usage of UltraDMD or FlexDMD and associated project folder.
-  - Added validator to check DMD folder exists.
+  - Added validator to check the scanned DMD folder exists.
   - Refactored DMD tables sidebar to display DMD Type from script and associated DMD Folder.
   - **Note that you have to rescan the table or press the reload button in the DMD section to update the DMD information**.
 - **VPS Overview**:

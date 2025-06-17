@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerPane?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <center>
@@ -114,177 +115,7 @@
                   </VBox>
                   <BorderPane prefHeight="386.0">
                      <left>
-                        <Pane fx:id="mediaRootPane" BorderPane.alignment="CENTER">
-                           <children>
-                              <BorderPane fx:id="screenPlayField" layoutX="80.0" layoutY="230.0" prefHeight="140.0" prefWidth="90.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Playfield" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_PlayField" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenGameHelp" layoutX="3.0" layoutY="280.0" prefHeight="79.0" prefWidth="70.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Help" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_GameHelp" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenGameInfo" layoutX="3.0" layoutY="190.0" prefHeight="79.0" prefWidth="70.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Info / Flyer" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_GameInfo" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenDMD" layoutX="80.0" layoutY="161.0" prefHeight="60.0" prefWidth="90.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_DMD" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenTopper" layoutX="80.0" layoutY="4.0" maxHeight="208.0" prefHeight="70.0" prefWidth="90.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Topper" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_Topper" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenBackGlass" layoutX="80.0" layoutY="82.0" prefHeight="70.0" prefWidth="90.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Backglass" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_BackGlass" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenLoading" layoutX="176.0" layoutY="98.0" prefHeight="80.0" prefWidth="70.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Loading" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_Loading" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenMenu" layoutX="3.0" layoutY="98.0" prefHeight="80.0" prefWidth="70.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Full DMD" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_Menu" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenOther2" layoutX="176.0" layoutY="190.0" prefHeight="80.0" prefWidth="70.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Other2" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_Other2" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenWheel" layoutX="176.0" layoutY="280.0" prefHeight="80.0" prefWidth="70.0" styleClass="media-container">
-                                 <bottom>
-                                    <Label text="Wheel" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                                 <top>
-                                    <BorderPane fx:id="top_Wheel" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                              </BorderPane>
-                              <BorderPane fx:id="screenAudioLaunch" layoutX="3.0" layoutY="26.0" prefHeight="60.0" prefWidth="70.0" styleClass="media-container">
-                                 <top>
-                                    <BorderPane fx:id="top_AudioLaunch" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                                 <center>
-                                    <Label alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" prefHeight="30.0" BorderPane.alignment="BOTTOM_CENTER">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <BorderPane.margin>
-                                          <Insets top="12.0" />
-                                       </BorderPane.margin>
-                                    </Label>
-                                 </center>
-                                 <bottom>
-                                    <Label text="Audio L." textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                              </BorderPane>
-                              <BorderPane fx:id="screenAudio" layoutX="176.0" layoutY="26.0" prefHeight="60.0" prefWidth="70.0" styleClass="media-container">
-                                 <top>
-                                    <BorderPane fx:id="top_Audio" BorderPane.alignment="TOP_RIGHT">
-                                       <BorderPane.margin>
-                                          <Insets />
-                                       </BorderPane.margin>
-                                    </BorderPane>
-                                 </top>
-                                 <center>
-                                    <Label alignment="BOTTOM_CENTER" contentDisplay="BOTTOM" prefHeight="30.0" BorderPane.alignment="CENTER">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <BorderPane.margin>
-                                          <Insets top="12.0" />
-                                       </BorderPane.margin>
-                                    </Label>
-                                 </center>
-                                 <bottom>
-                                    <Label text="Audio" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                 </bottom>
-                              </BorderPane>
-                           </children>
-                           <BorderPane.margin>
-                              <Insets bottom="12.0" />
-                           </BorderPane.margin>
-                        </Pane>
+                        <TableAssetManagerPane fx:id="mediaRootPane" prefWidth="245" BorderPane.alignment="CENTER" />
                      </left>
                      <center>
                         <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
@@ -362,6 +193,11 @@
                            <font>
                               <Font size="14.0" />
                            </font>
+                        </Button>
+                        <Button fx:id="viewBtn" mnemonicParsing="false" onAction="#onView">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                           </graphic>
                         </Button>
                         <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
                            <graphic>

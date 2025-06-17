@@ -305,12 +305,16 @@ public class TableDialogs {
       return true;
     }
 
-    String fxml = getDataManagerFxml();
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, "dialog-table-asset-manager.fxml", "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
     controller.setGame(stage, overviewController, game, screen, false);
 
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(860);
+    stage.setMinHeight(600);
+     
     stage.showAndWait();
     return true;
   }
@@ -320,8 +324,7 @@ public class TableDialogs {
       return true;
     }
 
-    String fxml = getDataManagerFxml();
-    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, fxml, "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
+    Stage stage = Dialogs.createStudioDialogStage(Studio.stage, TableAssetManagerDialogController.class, "dialog-table-asset-manager.fxml", "Asset Manager", TableAssetManagerDialogController.MODAL_STATE_ID);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game != null ? game.getEmulatorId() : -1);
     controller.setStage(stage);
@@ -330,19 +333,6 @@ public class TableDialogs {
 
     stage.showAndWait();
     return true;
-  }
-
-  @NonNull
-  private static String getDataManagerFxml() {
-    double width = Studio.stage.getWidth();
-    String fxml = "dialog-table-asset-manager.fxml";
-    if (width <= 1300) {
-      fxml = "dialog-table-asset-manager-hd.fxml";
-    }
-    else if (width < 1900) {
-      fxml = "dialog-table-asset-manager-fullhd.fxml";
-    }
-    return fxml;
   }
 
   public static boolean openHighscoresAdminDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
@@ -385,8 +375,8 @@ public class TableDialogs {
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(600);
-    stage.setMinHeight(500);
+    stage.setMinWidth(800);
+    stage.setMinHeight(600);
 
     stage.showAndWait();
 

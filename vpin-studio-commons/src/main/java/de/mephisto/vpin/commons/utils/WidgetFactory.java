@@ -53,9 +53,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -947,17 +948,19 @@ public class WidgetFactory {
     boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
+    url += "/" +  URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     if (baseType.equals("image") && !audioOnly) {
-      ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
-      Image image = gameMediaItem != null ? new Image(gameMediaItem) : null;
-      ImageViewer imageViewer = new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
+      Image image = new Image(url);
+      ImageViewer imageViewer = new ImageViewer(mediaItem, image, frontend.isPlayfieldMediaInverted());
+      parent.setCenter(imageViewer);
       parent.setUserData(imageViewer);
     }
     else if (baseType.equals("audio")) {
-      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(parent, mediaItem, url);
+      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(mediaItem, url);
+      parent.setCenter(audioMediaPlayer);
       if (listener != null) {
         audioMediaPlayer.addListener(listener);
       }
@@ -965,7 +968,8 @@ public class WidgetFactory {
       return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
-      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
+      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted());
+      parent.setCenter(videoMediaPlayer);
       if (listener != null) {
         videoMediaPlayer.addListener(listener);
       }

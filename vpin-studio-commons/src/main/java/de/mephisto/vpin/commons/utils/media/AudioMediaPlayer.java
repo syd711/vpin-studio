@@ -9,8 +9,6 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -33,18 +31,17 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   private MediaView mediaView;
   private FontIcon fontIcon;
 
-  public AudioMediaPlayer(@NonNull BorderPane parent, @NonNull String url) {
-    this(parent, null, url);
+  public AudioMediaPlayer(@NonNull String url) {
+    this(null, url);
   }
 
-  public AudioMediaPlayer(@NonNull BorderPane parent, @Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
-    super(parent, url);
+  public AudioMediaPlayer(@Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
+    super(url);
     this.mediaItem = mediaItem;
   }
 
   public void render() {
-    this.setCenter(new ProgressIndicator());
-    parent.setCenter(this);
+    setLoading();
 
     Media media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
@@ -66,7 +63,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
         });
       }
       else {
-        parent.setCenter(getErrorLabel(mediaItem));
+        setCenter(getErrorLabel(mediaItem));
       }
     });
 
@@ -139,8 +136,6 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
       });
 
       bindProgress(mediaPlayer, progressBar);
-
-      this.setBottom(mediaView);
     });
   }
 
@@ -161,11 +156,5 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
 
   private boolean isValidDuration(Duration d) {
     return d != null && !d.isIndefinite() && !d.isUnknown();
-  }
-
-  @Override
-  public void disposeMedia() {
-    super.disposeMedia();
-    this.setBottom(null);
   }
 }

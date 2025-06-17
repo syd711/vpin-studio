@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
@@ -28,7 +29,6 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
-import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
 import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -107,10 +107,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private BorderPane mediaPane;
 
   @FXML
-  private Pane mediaRootPane;
+  private TableAssetManagerPane mediaRootPane;
+
+  @FXML
+  private ToolBar installedAssetsToolbar;
 
   @FXML
   private Button addToPlaylistBtn;
+
+  @FXML
+  private Button viewBtn;
 
   @FXML
   private SplitMenuButton deleteBtn;
@@ -129,6 +135,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private Button folderBtn;
+
+  @FXML
+  private Button reloadBtn;
+
+  @FXML
+  private Button uploadBtn;
 
   @FXML
   private Button clearCacheBtn;
@@ -153,42 +165,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
   @FXML
-  private BorderPane screenTopper;
-
-  @FXML
-  private BorderPane screenBackGlass;
-
-  @FXML
-  private BorderPane screenDMD;
-
-  @FXML
-  private BorderPane screenPlayField;
-
-  @FXML
-  private BorderPane screenMenu;
-
-  @FXML
-  private BorderPane screenOther2;
-
-  @FXML
-  private BorderPane screenWheel;
-
-  @FXML
-  private BorderPane screenGameInfo;
-
-  @FXML
-  private BorderPane screenGameHelp;
-
-  @FXML
-  private BorderPane screenLoading;
-
-  @FXML
-  private BorderPane screenAudio;
-
-  @FXML
-  private BorderPane screenAudioLaunch;
-
-  @FXML
   private Button openDataManager;
 
   @FXML
@@ -202,9 +178,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private Label assetSearchLabel;
-
-  @FXML
-  private BorderPane assetSearchList;
 
   @FXML
   private Label previewTitleLabel;
@@ -466,6 +439,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   @FXML
+  private void onView(ActionEvent e) {
+    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      TableDialogs.openMediaDialog(game, selectedItem);
+    }
+  }
+
+  @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
@@ -608,14 +589,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         Frontend frontend = client.getFrontendService().getFrontendCached();
 
         if (baseType.equals("image")) {
-          new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
+          ImageViewer imageViewer = new ImageViewer(assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
+          serverAssetMediaPane.setCenter(imageViewer);
         }
         else if (baseType.equals("audio")) {
-          serverAudioMediaPlayer = new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
+          serverAudioMediaPlayer = new AudioMediaPlayer(assetUrl);
+          serverAssetMediaPane.setCenter(serverAudioMediaPlayer);
           serverAudioMediaPlayer.render();
         }
         else if (baseType.equals("video")) {
-          serverVideoMediaPlayer = new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+          serverVideoMediaPlayer = new VideoMediaPlayer(assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+          serverAssetMediaPane.setCenter(serverVideoMediaPlayer);
           serverVideoMediaPlayer.render();
         }
       }
@@ -756,7 +740,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           }
         }
       });
-    }
+   
+      installedAssetsToolbar.widthProperty().addListener((obs, o, n) -> {
+        reshapeToolbar(n);
+      });
+    } 
 
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
     assetSearchBox.setVisible(tableAssetConf != null);
@@ -769,46 +757,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
 
-    screenAudio.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Audio, screenAudio, t1, false));
-    screenAudio.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Audio, screenAudio, true, true));
-    screenAudioLaunch.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.AudioLaunch, screenAudioLaunch, t1, false));
-    screenAudioLaunch.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.AudioLaunch, screenAudioLaunch, true, true));
-    screenDMD.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.DMD, screenDMD, t1, false));
-    screenDMD.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.DMD, screenDMD, true, true));
-    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.BackGlass, screenBackGlass, t1, false));
-    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.BackGlass, screenBackGlass, true, true));
-    screenMenu.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Menu, screenMenu, t1, false));
-    screenMenu.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Menu, screenMenu, true, true));
-    screenGameInfo.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.GameInfo, screenGameInfo, t1, false));
-    screenGameInfo.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.GameInfo, screenGameInfo, true, true));
-    screenGameHelp.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.GameHelp, screenGameHelp, t1, false));
-    screenGameHelp.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.GameHelp, screenGameHelp, true, true));
-    screenLoading.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Loading, screenLoading, t1, false));
-    screenLoading.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Loading, screenLoading, true, true));
-    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.BackGlass, screenBackGlass, t1, false));
-    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.BackGlass, screenBackGlass, true, true));
-    screenPlayField.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.PlayField, screenPlayField, t1, false));
-    screenPlayField.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.PlayField, screenPlayField, true, true));
-    screenTopper.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Topper, screenTopper, t1, false));
-    screenTopper.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Topper, screenTopper, true, true));
-    screenOther2.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Other2, screenOther2, t1, false));
-    screenOther2.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Other2, screenOther2, true, true));
-    screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Wheel, screenWheel, t1, false));
-    screenWheel.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Wheel, screenWheel, true, true));
-
-    screenAudio.setVisible(supportedScreens.contains(VPinScreen.Audio));
-    screenAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch));
-    screenDMD.setVisible(supportedScreens.contains(VPinScreen.DMD));
-    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
-    screenMenu.setVisible(supportedScreens.contains(VPinScreen.Menu));
-    screenGameInfo.setVisible(supportedScreens.contains(VPinScreen.GameInfo));
-    screenGameHelp.setVisible(supportedScreens.contains(VPinScreen.GameHelp));
-    screenLoading.setVisible(supportedScreens.contains(VPinScreen.Loading));
-    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
-    screenPlayField.setVisible(supportedScreens.contains(VPinScreen.PlayField));
-    screenTopper.setVisible(supportedScreens.contains(VPinScreen.Topper));
-    screenOther2.setVisible(supportedScreens.contains(VPinScreen.Other2));
-    screenWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel));
+    mediaRootPane.addListeners(this);
+    mediaRootPane.setPanesVisibility(supportedScreens);
+    if (isEmbeddedMode()) {
+      mediaRootPane.setEmbeddedMode();
+    }
 
     downloadBtn.setVisible(false);
     webPreviewBtn.setVisible(false);
@@ -892,14 +845,17 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         Tooltip.uninstall(mediaPane, null);
         if (baseType.equals("image")) {
-          new ImageViewer(mediaPane, url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
+          ImageViewer iv = new ImageViewer(url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
+          mediaPane.setCenter(iv);
         }
         else if (baseType.equals("audio")) {
-          assetAudioMediaPlayer = new AudioMediaPlayer(mediaPane, mediaItem, url);
+          assetAudioMediaPlayer = new AudioMediaPlayer(mediaItem, url);
+          mediaPane.setCenter(assetAudioMediaPlayer);
           assetAudioMediaPlayer.render();
         }
         else if (baseType.equals("video")) {
-          assetVideoMediaPlayer = new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
+          assetVideoMediaPlayer = new VideoMediaPlayer(mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted());
+          mediaPane.setCenter(assetVideoMediaPlayer);
           assetVideoMediaPlayer.render();
         }
         Tooltip.install(mediaPane, WidgetFactory.createMediaItemTooltip(mediaItem));
@@ -960,11 +916,22 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
   }
 
+  /**
+   * Called when the toolbar is resized
+   */
+  private void reshapeToolbar(Number w) {
+    boolean small = w.intValue() < 725;
+    uploadBtn.setText(small ? "" : "Upload");
+    downloadAssetBtn.setText(small ? "" : "Download");
+    renameBtn.setText(small ? "" : "Rename");
+    reloadBtn.setText(small ? "" : "Reload");
+  }
+
   private boolean isEmbeddedMode() {
     return this.tablesCombo == null;
   }
 
-  private void updateState(VPinScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
+  public void updateState(VPinScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
     List<FrontendMediaItemRepresentation> mediaItems = new ArrayList<>();
     if (frontendMedia != null) {
       mediaItems = frontendMedia.getMediaItems(s);
@@ -1220,53 +1187,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private void initDragAndDrop() {
-    FileDragEventHandler.install(mediaRootPane, screenAudio, false, "mp3")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Audio, "mp3"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenAudioLaunch, false, "mp3")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.AudioLaunch, "mp3"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenTopper, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Topper, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenLoading, false, "mp4")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Loading, "mp4"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenPlayField, false, "mp4")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.PlayField, "mp4"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenBackGlass, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.BackGlass, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenGameInfo, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameInfo, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenGameHelp, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameHelp, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenMenu, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Menu, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenDMD, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.DMD, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenOther2, false, "mp4", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Other2, "mp4", "png", "jpg"))
-        .setEmbeddedMode(isEmbeddedMode());
-
-    FileDragEventHandler.install(mediaRootPane, screenWheel, false, "apng", "png", "jpg")
-        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Wheel, "apng", "png", "apng"))
-        .setEmbeddedMode(isEmbeddedMode());
+    mediaRootPane.installFileDragEventHandlers(this, isEmbeddedMode());
   }
 
   private boolean isAutoSearchEnabled() {
@@ -1277,19 +1198,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private void refreshTableView() {
-    updateState(VPinScreen.Audio, screenAudio, false, this.screen.equals(VPinScreen.Audio));
-    updateState(VPinScreen.AudioLaunch, screenAudioLaunch, false, this.screen.equals(VPinScreen.AudioLaunch));
-    updateState(VPinScreen.DMD, screenDMD, false, this.screen.equals(VPinScreen.DMD));
-    updateState(VPinScreen.BackGlass, screenBackGlass, false, this.screen.equals(VPinScreen.BackGlass));
-    updateState(VPinScreen.Menu, screenMenu, false, this.screen.equals(VPinScreen.Menu));
-    updateState(VPinScreen.GameInfo, screenGameInfo, false, this.screen.equals(VPinScreen.GameInfo));
-    updateState(VPinScreen.GameHelp, screenGameHelp, false, this.screen.equals(VPinScreen.GameHelp));
-    updateState(VPinScreen.Loading, screenLoading, false, this.screen.equals(VPinScreen.Loading));
-    updateState(VPinScreen.BackGlass, screenBackGlass, false, this.screen.equals(VPinScreen.BackGlass));
-    updateState(VPinScreen.PlayField, screenPlayField, false, this.screen.equals(VPinScreen.PlayField));
-    updateState(VPinScreen.Topper, screenTopper, false, this.screen.equals(VPinScreen.Topper));
-    updateState(VPinScreen.Other2, screenOther2, false, this.screen.equals(VPinScreen.Other2));
-    updateState(VPinScreen.Wheel, screenWheel, false, this.screen.equals(VPinScreen.Wheel));
+    mediaRootPane.refreshPanes(this, this.screen);
   }
 
   public void refreshTableMediaView() {
@@ -1297,60 +1206,69 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       return;
     }
 
-    if (isPlaylistMode()) {
-      this.frontendMedia = client.getPlaylistMediaService().getPlaylistMedia(this.playlist.getId());
-    }
-    else {
-      if (this.game == null) {
-        this.game = tablesCombo.getItems().get(0);
+    viewBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+
+    JFXFuture.supplyAsync(() -> {
+      if (isPlaylistMode()) {
+       return client.getPlaylistMediaService().getPlaylistMedia(this.playlist.getId());
       }
-      this.frontendMedia = client.getGameMediaService().getGameMedia(this.game.getId());
-    }
+      else {
+        if (this.game == null) {
+          this.game = tablesCombo.getItems().get(0);
+        }
+        return client.getGameMediaService().getGameMedia(this.game.getId());
+      }
+    }).thenAcceptLater(media -> {
+      this.frontendMedia = media;
 
-    if (!isEmbeddedMode()) {
-      this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
-    }
-    if (screen.equals(VPinScreen.Wheel)) {
-      client.getImageCache().clearWheelCache();
-    }
-
-    this.addToPlaylistBtn.setVisible(screen.equals(VPinScreen.Loading));
-    this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
-
-
-    if (frontendMedia != null) {
-      List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(screen);
-      ObservableList<FrontendMediaItemRepresentation> assets = FXCollections.observableList(items);
-      assetList.getItems().removeAll(assetList.getItems());
-      assetList.setItems(assets);
-      assetList.refresh();
-
-      if (!items.isEmpty()) {
-        assetList.getSelectionModel().select(0);
+      if (!isEmbeddedMode()) {
+        this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
+      }
+      if (screen.equals(VPinScreen.Wheel)) {
+        client.getImageCache().clearWheelCache();
       }
 
-      boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
-      this.addToPlaylistBtn.setDisable(!convertable);
-    }
-    else {
-      assetList.setItems(FXCollections.emptyObservableList());
-      assetList.refresh();
-      addToPlaylistBtn.setDisable(true);
+      this.addToPlaylistBtn.setVisible(screen.equals(VPinScreen.Loading));
+      this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
 
-      serverAssetsList.setItems(FXCollections.emptyObservableList());
-      serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
-      serverAssetsList.refresh();
-    }
 
-    refreshTableView();
-    if (previewTitleLabel != null) {
-      Node node = this.lastSelected;
-      if (node == null) {
-        node = screenWheel;
+      if (frontendMedia != null) {
+        List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(screen);
+        ObservableList<FrontendMediaItemRepresentation> assets = FXCollections.observableList(items);
+        assetList.getItems().removeAll(assetList.getItems());
+        assetList.setItems(assets);
+        assetList.refresh();
+
+        if (!items.isEmpty()) {
+          assetList.getSelectionModel().select(0);
+          viewBtn.setDisable(false);
+          deleteBtn.setDisable(false);
+        }
+
+        boolean convertable = items.size() == 1 && !items.get(0).getName().contains("(SCREEN");
+        this.addToPlaylistBtn.setDisable(!convertable);
       }
-      Label nameLabel = (Label) ((BorderPane) node).getBottom();
-      previewTitleLabel.setText(nameLabel.getText());
-    }
+      else {
+        assetList.setItems(FXCollections.emptyObservableList());
+        assetList.refresh();
+        addToPlaylistBtn.setDisable(true);
+
+        serverAssetsList.setItems(FXCollections.emptyObservableList());
+        serverAssetsList.setPlaceholder(new Label("Press the search button to search to find assets for this screen and table."));
+        serverAssetsList.refresh();
+      }
+
+      refreshTableView();
+      if (previewTitleLabel != null) {
+        Node node = this.lastSelected;
+        if (node == null) {
+          node = mediaRootPane.wheel;
+        }
+        Label nameLabel = (Label) ((BorderPane) node).getBottom();
+        previewTitleLabel.setText(nameLabel.getText());
+      }
+    });
   }
 
   @Override
