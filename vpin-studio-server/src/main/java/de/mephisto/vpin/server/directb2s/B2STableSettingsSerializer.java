@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.directb2s;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.util.FileUpdateWriter;
 import de.mephisto.vpin.server.util.XMLUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -20,13 +21,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class B2STableSettingsSerializer {
   private final static Logger LOG = LoggerFactory.getLogger(B2STableSettingsSerializer.class);
 
   private final static List<String> tableEntries = Arrays.asList("HideGrill", "HideB2SDMD", "HideB2SBackglass", "HideDMD",
-      "LampsSkipFrames", "SolenoidsSkipFrames", "GIStringsSkipFrames", "LEDsSkipFrames",
+      "LampsSkipFrames", "SolenoidsSkipFrames", "GIStringsSkipFrames", "LEDsSkipFrames", "DualMode",
       "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "FormToBack", "Animations");
 
   private final static List<String> serverEntries = Arrays.asList(
@@ -35,21 +37,20 @@ public class B2STableSettingsSerializer {
 
   private final static List<String> skippedWhenMinusOne = Arrays.asList("UsedLEDType");
 
-  private final File xmlFile;
-
-  public B2STableSettingsSerializer(@NonNull File xmlFile) {
-    this.xmlFile = xmlFile;
+  public B2STableSettingsSerializer() {
   }
 
-  public void serialize(@NonNull DirectB2ServerSettings settings) throws VPinStudioException {
-    serialize(settings, null, serverEntries, (s, name) -> getServerValue(s, name));
+  //-------------------------------
+
+  public void serializeXml(@NonNull DirectB2ServerSettings settings, @NonNull File xmlFile) throws VPinStudioException {
+    serializeXml(settings, xmlFile, null, serverEntries, (s, name) -> getServerValue(s, name));
   }
 
-  public void serialize(@NonNull DirectB2STableSettings settings) throws VPinStudioException {
-    serialize(settings, settings.getRom(), tableEntries, (s, name) -> getTableValue(s, name));
+  public void serializeXml(@NonNull DirectB2STableSettings settings, @NonNull File xmlFile) throws VPinStudioException {
+    serializeXml(settings, xmlFile, settings.getRom(), tableEntries, (s, name) -> getTableValue(s, name));
   }
 
-  protected <T> void serialize(@NonNull T settings, String rom, List<String> tableEntries, SettingsGetter<T> getter) throws VPinStudioException {
+  protected <T> void serializeXml(@NonNull T settings, @NonNull File xmlFile, String rom, List<String> tableEntries, SettingsGetter<T> getter) throws VPinStudioException {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -143,8 +144,72 @@ public class B2STableSettingsSerializer {
     return null;
   }
 
+  //-------------------------------
+
+  public void serializeIni(@NonNull DirectB2ServerSettings settings, @NonNull DirectB2ServerSettings defaultSettings, @NonNull File iniFile) throws VPinStudioException {
+    List<String> mandatoryEntries = Arrays.asList("Plugins", "HideGrill", "HideB2SDMD", "HideDMD", "HideB2SBackglass");
+
+    List<String> nonnullEntries = Arrays.asList("DefaultStartMode", "ShowStartupError", "DisableFuzzyMatching", 
+      "FormToFront", "FormToBack", "UsedLEDType" );
+
+    serializeIni(settings, defaultSettings, iniFile, null, mandatoryEntries, nonnullEntries, (s, name) -> getServerValue(s, name));
+  }
+
+  public void serializeIni(@NonNull DirectB2STableSettings settings, @NonNull DirectB2ServerSettings defaultSettings, @NonNull File iniFile) throws VPinStudioException {
+    serializeIni(settings, defaultSettings, iniFile, settings.getRom(), Collections.emptyList(), tableEntries, (s, name) -> getTableValue(s, name));
+  }
+
+  protected <T> void serializeIni(@NonNull T settings, @NonNull T defaultSettings, @NonNull File iniFile, 
+        String rom, List<String> mandatoryTableEntries, List<String> nonnullTableEntries, SettingsGetter<T> getter) throws VPinStudioException {
+    FileUpdateWriter iniConfiguration = new FileUpdateWriter();
+    try {
+      iniConfiguration.read(iniFile.toPath());
+    } catch (IOException e) {
+      throw new VPinStudioException(e);
+    }
+
+    String section = "Standalone";
+
+    
+    for (String tableEntry : mandatoryTableEntries) {
+      String newValue = getter.getValue(settings, tableEntry);
+      if (StringUtils.isEmpty(newValue)) {
+        iniConfiguration.updateLine("B2S" + tableEntry, "", section);
+      }
+      else {
+        iniConfiguration.updateLine("B2S" + tableEntry, newValue, section);
+      }
+    }
+
+    for (String tableEntry : nonnullTableEntries) {
+      String newValue = getter.getValue(settings, tableEntry);
+      if (StringUtils.isEmpty(newValue)) {
+        iniConfiguration.removeLine("B2S" + tableEntry, section);
+      }
+      else {
+        String defValue = getter.getValue(defaultSettings, tableEntry);
+        // same value as default, don't add or even remove the settings as redundent
+        if (newValue.equals(defValue)) {
+          iniConfiguration.removeLine("B2S" + tableEntry, section);
+        }
+        else {
+          iniConfiguration.updateLine("B2S" + tableEntry, newValue, section);
+        }
+      }
+    }
+
+    try {
+      iniConfiguration.write(iniFile.toPath());
+    } catch (IOException e) {
+      throw new VPinStudioException(e);
+    }
+  }
+
+  //-------------------------------
+
   private String getServerValue(DirectB2ServerSettings settings, String qName) {
     switch (qName) {
+      case "Plugins":
       case "ArePluginsOn": {
         return intValue(settings.isPluginsOn());
       }

@@ -532,6 +532,11 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
   }
 
+  public File getHighscoreFile(int id) {
+    Game game = getGame(id);
+    return game != null ? highscoreService.getHighscoreFile(game) : null;
+  }
+
   public HighscoreFiles getHighscoreFiles(int id) {
     Game game = getGame(id);
     if (game.isVpxGame()) {

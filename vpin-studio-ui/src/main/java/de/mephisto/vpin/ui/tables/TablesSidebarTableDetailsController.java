@@ -28,6 +28,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarTableDetailsController implements Initializable {
@@ -269,13 +270,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
       uploadsButtonController.setData(Arrays.asList(g.get()), tablesSidebarController.getTableOverviewController().getEmulatorSelection());
     }
 
-
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-    if (!frontendType.supportStandardFields()) {
+    if (!Features.FIELDS_STANDARD) {
       tableDataBox.getChildren().remove(gameMetaDataFields);
     }
-    if (!frontendType.isNotStandalone()) {
+    if (Features.IS_STANDALONE) {
       tableDataBox.getChildren().remove(screenFields);
     }
 
@@ -287,7 +285,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
     GameRepresentation game = g.orElse(null);
 
     if (game != null) {
-      autoFillBtn.setVisible(game.isVpxGame() && frontendType.supportStandardFields());
+      autoFillBtn.setVisible(game.isVpxGame() && Features.FIELDS_STANDARD);
 
       dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
       emulatorLabel.setText(client.getEmulatorService().getGameEmulator(game.getEmulatorId()).getName());
@@ -353,7 +351,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
 
       if (tableDetails.getStatus() >= 0) {
-        List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+        List<TableStatus> statuses = TableDataController.supportedStatuses();
         Optional<TableStatus> first = statuses.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
         if (first.isPresent()) {
           status.setText(first.get().label);
@@ -421,8 +419,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
     popperRuntimeFields.managedProperty().bindBidirectional(popperRuntimeFields.visibleProperty());
     gameMetaDataFields.managedProperty().bindBidirectional(gameMetaDataFields.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    popperRuntimeFields.setVisible(frontendType.supportExtendedFields());
+    popperRuntimeFields.setVisible(Features.FIELDS_EXTENDED);
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));

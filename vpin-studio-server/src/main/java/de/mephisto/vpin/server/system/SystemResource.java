@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.system.*;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.util.ZipUtil;
+import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
@@ -348,6 +349,12 @@ public class SystemResource {
   public String version() {
     return systemService.getVersion();
   }
+
+  @GetMapping("/features")
+  public FeaturesInfo getFeatures() {
+    return VPinStudioServer.Features;
+  }
+
 
   @GetMapping("/badges")
   public List<String> getCompetitionBadges() {

@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -20,9 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,6 +31,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -265,7 +263,6 @@ public class EmulatorsController implements Initializable {
       emu.setType(template.getType());
       emu.setDescription(template.getDescription());
       emu.setMediaDirectory(template.getMediaDirectory());
-      emu.setAltColorDirectory(template.getAltColorDirectory());
       emu.setRomDirectory(template.getRomDirectory());
       emu.setGameExt(template.getGameExt());
       emu.setGamesDirectory(template.getGamesDirectory());
@@ -320,8 +317,6 @@ public class EmulatorsController implements Initializable {
   }
 
   public void setSelection(Optional<GameEmulatorRepresentation> model) {
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     this.emulator = model;
 
     emulatorNameLabel.setText("-");
@@ -330,7 +325,7 @@ public class EmulatorsController implements Initializable {
     enabledCheckbox.setSelected(false);
     enabledCheckbox.setDisable(model.isEmpty());
     safeNameField.setText("");
-    safeNameField.setDisable(model.isEmpty() || !frontendType.supportEmulatorCreateDelete());
+    safeNameField.setDisable(model.isEmpty() || !Features.EMULATORS_CRUD);
     nameField.setText("");
     nameField.setDisable(model.isEmpty());
     descriptionField.setText("");
@@ -369,6 +364,8 @@ public class EmulatorsController implements Initializable {
       launchFolderField.setText(emulator.getInstallationDirectory());
       gamesFolderField.setText(emulator.getGamesDirectory());
       romsFolderField.setText(emulator.getRomDirectory());
+
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
 
       if (frontendType.equals(FrontendType.Popper)) {
         customField2.setText(emulator.getGameExt());
@@ -529,10 +526,10 @@ public class EmulatorsController implements Initializable {
       tabPane.setVisible(false);
     }
 
-    createBtn.setVisible(frontendType.supportEmulatorCreateDelete());
-    deleteBtn.setVisible(frontendType.supportEmulatorCreateDelete());
-    duplicateBtn.setVisible(frontendType.supportEmulatorCreateDelete());
-    firstSeparator.setVisible(frontendType.supportEmulatorCreateDelete());
+    createBtn.setVisible(Features.EMULATORS_CRUD);
+    deleteBtn.setVisible(Features.EMULATORS_CRUD);
+    duplicateBtn.setVisible(Features.EMULATORS_CRUD);
+    firstSeparator.setVisible(Features.EMULATORS_CRUD);
 
     emulatorRoot.widthProperty().addListener(new ChangeListener<Number>() {
       @Override

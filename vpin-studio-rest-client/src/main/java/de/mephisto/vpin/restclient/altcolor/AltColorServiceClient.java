@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,10 @@ public class AltColorServiceClient extends VPinStudioClientService {
 
   public AltColor getAltColor(int gameId) {
     return getRestClient().get(API + "altcolor/" + gameId, AltColor.class);
+  }
+
+  public FileInfo getAltColorFolderInfo(int gameId) {
+    return getRestClient().get(API + "altcolor/" + gameId + "/fileinfo", FileInfo.class);
   }
 
   public boolean delete(int gameId) {

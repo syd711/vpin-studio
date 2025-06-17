@@ -37,16 +37,18 @@ public class Dialogs {
   private final static Logger LOG = LoggerFactory.getLogger(Dialogs.class);
 
   public static void editFile(File file) {
-    try {
-      if (file.exists()) {
-        Studio.edit(file);
+    if (file != null) {
+      try {
+        if (file.exists()) {
+          Studio.edit(file);
+        }
+        else {
+          WidgetFactory.showAlert(Studio.stage, "File Not Found", "The file \"" + file.getAbsolutePath() + "\" does not exist.");
+        }
       }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
+      catch (Exception e) {
+        LOG.error("Failed to open Explorer: " + e.getMessage(), e);
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
 

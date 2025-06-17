@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TabMameController extends AbstractComponentTab implements Initializable {
@@ -32,20 +33,8 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onMameSetup() {
-    File mameFolder = client.getMameService().getMameFolder();
-
-    if (mameFolder != null && mameFolder.exists()) {
-      File file = new File(mameFolder, "Setup64.exe");
-
-      if (!file.exists()) {
-        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-      }
-      else {
-        Studio.open(file);
-      }
-    }
-    else {
-      WidgetFactory.showAlert(Studio.stage, "VPinMAME folder invalid", "The server couldn't determine the PinMAME installation folder.");
+    if (!client.getMameService().runSetup()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file was not found.");
     }
   }
 
@@ -67,6 +56,9 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize();
+
+    mameBtn.managedProperty().bind(mameBtn.visibleProperty());
+    mameBtn.setVisible(!Features.IS_STANDALONE);
   }
 
   @Override

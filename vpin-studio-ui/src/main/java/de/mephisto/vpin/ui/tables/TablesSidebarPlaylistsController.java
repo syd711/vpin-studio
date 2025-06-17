@@ -1,7 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -39,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -146,10 +145,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
     dataBox.setVisible(!games.isEmpty());
     dataRoot.setVisible(!games.isEmpty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    if (!frontendType.supportPlaylists()) {
+    if (!Features.PLAYLIST_ENABLED) {
       parentBox.getChildren().remove(dataRoot);
       return;
     }
@@ -215,7 +213,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
         Tooltip playlistTooltip = TableOverviewController.createPlaylistTooltip(playlist, playlistIcon);
         playlistIcon.setTooltip(playlistTooltip);
-        if (frontendType.supportPlaylistsCrud() && isEditablePlaylist(playlist) && !dialogMode) {
+        if (Features.PLAYLIST_CRUD && isEditablePlaylist(playlist) && !dialogMode) {
           Button plyButton = new Button();
           plyButton.setGraphic(playlistIcon.getGraphic());
           plyButton.setTooltip(playlistTooltip);
@@ -385,9 +383,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     dialogTitleLabel.managedProperty().bindBidirectional(dialogTitleLabel.visibleProperty());
     dialogTitleLabel.setVisible(false);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    playlistManagerBtn.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
-    playlistManagerSeparator.setVisible(frontendType.supportPlaylistsCrud() && Features.PLAYLIST_MANAGER);
+    playlistManagerBtn.setVisible(Features.PLAYLIST_CRUD && Features.PLAYLIST_MANAGER);
+    playlistManagerSeparator.setVisible(Features.PLAYLIST_CRUD && Features.PLAYLIST_MANAGER);
 
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());

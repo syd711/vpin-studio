@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.mephisto.vpin.ui.Studio.Features;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +53,8 @@ public class BackglassPreferencesController implements Initializable {
   private Label backglassServerFolder;
 
   @FXML
+  private Label b2STableSettingsDescr;
+  @FXML
   private Label b2STableSettingsFile;
 
   @FXML
@@ -65,12 +69,18 @@ public class BackglassPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    backglassServerFolder.managedProperty().bind(backglassServerFolder.visibleProperty());
+    b2STableSettingsDescr.managedProperty().bind(b2STableSettingsDescr.visibleProperty());
+    b2STableSettingsFile.managedProperty().bind(b2STableSettingsFile.visibleProperty());
+    
     try {
       backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings();
       boolean serverInstalled = backglassServerSettings != null;
 
-      backglassServerFolder.setVisible(serverInstalled);
-      b2STableSettingsFile.setVisible(serverInstalled);
+      backglassServerFolder.setVisible(serverInstalled && !Features.IS_STANDALONE);
+      b2STableSettingsDescr.setVisible(serverInstalled && !Features.IS_STANDALONE);
+      b2STableSettingsFile.setVisible(serverInstalled && !Features.IS_STANDALONE);
+
       noMatchFound.setVisible(!serverInstalled);
       pluginsCheckbox.setDisable(!serverInstalled);
       backglassMissingCheckbox.setDisable(!serverInstalled);
@@ -83,7 +93,6 @@ public class BackglassPreferencesController implements Initializable {
       usedLEDType.setDisable(!serverInstalled);
 
       if (serverInstalled) {
-
         backglassServerFolder.setText(backglassServerSettings.getBackglassServerFolder());
         b2STableSettingsFile.setText(backglassServerSettings.getB2STableSettingsFile());
 
@@ -159,7 +168,6 @@ public class BackglassPreferencesController implements Initializable {
           }
           saveSettings();
         });
-
 
         saveEnabled = true;
       }

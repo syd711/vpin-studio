@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.List;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
+import static de.mephisto.vpin.ui.Studio.Features;
 
 /**
  * See GameValidator
@@ -73,7 +74,7 @@ public class GameValidationTexts {
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
         label = "No directb2s file found.";
-        if(frontend.getFrontendType().supportPupPacks()) {
+        if(Features.PUPPACKS_ENABLED) {
           label = "No PUP pack and no directb2s file found.";
         }
         text = "Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";

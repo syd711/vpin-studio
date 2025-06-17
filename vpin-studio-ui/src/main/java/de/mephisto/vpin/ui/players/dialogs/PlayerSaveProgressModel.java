@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.AccountVisibility;
@@ -23,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 
+import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 

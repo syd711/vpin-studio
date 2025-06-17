@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.system.FileInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
@@ -43,6 +44,12 @@ public class AltColorResource {
       return getAltColor(game);
     }
     return new AltColor();
+  }
+
+  @GetMapping("{id}/fileinfo")
+  public FileInfo getAltColorFolder(@PathVariable("id") int id) {
+    Game game = gameService.getGame(id);
+    return game != null ? FileInfo.folder(altColorService.getAltColorFolder(game), game.getEmulator().getAltColorFolder()) : null;
   }
 
   @DeleteMapping("/{id}/{filename}")

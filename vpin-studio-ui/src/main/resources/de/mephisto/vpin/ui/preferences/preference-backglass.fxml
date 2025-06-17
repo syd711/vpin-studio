@@ -28,7 +28,7 @@
             </Label>
             <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE" />
 
-            <Label styleClass="preference-description" text="B2STableSettings.xml:" textFill="WHITE">
+            <Label fx:id="b2STableSettingsDescr" styleClass="preference-description" text="B2STableSettings.xml:" textFill="WHITE">
                <VBox.margin>
                   <Insets top="8.0" />
                </VBox.margin>
