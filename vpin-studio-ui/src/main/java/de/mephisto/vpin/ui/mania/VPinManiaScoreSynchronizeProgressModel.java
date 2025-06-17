@@ -68,7 +68,7 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
   @Override
   public void processNext(ProgressResultModel progressResultModel, VpsTable next) {
     try {
-      ManiaTableSyncResult result = client.getManiaService().synchronizeTable(next.getId());
+      ManiaTableSyncResult result = client.getManiaService().synchronizeHighscore(next.getId());
       progressResultModel.getResults().add(result);
     }
     catch (Exception e) {

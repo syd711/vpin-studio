@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ManiaTableSyncResult {
   private String result = null;
-  private List<TableScore> tableScores = new ArrayList<>();
+  private TableScore tableScore;
 
   public String getResult() {
     return result;
@@ -17,11 +17,11 @@ public class ManiaTableSyncResult {
     this.result = result;
   }
 
-  public List<TableScore> getTableScores() {
-    return tableScores;
+  public TableScore getTableScore() {
+    return tableScore;
   }
 
-  public void setTableScores(List<TableScore> tableScores) {
-    this.tableScores = tableScores;
+  public void setTableScore(TableScore tableScore) {
+    this.tableScore = tableScore;
   }
 }

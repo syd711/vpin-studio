@@ -6,7 +6,6 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
-import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.ui.Studio;

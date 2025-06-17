@@ -84,7 +84,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   private ManiaSettings maniaSettings;
   private Cabinet cabinet;
 
-  public ManiaTableSyncResult synchronize(String vpsTableId) {
+  public ManiaTableSyncResult synchronizeHighscore(String vpsTableId) {
     ManiaTableSyncResult result = new ManiaTableSyncResult();
     VpsTable vpsTable = vpsService.getTableById(vpsTableId);
     if (vpsTable == null) {
@@ -152,7 +152,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
           LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
-          result.getTableScores().add(submitted);
+          result.setTableScore(submitted);
 
           submittedInitials.add(playerInitials);
         }
@@ -163,7 +163,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
     }
 
-    LOG.info("Highscore sync finished for \"" + vpsTable.getDisplayName() + ": " + result.getTableScores().size() + " scores have been submitted.");
+    LOG.info("Highscore sync finished for \"{}\"/{}/{}.", vpsTable.getDisplayName(), game.getExtTableId(), game.getExtTableVersionId());
   }
 
   public VPinManiaClient getClient() {
