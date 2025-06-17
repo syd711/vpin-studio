@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
+import de.mephisto.vpin.restclient.mania.ManiaTableSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.system.SystemId;
 import de.mephisto.vpin.ui.Studio;
@@ -110,11 +111,10 @@ public class ManiaHelper {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel());
     if (showScoreSummary) {
       List<Object> results = progressDialog.getResults();
-      int count = 0;
+      int count = results.size();
       String msg = null;
       for (Object result : results) {
         ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
-        count += syncResult.getTableScores().size();
         msg = syncResult.getResult();
       }
       WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
