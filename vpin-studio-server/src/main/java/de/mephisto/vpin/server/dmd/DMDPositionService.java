@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2sScreenRes;
 import de.mephisto.vpin.restclient.dmd.DMDAspectRatio;
 import de.mephisto.vpin.restclient.dmd.DMDInfo;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
+import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.dmd.DMDType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -26,6 +27,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,10 +66,18 @@ public class DMDPositionService {
   public DMDInfo getDMDInfo(int gameId) {
     Game game = gameService.getGame(gameId);
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = rom;
+    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
+      storeName = FilenameUtils.getBaseName(game.getGameFileName());
+    }
+    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
+      storeName = game.getDMDGameName();
+    }
 
     DMDInfo dmdinfo = new DMDInfo();
     dmdinfo.setGameId(game.getId());
     dmdinfo.setGameRom(rom);
+    dmdinfo.setDmdStoreName(storeName);
 
     DMDType type = null;
     if (useExternalDmd(rom)) {
@@ -123,7 +133,7 @@ public class DMDPositionService {
         if (type == null) {
           SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
           SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-          SubnodeConfiguration conf = dmdinfo.getGameRom() != null ? iniConfiguration.getSection(dmdinfo.getGameRom()) : null;
+          SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName().replace(".", ".."));
           boolean virtualDmdEnabled = safeGetBoolean(conf, "virtualdmd enabled", safeGetBoolean(virtualdmdConf, "enabled", false));
           boolean alphaNumericEnabled = safeGetBoolean(conf, "alphanumeric enabled", safeGetBoolean(alphaNumericConf, "enabled", false));
           type = alphaNumericEnabled ? DMDType.AlphaNumericDMD :
@@ -255,9 +265,9 @@ public class DMDPositionService {
   }
 
   private boolean fillDMDInfoFromIni(DMDInfo info, DMDInfoZone main, List<DMDInfoZone> alphaNumZones, INIConfiguration iniConfiguration) {
-    if (info.getGameRom() != null) {
+    if (info.getDmdStoreName() != null) {
       SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
-      SubnodeConfiguration conf = iniConfiguration.getSection(info.getGameRom());
+      SubnodeConfiguration conf = iniConfiguration.getSection(info.getDmdStoreName().replace(".", ".."));
 
       info.setLocallySaved(!conf.isEmpty());
       info.setUseRegistry(false);
@@ -403,6 +413,14 @@ public class DMDPositionService {
   public boolean saveDMDInfo(DMDInfo dmdinfo) {
     Game game = gameService.getGame(dmdinfo.getGameId());
     String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
+    String storeName = rom;
+    if (DMDPackageTypes.UltraDMD.equals(game.getDMDType())) {
+      storeName = FilenameUtils.getBaseName(game.getGameFileName());
+    }
+    else if (DMDPackageTypes.FlexDMD.equals(game.getDMDType())) {
+      storeName = game.getDMDGameName();
+    }
+    dmdinfo.setDmdStoreName(storeName);
 
     List<FrontendPlayerDisplay> screenResDisplays = screenService.getScreenResDisplays(game);
     //DirectB2sScreenRes screenres = backglassService.getScreenRes(game, false);
@@ -475,7 +493,7 @@ public class DMDPositionService {
           return saveDMDInfoInRegistry(game, mainZone, iniConfiguration);
         }
         else {
-          return saveVirtualDMDInfoInIni(game, mainZone, iniConfiguration, dmdinfo.isLocallySaved());
+          return saveVirtualDMDInfoInIni(game, dmdinfo, mainZone, iniConfiguration, dmdinfo.isLocallySaved());
         }
       }
     }
@@ -561,12 +579,10 @@ public class DMDPositionService {
     return mameService.saveDmdPosition(rom, dmdinfo);
   }
 
-  private boolean saveVirtualDMDInfoInIni(Game game, DMDInfoZone dmdinfo, INIConfiguration iniConfiguration, boolean locallySaved) {
-    String rom = StringUtils.defaultString(game.getRomAlias(), game.getRom());
-
+  private boolean saveVirtualDMDInfoInIni(Game game, DMDInfo dmdinfo, DMDInfoZone dmdinfoZone, INIConfiguration iniConfiguration, boolean locallySaved) {
     SubnodeConfiguration virtualdmdConf = iniConfiguration.getSection("virtualdmd");
     SubnodeConfiguration alphaNumericConf = iniConfiguration.getSection("alphanumeric");
-    SubnodeConfiguration conf = iniConfiguration.getSection(rom.replace(".", ".."));
+    SubnodeConfiguration conf = iniConfiguration.getSection(dmdinfo.getDmdStoreName().replace(".", ".."));
 
     // if the global virtualDMD is not enabled, force enable=true
     if (!safeGetBoolean(virtualdmdConf, "enabled", false)) {
@@ -587,17 +603,17 @@ public class DMDPositionService {
 
     // now store the positions in the good section
     if (locallySaved) {
-      conf.setProperty("virtualdmd left", (int) dmdinfo.getX());
-      conf.setProperty("virtualdmd top", (int) dmdinfo.getY());
-      conf.setProperty("virtualdmd width", (int) dmdinfo.getWidth());
-      conf.setProperty("virtualdmd height", (int) dmdinfo.getHeight());
+      conf.setProperty("virtualdmd left", (int) dmdinfoZone.getX());
+      conf.setProperty("virtualdmd top", (int) dmdinfoZone.getY());
+      conf.setProperty("virtualdmd width", (int) dmdinfoZone.getWidth());
+      conf.setProperty("virtualdmd height", (int) dmdinfoZone.getHeight());
     }
     else {
       // else update the global ones
-      virtualdmdConf.setProperty("left", (int) dmdinfo.getX());
-      virtualdmdConf.setProperty("top", (int) dmdinfo.getY());
-      virtualdmdConf.setProperty("width", (int) dmdinfo.getWidth());
-      virtualdmdConf.setProperty("height", (int) dmdinfo.getHeight());
+      virtualdmdConf.setProperty("left", (int) dmdinfoZone.getX());
+      virtualdmdConf.setProperty("top", (int) dmdinfoZone.getY());
+      virtualdmdConf.setProperty("width", (int) dmdinfoZone.getWidth());
+      virtualdmdConf.setProperty("height", (int) dmdinfoZone.getHeight());
     }
 
     return saveDmdDeviceIni(game.getEmulator(), iniConfiguration);
@@ -700,7 +716,7 @@ public class DMDPositionService {
   }
 
   private boolean useExternalDmd(String rom) {
-    return rom != null ? mameService.getOptions(rom).isUseExternalDmd() : false;
+    return rom != null ? mameService.getOptions(rom).isUseExternalDmd() : true;
   }
 
   private void setMameOptions(String rom, boolean showDmd, boolean useExternalDmd) {

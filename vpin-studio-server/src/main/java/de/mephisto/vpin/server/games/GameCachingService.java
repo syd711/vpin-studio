@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
+import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.ValidationStateFactory;
@@ -297,7 +298,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         gameDetails.setVrRoomEnabled(!scanResult.isVrRoomDisabled());
         gameDetails.setVrRoomSupport(scanResult.isVrRoomSupport());
 
-        gameDetails.setDMDType(scanResult.getDMDType());
+        gameDetails.setDMDType(scanResult.getDMDType() != null ? DMDPackageTypes.valueOf(scanResult.getDMDType()) : DMDPackageTypes.Standard);
         gameDetails.setDMDGameName(scanResult.getDMDGameName());
         gameDetails.setDMDProjectFolder(scanResult.getDMDProjectFolder());
 

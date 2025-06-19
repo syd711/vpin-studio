@@ -60,17 +60,10 @@ public class DMDService implements InitializingBean {
   @Nullable
   public DMDPackage getDMDPackage(@NonNull Game game) {
 
-    if (StringUtils.isNotEmpty(game.getDMDType())) {
-      DMDPackageTypes packageTypes = DMDPackageTypes.Unknown;
-      if (StringUtils.equalsIgnoreCase(game.getDMDType(), DMDPackageTypes.FlexDMD.name())) {
-        packageTypes = DMDPackageTypes.FlexDMD;
-      }
-      else if (StringUtils.equalsIgnoreCase(game.getDMDType(), DMDPackageTypes.UltraDMD.name())) {
-        packageTypes = DMDPackageTypes.UltraDMD;
-      }
+    if (game.getDMDType() != null && !DMDPackageTypes.Standard.equals(game.getDMDType())) {
 
       DMDPackage dmdPackage = new DMDPackage();
-      dmdPackage.setDmdPackageTypes(packageTypes);
+      dmdPackage.setDmdPackageTypes(game.getDMDType());
 
       if (StringUtils.isNotEmpty(game.getDMDProjectFolder())) {
         dmdPackage.setName(game.getDMDProjectFolder());

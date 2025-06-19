@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
+import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -83,7 +84,7 @@ public class Game {
   private boolean vrRoomSupport = false;
   private boolean vrRoomEnabled = false;
 
-  private String dmdType;
+  private DMDPackageTypes dmdType;
   private String dmdGameName;
   private String dmdProjectFolder;
 
@@ -528,11 +529,11 @@ public class Game {
     this.nvOffset = nvOffset;
   }
 
-  public String getDMDType() {
+  public DMDPackageTypes getDMDType() {
     return dmdType;
   }
 
-  public void setDMDType(String dmdType) {
+  public void setDMDType(DMDPackageTypes dmdType) {
     this.dmdType = dmdType;
   }
 

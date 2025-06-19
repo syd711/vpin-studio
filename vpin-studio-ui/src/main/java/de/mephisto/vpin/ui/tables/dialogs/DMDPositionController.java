@@ -690,7 +690,9 @@ public class DMDPositionController implements Initializable, DialogController {
     // re-enable buttons
     enableDmd();
 
-    romLabel.setText(StringUtils.defaultIfEmpty(dmdinfo.getGameRom(), "--"));
+    String storename = StringUtils.defaultString(dmdinfo.getDmdStoreName(), dmdinfo.getGameRom());
+
+    romLabel.setText(StringUtils.defaultIfEmpty(storename, "--"));
 
     List<DMDType> types = dmdinfo.isSupportAlphaNumericDmd() ? 
       Arrays.asList(DMDType.NoDMD, DMDType.VirtualDMD, DMDType.AlphaNumericDMD, DMDType.VpinMAMEDMD) :
@@ -710,16 +712,16 @@ public class DMDPositionController implements Initializable, DialogController {
     backglassScorePane.setVisible(isAlpha);
 
     // no local save if no rom
-    if (dmdinfo.getGameRom() != null) {
+    if (storename != null) {
 
       if (backglassMgrController != null) {
-        saveLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+        saveLocallyBtn.setText("Save for " + storename);
         saveLocallyBtn.setVisible(true);
 
-        saveCloseLocallyBtn.setText("Save & Close for " + dmdinfo.getGameRom());
+        saveCloseLocallyBtn.setText("Save & Close for " + storename);
       }
       else {
-        saveCloseLocallyBtn.setText("Save for " + dmdinfo.getGameRom());
+        saveCloseLocallyBtn.setText("Save for " + storename);
       }
       saveCloseLocallyBtn.setVisible(true);
     }

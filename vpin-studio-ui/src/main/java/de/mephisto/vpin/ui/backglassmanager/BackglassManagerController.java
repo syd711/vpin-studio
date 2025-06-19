@@ -484,7 +484,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           .supplyAsync(() -> client.getGame(model.getGameId()))
           .thenAcceptLater(game -> {
             // Ignore old answer when a new backglass has been selected
-            if (model.getGameId() != game.getId()) {
+            if (game == null || model.getGameId() != game.getId()) {
               return;
             }
 

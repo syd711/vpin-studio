@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -74,7 +76,7 @@ public class GameDetails {
 
   private Boolean vrRoomEnabled = false;
 
-  private String dmdType;
+  private DMDPackageTypes dmdType;
   private String dmdGameName;
   private String dmdProjectFolder;
 
@@ -277,11 +279,11 @@ public class GameDetails {
     this.extRating = extRating;
   }
 
-  public String getDMDType() {
+  public DMDPackageTypes getDMDType() {
     return dmdType;
   }
 
-  public void setDMDType(String dmdType) {
+  public void setDMDType(DMDPackageTypes dmdType) {
     this.dmdType = dmdType;
   }
 
