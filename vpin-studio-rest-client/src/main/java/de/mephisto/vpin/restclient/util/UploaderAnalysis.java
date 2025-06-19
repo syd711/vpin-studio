@@ -432,6 +432,17 @@ public class UploaderAnalysis {
     return null;
   }
 
+  public List<String> getFileNamesForAssetType(AssetType assetType) {
+    List<String> result = new ArrayList<>();
+    for (String file : getFilteredFilenamesWithPath()) {
+      String fileName = getFileName(file);
+      if (fileName.toLowerCase().endsWith("." + assetType.name().toLowerCase())) {
+        result.add(fileName);
+      }
+    }
+    return result;
+  }
+
   public String getFileNameForExtension(String extension) {
     for (String file : getFilteredFilenamesWithPath()) {
       String fileName = getFileName(file);
