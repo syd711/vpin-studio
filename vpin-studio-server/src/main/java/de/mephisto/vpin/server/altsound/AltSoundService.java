@@ -139,6 +139,7 @@ public class AltSoundService implements InitializingBean {
     }
 
     LOG.info("Extracting ALT sound to " + altSoundFolder.getAbsolutePath());
+
     AltSoundUtil.unpack(archive, altSoundFolder);
     setAltSoundEnabled(rom, true);
     clearCache();

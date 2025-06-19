@@ -89,7 +89,7 @@ public class AltColorService implements InitializingBean {
   //public File getAltColorFolder() {
   //  return new File(mameService.getMameFolder(), "altcolor");
   //}
-  
+
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
@@ -160,21 +160,25 @@ public class AltColorService implements InitializingBean {
 
     String assetFileName = analysis.getFileNameForAssetType(AssetType.PAC);
     if (assetFileName != null) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.PAC_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pac"), assetFileName);
     }
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.PAL);
     if (assetFileName != null) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.PAL_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pal"), assetFileName);
     }
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.VNI);
     if (assetFileName != null) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.VNI_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.vni"), assetFileName);
     }
 
     assetFileName = analysis.getFileNameForAssetType(AssetType.CRZ);
     if (assetFileName != null) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.SERUM_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
     }
 
@@ -232,6 +236,10 @@ public class AltColorService implements InitializingBean {
   }
 
   private void backupFolder(File folder, String targetSuffix) {
+    if (!folder.exists()) {
+      return;
+    }
+
     File[] existingFiles = folder.listFiles((dir, name) -> new File(dir, name).isFile());
     File backupsFolder = new File(folder, "backups/");
     backupsFolder.mkdirs();
