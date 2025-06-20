@@ -245,6 +245,7 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setDisabled(details != null ? details.getStatus() == 0 : false);
     game.setVersion(details != null ? details.getGameVersion() : null);
     game.setRating(details != null && details.getGameRating() != null ? details.getGameRating() : 0);
+    game.setRom(details != null && details.getRomName() != null ? details.getRomName() : null);
 
     File table = new File(emu.getGamesDirectory(), filename);
     game.setGameFile(table);
