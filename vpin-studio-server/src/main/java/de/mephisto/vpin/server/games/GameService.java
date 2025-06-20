@@ -378,12 +378,12 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
           continue;
         }
 
-        if (emu.getInstallationFolder().getAbsolutePath().equals(emuDirOrName)) {
+        if (emu.getInstallationFolder().getAbsolutePath().equalsIgnoreCase(emuDirOrName)) {
           matchingEmulators.add(emu);
           continue;
         }
 
-        if (emu.getName() != null && emu.getName().equals(emuDirOrName)) {
+        if (emu.getName() != null && emu.getName().equalsIgnoreCase(emuDirOrName)) {
           matchingEmulators.add(emu);
         }
       }
@@ -413,7 +413,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       emuId = matchingEmulator.getId();
       game = getGameByFilename(emuId, tableFile.getName());
       if (game == null && tableFile.getParentFile() != null) {
-        LOG.warn("No game found with name \"{}\" for emulator with id \"{}\"", table, emuId);
+        LOG.warn("No game found with name \"{}\" for emulator with id \"{}\" and games folder \"{}\"", table, emuId, matchingEmulator.getGamesDirectory());
         game = getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
       }
 
