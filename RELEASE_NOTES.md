@@ -15,6 +15,7 @@
 - **VPS Overview**:
   - **Tutorial Column**: Improved the "Tutorials" column. The column shows the available tutorials for the given table. Note that the **Kongedam** tutorials have an additional color indicator. (This indicator has a technical reason too. It ensures that all the latest and greatest from him are available in the pause menu too). 
 - **Table Overview**: 
+  - In Table Data dialog, control the overriden rom Name exists
   - **ALT Color Backups**: Added dialog for backups to the ALT color section. Note that you may already have some backups available since the actual backup support for the backend was already build a year ago. The dialog allows you to restore these files now.
 - **Backglass Manager**:
   - Improved refresh of backglass sidebar when multiple clics in list

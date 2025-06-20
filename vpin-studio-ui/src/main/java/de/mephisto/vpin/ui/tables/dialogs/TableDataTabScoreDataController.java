@@ -235,7 +235,7 @@ public class TableDataTabScoreDataController implements Initializable {
     highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("highscoreFileName", () -> {
         onHighscoreFilenameUpdate(newValue);
-      }, DEBOUNCE_MS);
+      }, DEBOUNCE_MS, true);
     });
   }
 
@@ -312,7 +312,7 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
   private void refreshStatusIcons() {
-    GameScoreValidation gameScoreValidation = client.getGameService().getGameScoreValidation(this.game.getId());
+    GameScoreValidation gameScoreValidation = client.getGameService().getGameScoreValidation(game.getId(), tableDetails);
     romStatusBox.getChildren().removeAll(romStatusBox.getChildren());
     hsFileStatusBox.getChildren().removeAll(hsFileStatusBox.getChildren());
 

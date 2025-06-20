@@ -664,6 +664,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
     String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    if (game.isRomRequired() && !mameService.isRomExists(rom)) {
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_FOUND);
+      return validation;
+    }
 
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;

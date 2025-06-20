@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -503,5 +504,9 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public GameScoreValidation getGameScoreValidation(int gameId) {
     return getRestClient().get(API + "games/scorevalidation/" + gameId, GameScoreValidation.class);
+  }
+
+  public GameScoreValidation getGameScoreValidation(int gameId, TableDetails tableDetails) {
+    return getRestClient().post(API + "games/scorevalidation/" + gameId, tableDetails, GameScoreValidation.class);
   }
 }

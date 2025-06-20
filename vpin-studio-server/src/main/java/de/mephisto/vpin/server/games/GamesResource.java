@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -152,6 +153,10 @@ public class GamesResource {
   @GetMapping("/scorevalidation/{id}")
   public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id) {
     return gameService.getGameScoreValidation(id);
+  }
+  @PostMapping("/scorevalidation/{id}")
+  public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id, @RequestBody TableDetails tableDetails) {
+    return gameService.getGameScoreValidation(id, tableDetails);
   }
 
   @GetMapping("/scores/{id}")

@@ -561,9 +561,12 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   public GameScoreValidation getGameScoreValidation(int id) {
+    TableDetails tableDetails = frontendService.getTableDetails(id);
+    return getGameScoreValidation(id, tableDetails);
+  }
+  public GameScoreValidation getGameScoreValidation(int id, TableDetails tableDetails) {
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    TableDetails tableDetails = frontendService.getTableDetails(id);
     return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails, frontendService.getFrontendType(), serverSettings);
   }
 

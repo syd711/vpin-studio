@@ -231,6 +231,13 @@ public class MameService implements InitializingBean {
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, nvramFolder);
   }
 
+  public boolean isRomExists(String name) {
+    if (StringUtils.isEmpty(name)) {
+      return false;
+    }
+    File romFile = new File(getRomsFolder(), name + ".zip");
+    return romFile.exists();
+  }
   public boolean isValidRom(String name) {
     return !romValidationCache.containsKey(name);
   }
