@@ -158,7 +158,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     if (this.avatarFile != null) {
 
       //FIXME was in AvatarGeneratorProgressModel so moved here but is it really needed ???
-      ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
+      ProgressDialog.createProgressDialog(ClearCacheProgressModel.getFullClearCacheModel());
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new AvatarGeneratorProgressModel(avatar, this.avatarFile));
       this.avatarFile = (File) progressDialog.getResults().get(0);

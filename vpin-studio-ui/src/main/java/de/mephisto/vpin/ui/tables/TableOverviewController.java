@@ -38,7 +38,6 @@ import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
-import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -679,7 +678,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onReload() {
-    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel(true));
+    ProgressDialog.createProgressDialog(ClearCacheProgressModel.getReloadGamesClearCacheModel(true));
     this.doReload();
   }
 

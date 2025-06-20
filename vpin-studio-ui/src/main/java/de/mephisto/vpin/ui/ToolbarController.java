@@ -252,7 +252,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onClearCache() {
-    ProgressDialog.createProgressDialog(new ClearCacheProgressModel());
+    ProgressDialog.createProgressDialog(ClearCacheProgressModel.getFullClearCacheModel());
   }
 
   @FXML
