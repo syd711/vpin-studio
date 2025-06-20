@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -89,7 +90,7 @@ public class AltColorService implements InitializingBean {
   //public File getAltColorFolder() {
   //  return new File(mameService.getMameFolder(), "altcolor");
   //}
-  
+
   public File getAltColorFolder(@NonNull Game game) {
     File altColorFolder = null;
     if (!StringUtils.isEmpty(game.getRomAlias()) && game.getEmulator() != null) {
@@ -155,26 +156,30 @@ public class AltColorService implements InitializingBean {
     return altColor;
   }
 
-  public void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, Game game, File out) throws IOException {
+  public void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, Game game, File out) {
     File gameAltColorFolder = getAltColorFolder(game);
 
-    String assetFileName = analysis.getFileNameForAssetType(AssetType.PAC);
-    if (assetFileName != null) {
+    List<String> assetFileNames = analysis.getFileNamesForAssetType(AssetType.PAC);
+    for (String assetFileName : assetFileNames) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.PAC_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pac"), assetFileName);
     }
 
-    assetFileName = analysis.getFileNameForAssetType(AssetType.PAL);
-    if (assetFileName != null) {
+    assetFileNames = analysis.getFileNamesForAssetType(AssetType.PAL);
+    for (String assetFileName : assetFileNames) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.PAL_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pal"), assetFileName);
     }
 
-    assetFileName = analysis.getFileNameForAssetType(AssetType.VNI);
-    if (assetFileName != null) {
+    assetFileNames = analysis.getFileNamesForAssetType(AssetType.VNI);
+    for (String assetFileName : assetFileNames) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.VNI_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.vni"), assetFileName);
     }
 
-    assetFileName = analysis.getFileNameForAssetType(AssetType.CRZ);
-    if (assetFileName != null) {
+    assetFileNames = analysis.getFileNamesForAssetType(AssetType.CRZ);
+    for (String assetFileName : assetFileNames) {
+      backupFolder(gameAltColorFolder, UploaderAnalysis.SERUM_SUFFIX);
       PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
     }
 
@@ -232,6 +237,10 @@ public class AltColorService implements InitializingBean {
   }
 
   private void backupFolder(File folder, String targetSuffix) {
+    if (!folder.exists()) {
+      return;
+    }
+
     File[] existingFiles = folder.listFiles((dir, name) -> new File(dir, name).isFile());
     File backupsFolder = new File(folder, "backups/");
     backupsFolder.mkdirs();
@@ -249,13 +258,18 @@ public class AltColorService implements InitializingBean {
         try {
           String name = existingFile.getName();
           File backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
+          while (backup.exists()) {
+            Thread.sleep(1000);
+            format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+            backup = new File(backupsFolder, FilenameUtils.getBaseName(name) + "[" + format + "]." + FilenameUtils.getExtension(name));
+          }
           FileUtils.copyFile(existingFile, backup);
           LOG.info("Created backup ALTColor backup file \"" + backup.getAbsolutePath() + "\"");
           if (!existingFile.delete()) {
             LOG.error("Failed to delete existing ALTColor file \"" + existingFile.getAbsolutePath() + "\"");
           }
         }
-        catch (IOException e) {
+        catch (Exception e) {
           LOG.error("Failed to backup ALTColor file \"" + existingFile.getAbsolutePath() + "\": " + e.getMessage(), e);
         }
       }
