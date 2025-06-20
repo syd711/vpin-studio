@@ -194,7 +194,7 @@ public class TableDataTabScoreDataController implements Initializable {
     romName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("romName", () -> {
         onRomNameUpdate(newValue);
-      }, DEBOUNCE_MS);
+      }, DEBOUNCE_MS, true);
     });
 
 

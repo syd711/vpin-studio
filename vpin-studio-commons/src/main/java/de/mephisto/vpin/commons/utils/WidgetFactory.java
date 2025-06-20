@@ -236,45 +236,19 @@ public class WidgetFactory {
   }
 
   public static FontIcon createCheckboxIcon() {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    fontIcon.setIconLiteral("bi-check-circle");
-    return fontIcon;
+    return createIcon("bi-check-circle", DEFAULT_ICON_SIZE, null);
   }
 
-
   public static FontIcon createCheckboxIcon(@Nullable String color) {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconLiteral("bi-check-circle");
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    if (color != null) {
-      fontIcon.setIconColor(Paint.valueOf(color));
-    }
-    return fontIcon;
+    return createIcon("bi-check-circle", DEFAULT_ICON_SIZE, color);
   }
 
   public static Label createCheckboxIcon(@Nullable String color, @NonNull String tooltip) {
     Label label = new Label();
     label.setTooltip(new Tooltip(tooltip));
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconLiteral("bi-check-circle");
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    if (color != null) {
-      fontIcon.setIconColor(Paint.valueOf(color));
-    }
+    FontIcon fontIcon = createCheckboxIcon(color);
     label.setGraphic(fontIcon);
     return label;
-  }
-
-  public static FontIcon createExclamationIcon() {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
-    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
-    return fontIcon;
   }
 
   public static FontIcon createUnsupportedIcon() {
@@ -285,15 +259,16 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createExclamationIcon() {
+    return createExclamationIcon(null);
+  }
+
   public static FontIcon createExclamationIcon(@Nullable String color) {
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconLiteral("bi-exclamation-circle-fill");
-    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
-    if (color != null) {
-      fontIcon.setIconColor(Paint.valueOf(color));
-    }
-    return fontIcon;
+    return createIcon("bi-exclamation-circle-fill", DEFAULT_ICON_SIZE, color != null ? color : ERROR_COLOR);
+  }
+
+  public static FontIcon createWarningIcon(@Nullable String color) {
+    return createIcon("bi-exclamation-circle", DEFAULT_ICON_SIZE, color);
   }
 
   public static HBox addUpdateIcon(FontIcon icon, String tooltip) {

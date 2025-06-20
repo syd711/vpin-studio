@@ -2,6 +2,8 @@ package de.mephisto.vpin.commons.fx;
 
 import java.util.concurrent.*;
 
+import javafx.application.Platform;
+
 public class Debouncer {
   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
   private final ConcurrentHashMap<String, Future<?>> delayedMap = new ConcurrentHashMap<>();
@@ -10,6 +12,10 @@ public class Debouncer {
    *
    */
   public void debounce(final String key, final Runnable runnable, int ms) {
+    debounce(key, runnable, ms, false);
+  }
+
+   public void debounce(final String key, final Runnable runnable, int ms, boolean runLater) {
     if (delayedMap.containsKey(key)) {
       delayedMap.get(key).cancel(true);
     }
@@ -18,7 +24,12 @@ public class Debouncer {
       @Override
       public void run() {
         try {
-          runnable.run();
+          if (runLater) {
+            Platform.runLater(runnable);
+          }
+          else {
+            runnable.run();
+          }
         } finally {
           delayedMap.remove(key);
         }

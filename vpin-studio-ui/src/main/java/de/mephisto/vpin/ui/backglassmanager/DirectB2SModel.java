@@ -117,9 +117,14 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
     return validationState != null ? validationState.getCode() : -1;
   }
 
-  public boolean _isGameAvailable() {
+  public boolean isGameAvailable() {
     return backglassDetail == null ? false : 
       !ValidationState.contains(backglassDetail.getValidations(), BackglassValidationCode.CODE_NO_GAME);
+  }
+
+  public boolean hasWrongFullDMDRatioError() {
+    return backglassDetail == null ? false : 
+      ValidationState.contains(backglassDetail.getValidations(), BackglassValidationCode.CODE_WRONG_FULLDMD_RATIO);
   }
 
   //---------------------------------------

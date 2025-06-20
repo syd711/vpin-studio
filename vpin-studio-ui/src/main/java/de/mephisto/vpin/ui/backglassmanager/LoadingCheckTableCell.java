@@ -6,13 +6,17 @@ import javafx.scene.control.Tooltip;
 
 abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<DirectB2SModel> {
 
+  public enum CheckStyle {
+    ERROR, WARNING, CHECKED, NONE
+  }
+
   /**
    * should return the value display the checked mark. Model is never null
    * 0 => display nothing
    * 1 => display a Check Icon
    * 2 => display an Exclamation Icon 
    */
-  protected abstract int isChecked(DirectB2SModel model);
+  protected abstract CheckStyle isChecked(DirectB2SModel model);
 
   /**
    * should return a contextualized tooltip for given model. Model is never null
@@ -21,13 +25,18 @@ abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<Direct
 
   @Override
   protected void renderItem(DirectB2SModel model) {
-    int check = isChecked(model);
-    if (check == 1) {
+    CheckStyle check = isChecked(model);
+    if (CheckStyle.CHECKED.equals(check)) {
       setText(null);
       setTooltip(new Tooltip(getTooltip(model)));
       setGraphic(WidgetFactory.createCheckboxIcon(getIconColor(model)));
     }
-    else if (check == 2) {
+    else if (CheckStyle.WARNING.equals(check)) {
+      setText(null);
+      setTooltip(new Tooltip(getTooltip(model)));
+      setGraphic(WidgetFactory.createWarningIcon(getIconColor(model)));
+    }
+    else if (CheckStyle.ERROR.equals(check)) {
       setText(null);
       setTooltip(new Tooltip(getTooltip(model)));
       setGraphic(WidgetFactory.createExclamationIcon(getIconColor(model)));
@@ -40,7 +49,7 @@ abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<Direct
   }
 
   private String getIconColor(DirectB2SModel model) {
-    return model.getBacklass().isEnabled() ? null : WidgetFactory.DISABLED_COLOR;
+    return model.getBacklass().isEnabled() ? null: WidgetFactory.DISABLED_COLOR;
   }
 
 }

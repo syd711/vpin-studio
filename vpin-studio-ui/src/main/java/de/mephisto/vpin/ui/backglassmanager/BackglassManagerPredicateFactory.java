@@ -67,7 +67,7 @@ public class BackglassManagerPredicateFactory {
         if (scoresAvailableFilter.getValue() && model.getNbScores() <= 0) {
           return false;
         }
-        if (missingTableFilter.getValue() && model._isGameAvailable()) {
+        if (missingTableFilter.getValue() && model.isGameAvailable()) {
           return false;
         }
         if (equalsVisibility(grillVisibilityFilter.getValue(), model.getHideGrill())) {

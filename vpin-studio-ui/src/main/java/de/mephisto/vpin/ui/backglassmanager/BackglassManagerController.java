@@ -390,8 +390,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       }
 
       @Override
-      protected int isChecked(DirectB2SModel model) {
-        return model.hasDmd() ? (model.isFullDmd() ? 1 : 2) : 0;
+      protected CheckStyle isChecked(DirectB2SModel model) {
+        return !model.hasDmd() ? CheckStyle.NONE :
+          model.isFullDmd() ? CheckStyle.CHECKED : 
+            model.hasWrongFullDMDRatioError()? CheckStyle.ERROR : CheckStyle.WARNING;
       }
 
       @Override
@@ -404,8 +406,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureLoadingColumn(grillColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected int isChecked(DirectB2SModel model) {
-        return model.getGrillHeight() > 0 ? 1 : 0;
+      protected CheckStyle isChecked(DirectB2SModel model) {
+        return model.getGrillHeight() > 0 ? CheckStyle.CHECKED : null;
       }
 
       @Override
@@ -416,8 +418,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureLoadingColumn(scoreColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected int isChecked(DirectB2SModel model) {
-        return model.getNbScores() > 0 ? 1 : 0;
+      protected CheckStyle isChecked(DirectB2SModel model) {
+        return model.getNbScores() > 0 ? CheckStyle.CHECKED : null;
       }
 
       @Override
@@ -428,8 +430,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureLoadingColumn(resColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected int isChecked(DirectB2SModel model) {
-        return model.getResPath() != null ? 1 : 0;
+      protected CheckStyle isChecked(DirectB2SModel model) {
+        return model.getResPath() != null ? CheckStyle.CHECKED : null;
       }
 
       @Override
@@ -441,8 +443,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     BaseLoadingColumn.configureLoadingColumn(frameColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected int isChecked(DirectB2SModel model) {
-        return model.getFramePath() != null ? 1 : 0;
+      protected CheckStyle isChecked(DirectB2SModel model) {
+        return model.getFramePath() != null ? CheckStyle.CHECKED : null;
       }
 
       @Override
@@ -497,7 +499,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
               vpsOpenBtn.setDisable(client.getVpsService().getTableById(game.getExtTableId()) == null);
             }
             // Pass Game to sidebar so that it also updates the Game section
-            backglassManagerSideBarController.setGame(game, model._isGameAvailable());
+            backglassManagerSideBarController.setGame(game, model.isGameAvailable());
           });
       
       int validationCode = model.getValidationCode();
