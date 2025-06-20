@@ -10,6 +10,7 @@
   - Improved parsing of script to detect usage of UltraDMD or FlexDMD and associated project folder.
   - Added validator to check the scanned DMD folder exists.
   - Refactored DMD tables sidebar to display DMD Type from script and associated DMD Folder.
+  - DMDPosition tool support for UltraDMD and FlexDMD
   - **Note that you have to rescan the table or press the reload button in the DMD section to update the DMD information**.
 - **VPS Overview**:
   - **Tutorial Column**: Improved the "Tutorials" column. The column shows the available tutorials for the given table. Note that the **Kongedam** tutorials have an additional color indicator. (This indicator has a technical reason too. It ensures that all the latest and greatest from him are available in the pause menu too). 
