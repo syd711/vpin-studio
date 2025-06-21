@@ -100,8 +100,10 @@ public class AltSoundResource {
 
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                 @RequestParam("gameId") Integer gameId,
                                  @RequestParam("objectId") Integer emulatorId) {
     UploadDescriptor descriptor = universalUploadService.create(file);
+    descriptor.setGameId(gameId);
     descriptor.setEmulatorId(emulatorId);
     try {
       descriptor.upload();

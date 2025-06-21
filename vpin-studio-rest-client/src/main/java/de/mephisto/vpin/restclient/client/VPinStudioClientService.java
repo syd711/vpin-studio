@@ -33,7 +33,7 @@ public class VPinStudioClientService {
     return createUpload(map, file, gameId, uploadType, assetType, listener);
   }
 
-  protected HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameId, String uploadType, AssetType assetType, FileUploadProgressListener listener) {
+  protected HttpEntity createUpload(LinkedMultiValueMap<String, Object> map, File file, int gameOrEmulatorId, String uploadType, AssetType assetType, FileUploadProgressListener listener) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     String boundary = Long.toHexString(System.currentTimeMillis());
@@ -41,7 +41,7 @@ public class VPinStudioClientService {
     ProgressableFileSystemResource rsr = new ProgressableFileSystemResource(file, listener);
 
     map.add("file", rsr);
-    map.add("objectId", gameId);
+    map.add("objectId", gameOrEmulatorId);
     map.add("uploadType", uploadType);
     map.add("assetType", assetType.name());
     return new HttpEntity<>(map, headers);
