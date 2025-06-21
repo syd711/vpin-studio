@@ -17,6 +17,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -386,6 +387,12 @@ public class TableUploadController implements Initializable, DialogController {
           this.uploadBtn.setDisable(true);
         });
       }
+      else if (VpsInstallLink.isLinkFilename(selection.getName())) {
+        this.fileNameField.setText("");
+        this.fileNameField.setDisable(true);
+        this.fileBtn.setDisable(true);
+        this.uploadBtn.setDisable(false);
+      }
       else {
         this.uploaderAnalysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, this.selection);
         if (!selectMatchingEmulator()) {
@@ -426,7 +433,7 @@ public class TableUploadController implements Initializable, DialogController {
         return true;
       }
       else {
-        WidgetFactory.showAlert(stage, "Invalid File", "No matching Future Pinball emulator found.");
+        WidgetFactory.showAlert(stage, "Invalid File", "No matching emulator found.");
         this.selection = null;
         setSelection(false);
       }

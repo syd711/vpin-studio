@@ -17,25 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
 public class VpsInstallerUtils {
   private final static Logger LOG = LoggerFactory.getLogger(VpsInstallerUtils.class);
-
-  public static void installTable(@Nullable GameRepresentation game, String link, String tableId, String versionId, String version) {
-    if (installOrBrowse(game, link, VpsDiffTypes.tableNewVersionVPX)) {
-      if (game != null) {
-        // If table has been installed, auto link it to VPS entry and force fix version
-        try {
-          client.getFrontendService().saveVpsMapping(game.getId(), tableId, versionId);
-          client.getFrontendService().fixVersion(game.getId(), version);
-        }
-        catch (Exception e) {
-          LOG.error("Cannot link table to VPS or fix version, it has to be done manually : " + e.getMessage());
-        }
-      }
-    }
-  }
 
   public static boolean installOrBrowse(@Nullable GameRepresentation game, String link, VpsDiffTypes type) {
     ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new VpsInstallerProgressModel(link));
@@ -68,7 +51,7 @@ public class VpsInstallerUtils {
   }
 
   private static void installFile(GameRepresentation game, String link, VpsInstallLink installFile, AssetType assetType) {
-    String filename = installFile.getName() + VpsInstallLink.VPS_INSTALL_LINK_PREFIX;
+    String filename = VpsInstallLink.getLinkFilename(installFile.getName());
     try {
       Path tmp = Path.of(System.getProperty("java.io.tmpdir"), filename);
       Files.write(tmp, (link + "@" + installFile.getOrder()).getBytes());

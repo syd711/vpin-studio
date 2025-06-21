@@ -154,17 +154,7 @@ public class VpsEntry extends HBox {
       button.setPrefWidth(70);
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
-        if (Features.AUTO_INSTALLER) {
-          if (table != null && tableVersion != null) {
-            VpsInstallerUtils.installTable(game, link, table.getId(), tableVersion.getId(), version);
-          }
-          else {
-            VpsInstallerUtils.installOrBrowse(game, link, type);
-          }
-        }
-        else {
-          Studio.browse(link);
-        }
+        Studio.browse(link);
       });
 
       FontIcon fontIcon = new FontIcon();
@@ -186,6 +176,24 @@ public class VpsEntry extends HBox {
         clipboard.setContent(content);
       });
       menu.getItems().add(copyItem);
+
+      if (Features.AUTO_INSTALLER) {
+        MenuItem installItem = new MenuItem("Install...");
+        installItem.setOnAction(actionEvent -> {
+          boolean isInstalled = VpsInstallerUtils.installOrBrowse(game, link, VpsDiffTypes.tableNewVersionVPX);
+          if (isInstalled && game != null && table != null && tableVersion != null) {
+            // If table has been installed, auto link it to VPS entry and force fix version
+            try {
+              client.getFrontendService().saveVpsMapping(game.getId(), table.getId(), tableVersion.getId());
+              client.getFrontendService().fixVersion(game.getId(), version);
+            }
+            catch (Exception e) {
+              LOG.error("Cannot link table to VPS or fix version, it has to be done manually : " + e.getMessage());
+            }
+          }
+        });
+        menu.getItems().add(installItem);
+      }
 
       if (game != null) {
         MenuItem addTodoItem = new MenuItem("Add //TODO Link");
