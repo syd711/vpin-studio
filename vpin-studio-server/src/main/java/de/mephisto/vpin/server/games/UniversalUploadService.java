@@ -265,9 +265,9 @@ public class UniversalUploadService {
   public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
     // detection that it is a file hosted on a remote source
     String originalFilename = uploadDescriptor.getOriginalUploadFileName();
-    if (originalFilename.endsWith(VpsInstallLink.VPS_INSTALL_LINK_PREFIX)) {
+    if (VpsInstallLink.isLinkFilename(originalFilename)) {
 
-      originalFilename = StringUtils.substring(originalFilename, 0, -VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
+      originalFilename = VpsInstallLink.getOriginalFilename(originalFilename);
       uploadDescriptor.setOriginalUploadFileName(originalFilename);
 
       File tempFile = new File(uploadDescriptor.getTempFilename());
@@ -276,7 +276,7 @@ public class UniversalUploadService {
         String link = StringUtils.substringBeforeLast(content, "@");
         String order = StringUtils.substringAfterLast(content, "@");
 
-        String tempFilename = StringUtils.substring(uploadDescriptor.getTempFilename(), 0, -VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
+        String tempFilename = VpsInstallLink.getOriginalFilename(uploadDescriptor.getTempFilename());
         uploadDescriptor.setTempFilename(tempFilename);
         try (FileOutputStream fout = new FileOutputStream(tempFilename)) {
           vpsService.downloadLink(fout, link, Integer.parseInt(order));
