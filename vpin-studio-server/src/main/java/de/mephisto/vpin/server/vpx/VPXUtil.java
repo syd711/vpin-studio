@@ -81,6 +81,7 @@ public class VPXUtil {
     }
   }
 
+  @NonNull
   public static Map<String, Object> readTableInfo(@NonNull File file) throws Exception {
     Map<String, Object> result = new HashMap<>();
     POIFSFileSystem fs = null;

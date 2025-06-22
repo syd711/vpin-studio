@@ -1322,6 +1322,14 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Deleted emulator {}", emulatorId);
+
+
+      PreparedStatement preparedStatementGames = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Games WHERE EMUID = ?");
+      preparedStatementGames.setInt(1, emulatorId);
+      preparedStatementGames.executeUpdate();
+      preparedStatementGames.close();
+      LOG.info("Deleted games from emulator {}", emulatorId);
+
       return true;
     }
     catch (SQLException e) {

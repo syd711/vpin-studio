@@ -345,14 +345,17 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     GameList list = new GameList();
-    File vpxTablesFolder = emulator.getGamesFolder();
+    File gamesFolder = emulator.getGamesFolder();
 
     List<File> files = new ArrayList<>();
     if (emulator.isVpxEmulator()) {
-      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+      files.addAll(FileUtils.listFiles(gamesFolder, new String[]{"vpx"}, true));
     }
     else if (emulator.isFpEmulator()) {
-      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"fpt"}, true));
+      files.addAll(FileUtils.listFiles(gamesFolder, new String[]{"fpt"}, true));
+    }
+    else if (!StringUtils.isEmpty(emulator.getGameExt())) {
+      files.addAll(FileUtils.listFiles(gamesFolder, new String[]{emulator.getGameExt()}, true));
     }
 
     List<Game> games = frontendService.getGamesByEmulator(emulator.getId());
@@ -394,7 +397,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
     if (!StringUtils.isEmpty(emuDirOrName) && matchingEmulators.isEmpty()) {
-      LOG.warn("No matching emulator found for emulator installation parameter \"{}\"", emuDirOrName);
+      LOG.warn("No matching emulator found for installation parameter \"{}\"", emuDirOrName);
     }
 
     if (matchingEmulators.isEmpty()) {

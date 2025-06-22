@@ -211,14 +211,12 @@ public class VPXService implements InitializingBean {
 
   @Nullable
   public TableInfo getTableInfo(Game game) {
-    if (game != null) {
+    if (game != null && game.isVpxGame()) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
           Map<String, Object> values = VPXUtil.readTableInfo(gameFile);
-          if (values != null) {
-            return new TableInfo(values);
-          }
+          return new TableInfo(values);
         }
         catch (Exception e) {
           LOG.error("Failed to read table info: " + e.getMessage());

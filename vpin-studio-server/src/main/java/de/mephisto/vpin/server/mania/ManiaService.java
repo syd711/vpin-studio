@@ -391,6 +391,10 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
    */
   public boolean synchronizeTables() {
     try {
+      if (!Features.MANIA_ENABLED) {
+        return false;
+      }
+
       ManiaSettings maniaSettings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
       if (maniaSettings.isSubmitTables()) {
         if (cabinet != null) {

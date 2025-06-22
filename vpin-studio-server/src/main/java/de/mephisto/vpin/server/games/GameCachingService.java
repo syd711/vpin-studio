@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.competitions.CompetitionChangeListener;
 import de.mephisto.vpin.server.competitions.CompetitionLifecycleService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.BackglassService;
+import de.mephisto.vpin.server.emulators.EmulatorChangeListener;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -51,7 +52,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener {
+public class GameCachingService implements InitializingBean, PreferenceChangedListener, GameLifecycleListener, GameDataChangedListener, CompetitionChangeListener, HighscoreChangeListener, EmulatorChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameCachingService.class);
 
   @Autowired
@@ -107,16 +108,20 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private ServerSettings serverSettings;
 
-  private final Map<Integer, List<Game>> allGames = new HashMap<>();
+  private final Map<Integer, List<Game>> allGamesByEmulatorId = new HashMap<>();
 
   public void clearCache() {
-    allGames.clear();
+    allGamesByEmulatorId.clear();
+  }
+
+  public void clearCacheForEmulator(int emulatorId) {
+    allGamesByEmulatorId.remove(emulatorId);
   }
 
   public Game invalidate(int gameId) {
     Game game = getGame(gameId);
     if (game != null) {
-      List<Game> games = allGames.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
+      List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
       games.remove(game);
 //      LOG.info("-------------------> Evicted {}", game.getGameDisplayName());
     }
@@ -124,7 +129,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   }
 
   public void invalidateByRom(int emulatorId, @NonNull String rom) {
-    List<Game> games = allGames.computeIfAbsent(emulatorId, k -> new ArrayList<>());
+    List<Game> games = allGamesByEmulatorId.computeIfAbsent(emulatorId, k -> new ArrayList<>());
     for (Game game : new ArrayList<>(games)) {
       if (rom.trim().equals(game.getRom()) || rom.trim().equals(game.getRomAlias())) {
         games.remove(game);
@@ -170,7 +175,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
       game = frontendService.getOriginalGame(id);
       if (game != null && game.getEmulator() != null) {
         applyGameDetails(game, false, true);
-        List<Game> games = allGames.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
+        List<Game> games = allGamesByEmulatorId.computeIfAbsent(game.getEmulatorId(), k -> new ArrayList<>());
         games.add(game);
       }
     }
@@ -178,7 +183,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
   }
 
   private Game getGameCached(int id) {
-    Collection<List<Game>> values = allGames.values();
+    Collection<List<Game>> values = allGamesByEmulatorId.values();
     for (List<Game> value : values) {
       for (Game game : value) {
         if (game.getId() == id) {
@@ -210,10 +215,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     else {
       GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
       if (emulator != null && emulator.isEnabled()) {
-        if (!allGames.containsKey(emulator.getId())) {
+        if (!allGamesByEmulatorId.containsKey(emulator.getId())) {
           fetchEmulatorGames(emulator);
         }
-        games.addAll(allGames.get(emulator.getId()));
+        games.addAll(allGamesByEmulatorId.get(emulator.getId()));
       }
     }
 
@@ -227,10 +232,10 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     List<GameEmulator> gameEmulators = emulatorService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isEnabled()) {
-        if (!allGames.containsKey(gameEmulator.getId())) {
+        if (!allGamesByEmulatorId.containsKey(gameEmulator.getId())) {
           fetchEmulatorGames(gameEmulator);
         }
-        games.addAll(allGames.get(gameEmulator.getId()));
+        games.addAll(allGamesByEmulatorId.get(gameEmulator.getId()));
       }
     }
     return games;
@@ -253,7 +258,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
         killFrontend = true;
       }
     }
-    allGames.put(emulator.getId(), gamesByEmulator);
+    allGamesByEmulatorId.put(emulator.getId(), gamesByEmulator);
     long duration = System.currentTimeMillis() - start;
     long avg = 0;
     if (!gamesByEmulator.isEmpty()) {
@@ -462,7 +467,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Override
   public void gameDeleted(int gameId) {
-    Collection<List<Game>> values = allGames.values();
+    Collection<List<Game>> values = allGamesByEmulatorId.values();
     for (List<Game> value : values) {
       Optional<Game> first = value.stream().filter(g -> g.getId() == gameId).findFirst();
       if (first.isPresent()) {
@@ -562,6 +567,12 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     invalidate(game.getId());
   }
 
+  //---------- Emulator Change Listener ---------------------
+
+  @Override
+  public void emulatorChanged(int emulatorId) {
+    clearCacheForEmulator(emulatorId);
+  }
 
   //---------- InitializingBean----------------------------------
 
@@ -575,5 +586,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     gameLifecycleService.addGameLifecycleListener(this);
     gameLifecycleService.addGameDataChangedListener(this);
     competitionLifecycleService.addCompetitionChangeListener(this);
+    emulatorService.addEmulatorChangeListener(this);
   }
 }
