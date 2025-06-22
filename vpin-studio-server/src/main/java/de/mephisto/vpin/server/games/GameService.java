@@ -382,12 +382,12 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
           continue;
         }
 
-        if (emu.getInstallationFolder().getAbsolutePath().equals(emuDirOrName)) {
+        if (emu.getInstallationFolder().getAbsolutePath().equalsIgnoreCase(emuDirOrName)) {
           matchingEmulators.add(emu);
           continue;
         }
 
-        if (emu.getName() != null && emu.getName().equals(emuDirOrName)) {
+        if (emu.getName() != null && emu.getName().equalsIgnoreCase(emuDirOrName)) {
           matchingEmulators.add(emu);
         }
       }

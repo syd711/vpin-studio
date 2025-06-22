@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VPXFileScannerTest {
 
-  //private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
-  //private final static File folder = new File("C:\\vPinball\\VisualPinball\\Tables");
-  private final static File folder = new File("C:\\Visual Pinball\\tables");
+  private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
+//  private final static File folder = new File("C:\\vPinball\\VisualPinball\\Tables");
+//  private final static File folder = new File("C:\\Visual Pinball\\tables");
 
   @Test
   public void testScan() throws IOException {
@@ -50,39 +50,44 @@ public class VPXFileScannerTest {
 
   //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
   private void compare(StringBuilder bld, Path p) {
+    try {
+      System.out.println("Testing " + p.toFile().getAbsolutePath());
+      ScanResult scan = new ScanResult();
 
-    ScanResult scan = new ScanResult();
+      String script = VPXUtil.readScript(p.toFile());
 
-    String script = VPXUtil.readScript(p.toFile());
+      List<String> allLines = new ArrayList<>();
+      script = script.replaceAll("\r\n", "\n");
+      script = script.replaceAll("\r", "\n");
+      allLines.addAll(Arrays.asList(script.split("\n")));
+      Collections.reverse(allLines);
 
-    List<String> allLines = new ArrayList<>();
-    script = script.replaceAll("\r\n", "\n");
-    script = script.replaceAll("\r", "\n");
-    allLines.addAll(Arrays.asList(script.split("\n")));
-    Collections.reverse(allLines);
+      EvaluationContext evalctxt = new EvaluationContext();
 
-    EvaluationContext evalctxt = new EvaluationContext();
+      VPXFileScanner.scanLines(p.toFile(), scan, evalctxt, allLines);
 
-    VPXFileScanner.scanLines(p.toFile(), scan, evalctxt, allLines);
+      if (scan.getGameName() != null) {
+        diff(bld, p, "Rom", scan.getRom(), scan.getGameName());
+      }
 
-    if (scan.getGameName() != null) {
-      diff(bld, p, "Rom", scan.getRom(), scan.getGameName());
+      String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
+      diff(bld, p, "TableName", scan.getTableName(), tableName);
+      diff(bld, p, "pGameName", scan.getPupPackName(), evalctxt.getVarValue("pGameName"));
+
+      Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
+      if (vrroom != null ||  scan.isVrRoomSupport()) {
+        String oldvrromm = scan.isVrRoomSupport() + " / " + scan.isVrRoomDisabled();
+        String newvrroom = (vrroom != null) + " / " + (vrroom == null || vrroom.toString().equals("0"));
+        diff(bld, p, "vrroom", oldvrromm, newvrroom);
+      }
+
+      if (scan.getDMDType() != null) {
+      //  bld.append("For " + p.toString() + ", " + scan.getDMDType() + ", " + scan.getDMDGameName() + ", " + scan.getDMDProjectFolder());
+      //  bld.append("\n");
+      }
     }
-
-    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
-    diff(bld, p, "TableName", scan.getTableName(), tableName);
-    diff(bld, p, "pGameName", scan.getPupPackName(), evalctxt.getVarValue("pGameName"));
-
-    Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
-    if (vrroom != null ||  scan.isVrRoomSupport()) {
-      String oldvrromm = scan.isVrRoomSupport() + " / " + scan.isVrRoomDisabled();
-      String newvrroom = (vrroom != null) + " / " + (vrroom == null || vrroom.toString().equals("0"));
-      diff(bld, p, "vrroom", oldvrromm, newvrroom);
-    }
-
-    if (scan.getDMDType() != null) {
-    //  bld.append("For " + p.toString() + ", " + scan.getDMDType() + ", " + scan.getDMDGameName() + ", " + scan.getDMDProjectFolder());
-    //  bld.append("\n");
+    catch (Exception e) {
+      System.out.println("Failed to read " + p.toFile().getName());
     }
   }
 
