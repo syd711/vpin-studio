@@ -11,7 +11,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 public class ClearCacheProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(ClearCacheProgressModel.class);
 
-  private static String[] ALL_CACHES = {
+  private final static String[] ALL_CACHES = {
     "Mania",
     "Hooks",
     "NvRams",
@@ -19,6 +19,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
     "Backglass",
     "Discord",
     "Image",
+    "GamesCache",
     "Games",
     "System",
     "Mame",
@@ -27,10 +28,10 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
     "Frontend",
     "Emulator"
   };
-  private static String[] RELOADGAMES_CACHES_WITH_MAME = {
+  private final static String[] RELOADGAMES_CACHES_WITH_MAME = {
     "PinVol", "Frontend", "Games", "Mame", "Dmd", "System"
   };
-  private static String[] RELOADGAMES_CACHES = {
+  private final static String[] RELOADGAMES_CACHES = {
     "PinVol", "Frontend", "Games", "Dmd", "System"
   };
 
@@ -111,6 +112,9 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
           break;
         case "Games":
           client.getGameService().clearCache();
+          break;
+        case "GamesCache":
+          client.getGameService().reload();
           break;
         case "System":
           client.getSystemService().clearCache();

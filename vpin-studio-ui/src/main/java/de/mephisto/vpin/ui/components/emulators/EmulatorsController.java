@@ -285,6 +285,7 @@ public class EmulatorsController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Game Emulator", "Delete Game Emulator \"" + gameEmulatorRepresentation.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         client.getEmulatorService().deleteGameEmulator(gameEmulatorRepresentation.getId());
+        client.getGameService().clearCache(gameEmulatorRepresentation.getId());
         onReload();
       }
     }

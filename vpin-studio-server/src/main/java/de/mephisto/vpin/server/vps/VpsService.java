@@ -83,7 +83,7 @@ public class VpsService implements InitializingBean {
    *
    * @return GameVpsMatch of ids
    */
-  public VpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
+  public VpsMatch autoMatch(VPS vpsDatabase, Game game, @Nullable TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
     VpsMatch vpsMatch = new VpsMatch();
     vpsMatch.setGameId(game.getId());
     vpsMatch.setExtTableId(game.getExtTableId());

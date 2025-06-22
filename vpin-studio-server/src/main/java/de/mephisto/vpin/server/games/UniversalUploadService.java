@@ -35,12 +35,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class UniversalUploadService {
@@ -164,9 +164,24 @@ public class UniversalUploadService {
     switch (assetType) {
       case ALT_SOUND: {
         if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
-          JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
-          uploadDescriptor.setError(jobExecutionResult.getError());
-          gameLifecycleService.notifyGameAssetsChanged(assetType, updatedAssetName);
+          String rom = analysis.getRomFromAltSoundPack();
+          if (game != null && StringUtils.isEmpty(rom)) {
+            rom = game.getRom();
+          }
+          if (game != null && StringUtils.isEmpty(rom)) {
+            rom = game.getScannedRom();
+          }
+          if (StringUtils.isEmpty(rom)) {
+            rom = FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadFileName());
+          }
+          if (!StringUtils.isEmpty(rom)) {
+            JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), rom, tempFile);
+            uploadDescriptor.setError(jobExecutionResult.getError());
+            gameLifecycleService.notifyGameAssetsChanged(assetType, rom);
+          }
+          else {
+            LOG.error("Failed to install ALT sound bundle, no ROM name could be detected.");
+          }
         }
         break;
       }
