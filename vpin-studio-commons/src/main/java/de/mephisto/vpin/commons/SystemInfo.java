@@ -23,6 +23,10 @@ public class SystemInfo {
 
   public final static String B2SSERVER_INSTALLATION_DIR = "B2SServer.installationDir";
 
+  public final static String SYSTEM_FEATURES_ON = "system.featuresOn";
+  public final static String SYSTEM_FEATURES_OFF = "system.featuresOff";
+
+
   public final static String DOT_NET = "SOFTWARE\\Microsoft\\NET Framework Setup\\NDP";
 
   public File resolvePinUPSystemInstallationFolder() {

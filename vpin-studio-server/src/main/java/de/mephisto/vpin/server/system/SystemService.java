@@ -9,6 +9,7 @@ import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
@@ -40,6 +41,7 @@ import static de.mephisto.vpin.server.VPinStudioServer.Features;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
@@ -136,6 +138,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
       // now that frontend is determined, activate or deactivate features
       frontendType.apply(Features);
+      // POssibly override features from system
+      apply(Features, store.get(SYSTEM_FEATURES_ON), true);
+      apply(Features, store.get(SYSTEM_FEATURES_OFF), false);
 
       if (!getRawImageExtractionFolder().exists()) {
         boolean mkdirs = getRawImageExtractionFolder().mkdirs();
@@ -298,6 +303,22 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getStandaloneTablesFolder() {
     return standaloneTablesFolder;
+  }
+
+  private void apply(FeaturesInfo features, String values, boolean enabled) {
+    if (StringUtils.isNotEmpty(values)) {
+      for (String value : StringUtils.split(values, ",")) {
+        try {
+          Field activeField = features.getClass().getDeclaredField(value.trim());
+          activeField.setAccessible(true);
+          activeField.setBoolean(features, enabled);
+          LOG.info("{} feature {}",  enabled ? "Enabled" : "Disabled", value.trim());
+        }
+        catch (Exception e) {
+          LOG.error("Cannot change feature {} : {}", value.trim(), e.getMessage());
+        }
+      }
+    }
   }
 
   /**
