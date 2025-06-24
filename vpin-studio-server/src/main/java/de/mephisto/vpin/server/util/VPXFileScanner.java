@@ -5,6 +5,7 @@ import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,21 +31,21 @@ import java.util.regex.Pattern;
 public class VPXFileScanner {
   private final static Logger LOG = LoggerFactory.getLogger(VPXFileScanner.class);
 
-  private final static int MAX_ROM_FILENAME_LENGTH = 32;
+  //private final static int MAX_ROM_FILENAME_LENGTH = 32;
   private final static int MAX_FILENAME_LENGTH = 128;
 
   private final static List<String> PATTERN_TABLENAME = Arrays.asList("TableName");
   private final static List<String> PATTERN_ROM = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
-  private final static List<String> PATTERN_PUP_PACK = Arrays.asList("pGameName", "pgamename");
+  //private final static List<String> PATTERN_PUP_PACK = Arrays.asList("pGameName", "pgamename");
 
   private final static List<Pattern> romNamePatternList = new ArrayList<>();
   private final static List<Pattern> tableNamePatternList = new ArrayList<>();
-  private final static List<Pattern> pupPackPatternList = new ArrayList<>();
+  //private final static List<Pattern> pupPackPatternList = new ArrayList<>();
 
   static {
     PATTERN_ROM.forEach(p -> romNamePatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
     PATTERN_TABLENAME.forEach(p -> tableNamePatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
-    PATTERN_PUP_PACK.forEach(p -> pupPackPatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
+    //PATTERN_PUP_PACK.forEach(p -> pupPackPatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
   }
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
@@ -71,15 +72,33 @@ public class VPXFileScanner {
     allLines.addAll(Arrays.asList(script.split("\n")));
     Collections.reverse(allLines);
 
-    // FIXME under evaluation
     EvaluationContext evalctxt = new EvaluationContext();
-
     scanLines(gameFile, result, evalctxt, allLines);
 
-    // FIXME force GameName? Removed for the sake of comparison
-    //if (!StringUtils.isEmpty(result.getGameName())) {
-    //  result.setRom(result.getGameName());
-    //}
+    //---------------------
+    // set result of scan in Scanresult
+    if (StringUtils.isNotEmpty(result.getGameName())) {
+      result.setRom(result.getGameName());
+    }
+
+    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
+    if (StringUtils.isNotEmpty(tableName)) {
+      result.setTableName(tableName);
+    }
+
+    String pGameName = evalctxt.getVarValue("pGameName");
+    if (StringUtils.isNotEmpty(pGameName)) {
+      result.setPupPackName(pGameName);
+    }
+
+    Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
+    if (vrroom != null) {
+      result.setVrRoomSupport(vrroom != null);
+      result.setVrRoomDisabled(vrroom == null || vrroom.toString().equals("0"));
+    }
+
+    //---------------------
+    // Post manupulations
 
     //apply table name as ROM name, e.g. for EM tables
     if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
@@ -121,7 +140,6 @@ public class VPXFileScanner {
     BufferedReader bufferedReader = null;
     ReverseLineInputStream reverseLineInputStream = null;
     String line = null;
-    int count = 0;
     try {
       reverseLineInputStream = new ReverseLineInputStream(gameFile);
       bufferedReader = new BufferedReader(new InputStreamReader(reverseLineInputStream));
@@ -137,7 +155,6 @@ public class VPXFileScanner {
             break;
           }
         }
-        count++;
 
         if (result.isScanComplete() || line.trim().equals("Option Explicit")) {
           break;
@@ -229,13 +246,13 @@ public class VPXFileScanner {
           lineDetectWith(result, line, evalctxt);
           lineEvaluateVars(line, evalctxt);
           lineSearchGameName(result, line, evalctxt);
-          lineSearchRom(result, line);
-          lineSearchPupPack(result, line);
-          lineSearchTableName(result, line);
+          //lineSearchRom(result, line);
+          //lineSearchPupPack(result, line);
+          //lineSearchTableName(result, line);
           lineSearchNvOffset(result, line);
           lineSearchHsFileName(result, line);
           lineSearchTextFileName(result, line);
-          lineSearchVRRoom(result, line);
+          //lineSearchVRRoom(result, line);
           lineSearchDMDType(result, line);
           lineSearchInitUltraDmd(result, line, evalctxt);
           lineSearchDMDProjectFolder(result, line, evalctxt);
@@ -433,7 +450,7 @@ public class VPXFileScanner {
   /**
    * Single line eval for rom name
    */
-  private static void lineSearchVRRoom(@NonNull ScanResult result, @NonNull String line) {
+  /*private static void lineSearchVRRoom(@NonNull ScanResult result, @NonNull String line) {
     if (result.isVrRoomSupport()) {
       return;
     }
@@ -449,12 +466,12 @@ public class VPXFileScanner {
         result.setVrRoomDisabled(true);
       }
     }
-  }
+  }*/
 
   /**
    * Single line eval for rom name
    */
-  private static void lineSearchPupPack(@NonNull ScanResult result, @NonNull String line) {
+  /*private static void lineSearchPupPack(@NonNull ScanResult result, @NonNull String line) {
     if (!StringUtils.isEmpty(result.getPupPackName()) || line.startsWith("'")) {
       return;
     }
@@ -464,7 +481,7 @@ public class VPXFileScanner {
       String pattern = PATTERN_PUP_PACK.get(patternMatch);
       result.setPupPackName(extractLineValue(line, pattern));
     }
-  }
+  }*/
 
   private static void lineSearchDMDType(ScanResult result, String line) {
     if (StringUtils.containsIgnoreCase(line, "CreateObject(\"UltraDMD.DMDObject\")")) {
