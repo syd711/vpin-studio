@@ -185,8 +185,10 @@ public class VpsService implements InitializingBean {
 
   public VpsTable getTableById(String extTableId) {
     VpsTable tableById = vpsDatabase.getTableById(extTableId);
-    VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(tableById.getId());
-    augmentTable(tableById, vpsDbEntry);
+    if (tableById != null) {
+      VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(tableById.getId());
+      augmentTable(tableById, vpsDbEntry);
+    }
     return tableById;
   }
 
