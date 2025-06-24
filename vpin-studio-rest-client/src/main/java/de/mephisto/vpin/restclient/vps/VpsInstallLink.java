@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class VpsInstallLink {
 
-  private static final String VPS_INSTALL_LINK_PREFIX = ".vpslnk";
+  private static final String VPS_INSTALL_LINK_PREFIX = "_vpslnk";
 
   private int order;
   private String name;
