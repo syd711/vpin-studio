@@ -50,7 +50,7 @@ Assuming you use IDEA:
 - Push everything.
 - Go to github actions and trigger the workflow job, this will build a release draft to review.
 - Manually publish the drafted release.
-- Copy the RELEASE_NOTES.md content into the **anncouncement** channel of Discord and write some nice words. Note that the markup is the same.
+- Copy the RELEASE_NOTES.md content into the **anncouncement** channel of Discord and write some nice words. Note that the markup is the same. **If the text is too long just split it and press PUBLISH after every message**.
 - Close all resolved tickets on github.
 - Clear the RELEASE_NOTES.md afterwards to start with the next version by created the corresponding **rc** branch.
 
