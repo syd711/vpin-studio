@@ -39,7 +39,15 @@ public class VpsAutomatcher {
 
   public VpsTable autoMatchTable(VPS vpsDatabase, String filename, String rom) {
     TableNameParts parts = tableNameSplitter.parseFilename(filename);
-    return tableMatcher.findClosest(parts.displayName, rom, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
+    return autoMatch(vpsDatabase, parts);
+  }
+
+  public TableNameParts parseFilename(String filename) {
+    return tableNameSplitter.parseFilename(filename);
+  }
+
+  public VpsTable autoMatch(VPS vpsDatabase, TableNameParts parts) {
+    return tableMatcher.findClosest(parts.displayName, null, parts.tableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
   }
 
   /**
