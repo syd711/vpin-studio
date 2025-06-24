@@ -39,11 +39,11 @@ jobs:
           token: ${{ secrets.ACCESS_TOKEN }}
 
       # Step 2: Set up Zulu OpenJDK 17
-      - name: Set up Zulu JDK 17
+      - name: Set up Zulu JDK 11
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '11'
           architecture: 'x64'
 
       # Step 4: Build the Java application
