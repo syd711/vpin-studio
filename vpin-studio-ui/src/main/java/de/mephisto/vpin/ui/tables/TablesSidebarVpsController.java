@@ -506,6 +506,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(-1, vpsTable, vpsTableVersion);
         boolean installed = (gameByVpsTable != null);
 
+        if (gameByVpsTable == null) {
+          gameByVpsTable = game;
+        }
+
         boolean isFiltered = filterPredicate != null ? filterPredicate.test(vpsTableVersion) : true;
 
         if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
