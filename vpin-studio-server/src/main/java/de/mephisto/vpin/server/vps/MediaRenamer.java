@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vps;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
+import de.mephisto.vpin.connectors.vps.matcher.TableNameSplitter.TableNameParts;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.util.FileUtils;
 
 /**
  * Small tool that takes a folder, match all filenames against VPS database 
@@ -31,10 +34,10 @@ public class MediaRenamer {
     vpsDatabase.reload();
 
 	MediaRenamer renamer = new MediaRenamer();
-	renamer.renameAll(path, vpsDatabase);
+	renamer.renameAll(path, path, vpsDatabase);
   }
 
-  public void renameAll(Path path, VPS vpsDatabase) {
+  public void renameAll(Path path, Path target, VPS vpsDatabase) {
 
 		VpsAutomatcher automatcher = new VpsAutomatcher(null);
 
@@ -43,9 +46,10 @@ public class MediaRenamer {
 				.filter(p -> !Files.isDirectory(p) )
 				.forEach(p -> {
 					String filename = FilenameUtils.getBaseName(p.getFileName().toString());
-					VpsTable table = automatcher.autoMatchTable(vpsDatabase, filename);
+					TableNameParts parts = automatcher.parseFilename(filename);
+					VpsTable table = automatcher.autoMatch(vpsDatabase, parts);
 					if (table != null) {				
-						renameToTable(p, table);
+						renameToTable(target, path.relativize(p), table, parts);
 					}
 					else {
 						LOG.warn(" >>> No Match for " + p.getFileName());
@@ -62,20 +66,29 @@ public class MediaRenamer {
 	 * @param p The file that comes from the folder 
 	 * @param table The closest table
 	 */
-	protected void renameToTable(Path p, VpsTable table) {
+	protected void renameToTable(Path target, Path p, VpsTable table, TableNameParts parts) {
 
-		String ext = "." + StringUtils.substringAfterLast(p.toString(), ".").toLowerCase();
+		String subfolder = target.toFile().getParent().toString();
+		String ext = StringUtils.substringAfterLast(p.toString(), ".").toLowerCase();
 		String tableName = table.getDisplayName();
 		
 		LOG.info("Match " + p.getFileName() + " with " + tableName);
 
-		int i = 1;
-		Path newPath = p.resolveSibling(tableName + ext);
-		while (!p.equals(newPath) && Files.exists(newPath)) {
-			newPath = p.resolveSibling(tableName + (i<10 ? "0" + i : i) + ext);
-			i++;
+		String fileName = tableName;
+		if (StringUtils.isNotEmpty(parts.getExtra())) {
+			fileName += " " + parts.getExtra();
 		}
-		// don't rename if already good
+		fileName += "." + ext;
+
+		fileName = StringUtils.replace(fileName, "\\", "-");
+		fileName = StringUtils.replace(fileName, "/", "-");
+		fileName = StringUtils.replace(fileName, ":", "-");
+
+		Path newPath = target.resolve(subfolder).resolve(fileName);
+		File newFile = FileUtils.uniqueAsset(newPath.toFile());
+		newPath = newFile.toPath();
+
+		// don't rename if same file
 		if (!p.equals(newPath)) {
 			try {
 				Files.move(p, newPath);
