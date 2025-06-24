@@ -220,13 +220,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return false;
   }
 
-  public boolean isPupPackDisabled(Game game) {
-    if (game != null) {
-      return game.isPupPackDisabled();
-    }
-    return false;
-  }
-
   @NonNull
   public TableDetails autoFill(Game game, TableDetails tableDetails, boolean simulate) {
     String vpsTableId = game.getExtTableId();

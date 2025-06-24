@@ -114,11 +114,10 @@ public class UniversalUploadService {
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
     Game game = gameService.getGame(uploadDescriptor.getGameId());
+    if (game == null) {
+      throw new Exception("No game found for id " + uploadDescriptor.getGameId());
+    }
     try {
-      if (game == null) {
-        throw new Exception("No game found for id " + uploadDescriptor.getGameId());
-      }
-
       if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadDescriptorBundleFile.getName()))) {
         if (analysis == null) {
           analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, temporaryUploadDescriptorBundleFile);
