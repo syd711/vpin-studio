@@ -112,7 +112,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Deplay:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="9.0" layoutY="77.0" styleClass="preference-label" text="Resume Delay:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>

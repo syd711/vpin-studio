@@ -420,7 +420,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
       emuId = matchingEmulator.getId();
       game = getGameByFilename(emuId, tableFile.getName());
       if (game == null && tableFile.getParentFile() != null) {
-        LOG.warn("No game found with name \"{}\" for emulator with id \"{}\"", table, emuId);
+        LOG.warn("No game found with name \"{}\" for emulator with id \"{}\" and games folder \"{}\"", table, emuId, matchingEmulator.getGamesDirectory());
         game = getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
       }
 
