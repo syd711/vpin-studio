@@ -10,6 +10,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+
+import java.util.function.Consumer;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -149,6 +152,16 @@ public class BeanBinder {
           int value1 = ((Double) t1).intValue();
           setProperty(property, value1);
         }, MAX_DEBOUNCE);
+      }
+    });
+  }
+
+  public void bindSlider(Slider slider, int value, Consumer<Integer> onChange) {
+    slider.setValue(value);
+    slider.valueProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+        onChange.accept(t1.intValue());
       }
     });
   }

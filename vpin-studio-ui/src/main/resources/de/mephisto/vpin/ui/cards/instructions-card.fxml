@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="1400" prefHeight="500.0" prefWidth="860.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.InstructionsCardsController">
+   <top>
+      <fx:include fx:id="header" source="../scene-header.fxml" />
+   </top>
+   <center>
+      <BorderPane fx:id="main" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets top="6.0" left="12.0" right="12.0" bottom="6.0" />
+         </BorderPane.margin>
+         <top>
+            <BorderPane>
+               <center>
+                  <HBox spacing="6.0" alignment="CENTER_LEFT" >
+                     <children>
+                        <Label text="Table: " textFill="WHITE" >
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <StackPane alignment="CENTER_RIGHT" >
+                           <children>
+                              <TextField fx:id="tableNameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="Enter Table Name...">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Label textAlignment="JUSTIFY" textFill="WHITE" >
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </StackPane>                
+                        <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+
+                        <Label text="Language: " textFill="WHITE" >
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="languagesCombo" prefWidth="100.0" />
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="6.0" bottom="6.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </center>
+               <right>
+                  <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="prevBtn" mnemonicParsing="false" onAction="#onPrevImage">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#onNextImage">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <CheckBox fx:id="autosaveCheckbox" mnemonicParsing="false" selected="true" text="Auto-save" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+               </right>
+            </BorderPane>
+         </top>
+         <center>
+            <Pane fx:id="imagepane" styleClass="media-parent" minHeight="500" maxHeight="500">
+               <ImageView fx:id="imageview" fitWidth="900" fitHeight="500" pickOnBounds="true" preserveRatio="true">
+               </ImageView>
+            </Pane>
+         </center>
+         <right>
+            <GridPane BorderPane.alignment="TOP_LEFT">
+               <BorderPane.margin>
+                  <Insets top="6.0" left="12.0" right="12.0" bottom="6.0" />
+               </BorderPane.margin>
+               <columnConstraints>
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="80.0" />
+                     <ColumnConstraints hgrow="SOMETIMES" prefWidth="220.0" />
+               </columnConstraints>
+               <rowConstraints>
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Label text="Table id:" styleClass="default-text" textFill="WHITE" />
+                  <Label fx:id="tableId" styleClass="default-text" text="-" GridPane.columnIndex="1" />
+               </children>
+            </GridPane>
+         </right>
+         <bottom>
+            <BorderPane>
+               <top>
+                  <ToolBar fx:id="toolbar" styleClass="floating-toolbar">
+                     <items />
+                     <BorderPane.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </BorderPane.margin>
+                  </ToolBar>
+               </top>
+               <center>
+                  <TextArea fx:id="instructionsTextArea" editable="true" >
+                  </TextArea>
+               </center>
+            </BorderPane>
+         </bottom>
+      </BorderPane>
+   </center>
+   <bottom>
+      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSave" styleClass="default-button" text="Save">
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+</BorderPane>
