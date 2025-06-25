@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.commons.fx;
 
 import com.jhlabs.image.GaussianFilter;
 import com.jhlabs.image.GrayscaleFilter;
@@ -159,7 +159,14 @@ public class ImageUtil {
     }
   }
 
-  public static void gradient(BufferedImage gradientImage, int height, int width, Color start, Color end) {
+  public static void fill(BufferedImage gradientImage, int height, int width, Color color) {
+    Graphics2D g2 = (Graphics2D) gradientImage.getGraphics();
+    g2.setPaint(color);
+    g2.fillRect(0, 0, width, height);
+    g2.dispose();
+  }
+
+  public static void gradient(BufferedImage gradientImage, int width, int height, Color start, Color end) {
     GradientPaint gradient = new GradientPaint(0, 0, start, width, 0, end, false);
     Graphics2D g2 = (Graphics2D) gradientImage.getGraphics();
     g2.setPaint(gradient);

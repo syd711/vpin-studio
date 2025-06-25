@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
@@ -36,6 +36,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+
+/**
+ * ON THE WAY TO commons.fx.CardGraphicsHighscore
+ */
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 

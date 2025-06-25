@@ -12,13 +12,12 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
-import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
-import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.commons.fx.ImageUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

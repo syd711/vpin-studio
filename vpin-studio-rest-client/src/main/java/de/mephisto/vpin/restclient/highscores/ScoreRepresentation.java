@@ -9,6 +9,7 @@ import java.util.Date;
 public class ScoreRepresentation {
   private String playerInitials;
   private PlayerRepresentation player;
+  private boolean external;
   private String rawScore;
   private int position;
   private long score;
@@ -45,6 +46,14 @@ public class ScoreRepresentation {
 
   public void setPlayerInitials(String playerInitials) {
     this.playerInitials = playerInitials;
+  }
+
+  public boolean isExternal() {
+    return external;
+  }
+
+  public void setExternal(boolean external) {
+    this.external = external;
   }
 
   public int getPosition() {

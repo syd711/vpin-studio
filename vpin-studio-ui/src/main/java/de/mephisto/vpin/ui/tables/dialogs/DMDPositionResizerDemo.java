@@ -1,8 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import javafx.application.*;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
