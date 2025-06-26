@@ -1,15 +1,23 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.PreferencesController;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.Features;
@@ -17,6 +25,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpsPreferencesController.class);
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private CheckBox vpsAltSound;
@@ -42,6 +51,13 @@ public class VpsPreferencesController implements Initializable {
   @FXML
   private CheckBox uiShowVPSUpdates;
 
+  @FXML
+  private TextField authorDenyList;
+
+  @FXML
+  public void onReload() {
+    ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -141,5 +157,19 @@ public class VpsPreferencesController implements Initializable {
       vpsTutorial.setDisable(disabledSelection);
       vpsWheel.setDisable(disabledSelection);
     });
+
+    authorDenyList.setText(vpsSettings.getAuthorDenyList());
+    authorDenyList.textProperty().addListener((observableValue, integer, t1) -> {
+      debouncer.debounce("authorDenyList", () -> {
+        try {
+          vpsSettings.setAuthorDenyList(t1);
+          client.getPreferenceService().setJsonPreference(vpsSettings);
+        }
+        catch (Exception e) {
+          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+        }
+      }, 300);
+    });
+
   }
 }

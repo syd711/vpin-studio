@@ -23,6 +23,16 @@ public class VpsSettings extends JsonSettings {
   private boolean vpsTutorial = true;
   private boolean vpsWheel = true;
 
+  private String authorDenyList;
+
+  public String getAuthorDenyList() {
+    return authorDenyList;
+  }
+
+  public void setAuthorDenyList(String authorDenyList) {
+    this.authorDenyList = authorDenyList;
+  }
+
   public boolean isHideVPSUpdates() {
     return hideVPSUpdates;
   }

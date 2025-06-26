@@ -106,7 +106,7 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
-                  <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" text="Use Material UI playlist icons instead of custom ones." textFill="WHITE">
+                  <CheckBox fx:id="uiHideCustomIcons" layoutX="34.0" layoutY="507.0" mnemonicParsing="false" styleClass="default-text" text="Use Material UI playlist icons instead of custom ones." textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

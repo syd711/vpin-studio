@@ -4,12 +4,14 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
+import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
@@ -197,7 +199,19 @@ public class VpsService implements InitializingBean {
   }
 
   public boolean update(List<Game> games) {
-    List<VpsDiffer> update = vpsDatabase.update();
+    VpsSettings vpsSettings = preferencesService.getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
+    List<String> denyList = new ArrayList<>();
+    if (!StringUtils.isEmpty(vpsSettings.getAuthorDenyList())) {
+      String[] split = vpsSettings.getAuthorDenyList().split(",");
+      for (String s : split) {
+        if (!StringUtils.isEmpty(s)) {
+          denyList.add(s.trim());
+        }
+      }
+    }
+
+
+    List<VpsDiffer> update = vpsDatabase.update(denyList);
     applyVPSDiff(update, games);
     return update.isEmpty();
   }

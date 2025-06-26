@@ -1,18 +1,23 @@
 package de.mephisto.vpin.connectors.vps;
 
 import de.mephisto.vpin.connectors.vps.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 public class VpsDiffer {
+  private final static Logger LOG = LoggerFactory.getLogger(VpsDiffer.class);
   private final VpsTable oldTable;
   private final VpsTable newTable;
+  private final List<String> authorDenyList;
 
-  public VpsDiffer(VpsTable newTable, VpsTable oldTable) {
+  public VpsDiffer(VpsTable newTable, VpsTable oldTable, List<String> authorDenyList) {
     this.oldTable = oldTable;
     this.newTable = newTable;
+    this.authorDenyList = authorDenyList;
   }
 
   public String getId() {
@@ -72,6 +77,11 @@ public class VpsDiffer {
     }
 
     for (VpsTableVersion newVersionFile : newFiles) {
+      if (isIgnored(newVersionFile.getAuthors())) {
+        LOG.info("Ignored table version \"{}\" of table \"{}\", is on deny list: \"{}\"", newVersionFile, newTable.getName(), authorDenyList);
+        return;
+      }
+
       Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t -> t.getId() != null && t.getId().equals(newVersionFile.getId())).findFirst();
       if (versionInOtherList.isPresent()) {
         VpsTableVersion version = versionInOtherList.get();
@@ -106,6 +116,10 @@ public class VpsDiffer {
     }
 
     for (VpsTutorialUrls newUrl : newUrls) {
+      if (isIgnored(newUrl.getAuthors())) {
+        LOG.info("Ignored {}, is on deny list\"{}\"", newUrl, authorDenyList);
+        return;
+      }
       if (!oldUrls.contains(newUrl)) {
         differences.add(new VPSChange(newUrl, VpsDiffTypes.tutorial));
         break;
@@ -128,11 +142,26 @@ public class VpsDiffer {
     }
 
     for (VpsAuthoredUrls newUrl : newUrls) {
+      if (isIgnored(newUrl.getAuthors())) {
+        LOG.info("Ignored asset {} with URL {}, is on deny list\"{}\"", diffType, newUrl, authorDenyList);
+        return;
+      }
+
       if (newUrl.containsUpdatedVersion(oldUrls) || !newUrl.isContainedIn(oldUrls)) {
         differences.add(new VPSChange(newUrl, diffType));
         return;
       }
     }
+  }
+
+  private boolean isIgnored(List<String> authors) {
+    String authorString = String.join(" ", authors).toLowerCase();
+    for (String s : authorDenyList) {
+      if (authorString.contains(s.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public String getDisplayName() {
