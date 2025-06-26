@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -81,9 +82,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
@@ -517,10 +516,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     List<GameRepresentation> selectedGames = getSelections();
     if (selectedGames != null && !selectedGames.isEmpty()) {
       for (GameRepresentation game : selectedGames) {
-        if (client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
-          WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-              + "\" is used by at least one competition.", "Delete all competitions for this table first.");
-          return;
+        List<CompetitionRepresentation> gameCompetitions = client.getCompetitionService().getGameCompetitions(game.getId());
+        for (CompetitionRepresentation gameCompetition : gameCompetitions) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "The table \"" + game.getGameDisplayName()
+              + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").",
+              "Delete this competition?",
+              "You need to delete all competition references before deleting a table.", "Delete Competition");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            client.getCompetitionService().deleteCompetition(gameCompetition);
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
+          else {
+            return;
+          }
         }
       }
 

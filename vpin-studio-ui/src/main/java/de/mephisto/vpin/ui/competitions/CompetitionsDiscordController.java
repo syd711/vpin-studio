@@ -18,6 +18,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -249,6 +250,10 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
         try {
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
+          GameRepresentation game = client.getGameService().getGame(c.getGameId());
+          if (game != null) {
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
           tableView.getSelectionModel().select(newCmp);
         }
         catch (Exception e) {
@@ -285,9 +290,9 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
           help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
-        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition", 
-          "Deleting Competition " + selection.getName(), 
-          () -> client.getCompetitionService().deleteCompetition(selection)));
+        ProgressDialog.createProgressDialog(new WaitProgressModel<>("Delete Competition",
+            "Deleting Competition " + selection.getName(),
+            () -> client.getCompetitionService().deleteCompetition(selection)));
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "Discord Competitions"));
         onReload();
       }
@@ -361,7 +366,7 @@ public class CompetitionsDiscordController extends BaseCompetitionController imp
 
         tableView.setItems(data);
         tableView.refresh();
-        if (selection != null) {
+        if (selection != null && !data.isEmpty() && competitions.contains(selection)) {
           tableView.getSelectionModel().select(selection);
         }
         else if (!data.isEmpty()) {
