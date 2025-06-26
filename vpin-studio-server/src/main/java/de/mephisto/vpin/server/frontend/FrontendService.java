@@ -548,14 +548,14 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emulator, screen) : null;
   }
 
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen, boolean create) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getPlaylistMediaFolder(playList, screen) : null;
+    return mediaStrategy != null ? mediaStrategy.getPlaylistMediaFolder(playList, screen, create) : null;
   }
 
-  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
+  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    return mediaStrategy != null ? mediaStrategy.getGameMediaFolder(game, screen, extension) : null;
+    return mediaStrategy != null ? mediaStrategy.getGameMediaFolder(game, screen, extension, create) : null;
   }
 
   @NonNull

@@ -101,7 +101,7 @@ public class GameMediaResource {
       VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
       LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
       Game game = frontendService.getOriginalGame(gameId);
-      File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix());
+      File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix(), false);
       File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
       if (target.exists() && append) {
         target = FileUtils.uniqueAsset(target);
@@ -206,7 +206,7 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, true);
       File out = GameMediaService.buildMediaAsset(mediaFolder, game, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
@@ -225,7 +225,7 @@ public class GameMediaResource {
     try {
       Game game = frontendService.getOriginalGame(gameId);
       String suffix = FilenameUtils.getExtension(filename);
-      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
       File media = new File(mediaFolder, filename);
       if (media.exists()) {
         if (screen.equals(VPinScreen.Wheel)) {

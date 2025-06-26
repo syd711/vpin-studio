@@ -496,7 +496,7 @@ public class GameMediaService {
           if (frontendMediaItem.getFile().exists()) {
             File mediaFile = frontendMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix), clone.getGameName() + "." + suffix);
+            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix, true), clone.getGameName() + "." + suffix);
             if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;
@@ -560,7 +560,7 @@ public class GameMediaService {
         String suffix = FilenameUtils.getExtension(mediaFile);
         File out = uniqueMediaAsset(game, screen, suffix);
         if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
-          out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
+          out = new File(frontendService.getMediaFolder(game, screen, suffix, true), game.getGameName() + "." + suffix);
           if (out.exists() && !out.delete()) {
             out = uniqueMediaAsset(game, screen, suffix);
           }
@@ -771,7 +771,7 @@ public class GameMediaService {
   }
 
   public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
     return buildMediaAsset(mediaFolder, game, suffix, true);
   }
 
@@ -780,7 +780,7 @@ public class GameMediaService {
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
       suffix = "mp3";
     }
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
     return buildMediaAsset(mediaFolder, game, suffix, append);
   }
 

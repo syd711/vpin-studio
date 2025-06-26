@@ -15,9 +15,9 @@ public interface MediaAccessStrategy {
 
   File getEmulatorMediaFolder(@NonNull GameEmulator emulator, @NonNull VPinScreen screen);
 
-  File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen);
+  File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen, boolean create);
 
-  File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension);
+  File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create);
 
   List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen);
 

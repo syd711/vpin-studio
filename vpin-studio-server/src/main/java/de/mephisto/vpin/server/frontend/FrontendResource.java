@@ -152,7 +152,7 @@ public class FrontendResource {
     }
     else {
       Game game = frontendService.getOriginalGame(gameId);
-      return frontendService.getMediaFolder(game, screen, null);
+      return frontendService.getMediaFolder(game, screen, null, false);
     }
   }
 
@@ -160,7 +160,7 @@ public class FrontendResource {
   public File getPlaylistMediaDirectory(@PathVariable("playlistId") int playlistId, @PathVariable("screenName") String name) {
     VPinScreen screen = VPinScreen.valueOf(name);
     Playlist playList = frontendService.getPlayList(playlistId);
-    return frontendService.getPlaylistMediaFolder(playList, screen);
+    return frontendService.getPlaylistMediaFolder(playList, screen, false);
   }
 
 
