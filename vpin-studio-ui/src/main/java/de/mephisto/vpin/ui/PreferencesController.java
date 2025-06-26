@@ -84,6 +84,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button iScoredBtn;
 
   @FXML
+  private Button vpsBtn;
+
+  @FXML
   private Button validators_screensBtn;
 
   @FXML
@@ -315,6 +318,11 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onVPBM(ActionEvent event) throws IOException {
     load("preference-vpbm.fxml", event);
+  }
+
+  @FXML
+  private void onVps(ActionEvent event) throws IOException {
+    load("preference-vps.fxml", event);
   }
 
   @FXML

@@ -27,6 +27,7 @@ import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
@@ -267,6 +268,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
+  private VpsSettings vpsSettings;
   private ServerSettings serverSettings;
   private IScoredSettings iScoredSettings;
 
@@ -701,14 +703,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   public void doReload(boolean clearCache) {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
-    this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
+    this.showVpsUpdates = !vpsSettings.isHideVPSUpdates();
 
     startReload("Loading Tables...");
 
     refreshPlaylists();
-    refreshEmulators(uiSettings);
+    refreshEmulators();
 
     this.searchTextField.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -812,7 +815,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         });
   }
 
-  private void refreshEmulators(UISettings uiSettings) {
+  private void refreshEmulators() {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
@@ -932,7 +935,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
         int nbVersions = value.getNbDirectB2S();
         FontIcon icon = null;
@@ -961,12 +964,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), uiSettings);
+      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), vpsSettings);
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new POV file or an update for the existing one is available");
@@ -996,7 +998,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
@@ -1012,7 +1014,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
 
       if (value.getAltColorType() != null) {
         Label label = new Label(value.getAltColorType().name());
@@ -1033,7 +1035,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackPath() != null) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new PUP pack or an update for the existing one is available");
@@ -1596,7 +1598,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
 
-    refreshEmulators(uiSettings);
+    refreshEmulators();
     if (this.models == null) {
       this.doReload();
     }

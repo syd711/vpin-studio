@@ -563,7 +563,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
-    if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings) || preferenceType.equals(PreferenceType.competitionSettings)) {
+    if (preferenceType.equals(PreferenceType.serverSettings)
+        || preferenceType.equals(PreferenceType.uiSettings)
+        || preferenceType.equals(PreferenceType.validationSettings)
+        || preferenceType.equals(PreferenceType.vpsSettings)
+        || preferenceType.equals(PreferenceType.competitionSettings)) {
       Platform.runLater(() -> {
         this.tableOverviewController.onReload();
       });

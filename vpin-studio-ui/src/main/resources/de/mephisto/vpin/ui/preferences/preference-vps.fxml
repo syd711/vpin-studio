@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VpsPreferencesController">
+   <top>
+      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-subtitle" text="Virtual Pinball Spreadsheet">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Settings for the Virtual Pinball Spreadsheet integration." textFill="WHITE" />
+            <VBox>
+               <children>
+                  <CheckBox fx:id="uiShowVPSUpdates" mnemonicParsing="false" text="Show VPS table status in table overview." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
+                  <HBox>
+                     <children>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsPOV" mnemonicParsing="false" text="POV" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsSound" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsToppper" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsWheel" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+      </VBox>
+   </top>
+</BorderPane>

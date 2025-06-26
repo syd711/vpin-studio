@@ -55,9 +55,6 @@ public class ClientSettingsPreferencesController implements Initializable {
   private CheckBox uiShowVersion;
 
   @FXML
-  private CheckBox uiShowVPSUpdates;
-
-  @FXML
   private CheckBox autoEditCheckbox;
 
   @FXML
@@ -68,27 +65,6 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private TextField dropInTextField;
-
-  @FXML
-  private CheckBox vpsAltSound;
-  @FXML
-  private CheckBox vpsAltColor;
-  @FXML
-  private CheckBox vpsBackglass;
-  @FXML
-  private CheckBox vpsPOV;
-  @FXML
-  private CheckBox vpsPUPPack;
-  @FXML
-  private CheckBox vpsRom;
-  @FXML
-  private CheckBox vpsSound;
-  @FXML
-  private CheckBox vpsToppper;
-  @FXML
-  private CheckBox vpsTutorial;
-  @FXML
-  private CheckBox vpsWheel;
 
   @FXML
   private CheckBox sectionAltColor;
@@ -236,11 +212,9 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     sectionPlaylists.managedProperty().bindBidirectional(sectionPlaylists.visibleProperty());
     columnPlaylists.managedProperty().bindBidirectional(columnPlaylists.visibleProperty());
-    vpsPUPPack.managedProperty().bindBidirectional(vpsPUPPack.visibleProperty());
 
     columnPupPack.setVisible(Features.PUPPACKS_ENABLED);
     sectionPupPack.setVisible(Features.PUPPACKS_ENABLED);
-    vpsPUPPack.setVisible(Features.PUPPACKS_ENABLED);
 
     sectionPlaylists.setVisible(Features.PLAYLIST_ENABLED);
     columnPlaylists.setVisible(Features.PLAYLIST_ENABLED);
@@ -268,105 +242,12 @@ public class ClientSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
 
-    boolean disabled = uiSettings.isHideVPSUpdates();
-    vpsAltSound.setDisable(disabled);
-    vpsAltSound.setSelected(uiSettings.isVpsAltSound());
-    vpsAltColor.setDisable(disabled);
-    vpsAltColor.setSelected(uiSettings.isVpsAltColor());
-    vpsBackglass.setDisable(disabled);
-    vpsBackglass.setSelected(uiSettings.isVpsBackglass());
-    vpsPOV.setDisable(disabled);
-    vpsPOV.setSelected(uiSettings.isVpsPOV());
-    vpsPUPPack.setDisable(disabled);
-    vpsPUPPack.setSelected(uiSettings.isVpsPUPPack());
-    vpsRom.setDisable(disabled);
-    vpsRom.setSelected(uiSettings.isVpsRom());
-    vpsSound.setDisable(disabled);
-    vpsSound.setSelected(uiSettings.isVpsSound());
-    vpsToppper.setDisable(disabled);
-    vpsToppper.setSelected(uiSettings.isVpsToppper());
-    vpsTutorial.setDisable(disabled);
-    vpsTutorial.setSelected(uiSettings.isVpsTutorial());
-    vpsWheel.setDisable(disabled);
-    vpsWheel.setSelected(uiSettings.isVpsWheel());
-
-    vpsAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsAltSound(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsAltColor(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsBackglass(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsPOV.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsPOV(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsPUPPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsPUPPack(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsRom.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsRom(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsSound(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsToppper.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsToppper(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsTutorial.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsTutorial(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-    vpsWheel.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setVpsWheel(t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-    });
-
-    uiShowVPSUpdates.setSelected(!uiSettings.isHideVPSUpdates());
-    uiShowVPSUpdates.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setHideVPSUpdates(!t1);
-      PreferencesController.markDirty(PreferenceType.uiSettings);
-      client.getPreferenceService().setJsonPreference(uiSettings);
-
-      boolean disabledSelection = !t1;
-      vpsAltSound.setDisable(disabledSelection);
-      vpsAltColor.setDisable(disabledSelection);
-      vpsBackglass.setDisable(disabledSelection);
-      vpsPOV.setDisable(disabledSelection);
-      vpsPUPPack.setDisable(disabledSelection);
-      vpsRom.setDisable(disabledSelection);
-      vpsSound.setDisable(disabledSelection);
-      vpsToppper.setDisable(disabledSelection);
-      vpsTutorial.setDisable(disabledSelection);
-      vpsWheel.setDisable(disabledSelection);
-    });
-
     autoEditCheckbox.setSelected(uiSettings.isAutoEditTableData());
     autoEditCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setAutoEditTableData(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(uiSettings);
     });
-
 
     winNetworkShare.setText(uiSettings.getWinNetworkShare());
     winNetworkShare.setDisable(!supportsNetworkShare);
