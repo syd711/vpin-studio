@@ -6,8 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
@@ -18,72 +16,25 @@ public class CardLayerScores extends CardLayer {
   @Override
   protected void draw(GraphicsContext g, CardTemplate template, CardData data) throws Exception {
 
-    if (template.isRawScore()) {
-      renderRawScore(g, template, data);
-    }
-    else {
-      renderScorelist(g, template, data);
-    }
-  }
+    // Build score blocks
 
-  private void renderScorelist(GraphicsContext g, CardTemplate template, CardData data) throws Exception {
-
-    Font font = createFont(template.getScoreFontName(), template.getScoreFontStyle(), template.getScoreFontSize());
-    g.setFont(font);
-
-    //calc max length of scores
-    int scoreLength = 0;
-    List<ScoreRepresentation> scores = data.getScores();
-    for (ScoreRepresentation score : scores) {
-      if (score.getFormattedScore().length() > scoreLength) {
-        scoreLength = score.getFormattedScore().length();
-      }
-    }
-    //format score lines et form blocks
-    List<TextBlock> result = new ArrayList<>();
+    List<TextBlock> textBlocks = new ArrayList<>();
     TextBlock textBlock = new TextBlock(g, template);
-
-    for (ScoreRepresentation score : scores) {
-      String renderString = score.getPlayerInitials() + "   ";
-      if (template.isRenderPositions()) {
-        renderString = score.getPosition() + ". " + renderString;
+    for (String score : data.getScores()) {
+      boolean external = false;
+      if (StringUtils.startsWith(score, CardData.MARKER_EXTERNAL_SCORE)) {
+        external = true;
+        score = StringUtils.removeStart(score, CardData.MARKER_EXTERNAL_SCORE);
       }
-      String scoreText = score.getFormattedScore();
-      while (scoreText.length() < scoreLength) {
-        scoreText = " " + scoreText;
-      }
-      renderString = renderString + scoreText;
-
-      textBlock.addLine(renderString, score.isExternal());
+      textBlock.addLine(score, external);
     }
 
     if (!textBlock.isEmpty()) {
-      result.add(textBlock);
+      textBlocks.add(textBlock);
     }
 
-    renderScores(g, template, result);
-  }
-
-  private void renderRawScore(GraphicsContext g, CardTemplate template, CardData data) throws Exception {
-    String raw = ScoreFormatUtil.formatRaw(data.getRawScore());
-    String[] lines = raw.split("\n");
-
-    List<TextBlock> result = new ArrayList<>();
-    TextBlock textBlock = new TextBlock(g, template);
-
-    for (String line : lines) {
-      if (StringUtils.isNotEmpty(line)) {
-        textBlock.addLine(line, false);
-      }
-    }
-
-    if (!textBlock.isEmpty()) {
-      result.add(textBlock);
-    }
-    renderScores(g, template, result);
-  }
-
-  private void renderScores(GraphicsContext g, CardTemplate template, List<TextBlock> textBlocks) {
+    //----------
+    // Now render blocks
 
     double width = getWidth();
     double height = getHeight();

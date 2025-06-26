@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
@@ -58,11 +59,40 @@ public class CardLayerBackground extends CardLayer {
       return bufferedImage;
     }
 
-    File sourceImage = data.getBackgroundImage();
-    if (!sourceImage.exists()) {
-      throw new UnsupportedOperationException("No background images found");
+    BufferedImage backgroundImage = null;
+    if (template.isUseDirectB2S()) {
+      File cardDataFile = data.getBackgroundImage();
+      try {
+        backgroundImage = ImageUtil.loadImage(cardDataFile);
+      }
+      catch (Exception e) {
+        LOG.info("Using default image as fallback instead of " + cardDataFile.getAbsolutePath());
+      }
     }
-    BufferedImage backgroundImage = ImageUtil.loadImage(sourceImage);
+    // fall back or !isUseDirectB2S()
+    if (backgroundImage ==  null) {
+      File backgroundsFolder = new File(SystemInfo.RESOURCES + "backgrounds");
+      File sourceImage = new File(backgroundsFolder, template.getBackground() + ".jpg");
+      if (!sourceImage.exists()) {
+        sourceImage = new File(backgroundsFolder, template.getBackground() + ".png");
+      }
+      if (!sourceImage.exists()) {
+        File[] backgrounds = backgroundsFolder.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg"));
+        if (backgrounds != null && backgrounds.length > 0) {
+          sourceImage = backgrounds[0];
+        }
+      }
+      if (!sourceImage.exists()) {
+        throw new UnsupportedOperationException("No background images have been found, " +
+            "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+      }
+      backgroundImage = ImageUtil.loadImage(sourceImage);
+    }
+
+    if (backgroundImage != null) {
+      backgroundImage = ImageUtil.crop(backgroundImage, 16, 9);
+    }
+
     return backgroundImage;
   }
 }

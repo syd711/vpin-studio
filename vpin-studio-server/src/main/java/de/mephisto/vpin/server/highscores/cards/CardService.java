@@ -4,7 +4,9 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -15,11 +17,14 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
+import de.mephisto.vpin.commons.fx.cards.CardData;
+import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
@@ -32,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -167,7 +173,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
         //sample card are always generated
         if (generateSampleCard) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
+          BufferedImage bufferedImage = generateCard(game, summary, template);
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
             return true;
@@ -178,7 +184,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
         String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
           if (!game.isCardDisabled()) {
-            BufferedImage bufferedImage = new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
+            BufferedImage bufferedImage = generateCard(game, summary, template);
             if (bufferedImage != null) {
               File highscoreCard = getCardFile(game, screenName);
               ImageUtil.write(bufferedImage, highscoreCard);
@@ -217,14 +223,92 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return false;
   }
 
+  private BufferedImage generateCard_old(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    return new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
+  }
+
+  private BufferedImage generateCard(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore();
+    cardGraphics.setTemplate(template);
+    cardGraphics.setData(getCardData(game, summary, template));
+    // resize the cards to the needed resolution    
+    HighscoreCardResolution res = cardSettings.getCardResolution();
+    cardGraphics.resize(res.toWidth(), res.toHeight());
+
+    // then export image
+    return cardGraphics.snapshot();
+  }
+
+  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) {
+    CardDataGame cardData = new CardDataGame();
+    
+    cardData.setGameDisplayName(game.getGameDisplayName());
+
+    File wheelFile = frontendService.getWheelImage(game);
+    cardData.setWheelImage(wheelFile);
+
+    File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
+    cardData.setBackgroundImage(croppedDefaultPicture);
+
+    if (summary != null) {
+      cardData.setRawScore(summary.getRaw());
+      List<String> scores = template.isRawScore() ? 
+          getCardDataScoreFromRaw(summary): 
+          getCardDataScoreFromScoreList(summary, false);
+      cardData.setScores(scores);
+    }
+
+    return cardData;
+  }
+
+  private List<String> getCardDataScoreFromRaw(ScoreSummary summary) {
+    String raw = ScoreFormatUtil.formatRaw(summary.getRaw());
+    List<String> cds = new ArrayList<>();
+    for (String line : raw.split("\n")) {
+      if (StringUtils.isNotEmpty(line)) {
+        cds.add(line);
+      }
+    }
+    return cds;
+  }
+
+  public List<String> getCardDataScoreFromScoreList(ScoreSummary summary, boolean renderPositions) {
+    List<String> cds = new ArrayList<>();
+
+    //calc max length of scores
+    int scoreLength = 0;
+    for (Score score : summary.getScores()) {
+      scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
+    }
+    for (Score score : summary.getScores()) {
+      String renderString = score.getPlayerInitials() + "   ";
+      if (renderPositions) {
+        renderString = score.getPosition() + ". " + renderString;
+      }
+      String scoreText = score.getFormattedScore();
+      while (scoreText.length() < scoreLength) {
+        scoreText = " " + scoreText;
+      }
+      renderString = renderString + scoreText;
+
+      // add a marker for external/friend scores
+      if (score.isExternal()) {
+        renderString = CardData.MARKER_EXTERNAL_SCORE + renderString;
+      }
+
+      cds.add(renderString);
+    }
+    return cds;
+  }
+
   private File getCardSampleFile() {
     return new File(SystemService.RESOURCES, "highscore-card-sample.png");
   }
 
   @NonNull
-  private File getCardFile(@NonNull Game game, @NonNull String screenName) {
+  public File getCardFile(@NonNull Game game, @NonNull String screenName) {
     VPinScreen screen = VPinScreen.valueOf(screenName);
-    File mediaFolder = frontendService.getMediaFolder(game, screen, "png");
+    File mediaFolder = frontendService.getMediaFolder(game, screen, "png", true);
     return new File(mediaFolder, game.getGameName() + ".png");
   }
 

@@ -25,18 +25,21 @@ public class CardGraphicsTest extends Application {
 
   @Test
   public void generateHighscoreCard() throws Exception {
-    Platform.startup(null);
+    Platform.startup(() -> {
+      try {
+        CardGraphicsHighscore graphics = generateHighscore(true);
+        graphics.resize(1024, 768);
+        BufferedImage image = graphics.snapshot();
+        ImageUtil.write(image, new File("c:/temp/highscord_raw.png"));
 
-    CardGraphicsHighscore graphics = generateHighscore(true);
-    graphics.resize(1024, 768);
-    BufferedImage image = graphics.snapshot();
-    ImageUtil.write(image, new File("c:/temp/highscord_raw.png"));
-
-    graphics = generateHighscore(false);
-    graphics.resize(1024, 768);
-    image = graphics.snapshot();
-    ImageUtil.write(image, new File("c:/temp/highscord.png"));
-
+        graphics = generateHighscore(false);
+        graphics.resize(1024, 768);
+        image = graphics.snapshot();
+        ImageUtil.write(image, new File("c:/temp/highscord.png"));
+      }
+      catch (IOException ioe) {
+      }
+      });
   }
 
   public CardTemplate loadTemplate(String filename) throws IOException {
@@ -60,7 +63,7 @@ public class CardGraphicsTest extends Application {
       e.printStackTrace(System.err);
     }
 
-    CardData data = new CardData();
+    CardData data = new CardDataMock();
     graphics.setData(data);
 
     return graphics;

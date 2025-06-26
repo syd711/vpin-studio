@@ -2,7 +2,6 @@ package de.mephisto.vpin.commons.fx.cards;
 
 import de.mephisto.vpin.commons.fx.cards.CardLayerText.CardLayerTextType;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
@@ -12,7 +11,6 @@ import javafx.scene.paint.Color;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
 public class CardGraphicsHighscore extends Pane {
 
@@ -101,24 +99,17 @@ public class CardGraphicsHighscore extends Pane {
       height - currentY - template.getMarginBottom());
   }
 
-
-  public BufferedImage snapshot() throws Exception {
-    final CountDownLatch latchToWaitForJavaFx = new CountDownLatch(1);
-    BufferedImage[] bufferedImage = { null };
-    Platform.runLater(() -> {
-
-      SnapshotParameters snapshotParameters = new SnapshotParameters();
-      Rectangle2D rectangle2D = new Rectangle2D(0, 0, getWidth(), getHeight());
-      snapshotParameters.setViewport(rectangle2D);
-      snapshotParameters.setFill(Color.TRANSPARENT);
-      WritableImage snapshot = this.snapshot(snapshotParameters, null);
-      bufferedImage[0] = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
-      bufferedImage[0] = SwingFXUtils.fromFXImage(snapshot, bufferedImage[0]);
-
-      latchToWaitForJavaFx.countDown();
-    });
-    latchToWaitForJavaFx.await();
-    return bufferedImage[0];
+  /**
+   * Must be called on javaFX thread !
+   */
+  public BufferedImage snapshot() {
+    SnapshotParameters snapshotParameters = new SnapshotParameters();
+    Rectangle2D rectangle2D = new Rectangle2D(0, 0, getWidth(), getHeight());
+    snapshotParameters.setViewport(rectangle2D);
+    snapshotParameters.setFill(Color.TRANSPARENT);
+    WritableImage snapshot = this.snapshot(snapshotParameters, null);
+    BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    return SwingFXUtils.fromFXImage(snapshot, bufferedImage);
   }
 }
 

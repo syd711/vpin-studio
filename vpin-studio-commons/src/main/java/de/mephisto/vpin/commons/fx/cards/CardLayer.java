@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 
 public abstract class CardLayer extends Canvas {
 
-  private final static Logger LOG = LoggerFactory.getLogger(CardLayer.class);
+  protected final static Logger LOG = LoggerFactory.getLogger(CardLayer.class);
 
   private CardTemplate template;
   private CardData data;
