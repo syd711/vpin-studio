@@ -7,22 +7,20 @@ import java.util.List;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import de.mephisto.vpin.commons.fx.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardData;
+
 
 /**
  * TEMP CLASS FOR TESTING FOR TIME BEING
  */
-public class CardDataMock implements CardData {
+public class CardDataMock  {
 
-  public String getGameDisplayName() {
-    return "Ace of Speed (Original 2019)";
-  }
-
-  public File getWheelImage() {
-    return new File("C:\\PinballX\\Media\\Visual Pinball\\Wheel Images\\Ace Of Speed (Original 2019).png");
-  }
-
-  public List<String> getScores() {
+  public static CardData create() {
+    CardData data = new CardData();
+    data.setGameDisplayName("Ace of Speed (Original 2019)");
+    data.setWheelImage(new File("C:\\PinballX\\Media\\Visual Pinball\\Wheel Images\\Ace Of Speed (Original 2019).png"));
+    data.setBackgroundImage(new File("C:\\PinballX\\Media\\Visual Pinball\\Backglass Images\\AC-DC (Stern 2012).png"));
+  
     ArrayList<String> scores = new ArrayList<>();
     for (int i = 1; i <= 5; i++) {
       String score = i + ".  PL" + i + "   ";
@@ -32,15 +30,10 @@ public class CardDataMock implements CardData {
       }
       scores.add(score);
     }
-    return scores;
-  }
+    data.setScores(scores);
+    data.setRawScore("ALE 10.000.000\nDHL  6.000.000\nOLE  2.458.366\nNUL    500.000");
 
-  public String getRawScore() {
-    return "ALE 10.000.000\nDHL  6.000.000\nOLE  2.458.366\nNUL    500.000";
-  }
-
-  public File getBackgroundImage() {
-    return new File("C:\\PinballX\\Media\\Visual Pinball\\Backglass Images\\AC-DC (Stern 2012).png");
+    return data;
   }
 
 }

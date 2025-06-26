@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.cards;
 
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;

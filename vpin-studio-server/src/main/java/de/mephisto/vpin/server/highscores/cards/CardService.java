@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -23,7 +24,6 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
-import de.mephisto.vpin.commons.fx.cards.CardData;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -240,7 +240,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) {
-    CardDataGame cardData = new CardDataGame();
+    CardData cardData = new CardData();
     
     cardData.setGameDisplayName(game.getGameDisplayName());
 

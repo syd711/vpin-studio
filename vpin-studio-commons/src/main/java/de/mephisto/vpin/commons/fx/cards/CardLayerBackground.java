@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ImageUtil;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;

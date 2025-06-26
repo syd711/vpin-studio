@@ -1,13 +1,14 @@
-package de.mephisto.vpin.server.highscores.cards;
+package de.mephisto.vpin.restclient.cards;
 
 import java.io.File;
 import java.util.List;
 
-import de.mephisto.vpin.commons.fx.cards.CardData;
 
 /**
  */
-public class CardDataGame implements CardData {
+public class CardData  {
+
+  public static final String MARKER_EXTERNAL_SCORE = "!^";
 
   private String gameDisplayName;
   private File wheelImage;

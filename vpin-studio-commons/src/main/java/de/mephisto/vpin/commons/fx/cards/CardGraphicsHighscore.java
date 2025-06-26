@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.cards;
 
 import de.mephisto.vpin.commons.fx.cards.CardLayerText.CardLayerTextType;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;

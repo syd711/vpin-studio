@@ -10,8 +10,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mephisto.vpin.commons.fx.ImageUtil;
-import de.mephisto.vpin.commons.fx.cards.CardData;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -63,7 +63,7 @@ public class CardGraphicsTest extends Application {
       e.printStackTrace(System.err);
     }
 
-    CardData data = new CardDataMock();
+    CardData data = CardDataMock.create();
     graphics.setData(data);
 
     return graphics;

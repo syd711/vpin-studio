@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.cards;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
