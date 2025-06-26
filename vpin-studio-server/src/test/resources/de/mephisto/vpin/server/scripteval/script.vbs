@@ -6,7 +6,7 @@
 ' Exotic GameName
 
 ' use _ to split const on several lines
-Const myExoticName = "rab_320", _
+Const myExoticName = "rab_320",_
 			tableName = "ex""'otic" & " 'and' " & "com'""plex", _ ' with a "comment" at the end"   ' with a "comment"
 			BallSize = 54, _
 			UseSolenoids  = True
@@ -128,8 +128,7 @@ End Sub
 '===============================================================
 ' Cyber Race (Original 2023)
 
-Const cGameName = "cyberrace"
-Const myVersion = "1.3.0"
+Const cGameName = "cyberrace", myVersion = "1.3.0"
 
 LoadCoreFiles
 Sub LoadCoreFiles

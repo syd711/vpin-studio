@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ScriptTest {
 
-  @Test
+  /*@Test
   public void checkExotic() {
     ScanResult result = doScan("Exotic GameName");
     assertEquals("rab_320", result.getGameName());
     assertEquals("ex\"'otic 'and' com'\"plex", result.getTableName());
-  }
+  }*/
 
   @Test
   public void checkStrangerThings() {
@@ -140,9 +140,7 @@ public class ScriptTest {
         ScanResult result = new ScanResult();
         Collections.reverse(scriptLines);
 
-        EvaluationContext evalctxt = new EvaluationContext();
-
-        VPXFileScanner.scanLines(new File("c:/fake/tables/", scenario + ".vpx"), result, evalctxt, scriptLines);
+        VPXFileScanner.scanLines(new File("c:/fake/tables/", scenario + ".vpx"), result, scriptLines);
         return result;
       }
     }

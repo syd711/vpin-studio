@@ -72,33 +72,14 @@ public class VPXFileScanner {
     allLines.addAll(Arrays.asList(script.split("\n")));
     Collections.reverse(allLines);
 
-    EvaluationContext evalctxt = new EvaluationContext();
-    scanLines(gameFile, result, evalctxt, allLines);
-
-    //---------------------
-    // set result of scan in Scanresult
-    if (StringUtils.isNotEmpty(result.getGameName())) {
-      result.setRom(result.getGameName());
-    }
-
-    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
-    if (StringUtils.isNotEmpty(tableName)) {
-      result.setTableName(tableName);
-    }
-
-    String pGameName = evalctxt.getVarValue("pGameName");
-    if (StringUtils.isNotEmpty(pGameName)) {
-      result.setPupPackName(pGameName);
-    }
-
-    Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
-    if (vrroom != null) {
-      result.setVrRoomSupport(vrroom != null);
-      result.setVrRoomDisabled(vrroom == null || vrroom.toString().equals("0"));
-    }
+    scanLines(gameFile, result, allLines);
 
     //---------------------
     // Post manupulations
+
+    if (StringUtils.isNotEmpty(result.getGameName())) {
+      result.setRom(result.getGameName());
+    }
 
     //apply table name as ROM name, e.g. for EM tables
     if (StringUtils.isEmpty(result.getRom()) && !StringUtils.isEmpty(result.getTableName())) {
@@ -219,7 +200,9 @@ public class VPXFileScanner {
     }
   }
 
-  public static void scanLines(File gameFile, ScanResult result, EvaluationContext evalctxt, List<String> split) {
+  public static void scanLines(File gameFile, ScanResult result, List<String> split) {
+    EvaluationContext evalctxt = new EvaluationContext();
+
     // so that curDir can be resolved 
     evalctxt.setVarValue("curdir", ".");
     // simulate Table1 object
@@ -238,29 +221,72 @@ public class VPXFileScanner {
     evalctxt.addUndefinedVar("vrroom");
     evalctxt.addUndefinedVar("vr_room");
 
+
     int nbline = split.size();
+    String prevLine = null;
     for (String fulline : split) {
       String[] statements = stripComments(fulline);
-      for (String line : statements) {
-        try {
-          lineDetectWith(result, line, evalctxt);
-          lineEvaluateVars(line, evalctxt);
-          lineSearchGameName(result, line, evalctxt);
-          //lineSearchRom(result, line);
-          //lineSearchPupPack(result, line);
-          //lineSearchTableName(result, line);
-          lineSearchNvOffset(result, line);
-          lineSearchHsFileName(result, line);
-          lineSearchTextFileName(result, line);
-          //lineSearchVRRoom(result, line);
-          lineSearchDMDType(result, line);
-          lineSearchInitUltraDmd(result, line, evalctxt);
-          lineSearchDMDProjectFolder(result, line, evalctxt);
-        } catch (Exception e) {
-          LOG.error("error on line "+nbline, e);
+      for (String statement : statements) {
+        if (statement.endsWith("_")) {
+          prevLine = statement.substring(0, statement.length() - 1) + " " + prevLine;
+        }
+        else {
+          if (prevLine != null) {
+            detectLine(result, evalctxt, nbline, prevLine);
+          }
+          prevLine = statement;
         }
       }
       nbline--;
+    }
+    // last line to process
+    if (prevLine != null) {
+      detectLine(result, evalctxt, nbline, prevLine);
+    }
+
+
+    //-------------------
+    // Copy discovered variables into Scanresult
+
+    String cGameName = StringUtils.defaultString(evalctxt.getVarValue("cGameName"), evalctxt.getVarValue("GameName"));
+    if (StringUtils.isNotEmpty(cGameName)) {
+      result.setRom(cGameName);
+    }
+
+    String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
+    if (StringUtils.isNotEmpty(tableName)) {
+      result.setTableName(tableName);
+    }
+
+    String pGameName = evalctxt.getVarValue("pGameName");
+    if (StringUtils.isNotEmpty(pGameName)) {
+      result.setPupPackName(pGameName);
+    }
+
+    Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
+    if (vrroom != null) {
+      result.setVrRoomSupport(vrroom != null);
+      result.setVrRoomDisabled(vrroom == null || vrroom.toString().equals("0"));
+    }
+  }
+
+  private static void detectLine(ScanResult result, EvaluationContext evalctxt, int nbline, String line) {
+    try {
+      lineDetectWith(result, line, evalctxt);
+      lineEvaluateVars(line, evalctxt);
+      lineSearchGameName(result, line, evalctxt);
+      //lineSearchRom(result, line);
+      //lineSearchPupPack(result, line);
+      //lineSearchTableName(result, line);
+      lineSearchNvOffset(result, line);
+      lineSearchHsFileName(result, line);
+      lineSearchTextFileName(result, line);
+      //lineSearchVRRoom(result, line);
+      lineSearchDMDType(result, line);
+      lineSearchInitUltraDmd(result, line, evalctxt);
+      lineSearchDMDProjectFolder(result, line, evalctxt);
+    } catch (Exception e) {
+      LOG.error("error on line "+nbline, e);
     }
   }
 

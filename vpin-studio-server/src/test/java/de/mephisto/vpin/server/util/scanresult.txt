@@ -1,0 +1,31 @@
+250 cc (Inder 1992).vpx
+Rom = ind250cc
+TableName = null
+pGameName = null
+vrroom = false / false
+
+Baseball (1970).vpx
+Rom = Baseball_1970
+TableName = Baseball_1970
+pGameName = null
+vrroom = false / false
+
+Baseball2 (1970).vpx
+Rom = Baseball_1970
+TableName = Baseball_1970
+pGameName = null
+vrroom = false / false
+
+Jaws.vpx
+Rom = Jaws
+TableName = JAWSHighScore
+pGameName = null
+vrroom = false / false
+dmdtype = UltraDMD, null, Jaws.UltraDMD
+
+Twister (1996).vpx
+Rom = twst_405
+TableName = null
+pGameName = null
+vrroom = false / false
+
