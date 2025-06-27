@@ -126,6 +126,16 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    */
   public synchronized boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
+      // enrich template with reference
+      if (template.getReferenceWidth() < 0 || template.getReferenceHeight() < 0) {
+        HighscoreCardResolution res = cardSettings.getCardResolution();
+        if (res != null) {
+          template.setReferenceWidth(res.toWidth());
+          template.setReferenceHeight(res.toHeight());
+          // FIXME should that modification be stored back ? 
+        }
+      }
+
       ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
       Platform.runLater(() -> {
         Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
@@ -171,8 +181,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
     try {
       if (!summary.getScores().isEmpty() && !StringUtils.isEmpty(summary.getRaw())) {
+        String screenName = cardSettings.getPopperScreen();
+
         //sample card are always generated
-        if (generateSampleCard) {
+        if (generateSampleCard || StringUtils.isEmpty(screenName)) {
           BufferedImage bufferedImage = generateCard(game, summary, template);
           if (bufferedImage != null) {
             ImageUtil.write(bufferedImage, getCardSampleFile());
@@ -181,7 +193,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
           return false;
         }
 
-        String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
           if (!game.isCardDisabled()) {
             BufferedImage bufferedImage = generateCard(game, summary, template);
@@ -228,7 +239,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   private BufferedImage generateCard(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
-    CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore();
+    CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
     cardGraphics.setTemplate(template);
     cardGraphics.setData(getCardData(game, summary, template));
     // resize the cards to the needed resolution    
@@ -237,6 +248,12 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
     // then export image
     return cardGraphics.snapshot();
+  }
+
+  public CardData getCardData(Game game, int templateId) throws Exception {
+    CardTemplate template = cardTemplatesService.getTemplate(templateId);
+    ScoreSummary summary = getScoreSummary(game, template, false);
+    return getCardData(game, summary, template);
   }
 
   private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) {

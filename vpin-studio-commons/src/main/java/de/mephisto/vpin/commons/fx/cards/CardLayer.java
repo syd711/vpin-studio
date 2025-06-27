@@ -1,5 +1,8 @@
 package de.mephisto.vpin.commons.fx.cards;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,31 +23,16 @@ public abstract class CardLayer extends Canvas {
   private CardTemplate template;
   private CardData data;
 
-  boolean debug = false;
-
-  boolean enableRedraw = true;
+  /** FALSE FOR PROD !!!!!
+   * render a semi-transparent colored background to help visualize the resized effect */
+  private boolean debug = false;
 
   public CardLayer() {
-    // Redraw canvas when size changes.
-    widthProperty().addListener(evt -> {
-      if (enableRedraw) { 
-        draw(); 
-      }
-    });
-    heightProperty().addListener(evt -> {
-      if (enableRedraw) { 
-        draw(); 
-      }
-    });
   }
 
   @Override
-  public void resize(double width, double height) {
-    enableRedraw = false;
-    setWidth(width);
-    setHeight(height);
-    enableRedraw = true;
-    draw();
+  public boolean isResizable() {
+    return false;
   }
 
   public void setTemplate(CardTemplate template) {
@@ -55,47 +43,37 @@ public abstract class CardLayer extends Canvas {
     this.data = data;
   }
 
-  @Override
-  public boolean isResizable() {
-    return true;
-  }
-
-  @Override
-  public double prefWidth(double height) {
-    return getWidth();
-  }
-
-  @Override
-  public double prefHeight(double width) {
-    return getHeight();
-  }
-
-  private void draw() {
-    double width = getWidth();
-    double height = getHeight();
+  public void resizeRelocate(double x, double y, double width, double height, double zoomX, double zoomY) {
+    super.relocate(x * zoomX, y * zoomY);
+    super.setWidth(width * zoomX);
+    super.setHeight(height * zoomY);
 
     GraphicsContext gc = getGraphicsContext2D();
-    gc.clearRect(0, 0, width, height);
+    gc.clearRect(0, 0, width * zoomX, height * zoomY);
     if (debug) {
       gc.setFill(getDebugColor());
-      gc.fillRect(0, 0, width, height);
+      gc.fillRect(0, 0, width * zoomX, height * zoomY);
       gc.setStroke(Color.BLACK);
       gc.setLineWidth(1);
-      gc.strokeRect(0, 0, width, height);
+      gc.strokeRect(0, 0, width * zoomX, height * zoomY);
     }
     try {
-      draw(gc, template, data);
+      if (template != null) {
+        long startTime = System.currentTimeMillis();
+        draw(gc, template, data, zoomX, zoomY);
+        LOG.debug(this.getClass().getSimpleName() + " drawn in (ms) " + (System.currentTimeMillis() - startTime));
+      }
     }
     catch (Exception e) {
       LOG.error("Error drawing layer {}", this, e);
     }
   }
 
-  protected abstract void draw(GraphicsContext g, CardTemplate template, CardData data) throws Exception;
+  protected abstract void draw(GraphicsContext g, @Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception;
 
   //------------------------------------------
 
-  protected Font createFont(String family, String posture, int size) {
+  protected Font createFont(String family, String posture, double size) {
     FontWeight fontWeight = FontWeight.findByName(posture);
     FontPosture fontPosture = FontPosture.findByName(posture);
     if (posture != null && posture.contains(" ")) {
@@ -103,7 +81,7 @@ public abstract class CardLayer extends Canvas {
       fontWeight = FontWeight.findByName(split[0]);
       fontPosture = FontPosture.findByName(split[1]);
     }
-    return Font.font(family, fontWeight, fontPosture, size);
+    return Font.font(family, fontWeight, fontPosture, (int) size);
   }
 
   protected int getTextWidth(String text, Font font) {
@@ -112,14 +90,16 @@ public abstract class CardLayer extends Canvas {
     return (int) theText.getBoundsInLocal().getWidth();
   }
 
+  //------------------------------------------
+
   private Color getDebugColor() {
     switch (getClass().getSimpleName()) {
-      case "CardLayerBackground": return Color.AQUA;
-      case "CardLayerCanvas": return Color.YELLOW;
-      case "CardLayerText": return Color.LIME;
-      case "CardLayerScores": return Color.CYAN;
+      case "CardLayerBackground": return Color.color(0.0f, 1.0f, 1.0f, 0.5f);
+      case "CardLayerCanvas": return Color.color(1.0f, 1.0f, 0.0f, 0.5f);
+      case "CardLayerText": return Color.color(0.0f, 1.0f, 0.0f, 0.5f);
+      case "CardLayerScores": return Color.color(0.0f, 1.0f, 1.0f, 0.5f);
+      case "CardLayerWheel": return Color.color(1.0f, 0.0f, 1.0f, 0.3f);
       default: return Color.TRANSPARENT;
     }
   }
-
 }

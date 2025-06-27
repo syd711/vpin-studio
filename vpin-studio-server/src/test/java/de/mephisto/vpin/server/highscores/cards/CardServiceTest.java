@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -23,7 +23,7 @@ public class CardServiceTest extends AbstractVPinServerTest {
   @Autowired
   protected CardService cardService;
   @Autowired
-  private PreferencesService preferencesService;
+  protected PreferencesService preferencesService;
 
   @Test
   public void generateHighscoreCard() throws Exception {

@@ -5,6 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ImageUtil;
@@ -17,38 +21,87 @@ import javafx.scene.paint.Paint;
 
 public class CardLayerBackground extends CardLayer {
 
+  private Image cacheBackground;
+  private BufferedImage cacheBackgroundImage;
+
+  /**
+   * Indication on relative times
+   CardLayerBackground/getBackgroundImage(): 132 ms
+   CardLayerBackground/blurImage(): 424 ms
+   CardLayerBackground/applyAlphaComposites(): 203 ms
+   CardLayerBackground/toFXImage(): 52 ms
+   CardLayerBackground/drawImage(): 0 ms
+   CardLayerBackground/drawBorder(): 1 ms
+   */
   @Override
-  protected void draw(GraphicsContext g, CardTemplate template, CardData data) throws Exception {
+  protected void draw(GraphicsContext g, @Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
     double width = getWidth();
     double height = getHeight();
-    BufferedImage backgroundImage = getBackgroundImage(template, data, width, height);
 
+    LogTime lt = new LogTime("   CardLayerBackground");
+
+    boolean imageDirty = false;
+    if (hasBackroundChanged(template, data)) {
+      this.cacheBackgroundImage = getBackgroundImage(template, data);
+      lt.pulse("getBackgroundImage()");
+      imageDirty = true;
+    }
     if (!template.isTransparentBackground()) {
-      if (template.getBlur() > 0) {
-        backgroundImage = ImageUtil.blurImage(backgroundImage, template.getBlur());
-      }
+     // if the backgroundImage has Changed, in all cases effect must be re-applied
+      if (imageDirty || hasEffectsChanged(template)) {
+        if (template.getBlur() > 0) {
+          cacheBackgroundImage = ImageUtil.blurImage(cacheBackgroundImage, template.getBlur());
+          lt.pulse("blurImage()");
+        }
 
-      if (template.isGrayScale()) {
-        backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
-      }
+        if (template.isGrayScale()) {
+          cacheBackgroundImage = ImageUtil.grayScaleImage(cacheBackgroundImage);
+          lt.pulse("grayScaleImage()");
+        }
 
-      float alphaWhite = template.getAlphaWhite();
-      float alphaBlack = template.getAlphaBlack();
-      ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
+        float alphaWhite = template.getAlphaWhite();
+        float alphaBlack = template.getAlphaBlack();
+        ImageUtil.applyAlphaComposites(cacheBackgroundImage, alphaWhite, alphaBlack);
+        lt.pulse("applyAlphaComposites()");
+  
+        imageDirty = true;
+      }
     }
 
-    Image background = SwingFXUtils.toFXImage(backgroundImage, null);
-    g.drawImage(background, 0, 0, width, height);
+    if (imageDirty) {
+      cacheBackground = SwingFXUtils.toFXImage(cacheBackgroundImage, null);
+      lt.pulse("toFXImage()");
+    }
 
-    int borderWidth = template.getBorderWidth();
-    g.setFill(Paint.valueOf(template.getFontColor()));
-    ImageUtil.drawBorder(g, borderWidth, (int) width, (int) height);
+    //--------------------------
+    // Draw Part
+
+    if (cacheBackground != null) {
+      g.drawImage(cacheBackground, 0, 0, width, height);
+      lt.pulse("drawImage()");
+    }
+
+    if (template.getBorderWidth() > 0) {
+      g.setStroke(Paint.valueOf(template.getFontColor()));
+      double strokeWidthX = template.getBorderWidth() * zoomX;
+      double strokeWidthY = template.getBorderWidth() * zoomY;
+      g.setLineWidth(strokeWidthX);
+      // left
+      g.strokeLine(strokeWidthX / 2, strokeWidthY / 2, strokeWidthX / 2, height - strokeWidthY);
+      // Top 
+      g.strokeLine(strokeWidthX / 2, strokeWidthY / 2, width - strokeWidthX, strokeWidthY / 2);
+      // Right
+      g.strokeLine(width - strokeWidthX, strokeWidthY / 2, width - strokeWidthX, height - strokeWidthY);
+      // Bottom
+      g.strokeLine(strokeWidthX / 2, height - strokeWidthY, width - strokeWidthX, height - strokeWidthY);
+      lt.pulse("drawBorder()");
+    }
   }
 
-  private BufferedImage getBackgroundImage(CardTemplate template, CardData data, double width, double height) throws IOException {
+  private @Nullable BufferedImage getBackgroundImage(@Nonnull CardTemplate template, @Nullable CardData data) throws IOException {
 
     if (template.isTransparentBackground()) {
-      BufferedImage bufferedImage = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB);
+      BufferedImage bufferedImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
 
@@ -61,13 +114,12 @@ public class CardLayerBackground extends CardLayer {
     }
 
     BufferedImage backgroundImage = null;
-    if (template.isUseDirectB2S()) {
-      File cardDataFile = data.getBackgroundImage();
+    if (template.isUseDirectB2S() && data != null && data.getBackgroundImage() != null) {
       try {
-        backgroundImage = ImageUtil.loadImage(cardDataFile);
+        backgroundImage = ImageUtil.loadImage(data.getBackgroundImage());
       }
       catch (Exception e) {
-        LOG.info("Using default image as fallback instead of " + cardDataFile.getAbsolutePath());
+        LOG.info("Using default image as fallback instead of " + data.getBackgroundImage());
       }
     }
     // fall back or !isUseDirectB2S()
@@ -96,4 +148,55 @@ public class CardLayerBackground extends CardLayer {
 
     return backgroundImage;
   }
+
+  //------------------------------------ Detetection of layer changes
+
+  private File cacheBackgroundFile = null;
+  private int cacheHashTemplate = 0;
+
+  private boolean hasBackroundChanged(CardTemplate template, @Nullable CardData data) {
+    boolean hasChanged = false;
+    // check on CardData
+    if (template.isUseDirectB2S() && data != null) {
+      if (cacheBackgroundFile == null || !cacheBackgroundFile.equals(data.getBackgroundImage())) {
+        cacheBackgroundFile = data.getBackgroundImage();
+        hasChanged = true;
+      }
+    }
+    else {
+      cacheBackgroundFile = null;
+    }
+
+    // Check on Template
+    int hashTemplate = Objects.hash(
+      template.isTransparentBackground(),
+      template.getTransparentPercentage(),
+      template.getBackground()
+    );
+    if (cacheHashTemplate == 0 || cacheHashTemplate != hashTemplate) {
+      cacheHashTemplate = hashTemplate;
+      hasChanged = true;
+    }
+
+    return hasChanged;
+  }
+
+  private int cacheHashEffect = 0;
+
+  private boolean hasEffectsChanged(@Nonnull CardTemplate template) {
+    boolean hasChanged = false;
+
+    int hashEffect = Objects.hash(
+      template.getBlur(),
+      template.isGrayScale(),
+      template.getAlphaWhite(),
+      template.getAlphaBlack()
+    );
+    if (cacheHashEffect == 0 || cacheHashEffect != hashEffect) {
+      cacheHashEffect = hashEffect;
+      hasChanged = true;
+    }
+    return hasChanged;
+  }
+
 }

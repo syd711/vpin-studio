@@ -1,5 +1,8 @@
 package de.mephisto.vpin.commons.fx.cards;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.geometry.VPos;
@@ -22,24 +25,24 @@ public class CardLayerText extends CardLayer {
   }
 
   @Override
-  protected void draw(GraphicsContext g, CardTemplate template, CardData data) throws Exception {
+  protected void draw(GraphicsContext g, @Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
 
     String text = null;
     String fontName = null, fontStyle = null;
-    int fontSize = 12;
+    int fontSIZE = -1;
     switch (type) {
       case Title: {
         text = template.getTitle();
         fontName = template.getTitleFontName();
         fontStyle = template.getTitleFontStyle();
-        fontSize = template.getTitleFontSize();
+        fontSIZE = template.getTitleFontSize();
         break;
       }
       case TableName: {
-        text = data.getGameDisplayName();
+        text = data != null ? data.getGameDisplayName() : "<Game Name>";
         fontName = template.getTableFontName();
         fontStyle = template.getTableFontStyle();
-        fontSize = template.getTableFontSize();
+        fontSIZE = template.getTableFontSize();
         break;
       }
     }
@@ -47,7 +50,7 @@ public class CardLayerText extends CardLayer {
     Paint paint = Paint.valueOf(template.getFontColor());
     g.setFill(paint);
 
-    Font font = createFont(fontName, fontStyle, fontSize);
+    Font font = createFont(fontName, fontStyle, fontSIZE * zoomY);
     g.setFont(font);
 
     g.setTextAlign(TextAlignment.CENTER);

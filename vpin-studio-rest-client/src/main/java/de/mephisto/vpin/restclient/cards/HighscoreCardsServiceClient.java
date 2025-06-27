@@ -45,6 +45,11 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
     return new ByteArrayInputStream(bytes);
   }
 
+  public CardData getHighscoreCardData(GameRepresentation game, CardTemplate template) {
+    return getRestClient().get(API + "cards/gamedata/" + game.getId() + "/" + template.getId(), CardData.class);
+  }
+
+
   public boolean generateHighscoreCard(GameRepresentation game) {
     int gameId = game.getId();
     return getRestClient().get(API + "cards/generate/" + gameId, Boolean.class);

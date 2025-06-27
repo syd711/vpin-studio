@@ -1,6 +1,8 @@
 {
   "id": 6,
   "name": "Default",
+  "referenceWidth": 1280,
+  "referenceHeight": 720,
   "alphaBlack": 33,
   "alphaWhite": 1,
   "background": "Old Bumbers",
@@ -19,7 +21,7 @@
   "grayScale": false,
   "rawScore": true,
   "maxScores": 0,
-  "scoreFontName": "Monospaced",
+  "scoreFontName": "Courier New",
   "scoreFontSize": 90,
   "scoreFontStyle": "Regular",
   "tableFontName": "Impact",

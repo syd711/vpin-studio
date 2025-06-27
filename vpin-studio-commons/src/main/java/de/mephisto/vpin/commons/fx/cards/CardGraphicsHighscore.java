@@ -15,6 +15,9 @@ import java.util.*;
 
 public class CardGraphicsHighscore extends Pane {
 
+  /** Whether autosize is active or not, depends on how it is embeded ? */
+  private boolean resizable;
+
   private CardTemplate template;
   //private CardData data;
 
@@ -28,30 +31,60 @@ public class CardGraphicsHighscore extends Pane {
   List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, titleLayer, 
       tableNameLayer, wheelLayer, scoresLayer);
 
-  public CardGraphicsHighscore() {
+  public CardGraphicsHighscore(boolean resizable) {
+    this.resizable = resizable;
     getChildren().addAll(layers);
   }
 
   public void setTemplate(CardTemplate template) {
     this.template = template;
     layers.forEach(l -> l.setTemplate(template));
+    this.requestLayout();
+  }
+
+  @Override
+  public boolean isResizable() {
+    return resizable;
   }
 
   public void setData(CardData data) {
     //this.data = data;
     layers.forEach(l -> l.setData(data));
+    this.requestLayout();
   }
 
   @Override protected void layoutChildren() {
     double width = getWidth();
     double height = getHeight();
+    if (width == 0 || height == 0) {
+      return;
+    }
+   
+    if (template == null) {
+      layers.forEach(l -> l.setVisible(false));
+      return;
+    }
+
+    // calculate zoom factors and calculate WIDTH/HEIGHT in the dimensions of the template
+    // As we manipulate both dimension in template coordinate system and image coordinate, 
+    // a WIDTH uppercase refers to template coordinate and width lowercase, refer to the image
+    // then width = WIDTH * zoomX and height = HEIGHT * zoomY
+
+    double zoomX = template.getRatioXFor(width);
+    double WIDTH = width / zoomX;
+    double zoomY = template.getRatioYFor(height);
+    double HEIGHT = height / zoomY;
+
+    //-----------
+    // From here, below system of coordinate is template dimensions
     
-    backgroundLayer.resizeRelocate(0, 0, width, height);
+    backgroundLayer.setVisible(true);
+    backgroundLayer.resizeRelocate(0, 0, WIDTH, HEIGHT, zoomX, zoomY);
 
     if (template.isRenderCanvas()) {
       canvasLayer.setVisible(true);
-      double xcenter = template.getCanvasX() == 0 ? (width / 2) - (template.getCanvasWidth() / 2) : template.getCanvasX();
-      canvasLayer.resizeRelocate(xcenter, template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight());
+      double xcenter = template.getCanvasX() == 0 ? (WIDTH / 2) - (template.getCanvasWidth() / 2) : template.getCanvasX();
+      canvasLayer.resizeRelocate(xcenter, template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), zoomX, zoomY);
     }
     else {
       canvasLayer.setVisible(false);
@@ -63,8 +96,8 @@ public class CardGraphicsHighscore extends Pane {
       titleLayer.setVisible(true);
       int titleFontSize = template.getTitleFontSize();
       titleLayer.resizeRelocate(template.getMarginLeft(), currentY, 
-            width - template.getMarginLeft() - template.getMarginRight(), 
-            titleFontSize + template.getPadding());
+            WIDTH - template.getMarginLeft() - template.getMarginRight(), 
+            titleFontSize + template.getPadding(), zoomX, zoomY);
       currentY += titleFontSize + template.getPadding();
     }
     else {
@@ -75,8 +108,8 @@ public class CardGraphicsHighscore extends Pane {
       tableNameLayer.setVisible(true);
       int tableFontSize = template.getTableFontSize();
       tableNameLayer.resizeRelocate(template.getMarginLeft(), currentY, 
-            width - template.getMarginLeft() - template.getMarginRight(), 
-            tableFontSize + template.getPadding());
+            WIDTH - template.getMarginLeft() - template.getMarginRight(), 
+            tableFontSize + template.getPadding(), zoomX, zoomY);
       currentY += tableFontSize + template.getPadding();
     }
     else {
@@ -88,16 +121,17 @@ public class CardGraphicsHighscore extends Pane {
     if (template.isRenderWheelIcon()) {
       wheelLayer.setVisible(true);
       int wheelY = currentY + template.getTableFontSize() / 2;
-      wheelLayer.resizeRelocate(template.getMarginLeft(), wheelY, template.getWheelSize(), template.getWheelSize());
+      wheelLayer.resizeRelocate(template.getMarginLeft(), wheelY, template.getWheelSize(), template.getWheelSize(), zoomX, zoomY);
       scoreX += template.getWheelSize() + template.getWheelPadding();
     }
     else {
       wheelLayer.setVisible(false);
     }
 
+    scoresLayer.setVisible(true);
     scoresLayer.resizeRelocate(scoreX, currentY, 
-      width - scoreX - template.getMarginRight(), 
-      height - currentY - template.getMarginBottom());
+      WIDTH - scoreX - template.getMarginRight(), 
+      HEIGHT - currentY - template.getMarginBottom(), zoomX, zoomY);
   }
 
   /**
@@ -113,4 +147,3 @@ public class CardGraphicsHighscore extends Pane {
     return SwingFXUtils.fromFXImage(snapshot, bufferedImage);
   }
 }
-

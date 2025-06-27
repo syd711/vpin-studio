@@ -4,12 +4,21 @@ import de.mephisto.vpin.restclient.JsonSettings;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class CardTemplate extends JsonSettings {
   public final static String DEFAULT = "Default";
 
   private Long id;
-
   private String name = DEFAULT;
+
+  /** This dimensions are used as a reference to calculate the ratio between the template dimensions and the displayed dimensions 
+   * Used to calculate ratioX = displayWidth / referenceWidth or 1 if referenceWidth < 0
+  */
+  private int referenceWidth = -1;
+  private int referenceHeight = -1;
+
+
   private int alphaBlack = 33;
   private int alphaWhite = 1;
   private String background = "Old Bumbers";
@@ -447,6 +456,32 @@ public class CardTemplate extends JsonSettings {
     this.useDirectB2S = useDirectB2S;
   }
 
+  public int getReferenceWidth() {
+    return referenceWidth;
+  }
+
+  public void setReferenceWidth(int referenceWidth) {
+    this.referenceWidth = referenceWidth;
+  }
+
+  public int getReferenceHeight() {
+    return referenceHeight;
+  }
+
+  public void setReferenceHeight(int referenceHeight) {
+    this.referenceHeight = referenceHeight;
+  }
+
+  @JsonIgnore
+  public double getRatioXFor(double width) {
+    return referenceWidth < 0 ? 1 : width / referenceWidth;
+  }
+
+  @JsonIgnore
+  public double getRatioYFor(double height) {
+    return referenceHeight < 0 ? 1 : height / referenceHeight;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -469,4 +504,5 @@ public class CardTemplate extends JsonSettings {
   public String getSettingsName() {
     return null;
   }
+
 }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -35,10 +37,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -49,7 +51,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -208,11 +209,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private ComboBox<String> screensComboBox;
 
-  @FXML
-  private Pane imagepane;
+  //@FXML
+  //private Pane imagepane;
 
-  @FXML
-  private ImageView cardPreview;
+  //@FXML
+  //private ImageView cardPreview;
+  private CardGraphicsHighscore cardPreview = new CardGraphicsHighscore(false);
 
   @FXML
   private Pane mediaPlayerControl;
@@ -312,8 +314,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       selection.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(selection))
       .thenAcceptLater(newTemplate -> {
-          templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
+          loadTemplates();
           this.templateCombo.setValue(newTemplate);
 
           highscoreCardsController.refresh(gameRepresentation, templates, false);
@@ -335,8 +336,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
       .thenAcceptLater(updatedTemplate -> {
-          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
+          loadTemplates();  
           this.templateCombo.setValue(updatedTemplate);
 
           assignTemplate(updatedTemplate);
@@ -360,8 +360,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         Platform.runLater(() -> {
           CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
 
-          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
+          loadTemplates();
           this.templateCombo.setValue(defaultTemplate);
 
           assignTemplate(defaultTemplate);
@@ -547,6 +546,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     templateBeanBinder.setPaused(false);
 
+    cardPreview.setTemplate(cardTemplate);
+
     refreshPreview(this.gameRepresentation, true);
   }
 
@@ -619,6 +620,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       templateBeanBinder.bindTextField(titleText, getCardTemplate(), "title", "Highscores");
       templateBeanBinder.bindSlider(brightenSlider, getCardTemplate(), "alphaWhite");
+
+      templateBeanBinder.bindSlider(brightenSlider, getCardTemplate().getAlphaWhite(), alpha -> getCardTemplate().setAlphaWhite(alpha));
+
       templateBeanBinder.bindSlider(darkenSlider, getCardTemplate(), "alphaBlack");
       templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
       templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
@@ -758,37 +762,24 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     mediaPlayerControl.setVisible(false);
 
     if (!game.isPresent()) {
+      // empty game information
+      cardPreview.setData(null);
       return;
     }
+    previewStack.getChildren().remove(waitOverlay);
+    previewStack.getChildren().add(waitOverlay);
+    refreshTransparency();
+    refreshOverlayBackgroundPreview();
 
-    Platform.runLater(() -> {
-      previewStack.getChildren().remove(waitOverlay);
-      previewStack.getChildren().add(waitOverlay);
-      refreshTransparency();
-      refreshOverlayBackgroundPreview();
+    JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
+      .thenAcceptLater(cardData -> {
+        cardPreview.setData(cardData);
+      });
 
-      try {
-        new Thread(() -> {
-          if (regenerate) {
-            InputStream input = client.getHighscoreCardsService().getHighscoreCardPreview(game.get(), templateCombo.getValue());
-            Image image = new Image(input);
-            cardPreview.setImage(image);
-            cardPreview.setVisible(true);
-          }
-
-          Platform.runLater(() -> {
-            previewStack.getChildren().remove(waitOverlay);
-            this.openImageBtn.setDisable(false);
-            this.generateBtn.setDisable(false);
-            this.generateAllBtn.setDisable(false);
-          });
-
-        }).start();
-      }
-      catch (Exception e) {
-        LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
-      }
-    });
+    previewStack.getChildren().remove(waitOverlay);
+    this.openImageBtn.setDisable(false);
+    this.generateBtn.setDisable(false);
+    this.generateAllBtn.setDisable(false);
   }
 
 
@@ -810,13 +801,15 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this);
           //images do not have a media player
           if (assetMediaPlayer != null) {
-            assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
+            double fitwith = stage.getWidth() - 900; // was cardPreview.getFitWidth()
+            double fitheight = stage.getHeight() - 200; // was cardPreview.getFitHeight()
+            assetMediaPlayer.setSize(fitwith, fitheight);
             mediaPlayerControl.setVisible(true);
           }
 
           if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
             ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
-            imageViewer.scaleForTemplate(cardPreview);
+            // FIXME OLE imageViewer.scaleForTemplate(cardPreview);
           }
 
           previewOverlayPanel.setVisible(true);
@@ -826,8 +819,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   public void refreshPreviewSize() {
+    /* FIXME OLE
     cardPreview.setFitWidth(stage.getWidth() - 900);
     cardPreview.setFitHeight(stage.getHeight() - 200);
+    */
   }
 
   @Override
@@ -856,8 +851,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      templateCombo.setItems(FXCollections.observableList(templates));
+      loadTemplates();
 
       templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
         @Override
@@ -879,10 +873,68 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       accordion.setExpandedPane(backgroundSettingsPane);
 
-      cardPreview.setPreserveRatio(true);
+      previewStack.setBackground(Background.fill(Color.AQUA));
+      previewPanel.setBackground(Background.fill(Color.ALICEBLUE));
+
+      previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
+      previewStack.heightProperty().addListener((obs, o, n) -> resizeCardPreview(previewStack.getWidth(), n.doubleValue(), false));
+      previewPanel.getChildren().add(cardPreview);
     }
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
+    }
+  }
+
+  private void loadTemplates() {
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    HighscoreCardResolution res = cardSettings.getCardResolution();
+    this.templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
+    if (res != null) {
+      for (CardTemplate template : templates) {
+        if (template.getReferenceWidth() < 0 || template.getReferenceHeight() < 0) {
+          template.setReferenceWidth(res.toWidth());
+          template.setReferenceHeight(res.toHeight());
+        }
+      }
+    }
+    templateCombo.setItems(FXCollections.observableList(templates));
+  }
+
+  private void resizeCardPreview(double width, double height, boolean forceWidth) {
+    // make sure the panel is full size always
+    previewPanel.resizeRelocate(0, 0, width, height);
+
+    if (width > 0 && height > 0) {
+      double aspectRatio = 16.0 / 9.0;
+      double newWidth = width;
+      double newHeight = height;
+      double offSetX = 0;
+      double offSetY = 0;
+      if (forceWidth) {
+        newHeight = newWidth / aspectRatio;
+        if (newHeight > height) {
+          newHeight = height;
+          newWidth = height * aspectRatio;
+          // constraint width and center horizontally
+          offSetX = (width - newWidth) / 2;
+        }
+        else {
+          offSetY = (height - newHeight) / 2;
+        }
+      }
+      else {
+        newWidth = newHeight * aspectRatio;
+        if (newWidth > width) {
+          newWidth = width;
+          newHeight = width / aspectRatio;
+          // constraint width and center horizontally
+          offSetY = (height - newHeight) / 2;
+        }
+        else {
+          offSetX = (width - newWidth) / 2;
+        }
+      }
+      cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
     }
   }
 
@@ -907,7 +959,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     // first delete previous boxes
     for (DMDPositionResizer dragBox : dragBoxes) {
-      dragBox.removeFromPane(imagepane);
+      dragBox.removeFromPane(previewPanel);
     }
     dragBoxes.clear();
 
@@ -923,7 +975,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.setX(cardtemplate.getCanvasX());
       dragBox.setY(cardtemplate.getCanvasY());
   
-      double cardw = cardPreview.getFitWidth();
+      double cardw = stage.getWidth() - 900; // FIXME OLE was cardPreview.getFitWidth();
       double zoom = cardw / 1920.0;
       dragBox.setZoom(zoom);
 
@@ -940,14 +992,14 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           cardtemplate.setCanvasX((int) dragBox.getX());
           cardtemplate.setCanvasWidth((int) dragBox.getWidth());
           cardtemplate.setCanvasHeight((int) dragBox.getHeight());
-          dragBox.removeFromPane(imagepane);
+          dragBox.removeFromPane(previewPanel);
           dragBoxes.remove(dragBox);
           templateBeanBinder.setPaused(false);
         }
       });
       dragBox.select();
 
-      dragBox.addToPane(imagepane);
+      dragBox.addToPane(previewPanel);
       dragBoxes.add(dragBox);
     }   
   }
