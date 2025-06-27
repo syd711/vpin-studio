@@ -27,12 +27,31 @@ public abstract class CardLayer extends Canvas {
    * render a semi-transparent colored background to help visualize the resized effect */
   private boolean debug = false;
 
+  /** Whether this layer can be selected */
+  private boolean selectable = true;
+
   public CardLayer() {
   }
 
   @Override
   public boolean isResizable() {
     return false;
+  }
+
+  public void setSelectable(boolean selectable) {
+    this.selectable = selectable;
+  }
+  public boolean isSelectable() {
+    return selectable;
+  }
+
+  @Override
+  public boolean contains(double x, double y) {
+    double lx = getLayoutX();
+    double ly = getLayoutY();
+    double lw = getWidth();
+    double lh = getHeight();
+    return (x >= lx && x < lx + lw && y >= ly && y < ly + lh);
   }
 
   public void setTemplate(CardTemplate template) {

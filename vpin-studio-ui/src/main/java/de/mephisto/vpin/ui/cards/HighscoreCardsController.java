@@ -288,7 +288,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     templateEditorController.selectTable(selectedItem, false);
     refreshRawPreview(selectedItem);
 
-    templateEditorController.refreshPreviewSize();
     refreshPreview(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
   }
 
@@ -347,19 +346,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
   }
 
-  public void onDragDone() {
-    if (!NavigationItem.HighscoreCards.equals(NavigationController.getActiveNavigation())) {
-      return;
-    }
-
-    debouncer.debounce("position", () -> {
-      Platform.runLater(() -> {
-        templateEditorController.refreshPreviewSize();
-        refreshPreview(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
-      });
-    }, 500);
-  }
-
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
@@ -385,9 +371,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     catch (IOException e) {
       LOG.error("failed to load template editor: " + e.getMessage(), e);
     }
-
-    stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-    stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
 
     try {
       ignoreList.addAll(Arrays.asList("popperScreen"));
@@ -559,7 +542,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     EventManager.getInstance().addListener(this);
     onReload(false);
-    templateEditorController.refreshPreviewSize();
   }
 
   public void refresh(Optional<GameRepresentation> gameRepresentation, List<CardTemplate> templates, boolean refreshAll) {

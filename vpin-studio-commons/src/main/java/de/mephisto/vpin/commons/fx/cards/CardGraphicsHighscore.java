@@ -18,6 +18,11 @@ public class CardGraphicsHighscore extends Pane {
   /** Whether autosize is active or not, depends on how it is embeded ? */
   private boolean resizable;
 
+  private boolean maintainAspectRatio = true;
+
+  private double zoomX = 1;
+  private double zoomY = 1;
+
   private CardTemplate template;
   //private CardData data;
 
@@ -33,6 +38,9 @@ public class CardGraphicsHighscore extends Pane {
 
   public CardGraphicsHighscore(boolean resizable) {
     this.resizable = resizable;
+    // configure layers
+    backgroundLayer.setSelectable(false);
+
     getChildren().addAll(layers);
   }
 
@@ -40,6 +48,22 @@ public class CardGraphicsHighscore extends Pane {
     this.template = template;
     layers.forEach(l -> l.setTemplate(template));
     this.requestLayout();
+  }
+
+  public boolean isMaintainAspectRatio() {
+    return maintainAspectRatio;
+  }
+
+  public void setMaintainAspectRatio(boolean maintainAspectRatio) {
+    this.maintainAspectRatio = maintainAspectRatio;
+  }
+
+  public double getZoomX() {
+    return zoomX;
+  }
+
+  public double getZoomY() {
+    return zoomY;
   }
 
   @Override
@@ -70,10 +94,15 @@ public class CardGraphicsHighscore extends Pane {
     // a WIDTH uppercase refers to template coordinate and width lowercase, refer to the image
     // then width = WIDTH * zoomX and height = HEIGHT * zoomY
 
-    double zoomX = template.getRatioXFor(width);
+    this.zoomX = template.getRatioXFor(width);
     double WIDTH = width / zoomX;
-    double zoomY = template.getRatioYFor(height);
+    this.zoomY = template.getRatioYFor(height);
     double HEIGHT = height / zoomY;
+
+    if (maintainAspectRatio) {
+      zoomX = Math.min(zoomX, zoomY);
+      zoomY = zoomX;
+    }
 
     //-----------
     // From here, below system of coordinate is template dimensions
@@ -83,8 +112,7 @@ public class CardGraphicsHighscore extends Pane {
 
     if (template.isRenderCanvas()) {
       canvasLayer.setVisible(true);
-      double xcenter = template.getCanvasX() == 0 ? (WIDTH / 2) - (template.getCanvasWidth() / 2) : template.getCanvasX();
-      canvasLayer.resizeRelocate(xcenter, template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), zoomX, zoomY);
+      canvasLayer.resizeRelocate(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), zoomX, zoomY);
     }
     else {
       canvasLayer.setVisible(false);
@@ -145,5 +173,16 @@ public class CardGraphicsHighscore extends Pane {
     WritableImage snapshot = this.snapshot(snapshotParameters, null);
     BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
     return SwingFXUtils.fromFXImage(snapshot, bufferedImage);
+  }
+
+  public CardLayer selectCardLayer(double x, double y) {
+    // look from top to bottom
+    for (int i = layers.size() - 1; i>=0; i--) {
+      CardLayer layer = layers.get(i);
+      if (layer.isSelectable() && layer.contains(x, y)) {
+        return layer;
+      }
+    }
+    return null;
   }
 }

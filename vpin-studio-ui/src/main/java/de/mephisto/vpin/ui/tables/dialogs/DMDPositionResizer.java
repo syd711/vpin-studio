@@ -43,7 +43,8 @@ public class DMDPositionResizer {
   private ObjectProperty<Integer>  heightProperty, heightMinProperty, heightMaxProperty;
 
   /** The internal zoom to transform the coordinate of the box into screen coordinates */
-  private double zoom = 1.0;
+  private double zoomX = 1.0;
+  private double zoomY = 1.0;
   /** The aspect ratio between x/y that must be maintained. none if null */
   private Double aspectRatio = null;
 
@@ -68,11 +69,11 @@ public class DMDPositionResizer {
       if (areaMaxX >= 0) {
         widthMaxProperty.set(areaMaxX - x.intValue());
       }
-      srFill.setX(x.intValue() * zoom);
-      srBnd.setX(x.intValue() * zoom);
+      srFill.setX(x.intValue() * zoomX);
+      srBnd.setX(x.intValue() * zoomX);
       for (int i = 0; i <= 2; i++) {
         for (int j = 0; j <= 2; j++) {
-          handles[i][j].setX((x.intValue() + i * widthProperty.get() / 2.0) * zoom - i * handleSize2);
+          handles[i][j].setX((x.intValue() + i * widthProperty.get() / 2.0) * zoomX - i * handleSize2);
         }
       }
     });
@@ -83,11 +84,11 @@ public class DMDPositionResizer {
       if (areaMaxY >= 0) {
         heightMaxProperty.set(areaMaxY - y.intValue());
       }
-      srFill.setY(y.intValue() * zoom);
-      srBnd.setY(y.intValue() * zoom);
+      srFill.setY(y.intValue() * zoomY);
+      srBnd.setY(y.intValue() * zoomY);
       for (int i = 0; i <= 2; i++) {
         for (int j = 0; j <= 2; j++) {
-          handles[i][j].setY((y.intValue() + j * heightProperty.get() / 2.0) * zoom - j * handleSize2);
+          handles[i][j].setY((y.intValue() + j * heightProperty.get() / 2.0) * zoomY - j * handleSize2);
         }
       }
     });
@@ -108,11 +109,11 @@ public class DMDPositionResizer {
       if (areaMaxX >= 0) {
         xMaxProperty.set(areaMaxX - width.intValue());
       }
-      srFill.setWidth(width.intValue() * zoom);
-      srBnd.setWidth(width.intValue() * zoom);
+      srFill.setWidth(width.intValue() * zoomX);
+      srBnd.setWidth(width.intValue() * zoomX);
       for (int i = 1; i <= 2; i++) {
         for (int j = 0; j <= 2; j++) {
-          handles[i][j].setX((xProperty.get() + i * width.intValue() / 2.0) * zoom - i * handleSize2);
+          handles[i][j].setX((xProperty.get() + i * width.intValue() / 2.0) * zoomX - i * handleSize2);
         }
       }
     });
@@ -133,11 +134,11 @@ public class DMDPositionResizer {
       if (areaMaxY >= 0) {
         yMaxProperty.set(areaMaxY - height.intValue());
       }
-      srFill.setHeight(height.intValue() * zoom);
-      srBnd.setHeight(height.intValue() * zoom);
+      srFill.setHeight(height.intValue() * zoomY);
+      srBnd.setHeight(height.intValue() * zoomY);
       for (int i = 0; i <= 2; i++) {
         for (int j = 1; j <= 2; j++) {
-          handles[i][j].setY((yProperty.get() + j * height.intValue()   / 2.0) * zoom - j * handleSize2);
+          handles[i][j].setY((yProperty.get() + j * height.intValue()   / 2.0) * zoomY - j * handleSize2);
         }
       }
     });
@@ -219,7 +220,7 @@ public class DMDPositionResizer {
     setInternalX(newX);
   }
 
-  public void setInternalX(int newX) {
+  protected void setInternalX(int newX) {
     if (areaMinX >= 0 && newX < areaMinX) {
       newX = areaMinX;
     }
@@ -237,7 +238,7 @@ public class DMDPositionResizer {
     setInternalY(newY);
   }
 
-  public void setInternalY(int y) {
+  protected void setInternalY(int y) {
     if (areaMinY >= 0 && y < areaMinY) {
       y = areaMinY;
     }
@@ -271,7 +272,14 @@ public class DMDPositionResizer {
   }
 
   public void setZoom(double zoom) {
-    this.zoom = zoom;
+    this.zoomX = zoom;
+    this.zoomY = zoom;
+  }
+  public void setZoomX(double zoomX) {
+    this.zoomX = zoomX;
+  }
+  public void setZoomY(double zoomY) {
+    this.zoomY = zoomY;
   }
 
   public Color getColor() {
@@ -481,8 +489,8 @@ public class DMDPositionResizer {
 
   private void mousePressed(MouseEvent me) {
     overlay.setVisible(true);
-    sX = (int) (xProperty.get() * zoom - me.getX());
-    sY = (int) (yProperty.get() * zoom - me.getY());
+    sX = (int) (xProperty.get() * zoomX - me.getX());
+    sY = (int) (yProperty.get() * zoomY - me.getY());
 
     Object source = me.getSource();
     for (int i = 0; i <= 2; i++) {
@@ -496,8 +504,8 @@ public class DMDPositionResizer {
   }
 
   private void mouseDragged(MouseEvent me) {
-    int x = (int) ((me.getX() + sX) / zoom);
-    int y = (int) ((me.getY() + sY) / zoom);
+    int x = (int) ((me.getX() + sX) / zoomX);
+    int y = (int) ((me.getY() + sY) / zoomY);
     Object source = me.getSource();
 
     if (source == srBnd) {
