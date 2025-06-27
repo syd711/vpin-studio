@@ -128,10 +128,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTable.getId());
 
     for (Score score : scoreList) {
-      if (isOnDenyList(deniedScoresByTableId, score, game)) {
-        continue;
-      }
-
       try {
         String playerInitials = score.getPlayerInitials();
         //we only synchronize the highest score of each table
@@ -152,10 +148,15 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           tableScore.setScoreSource(game.getRom());
           tableScore.setCreationDate(score.getCreatedAt());
 
+          if (isOnDenyList(deniedScoresByTableId, score, game)) {
+            result.setTableScore(tableScore);
+            result.setDenied(true);
+            continue;
+          }
+
           LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
           result.setTableScore(submitted);
-
           submittedInitials.add(playerInitials);
         }
       }

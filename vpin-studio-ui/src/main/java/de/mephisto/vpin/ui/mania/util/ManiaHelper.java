@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -110,14 +111,8 @@ public class ManiaHelper {
   public static void runScoreSynchronization(boolean showScoreSummary) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel());
     if (showScoreSummary) {
-      List<Object> results = progressDialog.getResults();
-      int count = results.size();
-      String msg = null;
-      for (Object result : results) {
-        ManiaTableSyncResult syncResult = (ManiaTableSyncResult) result;
-        msg = syncResult.getResult();
-      }
-      WidgetFactory.showInformation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.", msg);
+      List<ManiaTableSyncResult> results = (List<ManiaTableSyncResult>) (List<?>) progressDialog.getResults();
+      ManiaDialogs.openTableSyncResult(results);
     }
   }
 
