@@ -41,4 +41,5 @@
 
 ## VPin Mania
 
-- Fixed rating submissions. Instead of incremental ratings they are calculated by a scheduled bulk operation. Make sure to enable the rating submissions in your privacy settings of VPin Mania. The rating on https://app.vpin-mania.net will be re-enabled soon. 
+- **Added highscore synchronization view**: When you run a complete highscore synchronization overview, including the ones that have been denied. This view will also help us in case highscores have not been found on https://app.vpin-mania.net. 
+- **Fixed rating submissions**: Instead of incremental ratings they are calculated by a scheduled bulk operation. Make sure to enable the rating submissions in your privacy settings of VPin Mania. The rating on https://app.vpin-mania.net will be re-enabled soon. 
