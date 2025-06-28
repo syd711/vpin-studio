@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.util;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 
-public class DMDPositionSelection {
+public class PositionSelection {
 
   private static double minSize = 8;
 
@@ -31,7 +31,7 @@ public class DMDPositionSelection {
   /** The constrained area for mouse drag in caller coordinates */
   private int areaMinX = -1, areaMaxX = -1, areaMinY = -1, areaMaxY = -1;
 
-  public DMDPositionSelection(Pane pane, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
+  public PositionSelection(Pane pane, Runnable onDragStart, Consumer<Rectangle2D> onDragEnd) {
 
     pane.setOnMousePressed(me -> {
       this.initX = checkAreaX(me.getX());

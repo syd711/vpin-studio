@@ -23,7 +23,6 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
-import de.mephisto.vpin.ui.tables.dialogs.DMDPositionResizer;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
@@ -239,7 +238,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private Label resolutionLabel;
 
   /** the different dragboxes */
-  private List<DMDPositionResizer> dragBoxes = new ArrayList<>();
+  private List<PositionResizer> dragBoxes = new ArrayList<>();
 
   public Debouncer cardTemplateSaveDebouncer = new Debouncer();
 
@@ -946,7 +945,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private void loadDragBoxes(CardLayer layer) {
 
     // first delete previous boxes
-    for (DMDPositionResizer dragBox : dragBoxes) {
+    for (PositionResizer dragBox : dragBoxes) {
       dragBox.removeFromPane(cardPreview);
     }
     dragBoxes.clear();
@@ -954,7 +953,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     if (layer != null) {
 
       // The canvas box
-      DMDPositionResizer dragBox = new DMDPositionResizer();
+      PositionResizer dragBox = new PositionResizer();
 
       CardTemplate cardtemplate = getCardTemplate();
       dragBox.setBounds(0, 0, cardtemplate.getReferenceWidth(), cardtemplate.getReferenceHeight());

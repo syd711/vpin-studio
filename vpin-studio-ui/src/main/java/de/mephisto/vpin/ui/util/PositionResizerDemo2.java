@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.util;
 
 import javafx.application.*;
 import javafx.beans.value.ChangeListener;
@@ -18,10 +18,10 @@ import javafx.geometry.*;
 /**
  * Very inspired from 
  */
-public class DMDPositionResizerDemo2 extends Application {
+public class PositionResizerDemo2 extends Application {
 
-  DMDPositionResizer resizer;
-  DMDPositionSelection selection;
+  PositionResizer resizer;
+  PositionSelection selection;
 
   @Override
   public void start(final Stage stage) {
@@ -84,7 +84,7 @@ public class DMDPositionResizerDemo2 extends Application {
     });
 
     // add a selector in the pane
-    selection = new DMDPositionSelection(pane,
+    selection = new PositionSelection(pane,
       () -> {
         if (resizer != null) {
           resizer.removeFromPane(pane);
@@ -92,7 +92,7 @@ public class DMDPositionResizerDemo2 extends Application {
         }  
       }, 
       rect -> {
-        resizer = new DMDPositionResizer();
+        resizer = new PositionResizer();
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());

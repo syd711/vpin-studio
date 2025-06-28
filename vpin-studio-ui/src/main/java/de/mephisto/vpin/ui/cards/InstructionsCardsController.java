@@ -45,10 +45,10 @@ import de.mephisto.vpin.connectors.vps.matcher.VpsDebug;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.HeaderController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.dialogs.DMDPositionResizer;
-import de.mephisto.vpin.ui.tables.dialogs.DMDPositionSelection;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoMatchModel;
+import de.mephisto.vpin.ui.util.PositionSelection;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -119,7 +119,7 @@ public class InstructionsCardsController  implements Initializable {
     private BooleanProperty processing = new SimpleBooleanProperty(false);
     private BooleanProperty dirty = new SimpleBooleanProperty(false);
   
-    private DMDPositionResizer resizer; 
+    private PositionResizer resizer; 
   
     @FXML
     private TextArea instructionsTextArea;
@@ -217,12 +217,12 @@ public class InstructionsCardsController  implements Initializable {
     // add a selector in the pane
     Bounds area = new BoundingBox(0, 0, 1920, 1080);
 
-    new DMDPositionSelection(imagepane,
+    new PositionSelection(imagepane,
       () -> {
         unselectArea();
       }, 
       rect -> {
-        resizer = new DMDPositionResizer();
+        resizer = new PositionResizer();
         resizer.setX((int) rect.getMinX());
         resizer.setY((int) rect.getMinY());
         resizer.setWidth((int) rect.getWidth());

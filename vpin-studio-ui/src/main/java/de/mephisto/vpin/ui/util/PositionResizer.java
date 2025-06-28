@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.util;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
-public class DMDPositionResizer {
+public class PositionResizer {
 
   private static int handleSize = 6, handleSize2 = handleSize / 2;
   private static int minSize = 8;
@@ -59,7 +59,7 @@ public class DMDPositionResizer {
     eventTriggered = false;
   };
 
-  public DMDPositionResizer() {
+  public PositionResizer() {
     initOverlay();
 
     xProperty = new SimpleObjectProperty<Integer>(0);

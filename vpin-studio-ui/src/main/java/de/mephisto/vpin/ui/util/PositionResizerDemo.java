@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.util;
 
 import javafx.application.*;
 import javafx.stage.*;
@@ -10,7 +10,7 @@ import javafx.geometry.*;
 /**
  * Very inspired from 
  */
-public class DMDPositionResizerDemo extends Application {
+public class PositionResizerDemo extends Application {
 
   @Override
   public void start(final Stage stage) {
@@ -31,7 +31,7 @@ public class DMDPositionResizerDemo extends Application {
   }
     
   private void createElementHandler(Pane pane, Bounds area, int x, int y, int width, int height, Color color, Double aspectRatio) {
-    DMDPositionResizer eh = new DMDPositionResizer();
+    PositionResizer eh = new PositionResizer();
     eh.setX(x);
     eh.setY(y);
     eh.setWidth(width);
