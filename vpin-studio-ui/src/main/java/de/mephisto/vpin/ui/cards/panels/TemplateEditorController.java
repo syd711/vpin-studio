@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.cards.CardLayer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
@@ -32,7 +33,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -47,6 +47,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -160,27 +161,25 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private TitledPane backgroundSettingsPane;
+  @FXML
+  private TitledPane canvasSettingsPane;
+  @FXML
+  private TitledPane titleSettingsPane;
+  @FXML
+  private TitledPane tableNameSettingsPane;
+  @FXML
+  private TitledPane wheelSettingsPane;
+  @FXML
+  private TitledPane ScoreSettingsPane;
 
   @FXML
   private Accordion accordion;
-
-  @FXML
-  private CheckBox renderTitleCheckbox;
-
-  @FXML
-  private CheckBox renderTableNameCheckbox;
-
-  @FXML
-  private CheckBox renderWheelIconCheckbox;
 
   @FXML
   private CheckBox renderFriendsHighscore;
 
   @FXML
   private CheckBox renderPositionsCheckbox;
-
-  @FXML
-  private CheckBox renderCanvasCheckbox;
 
   @FXML
   private Slider canvasAlphaPercentageSlider;
@@ -240,6 +239,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   /** the different dragboxes */
   private List<DMDPositionResizer> dragBoxes = new ArrayList<>();
 
+  public Debouncer cardTemplateSaveDebouncer = new Debouncer();
 
   private BeanBinder templateBeanBinder;
   private ObservableList<String> imageList;
@@ -486,12 +486,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setBean(cardTemplate);
     templateBeanBinder.setPaused(true);
 
-    titleFontLabel.setText(cardTemplate.getTitleFontName() + ", " + cardTemplate.getTitleFontStyle() + ", " + cardTemplate.getTitleFontSize() + "px");
-    tableFontLabel.setText(cardTemplate.getTableFontName() + ", " + cardTemplate.getTableFontStyle() + ", " + cardTemplate.getTableFontName() + "px");
-    scoreFontLabel.setText(cardTemplate.getScoreFontName() + ", " + cardTemplate.getScoreFontStyle() + ", " + cardTemplate.getScoreFontSize() + "px");
+    templateBeanBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
+    templateBeanBinder.setFontLabel(tableFontLabel, cardTemplate, "table");
+    templateBeanBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
 
-    templateBeanBinder.setColorPickerValue(fontColorSelector, getCardTemplate(), "fontColor");
-    templateBeanBinder.setColorPickerValue(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
+    templateBeanBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
+    templateBeanBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
 
     useDirectB2SCheckbox.setSelected(cardTemplate.isUseDirectB2S());
     backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
@@ -500,9 +500,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
     transparentBackgroundCheckbox.setSelected(cardTemplate.isTransparentBackground());
     overlayModeCheckbox.setSelected(cardTemplate.isOverlayMode());
-    renderTableNameCheckbox.setSelected(cardTemplate.isRenderTableName());
-    renderWheelIconCheckbox.setSelected(cardTemplate.isRenderWheelIcon());
-    renderTitleCheckbox.setSelected(cardTemplate.isRenderTitle());
+    
+    BeanBinder.setIconVisibility(canvasSettingsPane, cardTemplate.isRenderCanvas());
+    BeanBinder.setIconVisibility(titleSettingsPane, cardTemplate.isRenderTitle());
+    BeanBinder.setIconVisibility(tableNameSettingsPane, cardTemplate.isRenderTableName());
+    BeanBinder.setIconVisibility(wheelSettingsPane, cardTemplate.isRenderWheelIcon());
 
     titleText.setText(cardTemplate.getTitle());
     brightenSlider.setValue(cardTemplate.getAlphaWhite());
@@ -529,7 +531,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
-    renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
     //canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
     //canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
     //canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
@@ -537,37 +538,20 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
 
-    canvasAlphaPercentageSlider.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasColorSelector.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasXSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasYSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasWidthSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasHeightSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasBorderRadiusSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    renderFriendsHighscore.setDisable(renderRawHighscore.isSelected());
-
     templateBeanBinder.setPaused(false);
-
     cardPreview.setTemplate(cardTemplate);
-
     refreshPreview(this.gameRepresentation, true);
   }
-
 
   private void initBindings() {
     try {
       templateBeanBinder = new BeanBinder(this);
       templateBeanBinder.setBean(this.getCardTemplate());
 
-      templateBeanBinder.bindFontLabel(titleFontLabel, getCardTemplate(), "title");
-      templateBeanBinder.bindFontLabel(tableFontLabel, getCardTemplate(), "table");
-      templateBeanBinder.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
+      templateBeanBinder.bindColorPicker(fontColorSelector, "fontColor");
+      templateBeanBinder.bindColorPicker(friendsFontColorSelector, "friendsFontColor");
 
-      templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
-      templateBeanBinder.bindColorPicker(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
-      templateBeanBinder.bindColorPicker(canvasColorSelector, getCardTemplate(), "canvasBackground");
-
-      templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
+      templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, "useDirectB2S");
       useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -591,14 +575,36 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       screensComboBox.setItems(FXCollections.observableList(VPinScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
       screensComboBox.setDisable(!getCardTemplate().isOverlayMode());
 
-      templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
-      templateBeanBinder.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
-      templateBeanBinder.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
-      templateBeanBinder.bindCheckbox(renderWheelIconCheckbox, getCardTemplate(), "renderWheelIcon");
-      templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
-      templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
-      templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
-      templateBeanBinder.bindCheckbox(overlayModeCheckbox, getCardTemplate(), "overlayMode");
+      templateBeanBinder.bindCheckbox(grayScaleCheckbox, "grayScale");
+      templateBeanBinder.bindCheckbox(transparentBackgroundCheckbox, "transparentBackground");
+
+      templateBeanBinder.bindVisibilityIcon(canvasSettingsPane, "renderCanvas");
+      templateBeanBinder.bindVisibilityIcon(titleSettingsPane, "renderTitle");
+      templateBeanBinder.bindVisibilityIcon(tableNameSettingsPane, "renderTableName");
+      templateBeanBinder.bindVisibilityIcon(wheelSettingsPane, "renderWheelIcon");
+
+      // Canvas
+      templateBeanBinder.bindColorPicker(canvasColorSelector, "canvasBackground");
+      templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");
+      //templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
+      //templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
+      //templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
+      //templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
+      canvasXSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasX(v));
+      canvasYSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasY(v));
+      canvasWidthSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasWidth(v));
+      canvasHeightSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasHeight(v));
+      templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, "canvasBorderRadius", 0, 100);
+
+      // Wheel
+      templateBeanBinder.bindSpinner(wheelSizeSpinner, "wheelSize");
+      templateBeanBinder.bindSpinner(wheelImageSpinner, "wheelPadding");
+
+      // Title
+      templateBeanBinder.bindTextField(titleText, "title");
+
+      templateBeanBinder.bindCheckbox(renderPositionsCheckbox, "renderPositions");
+      templateBeanBinder.bindCheckbox(overlayModeCheckbox, "overlayMode");
 
       overlayModeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -620,51 +626,20 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       templateBeanBinder.bindComboBox(screensComboBox, getCardTemplate(), "overlayScreen");
 
-      templateBeanBinder.bindTextField(titleText, getCardTemplate(), "title", "Highscores");
-      templateBeanBinder.bindSlider(brightenSlider, getCardTemplate(), "alphaWhite");
-
+      templateBeanBinder.bindSlider(brightenSlider, "alphaWhite");
       templateBeanBinder.bindSlider(brightenSlider, getCardTemplate().getAlphaWhite(), alpha -> getCardTemplate().setAlphaWhite(alpha));
+      templateBeanBinder.bindSlider(darkenSlider, "alphaBlack");
+      templateBeanBinder.bindSlider(blurSlider, "blur");
+      templateBeanBinder.bindSlider(borderSlider, "borderWidth");
+      templateBeanBinder.bindSlider(alphaPercentageSpinner, "transparentPercentage");
 
-      templateBeanBinder.bindSlider(darkenSlider, getCardTemplate(), "alphaBlack");
-      templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
-      templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
-      templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
-      templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, getCardTemplate(), "canvasAlphaPercentage");
-      templateBeanBinder.bindSpinner(wheelSizeSpinner, getCardTemplate(), "wheelSize");
-      templateBeanBinder.bindSpinner(paddingSpinner, getCardTemplate(), "padding");
-      templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "marginTop");
-      templateBeanBinder.bindSpinner(marginRightSpinner, getCardTemplate(), "marginRight");
-      templateBeanBinder.bindSpinner(marginBottomSpinner, getCardTemplate(), "marginBottom");
-      templateBeanBinder.bindSpinner(marginLeftSpinner, getCardTemplate(), "marginLeft");
-      templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
-      templateBeanBinder.bindSpinner(maxScoresSpinner, getCardTemplate(), "maxScores", 0, 100);
-      templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
-
-      //templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
-      //templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
-      //templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
-      //templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
-
-      canvasXSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasX(v));
-      canvasYSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasY(v));
-      canvasWidthSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasWidth(v));
-      canvasHeightSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasHeight(v));
-
-      templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
-
-      renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          wheelSizeSpinner.setDisable(!newValue);
-        }
-      });
-
-      renderTitleCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          titleText.setDisable(!newValue);
-        }
-      });
+      templateBeanBinder.bindSpinner(paddingSpinner, "padding");
+      templateBeanBinder.bindSpinner(marginTopSpinner, "marginTop");
+      templateBeanBinder.bindSpinner(marginRightSpinner, "marginRight");
+      templateBeanBinder.bindSpinner(marginBottomSpinner, "marginBottom");
+      templateBeanBinder.bindSpinner(marginLeftSpinner, "marginLeft");
+      templateBeanBinder.bindSpinner(maxScoresSpinner, "maxScores", 0, 100);
+      templateBeanBinder.bindSpinner(rowSeparatorSpinner, "rowMargin", 0, 300);
 
       transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -679,7 +654,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         }
       });
 
-      templateBeanBinder.bindCheckbox(renderRawHighscore, getCardTemplate(), "rawScore");
+      templateBeanBinder.bindCheckbox(renderRawHighscore, "rawScore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
         maxScoresSpinner.setDisable(t1);
         wheelImageSpinner.setDisable(t1);
@@ -688,18 +663,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         renderFriendsHighscore.setDisable(t1);
       });
 
-      renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-        canvasAlphaPercentageSlider.setDisable(!t1);
-        canvasColorSelector.setDisable(!t1);
-        canvasXSpinner.setDisable(!t1);
-        canvasYSpinner.setDisable(!t1);
-        canvasWidthSpinner.setDisable(!t1);
-        canvasHeightSpinner.setDisable(!t1);
-        canvasBorderRadiusSpinner.setDisable(!t1);
-      });
-
-      titleText.setDisable(!renderTitleCheckbox.isSelected());
-      wheelSizeSpinner.setDisable(!renderWheelIconCheckbox.isSelected());
       wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
       maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
       rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
@@ -830,8 +793,20 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @Override
   public void beanPropertyChanged(Object bean, String key, Object value) {
     if (bean instanceof CardTemplate) {
-      onGenerateClick();
+      saveCardTemplate((CardTemplate) bean);
     }
+  }
+
+  private void saveCardTemplate(CardTemplate cardTemplate) {
+    cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
+      JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
+        .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+        .onErrorLater(e -> {
+          LOG.error("Failed to save template: " + e.getMessage());
+          WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+        });
+
+      }, 1000);
   }
 
   @Override

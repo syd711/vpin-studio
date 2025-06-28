@@ -67,6 +67,7 @@ public class WidgetFactory {
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DEFAULT_TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
+  public static final String DEFAULT_COLOR = "#FFFFFF";
   public static final String DISABLED_COLOR = "#767272";
   public static final String LOCAL_FAVS_COLOR = "#ffcc00";
   public static final String GLOBAL_FAVS_COLOR = "#cc6600";
@@ -147,7 +148,7 @@ public class WidgetFactory {
   }
 
   public static HBox createCheckAndUpdateIcon(String tooltip) {
-    return addUpdateIcon(createCheckIcon("#FFFFFF"), tooltip);
+    return addUpdateIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
   }
 
   public static FontIcon createUpdateStar() {
@@ -222,7 +223,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : DEFAULT_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -230,7 +231,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, int size, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(size);
-    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : DEFAULT_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -312,7 +313,7 @@ public class WidgetFactory {
     label.setText("");
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(DEFAULT_COLOR));
     fontIcon.setIconLiteral("mdi2h-help-circle-outline");
     Tooltip tt = new Tooltip(tooltip);
     tt.setWrapText(true);
