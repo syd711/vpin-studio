@@ -1,6 +1,5 @@
 package de.mephisto.vpin.restclient.cards;
 
-import java.io.File;
 import java.util.List;
 
 
@@ -11,12 +10,16 @@ public class CardData  {
   public static final String MARKER_EXTERNAL_SCORE = "!^";
 
   private String gameDisplayName;
-  private File wheelImage;
-  private File backgroundImage;
+  private String wheelUrl;
+  private String backgroundUrl;
 
   private List<String> scores;
   private String rawScore;
 
+  public void addBaseUrl(String baseurl) {
+    wheelUrl = baseurl + wheelUrl;
+    backgroundUrl = baseurl + backgroundUrl;
+  }
 
   public String getGameDisplayName() {
     return gameDisplayName;
@@ -26,20 +29,20 @@ public class CardData  {
     this.gameDisplayName = gameDisplayName;
   }
 
-  public File getWheelImage() {
-    return wheelImage;
+  public String getWheelUrl() {
+    return wheelUrl;
   }
 
-  public void setWheelImage(File wheelImage) {
-    this.wheelImage = wheelImage;
+  public void setWheelUrl(String wheelUrl) {
+    this.wheelUrl = wheelUrl;
   }
 
-  public File getBackgroundImage() {
-    return backgroundImage;
+  public String getBackgroundUrl() {
+    return backgroundUrl;
   }
 
-  public void setBackgroundImage(File backgroundImage) {
-    this.backgroundImage = backgroundImage;
+  public void setBackgroundUrl(String backgroundUrl) {
+    this.backgroundUrl = backgroundUrl;
   }
 
   public List<String> getScores() {

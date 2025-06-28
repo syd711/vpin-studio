@@ -5,10 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,12 +127,13 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     }
 
     BufferedImage backgroundImage = null;
-    if (template.isUseDirectB2S() && data != null && data.getBackgroundImage() != null) {
+    if (template.isUseDirectB2S() && data != null && data.getBackgroundUrl() != null) {
       try {
-        backgroundImage = ImageUtil.loadImage(data.getBackgroundImage());
+        URL url = new URL(data.getBackgroundUrl());
+        backgroundImage = ImageIO.read(url);
       }
       catch (Exception e) {
-        LOG.info("Using default image as fallback instead of " + data.getBackgroundImage());
+        LOG.info("Using default image as fallback instead of " + data.getBackgroundUrl());
       }
     }
     // fall back or !isUseDirectB2S()
@@ -162,20 +165,20 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
   //------------------------------------ Detetection of layer changes
 
-  private File cacheBackgroundFile = null;
+  private String cacheBackgroundUrl = null;
   private int cacheHashTemplate = 0;
 
   private boolean hasBackroundChanged(CardTemplate template, @Nullable CardData data) {
     boolean hasChanged = false;
     // check on CardData
     if (template.isUseDirectB2S() && data != null) {
-      if (cacheBackgroundFile == null || !cacheBackgroundFile.equals(data.getBackgroundImage())) {
-        cacheBackgroundFile = data.getBackgroundImage();
+      if (cacheBackgroundUrl == null || !cacheBackgroundUrl.equals(data.getBackgroundUrl())) {
+        cacheBackgroundUrl = data.getBackgroundUrl();
         hasChanged = true;
       }
     }
     else {
-      cacheBackgroundFile = null;
+      cacheBackgroundUrl = null;
     }
 
     // Check on Template

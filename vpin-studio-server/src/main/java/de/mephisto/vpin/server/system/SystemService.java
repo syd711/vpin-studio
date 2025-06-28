@@ -305,6 +305,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return standaloneTablesFolder;
   }
 
+  public int getServerPort() {
+    return port;
+  }
+
   private void apply(FeaturesInfo features, String values, boolean enabled) {
     if (StringUtils.isNotEmpty(values)) {
       for (String value : StringUtils.split(values, ",")) {

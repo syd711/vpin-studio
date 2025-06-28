@@ -87,6 +87,7 @@ public class CardGraphicsTest extends Application {
     stage.setScene(new Scene(layout, 800, 450));
 
     CardGraphicsHighscore graphics = generateHighscore(true);
+    graphics.setMaintainAspectRatio(false);
     layout.setCenter(graphics);
     
     stage.show();

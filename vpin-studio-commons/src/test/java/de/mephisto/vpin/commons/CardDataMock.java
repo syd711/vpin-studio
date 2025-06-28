@@ -1,8 +1,6 @@
 package de.mephisto.vpin.commons;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +16,8 @@ public class CardDataMock  {
   public static CardData create() {
     CardData data = new CardData();
     data.setGameDisplayName("Ace of Speed (Original 2019)");
-    data.setWheelImage(new File("C:\\PinballX\\Media\\Visual Pinball\\Wheel Images\\Ace Of Speed (Original 2019).png"));
-    data.setBackgroundImage(new File("C:\\PinballX\\Media\\Visual Pinball\\Backglass Images\\AC-DC (Stern 2012).png"));
+    data.setWheelUrl("file:///C:/PinballX/Media/Visual Pinball/Wheel Images/Ace Of Speed (Original 2019).png");
+    data.setBackgroundUrl("file:///C:/PinballX/Media/Visual Pinball/Backglass Images/AC-DC (Stern 2012).png");
   
     ArrayList<String> scores = new ArrayList<>();
     for (int i = 1; i <= 5; i++) {

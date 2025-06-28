@@ -41,7 +41,8 @@ public class CardGraphicsHighscore extends Pane {
   List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, titleLayer, 
       tableNameLayer, wheelLayer, scoresLayer);
 
-  private boolean debug = true;
+  /** Activate the layers to visualize the disposition */
+  private boolean debug = false;
   private CardLayerDebug debugLayer;
 
   public CardGraphicsHighscore(boolean resizable) {

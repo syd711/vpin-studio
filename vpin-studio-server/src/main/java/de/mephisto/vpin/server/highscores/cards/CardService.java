@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -65,6 +66,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Autowired
   private FrontendStatusService frontendStatusService;
+
+  @Autowired
+  private SystemService systemService;
+
 
   private CardSettings cardSettings;
 
@@ -241,7 +246,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   private BufferedImage generateCard(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
     CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
     cardGraphics.setTemplate(template);
-    cardGraphics.setData(getCardData(game, summary, template));
+
+    CardData data = getCardData(game, summary, template);
+    data.addBaseUrl("http://localhost:" + systemService.getServerPort() + "/" + VPinStudioServer.API_SEGMENT);
+    cardGraphics.setData(data);
     // resize the cards to the needed resolution    
     HighscoreCardResolution res = cardSettings.getCardResolution();
     cardGraphics.resize(res.toWidth(), res.toHeight());
@@ -261,17 +269,14 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     
     cardData.setGameDisplayName(game.getGameDisplayName());
 
-    File wheelFile = frontendService.getWheelImage(game);
-    cardData.setWheelImage(wheelFile);
-
-    File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
-    cardData.setBackgroundImage(croppedDefaultPicture);
+    cardData.setWheelUrl("media/" + game.getId() + "/" + VPinScreen.Wheel);
+    cardData.setBackgroundUrl("assets/defaultbackground/" + game.getId());
 
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
       List<String> scores = template.isRawScore() ? 
           getCardDataScoreFromRaw(summary): 
-          getCardDataScoreFromScoreList(summary, false);
+          getCardDataScoreFromScoreList(summary, template.isRenderPositions());
       cardData.setScores(scores);
     }
 

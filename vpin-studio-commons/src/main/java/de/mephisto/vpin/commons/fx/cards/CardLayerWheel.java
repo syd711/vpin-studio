@@ -1,8 +1,5 @@
 package de.mephisto.vpin.commons.fx.cards;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -20,14 +17,9 @@ public class CardLayerWheel extends ImageView implements CardLayer {
 
     if (data != null && hasChanged(data)) {
       //file exists && there is place to render it
-      File wheelIconFile = data.getWheelImage();
-      if (wheelIconFile != null && wheelIconFile.exists()) {
-        //BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        //this.cacheImage = SwingFXUtils.toFXImage(wheelImage, null);
-
-        try (FileInputStream f = new FileInputStream(wheelIconFile)) {
-          this.cacheImage = new Image(f);
-        }
+      String wheelIconUrl = data.getWheelUrl();
+      if (wheelIconUrl != null) {
+        this.cacheImage = new Image(wheelIconUrl);
       }
     }
 
@@ -61,13 +53,13 @@ public class CardLayerWheel extends ImageView implements CardLayer {
 
   //------------------------------------ Detetection of layer changes
 
-  private File cacheWheelFile = null;
+  private String cacheWheelUrl = null;
 
   private boolean hasChanged(@Nonnull CardData data) {
     boolean hasChanged = false;
     // check on 
-    if (cacheWheelFile == null || !cacheWheelFile.equals(data.getWheelImage())) {
-      cacheWheelFile = data.getWheelImage();
+    if (cacheWheelUrl == null || !cacheWheelUrl.equals(data.getWheelUrl())) {
+      cacheWheelUrl = data.getWheelUrl();
       hasChanged = true;
     }
     return hasChanged;

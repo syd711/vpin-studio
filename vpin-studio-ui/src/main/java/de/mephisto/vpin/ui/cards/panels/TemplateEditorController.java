@@ -13,6 +13,7 @@ import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -743,6 +744,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
       .thenAcceptLater(cardData -> {
+        String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
+        cardData.addBaseUrl(baseurl);
         cardPreview.setData(cardData);
       });
 
