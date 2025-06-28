@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
@@ -13,7 +14,11 @@ import javafx.scene.paint.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CardGraphicsHighscore extends Pane {
+  protected final static Logger LOG = LoggerFactory.getLogger(CardGraphicsHighscore.class);
 
   /** Whether autosize is active or not, depends on how it is embeded ? */
   private boolean resizable;
@@ -24,7 +29,7 @@ public class CardGraphicsHighscore extends Pane {
   private double zoomY = 1;
 
   private CardTemplate template;
-  //private CardData data;
+  private CardData data;
 
   CardLayerBackground backgroundLayer = new CardLayerBackground();
   CardLayerCanvas canvasLayer = new CardLayerCanvas();
@@ -36,17 +41,23 @@ public class CardGraphicsHighscore extends Pane {
   List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, titleLayer, 
       tableNameLayer, wheelLayer, scoresLayer);
 
+  private boolean debug = true;
+  private CardLayerDebug debugLayer;
+
   public CardGraphicsHighscore(boolean resizable) {
     this.resizable = resizable;
-    // configure layers
-    backgroundLayer.setSelectable(false);
-
-    getChildren().addAll(layers);
+    for (CardLayer layer : layers) {
+      getChildren().add((Node) layer);
+    }
+    // add a temporary debug layer
+    if (debug) {
+      debugLayer = new CardLayerDebug(layers);
+      getChildren().add(debugLayer);
+    }
   }
 
   public void setTemplate(CardTemplate template) {
     this.template = template;
-    layers.forEach(l -> l.setTemplate(template));
     this.requestLayout();
   }
 
@@ -72,8 +83,7 @@ public class CardGraphicsHighscore extends Pane {
   }
 
   public void setData(CardData data) {
-    //this.data = data;
-    layers.forEach(l -> l.setData(data));
+    this.data = data;
     this.requestLayout();
   }
 
@@ -108,11 +118,11 @@ public class CardGraphicsHighscore extends Pane {
     // From here, below system of coordinate is template dimensions
     
     backgroundLayer.setVisible(true);
-    backgroundLayer.resizeRelocate(0, 0, WIDTH, HEIGHT, zoomX, zoomY);
+    resizeRelocate(backgroundLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
 
     if (template.isRenderCanvas()) {
       canvasLayer.setVisible(true);
-      canvasLayer.resizeRelocate(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), zoomX, zoomY);
+      resizeRelocate(canvasLayer, template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), zoomX, zoomY);
     }
     else {
       canvasLayer.setVisible(false);
@@ -123,9 +133,9 @@ public class CardGraphicsHighscore extends Pane {
     if (template.isRenderTitle()) {
       titleLayer.setVisible(true);
       int titleFontSize = template.getTitleFontSize();
-      titleLayer.resizeRelocate(template.getMarginLeft(), currentY, 
+      resizeRelocate(titleLayer, template.getMarginLeft(), currentY, 
             WIDTH - template.getMarginLeft() - template.getMarginRight(), 
-            titleFontSize + template.getPadding(), zoomX, zoomY);
+            titleFontSize, zoomX, zoomY);
       currentY += titleFontSize + template.getPadding();
     }
     else {
@@ -135,9 +145,9 @@ public class CardGraphicsHighscore extends Pane {
     if (template.isRenderTableName()) {
       tableNameLayer.setVisible(true);
       int tableFontSize = template.getTableFontSize();
-      tableNameLayer.resizeRelocate(template.getMarginLeft(), currentY, 
+      resizeRelocate(tableNameLayer, template.getMarginLeft(), currentY, 
             WIDTH - template.getMarginLeft() - template.getMarginRight(), 
-            tableFontSize + template.getPadding(), zoomX, zoomY);
+            tableFontSize, zoomX, zoomY);
       currentY += tableFontSize + template.getPadding();
     }
     else {
@@ -149,7 +159,7 @@ public class CardGraphicsHighscore extends Pane {
     if (template.isRenderWheelIcon()) {
       wheelLayer.setVisible(true);
       int wheelY = currentY + template.getTableFontSize() / 2;
-      wheelLayer.resizeRelocate(template.getMarginLeft(), wheelY, template.getWheelSize(), template.getWheelSize(), zoomX, zoomY);
+      resizeRelocate(wheelLayer, template.getMarginLeft(), wheelY, template.getWheelSize(), template.getWheelSize(), zoomX, zoomY);
       scoreX += template.getWheelSize() + template.getWheelPadding();
     }
     else {
@@ -157,10 +167,35 @@ public class CardGraphicsHighscore extends Pane {
     }
 
     scoresLayer.setVisible(true);
-    scoresLayer.resizeRelocate(scoreX, currentY, 
+    resizeRelocate(scoresLayer, scoreX, currentY, 
       WIDTH - scoreX - template.getMarginRight(), 
       HEIGHT - currentY - template.getMarginBottom(), zoomX, zoomY);
+
+
+    if (debug) {
+      resizeRelocate(debugLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
+    }
   }
+
+  public void resizeRelocate(CardLayer layer, double x, double y, double width, double height, double zoomX, double zoomY) {
+    // don't change the order 
+    layer.setWidth(width * zoomX);
+    layer.setHeight(height * zoomY);
+    layer.relocate(x * zoomX, y * zoomY);
+
+    try {
+      if (template != null) {
+        long startTime = System.currentTimeMillis();
+        layer.draw(template, data, zoomX, zoomY);
+        LOG.debug(this.getClass().getSimpleName() + " drawn in (ms) " + (System.currentTimeMillis() - startTime));
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Error drawing layer {}", this, e);
+    }
+  }
+  
+  //----------------------------------------------------------------
 
   /**
    * Must be called on javaFX thread !
@@ -179,10 +214,20 @@ public class CardGraphicsHighscore extends Pane {
     // look from top to bottom
     for (int i = layers.size() - 1; i>=0; i--) {
       CardLayer layer = layers.get(i);
-      if (layer.isSelectable() && layer.contains(x, y)) {
+      if (layer.isSelectable() && contains(layer, x, y)) {
         return layer;
       }
     }
     return null;
   }
+
+  private boolean contains(CardLayer layer, double x, double y) {
+    double lx = layer.getLocX();
+    double ly = layer.getLocY();
+    double lw = layer.getWidth();
+    double lh = layer.getHeight();
+    return (x >= lx && x < lx + lw && y >= ly && y < ly + lh);
+  }
+
+
 }

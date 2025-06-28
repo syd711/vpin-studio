@@ -541,9 +541,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     renderFriendsHighscore.setSelected(cardTemplate.isRenderFriends());
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
-    wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
     maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
-    rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
 
 
@@ -662,15 +660,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder.bindCheckbox(renderRawHighscore, "rawScore");
       renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
         maxScoresSpinner.setDisable(t1);
-        wheelImageSpinner.setDisable(t1);
-        rowSeparatorSpinner.setDisable(t1);
         renderPositionsCheckbox.setDisable(t1);
         renderFriendsHighscore.setDisable(t1);
       });
 
-      wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
       maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
-      rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     }
     catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
@@ -966,8 +960,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       dragBox.setWidth((int) (layer.getWidth() / zoomX));
       dragBox.setHeight((int) (layer.getHeight() / zoomY));
-      dragBox.setX((int) (layer.getLayoutX() / zoomX));
-      dragBox.setY((int) (layer.getLayoutY() / zoomY));
+      dragBox.setX((int) (layer.getLocX() / zoomX));
+      dragBox.setY((int) (layer.getLocY() / zoomY));
 
       if (layer instanceof CardLayerCanvas) {
         configureSpinner(canvasXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());

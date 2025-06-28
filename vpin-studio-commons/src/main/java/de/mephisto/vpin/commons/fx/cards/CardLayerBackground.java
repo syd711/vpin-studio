@@ -10,19 +10,28 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Paint;
 
-public class CardLayerBackground extends CardLayer {
+public class CardLayerBackground extends Canvas implements CardLayer {
+  protected final static Logger LOG = LoggerFactory.getLogger(CardLayerDebug.class);
 
   private Image cacheBackground;
   private BufferedImage cacheBackgroundImage;
+
+  public boolean isSelectable() {
+    return false;
+  }
 
   /**
    * Indication on relative times
@@ -34,9 +43,11 @@ public class CardLayerBackground extends CardLayer {
    CardLayerBackground/drawBorder(): 1 ms
    */
   @Override
-  protected void draw(GraphicsContext g, @Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
     double width = getWidth();
     double height = getHeight();
+    GraphicsContext g = getGraphicsContext2D();
+    g.clearRect(0, 0, width, height);
 
     LogTime lt = new LogTime("   CardLayerBackground");
 

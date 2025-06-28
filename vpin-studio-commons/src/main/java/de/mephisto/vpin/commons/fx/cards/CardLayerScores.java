@@ -11,19 +11,25 @@ import org.apache.commons.lang3.StringUtils;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.geometry.VPos;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  * As we manipulate both dimension in template coordinate system and image coordinate, 
  * a WIDTH uppercase refer to template coordinate and width lowercase, refer to the image
  * then width = WIDTH * zoomX and height = HEIGHT * zoomY
  */
-public class CardLayerScores extends CardLayer {
+public class CardLayerScores extends Canvas implements CardLayer {
 
   @Override
-  protected void draw(GraphicsContext g, @Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+    double width = getWidth();
+    double height = getHeight();
+    GraphicsContext g = getGraphicsContext2D();
+    g.clearRect(0, 0, width, height);
 
     // Build score blocks
 
@@ -48,9 +54,7 @@ public class CardLayerScores extends CardLayer {
     //----------
     // Now render blocks
 
-    double width = getWidth();
     double WIDTH = width / zoomX;
-    double height = getHeight();
     double HEIGHT = height / zoomY;
 
     double fontSIZE = Math.max(template.getScoreFontSize(), 20);
@@ -213,6 +217,12 @@ public class CardLayerScores extends CardLayer {
         maxWIDTH = Math.max(maxWIDTH, getTextWidth(line + "   ", FONT));
       }
       return maxWIDTH;
+    }
+
+    protected int getTextWidth(String text, Font font) {
+      Text theText = new Text(text);
+      theText.setFont(font);
+      return (int) theText.getBoundsInLocal().getWidth();
     }
 
     public boolean isEmpty() {
