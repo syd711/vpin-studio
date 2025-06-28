@@ -3,6 +3,8 @@ package de.mephisto.vpin.ui.cards.panels;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.cards.CardLayer;
+import de.mephisto.vpin.commons.fx.cards.CardLayerCanvas;
+import de.mephisto.vpin.commons.fx.cards.CardLayerWheel;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
@@ -486,12 +488,36 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setBean(cardTemplate);
     templateBeanBinder.setPaused(true);
 
-    templateBeanBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
-    templateBeanBinder.setFontLabel(tableFontLabel, cardTemplate, "table");
-    templateBeanBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
+    templateBeanBinder.setIconVisibility(canvasSettingsPane, cardTemplate.isRenderCanvas());
+    templateBeanBinder.setIconVisibility(titleSettingsPane, cardTemplate.isRenderTitle());
+    templateBeanBinder.setIconVisibility(tableNameSettingsPane, cardTemplate.isRenderTableName());
+    templateBeanBinder.setIconVisibility(wheelSettingsPane, cardTemplate.isRenderWheelIcon());
 
+    // Canvas
+    templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
+    canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
+    canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
+    canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
+    canvasHeightSpinner.getValueFactory().setValue(cardTemplate.getCanvasHeight());
+    canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
+    canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
+
+    // Title
+    titleText.setText(cardTemplate.getTitle());
+    templateBeanBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
+
+    // TableName
+    templateBeanBinder.setFontLabel(tableFontLabel, cardTemplate, "table");
+
+    // Wheel
+    wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
+    wheelSizeSpinner.getValueFactory().setValue(cardTemplate.getWheelSize());
+
+    // Scores
+    templateBeanBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
     templateBeanBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
     templateBeanBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
+
 
     useDirectB2SCheckbox.setSelected(cardTemplate.isUseDirectB2S());
     backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
@@ -501,24 +527,16 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     transparentBackgroundCheckbox.setSelected(cardTemplate.isTransparentBackground());
     overlayModeCheckbox.setSelected(cardTemplate.isOverlayMode());
     
-    BeanBinder.setIconVisibility(canvasSettingsPane, cardTemplate.isRenderCanvas());
-    BeanBinder.setIconVisibility(titleSettingsPane, cardTemplate.isRenderTitle());
-    BeanBinder.setIconVisibility(tableNameSettingsPane, cardTemplate.isRenderTableName());
-    BeanBinder.setIconVisibility(wheelSettingsPane, cardTemplate.isRenderWheelIcon());
-
-    titleText.setText(cardTemplate.getTitle());
     brightenSlider.setValue(cardTemplate.getAlphaWhite());
     darkenSlider.setValue(cardTemplate.getAlphaBlack());
     blurSlider.setValue(cardTemplate.getBlur());
     borderSlider.setValue(cardTemplate.getBorderWidth());
     alphaPercentageSpinner.setValue(cardTemplate.getTransparentPercentage());
     paddingSpinner.getValueFactory().setValue(cardTemplate.getPadding());
-    wheelSizeSpinner.getValueFactory().setValue(cardTemplate.getWheelSize());
     marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
     marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());
     marginBottomSpinner.getValueFactory().setValue(cardTemplate.getMarginBottom());
     marginLeftSpinner.getValueFactory().setValue(cardTemplate.getMarginLeft());
-    wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
 
@@ -529,14 +547,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
     renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
 
-    templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
-
-    //canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
-    //canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
-    //canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
-    //canvasHeightSpinner.getValueFactory().setValue(cardTemplate.getCanvasHeight());
-    canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
-    canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
 
     templateBeanBinder.setPaused(false);
     cardPreview.setTemplate(cardTemplate);
@@ -586,14 +596,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       // Canvas
       templateBeanBinder.bindColorPicker(canvasColorSelector, "canvasBackground");
       templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");
-      //templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
-      //templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
-      //templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
-      //templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
-      canvasXSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasX(v));
-      canvasYSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasY(v));
-      canvasWidthSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasWidth(v));
-      canvasHeightSpinner.valueProperty().addListener((obs, o, v) -> getCardTemplate().setCanvasHeight(v));
+      templateBeanBinder.bindSpinner(canvasXSpinner, "canvasX", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasYSpinner, "canvasY", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasWidthSpinner, "canvasWidth", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasHeightSpinner, "canvasHeight", 0, 1080);
       templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, "canvasBorderRadius", 0, 100);
 
       // Wheel
@@ -930,13 +936,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private void configureSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
                                 ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {
-    IntegerSpinnerValueFactory factory = new IntegerSpinnerValueFactory(minProperty.get(), maxProperty.get());
-    spinner.setValueFactory(factory);
+    IntegerSpinnerValueFactory factory = (IntegerSpinnerValueFactory) spinner.getValueFactory();
     spinner.setEditable(true);
     factory.valueProperty().bindBidirectional(property);
     factory.minProperty().bind(minProperty);
     factory.maxProperty().bind(maxProperty);
-    //factory.valueProperty().addListener((obs, o, v) -> headerController.setDirty(true));
   }
 
   private void loadDragBoxes(CardLayer layer) {
@@ -966,14 +970,22 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.setX((int) (layer.getLayoutX() / zoomX));
       dragBox.setY((int) (layer.getLayoutY() / zoomY));
 
+      if (layer instanceof CardLayerCanvas) {
+        configureSpinner(canvasXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
+        configureSpinner(canvasYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
+        configureSpinner(canvasWidthSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
+        configureSpinner(canvasHeightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
+      }
+      else if (layer instanceof CardLayerWheel) {
+        // force aspect ratio of 1 for 
+        dragBox.setAspectRatio(1.0);
+        configureSpinner(wheelSizeSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
+      }
+
       // setup linkages between spinner and our dragbox
       dragBox.selectProperty().addListener((obs, oldV, newV) -> {
         if (newV) {
           templateBeanBinder.setPaused(true);
-          configureSpinner(canvasXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
-          configureSpinner(canvasYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
-          configureSpinner(canvasWidthSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
-          configureSpinner(canvasHeightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
         }
         else {
           //CardTemplate cardtemplate = getCardTemplate();

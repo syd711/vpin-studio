@@ -193,7 +193,7 @@ public class BeanBinder {
     titleSettingsPane.setGraphicTextGap(12);
   }
 
-  public static void setIconVisibility(TitledPane titleSettingsPane, boolean visible) {
+  public void setIconVisibility(TitledPane titleSettingsPane, boolean visible) {
     FontIcon icon = (FontIcon) titleSettingsPane.getGraphic();
     icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
   }
