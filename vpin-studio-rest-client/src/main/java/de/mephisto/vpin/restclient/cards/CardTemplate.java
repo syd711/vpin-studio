@@ -57,7 +57,6 @@ public class CardTemplate extends JsonSettings {
   private boolean renderTableName = true;
   private boolean renderTitle = true;
   private boolean renderWheelIcon = true;
-  private boolean renderPositions = true;
   private boolean renderCanvas = false;
 
   private int canvasX = 100;
@@ -69,6 +68,9 @@ public class CardTemplate extends JsonSettings {
   private int canvasBorderRadius = 0;
 
   private boolean renderFriends = true;
+  private boolean renderPositions = true;
+  private boolean renderScoreDates = true;
+
   private boolean overlayMode = false;
   private String overlayScreen = null;
 
@@ -182,6 +184,14 @@ public class CardTemplate extends JsonSettings {
 
   public void setRenderPositions(boolean renderPositions) {
     this.renderPositions = renderPositions;
+  }
+
+  public boolean isRenderScoreDates() {
+    return renderScoreDates;
+  }
+
+  public void setRenderScoreDates(boolean renderscoreDate) {
+    this.renderScoreDates = renderscoreDate;
   }
 
   public int getWheelSize() {

@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -69,7 +70,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Autowired
   private SystemService systemService;
-
 
   private CardSettings cardSettings;
 
@@ -276,7 +276,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       cardData.setRawScore(summary.getRaw());
       List<String> scores = template.isRawScore() ? 
           getCardDataScoreFromRaw(summary): 
-          getCardDataScoreFromScoreList(summary, template.isRenderPositions());
+          getCardDataScoreFromScoreList(summary, template.isRenderPositions(), template.isRenderScoreDates());
       cardData.setScores(scores);
     }
 
@@ -294,24 +294,37 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return cds;
   }
 
-  public List<String> getCardDataScoreFromScoreList(ScoreSummary summary, boolean renderPositions) {
+  public List<String> getCardDataScoreFromScoreList(ScoreSummary summary, boolean renderPositions, boolean renderDate) {
     List<String> cds = new ArrayList<>();
 
     //calc max length of scores
     int scoreLength = 0;
+    int initialsLength = 0;
+    int maxPosition = 0;
     for (Score score : summary.getScores()) {
       scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
+      initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
+      maxPosition = Math.max(maxPosition, score.getPosition());
     }
+    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+
     for (Score score : summary.getScores()) {
-      String renderString = score.getPlayerInitials() + "   ";
+      String renderString = "";
       if (renderPositions) {
-        renderString = score.getPosition() + ". " + renderString;
+        renderString += StringUtils.leftPad(Integer.toString(score.getPosition()), maxPosition > 9 ? 2 : 1);
+        renderString += ". ";
       }
-      String scoreText = score.getFormattedScore();
-      while (scoreText.length() < scoreLength) {
-        scoreText = " " + scoreText;
+
+      renderString += StringUtils.rightPad(score.getPlayerInitials(), initialsLength);
+      renderString += "   ";
+
+      String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
+      renderString += scoreText;
+
+      if (renderDate && score.getPlayer() != null) {
+        renderString += "  ";
+        renderString += df.format(score.getCreatedAt());
       }
-      renderString = renderString + scoreText;
 
       // add a marker for external/friend scores
       if (score.isExternal()) {

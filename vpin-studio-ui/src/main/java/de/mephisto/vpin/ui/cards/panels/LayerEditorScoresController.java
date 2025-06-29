@@ -29,8 +29,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   private CheckBox renderFriendsHighscore;
   @FXML
   private CheckBox renderPositionsCheckbox;
-
-
+  @FXML
+  private CheckBox renderScoreDatesCheckbox;
   
   @FXML
   private void onFontScoreSelect() {
@@ -60,8 +60,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
     renderFriendsHighscore.setSelected(cardTemplate.isRenderFriends());
     renderRawHighscore.setSelected(cardTemplate.isRawScore());
-    maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
-    renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
+    renderPositionsCheckbox.setSelected(cardTemplate.isRenderPositions());
+    renderScoreDatesCheckbox.setSelected(cardTemplate.isRenderScoreDates());
   }
 
   @Override
@@ -76,12 +76,16 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
     templateBeanBinder.bindColorPicker(friendsFontColorSelector, "friendsFontColor");
 
     templateBeanBinder.bindCheckbox(renderPositionsCheckbox, "renderPositions");
+    templateBeanBinder.bindCheckbox(renderScoreDatesCheckbox, "renderScoreDates");
+
     templateBeanBinder.bindSpinner(maxScoresSpinner, "maxScores", 0, 100);
     templateBeanBinder.bindSpinner(rowSeparatorSpinner, "rowMargin", 0, 300);
     templateBeanBinder.bindCheckbox(renderRawHighscore, "rawScore");
+
     renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       maxScoresSpinner.setDisable(t1);
       renderPositionsCheckbox.setDisable(t1);
+      renderScoreDatesCheckbox.setDisable(t1);
       renderFriendsHighscore.setDisable(t1);
     });
   }

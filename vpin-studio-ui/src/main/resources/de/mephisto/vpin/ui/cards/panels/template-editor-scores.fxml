@@ -196,6 +196,15 @@
                     </VBox.margin>
                 </CheckBox>
 
+                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="Render creation Dates" textFill="WHITE">
+                    <font>
+                      <Font size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets left="26.0" top="6.0" />
+                    </VBox.margin>
+                </CheckBox>
+
               </children>
               <padding>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
