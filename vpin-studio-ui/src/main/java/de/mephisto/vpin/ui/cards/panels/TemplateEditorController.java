@@ -356,27 +356,26 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     this.generateAllBtn.setDisable(true);
     mediaPlayerControl.setVisible(false);
 
-    if (!game.isPresent()) {
-      // empty game information
-      cardPreview.setData(null);
-      return;
+    cardPreview.setData(null);
+
+    if (game.isPresent()) {
+      previewStack.getChildren().remove(waitOverlay);
+      previewStack.getChildren().add(waitOverlay);
+      refreshTransparency();
+      refreshOverlayBackgroundPreview();
+
+      JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
+        .thenAcceptLater(cardData -> {
+          String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
+          cardData.addBaseUrl(baseurl);
+          cardPreview.setData(cardData);
+
+          previewStack.getChildren().remove(waitOverlay);
+          this.openImageBtn.setDisable(false);
+          this.generateBtn.setDisable(false);
+          this.generateAllBtn.setDisable(false);
+        });
     }
-    previewStack.getChildren().remove(waitOverlay);
-    previewStack.getChildren().add(waitOverlay);
-    refreshTransparency();
-    refreshOverlayBackgroundPreview();
-
-    JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
-      .thenAcceptLater(cardData -> {
-        String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
-        cardData.addBaseUrl(baseurl);
-        cardPreview.setData(cardData);
-      });
-
-    previewStack.getChildren().remove(waitOverlay);
-    this.openImageBtn.setDisable(false);
-    this.generateBtn.setDisable(false);
-    this.generateAllBtn.setDisable(false);
   }
 
 

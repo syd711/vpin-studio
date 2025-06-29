@@ -95,7 +95,7 @@ public class CardGraphicsHighscore extends Pane {
       return;
     }
    
-    if (template == null) {
+    if (template == null || data == null) {
       layers.forEach(l -> l.setVisible(false));
       return;
     }
