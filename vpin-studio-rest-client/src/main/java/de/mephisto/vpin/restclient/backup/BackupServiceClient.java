@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.backup;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -23,6 +26,14 @@ public class BackupServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+  private final static ObjectMapper objectMapper = new ObjectMapper();
+
+  static {
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
+
   public String backup() {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "backup/create", new HashMap<>(), String.class);
@@ -33,7 +44,9 @@ public class BackupServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "backup/restore";
       HttpEntity upload = createUpload(file, -1, null, null, null);
       LinkedMultiValueMap<String, Object> map = (LinkedMultiValueMap<String, Object>) upload.getBody();
-      map.add("backupDescriptor", backupDescriptor);
+
+      String backupDescriptorJson = objectMapper.writeValueAsString(backupDescriptor);
+      map.add("backupDescriptor", backupDescriptorJson);
       new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       finalizeUpload(upload);
       return true;

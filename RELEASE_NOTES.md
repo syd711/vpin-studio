@@ -30,6 +30,7 @@
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
 - **Pause Menu**:
   - Improved icon and label for tutorials.
+  - New revamped icons! Thanks to @planetxplanetx!
 - **Main Window**:
   - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.
 - **Uploads**:

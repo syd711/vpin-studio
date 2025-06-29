@@ -15,9 +15,12 @@ import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.beans.PropertyDescriptor;
 import java.util.*;
 
 @Service
@@ -35,6 +38,8 @@ public class BackupService {
 
   @Autowired
   private GameService gameService;
+
+  private final static List<String> IGNORED_PREFERENCES = Arrays.asList("id", "class", "filterSettings", "ignoredValidations");
 
   private final static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -83,13 +88,33 @@ public class BackupService {
         List<Map<String, Object>> playerEntries = (List<Map<String, Object>>) map.get("players");
         List<Player> players = Arrays.asList(objectMapper.convertValue(playerEntries, Player[].class));
         for (Player entry : players) {
-          System.out.println(entry);
+          Player playerForInitials = playerService.getPlayerForInitials(-1, entry.getInitials());
+          if (playerForInitials == null || !playerForInitials.getName().equalsIgnoreCase(entry.getName())) {
+            entry.setId(0l);
+            entry.setTournamentUserUuid(null);
+            entry.setAvatar(null);
+            Player save = playerService.save(entry);
+            LOG.info("Restored player {}", save);
+          }
         }
       }
 
       if (backupDescriptor.isPreferences()) {
         Map<String, Object> preferenceEntry = (Map<String, Object>) map.get("preferences");
-        List<Player> players = Arrays.asList(objectMapper.convertValue(playerEntries, Player[].class));
+        Preferences restoredPreferences = objectMapper.convertValue(preferenceEntry, Preferences.class);
+        BeanWrapper sourceBean = new BeanWrapperImpl(restoredPreferences);
+        PropertyDescriptor[] propertyDescriptors = sourceBean.getPropertyDescriptors();
+
+        Map<String, Object> values = new HashMap<>();
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+          String name = propertyDescriptor.getName();
+          if (IGNORED_PREFERENCES.contains(name)) {
+            continue;
+          }
+          values.put(name, sourceBean.getPropertyValue(name));
+        }
+        preferencesService.savePreference(values);
+        LOG.info("Updated preferences from restored values.");
 
       }
 
@@ -101,16 +126,19 @@ public class BackupService {
           if (!StringUtils.isEmpty(vpsEntry.getComment())) {
             vpsEntry.setComment(entry.getComment());
             vpsEntryService.save(vpsEntry);
+            LOG.info("Restored {}", vpsEntry);
           }
         }
       }
 
       if (backupDescriptor.isGames()) {
+        List<Game> knownGames = gameService.getKnownGames(-1);
         List<Map<String, Object>> games = (List<Map<String, Object>>) map.get("games");
         for (Map<String, Object> gameEntry : games) {
           String fileName = (String) gameEntry.get("fileName");
-          Game game = gameService.getGameByFilename(-1, fileName);
-          if (game != null) {
+          Optional<Game> gameOptional = knownGames.stream().filter(g -> g.getGameFileName().equalsIgnoreCase(fileName)).findFirst();
+          if (gameOptional.isPresent()) {
+            Game game = gameOptional.get();
             if (backupDescriptor.isGameComments() && StringUtils.isEmpty(game.getComment())) {
               game.setComment((String) gameEntry.get("notes"));
             }
