@@ -13,14 +13,16 @@ import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TitledPane;
 
 public abstract class LayerEditorBaseController {
-  final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
+  final protected static Logger LOG = LoggerFactory.getLogger(LayerEditorBaseController.class);
 
   @FXML
   protected TitledPane settingsPane;
 
+  /** Link to the parent controller */
   protected TemplateEditorController templateEditorController;
 
   public void initialize(TemplateEditorController templateEditorController) {
+    LOG.info("initBindings for {}", getClass().getSimpleName());
     this.templateEditorController = templateEditorController;
     initBindings(templateEditorController.getBeanBinder());
   }
@@ -29,6 +31,7 @@ public abstract class LayerEditorBaseController {
 
   public abstract void setTemplate(CardTemplate cardTemplate);
 
+  //---------------------------------------- Common Utilities ---
 
   protected void bindSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
                              ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {

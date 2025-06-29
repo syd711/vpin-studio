@@ -472,7 +472,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       //accordion.setExpandedPane(backgroundSettingsPane);
 
-      // Initilaize bindings between CardTemplate and sidebar
+      // Initialize bindings between CardTemplate and sidebar
       initBindings();
 
       // Resize handlers

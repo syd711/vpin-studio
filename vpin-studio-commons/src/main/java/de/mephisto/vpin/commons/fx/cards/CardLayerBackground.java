@@ -31,10 +31,6 @@ public class CardLayerBackground extends Canvas implements CardLayer {
   private Image cacheBackground;
   private BufferedImage cacheBackgroundImage;
 
-  public boolean isSelectable() {
-    return false;
-  }
-
   /**
    * Indication on relative times
    CardLayerBackground/getBackgroundImage(): 132 ms

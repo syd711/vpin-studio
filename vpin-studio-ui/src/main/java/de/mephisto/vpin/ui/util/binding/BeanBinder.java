@@ -169,10 +169,9 @@ public class BeanBinder {
     FontIcon icon = WidgetFactory.createIcon("mdi2e-eye-outline", 18, WidgetFactory.DEFAULT_COLOR);
     icon.setOnMouseReleased(e -> {
       try {
-        boolean visible = getBooleanProperty(property, true);
-        setProperty(property, !visible);
-        setIconVisibility(titleSettingsPane, !visible);
-        titleSettingsPane.getContent().setDisable(visible);
+        boolean visible = !getBooleanProperty(property, true);
+        setProperty(property, visible);
+        setIconVisibility(titleSettingsPane, visible);
       } 
       catch (Exception ex) {
         LOG.error("Cannot read property {} from template", property, ex);
@@ -186,6 +185,7 @@ public class BeanBinder {
   public static void setIconVisibility(TitledPane titleSettingsPane, boolean visible) {
     FontIcon icon = (FontIcon) titleSettingsPane.getGraphic();
     icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
+    titleSettingsPane.getContent().setDisable(!visible);
   }
 
   //------------------------------------------------------

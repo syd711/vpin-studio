@@ -26,7 +26,7 @@ public interface CardLayer {
    * Whether the layer can be selected and a dragbox set, true by default
    */
   default boolean isSelectable() {
-    return true;
+    return false;
   }
 
   /**
