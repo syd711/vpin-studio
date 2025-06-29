@@ -61,7 +61,7 @@ public class DiscordCompetitionService {
 
         LOG.info("Synchronizing " + competition);
         Date startDate = competition.getCreatedAt();
-        ScoreList scoreHistory = highscoreService.getScoresBetween(competition.getGameId(), startDate, new Date(), competition.getDiscordServerId());
+        ScoreList scoreHistory = highscoreService.getScoresBetween(game, startDate, new Date(), competition.getDiscordServerId());
         List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
         ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);

@@ -274,7 +274,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         }
       }
     }
-    return new ScoreSummary(Collections.emptyList(), new Date());
+    return new ScoreSummary();
   }
 
   public boolean isEnabled() {
@@ -497,11 +497,9 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   private ScoreSummary toScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull DiscordMessage message) {
-    List<Score> scores = new ArrayList<>();
-    ScoreSummary summary = new ScoreSummary(scores, message.getCreatedAt());
     String raw = message.getRaw();
-    scores.addAll(highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId()));
-    return summary;
+    List<Score> scores = highscoreParser.parseScores(message.getCreatedAt(), raw, null, message.getServerId());
+    return new ScoreSummary(scores, message.getCreatedAt(), raw);
   }
 
   public void initCompetition(long serverId, long channelId, long messageId, String topic) {

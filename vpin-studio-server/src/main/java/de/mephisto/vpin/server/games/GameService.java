@@ -235,7 +235,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
    * Returns a complete list of highscore versions
    */
   public ScoreList getScoreHistory(int gameId) {
-    return highscoreService.getScoreHistory(gameId);
+    Game game = getGame(gameId);
+    return highscoreService.getScoreHistory(game);
   }
 
   public ScoreSummary getRecentHighscores(int count) {
@@ -245,7 +246,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public ScoreSummary getRecentHighscores(int count, int gameId) {
     long start = System.currentTimeMillis();
     List<Score> scores = new ArrayList<>();
-    ScoreSummary summary = new ScoreSummary(scores, null);
+    ScoreSummary summary = new ScoreSummary(scores, null, null);
 
     boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
     List<Player> buildInPlayers = playerService.getBuildInPlayers();

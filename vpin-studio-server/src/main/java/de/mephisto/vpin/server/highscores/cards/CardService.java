@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
@@ -35,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -71,7 +74,12 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private ManiaService maniaService;
+
+
   private CardSettings cardSettings;
+
 
   private Map<Integer, ScoreSummary> scoreCache = new LinkedHashMap<>();
 
@@ -163,25 +171,43 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   @NonNull
   private ScoreSummary getScoreSummary(Game game, CardTemplate template, boolean generateSampleCard) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    ScoreSummary summary = null;
+    ScoreSummary summary = template.isRenderScoreDates() ? 
+      highscoreService.getScoreSummaryWithDates(serverId, game):
+      highscoreService.getScoreSummary(serverId, game);
+
     if (template.isRenderFriends()) {
       //add simply caching until a real card is generated, should be sufficient while editing
       if (generateSampleCard) {
         if (!scoreCache.containsKey(game.getId())) {
-          scoreCache.put(game.getId(), highscoreService.getMergedScoreSummary(serverId, game));
+          summary = getMergedScoreSummary(summary, game);
+          scoreCache.put(game.getId(), summary);
         }
-
         return scoreCache.get(game.getId());
       }
 
       scoreCache.clear();
-      summary = highscoreService.getMergedScoreSummary(serverId, game);
-    }
-    else {
-      summary = highscoreService.getScoreSummary(serverId, game);
+      summary = getMergedScoreSummary(summary, game);
     }
     return summary;
   }
+
+
+  /**
+   * Returns a list of all scores for the given game
+   *
+   * @param game the game to retrieve the highscores for
+   * @return all highscores of the given player
+   */
+  @NonNull
+  public ScoreSummary getMergedScoreSummary(ScoreSummary summary, Game game) {
+    if (Features.MANIA_ENABLED) {
+      List<Score> externalScores = maniaService.getFriendsScoresFor(game);
+      summary.mergeScores(externalScores);
+    }
+    return summary;
+  }
+
+
 
   private boolean doGenerateCard(Game game, ScoreSummary summary, boolean generateSampleCard, CardTemplate template) {
     try {
@@ -321,7 +347,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
       renderString += scoreText;
 
-      if (renderDate && score.getPlayer() != null) {
+      if (renderDate && score.getPlayer() != null && score.getCreatedAt() != null) {
         renderString += "  ";
         renderString += df.format(score.getCreatedAt());
       }
