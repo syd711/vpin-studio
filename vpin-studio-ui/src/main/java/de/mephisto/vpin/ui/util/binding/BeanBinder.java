@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.util.binding;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.util.FontSelectorDialog;
 import javafx.application.Platform;
@@ -12,8 +11,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
-import java.util.function.Consumer;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -23,17 +20,30 @@ import org.slf4j.LoggerFactory;
 public class BeanBinder {
   private final static Logger LOG = LoggerFactory.getLogger(BeanBinder.class);
 
-  public static Debouncer debouncer = new Debouncer();
-
   private BindingChangedListener listener;
-  private Object bean;
-  private boolean paused;
 
-  private final static int MAX_DEBOUNCE = 500;
+  private Object bean;
+
+  private boolean paused;
 
   public BeanBinder(BindingChangedListener listener) {
     this.listener = listener;
   }
+
+  public void setBean(Object bean) {
+    this.bean = bean;
+  }
+
+  public Object getBean() {
+    return bean;
+  }
+
+  public void setPaused(boolean paused) {
+    this.paused = paused;
+  }
+
+
+  //------------------------------
 
   public void bindTextField(TextField textField, String property) {
     textField.textProperty().addListener((observableValue, s, t1) -> {
@@ -41,13 +51,11 @@ public class BeanBinder {
     });
   }
 
-  public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property) {
-    bindComboBox(comboBox, beanObject, property, "");
+  public void bindComboBox(ComboBox<String> comboBox, String property) {
+    bindComboBox(comboBox, property, "");
   }
 
-  public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property, String defaultValue) {
-    String value = getProperty(beanObject, property, defaultValue);
-    comboBox.setValue(value);
+  public void bindComboBox(ComboBox<String> comboBox, String property, String defaultValue) {
     comboBox.valueProperty().addListener((observableValue, s, t1) -> {
       Platform.runLater(() -> {
         setProperty(property, t1);
@@ -73,10 +81,10 @@ public class BeanBinder {
     bindSpinner(spinner, property, 0, 2000);
   }
 
-  public void setFontLabel(Label label, Object beanObject, String key) {
-    String name = getProperty(beanObject, key + "FontName", "Arial");
+  public static void setFontLabel(Label label, Object bean, String key) {
+    String name = getProperty(bean, key + "FontName", "Arial");
     int size = 14;
-    String style = getProperty(beanObject, key + "FontStyle", FontPosture.REGULAR.name());
+    String style = getProperty(bean, key + "FontStyle", FontPosture.REGULAR.name());
     Font font = resolveFont(name, style, size);
     String text = name + ", " + style + ", " + size + "px";
     label.setFont(font);
@@ -84,10 +92,10 @@ public class BeanBinder {
     label.setTooltip(new Tooltip(text));
   }
 
-  public void bindFontSelector(Object beanObject, String key, Label label) {
-    String name = getProperty(beanObject, key + "FontName", "Arial");
-    int size = getIntProperty(beanObject, key + "FontSize", 72);
-    String style = getProperty(beanObject, key + "FontStyle", FontWeight.NORMAL.name());
+  public void openFontSelector(String key, Label label) {
+    String name = getProperty(key + "FontName", "Arial");
+    int size = getIntProperty(key + "FontSize", 72);
+    String style = getProperty(key + "FontStyle", FontWeight.NORMAL.name());
 
     Font font = resolveFont(name, style, size);
     FontSelectorDialog fs = new FontSelectorDialog(font);
@@ -99,21 +107,13 @@ public class BeanBinder {
     fs.setOnCloseRequest(e -> {
       if (fs.getResult() != null) {
         Font result = fs.getResult();
-        debouncer.debounce("font", () -> {
-          setProperty(key + "FontName", result.getFamily(), true);
-          setProperty(key + "FontSize", (int) result.getSize(), true);
-          setProperty(key + "FontStyle", result.getStyle());
+        setProperty(key + "FontName", result.getFamily(), true);
+        setProperty(key + "FontSize", (int) result.getSize(), true);
+        setProperty(key + "FontStyle", result.getStyle());
 
-          String updatedStyle = result.getStyle();
-          Font labelFont = resolveFont(result.getFamily(), result.getStyle(), 14);
-          label.setFont(labelFont);
-          String labelText = result.getFamily() + ", " + updatedStyle + ", " + result.getSize() + "px";
-          Platform.runLater(() -> {
-            label.setText(labelText);
-            label.setTooltip(new Tooltip(labelText));
-          });
-        }, 50);
-
+        Platform.runLater(() -> {
+          setFontLabel(label, bean, key);
+        });
       }
     });
   }
@@ -143,17 +143,7 @@ public class BeanBinder {
     });
   }
 
-  public void bindSlider(Slider slider, int value, Consumer<Integer> onChange) {
-    slider.setValue(value);
-    slider.valueProperty().addListener(new ChangeListener<Number>() {
-      @Override
-      public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-        onChange.accept(t1.intValue());
-      }
-    });
-  }
-
-  public void setColorPickerValue(ColorPicker colorPicker, Object beanObject, String property) {
+  public static void setColorPickerValue(ColorPicker colorPicker, Object beanObject, String property) {
     String value = getProperty(beanObject, property, "#FFFFFF");
     Color colorValue = Color.web(value);
     colorPicker.setValue(colorValue);
@@ -179,7 +169,7 @@ public class BeanBinder {
     FontIcon icon = WidgetFactory.createIcon("mdi2e-eye-outline", 18, WidgetFactory.DEFAULT_COLOR);
     icon.setOnMouseReleased(e -> {
       try {
-        boolean visible = getBooleanProperty(bean, property, true);
+        boolean visible = getBooleanProperty(property, true);
         setProperty(property, !visible);
         setIconVisibility(titleSettingsPane, !visible);
         titleSettingsPane.getContent().setDisable(visible);
@@ -193,24 +183,14 @@ public class BeanBinder {
     titleSettingsPane.setGraphicTextGap(12);
   }
 
-  public void setIconVisibility(TitledPane titleSettingsPane, boolean visible) {
+  public static void setIconVisibility(TitledPane titleSettingsPane, boolean visible) {
     FontIcon icon = (FontIcon) titleSettingsPane.getGraphic();
     icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
   }
 
   //------------------------------------------------------
 
-  private String getProperty(String property) {
-    try {
-      return (String) PropertyUtils.getProperty(bean, property);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read string property " + property + ": " + e.getMessage());
-    }
-    return null;
-  }
-
-  private String getProperty(Object beanObject, String property, String defaultValue) {
+  private static String getProperty(Object beanObject, String property, String defaultValue) {
     try {
       String value = (String) PropertyUtils.getProperty(beanObject, property);
       if (!StringUtils.isEmpty(value)) {
@@ -223,9 +203,13 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private boolean getBooleanProperty(Object beanObject, String property, boolean defaultValue) {
+  private String getProperty(String property, String defaultValue) {
+    return getProperty(bean, property, defaultValue);
+  }
+
+  private boolean getBooleanProperty(String property, boolean defaultValue) {
     try {
-      return (Boolean) PropertyUtils.getProperty(beanObject, property);
+      return (Boolean) PropertyUtils.getProperty(bean, property);
     }
     catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
@@ -233,20 +217,12 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private int getIntProperty(String property) {
+  private int getIntProperty(String property, int defaultValue) {
     try {
-      return (int) PropertyUtils.getProperty(bean, property);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to read property " + property + ": " + e.getMessage());
-    }
-    return 0;
-  }
-
-  private int getIntProperty(Object beanObject, String property, int defaultValue) {
-    try {
-      String value = String.valueOf(PropertyUtils.getProperty(beanObject, property));
-      return Integer.parseInt(value);
+      String value = getProperty(property, null);
+      if (value != null) {
+        return Integer.parseInt(value);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
@@ -267,25 +243,6 @@ public class BeanBinder {
     }
     catch (Exception e) {
       LOG.error("Failed to set property " + property + ": " + e.getMessage());
-    }
-  }
-
-  public void setBean(Object bean) {
-    this.bean = bean;
-  }
-
-  public Object getBean() {
-    return bean;
-  }
-
-  public void setPaused(boolean paused) {
-    if (!paused) {
-      debouncer.debounce("delay", () -> {
-        this.paused = paused;
-      }, MAX_DEBOUNCE + 100);
-    }
-    else {
-      this.paused = paused;
     }
   }
 }
