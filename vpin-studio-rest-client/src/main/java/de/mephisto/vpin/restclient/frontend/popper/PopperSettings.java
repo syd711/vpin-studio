@@ -269,13 +269,25 @@ public class PopperSettings extends JsonSettings {
 
   public void setScriptData(String optionString) {
     if (optionString != null) {
-      String[] split = optionString.split("\r\n");
+      String[] split = optionString.split("\n");
+      if (optionString.contains("\r")) {
+        split = optionString.split("\r\n");
+      }
+
       for (String s : split) {
         try {
           if (!StringUtils.isEmpty(s) && s.contains("=")) {
             String[] valueLine = s.split("=");
             String key = valueLine[0];
-            int value = Integer.parseInt(valueLine[1]);
+            int value = 0;
+            try {
+              value = Integer.parseInt(valueLine[1]);
+            }
+            catch (NumberFormatException e) {
+              LOG.error("Failed to read script value line \"" + s + "\": " + e.getMessage());
+              continue;
+            }
+
             switch (key) {
               case "DelayReturn": {
                 this.delayReturn = value;
@@ -371,7 +383,8 @@ public class PopperSettings extends JsonSettings {
               }
             }
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to read script value line \"" + s + "\": " + e.getMessage());
         }
       }

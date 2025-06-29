@@ -31,6 +31,10 @@ public class StudioFileChooser {
     this.fileChooser.setTitle(title);
   }
 
+  public void setInitialFileName(String name) {
+    this.fileChooser.setInitialFileName(name);
+  }
+
   public ObservableList<FileChooser.ExtensionFilter> getExtensionFilters() {
     return this.fileChooser.getExtensionFilters();
   }

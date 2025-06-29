@@ -43,7 +43,7 @@ public class VPinStudioClientService {
     map.add("file", rsr);
     map.add("objectId", gameOrEmulatorId);
     map.add("uploadType", uploadType);
-    map.add("assetType", assetType.name());
+    map.add("assetType", assetType != null ? assetType.name() : null);
     return new HttpEntity<>(map, headers);
   }
 

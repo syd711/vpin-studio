@@ -780,6 +780,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
             String name = sectionMappings.get(section);
             if (name != null) {
+              display.setTechnicalName(section);
               display.setName(name);
               display.setScreen(VPinScreen.valueOfScreen(name));
               display.setX(sectionNode.getInt("ScreenXPos"));

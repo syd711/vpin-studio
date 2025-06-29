@@ -28,6 +28,8 @@
   - Improved refresh of backglass sidebar when multiple clicks in list
 - **Media Recorder**:
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
+- **Pause Menu**:
+  - Improved icon and label for tutorials.
 - **Main Window**:
   - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.
 - **Uploads**:
