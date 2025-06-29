@@ -14,6 +14,7 @@
 ## Installation Steps
 
 - Clone all 3x repositories
+- **Copy [jinput-dx8_64.dll](resources/jvm/jinput-dx8_64.dll) into the bin folder of your JDK FX.**
 - Inside the **vpin-studio** project, run the maven build for the module **vpin-connector-assets**.
 - Maven build the **vpin-studio-popper-client** project.
 - Maven build the **vpin-mania-rest-client** project **with skip tests!!!**.
