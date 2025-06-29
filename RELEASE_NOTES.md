@@ -31,6 +31,9 @@
   - Added missing game scan for FX emulators so that these are automatically imported when the emulator is set up via Studio. Note that you have to set the proper game folder and file extension for this.
   - The "Import Game" dialog is now enabled for all emulators. After creating a new emulator the dialog can be used to import the related games. This was limited to FP and VPX before.
 
+## Bugfixes
+
+- Fixed table validation when loading media asset was missing but mandatory
 
 ## VPin Mania
 
