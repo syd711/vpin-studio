@@ -16,7 +16,8 @@
   - DMDPosition tool support for UltraDMD and FlexDMD.
   - **Note that you have to rescan the table or press the reload button in the DMD section to update the DMD information**.
 - **Preferences**
-  - Moved system settings into the cabinet, trying to declutter the preferences navigation a bit.
+  - **Reorganization**: Moved system settings into the cabinet, trying to declutter the preferences navigation a bit.
+  - **Backups**: 
 - **Virtual Pinball Spreadsheet**:
   - **Tutorial Column**: Improved the "Tutorials" column. The column shows the available tutorials for the given table. Note that the **Kongedam** tutorials have an additional color indicator. (This indicator has a technical reason too. It ensures that all the latest and greatest from him are available in the pause menu too).
   - **Preferences**: The VPS related preferences have been moved into a separate preferences page under "3rd party preferences". **This is a breaking change since the preferences have also been reorganized in the backend. So you need to reconfigure the section if you did not use the default values here.**
@@ -30,6 +31,7 @@
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
 - **Pause Menu**:
   - Improved icon and label for tutorials.
+  - Disabled additional frontend screens when the pause menu is shown. These should not have been active anymore since the latest revamp that came with version 4.0.
   - New revamped icons! Thanks to @planetxplanetx!
 - **Main Window**:
   - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.

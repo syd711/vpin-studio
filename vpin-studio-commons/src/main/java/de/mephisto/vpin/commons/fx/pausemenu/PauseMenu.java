@@ -216,7 +216,8 @@ public class PauseMenu extends Application {
           long start = System.currentTimeMillis();
           try {
             screenAssets.clear();
-            screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
+            //TODO show no additional screens for now
+//            screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
             LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
           }
           catch (Exception e) {

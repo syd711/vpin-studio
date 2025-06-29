@@ -48,7 +48,7 @@ public class PreferencesController extends SettingsSceneController implements In
   /**
    * a singleton
    */
-  private static PreferencesController instance;
+  public static PreferencesController instance;
 
   @FXML
   private Pane root;
@@ -187,6 +187,10 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onClose(ActionEvent event) {
+    closePreferences();
+  }
+
+  public void closePreferences() {
     FadeTransition outFader = TransitionUtil.createOutFader(root, UIDefaults.FADER_DURATION);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override

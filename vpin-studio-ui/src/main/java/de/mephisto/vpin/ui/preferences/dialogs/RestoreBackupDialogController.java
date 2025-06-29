@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.backup.BackupDescriptor;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -89,26 +90,13 @@ public class RestoreBackupDialogController implements Initializable, DialogContr
     descriptor.setGameComments(gameNotesCheckbox.isSelected());
     descriptor.setGameVersion(gamesVersionCheckbox.isSelected());
 
-    JFXFuture.supplyAsync(() -> {
-      try {
-        File file = new File(fileNameField.getText());
-        client.getBackupService().restore(file, descriptor);
-      }
-      catch (Exception ex) {
-        LOG.error("Failed to write backup file: {}", ex.getMessage(), ex);
-        WidgetFactory.showAlert(stage, "Error", "Failed to write backup file: " + ex.getMessage());
-        stage.close();
-      }
-      return true;
-    }).thenLater(() -> {
-      stage.close();
+    File file = new File(fileNameField.getText());
 
-      Platform.runLater(() -> {
-        WidgetFactory.showInformation(Studio.stage, "Backup Restore Finished", "The backup file was successfully imported.");
-        PreferencesController.markDirty(PreferenceType.uiSettings);
-      });
+    Platform.runLater(() -> {
+      stage.close();
     });
 
+    ProgressDialog.createProgressDialog(new BackupRestoreProgressModel(file, descriptor));
   }
 
   @FXML
