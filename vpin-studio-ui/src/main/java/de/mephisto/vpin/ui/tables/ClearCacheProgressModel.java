@@ -66,7 +66,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return false;
   }
 
   @Override
