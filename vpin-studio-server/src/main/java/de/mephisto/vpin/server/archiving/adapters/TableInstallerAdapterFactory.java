@@ -3,8 +3,6 @@ package de.mephisto.vpin.server.archiving.adapters;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableInstallerAdapterVpa;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.TableInstallerAdapterVpbm;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -23,9 +21,6 @@ public class TableInstallerAdapterFactory {
   private FrontendService frontendService;
 
   @Autowired
-  private VpbmService vpbmService;
-
-  @Autowired
   private GameService gameService;
 
   public TableInstallerAdapter createAdapter(@NonNull ArchiveDescriptor archiveDescriptor, @NonNull GameEmulator emulator) {
@@ -34,9 +29,6 @@ public class TableInstallerAdapterFactory {
     switch (archiveType) {
       case VPA: {
         return new TableInstallerAdapterVpa(gameService, frontendService, archiveDescriptor, emulator);
-      }
-      case VPBM: {
-        return new TableInstallerAdapterVpbm(gameService, vpbmService, archiveDescriptor, emulator);
       }
       default: {
         throw new UnsupportedOperationException("Unkown archive type " + archiveType);

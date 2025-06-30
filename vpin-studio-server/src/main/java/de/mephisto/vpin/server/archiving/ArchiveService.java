@@ -6,9 +6,6 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSourceAdapter;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmArchiveSource;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmArchiveSourceAdapter;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -40,9 +37,6 @@ public class ArchiveService implements InitializingBean {
 
   @Autowired
   private ArchiveSourceRepository archiveSourceRepository;
-
-  @Autowired
-  private VpbmService vpbmService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -193,14 +187,8 @@ public class ArchiveService implements InitializingBean {
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
     String descriptorFilename = archiveDescriptor.getFilename();
     ArchiveType archiveType = ArchiveType.VPA;
-    if (descriptorFilename.endsWith("vpinzip")) {
-      archiveType = ArchiveType.VPBM;
-    }
 
     switch (archiveType) {
-      case VPBM: {
-        return new File(vpbmService.getArchiveFolder(), archiveDescriptor.getFilename());
-      }
       case VPA: {
         return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
       }
@@ -211,9 +199,6 @@ public class ArchiveService implements InitializingBean {
   public File getArchivesFolder() {
     ArchiveType archiveType = systemService.getArchiveType();
     switch (archiveType) {
-      case VPBM: {
-        return vpbmService.getBundlesFolder();
-      }
       case VPA: {
         return new File(RESOURCES, "vpa");
       }
@@ -233,14 +218,6 @@ public class ArchiveService implements InitializingBean {
     if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
       this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
-      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
-    }
-
-    //VPBM
-    if (systemService.getArchiveType().equals(ArchiveType.VPBM)) {
-      File vpbmArchiveFolder = vpbmService.getArchiveFolder();
-      ArchiveSource archiveSource = new VpbmArchiveSource(vpbmArchiveFolder);
-      this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 

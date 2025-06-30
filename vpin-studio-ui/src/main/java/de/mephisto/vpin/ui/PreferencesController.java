@@ -102,9 +102,6 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button pinballXSettingsBtn;
 
   @FXML
-  private Button vpbmBtn;
-
-  @FXML
   private Button overlayBtn;
 
   @FXML
@@ -320,11 +317,6 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
-  private void onVPBM(ActionEvent event) throws IOException {
-    load("preference-vpbm.fxml", event);
-  }
-
-  @FXML
   private void onVps(ActionEvent event) throws IOException {
     load("preference-vps.fxml", event);
   }
@@ -454,7 +446,6 @@ public class PreferencesController extends SettingsSceneController implements In
     pinballXSettingsBtn.managedProperty().bindBidirectional(pinballXSettingsBtn.visibleProperty());
     repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
     notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
-    vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
     overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
     pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
@@ -465,9 +456,7 @@ public class PreferencesController extends SettingsSceneController implements In
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
 
-    vpbmBtn.setVisible(Features.ARCHIVE_ENABLED);
-    repositoriesBtn.setVisible(false);
-//    repositoriesBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
 
     // activation of custom options according to installed frontend
     FrontendType frontendType = client.getFrontendService().getFrontendType();

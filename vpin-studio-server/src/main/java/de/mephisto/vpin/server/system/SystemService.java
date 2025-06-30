@@ -99,13 +99,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
       this.archiveType = ArchiveType.VPA;
 
-      //check test run
-      if (!systemProperties.contains("-test")) {
-        if (!store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equalsIgnoreCase(ArchiveType.VPBM.name())) {
-          archiveType = ArchiveType.VPBM;
-        }
-      }
-
       // Determination of the installed Frontend
       //Standalone Folder
       if (store.containsNonEmptyKey(STANDALONE_INSTALLATION_DIR)) {

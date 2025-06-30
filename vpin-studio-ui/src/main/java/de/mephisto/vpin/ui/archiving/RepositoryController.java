@@ -10,12 +10,10 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -68,9 +66,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @FXML
   private Button bundleBtn;
-
-  @FXML
-  private Button vpbmBtbn;
 
   @FXML
   private TextField searchTextField;
@@ -135,25 +130,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
     searchTextField.setText("");
   }
 
-  @FXML
-  private void onVPBM() {
-    Platform.runLater(() -> {
-      vpbmBtbn.setDisable(true);
-    });
-
-    VPBMPreferencesController.openVPBM();
-
-
-    Platform.runLater(() -> {
-      try {
-        Thread.sleep(2000);
-      }
-      catch (InterruptedException e) {
-        //ignore
-      }
-      vpbmBtbn.setDisable(false);
-    });
-  }
 
   @FXML
   private void onRestore() {
@@ -308,11 +284,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     copyToRepositoryBtn.setVisible(false);
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
 
-    vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());
-
     systemSummary = client.getSystemService().getSystemSummary();
-    vpbmBtbn.setVisible(systemSummary.getArchiveType().equals(ArchiveType.VPBM));
-
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -485,9 +457,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
     bundleBtn.setDisable(true);
     copyToRepositoryBtn.setDisable(true);
 
-    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || (
-        !Studio.client.getSystemService().isLocal() && new File("resources", "vpbm").exists()));
-
     EventManager.getInstance().addListener(this);
     this.doReload();
   }
@@ -520,10 +489,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
     for (ArchiveDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (systemSummary.getArchiveType().equals(ArchiveType.VPBM) && !filename.endsWith(".vpinzip")) {
-          continue;
-        }
-
         if (systemSummary.getArchiveType().equals(ArchiveType.VPA) && !filename.endsWith(".vpa")) {
           continue;
         }

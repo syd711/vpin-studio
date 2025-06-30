@@ -5,8 +5,6 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.TableBackupAdapterVpbm;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -26,9 +24,6 @@ public class TableBackupAdapterFactory {
   @Autowired
   private VpaService vpaService;
 
-  @Autowired
-  private VpbmService vpbmService;
-
   public TableBackupAdapter createAdapter(@NonNull ArchiveSourceAdapter archiveSourceAdapter, @NonNull Game game) {
     ArchiveType archiveType = systemService.getArchiveType();
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
@@ -36,9 +31,6 @@ public class TableBackupAdapterFactory {
     switch (archiveType) {
       case VPA: {
         return new TableBackupAdapterVpa(vpaService, archiveSourceAdapter, game, tableDetails);
-      }
-      case VPBM: {
-        return new TableBackupAdapterVpbm(vpbmService, archiveSourceAdapter, game, tableDetails);
       }
       default: {
         throw new UnsupportedOperationException("Unkown archive type " +archiveType);

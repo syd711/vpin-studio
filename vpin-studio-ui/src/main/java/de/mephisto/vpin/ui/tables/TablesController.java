@@ -196,7 +196,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (!Features.STATISTICS_ENABLED) {
       tabPane.getTabs().remove(tablesStatisticsTab);
     }
-    if (!Features.ARCHIVE_ENABLED) {
+    if (!Features.BACKUPS_ENABLED) {
       tabPane.getTabs().remove(tableRepositoryTab);
     }
 
@@ -243,7 +243,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     try {
-      if (Features.BACKUP_VIEW_ENABLED) {
+      if (Features.BACKUPS_ENABLED) {
         FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
         Parent repositoryRoot = loader.load();
         repositoryController = loader.getController();

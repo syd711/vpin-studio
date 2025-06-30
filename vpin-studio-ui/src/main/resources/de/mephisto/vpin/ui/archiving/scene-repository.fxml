@@ -9,14 +9,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositoryController">
+<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositoryController">
     <children>
         <BorderPane>
             <center>
@@ -66,21 +64,6 @@
                      </children>
                   </StackPane>
                   <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="vpbmBtbn" layoutX="553.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="external-component" text="VPBM" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../vpbm-128.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Open the VPBM user interface." />
-                     </tooltip>
-                  </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
                      <font>
