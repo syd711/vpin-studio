@@ -391,7 +391,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
-      if (!validScreenAssets(game, VPinScreen.PlayField)) {
+      if (!validScreenAssets(game, VPinScreen.Loading)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
         if (findFirst) {
           return result;
