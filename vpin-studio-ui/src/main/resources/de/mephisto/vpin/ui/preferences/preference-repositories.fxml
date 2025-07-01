@@ -29,7 +29,7 @@
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHttpAdd" text="Add" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="Add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -60,7 +60,7 @@
               <columns>
                   <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Enabled" />
                 <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="URL" />
+                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Location" />
               </columns>
             </TableView>
          </children>

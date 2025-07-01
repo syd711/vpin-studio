@@ -158,7 +158,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @FXML
   private void onArchiveAdd() {
-    boolean uploaded = TableDialogs.openArchiveUploadDialog();
+    boolean uploaded = ArchivingDialogs.openArchiveUploadDialog();
     if (uploaded) {
       doReload();
     }
@@ -168,7 +168,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onDownload() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      TableDialogs.openArchiveDownloadDialog(selectedItems);
+      ArchivingDialogs.openArchiveDownloadDialog(selectedItems);
     }
   }
 
@@ -177,10 +177,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
       if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ)) {
-        TableDialogs.openVpaArchiveBundleDialog(selectedItems);
-      }
-      else {
-        TableDialogs.openVpbmArchiveBundleDialog(selectedItems);
+        ArchivingDialogs.openVpaArchiveBundleDialog(selectedItems);
       }
     }
   }
@@ -189,7 +186,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onToRepositoryCopy() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      TableDialogs.openCopyArchiveToRepositoryDialog(selectedItems);
+      ArchivingDialogs.openCopyArchiveToRepositoryDialog(selectedItems);
     }
   }
 

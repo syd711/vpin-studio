@@ -45,7 +45,7 @@ public class VpaArchiveSource extends ArchiveSource {
 
   @Override
   public String getName() {
-    return "VPXZ Default Backups Folder";
+    return ".vpxz Default Backups Folder";
   }
 
   @Override

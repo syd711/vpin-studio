@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.archiving.ArchivingDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.TableDialogs;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -52,11 +52,11 @@ public class TableRepositoriesPreferencesController implements Initializable {
       ArchiveSourceType archiveSourceType = ArchiveSourceType.valueOf(selectedItem.getType());
       switch (archiveSourceType) {
         case File: {
-          sourceRepresentation = TableDialogs.openArchiveSourceFileDialog(selectedItem);
+          sourceRepresentation = ArchivingDialogs.openArchiveSourceFolderDialog(selectedItem);
           break;
         }
         default: {
-          sourceRepresentation = TableDialogs.openArchiveSourceHttpDialog(selectedItem);
+          sourceRepresentation = ArchivingDialogs.openArchiveSourceHttpDialog(selectedItem);
           break;
         }
       }
@@ -74,7 +74,20 @@ public class TableRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private void onHttpAdd() {
-    ArchiveSourceRepresentation sourceRepresentation = TableDialogs.openArchiveSourceHttpDialog(null);
+    ArchiveSourceRepresentation sourceRepresentation = ArchivingDialogs.openArchiveSourceHttpDialog(null);
+    if (sourceRepresentation != null) {
+      try {
+        client.getArchiveService().saveArchiveSource(sourceRepresentation);
+      } catch (Exception e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
+      }
+      onReload();
+    }
+  }
+
+  @FXML
+  private void onFolderAdd() {
+    ArchiveSourceRepresentation sourceRepresentation = ArchivingDialogs.openArchiveSourceFolderDialog(null);
     if (sourceRepresentation != null) {
       try {
         client.getArchiveService().saveArchiveSource(sourceRepresentation);
