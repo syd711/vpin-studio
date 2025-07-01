@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSource;
@@ -41,7 +42,7 @@ public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith(".vpa"));
+      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + ArchiveType.VPXZ.name().toLowerCase()));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {
@@ -49,7 +50,8 @@ public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
             ArchivePackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
             ArchiveDescriptor descriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.length());
             cache.put(archiveFile.getName(), descriptor);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
           }
         }

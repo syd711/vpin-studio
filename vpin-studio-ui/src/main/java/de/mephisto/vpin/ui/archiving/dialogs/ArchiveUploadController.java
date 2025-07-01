@@ -74,7 +74,8 @@ public class ArchiveUploadController implements Initializable, DialogController 
         if (progressResult.isCancelled()) {
           result = false;
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Uploading archive failed", "Please check the log file for details", "Error: " + e.getMessage());
       }
@@ -87,10 +88,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
 
-    List<String> filters = Arrays.asList("*.vpinzip", "*.zip");
-    if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
-      filters = Arrays.asList("*.vpa");
-    }
+    List<String> filters = Arrays.asList("*." + ArchiveType.VPXZ.name().toLowerCase());
 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Archives");

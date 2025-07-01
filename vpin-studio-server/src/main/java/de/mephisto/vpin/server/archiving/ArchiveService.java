@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSourceAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -186,10 +186,10 @@ public class ArchiveService implements InitializingBean {
 
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
     String descriptorFilename = archiveDescriptor.getFilename();
-    ArchiveType archiveType = ArchiveType.VPA;
+    ArchiveType archiveType = ArchiveType.VPXZ;
 
     switch (archiveType) {
-      case VPA: {
+      case VPXZ: {
         return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
       }
     }
@@ -199,8 +199,8 @@ public class ArchiveService implements InitializingBean {
   public File getArchivesFolder() {
     ArchiveType archiveType = systemService.getArchiveType();
     switch (archiveType) {
-      case VPA: {
-        return new File(RESOURCES, "vpa");
+      case VPXZ: {
+        return new File(RESOURCES, ArchiveType.VPXZ.name().toLowerCase());
       }
     }
     return null;
@@ -208,14 +208,8 @@ public class ArchiveService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
-    if(!StringUtils.isEmpty(systemName) && systemName.contains("Syd")) {
-//      systemService.setArchiveType(ArchiveType.VPA);
-//      LOG.info("Switched archiving mode to VPA.");
-    }
-
-    //VPA
-    if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
+    //VPXZ
+    if (systemService.getArchiveType().equals(ArchiveType.VPXZ)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
       this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);

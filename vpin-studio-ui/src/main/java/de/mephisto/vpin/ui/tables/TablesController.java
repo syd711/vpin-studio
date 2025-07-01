@@ -161,7 +161,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         break;
       }
       case TAB_REPOSITORY: {
-        PreferencesController.open("vpbm");
+        PreferencesController.open("repositories");
         break;
       }
       case TAB_RECORDER: {

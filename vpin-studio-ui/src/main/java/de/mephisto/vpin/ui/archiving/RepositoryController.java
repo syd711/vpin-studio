@@ -2,14 +2,15 @@ package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -39,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -176,7 +176,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onBundle() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
+      if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ)) {
         TableDialogs.openVpaArchiveBundleDialog(selectedItems);
       }
       else {
@@ -322,8 +322,11 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
     nameColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
-      String gameDisplayName = value.getTableDetails().getGameDisplayName();
-      return new SimpleStringProperty(gameDisplayName);
+      TableDetails tableDetails = value.getTableDetails();
+      if (tableDetails != null) {
+        return new SimpleStringProperty(tableDetails.getGameDisplayName());
+      }
+      return new SimpleStringProperty(FilenameUtils.getBaseName(value.getFilename()));
     });
 
     directB2SColumn.setCellValueFactory(cellData -> {
@@ -458,7 +461,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
     copyToRepositoryBtn.setDisable(true);
 
     EventManager.getInstance().addListener(this);
-    this.doReload();
   }
 
   @Override
@@ -468,6 +470,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     if (archiveDescriptor != null) {
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, archiveDescriptor.getFilename()));
     }
+
+    this.doReload();
   }
 
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
@@ -489,7 +493,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     for (ArchiveDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (systemSummary.getArchiveType().equals(ArchiveType.VPA) && !filename.endsWith(".vpa")) {
+        if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ) && !filename.endsWith("." + ArchiveType.VPXZ.name().toLowerCase())) {
           continue;
         }
 

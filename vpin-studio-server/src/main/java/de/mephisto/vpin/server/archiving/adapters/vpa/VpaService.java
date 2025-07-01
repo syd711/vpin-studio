@@ -37,6 +37,30 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+/**
+ * - Table folder
+ *     - <table>.vpx
+ *     - <table>.vbs (if necessary)
+ *     - <table>.ini (if desired)
+ *     - <table>.directb2s (if desired)
+ *     - music (if table has music)
+ *        - *
+ *     - pupvideos (if table has pup)
+ *        - *
+ *     - pinmame
+ *        - roms
+ *           - <rom>.zip
+ *        - altcolor
+ *           - <rom>
+ *              - <rom>.cRZ (if you want)
+ *        - altsound
+ *           - <rom>
+ *              - * (if you want)
+ *        - nvram
+ *           - <rom>.nv (if you want)
+ *        - ini
+ *           - <rom>.ini (if you want)
+ */
 @Service
 public class VpaService {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);

@@ -435,7 +435,7 @@ public class PreferencesController extends SettingsSceneController implements In
       preferencesMain.setCenter(node);
     }
     catch (Exception e) {
-      LOG.error("Failed to loading settings view: " + e.getMessage(), e);
+      LOG.error("Failed to loading settings view {}: {}", screen, e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
     }
   }

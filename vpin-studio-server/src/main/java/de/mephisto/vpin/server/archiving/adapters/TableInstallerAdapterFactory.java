@@ -27,7 +27,7 @@ public class TableInstallerAdapterFactory {
     ArchiveType archiveType = systemService.getArchiveType();
 
     switch (archiveType) {
-      case VPA: {
+      case VPXZ: {
         return new TableInstallerAdapterVpa(gameService, frontendService, archiveDescriptor, emulator);
       }
       default: {
