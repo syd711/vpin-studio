@@ -65,7 +65,7 @@ public class VpaArchiveBundleDialogController implements Initializable, DialogCo
         stage.close();
       });
 
-      ProgressDialog.createProgressDialog(new BundleProgressModel("Bundle Creation", this.targetFolder, archiveBundleDescriptor));
+//      ProgressDialog.createProgressDialog(new BundleProgressModel("Bundle Creation", this.targetFolder, archiveBundleDescriptor));
 
     } catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);

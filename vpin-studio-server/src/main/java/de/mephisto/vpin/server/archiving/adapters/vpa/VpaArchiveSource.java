@@ -30,7 +30,7 @@ public class VpaArchiveSource extends ArchiveSource {
 
   @Override
   public String getType() {
-    return ArchiveSourceType.File.name();
+    return ArchiveSourceType.Folder.name();
   }
 
   @Override

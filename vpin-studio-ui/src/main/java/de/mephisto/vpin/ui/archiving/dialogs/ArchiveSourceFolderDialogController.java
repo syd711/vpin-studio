@@ -52,7 +52,7 @@ public class ArchiveSourceFolderDialogController implements Initializable, Dialo
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(ArchiveSourceType.File.name());
+    this.source.setType(ArchiveSourceType.Folder.name());
     this.source.setName(nameField.getText());
     this.source.setLocation(folderField.getText());
     this.source.setEnabled(enabledCheckbox.isSelected());

@@ -89,29 +89,15 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return executor.submit(task);
   }
 
-  public boolean installArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
-    try {
-      return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
-    } catch (Exception e) {
-      LOG.error("Failed install archive: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public boolean backupTable(BackupDescriptor exportDescriptor) throws Exception {
-    return getRestClient().post(API + "io/backup", exportDescriptor, Boolean.class);
+    return getRestClient().post(API + "archives/backup", exportDescriptor, Boolean.class);
   }
 
   public boolean installTable(ArchiveRestoreDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "io/install", descriptor, Boolean.class);
+    return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
   }
 
   public boolean copyToRepository(ArchiveCopyToRepositoryDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "io/copytorepository", descriptor, Boolean.class);
-  }
-
-  public String bundle(ArchiveBundleDescriptor descriptor) throws Exception {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "io/bundle", descriptor, String.class);
+    return getRestClient().post(API + "archives/copytorepository", descriptor, Boolean.class);
   }
 }

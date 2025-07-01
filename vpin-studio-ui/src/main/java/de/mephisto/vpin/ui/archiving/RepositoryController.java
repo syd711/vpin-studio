@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -412,10 +413,10 @@ public class RepositoryController implements Initializable, StudioFXController, 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       ArchiveSourceRepresentation archiveSource = sourceCombo.getValue();
 
-      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
-      addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
-      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
-      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
+      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
+      addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()));
+      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
+      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
       copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()) || newSelection == null);
 
 
@@ -443,9 +444,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
-      addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
-      restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
-      bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
+      addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
+      restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
+      bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
 
       tableView.getSelectionModel().clearSelection();
       doReload();
@@ -562,6 +563,15 @@ public class RepositoryController implements Initializable, StudioFXController, 
         searchTextField.setText("");
       }
       event.consume();
+    }
+  }
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.backups)) {
+      Platform.runLater(() -> {
+        onReload();
+      });
     }
   }
 }

@@ -19,8 +19,6 @@ import java.util.List;
 public class ArchiveUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
 
-  public final static String DESCRIPTOR_JSON = "descriptor.json";
-
   public static ArchiveDescriptor readArchiveDescriptor(@NonNull ArchiveSource source, @NonNull File archiveFile) {
     try {
       if (archiveFile.exists()) {
@@ -78,12 +76,6 @@ public class ArchiveUtil {
     } catch (IOException e) {
       LOG.error("Error writing export archive descriptor for " + descriptor.getFilename() + ": " + e.getMessage(), e);
     }
-  }
-
-  public static void exportDescriptorJson(ArchiveSourceAdapter archiveAdapter) {
-    List<ArchiveDescriptor> descriptors = archiveAdapter.getArchiveDescriptors();
-    File target = new File(archiveAdapter.getArchiveSource().getLocation(), DESCRIPTOR_JSON);
-    exportDescriptorJson(descriptors, target);
   }
 
   public static File exportDescriptorJson(List<ArchiveDescriptor> descriptors, File target) {

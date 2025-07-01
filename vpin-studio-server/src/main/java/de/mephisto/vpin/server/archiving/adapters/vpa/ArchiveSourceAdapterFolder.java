@@ -15,14 +15,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveSourceAdapter.class);
+public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterFolder.class);
 
   private final ArchiveSource source;
   private final File archiveFolder;
   private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public VpaArchiveSourceAdapter(ArchiveSource source) {
+  public ArchiveSourceAdapterFolder(ArchiveSource source) {
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
   }
@@ -84,7 +84,6 @@ public class VpaArchiveSourceAdapter implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-    ArchiveUtil.exportDescriptorJson(this);
     getArchiveDescriptors();
     LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
   }
