@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+
 <?import javafx.scene.layout.BorderPane?>
-
-
+<?import javafx.scene.media.MediaView?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="0.0" rotate="-90.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.MaintenanceController">
    <center>
-      <ImageView fx:id="imageView" pickOnBounds="true" BorderPane.alignment="CENTER">
-         <image>
-            <Image url="http://localhost:8089/api/v1/assets/maintenance" />
-         </image>
-      </ImageView>
+      <MediaView fx:id="mediaView" pickOnBounds="true" BorderPane.alignment="CENTER">
+      </MediaView>
    </center>
 </BorderPane>

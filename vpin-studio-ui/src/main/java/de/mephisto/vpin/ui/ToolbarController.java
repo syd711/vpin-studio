@@ -92,9 +92,6 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private ToggleButton maintenanceBtn;
 
   @FXML
-  private HBox toolbarHBox;
-
-  @FXML
   private Label breadcrumb;
 
   @FXML

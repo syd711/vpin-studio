@@ -37,6 +37,8 @@
   - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.
 - **Uploads**:
   - Fixed and improved ROM name detection of ALT sound bundles.
+- **Maintenance Mode**:
+  - Switched from showing an image to an (OLED friendly) maintenance video.
 - **Emulator Management**: 
   - Added missing game deletion from the database when an emulator is deleted.
   - Added missing server-side cache invalidations after emulator changes.
