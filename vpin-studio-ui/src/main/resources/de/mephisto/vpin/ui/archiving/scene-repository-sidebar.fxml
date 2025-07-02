@@ -12,14 +12,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.kordamp.ikonli.javafx.Label?>
 
-
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositorySidebarController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositorySidebarController">
    <center>
       <Accordion fx:id="repositoryAccordion">
         <panes>
-            <TitledPane fx:id="detailsPane" layoutX="10.0" layoutY="10.0" text="Archive Details">
+            <TitledPane fx:id="detailsPane" layoutX="10.0" layoutY="10.0" text="File Details">
                <content>
                   <ScrollPane hbarPolicy="NEVER">
                      <content>
@@ -41,7 +40,6 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label text="Filename:">
@@ -86,22 +84,32 @@
                                     </Label>
                                  </children>
                               </GridPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </TitledPane>
+            <TitledPane fx:id="assetsPane" layoutX="10.0" layoutY="10.0" text="Assets">
+               <content>
+                  <ScrollPane hbarPolicy="NEVER">
+                     <content>
+                        <VBox>
+                           <children>
                               <Label layoutX="20.0" layoutY="20.0" text="Included Files &amp; Data">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
                               <GridPane>
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="185.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="403.20002441406245" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="185.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="403.20002441406245" />
+                                 </columnConstraints>
+                                 <rowConstraints>
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -111,92 +119,93 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
                                  <children>
-                                    <Label text="DirectB2S:">
+                                    <Label text="DirectB2S:" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="PUP Pack:" GridPane.rowIndex="1">
+                                    <Label layoutX="10.0" layoutY="15.0" text="PUP Pack:" GridPane.rowIndex="5">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="ROM:" GridPane.rowIndex="2">
+                                    <Label layoutX="10.0" layoutY="45.0" text="ROM:" GridPane.rowIndex="4">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="76.0" text="Popper Media:" GridPane.rowIndex="4">
+                                    <Label layoutX="10.0" layoutY="76.0" text="Popper Media:" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="106.0" text="Highscore Data:" GridPane.rowIndex="12">
+                                    <Label layoutX="10.0" layoutY="106.0" text="Highscore Data:" GridPane.rowIndex="11">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="106.0" text="Flex DMD:" GridPane.rowIndex="5">
+                                    <Label layoutX="10.0" layoutY="106.0" text="DMD:" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="137.0" text="Ultra DMD:" GridPane.rowIndex="6">
+                                    <Label layoutX="10.0" layoutY="168.0" text="Alt Sound:" GridPane.rowIndex="9">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" text="Alt Sound:" GridPane.rowIndex="8">
+                                    <Label layoutX="10.0" layoutY="198.0" text="POV File:" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="directb2sIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" GridPane.columnIndex="1" />
-                                    <Label layoutX="10.0" layoutY="198.0" text="POV File:" GridPane.rowIndex="10">
+                                    <Label fx:id="pupPackLabel" layoutX="174.0" layoutY="34.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="romLabel" layoutX="174.0" layoutY="65.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Label fx:id="popperLabel" layoutX="174.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                    <Label fx:id="altSoundLabel" layoutX="174.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                    <Label fx:id="povLabel" layoutX="174.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label fx:id="highscoreLabel" layoutX="174.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                    <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="8">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="pupPackIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="34.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <FontIcon fx:id="romIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="65.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <FontIcon fx:id="popperIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                    <FontIcon fx:id="flexIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="126.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <FontIcon fx:id="ultraIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="156.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                    <FontIcon fx:id="altSoundIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <FontIcon fx:id="povIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                    <FontIcon fx:id="highscoreIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="174.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                                    <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="7">
+                                    <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                    <Label layoutX="10.0" layoutY="228.0" text="Alt Color:" GridPane.rowIndex="10">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="musicIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="192.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                    <Label layoutX="10.0" layoutY="228.0" text="Alt Color:" GridPane.rowIndex="9">
+                                    <Label fx:id="altColorLabel" layoutX="194.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                    <Label layoutX="10.0" layoutY="289.0" text="RES File:" GridPane.rowIndex="3">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="altColorIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                    <Label layoutX="10.0" layoutY="289.0" text="RES File:" GridPane.rowIndex="11">
+                                    <Label fx:id="resLabel" layoutX="194.0" layoutY="308.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label layoutX="10.0" layoutY="380.0" text="Windows Registry Entries:" GridPane.rowIndex="12">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="resIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="308.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                                    <Label layoutX="10.0" layoutY="76.0" text="Mame Config File:" GridPane.rowIndex="3">
+                                    <Label fx:id="registryLabel" layoutX="191.0" layoutY="399.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                    <Label fx:id="directb2sLabel" layoutX="10.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="cfgIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="194.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Label layoutX="10.0" layoutY="380.0" text="Windows Registry Entries:" GridPane.rowIndex="13">
+                                    <Label layoutX="10.0" layoutY="45.0" text="Table File:">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <FontIcon fx:id="registryIcon" iconColor="#FFFFFF" iconLiteral="bi-check-circle" iconSize="18" layoutX="191.0" layoutY="399.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                                  </children>
                               </GridPane>
                            </children>

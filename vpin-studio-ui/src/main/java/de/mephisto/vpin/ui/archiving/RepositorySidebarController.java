@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.archiving;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
@@ -13,9 +13,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private TitledPane detailsPane;
 
   @FXML
-  private VBox repositoryAccordionVBox;
+  private TitledPane assetsPane;
 
   @FXML
   private Label sourceLabel;
@@ -49,46 +47,43 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label lastModifiedLabel;
 
   @FXML
-  private FontIcon directb2sIcon;
+  private Label directb2sLabel;
 
   @FXML
-  private FontIcon pupPackIcon;
+  private Label pupPackLabel;
 
   @FXML
-  private FontIcon romIcon;
+  private Label romLabel;
 
   @FXML
-  private FontIcon cfgIcon;
+  private Label iniLabel;
 
   @FXML
-  private FontIcon popperIcon;
+  private Label popperLabel;
 
   @FXML
-  private FontIcon flexIcon;
+  private Label dmdLabel;
 
   @FXML
-  private FontIcon ultraIcon;
+  private Label musicLabel;
 
   @FXML
-  private FontIcon musicIcon;
+  private Label altSoundLabel;
 
   @FXML
-  private FontIcon altSoundIcon;
+  private Label altColorLabel;
 
   @FXML
-  private FontIcon altColorIcon;
+  private Label povLabel;
 
   @FXML
-  private FontIcon povIcon;
+  private Label resLabel;
 
   @FXML
-  private FontIcon resIcon;
+  private Label highscoreLabel;
 
   @FXML
-  private FontIcon highscoreIcon;
-
-  @FXML
-  private FontIcon registryIcon;
+  private Label registryLabel;
 
   @FXML
   private TitledPane manifestPane;
@@ -179,20 +174,19 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   }
 
   public void setArchiveDescriptor(Optional<ArchiveDescriptorRepresentation> selection) {
-    directb2sIcon.setVisible(false);
-    pupPackIcon.setVisible(false);
-    romIcon.setVisible(false);
-    popperIcon.setVisible(false);
-    flexIcon.setVisible(false);
-    ultraIcon.setVisible(false);
-    musicIcon.setVisible(false);
-    altSoundIcon.setVisible(false);
-    altColorIcon.setVisible(false);
-    resIcon.setVisible(false);
-    cfgIcon.setVisible(false);
-    povIcon.setVisible(false);
-    highscoreIcon.setVisible(false);
-    registryIcon.setVisible(false);
+    directb2sLabel.setText("-");
+    pupPackLabel.setText("-");
+    romLabel.setText("-");
+    popperLabel.setText("-");
+    dmdLabel.setText("-");
+    musicLabel.setText("-");
+    altSoundLabel.setText("-");
+    altColorLabel.setText("-");
+    resLabel.setText("-");
+    iniLabel.setText("-");
+    povLabel.setText("-");
+    highscoreLabel.setText("-");
+    registryLabel.setText("-");
 
     filenameLabel.setText("-");
     filenameLabel.setTooltip(null);
@@ -213,20 +207,19 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       ArchivePackageInfo packageInfo = descriptorRepresentation.getPackageInfo();
 
       if (packageInfo != null) {
-        directb2sIcon.setVisible(packageInfo.isDirectb2s());
-        pupPackIcon.setVisible(packageInfo.isPupPack());
-        romIcon.setVisible(packageInfo.isRom());
-        resIcon.setVisible(packageInfo.isRes());
-        cfgIcon.setVisible(packageInfo.isCfg());
-        popperIcon.setVisible(packageInfo.isPopperMedia());
-        flexIcon.setVisible(packageInfo.isFlexDMD());
-        ultraIcon.setVisible(packageInfo.isUltraDMD());
-        musicIcon.setVisible(packageInfo.isMusic());
-        altSoundIcon.setVisible(packageInfo.isAltSound());
-        altColorIcon.setVisible(packageInfo.isAltColor());
-        povIcon.setVisible(packageInfo.isPov());
-        highscoreIcon.setVisible(packageInfo.isHighscore());
-        registryIcon.setVisible(packageInfo.isRegistryData());
+        directb2sLabel.setText(applyValue(packageInfo.getDirectb2s()));
+        pupPackLabel.setText(applyValue(packageInfo.getPupPack()));
+        romLabel.setText(applyValue(packageInfo.getRom()));
+        resLabel.setText(applyValue(packageInfo.getRes()));
+        iniLabel.setText(applyValue(packageInfo.getIni()));
+        popperLabel.setText(applyValue(packageInfo.getPopperMedia()));
+        dmdLabel.setText(applyValue(packageInfo.getDmd()));
+        musicLabel.setText(applyValue(packageInfo.getMusic()));
+        altSoundLabel.setText(applyValue(packageInfo.getAltSound()));
+        altColorLabel.setText(applyValue(packageInfo.getAltColor()));
+        povLabel.setText(applyValue(packageInfo.getPov()));
+        highscoreLabel.setText(applyValue(packageInfo.getHighscore()));
+        registryLabel.setText(applyValue(packageInfo.getRegistryData()));
       }
 
       TableDetails tableDetails = descriptorRepresentation.getTableDetails();
@@ -248,8 +241,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
-      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" : 
-        VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
+      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" :
+          VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
       gameRating.setText(tableDetails.getGameRating() == null ? "?" : String.valueOf(tableDetails.getGameRating()));
       dof.setText(StringUtils.isEmpty(tableDetails.getDof()) ? "-" : tableDetails.getDof());
       IPDBNum.setText(StringUtils.isEmpty(tableDetails.getIPDBNum()) ? "-" : tableDetails.getIPDBNum());
@@ -261,5 +254,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     else {
 
     }
+  }
+
+  private String applyValue(String value) {
+    return value == null ? "-" : value;
   }
 }

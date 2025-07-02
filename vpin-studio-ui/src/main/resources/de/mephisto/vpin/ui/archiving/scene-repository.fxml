@@ -23,11 +23,19 @@
                   <TableColumn fx:id="iconColumn" minWidth="0.0" prefWidth="90.39989471435547" style="-fx-alignment: CENTER;" />
                         <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                   <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                  <TableColumn fx:id="iniColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="INI" />
+                  <TableColumn fx:id="vbsColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="VBS" />
+                  <TableColumn fx:id="resColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="RES" />
+                  <TableColumn fx:id="povColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="POV" />
+                  <TableColumn fx:id="highscoreColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Highscores" />
                   <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="PUP Pack" />
-                  <TableColumn fx:id="romColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ROM" />
-                  <TableColumn fx:id="popperColumn" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Popper Media" />
-                  <TableColumn fx:id="povColumn" style="-fx-alignment: CENTER;" text="POV" />
+                  <TableColumn fx:id="popperColumn" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Frontend Media" />
+                  <TableColumn fx:id="romColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="ROM" />
                   <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                  <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
+                  <TableColumn fx:id="musicColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Music" />
+                  <TableColumn fx:id="dmdColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="DMD" />
+                  <TableColumn fx:id="registryColumn" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Registry Data" />
                   <TableColumn fx:id="sizeColumn" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Size" />
                   <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Created At" />
                     </columns>
@@ -45,7 +53,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <StackPane alignment="CENTER_RIGHT">
                      <children>
                         <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="200.0" promptText="Search Backups...">
@@ -63,8 +71,7 @@
                         </Button>
                      </children>
                   </StackPane>
-                  <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -76,7 +83,7 @@
                         <Tooltip text="Restores the tables from the selected archives." />
                      </tooltip>
                   </Button>
-                  <Separator layoutX="637.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="637.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="Upload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

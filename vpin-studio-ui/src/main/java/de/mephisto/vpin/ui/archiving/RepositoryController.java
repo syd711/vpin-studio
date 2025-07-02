@@ -99,7 +99,31 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private TableColumn<ArchiveDescriptorRepresentation, String> povColumn;
 
   @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> iniColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> vbsColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> resColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> musicColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> highscoreColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> dmdColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> registryColumn;
+
+  @FXML
   private TableColumn<ArchiveDescriptorRepresentation, String> altSoundColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> altColorColumn;
 
   @FXML
   private TableColumn<ArchiveDescriptorRepresentation, String> sizeColumn;
@@ -330,8 +354,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     directB2SColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean directb2s = value.getPackageInfo().isDirectb2s();
-        if (directb2s) {
+        String directb2s = value.getPackageInfo().getDirectb2s();
+        if (directb2s != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -341,8 +365,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     pupPackColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean packaged = value.getPackageInfo().isPupPack();
-        if (packaged) {
+        String pupPack = value.getPackageInfo().getPupPack();
+        if (pupPack != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -353,8 +377,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     popperColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean packaged = value.getPackageInfo().isPopperMedia();
-        if (packaged) {
+        String media = value.getPackageInfo().getPopperMedia();
+        if (media != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -365,9 +389,99 @@ public class RepositoryController implements Initializable, StudioFXController, 
     povColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean pov = value.getPackageInfo().isPov();
-        if (pov) {
+        String pov = value.getPackageInfo().getPov();
+        if (pov != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    iniColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String pov = value.getPackageInfo().getIni();
+        if (pov != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    vbsColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String vbs = value.getPackageInfo().getVbs();
+        if (vbs != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    resColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String res = value.getPackageInfo().getRes();
+        if (res != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    musicColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String mus = value.getPackageInfo().getMusic();
+        if (mus != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+
+    highscoreColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String highscore = value.getPackageInfo().getHighscore();
+        if (highscore != null) {
+          return new SimpleObjectProperty(highscore);
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    dmdColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String dmd = value.getPackageInfo().getDmd();
+        if (dmd != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    registryColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String reg = value.getPackageInfo().getRegistryData();
+        if (reg != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+
+    altColorColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String altColor = value.getPackageInfo().getAltColor();
+        if (altColor != null) {
+          return new SimpleObjectProperty(altColor);
         }
       }
       return new SimpleStringProperty("");
@@ -376,9 +490,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
     romColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean packaged = value.getPackageInfo().isPopperMedia();
-        if (packaged) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        String rom = value.getPackageInfo().getRom();
+        if (rom != null) {
+          return new SimpleObjectProperty(rom);
         }
       }
       return new SimpleStringProperty("");
@@ -387,8 +501,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     altSoundColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean enabled = value.getPackageInfo().isAltSound();
-        if (enabled) {
+        String altSound = value.getPackageInfo().getAltSound();
+        if (altSound != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }

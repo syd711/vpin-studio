@@ -34,7 +34,7 @@ public class DMDService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
-  private File getDmdFolder(Game game) {
+  public File getDmdFolder(Game game) {
     File tablesFolder = game.getGameFile().getParentFile();
     return new File(tablesFolder, game.getDMDProjectFolder());
   }
