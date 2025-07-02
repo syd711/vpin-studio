@@ -59,6 +59,18 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label iniLabel;
 
   @FXML
+  private Label vbsLabel;
+
+  @FXML
+  private Label registryLabel;
+
+  @FXML
+  private Label vpxLabel;
+
+  @FXML
+  private Label resLabel;
+
+  @FXML
   private Label popperLabel;
 
   @FXML
@@ -77,13 +89,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label povLabel;
 
   @FXML
-  private Label resLabel;
-
-  @FXML
   private Label highscoreLabel;
-
-  @FXML
-  private Label registryLabel;
 
   @FXML
   private TitledPane manifestPane;
@@ -126,9 +132,6 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
 
   @FXML
   private Label author;
-
-  @FXML
-  private Label volume;
 
   @FXML
   private Label launchCustomVar;

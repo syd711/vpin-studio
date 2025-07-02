@@ -12,491 +12,513 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import org.kordamp.ikonli.javafx.Label?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.RepositorySidebarController">
-   <center>
-      <Accordion fx:id="repositoryAccordion">
-        <panes>
-            <TitledPane fx:id="detailsPane" layoutX="10.0" layoutY="10.0" text="File Details">
-               <content>
-                  <ScrollPane hbarPolicy="NEVER">
-                     <content>
-                        <VBox>
-                           <children>
-                              <Label text="File Details">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <GridPane>
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.4000244140625" minWidth="10.0" prefWidth="183.400048828125" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="365.799951171875" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="40.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label text="Filename:">
+    <center>
+        <Accordion fx:id="repositoryAccordion">
+            <panes>
+                <TitledPane fx:id="detailsPane" layoutX="10.0" layoutY="10.0" text="File Details">
+                    <content>
+                        <ScrollPane hbarPolicy="NEVER">
+                            <content>
+                                <VBox>
+                                    <children>
+                                        <Label text="File Details">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="296.4000244140625" minWidth="10.0" prefWidth="183.400048828125" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="365.799951171875" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="503.59996795654297" minWidth="10.0" prefWidth="40.0" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label text="Filename:">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" text="File Size:" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="45.0" text="Source:" GridPane.rowIndex="3">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="filenameLabel" text="-" GridPane.columnIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="fileSizeLabel" layoutX="136.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="sourceLabel" layoutX="136.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" GridPane.rowIndex="2">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="lastModifiedLabel" layoutX="149.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="assetsPane" layoutX="10.0" layoutY="10.0" text="Assets">
+                    <content>
+                        <ScrollPane hbarPolicy="NEVER">
+                            <content>
+                                <VBox>
+                                    <children>
+                                        <Label layoutX="20.0" layoutY="20.0" text="Included Files &amp; Data">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="185.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="403.20002441406245" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label text="DirectB2S:" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" text="PUP Pack:" GridPane.rowIndex="7">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="45.0" text="ROM:" GridPane.rowIndex="6">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="76.0" text="Popper Media:" GridPane.rowIndex="8">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="106.0" text="Highscore Data:" GridPane.rowIndex="13">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="106.0" text="DMD:" GridPane.rowIndex="9">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="168.0" text="Alt Sound:" GridPane.rowIndex="11">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="198.0" text="POV File:" GridPane.rowIndex="2">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="pupPackLabel" layoutX="174.0" layoutY="34.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                    <GridPane.margin>
+                                                        <Insets />
+                                                    </GridPane.margin>
+                                                </Label>
+                                                <Label fx:id="romLabel" layoutX="174.0" layoutY="65.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                <Label fx:id="popperLabel" layoutX="174.0" layoutY="95.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                                <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                                <Label fx:id="altSoundLabel" layoutX="174.0" layoutY="186.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                                <Label fx:id="povLabel" layoutX="174.0" layoutY="217.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label fx:id="highscoreLabel" layoutX="174.0" layoutY="247.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                                <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="10">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                                <Label layoutX="10.0" layoutY="228.0" text="Alt Color:" GridPane.rowIndex="12">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="altColorLabel" layoutX="194.0" layoutY="247.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                                <Label layoutX="10.0" layoutY="289.0" text="RES File:" GridPane.rowIndex="3">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="resLabel" layoutX="194.0" layoutY="308.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label layoutX="10.0" layoutY="380.0" text="Windows Registry Entries:" GridPane.rowIndex="14">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="registryLabel" layoutX="191.0" layoutY="399.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                                <Label fx:id="directb2sLabel" layoutX="10.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="45.0" text="Table File:">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="105.0" text="INI File:" GridPane.rowIndex="4">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="135.0" text="VBS File:" GridPane.rowIndex="5">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="iniLabel" layoutX="195.0" layoutY="107.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <Label fx:id="vbsLabel" layoutX="195.0" layoutY="137.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Label fx:id="vpxLabel" layoutX="195.0" layoutY="45.0" text="-" GridPane.columnIndex="1">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="File Size:" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="Source:" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="filenameLabel" text="-" GridPane.columnIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="fileSizeLabel" layoutX="136.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="sourceLabel" layoutX="136.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="Last Modified:" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="lastModifiedLabel" layoutX="149.0" layoutY="45.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </GridPane>
-                           </children>
-                           <padding>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </TitledPane>
-            <TitledPane fx:id="assetsPane" layoutX="10.0" layoutY="10.0" text="Assets">
-               <content>
-                  <ScrollPane hbarPolicy="NEVER">
-                     <content>
-                        <VBox>
-                           <children>
-                              <Label layoutX="20.0" layoutY="20.0" text="Included Files &amp; Data">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <GridPane>
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.2000732421875" minWidth="10.0" prefWidth="185.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.19995880126953" minWidth="10.0" prefWidth="403.20002441406245" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                                 <children>
-                                    <Label text="DirectB2S:" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="15.0" text="PUP Pack:" GridPane.rowIndex="5">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="ROM:" GridPane.rowIndex="4">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="76.0" text="Popper Media:" GridPane.rowIndex="6">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="106.0" text="Highscore Data:" GridPane.rowIndex="11">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="106.0" text="DMD:" GridPane.rowIndex="7">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="168.0" text="Alt Sound:" GridPane.rowIndex="9">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="198.0" text="POV File:" GridPane.rowIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="pupPackLabel" layoutX="174.0" layoutY="34.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <Label fx:id="romLabel" layoutX="174.0" layoutY="65.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                    <Label fx:id="popperLabel" layoutX="174.0" layoutY="95.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                    <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                    <Label fx:id="altSoundLabel" layoutX="174.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                    <Label fx:id="povLabel" layoutX="174.0" layoutY="217.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label fx:id="highscoreLabel" layoutX="174.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                                    <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="8">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <Label layoutX="10.0" layoutY="228.0" text="Alt Color:" GridPane.rowIndex="10">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="altColorLabel" layoutX="194.0" layoutY="247.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                    <Label layoutX="10.0" layoutY="289.0" text="RES File:" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="resLabel" layoutX="194.0" layoutY="308.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <Label layoutX="10.0" layoutY="380.0" text="Windows Registry Entries:" GridPane.rowIndex="12">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="registryLabel" layoutX="191.0" layoutY="399.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                                    <Label fx:id="directb2sLabel" layoutX="10.0" layoutY="15.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="45.0" text="Table File:">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </GridPane>
-                           </children>
-                           <padding>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </TitledPane>
-          <TitledPane fx:id="manifestPane" layoutX="10.0" layoutY="10.0" text="Table Details">
-            <content>
-                  <ScrollPane hbarPolicy="NEVER">
-                     <content>
-                      <VBox>
-                          <children>
-                              <GridPane vgap="3.0">
-                                  <columnConstraints>
-                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="157.399951171875" />
-                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.80004882812506" minWidth="10.0" prefWidth="444.80004882812506" />
-                                  </columnConstraints>
-                                  <rowConstraints>
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  </rowConstraints>
-                                  <children>
-                                      <Label layoutX="253.0" layoutY="16.0" textFill="WHITE">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                          <tooltip>
-                                              <Tooltip text="Every table will be added to the first playlist that is found." />
-                                          </tooltip>
-                                      </Label>
-                                      <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="1">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="137.0" text="Game File Name:" textFill="WHITE" GridPane.rowIndex="2">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="106.0" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="6">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="15.0" text="Game Name:" textFill="WHITE">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="76.0" text="Game Year:" textFill="WHITE" GridPane.rowIndex="7">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="106.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="8">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="289.0" text="Author:" textFill="WHITE" GridPane.rowIndex="9">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="137.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="168.0" text="Tags:" textFill="WHITE" GridPane.rowIndex="11">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="198.0" text="Category;" textFill="WHITE" GridPane.rowIndex="12">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="259.0" text="Launch Variables:" textFill="WHITE" GridPane.rowIndex="13">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-      
-                                                  <Label layoutX="10.0" layoutY="320.0" text="Keep Displays:" textFill="WHITE" GridPane.rowIndex="14">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="349.0" text="Game Rating:" textFill="WHITE" GridPane.rowIndex="15">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="380.0" text="DOF Parameters:" textFill="WHITE" GridPane.rowIndex="16">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="15.0" text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="17">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="15.0" text="Alternative Run Mode:" textFill="WHITE" GridPane.rowIndex="18">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="15.0" text="URL:" textFill="WHITE" GridPane.rowIndex="19">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="501.0" text="Designed By:" textFill="WHITE" GridPane.rowIndex="20">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label layoutX="10.0" layoutY="532.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="21">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="gameName" GridPane.columnIndex="1">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="gameDisplayName" layoutX="173.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="romName" layoutX="173.0" layoutY="41.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="gameYear" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="manufacturer" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="author" layoutX="173.0" layoutY="284.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="numberOfPlayers" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="tags" layoutX="173.0" layoutY="163.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="category" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="launchCustomVar" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="keepDisplays" layoutX="173.0" layoutY="315.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="gameRating" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="dof" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="16">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="IPDBNum" layoutX="173.0" layoutY="405.0" GridPane.columnIndex="1" GridPane.rowIndex="17">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="altRunMode" layoutX="173.0" layoutY="436.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="url" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="19">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="designedBy" layoutX="173.0" layoutY="496.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                      <Label fx:id="notes" layoutX="173.0" layoutY="527.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
-                                          <font>
-                                              <Font size="14.0" />
-                                          </font>
-                                      </Label>
-                                    <Label layoutX="10.0" layoutY="83.0" text="Game Type:" textFill="WHITE" GridPane.rowIndex="4">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="116.0" text="Game Theme:" textFill="WHITE" GridPane.rowIndex="5">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="10.0" layoutY="83.0" text="Game Version:" textFill="WHITE" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="gameVersion" layoutX="156.0" layoutY="15.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="gameType" layoutX="156.0" layoutY="116.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="gameTheme" layoutX="156.0" layoutY="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-      
-                  
-            
-                                              </children>
-                              </GridPane>
-                           </children>
-                           <padding>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </ScrollPane>
-               </content>
-            </TitledPane>
-        </panes>
-      </Accordion>
-   </center>
+                                    <Label fx:id="registryLabel" layoutX="195.0" layoutY="407.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="manifestPane" layoutX="10.0" layoutY="10.0" text="Table Details">
+                    <content>
+                        <ScrollPane hbarPolicy="NEVER">
+                            <content>
+                                <VBox>
+                                    <children>
+                                        <GridPane vgap="3.0">
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="157.399951171875" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.80004882812506" minWidth="10.0" prefWidth="444.80004882812506" />
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            </rowConstraints>
+                                            <children>
+                                                <Label layoutX="253.0" layoutY="16.0" textFill="WHITE">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                    <tooltip>
+                                                        <Tooltip text="Every table will be added to the first playlist that is found." />
+                                                    </tooltip>
+                                                </Label>
+                                                <Label text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="137.0" text="Game File Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="106.0" text="ROM Name:" textFill="WHITE" GridPane.rowIndex="6">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" text="Game Name:" textFill="WHITE">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="76.0" text="Game Year:" textFill="WHITE" GridPane.rowIndex="7">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="106.0" text="Manufacturer:" textFill="WHITE" GridPane.rowIndex="8">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="289.0" text="Author:" textFill="WHITE" GridPane.rowIndex="9">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="137.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="168.0" text="Tags:" textFill="WHITE" GridPane.rowIndex="11">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="198.0" text="Category;" textFill="WHITE" GridPane.rowIndex="12">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="259.0" text="Launch Variables:" textFill="WHITE" GridPane.rowIndex="13">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+
+                                                <Label layoutX="10.0" layoutY="320.0" text="Keep Displays:" textFill="WHITE" GridPane.rowIndex="14">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="349.0" text="Game Rating:" textFill="WHITE" GridPane.rowIndex="15">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="380.0" text="DOF Parameters:" textFill="WHITE" GridPane.rowIndex="16">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" text="IPDB Number:" textFill="WHITE" GridPane.rowIndex="17">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" text="Alternative Run Mode:" textFill="WHITE" GridPane.rowIndex="18">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" text="URL:" textFill="WHITE" GridPane.rowIndex="19">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="501.0" text="Designed By:" textFill="WHITE" GridPane.rowIndex="20">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="532.0" text="Notes:" textFill="WHITE" GridPane.rowIndex="21">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameName" GridPane.columnIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameDisplayName" layoutX="173.0" layoutY="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="romName" layoutX="173.0" layoutY="41.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameYear" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="manufacturer" layoutX="173.0" layoutY="72.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="author" layoutX="173.0" layoutY="284.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="numberOfPlayers" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="tags" layoutX="173.0" layoutY="163.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="category" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="launchCustomVar" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="keepDisplays" layoutX="173.0" layoutY="315.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameRating" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="15">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="dof" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="16">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="IPDBNum" layoutX="173.0" layoutY="405.0" GridPane.columnIndex="1" GridPane.rowIndex="17">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="altRunMode" layoutX="173.0" layoutY="436.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="url" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="19">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="designedBy" layoutX="173.0" layoutY="496.0" GridPane.columnIndex="1" GridPane.rowIndex="20">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="notes" layoutX="173.0" layoutY="527.0" GridPane.columnIndex="1" GridPane.rowIndex="21">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="83.0" text="Game Type:" textFill="WHITE" GridPane.rowIndex="4">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="116.0" text="Game Theme:" textFill="WHITE" GridPane.rowIndex="5">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="83.0" text="Game Version:" textFill="WHITE" GridPane.rowIndex="3">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameVersion" layoutX="156.0" layoutY="15.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameType" layoutX="156.0" layoutY="116.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="gameTheme" layoutX="156.0" layoutY="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+
+
+                                            </children>
+                                        </GridPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </TitledPane>
+            </panes>
+        </Accordion>
+    </center>
 </BorderPane>
