@@ -2,20 +2,20 @@ package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.preferences.VPBMPreferencesController;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -68,9 +67,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @FXML
   private Button bundleBtn;
-
-  @FXML
-  private Button vpbmBtbn;
 
   @FXML
   private TextField searchTextField;
@@ -103,7 +99,31 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private TableColumn<ArchiveDescriptorRepresentation, String> povColumn;
 
   @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> iniColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> vbsColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> resColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> musicColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> highscoreColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> dmdColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> registryColumn;
+
+  @FXML
   private TableColumn<ArchiveDescriptorRepresentation, String> altSoundColumn;
+
+  @FXML
+  private TableColumn<ArchiveDescriptorRepresentation, String> altColorColumn;
 
   @FXML
   private TableColumn<ArchiveDescriptorRepresentation, String> sizeColumn;
@@ -135,25 +155,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
     searchTextField.setText("");
   }
 
-  @FXML
-  private void onVPBM() {
-    Platform.runLater(() -> {
-      vpbmBtbn.setDisable(true);
-    });
-
-    VPBMPreferencesController.openVPBM();
-
-
-    Platform.runLater(() -> {
-      try {
-        Thread.sleep(2000);
-      }
-      catch (InterruptedException e) {
-        //ignore
-      }
-      vpbmBtbn.setDisable(false);
-    });
-  }
 
   @FXML
   private void onRestore() {
@@ -182,7 +183,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @FXML
   private void onArchiveAdd() {
-    boolean uploaded = TableDialogs.openArchiveUploadDialog();
+    boolean uploaded = ArchivingDialogs.openArchiveUploadDialog();
     if (uploaded) {
       doReload();
     }
@@ -192,7 +193,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onDownload() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      TableDialogs.openArchiveDownloadDialog(selectedItems);
+      ArchivingDialogs.openArchiveDownloadDialog(selectedItems);
     }
   }
 
@@ -200,11 +201,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onBundle() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
-        TableDialogs.openVpaArchiveBundleDialog(selectedItems);
-      }
-      else {
-        TableDialogs.openVpbmArchiveBundleDialog(selectedItems);
+      if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ)) {
+        ArchivingDialogs.openVpaArchiveBundleDialog(selectedItems);
       }
     }
   }
@@ -213,7 +211,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onToRepositoryCopy() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      TableDialogs.openCopyArchiveToRepositoryDialog(selectedItems);
+      ArchivingDialogs.openCopyArchiveToRepositoryDialog(selectedItems);
     }
   }
 
@@ -308,11 +306,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     copyToRepositoryBtn.setVisible(false);
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
 
-    vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());
-
     systemSummary = client.getSystemService().getSystemSummary();
-    vpbmBtbn.setVisible(systemSummary.getArchiveType().equals(ArchiveType.VPBM));
-
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -350,15 +344,18 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
     nameColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
-      String gameDisplayName = value.getTableDetails().getGameDisplayName();
-      return new SimpleStringProperty(gameDisplayName);
+      TableDetails tableDetails = value.getTableDetails();
+      if (tableDetails != null) {
+        return new SimpleStringProperty(tableDetails.getGameDisplayName());
+      }
+      return new SimpleStringProperty(FilenameUtils.getBaseName(value.getFilename()));
     });
 
     directB2SColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean directb2s = value.getPackageInfo().isDirectb2s();
-        if (directb2s) {
+        String directb2s = value.getPackageInfo().getDirectb2s();
+        if (directb2s != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -368,8 +365,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     pupPackColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean packaged = value.getPackageInfo().isPupPack();
-        if (packaged) {
+        String pupPack = value.getPackageInfo().getPupPack();
+        if (pupPack != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -380,8 +377,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     popperColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean packaged = value.getPackageInfo().isPopperMedia();
-        if (packaged) {
+        String media = value.getPackageInfo().getPopperMedia();
+        if (media != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -392,9 +389,99 @@ public class RepositoryController implements Initializable, StudioFXController, 
     povColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean pov = value.getPackageInfo().isPov();
-        if (pov) {
+        String pov = value.getPackageInfo().getPov();
+        if (pov != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    iniColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String pov = value.getPackageInfo().getIni();
+        if (pov != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    vbsColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String vbs = value.getPackageInfo().getVbs();
+        if (vbs != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    resColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String res = value.getPackageInfo().getRes();
+        if (res != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    musicColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String mus = value.getPackageInfo().getMusic();
+        if (mus != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+
+    highscoreColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String highscore = value.getPackageInfo().getHighscore();
+        if (highscore != null) {
+          return new SimpleObjectProperty(highscore);
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    dmdColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String dmd = value.getPackageInfo().getDmd();
+        if (dmd != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+    registryColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String reg = value.getPackageInfo().getRegistryData();
+        if (reg != null) {
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        }
+      }
+      return new SimpleStringProperty("");
+    });
+
+
+    altColorColumn.setCellValueFactory(cellData -> {
+      ArchiveDescriptorRepresentation value = cellData.getValue();
+      if (value.getPackageInfo() != null) {
+        String altColor = value.getPackageInfo().getAltColor();
+        if (altColor != null) {
+          return new SimpleObjectProperty(altColor);
         }
       }
       return new SimpleStringProperty("");
@@ -403,9 +490,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
     romColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean packaged = value.getPackageInfo().isPopperMedia();
-        if (packaged) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
+        String rom = value.getPackageInfo().getRom();
+        if (rom != null) {
+          return new SimpleObjectProperty(rom);
         }
       }
       return new SimpleStringProperty("");
@@ -414,8 +501,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     altSoundColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        boolean enabled = value.getPackageInfo().isAltSound();
-        if (enabled) {
+        String altSound = value.getPackageInfo().getAltSound();
+        if (altSound != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
@@ -440,10 +527,10 @@ public class RepositoryController implements Initializable, StudioFXController, 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       ArchiveSourceRepresentation archiveSource = sourceCombo.getValue();
 
-      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
-      addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()));
-      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
-      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.File.name()) || newSelection == null);
+      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
+      addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()));
+      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
+      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
       copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()) || newSelection == null);
 
 
@@ -471,9 +558,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
-      addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
-      restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
-      bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.File.name()));
+      addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
+      restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
+      bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
 
       tableView.getSelectionModel().clearSelection();
       doReload();
@@ -485,11 +572,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     bundleBtn.setDisable(true);
     copyToRepositoryBtn.setDisable(true);
 
-    vpbmBtbn.setDisable(sourceCombo.getValue().getId() == -1 || (
-        !Studio.client.getSystemService().isLocal() && new File("resources", "vpbm").exists()));
-
     EventManager.getInstance().addListener(this);
-    this.doReload();
   }
 
   @Override
@@ -499,6 +582,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     if (archiveDescriptor != null) {
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, archiveDescriptor.getFilename()));
     }
+
+    this.doReload();
   }
 
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
@@ -520,11 +605,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     for (ArchiveDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (systemSummary.getArchiveType().equals(ArchiveType.VPBM) && !filename.endsWith(".vpinzip")) {
-          continue;
-        }
-
-        if (systemSummary.getArchiveType().equals(ArchiveType.VPA) && !filename.endsWith(".vpa")) {
+        if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ) && !filename.endsWith("." + ArchiveType.VPXZ.name().toLowerCase())) {
           continue;
         }
 
@@ -596,6 +677,15 @@ public class RepositoryController implements Initializable, StudioFXController, 
         searchTextField.setText("");
       }
       event.consume();
+    }
+  }
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.backups)) {
+      Platform.runLater(() -> {
+        onReload();
+      });
     }
   }
 }

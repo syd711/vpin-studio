@@ -380,22 +380,13 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(launchItem);
 
       //decluttering
-      if (Features.ARCHIVE_ENABLED) {
+      if (Features.BACKUPS_ENABLED) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem exportItem = new MenuItem("Backup Table");
         exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
         exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
         ctxMenu.getItems().add(exportItem);
-
-//        ctxMenu.getItems().add(new SeparatorMenuItem());
-//
-//        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-//        vpbmItem.setGraphic(iconVpbm);
-//        vpbmItem.setOnAction(actionEvent -> {
-//          VPBMPreferencesController.openVPBM();
-//        });
-//        ctxMenu.getItems().add(vpbmItem);
       }
     }
 

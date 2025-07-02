@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.archiving;
 
+import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -37,6 +37,22 @@ public class ArchivesResource {
 
   @Autowired
   private SystemService systemService;
+
+
+  @PostMapping("/backup")
+  public Boolean backupTable(@RequestBody BackupDescriptor descriptor) {
+    return archiveService.backupTable(descriptor);
+  }
+
+  @PostMapping("/install")
+  public Boolean installArchive(@RequestBody ArchiveRestoreDescriptor descriptor) {
+    return archiveService.installArchive(descriptor);
+  }
+
+  @PostMapping("/copytorepository")
+  public Boolean copyToRepository(@RequestBody ArchiveCopyToRepositoryDescriptor descriptor) {
+    return archiveService.copyToRepository(descriptor);
+  }
 
   @GetMapping("/{sourceId}")
   public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {

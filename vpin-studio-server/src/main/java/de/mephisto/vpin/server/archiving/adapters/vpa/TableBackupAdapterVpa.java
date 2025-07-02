@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
@@ -54,7 +55,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(VpaArchiveSource.FOLDER, baseName + ".vpa");
+    File target = new File(VpaArchiveSource.FOLDER, baseName + "." + ArchiveType.VPXZ.name().toLowerCase());
     target = FileUtils.uniqueFile(target);
     archiveDescriptor.setFilename(target.getName());
 

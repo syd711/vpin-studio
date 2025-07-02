@@ -101,44 +101,44 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   }
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {
-    if (cache.isEmpty()) {
-      String location = this.source.getLocation();
-      if (!location.endsWith("/")) {
-        location += "/";
-      }
-      location += ArchiveUtil.DESCRIPTOR_JSON;
-
-      HttpURLConnection conn = null;
-      try {
-        conn = getConnection(location);
-        LOG.info("Reading " + location);
-        long start = System.currentTimeMillis();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        StringBuilder jsonBuffer = new StringBuilder();
-        String str;
-        while ((str = in.readLine()) != null) {
-          jsonBuffer.append(str);
-        }
-        in.close();
-
-        String json = jsonBuffer.toString();
-        List<ArchiveDescriptor> archiveDescriptors = ArchiveUtil.readArchiveDescriptors(json, this.getArchiveSource());
-        for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
-          if(archiveService.isValidArchiveDescriptor(archiveDescriptor)) {
-            cache.put(archiveDescriptor.getFilename(), archiveDescriptor);
-          }
-        }
-        LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis() - start) + "ms.");
-      } catch (FileNotFoundException e) {
-        LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
-      } catch (Exception e) {
-        LOG.error("Failed to read HTTP URL \"" + location + "\":" + e.getMessage());
-      } finally {
-        if (conn != null) {
-          conn.disconnect();
-        }
-      }
-    }
+//    if (cache.isEmpty()) {
+//      String location = this.source.getLocation();
+//      if (!location.endsWith("/")) {
+//        location += "/";
+//      }
+//      location += ArchiveUtil.DESCRIPTOR_JSON;
+//
+//      HttpURLConnection conn = null;
+//      try {
+//        conn = getConnection(location);
+//        LOG.info("Reading " + location);
+//        long start = System.currentTimeMillis();
+//        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//        StringBuilder jsonBuffer = new StringBuilder();
+//        String str;
+//        while ((str = in.readLine()) != null) {
+//          jsonBuffer.append(str);
+//        }
+//        in.close();
+//
+//        String json = jsonBuffer.toString();
+//        List<ArchiveDescriptor> archiveDescriptors = ArchiveUtil.readArchiveDescriptors(json, this.getArchiveSource());
+//        for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
+//          if(archiveService.isValidArchiveDescriptor(archiveDescriptor)) {
+//            cache.put(archiveDescriptor.getFilename(), archiveDescriptor);
+//          }
+//        }
+//        LOG.info("Reading of " + location + " finshed, took " + (System.currentTimeMillis() - start) + "ms.");
+//      } catch (FileNotFoundException e) {
+//        LOG.error("No descriptor found for " + location + " (" + e.getMessage() + ")");
+//      } catch (Exception e) {
+//        LOG.error("Failed to read HTTP URL \"" + location + "\":" + e.getMessage());
+//      } finally {
+//        if (conn != null) {
+//          conn.disconnect();
+//        }
+//      }
+//    }
     return new ArrayList<>(cache.values());
   }
 

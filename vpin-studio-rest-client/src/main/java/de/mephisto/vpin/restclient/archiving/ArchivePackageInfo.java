@@ -4,32 +4,24 @@ public class ArchivePackageInfo {
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
   public final static String ARCHIVE_FILENAME = "package-info.json";
 
-  private boolean directb2s;
-  private boolean pupPack;
-  private boolean rom;
-  private boolean res;
-  private boolean cfg;
-  private boolean popperMedia;
-  private boolean pov;
-  private boolean music;
-  private boolean altSound;
-  private boolean altColor;
-  private boolean highscore;
-  private boolean flexDMD;
-  private boolean ultraDMD;
-  private boolean vpx;
-  private boolean registryData;
+  private String directb2s;
+  private String pupPack;
+  private String rom;
+  private String res;
+  private String vbs;
+  private String popperMedia;
+  private String pov;
+  private String ini;
+  private String music;
+  private String altSound;
+  private String altColor;
+  private String highscore;
+  private String dmd;
+  private String vpx;
+  private String registryData;
 
   private String icon;
   private String thumbnail;
-
-  public boolean isRegistryData() {
-    return registryData;
-  }
-
-  public void setRegistryData(boolean registryData) {
-    this.registryData = registryData;
-  }
 
   public String getIcon() {
     return icon;
@@ -47,115 +39,123 @@ public class ArchivePackageInfo {
     this.thumbnail = thumbnail;
   }
 
-  public boolean isRes() {
-    return res;
-  }
-
-  public void setRes(boolean res) {
-    this.res = res;
-  }
-
-  public boolean isCfg() {
-    return cfg;
-  }
-
-  public void setCfg(boolean cfg) {
-    this.cfg = cfg;
-  }
-
-  public boolean isAltColor() {
-    return altColor;
-  }
-
-  public void setAltColor(boolean altColor) {
-    this.altColor = altColor;
-  }
-
-  public boolean isVpx() {
-    return vpx;
-  }
-
-  public void setVpx(boolean vpx) {
-    this.vpx = vpx;
-  }
-
-  public boolean isDirectb2s() {
+  public String getDirectb2s() {
     return directb2s;
   }
 
-  public void setDirectb2s(boolean directb2s) {
+  public void setDirectb2s(String directb2s) {
     this.directb2s = directb2s;
   }
 
-  public boolean isPupPack() {
+  public String getPupPack() {
     return pupPack;
   }
 
-  public void setPupPack(boolean pupPack) {
+  public void setPupPack(String pupPack) {
     this.pupPack = pupPack;
   }
 
-  public boolean isRom() {
+  public String getRom() {
     return rom;
   }
 
-  public void setRom(boolean rom) {
+  public void setRom(String rom) {
     this.rom = rom;
   }
 
-  public boolean isPopperMedia() {
+  public String getRes() {
+    return res;
+  }
+
+  public void setRes(String res) {
+    this.res = res;
+  }
+
+  public String getVbs() {
+    return vbs;
+  }
+
+  public void setVbs(String vbs) {
+    this.vbs = vbs;
+  }
+
+  public String getPopperMedia() {
     return popperMedia;
   }
 
-  public void setPopperMedia(boolean popperMedia) {
+  public void setPopperMedia(String popperMedia) {
     this.popperMedia = popperMedia;
   }
 
-  public boolean isPov() {
+  public String getPov() {
     return pov;
   }
 
-  public void setPov(boolean pov) {
+  public void setPov(String pov) {
     this.pov = pov;
   }
 
-  public boolean isMusic() {
+  public String getIni() {
+    return ini;
+  }
+
+  public void setIni(String ini) {
+    this.ini = ini;
+  }
+
+  public String getMusic() {
     return music;
   }
 
-  public void setMusic(boolean music) {
+  public void setMusic(String music) {
     this.music = music;
   }
 
-  public boolean isAltSound() {
+  public String getAltSound() {
     return altSound;
   }
 
-  public void setAltSound(boolean altSound) {
+  public void setAltSound(String altSound) {
     this.altSound = altSound;
   }
 
-  public boolean isHighscore() {
+  public String getAltColor() {
+    return altColor;
+  }
+
+  public void setAltColor(String altColor) {
+    this.altColor = altColor;
+  }
+
+  public String getHighscore() {
     return highscore;
   }
 
-  public void setHighscore(boolean highscore) {
+  public void setHighscore(String highscore) {
     this.highscore = highscore;
   }
 
-  public boolean isFlexDMD() {
-    return flexDMD;
+  public String getDmd() {
+    return dmd;
   }
 
-  public void setFlexDMD(boolean flexDMD) {
-    this.flexDMD = flexDMD;
+  public void setDmd(String dmd) {
+    this.dmd = dmd;
   }
 
-  public boolean isUltraDMD() {
-    return ultraDMD;
+  public String getVpx() {
+    return vpx;
   }
 
-  public void setUltraDMD(boolean ultraDMD) {
-    this.ultraDMD = ultraDMD;
+  public void setVpx(String vpx) {
+    this.vpx = vpx;
+  }
+
+  public String getRegistryData() {
+    return registryData;
+  }
+
+  public void setRegistryData(String registryData) {
+    this.registryData = registryData;
   }
 }

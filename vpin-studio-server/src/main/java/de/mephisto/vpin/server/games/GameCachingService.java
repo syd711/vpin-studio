@@ -49,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,7 +109,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   private ServerSettings serverSettings;
 
-  private final Map<Integer, List<Game>> allGamesByEmulatorId = new HashMap<>();
+  private final Map<Integer, List<Game>> allGamesByEmulatorId = new ConcurrentHashMap<>();
 
   public void clearCache() {
     allGamesByEmulatorId.clear();

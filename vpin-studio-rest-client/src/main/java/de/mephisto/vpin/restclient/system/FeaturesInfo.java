@@ -29,7 +29,7 @@ public class FeaturesInfo {
   public boolean PLAYLIST_EXTENDED = true;
   public boolean PLAYLIST_CRUD = true;
 
-  public boolean BACKUP_VIEW_ENABLED = false;
+  public boolean BACKUPS_ENABLED = true;
 
   public boolean SCREEN_MANAGER_ENABLED = true;
 
@@ -50,9 +50,6 @@ public class FeaturesInfo {
 
   /** Whether statistics are recorded by the frontend */
   public boolean STATISTICS_ENABLED = true;
-
-  /** Whether archive and VPBM is enabled */
-  public boolean ARCHIVE_ENABLED = true;
 
   /** Whether controls are supported by the frontend */
   public boolean CONTROLS_ENABLED = true;
