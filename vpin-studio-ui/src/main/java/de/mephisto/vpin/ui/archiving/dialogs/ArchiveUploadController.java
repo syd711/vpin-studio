@@ -88,7 +88,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
 
-    List<String> filters = Arrays.asList("*." + ArchiveType.VPXZ.name().toLowerCase());
+    List<String> filters = Arrays.asList("*." + ArchiveType.VPA.name().toLowerCase());
 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Archives");

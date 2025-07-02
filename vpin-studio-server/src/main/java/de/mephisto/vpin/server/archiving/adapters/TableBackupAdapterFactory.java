@@ -29,7 +29,7 @@ public class TableBackupAdapterFactory {
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
 
     switch (archiveType) {
-      case VPXZ: {
+      case VPA: {
         return new TableBackupAdapterVpa(vpaService, archiveSourceAdapter, game, tableDetails);
       }
       default: {

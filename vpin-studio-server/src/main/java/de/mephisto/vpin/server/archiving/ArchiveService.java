@@ -212,10 +212,10 @@ public class ArchiveService implements InitializingBean {
 
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
     String descriptorFilename = archiveDescriptor.getFilename();
-    ArchiveType archiveType = ArchiveType.VPXZ;
+    ArchiveType archiveType = ArchiveType.VPA;
 
     switch (archiveType) {
-      case VPXZ: {
+      case VPA: {
         return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
       }
     }
@@ -225,8 +225,8 @@ public class ArchiveService implements InitializingBean {
   public File getArchivesFolder() {
     ArchiveType archiveType = systemService.getArchiveType();
     switch (archiveType) {
-      case VPXZ: {
-        return new File(RESOURCES, ArchiveType.VPXZ.name().toLowerCase());
+      case VPA: {
+        return new File(RESOURCES, ArchiveType.VPA.name().toLowerCase());
       }
     }
     return null;
@@ -311,7 +311,7 @@ public class ArchiveService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     //VPXZ
-    if (systemService.getArchiveType().equals(ArchiveType.VPXZ)) {
+    if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
       this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);

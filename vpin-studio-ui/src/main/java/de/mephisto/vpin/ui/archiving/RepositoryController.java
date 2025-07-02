@@ -36,6 +36,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -201,7 +203,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onBundle() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ)) {
+      if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
         ArchivingDialogs.openVpaArchiveBundleDialog(selectedItems);
       }
     }
@@ -293,6 +295,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
         }
         tableView.getSelectionModel().clearSelection();
         doReload();
+        tablesController.getRepositorySideBarController().setArchiveDescriptor(Optional.empty());
       }
     }
   }
@@ -301,10 +304,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
   public void initialize(URL url, ResourceBundle resourceBundle) {
     clearBtn.setVisible(false);
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
-    sourceCombo.setVisible(false);
     copyToRepositoryBtn.managedProperty().bindBidirectional(copyToRepositoryBtn.visibleProperty());
     copyToRepositoryBtn.setVisible(false);
-    tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
+    tableView.setPlaceholder(new Label("This backup source does contains any files."));
 
     systemSummary = client.getSystemService().getSystemSummary();
 
@@ -344,11 +346,36 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
     nameColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
+      VBox vBox = new VBox(3);
+
       TableDetails tableDetails = value.getTableDetails();
       if (tableDetails != null) {
-        return new SimpleStringProperty(tableDetails.getGameDisplayName());
+        Label name = new Label(tableDetails.getGameDisplayName());
+        name.getStyleClass().add("default-text");
+        vBox.getChildren().add(name);
+
+        Label fileName = new Label(value.getFilename());
+        fileName.getStyleClass().add("default-text");
+        fileName.setStyle("-fx-font-size: 12px;");
+        vBox.getChildren().add(fileName);
       }
-      return new SimpleStringProperty(FilenameUtils.getBaseName(value.getFilename()));
+      else {
+        Label name = new Label(FilenameUtils.getBaseName(value.getFilename()));
+        name.getStyleClass().add("default-text");
+        vBox.getChildren().add(name);
+      }
+
+      Label size = new Label(FileUtils.readableFileSize(value.getSize()));
+      size.getStyleClass().add("default-text");
+      size.setStyle("-fx-font-size: 12px;");
+      vBox.getChildren().add(size);
+
+      Label created = new Label(new SimpleDateFormat().format(value.getCreatedAt()));
+      created.getStyleClass().add("default-text");
+      created.setStyle("-fx-font-size: 12px;");
+      vBox.getChildren().add(created);
+
+      return new SimpleObjectProperty(vBox);
     });
 
     directB2SColumn.setCellValueFactory(cellData -> {
@@ -605,7 +632,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     for (ArchiveDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (systemSummary.getArchiveType().equals(ArchiveType.VPXZ) && !filename.endsWith("." + ArchiveType.VPXZ.name().toLowerCase())) {
+        if (systemSummary.getArchiveType().equals(ArchiveType.VPA) && !filename.endsWith("." + ArchiveType.VPA.name().toLowerCase())) {
           continue;
         }
 

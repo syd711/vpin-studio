@@ -11,7 +11,7 @@ import java.util.Date;
 public class VpaArchiveSource extends ArchiveSource {
   public final static long DEFAULT_ARCHIVE_SOURCE_ID = -1;
 
-  public final static File FOLDER = new File(SystemService.RESOURCES, ArchiveType.VPXZ.name().toLowerCase() + "/");
+  public final static File FOLDER = new File(SystemService.RESOURCES, ArchiveType.VPA.name().toLowerCase() + "/");
 
   static {
     if (!FOLDER.exists()) {
@@ -45,7 +45,7 @@ public class VpaArchiveSource extends ArchiveSource {
 
   @Override
   public String getName() {
-    return ".vpxz Default Backups Folder";
+    return "Default Backups Folder";
   }
 
   @Override

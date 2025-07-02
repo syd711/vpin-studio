@@ -1,11 +1,13 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,74 +22,47 @@ import java.util.zip.ZipFile;
 public class VpaArchiveUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveUtil.class);
 
-  public static TableDetails readTableDetails(File file) {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-      objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
-      ZipFile zipFile = new ZipFile(file);
-      Enumeration<? extends ZipEntry> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = entries.nextElement();
-        if (entry.getName().equals(TableDetails.ARCHIVE_FILENAME)) {
-          InputStream stream = zipFile.getInputStream(entry);
-          String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-          stream.close();
-          zipFile.close();
+  static {
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
 
-          return objectMapper.readValue(text, TableDetails.class);
-        }
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to read manifest information from " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+  public static TableDetails readTableDetails(File file) throws JsonProcessingException {
+    String text = readStringFromZip(file, TableDetails.ARCHIVE_FILENAME);
+    if(text != null) {
+      return objectMapper.readValue(text, TableDetails.class);
     }
     return null;
   }
 
-  public static String readVPRegJson(File file) {
-    try {
-      ZipFile zipFile = new ZipFile(file);
+  public static ArchivePackageInfo readPackageInfo(File file) throws Exception {
+    String text = readStringFromZip(file, ArchivePackageInfo.ARCHIVE_FILENAME);
+    if(text != null) {
+      return objectMapper.readValue(text, ArchivePackageInfo.class);
+    }
+    return null;
+  }
+
+  @Nullable
+  public static String readStringFromZip(File file, String fileName) {
+    try (ZipFile zipFile = new ZipFile(file)) {
       Enumeration<? extends ZipEntry> entries = zipFile.entries();
       while (entries.hasMoreElements()) {
         ZipEntry entry = entries.nextElement();
-        if (entry.getName().equals(VPReg.ARCHIVE_FILENAME)) {
+        if (entry.getName().equals(fileName)) {
           InputStream stream = zipFile.getInputStream(entry);
           String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
           stream.close();
-          zipFile.close();
-
           return text;
         }
       }
-    } catch (IOException e) {
-      LOG.error("Failed to read VPReg.stg information from " + file.getAbsolutePath() + ": " + e.getMessage(), e);
     }
-    return null;
-  }
-
-
-  public static ArchivePackageInfo readPackageInfo(File file) {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-      ZipFile zipFile = new ZipFile(file);
-      Enumeration<? extends ZipEntry> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = entries.nextElement();
-        if (entry.getName().equals(ArchivePackageInfo.ARCHIVE_FILENAME)) {
-          InputStream stream = zipFile.getInputStream(entry);
-          String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-          stream.close();
-          zipFile.close();
-
-          return objectMapper.readValue(text, ArchivePackageInfo.class);
-        }
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to read manifest information from " + file.getAbsolutePath() + ": " + e.getMessage(), e);
+    catch (Exception e) {
+      LOG.error("Failed to read {}: {}", file.getAbsolutePath(), e.getMessage(), e);
     }
+    //ignore
     return null;
   }
 }

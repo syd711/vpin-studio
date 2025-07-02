@@ -102,7 +102,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   private void importHighscore(Game game, File zipFile) {
-    String jsonData = VpaArchiveUtil.readVPRegJson(zipFile);
+    String jsonData = VpaArchiveUtil.readStringFromZip(zipFile, VPReg.ARCHIVE_FILENAME);
     if (jsonData != null) {
       VPReg vpReg = new VPReg(emulator.getVPRegFile(), game.getRom(), game.getTableName());
       vpReg.restore(jsonData);

@@ -81,7 +81,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File backupFolder;
 
-  private ArchiveType archiveType = ArchiveType.VPXZ;
+  private ArchiveType archiveType = ArchiveType.VPA;
   private FrontendType frontendType = FrontendType.Popper;
 
   @Value("${system.properties}")
@@ -97,7 +97,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
-      this.archiveType = ArchiveType.VPXZ;
+      this.archiveType = ArchiveType.VPA;
 
       // Determination of the installed Frontend
       //Standalone Folder

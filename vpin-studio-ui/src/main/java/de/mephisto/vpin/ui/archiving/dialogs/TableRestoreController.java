@@ -99,6 +99,6 @@ public class TableRestoreController implements Initializable, DialogController {
     titleLabel.setText(title);
 
     ArchiveType archiveType = client.getSystemService().getSystemSummary().getArchiveType();
-    emuGrid.setVisible(archiveType.equals(ArchiveType.VPXZ));
+    emuGrid.setVisible(archiveType.equals(ArchiveType.VPA));
   }
 }

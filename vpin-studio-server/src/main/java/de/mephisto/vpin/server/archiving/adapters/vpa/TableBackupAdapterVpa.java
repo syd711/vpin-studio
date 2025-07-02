@@ -42,7 +42,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   }
 
   public void createBackup(JobDescriptor result) {
-
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
 
@@ -55,7 +54,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(VpaArchiveSource.FOLDER, baseName + "." + ArchiveType.VPXZ.name().toLowerCase());
+    File target = new File(VpaArchiveSource.FOLDER, baseName + "." + ArchiveType.VPA.name().toLowerCase());
     target = FileUtils.uniqueFile(target);
     archiveDescriptor.setFilename(target.getName());
 

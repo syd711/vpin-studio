@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSource;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
-import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + ArchiveType.VPXZ.name().toLowerCase()));
+      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + ArchiveType.VPA.name().toLowerCase()));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {

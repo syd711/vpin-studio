@@ -168,7 +168,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     repositoryAccordion.managedProperty().bindBidirectional(repositoryAccordion.visibleProperty());
-    repositoryAccordion.setExpandedPane(detailsPane);
+    repositoryAccordion.setExpandedPane(manifestPane);
     setArchiveDescriptor(Optional.empty());
   }
 
