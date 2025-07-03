@@ -141,25 +141,31 @@ public class PupPacksService implements InitializingBean {
   }
 
   public PupPack loadPupPack(File packFolder) {
-    PupPack pupPack = new PupPack(packFolder);
-    if (new File(packFolder, "scriptonly.txt").exists()) {
-      pupPack.setScriptOnly(true);
-    }
-
-    boolean orbitalPin = OrbitalPins.isOrbitalPin(packFolder.getName());
-    boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
-    if ((orbitalPin || containsMedia)) {
-      String msg = "Loaded PUP Pack " + packFolder.getName();
-      if (orbitalPin) {
-        msg += " (orbitalPin: " + orbitalPin + ")";
+    try {
+      PupPack pupPack = new PupPack(packFolder);
+      if (new File(packFolder, "scriptonly.txt").exists()) {
+        pupPack.setScriptOnly(true);
       }
-      LOG.info(msg);
-      pupPackCache.put(packFolder.getName().toLowerCase(), pupPack);
+
+      boolean orbitalPin = OrbitalPins.isOrbitalPin(packFolder.getName());
+      boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
+      if ((orbitalPin || containsMedia)) {
+        pupPackCache.put(packFolder.getName().toLowerCase(), pupPack);
+        String msg = "Loaded PUP Pack " + packFolder.getName();
+        if (orbitalPin) {
+          msg += " (orbitalPin: " + orbitalPin + ")";
+        }
+        LOG.info(msg);
+      }
+      else {
+        LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
+      }
+      return pupPack;
     }
-    else {
-      LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
+    catch (Exception e) {
+      LOG.error("Failed to load PUP pack {}: {}", packFolder.getAbsolutePath(), e.getMessage());
     }
-    return pupPack;
+    return null;
   }
 
   public JobDescriptor option(Game game, String option) {
