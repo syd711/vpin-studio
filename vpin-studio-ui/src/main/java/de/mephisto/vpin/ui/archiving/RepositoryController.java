@@ -19,6 +19,7 @@ import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -42,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -60,6 +62,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @FXML
   private Button restoreBtn;
+
+  @FXML
+  private Button openFolderButton;
 
   @FXML
   private Button addArchiveBtn;
@@ -137,6 +142,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private StackPane tableStack;
 
   @FXML
+  private Separator endSeparator;
+
+  @FXML
   private Button clearBtn;
 
   private Parent loadingOverlay;
@@ -157,6 +165,19 @@ public class RepositoryController implements Initializable, StudioFXController, 
     searchTextField.setText("");
   }
 
+  @FXML
+  public final void onFolder() {
+    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      ArchiveDescriptorRepresentation descriptor = selectedItems.get(0);
+      ArchiveSourceRepresentation source = sourceCombo.getValue();
+
+      File file = new File(source.getLocation(), descriptor.getFilename());
+      if (file.exists()) {
+        SystemUtil.openFile(file);
+      }
+    }
+  }
 
   @FXML
   private void onRestore() {
@@ -303,12 +324,16 @@ public class RepositoryController implements Initializable, StudioFXController, 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     clearBtn.setVisible(false);
+    endSeparator.managedProperty().bindBidirectional(endSeparator.visibleProperty());
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
+    openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
     copyToRepositoryBtn.managedProperty().bindBidirectional(copyToRepositoryBtn.visibleProperty());
     copyToRepositoryBtn.setVisible(false);
     tableView.setPlaceholder(new Label("This backup source does contains any files."));
 
     systemSummary = client.getSystemService().getSystemSummary();
+    openFolderButton.setVisible(client.getSystemService().isLocal());
+    endSeparator.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -474,7 +499,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       if (value.getPackageInfo() != null) {
         String highscore = value.getPackageInfo().getHighscore();
         if (highscore != null) {
-          return new SimpleObjectProperty(highscore);
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
       return new SimpleStringProperty("");
@@ -508,7 +533,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       if (value.getPackageInfo() != null) {
         String altColor = value.getPackageInfo().getAltColor();
         if (altColor != null) {
-          return new SimpleObjectProperty(altColor);
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
       return new SimpleStringProperty("");
@@ -519,7 +544,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       if (value.getPackageInfo() != null) {
         String rom = value.getPackageInfo().getRom();
         if (rom != null) {
-          return new SimpleObjectProperty(rom);
+          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
         }
       }
       return new SimpleStringProperty("");
@@ -559,6 +584,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
       bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
       copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()) || newSelection == null);
+      openFolderButton.setDisable(newSelection == null);
 
 
       if (oldSelection == null || !oldSelection.equals(newSelection)) {

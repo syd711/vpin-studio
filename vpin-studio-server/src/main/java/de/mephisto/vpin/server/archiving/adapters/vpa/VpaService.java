@@ -1,11 +1,13 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
@@ -15,6 +17,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -29,6 +32,7 @@ import java.nio.file.Files;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +72,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class VpaService {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
+  private final static ObjectMapper objectMapper;
+
+  static {
+    objectMapper = new ObjectMapper();
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
   @Autowired
   private EmulatorService emulatorService;
 
@@ -91,6 +104,9 @@ public class VpaService {
 
   @Autowired
   private DMDService dmdService;
+
+  @Autowired
+  private MameService mameService;
 
   //-------------------------------
 
@@ -150,13 +166,13 @@ public class VpaService {
     File vbsFile = game.getVBSFile();
     if (vbsFile.exists()) {
       packageInfo.setVbs(vbsFile.getName());
-      zipFile(vbsFile,  vbsFile.getName(), zipOut);
+      zipFile(vbsFile, vbsFile.getName(), zipOut);
     }
 
     File iniFile = game.getIniFile();
     if (iniFile.exists()) {
       packageInfo.setRes(iniFile.getName());
-      zipFile(iniFile,  iniFile.getName(), zipOut);
+      zipFile(iniFile, iniFile.getName(), zipOut);
     }
 
     File gameFile = game.getGameFile();
@@ -168,7 +184,7 @@ public class VpaService {
     File directB2SFile = game.getDirectB2SFile();
     if (directB2SFile.exists()) {
       packageInfo.setDirectb2s(directB2SFile.getName());
-      zipFile(directB2SFile,  directB2SFile.getName(), zipOut);
+      zipFile(directB2SFile, directB2SFile.getName(), zipOut);
     }
 
     // DMDs
@@ -219,6 +235,16 @@ public class VpaService {
     zipPupPack(packageInfo, game, zipOut);
     zipFrontendMedia(packageInfo, game, zipOut);
     zipTableDetails(game, tableDetails, zipOut);
+
+    Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
+    if (options != null) {
+      packageInfo.setRegistryData(game.getRom());
+      zipRegistryDetails(options, zipOut);
+    }
+
+    /*
+     * Always do this as the final step
+     */
     zipPackageInfo(packageInfo, game, zipOut);
   }
 
@@ -290,6 +316,16 @@ public class VpaService {
     }
   }
 
+  private void zipRegistryDetails(Map<String, Object> registryData, BiConsumer<File, String> zipOut) throws IOException {
+    String tableDetailsJson = objectMapper.writeValueAsString(registryData);
+
+    File tableDetailsTmpFile = File.createTempFile("registry", "json");
+    tableDetailsTmpFile.deleteOnExit();
+    Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
+    zipFile(tableDetailsTmpFile, "registry.json", zipOut);
+    tableDetailsTmpFile.delete();
+  }
+
   private void zipPackageInfo(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) throws IOException {
     //store wheel icon as archive preview
     File originalFile = frontendService.getWheelImage(game);
@@ -322,9 +358,6 @@ public class VpaService {
       tableDetails.setGameDisplayName(game.getGameDisplayName());
     }
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
     String tableDetailsJson = objectMapper.writeValueAsString(tableDetails);
 
     File tableDetailsTmpFile = File.createTempFile("table-details", "json");

@@ -106,6 +106,20 @@ public class MameService implements InitializingBean {
     return false;
   }
 
+  @Nullable
+  public Map<String, Object> getOptionsRaw(@Nullable String rom) {
+    if (rom == null) {
+      return null;
+    }
+
+    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    if (romFolders.contains(rom.toLowerCase())) {
+      return systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
+    }
+    return null;
+  }
+
+
   @NonNull
   public MameOptions getOptions(@NonNull String rom) {
     if (mameCache.containsKey(rom.toLowerCase())) {
@@ -238,6 +252,7 @@ public class MameService implements InitializingBean {
     File romFile = new File(getRomsFolder(), name + ".zip");
     return romFile.exists();
   }
+
   public boolean isValidRom(String name) {
     return !romValidationCache.containsKey(name);
   }

@@ -375,23 +375,41 @@
                                                     </GridPane.margin>
                                                 </Label>
                                                 <Label fx:id="romLabel" layoutX="174.0" layoutY="65.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                                <Label fx:id="popperLabel" layoutX="174.0" layoutY="95.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                                <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                                <Label fx:id="altSoundLabel" layoutX="174.0" layoutY="186.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                                <Label fx:id="popperLabel" layoutX="174.0" layoutY="95.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                                <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                                <Label fx:id="altSoundLabel" layoutX="174.0" layoutY="186.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
                                                 <Label fx:id="povLabel" layoutX="174.0" layoutY="217.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label fx:id="highscoreLabel" layoutX="174.0" layoutY="247.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                                <Label fx:id="highscoreLabel" layoutX="174.0" layoutY="247.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
                                                 <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="10">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                                <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
                                                 <Label layoutX="10.0" layoutY="228.0" text="Alt Color:" GridPane.rowIndex="12">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label fx:id="altColorLabel" layoutX="194.0" layoutY="247.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                                <Label fx:id="altColorLabel" layoutX="194.0" layoutY="247.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
                                                 <Label layoutX="10.0" layoutY="289.0" text="RES File:" GridPane.rowIndex="3">
                                                     <font>
                                                         <Font size="14.0" />
@@ -423,6 +441,9 @@
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
                                                 </Label>
                                                 <Label fx:id="iniLabel" layoutX="195.0" layoutY="107.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                 <Label fx:id="vbsLabel" layoutX="195.0" layoutY="137.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="5" />
@@ -431,7 +452,10 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="registryLabel2" layoutX="195.0" layoutY="407.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                    <Label fx:id="registryLabel2" layoutX="195.0" layoutY="407.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
                                             </children>
                                         </GridPane>
                                     </children>

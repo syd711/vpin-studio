@@ -124,6 +124,18 @@
                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                      </graphic>
                   </Button>
+                  <Separator fx:id="endSeparator" layoutX="806.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="Open" textFill="WHITE">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                      <graphic>
+                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                      </graphic>
+                      <tooltip>
+                          <Tooltip text="Open FlexDMD installation folder" />
+                      </tooltip>
+                  </Button>
               </items>
             </ToolBar>
          </top>
