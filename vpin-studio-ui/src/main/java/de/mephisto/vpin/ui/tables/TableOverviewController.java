@@ -1036,12 +1036,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
-      if (value.getPupPackPath() != null) {
+      if (value.getPupPackName() != null) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new PUP pack or an update for the existing one is available");
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
+          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackName());
         }
       }
       else if (hasUpdate) {

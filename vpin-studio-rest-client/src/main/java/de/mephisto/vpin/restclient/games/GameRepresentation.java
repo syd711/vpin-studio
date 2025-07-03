@@ -84,7 +84,6 @@ public class GameRepresentation {
   private String povPath;
   private String iniPath;
   private String resPath;
-  private String pupPackPath;
   private boolean altSoundAvailable;
 
   private int nbDirectB2S = -1;
@@ -205,14 +204,6 @@ public class GameRepresentation {
 
   public void setResPath(String resPath) {
     this.resPath = resPath;
-  }
-
-  public String getPupPackPath() {
-    return pupPackPath;
-  }
-
-  public void setPupPackPath(String pupPackPath) {
-    this.pupPackPath = pupPackPath;
   }
 
   public String getComment() {

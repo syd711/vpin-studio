@@ -56,7 +56,7 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
-        if (filterSettings.isWithPupPack() && game.getPupPackPath() == null) {
+        if (filterSettings.isWithPupPack() && game.getPupPackName() == null) {
           return false;
         }
 
