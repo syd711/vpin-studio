@@ -40,18 +40,4 @@ public class ArchivingDialogs {
     controller.setData(selectedItems);
     stage.showAndWait();
   }
-
-  public static void openVpaArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(VpaArchiveBundleDialogController.class, "dialog-vpa-bundle-download.fxml", "Archive Bundle");
-    VpaArchiveBundleDialogController controller = (VpaArchiveBundleDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openCopyArchiveToRepositoryDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(CopyArchiveToRepositoryDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
-    CopyArchiveToRepositoryDialogController controller = (CopyArchiveToRepositoryDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
 }

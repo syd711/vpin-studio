@@ -7,14 +7,12 @@ import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.mame.MameService;
@@ -45,28 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
- * - Table folder
- * - <table>.vpx
- * - <table>.vbs (if necessary)
- * - <table>.ini (if desired)
- * - <table>.directb2s (if desired)
- * - music (if table has music)
- * - *
- * - pupvideos (if table has pup)
- * - *
- * - pinmame
- * - roms
- * - <rom>.zip
- * - altcolor
- * - <rom>
- * - <rom>.cRZ (if you want)
- * - altsound
- * - <rom>
- * - * (if you want)
- * - nvram
- * - <rom>.nv (if you want)
- * - ini
- * - <rom>.ini (if you want)
+ *
  */
 @Service
 public class VpaService {
@@ -195,9 +172,9 @@ public class VpaService {
         dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
         File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
         if (dmdFiles != null) {
+          packageInfo.setDmd(dmdFolder.getName());
           for (File dmdFile : dmdFiles) {
-            String relativeName = dmdFile.getAbsolutePath().substring(dmdFolder.getAbsolutePath().length());
-            zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/" + relativeName, zipOut);
+            zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/", zipOut);
           }
         }
       }
@@ -242,10 +219,7 @@ public class VpaService {
       zipRegistryDetails(options, zipOut);
     }
 
-    /*
-     * Always do this as the final step
-     */
-    zipPackageInfo(packageInfo, game, zipOut);
+    writeWheelToPackageInfo(packageInfo, game);
   }
 
   public long calculateTotalSize(Game game) {
@@ -287,7 +261,7 @@ public class VpaService {
       List<FrontendMediaItem> items = frontendService.getMediaItems(game, value);
       for (FrontendMediaItem item : items) {
         if (item.getFile().exists()) {
-          LOG.info("Packing " + item.getFile().getAbsolutePath());
+          LOG.info("Packing {}", item.getFile().getAbsolutePath());
           File mediaFile = item.getFile();
 
           //do not archive augmented icons
@@ -297,7 +271,7 @@ public class VpaService {
               mediaFile = augmenter.getBackupWheelIcon();
             }
           }
-          zipFile(mediaFile, "Frontend/Screens/" + value.name() + "/" + mediaFile.getName(), zipOut);
+          zipFile(mediaFile, "Screens/" + value.name() + "/" + mediaFile.getName(), zipOut);
         }
       }
     }
@@ -312,7 +286,7 @@ public class VpaService {
       File pupackFolder = pupPack.getPupPackFolder();
       packageInfo.setPupPack(pupPack.getName());
       LOG.info("Packing " + pupackFolder.getAbsolutePath());
-      zipFile(pupackFolder, "Frontend/PUPPack/" + pupackFolder.getName(), zipOut);
+      zipFile(pupackFolder, "PUPPack/" + pupackFolder.getName(), zipOut);
     }
   }
 
@@ -326,7 +300,7 @@ public class VpaService {
     tableDetailsTmpFile.delete();
   }
 
-  private void zipPackageInfo(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) throws IOException {
+  private void writeWheelToPackageInfo(ArchivePackageInfo packageInfo, Game game) throws IOException {
     //store wheel icon as archive preview
     File originalFile = frontendService.getWheelImage(game);
     File mediaFile = originalFile;

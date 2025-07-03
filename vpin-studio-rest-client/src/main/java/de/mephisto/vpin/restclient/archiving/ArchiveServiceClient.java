@@ -35,20 +35,16 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "archives/" + id, ArchiveDescriptorRepresentation[].class));
   }
 
-  public List<ArchiveDescriptorRepresentation> getArchiveDescriptorsFiltered() {
-    return Arrays.asList(getRestClient().get(API + "archives/filtered", ArchiveDescriptorRepresentation[].class));
-  }
-
   public List<ArchiveSourceRepresentation> getArchiveSources() {
     return Arrays.asList(getRestClient().get(API + "archives/sources", ArchiveSourceRepresentation[].class));
   }
 
-  public void deleteArchive(long sourceId, String filename) {
-    getRestClient().delete(API + "archives/descriptor/" + sourceId + "/" + filename);
+  public boolean deleteArchive(long sourceId, String filename) {
+    return getRestClient().delete(API + "archives/descriptor/" + sourceId + "/" + filename);
   }
 
-  public void deleteArchiveSource(long id) {
-    getRestClient().delete(API + "archives/source/" + id);
+  public boolean deleteArchiveSource(long id) {
+    return getRestClient().delete(API + "archives/source/" + id);
   }
 
   public ArchiveSourceRepresentation saveArchiveSource(ArchiveSourceRepresentation source) throws Exception {
@@ -95,9 +91,5 @@ public class ArchiveServiceClient extends VPinStudioClientService {
 
   public boolean installTable(ArchiveRestoreDescriptor descriptor) throws Exception {
     return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
-  }
-
-  public boolean copyToRepository(ArchiveCopyToRepositoryDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "archives/copytorepository", descriptor, Boolean.class);
   }
 }

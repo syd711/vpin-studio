@@ -96,7 +96,7 @@
                         <Tooltip text="Uploads an archive bundle so it can be installed afterwards." />
                      </tooltip>
                   </Button>
-                  <Button fx:id="bundleBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBundle" text="Download" textFill="WHITE">
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -108,14 +108,6 @@
                      </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                  <Button fx:id="copyToRepositoryBtn" disable="true" layoutX="915.0" layoutY="11.0" mnemonicParsing="false" onAction="#onToRepositoryCopy" text="Copy" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
-                     </graphic>
-                  </Button>
                   <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />

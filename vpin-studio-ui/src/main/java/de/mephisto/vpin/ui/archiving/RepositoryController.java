@@ -70,10 +70,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private Button addArchiveBtn;
 
   @FXML
-  private Button copyToRepositoryBtn;
-
-  @FXML
-  private Button bundleBtn;
+  private Button downloadBtn;
 
   @FXML
   private TextField searchTextField;
@@ -221,24 +218,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
   }
 
   @FXML
-  private void onBundle() {
-    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if (!selectedItems.isEmpty()) {
-      if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
-        ArchivingDialogs.openVpaArchiveBundleDialog(selectedItems);
-      }
-    }
-  }
-
-  @FXML
-  private void onToRepositoryCopy() {
-    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-    if (!selectedItems.isEmpty()) {
-      ArchivingDialogs.openCopyArchiveToRepositoryDialog(selectedItems);
-    }
-  }
-
-  @FXML
   public void onReload() {
     doReload(true);
   }
@@ -308,7 +287,10 @@ public class RepositoryController implements Initializable, StudioFXController, 
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           for (ArchiveDescriptorRepresentation selectedItem : selectedItems) {
-            client.getArchiveService().deleteArchive(selectedItem.getSource().getId(), selectedItem.getFilename());
+            boolean b = client.getArchiveService().deleteArchive(selectedItem.getSource().getId(), selectedItem.getFilename());
+            if (!b) {
+              WidgetFactory.showAlert(stage, "Error", "Failed to delete \"" + selectedItem.getFilename() + "\"");
+            }
           }
         }
         catch (Exception e) {
@@ -327,13 +309,13 @@ public class RepositoryController implements Initializable, StudioFXController, 
     endSeparator.managedProperty().bindBidirectional(endSeparator.visibleProperty());
     sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
     openFolderButton.managedProperty().bindBidirectional(openFolderButton.visibleProperty());
-    copyToRepositoryBtn.managedProperty().bindBidirectional(copyToRepositoryBtn.visibleProperty());
-    copyToRepositoryBtn.setVisible(false);
+    downloadBtn.managedProperty().bindBidirectional(downloadBtn.visibleProperty());
     tableView.setPlaceholder(new Label("This backup source does contains any files."));
 
     systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());
     endSeparator.setVisible(client.getSystemService().isLocal());
+    downloadBtn.setVisible(client.getSystemService().isLocal());
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -582,8 +564,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
       addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()));
       restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
-      bundleBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
-      copyToRepositoryBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Http.name()) || newSelection == null);
+      downloadBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() != 1);
       openFolderButton.setDisable(newSelection == null);
 
 
@@ -613,7 +594,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
       addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
       restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
-      bundleBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
+      downloadBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
 
       tableView.getSelectionModel().clearSelection();
       doReload();
@@ -622,10 +603,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
     deleteBtn.setDisable(true);
     restoreBtn.setDisable(true);
-    bundleBtn.setDisable(true);
-    copyToRepositoryBtn.setDisable(true);
-
-    EventManager.getInstance().addListener(this);
+    downloadBtn.setDisable(true);
   }
 
   @Override
@@ -637,6 +615,12 @@ public class RepositoryController implements Initializable, StudioFXController, 
     }
 
     this.doReload();
+    EventManager.getInstance().addListener(this);
+  }
+
+  @Override
+  public void onViewDeactivated() {
+    EventManager.getInstance().removeListener(this);
   }
 
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
@@ -681,17 +665,11 @@ public class RepositoryController implements Initializable, StudioFXController, 
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if (jobType.equals(JobType.ARCHIVE_INSTALL)
-        || jobType.equals(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY)
-        || jobType.equals(JobType.ARCHIVE_DOWNLOAD_TO_FILESYSTEM)
-    ) {
+    if (jobType.equals(JobType.TABLE_BACKUP)) {
       Platform.runLater(() -> {
         onReload();
+        EventManager.getInstance().notifyTableChange(event.getGameId(), null);
       });
-    }
-
-    if (jobType.equals(JobType.TABLE_BACKUP)) {
-      EventManager.getInstance().notifyTableChange(event.getGameId(), null);
     }
   }
 

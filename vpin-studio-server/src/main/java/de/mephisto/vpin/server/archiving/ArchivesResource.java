@@ -49,11 +49,6 @@ public class ArchivesResource {
     return archiveService.installArchive(descriptor);
   }
 
-  @PostMapping("/copytorepository")
-  public Boolean copyToRepository(@RequestBody ArchiveCopyToRepositoryDescriptor descriptor) {
-    return archiveService.copyToRepository(descriptor);
-  }
-
   @GetMapping("/{sourceId}")
   public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
     List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors(sourceId);
@@ -63,18 +58,6 @@ public class ArchivesResource {
       result.add(descriptorRepresentation);
     }
     return result;
-  }
-
-
-  @GetMapping("/filtered")
-  public List<ArchiveDescriptorRepresentation> getFilteredArchives() {
-    List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors();
-    Map<String, ArchiveDescriptorRepresentation> result = new HashMap<>();
-    for (ArchiveDescriptor archiveDescriptor : descriptors) {
-      ArchiveDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
-      result.put(archiveDescriptor.getFilename(), descriptorRepresentation);
-    }
-    return new ArrayList<>(result.values());
   }
 
   @GetMapping("/sources")

@@ -256,26 +256,6 @@ public class ArchiveService implements InitializingBean {
     return true;
   }
 
-  public boolean copyToRepository(ArchiveCopyToRepositoryDescriptor archiveCopyToRepositoryDescriptor) {
-    try {
-      ArchiveDescriptor archiveDescriptor = getArchiveDescriptor(archiveCopyToRepositoryDescriptor.getArchiveSourceId(), archiveCopyToRepositoryDescriptor.getFilename());
-
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY);
-      jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
-
-      CopyArchiveToRepositoryJob job = new CopyArchiveToRepositoryJob(this, archiveDescriptor, archiveCopyToRepositoryDescriptor.isOverwrite());
-      jobDescriptor.setJob(job);
-
-      jobService.offer(jobDescriptor);
-      LOG.info("Offered archive copying for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
-    }
-    catch (Exception e) {
-      LOG.error("Import failed: " + e.getMessage(), e);
-      return false;
-    }
-    return true;
-  }
-
   public boolean backupTable(@NonNull BackupDescriptor exportDescriptor) {
     List<Integer> gameIds = exportDescriptor.getGameIds();
     boolean result = true;

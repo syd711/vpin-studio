@@ -526,6 +526,7 @@ public class VPinStudioClient implements OverlayClient {
     File file = template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
       FileOutputStream out = null;
       try {
+
         out = new FileOutputStream(target);
         StreamUtils.copy(clientHttpResponse.getBody(), out);
         return target;
@@ -534,7 +535,9 @@ public class VPinStudioClient implements OverlayClient {
         throw e;
       }
       finally {
-        out.close();
+        if (out != null) {
+          out.close();
+        }
       }
     });
   }

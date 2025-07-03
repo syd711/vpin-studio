@@ -458,12 +458,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
     JobType jobType = event.getJobType();
-    if (jobType.equals(JobType.TABLE_BACKUP) || jobType.equals(JobType.ARCHIVE_INSTALL) && repositoryController != null) {
-      Platform.runLater(() -> {
-        repositoryController.doReload();
-      });
-    }
-    else if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
+    if (jobType.equals(JobType.PUP_INSTALL) || jobType.equals(JobType.ALTSOUND_INSTALL) || jobType.equals(JobType.ALTCOLOR_INSTALL)) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           GameRepresentation game = Studio.client.getGameService().getGame(event.getGameId());

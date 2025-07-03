@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.event.ActionEvent;
@@ -40,7 +41,7 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
   @FXML
   private Label titleLabel;
 
-  private File targetFolder;
+  private static File targetFolder;
 
   private boolean result = false;
   private List<ArchiveDescriptorRepresentation> archiveDescriptors;
@@ -57,24 +58,19 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
     result = true;
     try {
       for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
-        File target = new File(targetFolder, selectedItem.getFilename());
-        int index = 1;
-        String originalBaseName = FilenameUtils.getBaseName(target.getName());
-        while (target.exists()) {
-          String suffix = FilenameUtils.getExtension(target.getName());
-          target = new File(target.getParentFile(), originalBaseName + " (" + index + ")." + suffix);
-          index++;
-        }
-
         long repositoryId = selectedItem.getSource().getId();
-        DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(target.getName(), StandardCharsets.UTF_8), target);
+        File asset = new File(targetFolder, selectedItem.getFilename());
+        File uniqueTarget = FileUtils.uniqueFile(asset);
+        DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(selectedItem.getFilename(), StandardCharsets.UTF_8), uniqueTarget);
         job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
         JobPoller.getInstance().queueJob(job);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Downloading archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
-    } finally {
+    }
+    finally {
       stage.close();
     }
   }
@@ -83,9 +79,13 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
-    this.targetFolder = chooser.showDialog(stage);
-    if (this.targetFolder != null) {
-      this.fileNameField.setText(this.targetFolder.getAbsolutePath());
+    if (targetFolder != null) {
+      chooser.setInitialDirectory(targetFolder);
+    }
+
+    targetFolder = chooser.showDialog(stage);
+    if (targetFolder != null) {
+      this.fileNameField.setText(targetFolder.getAbsolutePath());
     }
     else {
       this.fileNameField.setText("");
