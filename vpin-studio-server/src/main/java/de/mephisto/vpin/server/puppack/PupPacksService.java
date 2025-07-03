@@ -149,11 +149,15 @@ public class PupPacksService implements InitializingBean {
     boolean orbitalPin = OrbitalPins.isOrbitalPin(packFolder.getName());
     boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
     if ((orbitalPin || containsMedia)) {
-//      LOG.info("Loaded PUP Pack " + packFolder.getName() + " (orbitalPin: " + orbitalPin + ")");
+      String msg = "Loaded PUP Pack " + packFolder.getName();
+      if (orbitalPin) {
+        msg += " (orbitalPin: " + orbitalPin + ")";
+      }
+      LOG.info(msg);
       pupPackCache.put(packFolder.getName().toLowerCase(), pupPack);
     }
     else {
-//      LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
+      LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
     }
     return pupPack;
   }
