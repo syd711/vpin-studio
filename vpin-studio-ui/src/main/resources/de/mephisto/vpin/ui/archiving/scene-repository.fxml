@@ -44,7 +44,6 @@
          <top>
             <ToolBar BorderPane.alignment="CENTER">
               <items>
-                  <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
                 <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -72,6 +71,8 @@
                      </children>
                   </StackPane>
                   <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
+                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

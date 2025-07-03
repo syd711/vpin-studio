@@ -177,19 +177,21 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   }
 
   public void setArchiveDescriptor(Optional<ArchiveDescriptorRepresentation> selection) {
-    directb2sLabel.setText("-");
-    pupPackLabel.setText("-");
-    romLabel.setText("-");
-    popperLabel.setText("-");
-    dmdLabel.setText("-");
-    musicLabel.setText("-");
-    altSoundLabel.setText("-");
-    altColorLabel.setText("-");
-    resLabel.setText("-");
-    iniLabel.setText("-");
-    povLabel.setText("-");
-    highscoreLabel.setText("-");
-    registryLabel.setText("-");
+    vpxLabel.setText(applyValue(vpxLabel, null));
+    directb2sLabel.setText(applyValue(directb2sLabel, null));
+    pupPackLabel.setText(applyValue(pupPackLabel, null));
+    romLabel.setText(applyValue(romLabel, null));
+    resLabel.setText(applyValue(resLabel, null));
+    iniLabel.setText(applyValue(iniLabel, null));
+    vbsLabel.setText(applyValue(vbsLabel, null));
+    popperLabel.setText(applyValue(popperLabel, null));
+    dmdLabel.setText(applyValue(dmdLabel, null));
+    musicLabel.setText(applyValue(musicLabel, null));
+    altSoundLabel.setText(applyValue(altSoundLabel, null));
+    altColorLabel.setText(applyValue(altColorLabel, null));
+    povLabel.setText(applyValue(povLabel, null));
+    highscoreLabel.setText(applyValue(highscoreLabel, null));
+    registryLabel.setText(applyValue(registryLabel, null));
 
     filenameLabel.setText("-");
     filenameLabel.setTooltip(null);
@@ -210,19 +212,21 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       ArchivePackageInfo packageInfo = descriptorRepresentation.getPackageInfo();
 
       if (packageInfo != null) {
-        directb2sLabel.setText(applyValue(packageInfo.getDirectb2s()));
-        pupPackLabel.setText(applyValue(packageInfo.getPupPack()));
-        romLabel.setText(applyValue(packageInfo.getRom()));
-        resLabel.setText(applyValue(packageInfo.getRes()));
-        iniLabel.setText(applyValue(packageInfo.getIni()));
-        popperLabel.setText(applyValue(packageInfo.getPopperMedia()));
-        dmdLabel.setText(applyValue(packageInfo.getDmd()));
-        musicLabel.setText(applyValue(packageInfo.getMusic()));
-        altSoundLabel.setText(applyValue(packageInfo.getAltSound()));
-        altColorLabel.setText(applyValue(packageInfo.getAltColor()));
-        povLabel.setText(applyValue(packageInfo.getPov()));
-        highscoreLabel.setText(applyValue(packageInfo.getHighscore()));
-        registryLabel.setText(applyValue(packageInfo.getRegistryData()));
+        vpxLabel.setText(applyValue(vpxLabel, packageInfo.getVpx()));
+        directb2sLabel.setText(applyValue(directb2sLabel, packageInfo.getDirectb2s()));
+        pupPackLabel.setText(applyValue(pupPackLabel, packageInfo.getPupPack()));
+        romLabel.setText(applyValue(romLabel, packageInfo.getRom()));
+        resLabel.setText(applyValue(resLabel, packageInfo.getRes()));
+        iniLabel.setText(applyValue(iniLabel, packageInfo.getIni()));
+        vbsLabel.setText(applyValue(vbsLabel, packageInfo.getVbs()));
+        popperLabel.setText(applyValue(popperLabel, packageInfo.getPopperMedia()));
+        dmdLabel.setText(applyValue(dmdLabel, packageInfo.getDmd()));
+        musicLabel.setText(applyValue(musicLabel, packageInfo.getMusic()));
+        altSoundLabel.setText(applyValue(altSoundLabel, packageInfo.getAltSound()));
+        altColorLabel.setText(applyValue(altColorLabel, packageInfo.getAltColor()));
+        povLabel.setText(applyValue(povLabel, packageInfo.getPov()));
+        highscoreLabel.setText(applyValue(highscoreLabel, packageInfo.getHighscore()));
+        registryLabel.setText(applyValue(registryLabel, packageInfo.getRegistryData()));
       }
 
       TableDetails tableDetails = descriptorRepresentation.getTableDetails();
@@ -259,7 +263,14 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     }
   }
 
-  private String applyValue(String value) {
-    return value == null ? "-" : value;
+  private String applyValue(Label label, String value) {
+    if (value != null) {
+      label.setTooltip(new Tooltip(value));
+      return value;
+    }
+    else {
+      label.setTooltip(null);
+    }
+    return "-";
   }
 }
