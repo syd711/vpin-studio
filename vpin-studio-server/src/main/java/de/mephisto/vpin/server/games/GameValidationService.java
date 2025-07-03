@@ -580,7 +580,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && !pupPacksService.isPupPackDisabled(game)) {
+    if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && pupPacksService.isPupPackDisabled(game)) {
       ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
       result.add(validationState);
     }

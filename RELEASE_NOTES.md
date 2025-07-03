@@ -47,7 +47,8 @@
 
 ## Bugfixes
 
-- Fixed table validation when loading media asset was missing but mandatory
+- Fixed table validation when loading media asset was missing but mandatory.
+- Fixed wrong PUP pack validator that checked if the PUP pack is enabled.
 
 ## VPin Mania
 
