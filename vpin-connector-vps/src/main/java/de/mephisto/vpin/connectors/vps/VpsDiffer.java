@@ -33,7 +33,7 @@ public class VpsDiffer {
   }
 
   public VPSChanges getChanges() {
-    return getChanges(false);
+    return getChanges(true);
   }
 
   private VPSChanges getChanges(boolean skipNewEvents) {

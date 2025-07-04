@@ -49,6 +49,7 @@
 
 - Fixed table validation when loading media asset was missing but mandatory.
 - Fixed wrong PUP pack validator that checked if the PUP pack is enabled.
+- Fixed superfluous VPS updates about new table version that are not relevant for mapped tables.
 
 ## VPin Mania
 
