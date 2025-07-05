@@ -79,9 +79,9 @@ public class VPSTest {
 
       List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables(), Collections.emptyList());
       assertFalse(diff.isEmpty());
-      assertEquals(2, diff.size());
+      assertEquals(1, diff.size());
 
-      VpsDiffer diffTable1 = diff.get(1);
+      VpsDiffer diffTable1 = diff.get(0);
       VPSChanges tableChanges = diffTable1.getTableChanges();
       assertFalse(tableChanges.isEmpty());
 
