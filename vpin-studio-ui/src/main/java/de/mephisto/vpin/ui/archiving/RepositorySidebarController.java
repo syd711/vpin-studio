@@ -56,6 +56,9 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label romLabel;
 
   @FXML
+  private Label nvramLabel;
+
+  @FXML
   private Label iniLabel;
 
   @FXML
@@ -181,6 +184,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     directb2sLabel.setText(applyValue(directb2sLabel, null));
     pupPackLabel.setText(applyValue(pupPackLabel, null));
     romLabel.setText(applyValue(romLabel, null));
+    nvramLabel.setText(applyValue(nvramLabel, null));
     resLabel.setText(applyValue(resLabel, null));
     iniLabel.setText(applyValue(iniLabel, null));
     vbsLabel.setText(applyValue(vbsLabel, null));
@@ -216,6 +220,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
         directb2sLabel.setText(applyValue(directb2sLabel, packageInfo.getDirectb2s()));
         pupPackLabel.setText(applyValue(pupPackLabel, packageInfo.getPupPack()));
         romLabel.setText(applyValue(romLabel, packageInfo.getRom()));
+        nvramLabel.setText(applyValue(nvramLabel, packageInfo.getNvRam()));
         resLabel.setText(applyValue(resLabel, packageInfo.getRes()));
         iniLabel.setText(applyValue(iniLabel, packageInfo.getIni()));
         vbsLabel.setText(applyValue(vbsLabel, packageInfo.getVbs()));

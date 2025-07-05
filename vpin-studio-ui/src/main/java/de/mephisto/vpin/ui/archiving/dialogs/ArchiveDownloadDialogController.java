@@ -99,6 +99,10 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
 
     this.downloadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
+
+    if (targetFolder != null && targetFolder.exists()) {
+      fileNameField.setText(targetFolder.getAbsolutePath());
+    }
   }
 
   private void validateInput() {

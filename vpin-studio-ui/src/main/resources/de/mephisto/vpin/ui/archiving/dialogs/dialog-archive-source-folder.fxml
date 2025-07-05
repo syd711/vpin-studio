@@ -56,7 +56,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nameField" GridPane.columnIndex="1">
+                  <TextField fx:id="nameField" promptText="Enter the display name of the backup folder here." GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font></TextField>
@@ -65,7 +65,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="folderField" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="folderField" prefHeight="30.0" promptText="Enter the location for the backup folder here." GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

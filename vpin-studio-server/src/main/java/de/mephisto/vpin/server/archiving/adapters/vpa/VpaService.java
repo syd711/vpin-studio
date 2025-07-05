@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -9,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
@@ -85,42 +87,16 @@ public class VpaService {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private BackglassService backglassService;
+
   //-------------------------------
 
   public void createBackup(ArchivePackageInfo packageInfo, BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
 
     GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
-
-    //store highscore
-    //zip EM file
-    File highscoreFile = highscoreResolver.getHighscoreTextFile(game);
-    if (highscoreFile != null && highscoreFile.exists()) {
-      packageInfo.setHighscore(highscoreFile.getName());
-      zipFile(highscoreFile, "Highscore/" + highscoreFile.getName(), zipOut);
-    }
-
-    //zip nvram file
-    File nvRamFile = highscoreResolver.getNvRamFile(game);
-    if (nvRamFile.exists()) {
-      packageInfo.setHighscore(nvRamFile.getName());
-      zipFile(nvRamFile, "VPinMAME/nvram/" + nvRamFile.getName(), zipOut);
-    }
-
-    //write VPReg.stg data
-    if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
-      packageInfo.setHighscore("VPReg.stg");
-      File vprRegFile = emulator.getVPRegFile();
-      VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
-      String gameData = reg.toJson();
-      if (gameData != null) {
-        File regBackupTemp = File.createTempFile("vpreg-stg", "json");
-        regBackupTemp.deleteOnExit();
-        Files.write(regBackupTemp.toPath(), gameData.getBytes());
-        zipFile(regBackupTemp, "Highscore/" + VPReg.ARCHIVE_FILENAME, zipOut);
-        regBackupTemp.delete();
-      }
-    }
+    File gameFolder = game.getGameFile().getParentFile();
 
     File romFile = game.getRomFile();
     if (romFile != null && romFile.exists()) {
@@ -158,10 +134,46 @@ public class VpaService {
       zipFile(gameFile, gameFile.getName(), zipOut);
     }
 
-    File directB2SFile = game.getDirectB2SFile();
-    if (directB2SFile.exists()) {
-      packageInfo.setDirectb2s(directB2SFile.getName());
-      zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+    DirectB2S directB2SAndVersions = backglassService.getDirectB2SAndVersions(game);
+    List<String> versions = directB2SAndVersions.getVersions();
+    for (String version : versions) {
+      File directB2SFile = new File(gameFolder, version);
+      if (directB2SFile.exists()) {
+        packageInfo.setDirectb2s(directB2SFile.getName());
+        zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+      }
+    }
+
+
+    //store highscore
+    //zip EM file
+    File highscoreFile = highscoreResolver.getHighscoreTextFile(game);
+    if (highscoreFile != null && highscoreFile.exists()) {
+      packageInfo.setHighscore(highscoreFile.getName());
+      zipFile(highscoreFile, "Highscore/" + highscoreFile.getName(), zipOut);
+    }
+
+    //zip nvram file
+    File nvRamFile = highscoreResolver.getNvRamFile(game);
+    if (nvRamFile.exists()) {
+      packageInfo.setHighscore(nvRamFile.getName());
+      packageInfo.setNvRam(nvRamFile.getName());
+      zipFile(nvRamFile, "VPinMAME/nvram/" + nvRamFile.getName(), zipOut);
+    }
+
+    //write VPReg.stg data
+    if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
+      packageInfo.setHighscore("VPReg.stg");
+      File vprRegFile = emulator.getVPRegFile();
+      VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
+      String gameData = reg.toJson();
+      if (gameData != null) {
+        File regBackupTemp = File.createTempFile("vpreg-stg", "json");
+        regBackupTemp.deleteOnExit();
+        Files.write(regBackupTemp.toPath(), gameData.getBytes());
+        zipFile(regBackupTemp, "Highscore/" + VPReg.ARCHIVE_FILENAME, zipOut);
+        regBackupTemp.delete();
+      }
     }
 
     // DMDs
@@ -178,10 +190,17 @@ public class VpaService {
           }
         }
       }
-
     }
 
-    // Music and sounds
+
+    //always zip music files if they are in a ROM named folder
+    File musicFolder = musicService.getMusicFolder(game);
+    if (musicFolder != null && musicFolder.exists()) {
+      packageInfo.setMusic(musicFolder.getName());
+      zipFile(musicFolder, "Music/" + musicFolder.getName(), zipOut);
+    }
+
+    // sounds
     if (game.isAltSoundAvailable()) {
       File altSoundFolder = altSoundService.getAltSoundFolder(game);
       packageInfo.setAltSound(altSoundFolder.getName());
@@ -200,13 +219,6 @@ public class VpaService {
     if (altColorFolder != null && altColorFolder.exists()) {
       packageInfo.setAltColor(altColorFolder.getName());
       zipFile(altColorFolder, "VPinMAME/altcolor/" + altColorFolder.getName(), zipOut);
-    }
-
-    //always zip music files if they are in a ROM named folder
-    File musicFolder = musicService.getMusicFolder(game);
-    if (musicFolder != null && musicFolder.exists()) {
-      packageInfo.setMusic(musicFolder.getName());
-      zipFile(musicFolder, "Music/" + musicFolder.getName(), zipOut);
     }
 
     zipPupPack(packageInfo, game, zipOut);

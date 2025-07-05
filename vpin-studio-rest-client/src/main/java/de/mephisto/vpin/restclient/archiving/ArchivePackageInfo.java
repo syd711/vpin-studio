@@ -7,6 +7,7 @@ public class ArchivePackageInfo {
   private String directb2s;
   private String pupPack;
   private String rom;
+  private String nvRam;
   private String res;
   private String vbs;
   private String popperMedia;
@@ -22,6 +23,14 @@ public class ArchivePackageInfo {
 
   private String icon;
   private String thumbnail;
+
+  public String getNvRam() {
+    return nvRam;
+  }
+
+  public void setNvRam(String nvRam) {
+    this.nvRam = nvRam;
+  }
 
   public String getIcon() {
     return icon;

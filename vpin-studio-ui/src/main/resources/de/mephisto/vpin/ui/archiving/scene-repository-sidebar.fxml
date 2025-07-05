@@ -301,7 +301,7 @@
                             <content>
                                 <VBox>
                                     <children>
-                                        <Label layoutX="20.0" layoutY="20.0" text="Included Files &amp; Data">
+                                        <Label layoutX="20.0" layoutY="20.0" text="Table Files">
                                             <font>
                                                 <Font name="System Bold" size="14.0" />
                                             </font>
@@ -320,13 +320,6 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
                                                 <Label text="DirectB2S:" GridPane.rowIndex="1">
@@ -334,32 +327,7 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="15.0" text="PUP Pack:" GridPane.rowIndex="7">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="10.0" layoutY="45.0" text="ROM:" GridPane.rowIndex="6">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="10.0" layoutY="76.0" text="Popper Media:" GridPane.rowIndex="8">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="10.0" layoutY="106.0" text="Highscore Data:" GridPane.rowIndex="13">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="10.0" layoutY="106.0" text="DMD:" GridPane.rowIndex="9">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label layoutX="10.0" layoutY="168.0" text="Alt Sound:" GridPane.rowIndex="11">
+                                                <Label layoutX="10.0" layoutY="106.0" text="DMD:" GridPane.rowIndex="6">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -369,44 +337,17 @@
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label fx:id="pupPackLabel" layoutX="174.0" layoutY="34.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                                    <GridPane.margin>
-                                                        <Insets />
-                                                    </GridPane.margin>
-                                                </Label>
-                                                <Label fx:id="romLabel" layoutX="174.0" layoutY="65.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                                <Label fx:id="popperLabel" layoutX="174.0" layoutY="95.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font></Label>
-                                                <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font></Label>
-                                                <Label fx:id="altSoundLabel" layoutX="174.0" layoutY="186.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                                <Label fx:id="dmdLabel" layoutX="174.0" layoutY="126.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                        <font>
                                           <Font size="14.0" />
                                        </font></Label>
                                                 <Label fx:id="povLabel" layoutX="174.0" layoutY="217.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label fx:id="highscoreLabel" layoutX="174.0" layoutY="247.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font></Label>
-                                                <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="10">
+                                                <Label layoutX="10.0" layoutY="228.0" text="Music:" GridPane.rowIndex="7">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Label>
-                                                <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font></Label>
-                                                <Label layoutX="10.0" layoutY="228.0" text="Alt Color:" GridPane.rowIndex="12">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label fx:id="altColorLabel" layoutX="194.0" layoutY="247.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                                <Label fx:id="musicLabel" layoutX="192.0" layoutY="186.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                        <font>
                                           <Font size="14.0" />
                                        </font></Label>
@@ -416,12 +357,6 @@
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="resLabel" layoutX="194.0" layoutY="308.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <Label layoutX="10.0" layoutY="380.0" text="Windows Registry Entries:" GridPane.rowIndex="14">
-                                                    <font>
-                                                        <Font size="14.0" />
-                                                    </font>
-                                                </Label>
-                                                <Label fx:id="registryLabel" layoutX="191.0" layoutY="399.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                                                 <Label fx:id="directb2sLabel" layoutX="10.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                     <font>
                                                         <Font size="14.0" />
@@ -452,12 +387,150 @@
                                           <Font size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="registryLabel2" layoutX="195.0" layoutY="407.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="14">
+                                            </children>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                                        </GridPane>
+                              <Label layoutX="22.0" layoutY="22.0" text="VPin MAME Files">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="331.0" minWidth="10.0" prefWidth="185.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="426.0" minWidth="10.0" prefWidth="400.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                                 <children>
+                                                <Label text="ROM:">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="romLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" />
+                                                <Label text="Alt Sound:" GridPane.rowIndex="2">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="altSoundLabel" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <font>
                                           <Font size="14.0" />
                                        </font></Label>
-                                            </children>
-                                        </GridPane>
+                                                <Label text="Alt Color:" GridPane.rowIndex="3">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="altColorLabel" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="NVRAM:" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="nvramLabel" layoutX="199.0" layoutY="15.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 </children>
+                              </GridPane>
+                              <Label layoutX="22.0" layoutY="432.0" text="Frontend Media">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="288.0" minWidth="10.0" prefWidth="185.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="429.0" minWidth="10.0" prefWidth="403.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                                 <children>
+                                                <Label text="Screen Media Files:">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="popperLabel" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                                <Label text="PUP Pack:" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="pupPackLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                    <GridPane.margin>
+                                                        <Insets />
+                                                    </GridPane.margin>
+                                                </Label>
+                                 </children>
+                              </GridPane>
+                              <Label layoutX="22.0" layoutY="551.0" text="Additional Metadata">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="291.0" minWidth="10.0" prefWidth="185.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="413.0" minWidth="10.0" prefWidth="407.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                                <Label text="Highscore Data:">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="highscoreLabel" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                                <Label text="Windows Registry Entries:" GridPane.rowIndex="1">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                    <Label fx:id="registryLabel" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </GridPane>
                                     </children>
                                     <padding>
                                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

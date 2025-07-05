@@ -234,10 +234,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
     final ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     tableView.getSelectionModel().clearSelection();
     boolean disable = selection == null;
-    if (sourceCombo.getValue() != null) {
-      disable = sourceCombo.getValue().getId() != -1;
-    }
-
     deleteBtn.setDisable(disable);
     restoreBtn.setDisable(disable);
 
@@ -315,7 +311,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
     systemSummary = client.getSystemService().getSystemSummary();
     openFolderButton.setVisible(client.getSystemService().isLocal());
     endSeparator.setVisible(client.getSystemService().isLocal());
-    downloadBtn.setVisible(client.getSystemService().isLocal());
+    downloadBtn.setVisible(!client.getSystemService().isLocal());
+
+    restoreBtn.setDisable(true);
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -564,7 +562,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
       deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
       addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()));
       restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
-      downloadBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() != 1);
+      downloadBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
       openFolderButton.setDisable(newSelection == null);
 
 
@@ -614,13 +612,15 @@ public class RepositoryController implements Initializable, StudioFXController, 
       NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, archiveDescriptor.getFilename()));
     }
 
-    this.doReload();
+    if (this.tableView.getItems().isEmpty()) {
+      this.doReload();
+    }
+
     EventManager.getInstance().addListener(this);
   }
 
   @Override
   public void onViewDeactivated() {
-    EventManager.getInstance().removeListener(this);
   }
 
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
