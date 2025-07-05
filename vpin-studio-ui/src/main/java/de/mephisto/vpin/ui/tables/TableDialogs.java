@@ -599,13 +599,6 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openTableInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> descriptorRepresentations) {
-    Stage stage = Dialogs.createStudioDialogStage(TableRestoreController.class, "dialog-table-restore.fxml", "Restore Tables");
-    TableRestoreController controller = (TableRestoreController) stage.getUserData();
-    controller.setData(tablesController, descriptorRepresentations);
-    stage.showAndWait();
-  }
-
   public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
     Stage stage = Dialogs.createStudioDialogStage(WebhooksDialogController.class, "dialog-webhook-set.fxml", "Webhook Set");
     WebhooksDialogController controller = (WebhooksDialogController) stage.getUserData();

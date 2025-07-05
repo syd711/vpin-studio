@@ -3,7 +3,6 @@ package de.mephisto.vpin.server.archiving;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.descriptors.ArchiveCopyToRepositoryDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;

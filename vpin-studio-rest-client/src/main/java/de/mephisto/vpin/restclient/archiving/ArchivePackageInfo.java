@@ -4,32 +4,152 @@ public class ArchivePackageInfo {
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
   public final static String ARCHIVE_FILENAME = "package-info.json";
 
-  private String directb2s;
-  private String pupPack;
-  private String rom;
-  private String nvRam;
-  private String res;
-  private String vbs;
-  private String popperMedia;
-  private String pov;
-  private String ini;
-  private String music;
-  private String altSound;
-  private String altColor;
-  private String highscore;
-  private String dmd;
-  private String vpx;
-  private String registryData;
+  private ArchiveFileInfo directb2s;
+  private ArchiveFileInfo pupPack;
+  private ArchiveFileInfo rom;
+  private ArchiveFileInfo nvRam;
+  private ArchiveFileInfo res;
+  private ArchiveFileInfo vbs;
+  private ArchiveFileInfo popperMedia;
+  private ArchiveFileInfo pov;
+  private ArchiveFileInfo ini;
+  private ArchiveFileInfo music;
+  private ArchiveFileInfo altSound;
+  private ArchiveFileInfo altColor;
+  private ArchiveFileInfo highscore;
+  private ArchiveFileInfo dmd;
+  private ArchiveFileInfo vpx;
+  private ArchiveFileInfo registryData;
 
   private String icon;
   private String thumbnail;
 
-  public String getNvRam() {
+  public ArchiveFileInfo getDirectb2s() {
+    return directb2s;
+  }
+
+  public void setDirectb2s(ArchiveFileInfo directb2s) {
+    this.directb2s = directb2s;
+  }
+
+  public ArchiveFileInfo getPupPack() {
+    return pupPack;
+  }
+
+  public void setPupPack(ArchiveFileInfo pupPack) {
+    this.pupPack = pupPack;
+  }
+
+  public ArchiveFileInfo getRom() {
+    return rom;
+  }
+
+  public void setRom(ArchiveFileInfo rom) {
+    this.rom = rom;
+  }
+
+  public ArchiveFileInfo getNvRam() {
     return nvRam;
   }
 
-  public void setNvRam(String nvRam) {
+  public void setNvRam(ArchiveFileInfo nvRam) {
     this.nvRam = nvRam;
+  }
+
+  public ArchiveFileInfo getRes() {
+    return res;
+  }
+
+  public void setRes(ArchiveFileInfo res) {
+    this.res = res;
+  }
+
+  public ArchiveFileInfo getVbs() {
+    return vbs;
+  }
+
+  public void setVbs(ArchiveFileInfo vbs) {
+    this.vbs = vbs;
+  }
+
+  public ArchiveFileInfo getPopperMedia() {
+    return popperMedia;
+  }
+
+  public void setPopperMedia(ArchiveFileInfo popperMedia) {
+    this.popperMedia = popperMedia;
+  }
+
+  public ArchiveFileInfo getPov() {
+    return pov;
+  }
+
+  public void setPov(ArchiveFileInfo pov) {
+    this.pov = pov;
+  }
+
+  public ArchiveFileInfo getIni() {
+    return ini;
+  }
+
+  public void setIni(ArchiveFileInfo ini) {
+    this.ini = ini;
+  }
+
+  public ArchiveFileInfo getMusic() {
+    return music;
+  }
+
+  public void setMusic(ArchiveFileInfo music) {
+    this.music = music;
+  }
+
+  public ArchiveFileInfo getAltSound() {
+    return altSound;
+  }
+
+  public void setAltSound(ArchiveFileInfo altSound) {
+    this.altSound = altSound;
+  }
+
+  public ArchiveFileInfo getAltColor() {
+    return altColor;
+  }
+
+  public void setAltColor(ArchiveFileInfo altColor) {
+    this.altColor = altColor;
+  }
+
+  public ArchiveFileInfo getHighscore() {
+    return highscore;
+  }
+
+  public void setHighscore(ArchiveFileInfo highscore) {
+    this.highscore = highscore;
+  }
+
+  public ArchiveFileInfo getDmd() {
+    return dmd;
+  }
+
+  public void setDmd(ArchiveFileInfo dmd) {
+    this.dmd = dmd;
+  }
+
+  public ArchiveFileInfo getVpx() {
+    return vpx;
+  }
+
+  public void setVpx(ArchiveFileInfo vpx) {
+    this.vpx = vpx;
+  }
+
+  public ArchiveFileInfo getRegistryData() {
+    return registryData;
+  }
+
+  public void setRegistryData(ArchiveFileInfo registryData) {
+    this.registryData = registryData;
   }
 
   public String getIcon() {
@@ -46,125 +166,5 @@ public class ArchivePackageInfo {
 
   public void setThumbnail(String thumbnail) {
     this.thumbnail = thumbnail;
-  }
-
-  public String getDirectb2s() {
-    return directb2s;
-  }
-
-  public void setDirectb2s(String directb2s) {
-    this.directb2s = directb2s;
-  }
-
-  public String getPupPack() {
-    return pupPack;
-  }
-
-  public void setPupPack(String pupPack) {
-    this.pupPack = pupPack;
-  }
-
-  public String getRom() {
-    return rom;
-  }
-
-  public void setRom(String rom) {
-    this.rom = rom;
-  }
-
-  public String getRes() {
-    return res;
-  }
-
-  public void setRes(String res) {
-    this.res = res;
-  }
-
-  public String getVbs() {
-    return vbs;
-  }
-
-  public void setVbs(String vbs) {
-    this.vbs = vbs;
-  }
-
-  public String getPopperMedia() {
-    return popperMedia;
-  }
-
-  public void setPopperMedia(String popperMedia) {
-    this.popperMedia = popperMedia;
-  }
-
-  public String getPov() {
-    return pov;
-  }
-
-  public void setPov(String pov) {
-    this.pov = pov;
-  }
-
-  public String getIni() {
-    return ini;
-  }
-
-  public void setIni(String ini) {
-    this.ini = ini;
-  }
-
-  public String getMusic() {
-    return music;
-  }
-
-  public void setMusic(String music) {
-    this.music = music;
-  }
-
-  public String getAltSound() {
-    return altSound;
-  }
-
-  public void setAltSound(String altSound) {
-    this.altSound = altSound;
-  }
-
-  public String getAltColor() {
-    return altColor;
-  }
-
-  public void setAltColor(String altColor) {
-    this.altColor = altColor;
-  }
-
-  public String getHighscore() {
-    return highscore;
-  }
-
-  public void setHighscore(String highscore) {
-    this.highscore = highscore;
-  }
-
-  public String getDmd() {
-    return dmd;
-  }
-
-  public void setDmd(String dmd) {
-    this.dmd = dmd;
-  }
-
-  public String getVpx() {
-    return vpx;
-  }
-
-  public void setVpx(String vpx) {
-    this.vpx = vpx;
-  }
-
-  public String getRegistryData() {
-    return registryData;
-  }
-
-  public void setRegistryData(String registryData) {
-    this.registryData = registryData;
   }
 }

@@ -120,49 +120,6 @@ public class ArchivesResource {
     }
   }
 
-  @GetMapping("/download/bundle/{sourceId}/{filename}")
-  public void downloadBundle(@PathVariable("sourceId") long sourceId,
-                             @PathVariable("filename") String fn,
-                             HttpServletResponse response) {
-    InputStream in = null;
-    OutputStream out = null;
-    String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
-    File bundleFile = new File(archiveService.getArchivesFolder(), filename);
-
-    try {
-      in = new BufferedInputStream(new FileInputStream(bundleFile));
-      out = response.getOutputStream();
-      IOUtils.copy(in, out);
-      response.flushBuffer();
-
-      LOG.info("Finished download of \"" + filename + "\"");
-      invalidateCache();
-    } catch (IOException ex) {
-      LOG.info("Error writing bundle to output stream. Filename was '{}'", filename, ex);
-      throw new RuntimeException("IOError writing bundle to output stream");
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //
-        }
-      }
-
-      if (out != null) {
-        try {
-          out.close();
-        } catch (IOException e) {
-          //
-        }
-      }
-
-      if (bundleFile.exists() && bundleFile.delete()) {
-        LOG.info("Deleted temporary bundle file " + bundleFile.getAbsolutePath());
-      }
-    }
-  }
-
   @PostMapping("/upload")
   public JobDescriptor uploadArchive(@RequestParam(value = "file", required = false) MultipartFile file,
                                      @RequestParam("objectId") Integer repositoryId) {

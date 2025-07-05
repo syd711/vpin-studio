@@ -134,7 +134,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
       if (emulator != null) {
         game.setEmulator(emulator);
-      //  game.setEmulatorName(emulator.getName());
+        //  game.setEmulatorName(emulator.getName());
       }
       else {
         LOG.info("No emulator found for {}/{}/{}/{}", game, game.getId(), game.getEmulatorId(), game.getGameFilePath());
@@ -547,7 +547,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
     List<GameEmulator> vpxGameEmulators = emulatorService.getVpxGameEmulators();
-    if(vpxGameEmulators.isEmpty()) {
+    if (vpxGameEmulators.isEmpty()) {
       return getFrontendInstallationFolder();
     }
     GameEmulator emulator = vpxGameEmulators.get(0);
@@ -583,18 +583,18 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public List<FrontendMediaItem> getMediaItems(@NonNull Game game, @NonNull VPinScreen screen) {
-      List<FrontendMediaItem> itemList = new ArrayList<>();
-      List<File> mediaFiles = getMediaFiles(game, screen);
-      for (File file : mediaFiles) {
-        FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
-        itemList.add(item);
-      }
-      return itemList;
+    List<FrontendMediaItem> itemList = new ArrayList<>();
+    List<File> mediaFiles = getMediaFiles(game, screen);
+    for (File file : mediaFiles) {
+      FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
+      itemList.add(item);
     }
+    return itemList;
+  }
 
   public File getWheelImage(Game game) {
     List<File> mediaFiles = getMediaFiles(game, VPinScreen.Wheel);
-    return mediaFiles.isEmpty()? null : mediaFiles.get(0);
+    return mediaFiles.isEmpty() ? null : mediaFiles.get(0);
   }
 
   /**

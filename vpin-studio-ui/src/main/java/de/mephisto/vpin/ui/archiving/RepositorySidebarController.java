@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveFileInfo;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -268,10 +269,10 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     }
   }
 
-  private String applyValue(Label label, String value) {
+  private String applyValue(Label label, ArchiveFileInfo value) {
     if (value != null) {
-      label.setTooltip(new Tooltip(value));
-      return value;
+      label.setTooltip(new Tooltip(value.toString()));
+      return value.toString();
     }
     else {
       label.setTooltip(null);
