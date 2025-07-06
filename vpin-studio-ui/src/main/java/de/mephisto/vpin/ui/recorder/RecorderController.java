@@ -537,7 +537,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
       CheckBox cb = new CheckBox();
       column.setGraphic(cb);
-      cb.selectedProperty().addListener(new ColumnCheckboxListener(screen.getScreen()));
+      cb.selectedProperty().addListener(new ColumnCheckboxListener(screen.getScreen(), column));
 
       tableView.getColumns().add(2, column);
       screenColumns.put(screen.getScreen(), column);
@@ -810,14 +810,25 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   class ColumnCheckboxListener implements ChangeListener<Boolean> {
     private final VPinScreen screen;
+    private final TableColumn<GameRepresentationModel, GameRepresentationModel> column;
 
-    ColumnCheckboxListener(VPinScreen screen) {
+    ColumnCheckboxListener(VPinScreen screen, TableColumn<GameRepresentationModel, GameRepresentationModel> column) {
       this.screen = screen;
+      this.column = column;
     }
 
     @Override
     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
       if (newValue) {
+        ObservableList<GameRepresentationModel> items = tableView.getItems();
+        for (GameRepresentationModel item : items) {
+          if (!selection.contains(item.getGameId())) {
+            RecordingData data = new RecordingData();
+            data.setGameId(item.getGameId());
+            selection.add(data);
+          }
+        }
+
         selection.getRecordingData().forEach(data -> data.addScreen(screen));
       }
       else {
