@@ -17,7 +17,9 @@ public class RecordingDataSummary {
   }
 
   public void add(RecordingData recordingData) {
-    this.recordingData.add(recordingData);
+    if (!this.recordingData.contains(recordingData)) {
+      this.recordingData.add(recordingData);
+    }
   }
 
   public void remove(int id) {
@@ -29,9 +31,9 @@ public class RecordingDataSummary {
     }
   }
 
-  public boolean contains(int id) {
+  public boolean contains(int gameId) {
     for (RecordingData data : recordingData) {
-      if (data.getGameId() == id) {
+      if (data.getGameId() == gameId) {
         return true;
       }
     }
