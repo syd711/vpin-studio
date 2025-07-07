@@ -67,12 +67,7 @@ public class NotificationsPreferencesController implements Initializable {
     NotificationSettings notificationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
 
     screenInfoComboBox.setItems(FXCollections.observableList(client.getSystemService().getSystemSummary().getScreenInfos()));
-    if (notificationSettings.getNotificationsScreenId() == -1) {
-      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getPrimaryScreen());
-    }
-    else {
-      screenInfoComboBox.setValue(client.getSystemService().getSystemSummary().getScreenInfo(notificationSettings.getNotificationsScreenId()));
-    }
+    screenInfoComboBox.setValue(client.getSystemService().getScreenInfo(notificationSettings.getNotificationsScreenId()));
     screenInfoComboBox.valueProperty().addListener(new ChangeListener<MonitorInfo>() {
       @Override
       public void changed(ObservableValue<? extends MonitorInfo> observable, MonitorInfo oldValue, MonitorInfo newValue) {

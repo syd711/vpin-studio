@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.FrontendScreensManager;
-import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -47,7 +47,7 @@ public class PauseMenuScreensFactory {
   private static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, FrontendPlayerDisplay display, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
     FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
     if (defaultMediaItem != null) {
-      InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), screen);
+      InputStream imageStream = ServerFX.client.getGameMediaItem(game.getId(), screen);
       if (imageStream != null) {
 
         FrontendScreenAsset asset = new FrontendScreenAsset();
