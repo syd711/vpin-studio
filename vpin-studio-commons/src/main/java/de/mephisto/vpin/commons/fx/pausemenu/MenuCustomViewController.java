@@ -91,8 +91,8 @@ public class MenuCustomViewController implements Initializable {
       }
     }
 
-    GameScoreValidation scoreValidation = PauseMenu.client.getGameService().getGameScoreValidation(game.getId());
-    boolean valid = scoreValidation.isValidScoreConfiguration();
+    GameScoreValidation scoreValidation = ServerFX.client.getGameScoreValidation(game.getId());
+   //boolean valid = scoreValidation.isValidScoreConfiguration();
     if (!StringUtils.isEmpty(game.getRom())) {
       if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
         scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (supported)");
@@ -107,21 +107,21 @@ public class MenuCustomViewController implements Initializable {
       }
     }
 
-    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
+    InputStream imageStream = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
     if (imageStream == null) {
       imageStream = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(imageStream);
     wheelImage.setImage(image);
 
-    AlxSummary alxSummary = PauseMenu.client.getAlxService().getAlxSummary(game.getId());
+    AlxSummary alxSummary = ServerFX.client.getAlxSummary(game.getId());
     List<TableAlxEntry> entries = alxSummary.getEntries();
     tile1Controller.refresh(TileFactory.toTotalGamesPlayedEntry(entries));
     tile2Controller.refresh(TileFactory.toTotalScoresEntry(entries));
     tile3Controller.refresh(TileFactory.toTotalTimeEntry(entries));
     tile4Controller.refresh(TileFactory.toSessionDurationTile(status.getStarted()));
 
-    ScoreSummaryRepresentation recentlyPlayedGames = PauseMenu.client.getGameService().getRecentScoresByGame(3, game.getId());
+    ScoreSummaryRepresentation recentlyPlayedGames = ServerFX.client.getRecentScoresByGame(3, game.getId());
     List<ScoreRepresentation> scores = recentlyPlayedGames.getScores();
     stats3Col.getChildren().removeAll(stats3Col.getChildren());
 

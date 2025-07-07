@@ -143,6 +143,15 @@ public class SystemServiceClient extends VPinStudioClientService {
     return getRestClient().getCached(API + "system/info", SystemSummary.class, reloadData);
   }
 
+  public MonitorInfo getScreenInfo(int screenId) {
+    if (screenId == -1) {
+      return getSystemSummary().getPrimaryScreen();
+    }
+    else {
+      return getSystemSummary().getScreenInfo(screenId);
+    }
+  }
+
   public ScoringDB getScoringDatabase() {
     return getRestClient().getCached(API + "system/scoringdb", ScoringDB.class);
   }

@@ -38,6 +38,16 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
     return status;
   }
 
+  public GameStatus startPause() {
+    getStatus().startPause();
+    return getStatus();
+  }
+
+  public GameStatus finishPause() {
+    getStatus().finishPause();
+    return getStatus();
+  }
+
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
     status.setStarted(new Date());

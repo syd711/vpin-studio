@@ -25,13 +25,11 @@ public class GameStatusResource {
 
   @GetMapping("paused")
   public GameStatus startPause() {
-    gameStatusService.getStatus().startPause();
-    return gameStatusService.getStatus();
+    return gameStatusService.startPause();
   }
 
   @GetMapping("unpaused")
   public GameStatus endPause() {
-    gameStatusService.getStatus().finishPause();
-    return gameStatusService.getStatus();
+    return gameStatusService.finishPause();
   }
 }

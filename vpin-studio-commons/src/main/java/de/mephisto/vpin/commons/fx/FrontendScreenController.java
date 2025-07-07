@@ -2,11 +2,10 @@ package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +46,6 @@ public class FrontendScreenController implements Initializable {
 
   public void setMediaAsset(FrontendScreenAsset screenAsset) {
     try {
-      Screen screen = SystemUtil.getScreenById(-1);
-      Rectangle2D bounds = screen.getBounds();
       root.setPadding(new Insets(0, 0, 0, 0)); //reset of the other options
       root.setRotate(0);//reset of the other options
 
@@ -57,7 +53,8 @@ public class FrontendScreenController implements Initializable {
         showOnDisplay(screenAsset);
       }
       else {
-        showCentered(screenAsset, bounds);
+        MonitorInfo screen = ServerFX.client.getScreenInfo(-1);
+        showCentered(screenAsset, screen);
       }
     }
     catch (IOException e) {
@@ -65,7 +62,7 @@ public class FrontendScreenController implements Initializable {
     }
   }
 
-  private void showCentered(FrontendScreenAsset asset, Rectangle2D bounds) throws IOException {
+  private void showCentered(FrontendScreenAsset asset, MonitorInfo screen) throws IOException {
     InputStream in = asset.getInputStream();
     Image image = new Image(in);
     in.close();
@@ -77,12 +74,12 @@ public class FrontendScreenController implements Initializable {
     imageView.setFitHeight(image.getHeight());
 
     Stage screenStage = asset.getScreenStage();
-    double x = bounds.getWidth() / 2 - image.getWidth() / 2;
-    double y = bounds.getHeight() / 2 - image.getHeight() / 2;
-    screenStage.setX(0);
-    screenStage.setY(0);
-    screenStage.setHeight(bounds.getHeight());
-    screenStage.setWidth(bounds.getWidth());
+    double x = screen.getWidth() / 2 - image.getWidth() / 2;
+    double y = screen.getHeight() / 2 - image.getHeight() / 2;
+    screenStage.setX(x);
+    screenStage.setY(y);
+    screenStage.setHeight(screen.getHeight());
+    screenStage.setWidth(screen.getWidth());
 //    screenStage.initStyle(StageStyle.UTILITY);
 
     int targetRotation = asset.getRotation() + (-90);

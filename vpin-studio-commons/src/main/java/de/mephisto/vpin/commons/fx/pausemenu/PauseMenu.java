@@ -2,7 +2,6 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.NirCmd;
@@ -18,18 +17,16 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
@@ -41,12 +38,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.SELECTION_SCALE_DURATION;
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
-
-  public static VPinStudioClient client;
 
   public static Stage stage;
   public static boolean visible = false;
@@ -66,10 +61,15 @@ public class PauseMenu extends Application {
     }
   }
 
+  public static void main(String[] args) {
+    launch(args);
+  }
 
   @Override
   public void start(Stage stage) {
+    ServerFX.client = new VPinStudioClient("localhost");
     loadPauseMenu();
+    togglePauseMenu();
   }
 
   public static boolean isVisible() {
@@ -85,14 +85,11 @@ public class PauseMenu extends Application {
       PauseMenu.stage = pauseMenuStage;
 
       Scene scene = null;
-      client = new VPinStudioClient("localhost");
-
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
       PauseMenuSettings pauseMenuSettings = ServerFX.client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-      Screen playfieldScreen = SystemUtil.getScreenById(pauseMenuSettings.getPauseMenuScreenId());
-      LOG.info("Pause Menu is using screen {}", playfieldScreen);
-      Rectangle2D screenBounds = playfieldScreen.getBounds();
+      MonitorInfo screenBounds = ServerFX.client.getScreenInfo(pauseMenuSettings != null ? pauseMenuSettings.getPauseMenuScreenId() : -1);
+      LOG.info("Pause Menu is using screen {}", screenBounds);
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane root = loader.load();
 
@@ -102,7 +99,7 @@ public class PauseMenu extends Application {
         root.setTranslateX(0);
         root.setRotate(-90);
         stage.setY((screenBounds.getHeight() - root.getPrefWidth()) / 2);
-        stage.setX(screenBounds.getMinX() + (screenBounds.getWidth() / 2 / 2));
+        stage.setX(screenBounds.getX() + (screenBounds.getWidth() / 2 / 2));
         double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
         if (max > 2560) {
           stage.setX(stage.getX() + 600);
@@ -117,7 +114,7 @@ public class PauseMenu extends Application {
         LOG.info("Window Mode: Portrait");
         root.setTranslateY(0);
         root.setTranslateX(0);
-        stage.setX(screenBounds.getMinX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
+        stage.setX(screenBounds.getX() + ((screenBounds.getWidth() - root.getPrefWidth()) / 2));
         stage.setY(screenBounds.getHeight() / 2 / 2);
         double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
         if (max > 2560) {
@@ -137,7 +134,7 @@ public class PauseMenu extends Application {
     }
   }
 
-  private static void scalePauseMenuStage(BorderPane root, Rectangle2D screenBounds) {
+  private static void scalePauseMenuStage(BorderPane root, MonitorInfo screenBounds) {
     double max = Math.max(screenBounds.getWidth(), screenBounds.getHeight());
     double scaling = 1;
     if (max > 2560) {
@@ -155,16 +152,16 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu(@Nullable GameStatus status, boolean test) {
-    client.getPreferenceService().clearCache();
+    client.clearPreferenceCache();
     PauseMenu.test = test;
 
     if (!visible) {
       if (!test) {
-        status = client.getGameStatusService().startPause();
+        status = client.startPause();
       }
       try {
         if (status == null) {
-          status = client.getGameStatusService().getStatus();
+          status = client.getPauseStatus();
         }
         if (!status.isActive()) {
           LOG.info("Skipped showing start menu: no game status found.");
@@ -178,11 +175,11 @@ public class PauseMenu extends Application {
         togglePauseKey(0);
 
         //reload card settings to resolve actual target screen
-        CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-        PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+        CardSettings cardSettings = client.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
-        GameRepresentation game = client.getGameService().getGame(status.getGameId());
-        emulator = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+        GameRepresentation game = client.getGame(status.getGameId());
+        emulator = client.getGameEmulator(game.getEmulatorId());
 
         StateMananger.getInstance().setControls(pauseMenuSettings);
 
@@ -196,13 +193,13 @@ public class PauseMenu extends Application {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
 
-        FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
+        FrontendPlayerDisplay tutorialDisplay = client.getScreenDisplay(tutorialScreen);
 
         visible = true;
-        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+        FrontendMediaRepresentation frontendMedia = client.getFrontendMedia(game.getId());
 
         String extTableId = game.getExtTableId();
-        VpsTable tableById = client.getVpsService().getTableById(extTableId);
+        VpsTable tableById = client.getVpsTable(extTableId);
 
         StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
         stage.getScene().setCursor(Cursor.NONE);
@@ -217,7 +214,7 @@ public class PauseMenu extends Application {
           try {
             screenAssets.clear();
             //TODO show no additional screens for now
-//            screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
+            //screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, frontendMedia));
             LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
           }
           catch (Exception e) {
@@ -252,11 +249,11 @@ public class PauseMenu extends Application {
 
   public static void exitPauseMenu() {
     if (!PauseMenu.test) {
-      client.getGameStatusService().finishPause();
+      client.finishPause();
     }
 
     StateMananger.getInstance().exit();
-    PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+    PauseMenuSettings pauseMenuSettings = client.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
     LOG.info("Exited pause menu");
     SLOG.info("Exited pause menu");
@@ -264,7 +261,7 @@ public class PauseMenu extends Application {
 
     Platform.runLater(() -> {
       try {
-        Thread.sleep(SELECTION_SCALE_DURATION);
+        Thread.sleep(PauseMenuUIDefaults.SELECTION_SCALE_DURATION);
       }
       catch (InterruptedException e) {
         //

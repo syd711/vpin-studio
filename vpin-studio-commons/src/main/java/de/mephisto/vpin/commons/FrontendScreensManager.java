@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.FrontendScreenController;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
@@ -36,8 +35,9 @@ public class FrontendScreensManager {
     try {
       BorderPane root = new BorderPane();
       root.setStyle("-fx-background-color: transparent;");
-      Screen screen = SystemUtil.getScreenById(-1);
-      final Scene scene = new Scene(root, screen.getVisualBounds().getWidth(), screen.getVisualBounds().getHeight(), true, SceneAntialiasing.BALANCED);
+
+      MonitorInfo screen = ServerFX.client.getScreenInfo(-1);
+      final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
       scene.setFill(Color.TRANSPARENT);
       scene.setCursor(Cursor.NONE);
 
