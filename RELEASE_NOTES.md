@@ -26,7 +26,9 @@
   - In the Table Data dialog, an additional check has been added to see if the overridden ROM name exists.
   - **ALT Color Backups**: Added dialog for backups to the ALT color section. Note that you may already have some backups available since the actual backup support for the backend was already build a year ago. The dialog allows you to restore these files now.
 - **Backglass Manager**:
-  - Improved refresh of backglass sidebar when multiple clicks in list
+  - Improved refresh of backglass sidebar when multiple clicks in list.
+- **Playlist Manager**:
+  - Instead of auto-saving the SQL of the playlist, a separate button for saving has been added. The SQL is validated on save. Therefore the intermediate validation does not block the SQL input anymore.
 - **Media Recorder**:
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
 - **Pause Menu**:
