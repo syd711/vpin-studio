@@ -1178,7 +1178,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       preparedStatement.setString(index++, ""); //no field for notes
       preparedStatement.setInt(index++, playlist.isSqlPlayList() ? 1 : 0);
       preparedStatement.setString(index++, playlist.getPlayListSQL());
-      preparedStatement.setInt(index++, playlist.getMenuColor());
+      preparedStatement.setInt(index++, playlist.getMenuColor() != null ? playlist.getMenuColor() :  Integer.valueOf("FFFFFF", 16));
       preparedStatement.setInt(index++, playlist.getPassCode());
       preparedStatement.setInt(index++, playlist.isUglyList() ? 1 : 0);
       preparedStatement.setInt(index++, playlist.isHideSysLists() ? 1 : 0);
