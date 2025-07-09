@@ -17,7 +17,7 @@
   - **Note that you have to rescan the table or press the reload button in the DMD section to update the DMD information**.
 - **Preferences**
   - **Reorganization**: Moved **System Settings** into the **Cabinet** section, trying to declutter the preferences navigation a bit.
-  - **Backups**: 
+  - **Backups**: The backups have been re-implemented. Instead of a simple database copy, all preferences are exported as a json file. This file can be imported to any other client or cabinet, even if different tables are installed. It contains the settings of all 3rd party systems and the additional table information that are only available for the VPin Studio.
 - **Virtual Pinball Spreadsheet**:
   - **Tutorial Column**: Improved the "Tutorials" column. The column shows the available tutorials for the given table. Note that the **Kongedam** tutorials have an additional color indicator. (This indicator has a technical reason too. It ensures that all the latest and greatest from him are available in the pause menu too).
   - **Preferences**: The VPS related preferences have been moved into a separate preferences page under "3rd party preferences". **This is a breaking change since the preferences have also been reorganized in the backend. So you need to reconfigure the section if you did not use the default values here.**
