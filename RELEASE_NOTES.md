@@ -54,6 +54,7 @@
 - Fixed superfluous VPS updates about new table version that are not relevant for mapped tables.
 - Fixed error that backglasses were not appended when they are part of a zip or rar file. 
 - Fixed bulk column selection in media recorder.
+- Fixed duplication of emulators which did not work but only rename the selected one.
 
 ## VPin Mania
 

@@ -1386,8 +1386,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
       PreparedStatement preparedStatement = null;
       if (emulator.getId() < 0) {
-        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT OR REPLACE INTO Emulators (" +
-                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?)"
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Emulators (" +
+                "EmuName, Description, DirGames, DirMedia, EmuDisplay, Visible, DirRoms, EmuLaunchDir, GamesExt, LaunchScript, PostScript) values (?,?,?,?,?,?,?,?,?,?,?)"
             , Statement.RETURN_GENERATED_KEYS);
       }
       else {
