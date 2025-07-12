@@ -5,32 +5,149 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class BackupSettings extends JsonSettings {
 
-  private String vpbmInternalHostId;
-  private String vpbmExternalHostId1;
-  private String vpbmExternalHostId2;
+  private boolean directb2s;
+  private boolean pupPack;
+  private boolean rom;
+  private boolean nvRam;
+  private boolean res;
+  private boolean vbs;
+  private boolean popperMedia;
+  private boolean pov;
+  private boolean ini;
+  private boolean music;
+  private boolean altSound;
+  private boolean altColor;
+  private boolean highscore;
+  private boolean dmd;
+  private boolean vpx;
+  private boolean registryData;
 
-  public String getVpbmInternalHostId() {
-    return vpbmInternalHostId;
+  public boolean isDirectb2s() {
+    return directb2s;
   }
 
-  public void setVpbmInternalHostId(String vpbmInternalHostId) {
-    this.vpbmInternalHostId = vpbmInternalHostId;
+  public void setDirectb2s(boolean directb2s) {
+    this.directb2s = directb2s;
   }
 
-  public String getVpbmExternalHostId1() {
-    return vpbmExternalHostId1;
+  public boolean isPupPack() {
+    return pupPack;
   }
 
-  public void setVpbmExternalHostId1(String vpbmExternalHostId1) {
-    this.vpbmExternalHostId1 = vpbmExternalHostId1;
+  public void setPupPack(boolean pupPack) {
+    this.pupPack = pupPack;
   }
 
-  public String getVpbmExternalHostId2() {
-    return vpbmExternalHostId2;
+  public boolean isRom() {
+    return rom;
   }
 
-  public void setVpbmExternalHostId2(String vpbmExternalHostId2) {
-    this.vpbmExternalHostId2 = vpbmExternalHostId2;
+  public void setRom(boolean rom) {
+    this.rom = rom;
+  }
+
+  public boolean isNvRam() {
+    return nvRam;
+  }
+
+  public void setNvRam(boolean nvRam) {
+    this.nvRam = nvRam;
+  }
+
+  public boolean isRes() {
+    return res;
+  }
+
+  public void setRes(boolean res) {
+    this.res = res;
+  }
+
+  public boolean isVbs() {
+    return vbs;
+  }
+
+  public void setVbs(boolean vbs) {
+    this.vbs = vbs;
+  }
+
+  public boolean isPopperMedia() {
+    return popperMedia;
+  }
+
+  public void setPopperMedia(boolean popperMedia) {
+    this.popperMedia = popperMedia;
+  }
+
+  public boolean isPov() {
+    return pov;
+  }
+
+  public void setPov(boolean pov) {
+    this.pov = pov;
+  }
+
+  public boolean isIni() {
+    return ini;
+  }
+
+  public void setIni(boolean ini) {
+    this.ini = ini;
+  }
+
+  public boolean isMusic() {
+    return music;
+  }
+
+  public void setMusic(boolean music) {
+    this.music = music;
+  }
+
+  public boolean isAltSound() {
+    return altSound;
+  }
+
+  public void setAltSound(boolean altSound) {
+    this.altSound = altSound;
+  }
+
+  public boolean isAltColor() {
+    return altColor;
+  }
+
+  public void setAltColor(boolean altColor) {
+    this.altColor = altColor;
+  }
+
+  public boolean isHighscore() {
+    return highscore;
+  }
+
+  public void setHighscore(boolean highscore) {
+    this.highscore = highscore;
+  }
+
+  public boolean isDmd() {
+    return dmd;
+  }
+
+  public void setDmd(boolean dmd) {
+    this.dmd = dmd;
+  }
+
+  public boolean isVpx() {
+    return vpx;
+  }
+
+  public void setVpx(boolean vpx) {
+    this.vpx = vpx;
+  }
+
+  public boolean isRegistryData() {
+    return registryData;
+  }
+
+  public void setRegistryData(boolean registryData) {
+    this.registryData = registryData;
   }
 
   @Override

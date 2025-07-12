@@ -118,6 +118,10 @@ public class ArchiveUploadController implements Initializable, DialogController 
     repositoryCombo.getSelectionModel().select(0);
   }
 
+  public void setFile(File file) {
+    fileNameField.setText(file.getAbsolutePath());
+  }
+
   @Override
   public void onDialogCancel() {
     result = false;

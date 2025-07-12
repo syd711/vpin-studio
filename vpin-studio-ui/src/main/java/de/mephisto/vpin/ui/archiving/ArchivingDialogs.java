@@ -4,8 +4,12 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.util.Dialogs;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.util.List;
 
 public class ArchivingDialogs {
 
@@ -27,11 +31,23 @@ public class ArchivingDialogs {
   }
 
   public static boolean openArchiveUploadDialog() {
+    return openArchiveUploadDialog(null);
+  }
+
+  public static boolean openArchiveUploadDialog(@Nullable File file) {
     Stage stage = Dialogs.createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Upload");
     ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();
+    controller.setFile(file);
     stage.showAndWait();
 
     return controller.uploadFinished();
+  }
+
+  public static void openArchiveRestoreDialog(List<ArchiveDescriptorRepresentation> archives) {
+    Stage stage = Dialogs.createStudioDialogStage(ArchiveRestoreController.class, "dialog-archive-restore.fxml", "Restore");
+    ArchiveRestoreController controller = (ArchiveRestoreController) stage.getUserData();
+    controller.setData(archives);
+    stage.showAndWait();
   }
 
   public static void openArchiveDownloadDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
@@ -40,4 +56,5 @@ public class ArchivingDialogs {
     controller.setData(selectedItems);
     stage.showAndWait();
   }
+
 }

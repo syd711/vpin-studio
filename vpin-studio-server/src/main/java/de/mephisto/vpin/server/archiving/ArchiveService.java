@@ -9,8 +9,6 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
-import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.vpa.ArchiveSourceAdapterFolder;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.emulators.EmulatorService;
@@ -18,6 +16,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -52,9 +51,6 @@ public class ArchiveService implements InitializingBean {
   private JobService jobService;
 
   @Autowired
-  private TableInstallerAdapterFactory tableInstallerAdapterFactory;
-
-  @Autowired
   private TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
@@ -65,6 +61,9 @@ public class ArchiveService implements InitializingBean {
 
   @Autowired
   private CardService cardService;
+
+  @Autowired
+  private UniversalUploadService universalUploadService;
 
   private ArchiveSourceAdapter defaultArchiveSourceAdapter;
 
@@ -232,21 +231,18 @@ public class ArchiveService implements InitializingBean {
   }
 
 
-  public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
+  public boolean restoreArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
       GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
-
-      TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, emulator);
-
-      ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, cardService, gameService, this);
+      ArchiveInstallerJob job = new ArchiveInstallerJob(archiveDescriptor, universalUploadService, gameService, emulator, cardService);
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);
-      LOG.info("Offered import job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Offered restore job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     }
     catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
@@ -289,7 +285,7 @@ public class ArchiveService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    //VPXZ
+    //VPA files
     if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
       this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(archiveSource);

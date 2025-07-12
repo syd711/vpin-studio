@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.Arrays;
@@ -89,7 +88,7 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "archives/backup", exportDescriptor, Boolean.class);
   }
 
-  public boolean installTable(ArchiveRestoreDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
+  public boolean restoreTable(ArchiveRestoreDescriptor descriptor) throws Exception {
+    return getRestClient().post(API + "archives/restore", descriptor, Boolean.class);
   }
 }

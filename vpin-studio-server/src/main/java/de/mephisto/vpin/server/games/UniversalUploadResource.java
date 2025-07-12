@@ -64,7 +64,7 @@ public class UniversalUploadResource {
 
         String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
         File temporaryGameFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
-        importGame(temporaryGameFile, uploadDescriptor, analysis);
+        universalUploadService.importGame(temporaryGameFile, uploadDescriptor, analysis);
       }
 
       universalUploadService.processGameAssets(uploadDescriptor, analysis);
@@ -79,28 +79,6 @@ public class UniversalUploadResource {
     }
     LOG.info("****************************** /Import Finished *************************************");
     return uploadDescriptor;
-  }
-
-
-  private void importGame(File temporaryGameFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    UploadType uploadType = uploadDescriptor.getUploadType();
-    switch (uploadType) {
-      case uploadAndImport: {
-        gameMediaService.uploadAndImport(temporaryGameFile, uploadDescriptor, analysis);
-        break;
-      }
-      case uploadAndReplace: {
-        gameMediaService.uploadAndReplace(temporaryGameFile, uploadDescriptor, analysis);
-        break;
-      }
-      case uploadAndClone: {
-        gameMediaService.uploadAndClone(temporaryGameFile, uploadDescriptor, analysis);
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Unmapped upload type " + uploadType);
-      }
-    }
   }
 
 }

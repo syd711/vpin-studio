@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
@@ -87,6 +89,41 @@ public class UniversalUploadService {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
+    Thread.currentThread().setName("Universal Upload Thread");
+    long start = System.currentTimeMillis();
+    LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
+    try {
+      // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
+      resolveLinks(uploadDescriptor);
+
+      File tempFile = new File(uploadDescriptor.getTempFilename());
+      UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
+      analysis.analyze();
+      analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
+
+      if (analysis.isVpxOrFpTable()) {
+        LOG.info("Importing table bundle, not media bundle.");
+
+        String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
+        File temporaryGameFile = writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
+        importGame(temporaryGameFile, uploadDescriptor, analysis);
+      }
+
+      processGameAssets(uploadDescriptor, analysis);
+    }
+    catch (Exception e) {
+      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
+      uploadDescriptor.setError("Processing failed: " + e.getMessage());
+    }
+    finally {
+      uploadDescriptor.finalizeUpload();
+      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
+    }
+    LOG.info("****************************** /Import Finished *************************************");
+    return uploadDescriptor;
+  }
 
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
@@ -400,6 +437,28 @@ public class UniversalUploadService {
         MessageEmbed build = embed.build();
 
         discordService.sendMessage(serverId, channelId, build);
+      }
+    }
+  }
+
+
+  public void importGame(File temporaryGameFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    UploadType uploadType = uploadDescriptor.getUploadType();
+    switch (uploadType) {
+      case uploadAndImport: {
+        gameMediaService.uploadAndImport(temporaryGameFile, uploadDescriptor, analysis);
+        break;
+      }
+      case uploadAndReplace: {
+        gameMediaService.uploadAndReplace(temporaryGameFile, uploadDescriptor, analysis);
+        break;
+      }
+      case uploadAndClone: {
+        gameMediaService.uploadAndClone(temporaryGameFile, uploadDescriptor, analysis);
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Unmapped upload type " + uploadType);
       }
     }
   }

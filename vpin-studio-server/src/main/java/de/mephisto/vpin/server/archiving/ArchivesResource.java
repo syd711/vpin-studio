@@ -20,9 +20,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -44,9 +42,9 @@ public class ArchivesResource {
     return archiveService.backupTable(descriptor);
   }
 
-  @PostMapping("/install")
-  public Boolean installArchive(@RequestBody ArchiveRestoreDescriptor descriptor) {
-    return archiveService.installArchive(descriptor);
+  @PostMapping("/restore")
+  public Boolean restoreArchive(@RequestBody ArchiveRestoreDescriptor descriptor) {
+    return archiveService.restoreArchive(descriptor);
   }
 
   @GetMapping("/{sourceId}")

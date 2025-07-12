@@ -16,7 +16,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -179,10 +178,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
   private void onRestore() {
     ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
     if (!selectedItems.isEmpty()) {
-      for (ArchiveDescriptorRepresentation selectedItem : selectedItems) {
-
-      }
-
+      ArchivingDialogs.openArchiveRestoreDialog(selectedItems);
     }
   }
 
