@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.archiving;
 public class ArchivePackageInfo {
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
   public final static String ARCHIVE_FILENAME = "package-info.json";
+  public final static String REGISTRY_FILENAME = "registry.json";
 
   private ArchiveFileInfo directb2s;
   private ArchiveFileInfo pupPack;

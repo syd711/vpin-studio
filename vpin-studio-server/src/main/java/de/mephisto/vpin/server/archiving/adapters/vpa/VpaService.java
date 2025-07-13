@@ -331,7 +331,7 @@ public class VpaService {
     File tableDetailsTmpFile = File.createTempFile("registry", "json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
-    zipFile(tableDetailsTmpFile, "registry.json", zipOut);
+    zipFile(tableDetailsTmpFile, ArchivePackageInfo.REGISTRY_FILENAME, zipOut);
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary registry.json file {}", tableDetailsTmpFile.getName());
     }
