@@ -21,6 +21,7 @@ public enum AssetType {
   RES,
   VNI,
   VPA,
+  VBS,
   ALT_COLOR,
   ALT_SOUND,
   PUP_PACK,

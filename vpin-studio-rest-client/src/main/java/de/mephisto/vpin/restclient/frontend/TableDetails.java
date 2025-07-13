@@ -1,19 +1,11 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import javafx.scene.control.Tooltip;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.BeansException;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TableDetails {
   public final static String ARCHIVE_FILENAME = "table-details.json";
-  private final static Logger LOG = LoggerFactory.getLogger(TableDetails.class);
 
   private int sqlVersion;
   private int emulatorId;

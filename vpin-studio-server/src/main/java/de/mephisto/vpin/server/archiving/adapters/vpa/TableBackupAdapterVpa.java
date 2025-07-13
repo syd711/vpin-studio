@@ -30,7 +30,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final TableDetails tableDetails;
 
   private final VpaService vpaService;
- 
+
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
                                @NonNull ArchiveSourceAdapter archiveSourceAdapter,
@@ -74,7 +74,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
 
     try (FileOutputStream fos = new FileOutputStream(tempFile);
-        ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+         ZipOutputStream zipOut = new ZipOutputStream(fos)) {
 
       vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
         result.setStatus("Packing " + fileToZip.getAbsolutePath());
@@ -129,7 +129,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   public void simulateBackup() throws IOException {
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
     vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
-      LOG.info("Backup file " + fileName + ", " + fileToZip.getAbsolutePath());
+      LOG.info("Added to backup: \"{}\" [Source {}]", fileName, fileToZip.getAbsolutePath());
     }, game, tableDetails);
   }
 }

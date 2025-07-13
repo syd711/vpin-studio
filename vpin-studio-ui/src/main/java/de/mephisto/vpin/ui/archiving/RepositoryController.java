@@ -37,6 +37,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -369,7 +371,18 @@ public class RepositoryController implements Initializable, StudioFXController, 
       if (value.getPackageInfo() != null) {
         ArchiveFileInfo directb2s = value.getPackageInfo().getDirectb2s();
         if (directb2s != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", directb2s.toString()));
+          Label iconLabel = WidgetFactory.createCheckboxIcon("#FFFFFF", directb2s.toString());
+          int nbVersions = directb2s.getFiles();
+          FontIcon icon = null;
+          if (nbVersions > 9) {
+            icon = WidgetFactory.createIcon("mdi2n-numeric-9-plus-box-multiple-outline", "#FFFFFF");
+            iconLabel.setGraphic(icon);
+          }
+          else if (nbVersions > 1) {
+            icon = WidgetFactory.createIcon("mdi2n-numeric-" + nbVersions + "-box-multiple-outline", "#FFFFFF");
+            iconLabel.setGraphic(icon);
+          }
+          return new SimpleObjectProperty(iconLabel);
         }
       }
       return new SimpleStringProperty("");

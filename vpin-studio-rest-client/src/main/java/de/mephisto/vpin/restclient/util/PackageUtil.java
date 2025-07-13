@@ -7,7 +7,8 @@ public class PackageUtil {
   public static String ARCHIVE_RAR = "rar";
   public static String ARCHIVE_7Z = "7z";
   public static String ARCHIVE_ZIP = "zip";
-  public static String[] ARCHIVE_SUFFIXES = {ARCHIVE_ZIP, ARCHIVE_RAR, ARCHIVE_7Z};
+  public static String ARCHIVE_VPA = "vpa";
+  public static String[] ARCHIVE_SUFFIXES = {ARCHIVE_ZIP, ARCHIVE_RAR, ARCHIVE_7Z, ARCHIVE_VPA};
 
   public static boolean isSupportedArchive(String suffix) {
     return Arrays.asList(ARCHIVE_SUFFIXES).contains(suffix);
@@ -15,7 +16,7 @@ public class PackageUtil {
 
   public static String contains(File file, String suffix) {
     String fileName = file.getName().toLowerCase();
-    if (fileName.endsWith(".zip")) {
+    if (fileName.endsWith(".zip") || fileName.endsWith(".vpa")) {
       return ZipUtil.contains(file, suffix);
     }
     if (fileName.endsWith(".rar") || fileName.endsWith(".7z")) {
@@ -26,7 +27,7 @@ public class PackageUtil {
 
   public static boolean unpackTargetFile(File archiveFile, File targetFile, String name) {
     String archiveName = archiveFile.getName().toLowerCase();
-    if (archiveName.endsWith(".zip")) {
+    if (archiveName.endsWith(".zip") || archiveName.endsWith(".vpa")) {
       return ZipUtil.unzipTargetFile(archiveFile, targetFile, name);
     }
     if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
@@ -37,7 +38,7 @@ public class PackageUtil {
 
   public static byte[] readFile(File file, String name) {
     String archiveName = file.getName().toLowerCase();
-    if (archiveName.endsWith(".zip")) {
+    if (archiveName.endsWith(".zip") || archiveName.endsWith(".vpa")) {
       return ZipUtil.readFile(file, name);
     }
     if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {

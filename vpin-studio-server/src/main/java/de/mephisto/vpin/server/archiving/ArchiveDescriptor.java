@@ -12,19 +12,29 @@ public class ArchiveDescriptor {
   private ArchiveSource source;
   private Date createdAt;
   private String filename;
+  private String absoluteFileName;
   private long size;
 
   public ArchiveDescriptor() {
     //used for JSON serialization
   }
 
-  public ArchiveDescriptor(ArchiveSource source, TableDetails tableDetails, ArchivePackageInfo packageInfo, Date createdAt, String filename, long size) {
+  public ArchiveDescriptor(ArchiveSource source, TableDetails tableDetails, ArchivePackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
     this.source = source;
     this.tableDetails = tableDetails;
     this.packageInfo = packageInfo;
     this.createdAt = createdAt;
     this.filename = filename;
+    this.absoluteFileName= absoluteFileName;
     this.size = size;
+  }
+
+  public String getAbsoluteFileName() {
+    return absoluteFileName;
+  }
+
+  public void setAbsoluteFileName(String absoluteFileName) {
+    this.absoluteFileName = absoluteFileName;
   }
 
   public ArchivePackageInfo getPackageInfo() {

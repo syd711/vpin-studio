@@ -116,12 +116,6 @@ public class ArchiveService implements InitializingBean {
   }
 
   @Nullable
-  public ArchiveDescriptor getArchiveDescriptor(@NonNull File out) {
-    Optional<ArchiveDescriptor> first = getArchiveDescriptors().stream().filter(f -> f.getFilename().equals(out.getName())).findFirst();
-    return first.orElse(null);
-  }
-
-  @Nullable
   public ArchiveDescriptor getArchiveDescriptor(long sourceId, @NonNull String filename) {
     ArchiveSourceAdapter sourceAdapter = adapterCache.get(sourceId);
     List<ArchiveDescriptor> descriptors = sourceAdapter.getArchiveDescriptors();
@@ -155,10 +149,6 @@ public class ArchiveService implements InitializingBean {
 
   public List<ArchiveSource> getArchiveSources() {
     return adapterCache.values().stream().map(ArchiveSourceAdapter::getArchiveSource).collect(Collectors.toList());
-  }
-
-  public boolean isValidArchiveDescriptor(@NonNull ArchiveDescriptor archiveDescriptor) {
-    return archiveDescriptor.getFilename() != null;
   }
 
   public ArchiveSourceAdapter getDefaultArchiveSourceAdapter() {
@@ -209,7 +199,6 @@ public class ArchiveService implements InitializingBean {
   }
 
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
-    String descriptorFilename = archiveDescriptor.getFilename();
     ArchiveType archiveType = ArchiveType.VPA;
 
     switch (archiveType) {
@@ -220,21 +209,12 @@ public class ArchiveService implements InitializingBean {
     return null;
   }
 
-  public File getArchivesFolder() {
-    ArchiveType archiveType = systemService.getArchiveType();
-    switch (archiveType) {
-      case VPA: {
-        return new File(RESOURCES, ArchiveType.VPA.name().toLowerCase());
-      }
-    }
-    return null;
-  }
-
 
   public boolean restoreArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
       GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
+
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");

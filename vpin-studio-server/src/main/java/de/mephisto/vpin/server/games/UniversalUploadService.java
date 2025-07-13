@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.archiving.RegistryData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -33,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -109,6 +109,9 @@ public class UniversalUploadService {
         String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
         File temporaryGameFile = writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
         importGame(temporaryGameFile, uploadDescriptor, analysis);
+      }
+      else {
+        LOG.info("Skipped importing table, no game file found.");
       }
 
       processGameAssets(uploadDescriptor, analysis);
@@ -371,6 +374,7 @@ public class UniversalUploadService {
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.VBS);
     }
     else {
       LOG.info("Skipped table based assets since no gameId was set for the upload.");
@@ -390,6 +394,13 @@ public class UniversalUploadService {
     }
     if (analysis.isFpTable()) {
       importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.BAM_CFG, true);
+    }
+
+    if (uploadDescriptor.isBackupRestoreMode()) {
+      RegistryData registryData = analysis.readWindowRegistryData();
+      if (registryData != null) {
+        mameService.saveRegistryData(registryData);
+      }
     }
 
     if (analysis.isVpxOrFpTable()) {

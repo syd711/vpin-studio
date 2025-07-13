@@ -5,22 +5,22 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 
 public class BackupSettings extends JsonSettings {
 
-  private boolean directb2s;
-  private boolean pupPack;
-  private boolean rom;
-  private boolean nvRam;
-  private boolean res;
-  private boolean vbs;
-  private boolean popperMedia;
-  private boolean pov;
-  private boolean ini;
-  private boolean music;
-  private boolean altSound;
-  private boolean altColor;
-  private boolean highscore;
-  private boolean dmd;
-  private boolean vpx;
-  private boolean registryData;
+  private boolean directb2s = true;
+  private boolean pupPack = true;
+  private boolean rom = true;
+  private boolean nvRam = true;
+  private boolean res = true;
+  private boolean vbs = true;
+  private boolean popperMedia = true;
+  private boolean pov = true;
+  private boolean ini = true;
+  private boolean music = true;
+  private boolean altSound = true;
+  private boolean altColor = true;
+  private boolean highscore = true;
+  private boolean dmd = true;
+  private boolean vpx = true;
+  private boolean registryData = true;
 
   public boolean isDirectb2s() {
     return directb2s;

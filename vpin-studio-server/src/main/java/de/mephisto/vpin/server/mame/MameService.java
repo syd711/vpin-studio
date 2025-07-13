@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mame;
 
+import de.mephisto.vpin.restclient.archiving.RegistryData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -23,10 +24,7 @@ import org.springframework.stereotype.Service;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -150,6 +148,23 @@ public class MameService implements InitializingBean {
 
     mameCache.put(options.getRom().toLowerCase(), options);
     return options;
+  }
+
+
+  public void saveRegistryData(@NonNull RegistryData registryData) {
+    String rom = registryData.getRom();
+    systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
+
+    Set<Map.Entry<String, Object>> entries = registryData.getData().entrySet();
+    for (Map.Entry<String, Object> entry : entries) {
+      String key = entry.getKey();
+      Object value = entry.getValue();
+
+      if (value instanceof Integer) {
+        systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
+      }
+    }
+
   }
 
   public MameOptions saveOptions(@NonNull MameOptions options) {

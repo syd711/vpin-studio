@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.archiving;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -9,6 +10,8 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import java.io.File;
 
 public class ArchiveInstallerJob implements Job {
   private final ArchiveDescriptor archiveDescriptor;
@@ -40,10 +43,11 @@ public class ArchiveInstallerJob implements Job {
       UploadDescriptor uploadDescriptor = new UploadDescriptor();
       uploadDescriptor.setOriginalUploadFileName(archiveDescriptor.getFilename());
       uploadDescriptor.setEmulatorId(gameEmulator.getId());
-      uploadDescriptor.setTempFilename(archiveDescriptor.getFilename());
+      uploadDescriptor.setTempFilename(archiveDescriptor.getAbsoluteFileName());
       uploadDescriptor.setBackupRestoreMode(true);
       uploadDescriptor.setAutoFill(false);
       uploadDescriptor.setAsync(false);
+      uploadDescriptor.setUploadType(UploadType.uploadAndImport);
 
       universalUploadService.process(uploadDescriptor);
 

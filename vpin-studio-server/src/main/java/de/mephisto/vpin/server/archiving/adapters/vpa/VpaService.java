@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchiveFileInfoFactory;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
+import de.mephisto.vpin.restclient.archiving.RegistryData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -33,6 +34,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,7 +177,9 @@ public class VpaService {
         regBackupTemp.deleteOnExit();
         Files.write(regBackupTemp.toPath(), gameData.getBytes());
         zipFile(regBackupTemp, "Highscore/" + VPReg.ARCHIVE_FILENAME, zipOut);
-        regBackupTemp.delete();
+        if (!regBackupTemp.delete()) {
+          LOG.warn("Failed to delete temporary vpreg file {}", regBackupTemp.getName());
+        }
       }
     }
 
@@ -193,7 +197,7 @@ public class VpaService {
             zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/", zipOut);
           }
         }
-        packageInfo.setDmd(ArchiveFileInfoFactory.create(dmdFolder, files));
+        packageInfo.setDmd(ArchiveFileInfoFactory.create(dmdFolder, archiveFiles));
       }
     }
 
@@ -208,8 +212,13 @@ public class VpaService {
     // sounds
     if (game.isAltSoundAvailable()) {
       File altSoundFolder = altSoundService.getAltSoundFolder(game);
-      packageInfo.setAltSound(ArchiveFileInfoFactory.create(altSoundFolder));
-      zipFile(altSoundFolder, "VPinMAME/altsound/" + altSoundFolder.getName(), zipOut);
+      if (altSoundFolder != null) {
+        packageInfo.setAltSound(ArchiveFileInfoFactory.create(altSoundFolder));
+        zipFile(altSoundFolder, "VPinMAME/altsound/" + altSoundFolder.getName(), zipOut);
+      }
+      else {
+        LOG.warn("ALT sound was detected but no folder was found.");
+      }
     }
 
     // Cfg
@@ -233,7 +242,11 @@ public class VpaService {
     Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
     if (options != null) {
       packageInfo.setRegistryData(ArchiveFileInfoFactory.create(game.getRom(), null, null));
-      zipRegistryDetails(options, zipOut);
+
+      RegistryData registryData = new RegistryData();
+      registryData.setData(options);
+      registryData.setRom(game.getRom());
+      zipRegistryDetails(registryData, zipOut);
     }
 
     writeWheelToPackageInfo(packageInfo, game);
@@ -271,7 +284,7 @@ public class VpaService {
     return totalSizeExpected;
   }
 
-  private void zipFrontendMedia(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipFrontendMedia(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
     VPinScreen[] values = VPinScreen.values();
     List<File> screenFiles = new ArrayList<>();
     for (VPinScreen value : values) {
@@ -302,24 +315,26 @@ public class VpaService {
   /**
    * Archives the PUP pack
    */
-  private void zipPupPack(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipPupPack(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
     PupPack pupPack = pupPacksService.getPupPack(game);
     if (pupPack != null) {
       File pupackFolder = pupPack.getPupPackFolder();
-      LOG.info("Packing " + pupackFolder.getAbsolutePath());
+      LOG.info("Packing {}", pupackFolder.getAbsolutePath());
       zipFile(pupackFolder, "PUPPack/" + pupackFolder.getName(), zipOut);
       packageInfo.setPupPack(ArchiveFileInfoFactory.create(pupackFolder));
     }
   }
 
-  private void zipRegistryDetails(Map<String, Object> registryData, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipRegistryDetails(@NonNull RegistryData registryData, BiConsumer<File, String> zipOut) throws IOException {
     String tableDetailsJson = objectMapper.writeValueAsString(registryData);
 
     File tableDetailsTmpFile = File.createTempFile("registry", "json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
     zipFile(tableDetailsTmpFile, "registry.json", zipOut);
-    tableDetailsTmpFile.delete();
+    if (!tableDetailsTmpFile.delete()) {
+      LOG.warn("Failed to delete temporary registry.json file {}", tableDetailsTmpFile.getName());
+    }
   }
 
   private void writeWheelToPackageInfo(ArchivePackageInfo packageInfo, Game game) throws IOException {
@@ -360,11 +375,12 @@ public class VpaService {
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
     zipFile(tableDetailsTmpFile, TableDetails.ARCHIVE_FILENAME, zipOut);
-    tableDetailsTmpFile.delete();
+    if (!tableDetailsTmpFile.delete()) {
+      LOG.warn("Failed to delete temporary table-details file {}", tableDetailsTmpFile.getName());
+    }
   }
 
-  private void zipFile(File fileToZip, String fileName, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipFile(File fileToZip, String fileName, BiConsumer<File, String> zipOut) {
     zipOut.accept(fileToZip, fileName);
   }
-
 }

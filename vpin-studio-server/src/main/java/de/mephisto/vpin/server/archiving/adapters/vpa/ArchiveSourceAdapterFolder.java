@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
@@ -50,7 +51,7 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
           try {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
             ArchivePackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
-            ArchiveDescriptor descriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.length());
+            ArchiveDescriptor descriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
             cache.put(archiveFile.getName(), descriptor);
           }
           catch (Exception e) {

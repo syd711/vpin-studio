@@ -55,8 +55,8 @@
                         </Label>
                         <GridPane fx:id="emuGrid">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="123.99999237060547" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="488.7999267578125" minWidth="250.0" prefWidth="332.00000762939453" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="121.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="584.0" minWidth="250.0" prefWidth="584.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -74,7 +74,7 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
-                        <Label text="Settings">
+                        <Label styleClass="default-headline" text="Settings">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -96,7 +96,7 @@
                                           <Insets bottom="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <CheckBox fx:id="vpxCheckBox" mnemonicParsing="false" text="Table File" textFill="WHITE">
+                                    <CheckBox fx:id="vpxCheckBox" disable="true" mnemonicParsing="false" selected="true" text="Table File" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -271,7 +271,7 @@
                   </VBox>
                </center>
                <top>
-                  <Label fx:id="titleLabel" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                      <font>
                         <Font size="18.0" />
                      </font>
