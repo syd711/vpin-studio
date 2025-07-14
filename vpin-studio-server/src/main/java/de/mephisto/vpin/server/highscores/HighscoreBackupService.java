@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +85,8 @@ public class HighscoreBackupService implements InitializingBean {
     return result;
   }
 
-  public boolean backup(Game game) {
+  @Nullable
+  public File backup(Game game) {
     String rom = game.getRom();
     if (StringUtils.isEmpty(rom)) {
       rom = game.getTableName();
@@ -152,8 +154,8 @@ public class HighscoreBackupService implements InitializingBean {
     }
 
     File descriptorFile = new File(folder, DESCRIPTOR_JSON);
-    if (descriptorFile.exists()) {
-      descriptorFile.delete();
+    if (descriptorFile.exists() && !descriptorFile.delete()) {
+      LOG.error("Failed to delete existing backup descriptor file {}", descriptorFile.getAbsolutePath());
     }
 
     String json = objectMapper.writeValueAsString(backup);
@@ -182,7 +184,7 @@ public class HighscoreBackupService implements InitializingBean {
 
       //zip nvram file
       File nvRamFile = highscoreResolver.getNvRamFile(game);
-      if (nvRamFile != null && nvRamFile.exists()) {
+      if (nvRamFile.exists()) {
         ZipUtil.zipFile(nvRamFile, nvRamFile.getName(), zipOut);
         highscoreWritten = true;
       }
@@ -214,47 +216,47 @@ public class HighscoreBackupService implements InitializingBean {
     return highscoreWritten;
   }
 
-  public boolean writeBackupFile(@NonNull Game game, @NonNull File romBackupFolder) {
+  @Nullable
+  public File writeBackupFile(@NonNull Game game, @NonNull File romBasedBackupFolder) {
     Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
     if (hs.isPresent()) {
 
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;
 
-      if (!romBackupFolder.exists() && !romBackupFolder.mkdirs()) {
-        LOG.error("Failed to create highscore backup folder {}", romBackupFolder.getAbsolutePath());
+      if (!romBasedBackupFolder.exists() && !romBasedBackupFolder.mkdirs()) {
+        LOG.error("Failed to create highscore backup folder {}", romBasedBackupFolder.getAbsolutePath());
       }
 
-      File target = new File(romBackupFolder, filename);
+      File target = new File(romBasedBackupFolder, filename);
       target = FileUtils.uniqueFile(target);
 
       File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
       LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
 
-      boolean written = writeHighscoreBackup(game, game.getEmulator(), hs.get(), romBackupFolder, tempFile, filename);
+      boolean written = writeHighscoreBackup(game, game.getEmulator(), hs.get(), romBasedBackupFolder, tempFile, filename);
       if (written && !tempFile.renameTo(target)) {
         LOG.error("Failed to rename highscore zip file " + tempFile.getAbsolutePath());
-        return false;
+        return null;
       }
 
       if (!written && !tempFile.delete()) {
         LOG.error("No data written backup and deletion of temp data failed: " + tempFile.getAbsolutePath());
-        return false;
+        return null;
       }
 
       if (written) {
         LOG.info("Written highscore backup " + target.getAbsolutePath());
+        return target;
       }
       else {
         LOG.info("No highscore backup created, no matching source found for \"" + game.getRom() + "\"");
-        return true;
+        return null;
       }
-
-      return written;
     }
 
     LOG.info("Skipped creating highscore backup of \"" + game.getGameDisplayName() + "\", no existing highscore data found.");
-    return true;
+    return null;
   }
 
   public boolean restoreBackupFile(@NonNull GameEmulator gameEmulator, @NonNull File backupRomFolder, @NonNull String filename) {

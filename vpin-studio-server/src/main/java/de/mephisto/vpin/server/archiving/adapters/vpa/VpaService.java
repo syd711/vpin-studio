@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreResolver;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.mame.MameService;
@@ -79,7 +80,7 @@ public class VpaService {
   private PupPacksService pupPacksService;
 
   @Autowired
-  private HighscoreResolver highscoreResolver;
+  private HighscoreBackupService highscoreBackupService;
 
   @Autowired
   private DMDService dmdService;
@@ -152,36 +153,10 @@ public class VpaService {
 
 
     //store highscore
-    //zip EM file
-    File highscoreFile = highscoreResolver.getHighscoreTextFile(game);
-    if (highscoreFile != null && highscoreFile.exists()) {
-      packageInfo.setHighscore(ArchiveFileInfoFactory.create(highscoreFile));
-      zipFile(highscoreFile, "Highscore/" + highscoreFile.getName(), zipOut);
-    }
-
-    //zip nvram file
-    File nvRamFile = highscoreResolver.getNvRamFile(game);
-    if (nvRamFile.exists()) {
-      packageInfo.setHighscore(ArchiveFileInfoFactory.create(nvRamFile));
-      packageInfo.setNvRam(ArchiveFileInfoFactory.create(nvRamFile));
-      zipFile(nvRamFile, "VPinMAME/nvram/" + nvRamFile.getName(), zipOut);
-    }
-
-    //write VPReg.stg data
-    if (HighscoreType.VPReg.equals(game.getHighscoreType())) {
-      packageInfo.setHighscore(ArchiveFileInfoFactory.create(emulator.getVPRegFile()));
-      File vprRegFile = emulator.getVPRegFile();
-      VPReg reg = new VPReg(vprRegFile, game.getRom(), game.getTableName());
-      String gameData = reg.toJson();
-      if (gameData != null) {
-        File regBackupTemp = File.createTempFile("vpreg-stg", "json");
-        regBackupTemp.deleteOnExit();
-        Files.write(regBackupTemp.toPath(), gameData.getBytes());
-        zipFile(regBackupTemp, "Highscore/" + VPReg.ARCHIVE_FILENAME, zipOut);
-        if (!regBackupTemp.delete()) {
-          LOG.warn("Failed to delete temporary vpreg file {}", regBackupTemp.getName());
-        }
-      }
+    File highscoreBackupFile = highscoreBackupService.backup(game);
+    if (highscoreBackupFile != null && highscoreBackupFile.exists()) {
+      packageInfo.setHighscore(ArchiveFileInfoFactory.create(highscoreBackupFile));
+      zipFile(highscoreBackupFile, "Highscore/" + highscoreBackupFile.getName(), zipOut);
     }
 
     // DMDs
