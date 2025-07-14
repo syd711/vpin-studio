@@ -159,81 +159,55 @@ public class AltColorService implements InitializingBean {
   public void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, Game game, File out) {
     File gameAltColorFolder = getAltColorFolder(game);
 
-    List<String> assetFileNames = analysis.getFileNamesForAssetType(AssetType.PAC);
-    for (String assetFileName : assetFileNames) {
-      backupFolder(gameAltColorFolder, UploaderAnalysis.PAC_SUFFIX);
-      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pac"), assetFileName);
-    }
-
-    assetFileNames = analysis.getFileNamesForAssetType(AssetType.PAL);
-    for (String assetFileName : assetFileNames) {
-      backupFolder(gameAltColorFolder, UploaderAnalysis.PAL_SUFFIX);
-      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.pal"), assetFileName);
-    }
-
-    assetFileNames = analysis.getFileNamesForAssetType(AssetType.VNI);
-    for (String assetFileName : assetFileNames) {
-      backupFolder(gameAltColorFolder, UploaderAnalysis.VNI_SUFFIX);
-      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, "pin2dmd.vni"), assetFileName);
-    }
-
-    assetFileNames = analysis.getFileNamesForAssetType(AssetType.CRZ);
-    for (String assetFileName : assetFileNames) {
-      backupFolder(gameAltColorFolder, UploaderAnalysis.SERUM_SUFFIX);
-      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
-    }
+    installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.PAC, "pin2dmd.pac");
+    installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.PAL, "pin2dmd.pal");
+    installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.VNI, "pin2dmd.vni");
+    installAltColorFromArchive(analysis, gameAltColorFolder, out, AssetType.CRZ, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
 
     setAltColorEnabled(game.getRom(), true);
   }
 
-  public JobDescriptor installAltColor(@NonNull Game game, File out) {
+  private void installAltColorFromArchive(@NonNull UploaderAnalysis analysis, @NonNull File gameAltColorFolder, @NonNull File out, @NonNull AssetType assetType, @NonNull String fileName) {
+    List<String> assetFileNames = analysis.getFileNamesForAssetType(assetType);
+    for (String assetFileName : assetFileNames) {
+      //copy directly into the backups folder
+      if (assetFileName.contains("[")) {
+        File backupsFolder = new File(gameAltColorFolder, "backups/");
+        PackageUtil.unpackTargetFile(out, new File(backupsFolder, assetFileName), assetFileName);
+        continue;
+      }
+
+      backupFolder(gameAltColorFolder, FilenameUtils.getExtension(fileName));
+      PackageUtil.unpackTargetFile(out, new File(gameAltColorFolder, fileName), assetFileName);
+    }
+  }
+
+  public JobDescriptor installAltColorFromFile(@NonNull Game game, File out) {
     File folder = getAltColorFolder(game);
     if (folder != null) {
       String name = out.getName();
-      if (name.endsWith(UploaderAnalysis.PAC_SUFFIX)) {
-        try {
-          backupFolder(folder, UploaderAnalysis.PAC_SUFFIX);
-          FileUtils.copyFile(out, new File(folder, "pin2dmd.pac"));
-        }
-        catch (IOException e) {
-          LOG.error("Failed to copy pac file: " + e.getMessage(), e);
-          return JobDescriptorFactory.error("Failed to copy pac file: " + e.getMessage());
-        }
+      try {
+        installAltColorFromFile(name, folder, out, "pin2dmd.pac");
+        installAltColorFromFile(name, folder, out, "pin2dmd.vni");
+        installAltColorFromFile(name, folder, out, "pin2dmd.pal");
+        installAltColorFromFile(name, folder, out, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX);
       }
-      else if (name.endsWith(UploaderAnalysis.PAL_SUFFIX)) {
-        try {
-          backupFolder(folder, UploaderAnalysis.PAL_SUFFIX);
-          FileUtils.copyFile(out, new File(folder, "pin2dmd.pal"));
-        }
-        catch (IOException e) {
-          LOG.error("Failed to copy pal file: " + e.getMessage(), e);
-          return JobDescriptorFactory.error("Failed to copy pal file: " + e.getMessage());
-        }
-      }
-      else if (name.endsWith(UploaderAnalysis.VNI_SUFFIX)) {
-        try {
-          backupFolder(folder, UploaderAnalysis.VNI_SUFFIX);
-          FileUtils.copyFile(out, new File(folder, "pin2dmd.vni"));
-        }
-        catch (IOException e) {
-          LOG.error("Failed to copy vni file: " + e.getMessage(), e);
-          return JobDescriptorFactory.error("Failed to copy vni file: " + e.getMessage());
-        }
-      }
-      else if (name.endsWith(UploaderAnalysis.SERUM_SUFFIX)) {
-        try {
-          backupFolder(folder, UploaderAnalysis.SERUM_SUFFIX);
-          FileUtils.copyFile(out, new File(folder, game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX));
-        }
-        catch (IOException e) {
-          LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
-          return JobDescriptorFactory.error("Failed to copy cRZ file: " + e.getMessage());
-        }
+      catch (IOException e) {
+        LOG.error("Failed to copy alt color file: " + e.getMessage(), e);
+        return JobDescriptorFactory.error("Failed to copy alt color file: " + e.getMessage());
       }
     }
     LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
     setAltColorEnabled(game.getRom(), true);
     return JobDescriptorFactory.empty();
+  }
+
+  private void installAltColorFromFile(String name, File folder, File out, String fileName) throws IOException {
+    String suffix = FilenameUtils.getExtension(fileName);
+    if (name.endsWith(suffix)) {
+      backupFolder(folder, suffix);
+      FileUtils.copyFile(out, new File(folder, fileName));
+    }
   }
 
   private void backupFolder(File folder, String targetSuffix) {

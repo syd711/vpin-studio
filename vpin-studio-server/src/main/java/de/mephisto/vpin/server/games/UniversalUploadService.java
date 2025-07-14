@@ -236,7 +236,7 @@ public class UniversalUploadService {
             break;
           }
           if (game != null) {
-            JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
+            JobDescriptor jobExecutionResult = altColorService.installAltColorFromFile(game, tempFile);
             uploadDescriptor.setError(jobExecutionResult.getError());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }

@@ -45,7 +45,7 @@ public class VpaArchiveUtil {
 
   public static RegistryData readWindowRegistryValues(File file) {
     try {
-      String text = readStringFromZip(file, ArchivePackageInfo.ARCHIVE_FILENAME);
+      String text = readStringFromZip(file, ArchivePackageInfo.REGISTRY_FILENAME);
       if (text != null) {
         return objectMapper.readValue(text, RegistryData.class);
       }

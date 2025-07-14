@@ -382,5 +382,6 @@ public class VpaService {
 
   private void zipFile(File fileToZip, String fileName, BiConsumer<File, String> zipOut) {
     zipOut.accept(fileToZip, fileName);
+    LOG.info("Zipped archive file: {}", fileToZip);
   }
 }

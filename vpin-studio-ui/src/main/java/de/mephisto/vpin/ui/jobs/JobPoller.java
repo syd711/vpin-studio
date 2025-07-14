@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.jobs;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -29,6 +30,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class JobPoller implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
+  private final static String ACTIVE_STYLE = "-fx-border-style: solid;-fx-border-color: #6666FFAA;-fx-border-width: 1;";
 
   private static JobPoller instance;
 
@@ -139,6 +141,7 @@ public class JobPoller implements StudioEventListener {
       jobProgress.setProgress(-1);
       jobProgress.setVisible(true);
       jobProgress.setDisable(false);
+      jobMenu.setStyle(ACTIVE_STYLE);
 
       if (!service.isRunning()) {
         service.restart();
@@ -158,6 +161,10 @@ public class JobPoller implements StudioEventListener {
       jobProgress.setProgress(activeJobList.isEmpty() ? 0 : -1);
       jobProgress.setVisible(!activeJobList.isEmpty());
       jobProgress.setDisable(activeJobList.isEmpty());
+      if (activeJobList.isEmpty()) {
+        jobMenu.setStyle(null);
+      }
+
 
       if (activeJobList.size() == 1) {
         jobMenu.setText(activeJobList.size() + " active job");
