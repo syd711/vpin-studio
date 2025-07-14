@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
@@ -49,14 +49,6 @@ public class TablesBackupController implements Initializable, DialogController {
         JobPoller.getInstance().setPolling();
       });
     }).start();
-
-//    Platform.runLater(() -> {
-//      String msg = "The backup of " + games.size() + " tables has been started.";
-//      if(games.size() == 1) {
-//        msg = "The backup of \"" + games.get(0).getGameDisplayName() + "\" tables has been started.";
-//      }
-//      WidgetFactory.showInformation(Studio.stage, "Backup Started", msg, "The archived state will update once the backup is finished.");
-//    });
   }
 
   @FXML

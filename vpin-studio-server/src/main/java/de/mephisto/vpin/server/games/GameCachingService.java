@@ -426,9 +426,11 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     vpsService.applyVersionInfo(game);
 
     //do not parse highscore and generate highscore cards for new games, causing concurrent DB access likely through the FX thread
-    if (game.isVpxGame() && !newGame) {
-      Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
-      highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
+    if (game.isVpxGame()) {
+      if (!newGame) {
+        Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
+        highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
+      }
     }
 
     //run validations at the end!!!

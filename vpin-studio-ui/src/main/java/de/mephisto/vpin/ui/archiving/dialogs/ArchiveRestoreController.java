@@ -158,7 +158,7 @@ public class ArchiveRestoreController implements Initializable, DialogController
     nvRamCheckBox.setSelected(backupSettings.isNvRam());
     resCheckBox.setSelected(backupSettings.isRes());
     vbsCheckBox.setSelected(backupSettings.isVbs());
-    popperMediaCheckBox.setSelected(backupSettings.isPopperMedia());
+    popperMediaCheckBox.setSelected(backupSettings.isFrontendMedia());
     povCheckBox.setSelected(backupSettings.isPov());
     iniCheckBox.setSelected(backupSettings.isIni());
     musicCheckBox.setSelected(backupSettings.isMusic());
@@ -212,7 +212,7 @@ public class ArchiveRestoreController implements Initializable, DialogController
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
     popperMediaCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      backupSettings.setPopperMedia(newValue);
+      backupSettings.setFrontendMedia(newValue);
       client.getPreferenceService().setJsonPreference(backupSettings);
     });
     povCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {

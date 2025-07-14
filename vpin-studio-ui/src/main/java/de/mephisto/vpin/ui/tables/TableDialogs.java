@@ -585,13 +585,6 @@ public class TableDialogs {
     }
   }
 
-  public static void openTablesBackupDialog(List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(TablesBackupController.class, "dialog-tables-backup.fxml", "Table Backup");
-    TablesBackupController controller = (TablesBackupController) stage.getUserData();
-    controller.setGames(games);
-    stage.showAndWait();
-  }
-
   public static void openTableImportDialog(GameEmulatorRepresentation emulatorRepresentation) {
     Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Importer");
     TableImportController controller = (TableImportController) stage.getUserData();

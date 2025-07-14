@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 
 public class BackupSettings extends JsonSettings {
 
@@ -11,7 +12,7 @@ public class BackupSettings extends JsonSettings {
   private boolean nvRam = true;
   private boolean res = true;
   private boolean vbs = true;
-  private boolean popperMedia = true;
+  private boolean frontendMedia = true;
   private boolean pov = true;
   private boolean ini = true;
   private boolean music = true;
@@ -21,6 +22,52 @@ public class BackupSettings extends JsonSettings {
   private boolean dmd = true;
   private boolean vpx = true;
   private boolean registryData = true;
+
+  public boolean isAssetEnabled(AssetType assetType) {
+    switch (assetType) {
+      case DIRECTB2S: {
+        return directb2s;
+      }
+      case PUP_PACK: {
+        return pupPack;
+      }
+      case NV: {
+        return nvRam;
+      }
+      case RES: {
+        return res;
+      }
+      case VBS: {
+        return vbs;
+      }
+      case FRONTEND_MEDIA: {
+        return frontendMedia;
+      }
+      case POV: {
+        return pov;
+      }
+      case INI: {
+        return ini;
+      }
+      case MUSIC:
+      case MUSIC_BUNDLE: {
+        return music;
+      }
+      case ALT_SOUND: {
+        return altSound;
+      }
+      case ALT_COLOR: {
+        return altColor;
+      }
+      case DMD_PACK: {
+        return dmd;
+      }
+      case VPX: {
+        return vpx;
+      }
+    }
+    return false;
+  }
 
   public boolean isDirectb2s() {
     return directb2s;
@@ -70,12 +117,12 @@ public class BackupSettings extends JsonSettings {
     this.vbs = vbs;
   }
 
-  public boolean isPopperMedia() {
-    return popperMedia;
+  public boolean isFrontendMedia() {
+    return frontendMedia;
   }
 
-  public void setPopperMedia(boolean popperMedia) {
-    this.popperMedia = popperMedia;
+  public void setFrontendMedia(boolean frontendMedia) {
+    this.frontendMedia = frontendMedia;
   }
 
   public boolean isPov() {

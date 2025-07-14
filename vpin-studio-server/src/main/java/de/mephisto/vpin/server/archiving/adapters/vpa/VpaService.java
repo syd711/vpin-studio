@@ -135,18 +135,19 @@ public class VpaService {
     }
 
     DirectB2S directB2SAndVersions = backglassService.getDirectB2SAndVersions(game);
-    List<String> versions = directB2SAndVersions.getVersions();
-    List<File> files = new ArrayList<>();
-    for (String version : versions) {
-      File directB2SFile = new File(gameFolder, version);
-      if (directB2SFile.exists()) {
-        files.add(directB2SFile);
-        zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+    if (directB2SAndVersions != null) {
+      List<String> versions = directB2SAndVersions.getVersions();
+      List<File> files = new ArrayList<>();
+      for (String version : versions) {
+        File directB2SFile = new File(gameFolder, version);
+        if (directB2SFile.exists()) {
+          files.add(directB2SFile);
+          zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+        }
       }
-    }
-
-    if (!files.isEmpty()) {
-      packageInfo.setDirectb2s(ArchiveFileInfoFactory.create(files.get(0), files));
+      if (!files.isEmpty()) {
+        packageInfo.setDirectb2s(ArchiveFileInfoFactory.create(files.get(0), files));
+      }
     }
 
 

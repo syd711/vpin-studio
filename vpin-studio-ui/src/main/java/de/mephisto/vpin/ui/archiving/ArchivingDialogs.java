@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
+import de.mephisto.vpin.ui.archiving.dialogs.TablesBackupController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -12,6 +14,13 @@ import java.io.File;
 import java.util.List;
 
 public class ArchivingDialogs {
+
+  public static void openTablesBackupDialog(List<GameRepresentation> games) {
+    Stage stage = Dialogs.createStudioDialogStage(TablesBackupController.class, "dialog-tables-backup.fxml", "Table Backup");
+    TablesBackupController controller = (TablesBackupController) stage.getUserData();
+    controller.setGames(games);
+    stage.showAndWait();
+  }
 
   public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {
     Stage stage = Dialogs.createStudioDialogStage(ArchiveSourceHttpDialogController.class, "dialog-archive-source-http.fxml", "HTTP Repository");

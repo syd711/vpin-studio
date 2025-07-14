@@ -95,7 +95,7 @@ public class HighscoreBackupService implements InitializingBean {
 
   public boolean restore(@NonNull Game game, @NonNull List<Game> games, @NonNull String filename) {
     String rom = game.getRom();
-    if(StringUtils.isEmpty(rom)) {
+    if (StringUtils.isEmpty(rom)) {
       rom = game.getTableName();
     }
 
@@ -122,7 +122,8 @@ public class HighscoreBackupService implements InitializingBean {
       String json = ZipUtil.readZipFile(archiveFile, DESCRIPTOR_JSON);
 
       return objectMapper.readValue(json, HighscoreBackup.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return null;
@@ -165,7 +166,7 @@ public class HighscoreBackupService implements InitializingBean {
     boolean highscoreWritten = false;
 
     try (FileOutputStream fos = new FileOutputStream(tempFile);
-        ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+         ZipOutputStream zipOut = new ZipOutputStream(fos)) {
 
       File descriptorJsonFile = writeDescriptorJson(game, romBackupFolder, highscore, filename);
 
@@ -206,7 +207,8 @@ public class HighscoreBackupService implements InitializingBean {
       if (!descriptorJsonFile.delete()) {
         throw new UnsupportedEncodingException("Failed to delete " + descriptorJsonFile.getAbsolutePath());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to create highscore archive file: " + e.getMessage(), e);
     }
     return highscoreWritten;
@@ -218,6 +220,10 @@ public class HighscoreBackupService implements InitializingBean {
 
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;
+
+      if (!romBackupFolder.exists() && !romBackupFolder.mkdirs()) {
+        LOG.error("Failed to create highscore backup folder {}", romBackupFolder.getAbsolutePath());
+      }
 
       File target = new File(romBackupFolder, filename);
       target = FileUtils.uniqueFile(target);
@@ -238,7 +244,8 @@ public class HighscoreBackupService implements InitializingBean {
 
       if (written) {
         LOG.info("Written highscore backup " + target.getAbsolutePath());
-      } else {
+      }
+      else {
         LOG.info("No highscore backup created, no matching source found for \"" + game.getRom() + "\"");
         return true;
       }
@@ -272,7 +279,8 @@ public class HighscoreBackupService implements InitializingBean {
           vpReg.restore(json);
           LOG.info("Imported VPReg.stg data from " + backupRomFolder.getAbsolutePath());
           return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to restore backup for VPReg.stg file and rom " + rom + ": " + e.getMessage(), e);
         }
         break;

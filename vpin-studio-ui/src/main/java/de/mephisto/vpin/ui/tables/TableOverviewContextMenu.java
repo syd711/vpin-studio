@@ -384,6 +384,8 @@ public class TableOverviewContextMenu {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem exportItem = new MenuItem("Backup Table");
+        KeyCombination backupKey = new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
+        exportItem.setAccelerator(backupKey);
         exportItem.setGraphic(WidgetFactory.createIcon("mdi2a-archive-outline"));
         exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
         ctxMenu.getItems().add(exportItem);

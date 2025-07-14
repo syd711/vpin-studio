@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -151,6 +152,12 @@ public class UniversalUploadService {
     // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
     resolveLinks(uploadDescriptor);
 
+    // For backup imports, check if the AssetType was enabled
+    if (!isImportEnabled(uploadDescriptor, assetType)) {
+      LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
+      return;
+    }
+
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
     Game game = gameService.getGame(uploadDescriptor.getGameId());
@@ -185,12 +192,26 @@ public class UniversalUploadService {
     }
   }
 
+  private boolean isImportEnabled(UploadDescriptor uploadDescriptor, @NonNull AssetType assetType) {
+    if (uploadDescriptor.isBackupRestoreMode()) {
+      BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+      return backupSettings.isAssetEnabled(assetType);
+    }
+    return true;
+  }
+
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType) throws Exception {
     importArchiveBasedAssets(uploadDescriptor, analysis, assetType, false);
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType, boolean validateAssetType) throws Exception {
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
+    // For backup imports, check if the AssetType was enabled
+    if (!isImportEnabled(uploadDescriptor, assetType)) {
+      LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
+      return;
+    }
+
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
       analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
