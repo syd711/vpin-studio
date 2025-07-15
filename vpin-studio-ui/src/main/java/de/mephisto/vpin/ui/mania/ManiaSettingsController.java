@@ -153,11 +153,6 @@ public class ManiaSettingsController extends SettingsSceneController implements 
     load("mania-account-settings.fxml", event);
   }
 
-  @FXML
-  private void onCabinet(ActionEvent event) throws IOException {
-    load("mania-cabinet-settings.fxml", event);
-  }
-
 
   @FXML
   private void onTournaments(ActionEvent event) throws IOException {

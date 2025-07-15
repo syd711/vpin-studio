@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VpsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.VpsPreferencesController">
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
@@ -136,7 +136,7 @@
                   <Label styleClass="default-text" text="Author Deny List:" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
-                        <TextField fx:id="authorDenyList" prefWidth="500.0">
+                        <TextField fx:id="authorDenyList" prefWidth="500.0" promptText="Enter the names of authors you do not wish to receive updates from.">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -154,7 +154,6 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Label styleClass="default-text" text="(Enter the names of authors here you do not wish to receive updates from.)" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </children>

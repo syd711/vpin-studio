@@ -153,7 +153,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         break;
       }
       case TAB_VPS: {
-        PreferencesController.open("settings_client");
+        PreferencesController.open("vps");
         break;
       }
       case TAB_STATISTICS: {
