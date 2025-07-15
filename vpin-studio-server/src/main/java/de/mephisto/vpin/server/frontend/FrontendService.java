@@ -679,6 +679,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public boolean deleteEmulator(int emulatorId) {
+    killFrontend();
     return getFrontendConnector().deleteEmulator(emulatorId);
   }
 
