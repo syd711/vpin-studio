@@ -37,6 +37,7 @@
   - New revamped icons! Thanks to @planetxplanetx!
 - **Main Window**:
   - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/pinvol.png" width="200" />
 - **Uploads**:
   - Fixed and improved ROM name detection of ALT sound bundles.
 - **Maintenance Mode**:
