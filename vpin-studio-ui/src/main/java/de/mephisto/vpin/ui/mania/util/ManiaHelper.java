@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.mania.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.mania.ManiaRegistration;
@@ -109,6 +110,12 @@ public class ManiaHelper {
   }
 
   public static void runScoreSynchronization(boolean showScoreSummary) {
+    List<Account> accounts = maniaClient.getAccountClient().getAccounts();
+    if (accounts.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "Highscore Synchronization", "The synchronization has been cancelled, no registered player found.", "Register a local player to synchronize their highscores with vpin-mania.net.");
+      return;
+    }
+
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VPinManiaScoreSynchronizeProgressModel());
     if (showScoreSummary) {
       List<ManiaTableSyncResult> results = (List<ManiaTableSyncResult>) (List<?>) progressDialog.getResults();

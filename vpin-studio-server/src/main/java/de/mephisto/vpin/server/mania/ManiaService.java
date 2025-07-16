@@ -121,6 +121,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
     if (scoreList.isEmpty()) {
       String msg = "No highscores found for \"" + game.getGameDisplayName() + "\", VPS ids: " + game.getExtTableId() + "/" + game.getExtTableVersionId();
       LOG.info(msg);
+      return;
     }
 
     List<String> submittedInitials = new ArrayList<>();
