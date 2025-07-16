@@ -6,9 +6,12 @@
   - Added option to directly delete a competition if you want to delete a table that is used by one.
   - Added missing refreshes between the table overview and the different competition views.
 - **Media Manager**:
-  - Added support of animated PNGs!
+  - **Added support of animated PNGs!**
   - The Asset Manager Dialog is now resizable.
   - Added ability to view fullscreen a media asset in the Asset Manager dialog and tab.
+
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/preview.png" width="700" />
+  
 - **DMD Improvements**:
   - Improved parsing of script to detect usage of UltraDMD or FlexDMD and associated project folder.
   - Added validator to check the scanned DMD folder exists.
@@ -17,11 +20,17 @@
   - **Note that you have to rescan the table or press the reload button in the DMD section to update the DMD information**.
 - **Preferences**
   - **Reorganization**: Moved **System Settings** into the **Cabinet** section, trying to declutter the preferences navigation a bit.
-  - **Backups**: The backups have been re-implemented. Instead of a simple database copy, all preferences are exported as a json file. This file can be imported to any other client or cabinet, even if different tables are installed. It contains the settings of all 3rd party systems and the additional table information that are only available for the VPin Studio.
+  - **Studio Backups**: The backups have been re-implemented. Instead of a simple database copy, all preferences are exported as a json file. This file can be imported to any other client or cabinet, even if different tables are installed. It contains the settings of all 3rd party systems and the additional table information that are only available for the VPin Studio.
+
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/preferences.png" width="700" />
+  
 - **Virtual Pinball Spreadsheet**:
   - **Tutorial Column**: Improved the "Tutorials" column. The column shows the available tutorials for the given table. Note that the **Kongedam** tutorials have an additional color indicator. (This indicator has a technical reason too. It ensures that all the latest and greatest from him are available in the pause menu too).
   - **Preferences**: The VPS related preferences have been moved into a separate preferences page under "3rd party preferences". **This is a breaking change since the preferences have also been reorganized in the backend. So you need to reconfigure the section if you did not use the default values here.**
   - **Update Filtering**: You can filter updates from authors you are not interested in now. The names can be added on the (new) VPS preferences page in comma separated value format (case-insensitive).
+
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/vps.png" width="700" />
+  
 - **Table Overview**: 
   - In the Table Data dialog, an additional check has been added to see if the overridden ROM name exists.
   - **ALT Color Backups**: Added dialog for backups to the ALT color section. Note that you may already have some backups available since the actual backup support for the backend was already build a year ago. The dialog allows you to restore these files now.
