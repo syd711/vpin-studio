@@ -25,21 +25,27 @@
 - **Table Overview**: 
   - In the Table Data dialog, an additional check has been added to see if the overridden ROM name exists.
   - **ALT Color Backups**: Added dialog for backups to the ALT color section. Note that you may already have some backups available since the actual backup support for the backend was already build a year ago. The dialog allows you to restore these files now.
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/altcolor.png" width="200" />
+  
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/altcolor.png" width="700" />
+   
 - **Backglass Manager**:
   - Improved refresh of backglass sidebar when multiple clicks in list.
 - **Playlist Manager**:
   - Instead of auto-saving the SQL of the playlist, a separate button for saving has been added. The SQL is validated on save. Therefore the intermediate validation does not block the SQL input anymore.
-   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/playlists.png" width="200" />
+  
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/playlists.png" width="400" />
 - **Media Recorder**:
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
+
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/recorder.png" width="400" /> 
 - **Pause Menu**:
   - Improved icon and label for tutorials.
   - Disabled additional frontend screens when the pause menu is shown. These should not have been active anymore since the latest revamp that came with version 4.0.
   - New revamped icons! Thanks to @planetxplanetx!
 - **Main Window**:
   - Added options to start and stop PinVOL directly from the preferences dropdown menu. Since PinVOL may block key bindings, you can faster work around this problem this way.
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/pinvol.png" width="200" />
+  
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/pinvol.png" width="300" />
 - **Uploads**:
   - Fixed and improved ROM name detection of ALT sound bundles.
 - **Maintenance Mode**:
