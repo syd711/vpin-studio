@@ -156,7 +156,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           if (isOnDenyList(deniedScoresByTableId, score, game)) {
             result.setTableScore(tableScore);
             result.setDenied(true);
-            result.setResult("A matching score has been found, but it is ony the ignore list.");
+            result.setResult("A matching score has been found, but it is on the ignore list.");
             continue;
           }
 
