@@ -10,7 +10,7 @@
   - The Asset Manager Dialog is now resizable.
   - Added ability to view fullscreen a media asset in the Asset Manager dialog and tab.
 
-    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/preview.png" width="700" />
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/preview.png" width="600" />
   
 - **DMD Improvements**:
   - Improved parsing of script to detect usage of UltraDMD or FlexDMD and associated project folder.
