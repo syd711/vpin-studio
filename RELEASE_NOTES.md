@@ -25,6 +25,7 @@
 - **Table Overview**: 
   - In the Table Data dialog, an additional check has been added to see if the overridden ROM name exists.
   - **ALT Color Backups**: Added dialog for backups to the ALT color section. Note that you may already have some backups available since the actual backup support for the backend was already build a year ago. The dialog allows you to restore these files now.
+    <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/altcolor.png" width="200" />
 - **Backglass Manager**:
   - Improved refresh of backglass sidebar when multiple clicks in list.
 - **Playlist Manager**:
