@@ -10,7 +10,25 @@ public class ManiaTableSyncResult {
   @Nullable
   private TableScore tableScore;
 
+  private String tableName;
   private boolean denied = false;
+  private boolean valid = true;
+
+  public boolean isValid() {
+    return valid;
+  }
+
+  public void setValid(boolean valid) {
+    this.valid = valid;
+  }
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String tableName) {
+    this.tableName = tableName;
+  }
 
   public boolean isDenied() {
     return denied;

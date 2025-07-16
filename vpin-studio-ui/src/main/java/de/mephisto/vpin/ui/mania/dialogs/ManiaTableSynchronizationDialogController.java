@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
 
   @FXML
   private TableColumn<ManiaTableSynchronizationDialogController.ManiaTableSyncResultModel, String> statusColumn;
+  private List<Account> accounts;
 
   @Override
   public void onDialogCancel() {
@@ -61,37 +64,46 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     tableView.setPlaceholder(new Label("No synchronization data found."));
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
+    statusColumn.setCellValueFactory(cellData -> {
+      ManiaTableSyncResultModel value = cellData.getValue();
+
+      FontIcon statusIcon = WidgetFactory.createCheckIcon();
+      Label statusLabel = new Label();
+      if (value.isDenied()) {
+        statusIcon = WidgetFactory.createIcon("mdi2a-alert-circle-check-outline");
+        statusIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      }
+      else if (!value.isValid()) {
+        statusIcon = WidgetFactory.createExclamationIcon();
+      }
+      else if (value.getAccount() == null) {
+        statusIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      }
+
+      statusLabel.setGraphic(statusIcon);
+      if (value.getResult() != null) {
+        statusLabel.setTooltip(new Tooltip(value.getResult()));
+      }
+
+      return new SimpleObjectProperty(statusLabel);
+    });
+
     nameColumn.setCellValueFactory(cellData -> {
       ManiaTableSyncResultModel value = cellData.getValue();
-      return new SimpleObjectProperty(value.getTableName());
+      return new SimpleObjectProperty(value.getTableName() != null ? value.getTableName() : "-");
     });
 
     accountColumn.setCellValueFactory(cellData -> {
       ManiaTableSyncResultModel value = cellData.getValue();
-      return new SimpleObjectProperty(value.getAccount());
+      return new SimpleObjectProperty(value.getAccount() != null ? value.getAccount() : "-");
     });
 
     scoreColumn.setCellValueFactory(cellData -> {
       ManiaTableSyncResultModel value = cellData.getValue();
-      return new SimpleObjectProperty(value.getScore());
+      return new SimpleObjectProperty(value.getScore() != null ? value.getScore() : "-");
     });
 
-    statusColumn.setCellValueFactory(cellData -> {
-      ManiaTableSyncResultModel value = cellData.getValue();
-
-      FontIcon statusIcon = WidgetFactory.createCheckIcon(null);
-      Label statusLabel = new Label();
-      if (value.isDenied()) {
-        statusIcon = WidgetFactory.createExclamationIcon(null);
-        statusLabel.setTooltip(new Tooltip("This highscore is on the deny list."));
-      }
-      else {
-        statusLabel.setTooltip(new Tooltip("Synchronization successful."));
-      }
-      statusLabel.setGraphic(statusIcon);
-      return new SimpleObjectProperty(statusLabel);
-    });
-
+    accounts = maniaClient.getAccountClient().getAccounts();
   }
 
   public void setSynchronizationResult(List<ManiaTableSyncResult> result) {
@@ -101,7 +113,7 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     statsLabel.setText(result.stream().filter(r -> !r.isDenied()).count() + " highscore have been submitted to vpin-mania.net.");
   }
 
-  static class ManiaTableSyncResultModel {
+  class ManiaTableSyncResultModel {
 
     private final ManiaTableSyncResult result;
 
@@ -110,20 +122,40 @@ public class ManiaTableSynchronizationDialogController implements DialogControll
     }
 
     public String getTableName() {
-      return result.getTableScore().getTableName();
+      if (result.getTableName() != null) {
+        return result.getTableName();
+      }
+      return null;
     }
 
     public String getScore() {
-      return ScoreFormatUtil.formatScore(result.getTableScore().getScore(), Locale.getDefault());
+      if (result.getTableScore() != null) {
+        return ScoreFormatUtil.formatScore(result.getTableScore().getScore(), Locale.getDefault());
+      }
+      return null;
+    }
+
+    public boolean isValid() {
+      return result.isValid();
     }
 
     public boolean isDenied() {
       return result.isDenied();
     }
 
+    public String getResult() {
+      return result.getResult();
+    }
+
     public String getAccount() {
-      Account account = maniaClient.getAccountClient().getAccount(result.getTableScore().getAccountId());
-      return account.getDisplayName() + " [" + account.getInitials() + "]";
+      if (result.getTableScore() != null) {
+        Optional<Account> first = accounts.stream().filter(a -> a.getId() == result.getTableScore().getAccountId()).findFirst();
+        if (first.isPresent()) {
+          Account account = first.get();
+          return account.getDisplayName() + " [" + account.getInitials() + "]";
+        }
+      }
+      return null;
     }
   }
 }

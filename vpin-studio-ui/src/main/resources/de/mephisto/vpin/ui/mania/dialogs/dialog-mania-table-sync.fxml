@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.dialogs.ManiaTableSynchronizationDialogController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.dialogs.ManiaTableSynchronizationDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -33,12 +33,12 @@
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <TableView fx:id="tableView" prefHeight="600.0">
+            <TableView fx:id="tableView" prefHeight="700.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
-                  <TableColumn fx:id="statusColumn" prefWidth="50.0" />
-                <TableColumn fx:id="nameColumn" prefWidth="400.0" text="Table" />
-                <TableColumn fx:id="accountColumn" minWidth="0.0" prefWidth="300.0" text="Account" />
-                  <TableColumn fx:id="scoreColumn" prefWidth="214.0" text="Highscore" />
+                  <TableColumn fx:id="statusColumn" prefWidth="50.0" style="-fx-alignment: BASELINE_CENTER;" />
+                <TableColumn fx:id="nameColumn" prefWidth="500.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Table" />
+                <TableColumn fx:id="accountColumn" minWidth="0.0" prefWidth="300.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Account" />
+                  <TableColumn fx:id="scoreColumn" prefWidth="214.0" sortable="false" style="-fx-alignment: BASELINE_LEFT;" text="Highscore" />
               </columns>
             </TableView>
          </content>
