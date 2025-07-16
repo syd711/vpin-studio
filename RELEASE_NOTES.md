@@ -29,6 +29,7 @@
   - Improved refresh of backglass sidebar when multiple clicks in list.
 - **Playlist Manager**:
   - Instead of auto-saving the SQL of the playlist, a separate button for saving has been added. The SQL is validated on save. Therefore the intermediate validation does not block the SQL input anymore.
+   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/release-notes/playlists.png" width="200" />
 - **Media Recorder**:
   - Added new "Wizard" button that automatically selects all video screens of all tables that are missing and configured as mandatory.
 - **Pause Menu**:
