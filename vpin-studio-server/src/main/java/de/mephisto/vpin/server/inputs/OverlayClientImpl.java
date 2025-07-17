@@ -2,22 +2,35 @@ package de.mephisto.vpin.server.inputs;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.OverlayClient;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.ImageCache;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.alx.AlxService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -25,12 +38,17 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.VPinScreenService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
@@ -52,10 +70,25 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayClientImpl.class);
 
   @Autowired
+  private SystemService systemService;
+
+  @Autowired
   private GameService gameService;
 
   @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
+  private GameStatusService gameStatusService;
+
+  @Autowired
+  private AlxService alxService;
+
+  @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private VPinScreenService vPinScreenService;
 
   @Autowired
   private CompetitionService competitionService;
@@ -80,8 +113,33 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   private final Map<String, byte[]> imageByteCache = new HashMap<>();
   private final ImageCache imageCache = new ImageCache(null);
 
+
+  private <R> R convert(Object source, Class<R> clazz) {
+  try {
+      String s = mapper.writeValueAsString(source);
+      return mapper.readValue(s, clazz);
+    }
+    catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  private <R> List<R> convertList(List<?> source, Class<R[]> clazz) {
+    try {
+      String s = mapper.writeValueAsString(source);
+      R[] array = mapper.readValue(s, clazz);
+      return List.of(array);
+    }
+    catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return Collections.emptyList();
+  }
+
   @Override
   public DiscordServer getDiscordServer(long serverId) {
+    // FIXME why mapper ? 
     try {
       DiscordServer server = discordService.getServer(serverId);
       String s = mapper.writeValueAsString(server);
@@ -91,6 +149,14 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
       LOG.error("Error during conversion: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  @Override
+  public String getURL(String segment) {
+    if (!segment.startsWith("http") && !segment.contains(VPinStudioClient.API)) {
+      return "http://localhost:" + SystemUtil.getPort() + "/" + VPinStudioClient.API + segment;
+    }
+    return segment;
   }
 
   public InputStream getCachedUrlImage(String imageUrl) {
@@ -156,41 +222,25 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {
-    try {
-      List<Competition> finishedCompetitions = competitionService.getFinishedCompetitions(limit);
-      String s = mapper.writeValueAsString(finishedCompetitions);
-      return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return Collections.emptyList();
+    List<Competition> finishedCompetitions = competitionService.getFinishedCompetitions(limit);
+    return convertList(finishedCompetitions, CompetitionRepresentation[].class);
   }
 
   @Override
   public List<CompetitionRepresentation> getIScoredSubscriptions() {
-    try {
-      List<Competition> finishedCompetitions = competitionService.getIScoredSubscriptions();
-      String s = mapper.writeValueAsString(finishedCompetitions);
-      return List.of(mapper.readValue(s, CompetitionRepresentation[].class));
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return Collections.emptyList();
+    List<Competition> finishedCompetitions = competitionService.getIScoredSubscriptions();
+    return convertList(finishedCompetitions, CompetitionRepresentation[].class);
   }
 
   @Override
   public CompetitionRepresentation getActiveCompetition(CompetitionType type) {
-    try {
-      Competition competition = competitionService.getActiveCompetition(type);
-      String s = mapper.writeValueAsString(competition);
-      return mapper.readValue(s, CompetitionRepresentation.class);
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return null;
+    Competition competition = competitionService.getActiveCompetition(type);
+    return convert(competition, CompetitionRepresentation.class);
+  }
+
+  @Override
+  public VpsTable getVpsTable(String tableId) {
+    return vpsService.getTableById(tableId);
   }
 
   @Override
@@ -209,15 +259,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public GameRepresentation getGame(int id) {
-    try {
-      Game game = gameService.getGame(id);
-      String s = mapper.writeValueAsString(game);
-      return mapper.readValue(s, GameRepresentation.class);
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return null;
+    Game game = gameService.getGame(id);
+    return convert(game, GameRepresentation.class);
   }
 
   @Override
@@ -226,42 +269,33 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
+  public GameEmulatorRepresentation getGameEmulator(int emulatorId) {
+    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+    return convert(emulator, GameEmulatorRepresentation.class);
+  }
+
+  @Override
+  public GameScoreValidation getGameScoreValidation(int gameId) {
+    return gameService.getGameScoreValidation(gameId);
+  }
+
+  @Override
+  public AlxSummary getAlxSummary(int gameId) {
+    return alxService.getAlxSummary(gameId);
+  }
+
+  //--------------------------
+
+  @Override
   public FrontendMediaRepresentation getFrontendMedia(int id) {
-    try {
-      FrontendMedia frontendMedia = frontendService.getGameMedia(id);
-      String s = mapper.writeValueAsString(frontendMedia);
-      return mapper.readValue(s, FrontendMediaRepresentation.class);
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return null;
+    FrontendMedia frontendMedia = frontendService.getGameMedia(id);
+    return convert(frontendMedia, FrontendMediaRepresentation.class);
   }
 
   @Override
   public ScoreListRepresentation getCompetitionScoreList(long id) {
-    try {
-      ScoreList competitionScores = competitionService.getCompetitionScores(id);
-      String s = mapper.writeValueAsString(competitionScores);
-      return mapper.readValue(s, ScoreListRepresentation.class);
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  @Override
-  public ScoreSummaryRepresentation getCompetitionScore(long id) {
-    try {
-      ScoreSummary competitionScore = competitionService.getCompetitionScore(id);
-      String s = mapper.writeValueAsString(competitionScore);
-      return mapper.readValue(s, ScoreSummaryRepresentation.class);
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return null;
+    ScoreList competitionScores = competitionService.getCompetitionScores(id);
+    return convert(competitionScores, ScoreListRepresentation.class);
   }
 
   @Override
@@ -281,33 +315,63 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen) {
-    try {
-      FrontendMediaItem defaultMediaItem = frontendService.getGameMedia(id).getDefaultMediaItem(screen);
-      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
-        File file = defaultMediaItem.getFile();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] bytes = IOUtils.toByteArray(fileInputStream);
-        fileInputStream.close();
-        return new ByteArrayInputStream(bytes);
+    if (screen != null) {
+      try {
+        FrontendMediaItem defaultMediaItem = frontendService.getGameMedia(id).getDefaultMediaItem(screen);
+        if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+          File file = defaultMediaItem.getFile();
+          FileInputStream fileInputStream = new FileInputStream(file);
+          byte[] bytes = IOUtils.toByteArray(fileInputStream);
+          fileInputStream.close();
+          return new ByteArrayInputStream(bytes);
+        }
       }
-    }
-    catch (Exception e) {
-      LOG.error("Error reading media item: " + e.getMessage(), e);
+      catch (Exception e) {
+        LOG.error("Error reading media item: " + e.getMessage(), e);
+      }
     }
     return null;
   }
 
+  //---------------------------
+
+  @Override
+  public ScoreSummaryRepresentation getCompetitionScore(long id) {
+    ScoreSummary competitionScore = competitionService.getCompetitionScore(id);
+    return convert(competitionScore, ScoreSummaryRepresentation.class);
+  }
+
   @Override
   public ScoreSummaryRepresentation getRecentScores(int count) {
-    try {
-      ScoreSummary summary = gameService.getRecentHighscores(count);
-      String s = mapper.writeValueAsString(summary);
-      return mapper.readValue(s, ScoreSummaryRepresentation.class);
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
+    ScoreSummary summary = gameService.getRecentHighscores(count);
+    return convert(summary, ScoreSummaryRepresentation.class);
+  }
+
+  @Override
+  public ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId) {
+    ScoreSummary summary = gameService.getRecentHighscores(count, gameId);
+    return convert(summary, ScoreSummaryRepresentation.class);
+  }
+
+  @Override
+  public MonitorInfo getScreenInfo(int id) {
+    List<MonitorInfo> monitorInfos = systemService.getMonitorInfos();
+    for (MonitorInfo monitorInfo : monitorInfos) {
+      if (id == -1 && monitorInfo.isPrimary()) {
+        return monitorInfo;
+      }
+      else if (monitorInfo.getId() == id) {
+        return monitorInfo;
+      }
     }
     return null;
+  }
+
+  //--------------------------
+
+  @Override
+  public void clearPreferenceCache() {
+    // no server cache
   }
 
   @Override
@@ -326,15 +390,8 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Override
   public List<RankedPlayerRepresentation> getRankedPlayers() {
-    try {
-      List<RankedPlayer> rankedPlayers = highscoreService.getPlayersByRanks();
-      String s = mapper.writeValueAsString(rankedPlayers);
-      return List.of(mapper.readValue(s, RankedPlayerRepresentation[].class));
-    }
-    catch (Exception e) {
-      LOG.error("Error during conversion: " + e.getMessage(), e);
-    }
-    return Collections.emptyList();
+    List<RankedPlayer> rankedPlayers = highscoreService.getPlayersByRanks();
+    return convertList(rankedPlayers, RankedPlayerRepresentation[].class);
   }
 
   @Override
@@ -342,5 +399,33 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
     mapper = new ObjectMapper();
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
+  }
+
+
+  @Override
+  public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
+    return vPinScreenService.getScreenDisplay(screen);
+  }
+
+  //---------------------
+
+  @Override
+  public GameStatus startPause() {
+    return gameStatusService.startPause();
+  }
+
+  @Override
+  public GameStatus getPauseStatus() {
+    return gameStatusService.getStatus();
+  }
+
+  @Override
+  public GameStatus finishPause() {
+    return gameStatusService.finishPause();
+  }
+
+  @Override
+  public FeaturesInfo getFeatures() {
+    return VPinStudioServer.Features;
   }
 }

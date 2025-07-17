@@ -1,17 +1,25 @@
 package de.mephisto.vpin.restclient;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -19,6 +27,7 @@ import java.io.InputStream;
 import java.util.List;
 
 public interface OverlayClient {
+  
   DiscordServer getDiscordServer(long serverId);
 
   List<CompetitionRepresentation> getFinishedCompetitions(int limit);
@@ -27,11 +36,25 @@ public interface OverlayClient {
 
   CompetitionRepresentation getActiveCompetition(CompetitionType type);
 
-  GameRepresentation getGame(int id);
+  //----------------------------------
+  
+  GameRepresentation getGame(int gameId);
 
-  GameRepresentation getGameCached(int id);
+  GameRepresentation getGameCached(int gameId);
+
+  GameEmulatorRepresentation getGameEmulator(int emulatorId);
+
+  GameScoreValidation getGameScoreValidation(int gameId);
+
+  AlxSummary getAlxSummary(int gameId);
+
+  //------------------------------
+
+  FrontendPlayerDisplay getScreenDisplay(VPinScreen tutorialScreen);
 
   FrontendMediaRepresentation getFrontendMedia(int id);
+
+  String getURL(String url);
 
   InputStream getCachedUrlImage(String url);
 
@@ -47,7 +70,21 @@ public interface OverlayClient {
 
   ScoreSummaryRepresentation getRecentScores(int count);
 
+  ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId);
+
   ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen);
+
+  //--------------------------
+
+  GameStatus startPause();
+
+  GameStatus getPauseStatus();
+
+  GameStatus finishPause();
+
+  //--------------------------
+
+  void clearPreferenceCache();
 
   PreferenceEntryRepresentation getPreference(String key);
 
@@ -55,7 +92,17 @@ public interface OverlayClient {
 
   List<RankedPlayerRepresentation> getRankedPlayers();
 
+  //---------------------------
+
+  VpsTable getVpsTable(String extTableId);
+
   VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId);
 
   GameRepresentation getGameByVpsId(@Nullable String vpsTableId, @Nullable String vpsTableVersionId);
+
+  //---------------------------
+
+  FeaturesInfo getFeatures();
+
+  MonitorInfo getScreenInfo(int screenId);
 }

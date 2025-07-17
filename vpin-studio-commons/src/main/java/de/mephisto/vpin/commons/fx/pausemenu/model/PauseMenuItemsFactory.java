@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -33,7 +34,7 @@ public class PauseMenuItemsFactory {
   public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
 
     // get application features
-    FeaturesInfo Features = PauseMenu.client.getSystemService().getFeatures();
+    FeaturesInfo Features = ServerFX.client.getFeatures();
 
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
@@ -64,7 +65,7 @@ public class PauseMenuItemsFactory {
       }
     }
     item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
+    InputStream imageStream = ServerFX.client.getGameMediaItem(game.getId(), cardScreen);
     if (imageStream != null) {
       Image scoreImage = new Image(imageStream);
       item.setDataImage(scoreImage);
@@ -97,7 +98,7 @@ public class PauseMenuItemsFactory {
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
       String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
-      Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
+      Image scoreImage = new Image(ServerFX.client.getCachedUrlImage(url));
       item.setDataImage(scoreImage);
       pauseMenuItems.add(item);
     }
@@ -107,7 +108,7 @@ public class PauseMenuItemsFactory {
     List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
     if (!StringUtils.isEmpty(extTableId)) {
-      VpsTable tableById = PauseMenu.client.getVpsService().getTableById(extTableId);
+      VpsTable tableById = ServerFX.client.getVpsTable(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
@@ -149,14 +150,14 @@ public class PauseMenuItemsFactory {
       String baseType = mimeType.split("/")[0];
       if (baseType.equals("image")) {
         PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(pictureImage)));
-        String url = PauseMenu.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
-        Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
+        String url = ServerFX.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
+        Image scoreImage = new Image(ServerFX.client.getCachedUrlImage(url));
         item.setDataImage(scoreImage);
         pauseMenuItems.add(item);
       }
       else if (baseType.equals("video")) {
         PauseMenuItem item = new PauseMenuItem(pauseType, title, text, new Image(PauseMenu.class.getResourceAsStream(videoImage)));
-        String url = PauseMenu.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
+        String url = ServerFX.client.getURL(mediaItem.getUri() + "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset()));
         item.setVideoUrl(url);
         pauseMenuItems.add(item);
       }

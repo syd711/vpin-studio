@@ -8,21 +8,18 @@ import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,11 +71,10 @@ public class WidgetLatestScoresController extends WidgetController implements In
     }
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    Screen overlayScreen = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId());
+    MonitorInfo screenBounds = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
 
     new Thread(() -> {
       int limit = 12;
-      Rectangle2D screenBounds = overlayScreen.getBounds();
       if (screenBounds.getWidth() > 2000 && screenBounds.getWidth() < 3000) {
         limit = 10;
       }

@@ -18,16 +18,16 @@ public class GameController {
 
   private GameController() {
     new Thread(() -> {
-      Thread.currentThread().setName("GameController");
       Controller[] controllers = null;
       try {
-        controllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
+        DirectInputEnvironmentPlugin plugin = new DirectInputEnvironmentPlugin();
+        controllers = plugin.getControllers();
       }
       catch (UnsatisfiedLinkError e) {
         LOG.info("Loaded game controllers: " + e.getMessage());
       }
-      List<Controller> filteredControllers = Arrays.stream(controllers).filter(c ->
-              !(c.getType().equals(Controller.Type.MOUSE)))
+      List<Controller> filteredControllers = Arrays.stream(controllers)
+          .filter(c -> !(c.getType().equals(Controller.Type.MOUSE)))
           .collect(Collectors.toList());
 
       if (filteredControllers.isEmpty()) {
@@ -36,6 +36,7 @@ public class GameController {
       }
 
       LOG.info("Starting GameController");
+      Event event = new Event();
       while (true) {
         for (Controller controller : filteredControllers) {
           if (controller.getType().equals(Controller.Type.MOUSE)) {
@@ -44,7 +45,6 @@ public class GameController {
 
           controller.poll();
           EventQueue queue = controller.getEventQueue();
-          Event event = new Event();
           while (queue.getNextEvent(event)) {
             Component comp = event.getComponent();
             if (comp.isAnalog()) {
@@ -71,7 +71,7 @@ public class GameController {
           LOG.error("Error in game controller wait");
         }
       }
-    }).start();
+    }, "Game Controller").start();
 
   }
 

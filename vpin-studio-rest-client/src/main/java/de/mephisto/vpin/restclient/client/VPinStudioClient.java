@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
 import de.mephisto.vpin.restclient.alx.AlxServiceClient;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -26,7 +27,9 @@ import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.emulators.EmulatorServiceClient;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.fp.FpServiceClient;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -48,6 +51,8 @@ import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.recorder.RecorderServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.res.ResServiceClient;
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
@@ -391,8 +396,28 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public GameEmulatorRepresentation getGameEmulator(int emulatorId) {
+    return getEmulatorService().getGameEmulator(emulatorId);
+  }
+
+  @Override
+  public GameScoreValidation getGameScoreValidation(int gameId) {
+    return getGameService().getGameScoreValidation(gameId);
+  }
+
+  @Override
+  public AlxSummary getAlxSummary(int gameId) {
+    return getAlxService().getAlxSummary(gameId);
+  }
+
+  @Override
   public FrontendMediaRepresentation getFrontendMedia(int id) {
     return getFrontendService().getFrontendMedia(id);
+  }
+
+  @Override
+  public FrontendPlayerDisplay getScreenDisplay(VPinScreen tutorialScreen) {
+    return getFrontendService().getScreenDisplay(tutorialScreen);
   }
 
   /**
@@ -456,6 +481,11 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public VpsTable getVpsTable(String tableId) {
+    return getVpsService().getTableById(tableId);
+  }
+
+  @Override
   public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
     VpsTable table = getVpsService().getTableById(tableId);
     if (table != null && versionId != null) {
@@ -495,8 +525,25 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId) {
+    return getGameService().getRecentScoresByGame(count, gameId);
+  }
+
+  @Override
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
     return getAssetService().getGameMediaItem(id, screen);
+  }
+
+  @Override
+  public MonitorInfo getScreenInfo(int id) {
+    return getSystemService().getScreenInfo(id);
+  }
+
+  //---------------------
+
+  @Override
+  public void clearPreferenceCache() {
+    getPreferenceService().clearCache();
   }
 
   @Override
@@ -514,34 +561,47 @@ public class VPinStudioClient implements OverlayClient {
     return getPlayerService().getRankedPlayers();
   }
 
-  public RestClient getRestClient() {
-    return restClient;
+  //--------------------------
+
+  @Override
+  public GameStatus startPause() {
+    return getGameStatusService().startPause();
   }
 
+  @Override
+  public GameStatus getPauseStatus() {
+    return getGameStatusService().getStatus();
+  }
+
+  @Override
+  public GameStatus finishPause() {
+    return getGameStatusService().finishPause();
+  }
+
+  @Override
+  public FeaturesInfo getFeatures() {
+    return getSystemService().getFeatures();
+  }
 
   public void clearDiscordCache() {
     restClient.clearCache("discord/");
   }
 
-
   /*********************************************************************************************************************
    * Utils
    */
+
+  public RestClient getRestClient() {
+    return restClient;
+  }
+
   public void download(@NonNull String url, @NonNull File target) throws Exception {
     RestTemplate template = new RestTemplate();
     LOG.info("HTTP Download " + restClient.getBaseUrl() + VPinStudioClientService.API + url);
-    File file = template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
-      FileOutputStream out = null;
-      try {
-        out = new FileOutputStream(target);
+    template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
+      try (FileOutputStream out = new FileOutputStream(target)) {
         StreamUtils.copy(clientHttpResponse.getBody(), out);
         return target;
-      }
-      catch (Exception e) {
-        throw e;
-      }
-      finally {
-        out.close();
       }
     });
   }

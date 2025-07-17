@@ -35,17 +35,15 @@ public class SystemSummary {
   }
 
   public MonitorInfo getPrimaryScreen() {
-    for (MonitorInfo monitorInfo : monitorInfos) {
-      if (monitorInfo.isPrimary()) {
-        return monitorInfo;
-      }
-    }
-    return null;
+    return getScreenInfo(-1);
   }
 
   public MonitorInfo getScreenInfo(int id) {
     for (MonitorInfo monitorInfo : monitorInfos) {
-      if (monitorInfo.getId() == id) {
+      if (id == -1 && monitorInfo.isPrimary()) {
+        return monitorInfo;
+      }
+      else if (monitorInfo.getId() == id) {
         return monitorInfo;
       }
     }
