@@ -40,6 +40,7 @@ import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.panels.UploadsButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
+import de.mephisto.vpin.ui.tables.vps.VpsTutorialColumn;
 import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -148,6 +149,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlaylists;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTutorials;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateAdded;
@@ -1176,6 +1180,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, this, true);
 
+    BaseLoadingColumn.configureColumn(columnTutorials, (value, model) -> {
+      String vpsTableId = value.getExtTableId();
+      return new VpsTutorialColumn(vpsTableId);
+    }, this, true);
+
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
@@ -1712,6 +1721,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       tableView.getColumns().remove(columnRating);
       tableView.getColumns().add(tableView.getColumns().indexOf(columnPlaylists), columnRating);
     }
+    if (!getTableSettings().getColumnOrder().contains(columnTutorials.getId())) {
+      tableView.getColumns().remove(columnTutorials);
+      tableView.getColumns().add(tableView.getColumns().indexOf(columnHSType), columnTutorials);
+    }
 
     iScoredSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
     columnStatus.setPrefWidth(iScoredSettings != null && iScoredSettings.isEnabled() ? 75 : 55);
@@ -1888,6 +1901,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
+    columnTutorials.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnTutorial());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());

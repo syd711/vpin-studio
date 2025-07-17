@@ -25,7 +25,7 @@ import java.util.List;
 public class VpsTutorialColumn extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTutorialColumn.class);
 
-  public VpsTutorialColumn(@Nullable String vpsTableId, @NonNull UISettings uiSettings) {
+  public VpsTutorialColumn(@Nullable String vpsTableId) {
     super(0);
     try {
       int iconSize = 22;

@@ -50,6 +50,7 @@
                                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
                                  <TableColumn fx:id="columnPinVol" minWidth="130" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="PinVOL" />
                                  <TableColumn fx:id="columnLauncher" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Launcher" />
+                                 <TableColumn fx:id="columnTutorials" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: BASELINE_LEFT;" text="Tutorials" />
                                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
                                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
                                  <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="Wheel">

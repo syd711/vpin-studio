@@ -299,8 +299,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
         VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(tutorialColumn, "Loading...", (value, model) -> {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      return new VpsTutorialColumn(value.getId(), uiSettings);
+      return new VpsTutorialColumn(value.getId());
     });
 
     BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {
