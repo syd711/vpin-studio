@@ -165,7 +165,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         break;
       }
       case TAB_RECORDER: {
-        PreferencesController.open("inputs");
+        PreferencesController.open("validators_screens");
         break;
       }
       default: {
