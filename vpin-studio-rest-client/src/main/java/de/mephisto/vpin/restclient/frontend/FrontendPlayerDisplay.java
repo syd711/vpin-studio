@@ -9,6 +9,7 @@ public class FrontendPlayerDisplay {
    */
   private int monitor;
   private VPinScreen screen;
+  private String technicalName;
   private String name;
   private int x;
   private int y;
@@ -39,6 +40,14 @@ public class FrontendPlayerDisplay {
       }
     }
     return null;
+  }
+
+  public String getTechnicalName() {
+    return technicalName;
+  }
+
+  public void setTechnicalName(String technicalName) {
+    this.technicalName = technicalName;
   }
 
   public int getMonitor() {

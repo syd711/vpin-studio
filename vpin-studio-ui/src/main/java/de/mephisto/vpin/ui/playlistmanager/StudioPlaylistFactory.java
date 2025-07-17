@@ -57,7 +57,7 @@ public class StudioPlaylistFactory {
       case 3: {
         List<GameRepresentation> vpxGamesCached = client.getGameService().getVpxGamesCached();
         for (GameRepresentation gameRepresentation : vpxGamesCached) {
-          if (gameRepresentation.getPupPackPath() != null) {
+          if (gameRepresentation.getPupPackName() != null) {
             result.add(gameRepresentation);
           }
         }

@@ -43,7 +43,7 @@ public class AssetsResource {
 
   @GetMapping("/maintenance")
   public ResponseEntity<byte[]> getMaintenanceBackground() {
-    return serializeFile(new File("resources/maintenance.jpg"));
+    return serializeFile(new File("resources/maintenance.mp4"));
   }
 
   @GetMapping("/competition/{gameId}")

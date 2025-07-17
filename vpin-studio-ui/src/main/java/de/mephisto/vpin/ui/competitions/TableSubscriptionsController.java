@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -178,6 +179,10 @@ public class TableSubscriptionsController extends BaseCompetitionController impl
       try {
         CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
         onReload();
+        GameRepresentation game = client.getGameService().getGame(c.getGameId());
+        if (game != null) {
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+        }
         tableView.getSelectionModel().select(newCmp);
       }
       catch (Exception e) {

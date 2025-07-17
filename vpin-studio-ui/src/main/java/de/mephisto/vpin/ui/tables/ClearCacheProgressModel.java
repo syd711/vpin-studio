@@ -52,7 +52,11 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
   public static ClearCacheProgressModel getReloadGamesClearCacheModel(boolean invalidateMame) {
     return new ClearCacheProgressModel("Reloading Games", invalidateMame ? RELOADGAMES_CACHES_WITH_MAME : RELOADGAMES_CACHES);
   }
- 
+
+  @Override
+  public boolean isShowSteps() {
+    return false;
+  }
 
   @Override
   public boolean isShowSummary() {
@@ -66,7 +70,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return false;
   }
 
   @Override

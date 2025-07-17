@@ -30,7 +30,7 @@ public class Player {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @OneToOne(cascade = CascadeType.MERGE)
+  @OneToOne(cascade = CascadeType.MERGE, optional = true)
   private Asset avatar;
 
   @JsonInclude()

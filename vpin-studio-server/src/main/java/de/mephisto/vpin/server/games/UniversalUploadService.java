@@ -128,7 +128,7 @@ public class UniversalUploadService {
         if (fileNameForAssetType != null) {
           File temporaryAssetArchiveFile = writeTableFilenameBasedEntry(uploadDescriptor, fileNameForAssetType);
           uploadDescriptor.getTempFiles().add(temporaryAssetArchiveFile);
-          copyGameFileAsset(temporaryAssetArchiveFile, game, assetType);
+          copyGameFileAsset(temporaryAssetArchiveFile, game, assetType, uploadDescriptor.getUploadType());
         }
       }
       else if (uploadDescriptor.isFileAsset(assetType)) {
@@ -300,11 +300,7 @@ public class UniversalUploadService {
     }
   }
 
-  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType) throws IOException {
-    copyGameFileAsset(temporaryUploadDescriptorBundleFile, game, assetType, UploadType.uploadAndReplace);
-  }
-
-  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, UploadType uploadType) throws IOException {
+  private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType, @Nullable UploadType uploadType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.name().toLowerCase();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
 

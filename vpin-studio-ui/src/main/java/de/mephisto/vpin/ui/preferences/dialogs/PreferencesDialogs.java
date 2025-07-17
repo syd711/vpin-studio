@@ -45,4 +45,12 @@ public class PreferencesDialogs {
     Stage stage = Dialogs.createStudioDialogStage(TablePauseTestDialogController.class, "preference-table-pause-test-dialog.fxml", "Pause Menu Test");
     stage.showAndWait();
   }
+
+  public static void openRestoreBackupDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(RestoreBackupDialogController.class, "dialog-restore-backup.fxml", "Restore Backup");
+    RestoreBackupDialogController controller = (RestoreBackupDialogController) stage.getUserData();
+    controller.setStage(stage);
+    stage.showAndWait();
+
+  }
 }

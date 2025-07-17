@@ -92,7 +92,7 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item;
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
-      item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("rules.png")));
+      item = new PauseMenuItem(PauseMenuItemTypes.help, "Tutorial", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("infovideo.png")));
       String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);

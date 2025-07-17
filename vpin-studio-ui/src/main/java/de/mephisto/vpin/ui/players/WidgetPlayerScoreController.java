@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
@@ -62,34 +63,37 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
-    FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
-    FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
-    if (item != null) {
-      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), VPinScreen.Wheel);
-      Image image = new Image(gameMediaItem);
-      wheelImageView.setImage(image);
-    }
-    else {
-      Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      wheelImageView.setImage(wheel);
-    }
+    JFXFuture.supplyAsync(() -> {
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+      return frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
+    }).thenAcceptLater(item -> {
+      if (item != null) {
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), VPinScreen.Wheel);
+        Image image = new Image(gameMediaItem);
+        wheelImageView.setImage(image);
+      }
+      else {
+        Image wheel = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
+        wheelImageView.setImage(wheel);
+      }
 
-    tableLabel.setText(game.getGameDisplayName());
+      tableLabel.setText(game.getGameDisplayName());
 
-    positionLabel.setText("#" + score.getPosition());
-    nameLabel.setText(score.getPlayer().getName());
+      positionLabel.setText("#" + score.getPosition());
+      nameLabel.setText(score.getPlayer().getName());
 
-    scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getFormattedScore());
+      scoreLabel.setFont(getScoreFont());
+      scoreLabel.setText(score.getFormattedScore());
 
-    String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
-    changeDateLabel.setText("Updated: " + date);
+      String date = DateFormat.getDateTimeInstance().format(score.getCreatedAt());
+      changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
-    BackgroundImage myBI = new BackgroundImage(backgroundImage,
-        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-    rootStack.setBackground(new Background(myBI));
+      Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
+      BackgroundImage myBI = new BackgroundImage(backgroundImage,
+          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+      rootStack.setBackground(new Background(myBI));
+    });
   }
 
   public void setData(@Nullable GameRepresentation game, VpsTable vpsTable, int position, TableScoreDetails tableScore) {

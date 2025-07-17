@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 
@@ -41,6 +42,7 @@ public interface PreferenceNames {
   String OVERLAY_SETTINGS = "overlaySettings";
 
   String UI_SETTINGS = "uiSettings";
+  String VPS_SETTINGS = "vpsSettings";
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
   String FILTER_SETTINGS = "filterSettings";
@@ -133,6 +135,9 @@ public interface PreferenceNames {
       }
       case PreferenceNames.ISCORED_SETTINGS: {
         return IScoredSettings.class;
+      }
+      case PreferenceNames.VPS_SETTINGS: {
+        return VpsSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

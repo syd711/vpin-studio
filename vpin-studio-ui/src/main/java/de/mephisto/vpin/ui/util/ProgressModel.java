@@ -28,6 +28,10 @@ abstract public class ProgressModel<T> {
     return true;
   }
 
+  public boolean isShowSteps() {
+    return true;
+  }
+
   abstract public int getMax();
 
   abstract public T getNext();

@@ -73,6 +73,8 @@ public class Preferences {
 
   private String vpfSettings;
 
+  private String vpsSettings;
+
   private String webhookSettings;
 
   private String iScoredSettings;
@@ -270,6 +272,14 @@ public class Preferences {
 
   public void setUiSettings(String uiSettings) {
     this.uiSettings = uiSettings;
+  }
+
+  public String getVpsSettings() {
+    return vpsSettings;
+  }
+
+  public void setVpsSettings(String vpsSettings) {
+    this.vpsSettings = vpsSettings;
   }
 
   public boolean getHighscoreFilterEnabled() {

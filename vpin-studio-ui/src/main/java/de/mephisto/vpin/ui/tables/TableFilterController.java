@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -114,7 +115,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   private ComboBox<CommentType> commentsCombo;
 
   private FilterSettings filterSettings;
-  private UISettings uiSettings;
+  private VpsSettings vpsSettings;
 
   private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
 
@@ -123,7 +124,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     // as we do not call filterGames() anymore, manually call saveFilterSettings to persist the reset
     JFXFuture.runAsync(() -> {
       client.getPreferenceService().setJsonPreference(filterSettings);
-      uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
     }).thenLater(() -> {
       super.applyFilters();
     });
@@ -142,7 +143,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   @Override
   public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings, uiSettings);
+    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings, vpsSettings);
   }
 
   protected void resetFilters() {

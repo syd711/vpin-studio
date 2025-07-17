@@ -1,16 +1,16 @@
 package de.mephisto.vpin.server.util;
 
 import de.mephisto.vpin.server.roms.ScanResult;
-import de.mephisto.vpin.server.scripteval.EvaluationContext;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.StreamUtils;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,28 +30,26 @@ public class VPXFileScannerTest {
   @Test
   public void testScan() throws IOException {
 
-    try (FileWriter fw = new FileWriter("c:/temp/diffs.txt")) {
-
     if(folder.exists()) {
+      StringBuilder bld = new StringBuilder();
       try (Stream<Path> walkStream = Files.walk(folder.toPath())) {
-        StringBuilder bld = new StringBuilder();
         walkStream
           .filter(p -> p.getFileName().toString().endsWith("vpx"))
           .forEach(p -> {
-            compare(bld, p);
+            doScan(bld, p);
           });
-        fw.append(bld);
-        fw.flush();
       }
-    }
 
+      try (InputStream in = getClass().getResourceAsStream("scanresult.txt")) {
+        String expected = StreamUtils.copyToString(in, Charset.defaultCharset());
+        expected = StringUtils.remove(expected, '\r');
+        assertEquals(expected, bld.toString());
+      }
     }
   }
 
-  //FIXME REMOVE FOR PROD, JUST HERE TO COMPARE RESULT FROM NEW SCAN WITH OLD ONE
-  private void compare(StringBuilder bld, Path p) {
+  private void doScan(StringBuilder bld, Path p) {
     try {
-      System.out.println("Testing " + p.toFile().getAbsolutePath());
       ScanResult scan = new ScanResult();
 
       String script = VPXUtil.readScript(p.toFile());
@@ -62,49 +60,35 @@ public class VPXFileScannerTest {
       allLines.addAll(Arrays.asList(script.split("\n")));
       Collections.reverse(allLines);
 
-      EvaluationContext evalctxt = new EvaluationContext();
+      VPXFileScanner.scanLines(p.toFile(), scan, allLines);
 
-      VPXFileScanner.scanLines(p.toFile(), scan, evalctxt, allLines);
-
-      if (scan.getGameName() != null) {
-        diff(bld, p, "Rom", scan.getRom(), scan.getGameName());
-      }
-
-      String tableName = StringUtils.defaultString(evalctxt.getVarValue("TableName"), evalctxt.getVarValue("B2STableName"));
-      diff(bld, p, "TableName", scan.getTableName(), tableName);
-      diff(bld, p, "pGameName", scan.getPupPackName(), evalctxt.getVarValue("pGameName"));
-
-      Object vrroom = ObjectUtils.firstNonNull(evalctxt.getVarValue("vrroom"), evalctxt.getVarValue("vr_room"));
-      if (vrroom != null ||  scan.isVrRoomSupport()) {
-        String oldvrromm = scan.isVrRoomSupport() + " / " + scan.isVrRoomDisabled();
-        String newvrroom = (vrroom != null) + " / " + (vrroom == null || vrroom.toString().equals("0"));
-        diff(bld, p, "vrroom", oldvrromm, newvrroom);
-      }
-
+      // now log ScanResult
+      bld.append(p.getFileName().toFile() + "\n");
+      logScan(bld, p, "Rom", scan.getRom());
+      logScan(bld, p, "TableName", scan.getTableName());
+      logScan(bld, p, "pGameName", scan.getPupPackName());
+      String vrroom = scan.isVrRoomSupport() + " / " + scan.isVrRoomDisabled();
+      logScan(bld, p, "vrroom", vrroom);
       if (scan.getDMDType() != null) {
-      //  bld.append("For " + p.toString() + ", " + scan.getDMDType() + ", " + scan.getDMDGameName() + ", " + scan.getDMDProjectFolder());
-      //  bld.append("\n");
+        logScan(bld, p, "dmdtype", scan.getDMDType() + ", " + scan.getDMDGameName() + ", " + scan.getDMDProjectFolder());
       }
-    }
-    catch (Exception e) {
-      System.out.println("Failed to read " + p.toFile().getName());
-    }
-  }
-
-  private void diff(StringBuilder bld, Path p, String name, String oldWay, String newWay) {
-    if (!StringUtils.equals(oldWay, newWay)) {
-      bld.append("For " + p.toString() + ", " + name +  " = " + newWay + " vs/old " + oldWay);
       bld.append("\n");
     }
+    catch (Exception e) {
+      fail("Failed to read " + p.toFile().getName());
+    }
   }
 
+  private void logScan(StringBuilder bld, Path p, String name, String newWay) {
+    bld.append(/*"For " + p.toString() + ", " +*/ name +  " = " + newWay).append("\n");
+  }
 
   @Test
   public void testSingleScan() {
 //    File f = new File("C:\\vPinball\\VisualPinball\\Tables\\MF DOOM (GOILL773 2024) v1.1.vpx");
-    //File f = new File(folder,"Twister (1996).vpx");
+    File f = new File(folder,"Twister (1996).vpx");
     //File f = new File(folder,"Austin Powers (Stern 2001).vpx");
-    File f = new File(folder,"Batman (Data East 1991).vpx");
+    //File f = new File(folder,"Batman (Data East 1991).vpx");
 
     if(f.exists()) {
       ScanResult scan = VPXFileScanner.scan(f);
@@ -113,7 +97,7 @@ public class VPXFileScannerTest {
 //      assertTrue(scan.isFoundTableExit());
 
       StringBuilder bld = new StringBuilder();
-      compare(bld, f.toPath());
+      doScan(bld, f.toPath());
       System.out.println(bld.toString());
     }
   }

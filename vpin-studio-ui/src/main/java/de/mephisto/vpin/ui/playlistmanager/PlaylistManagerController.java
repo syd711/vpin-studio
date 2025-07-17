@@ -152,6 +152,9 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private Pane settingsBox;
 
   @FXML
+  private Button saveSQLBtn;
+
+  @FXML
   private PlaylistTableController playlistTableController; //fxml magic! Not unused -> id + "Controller"
 
   private Stage dialogStage;
@@ -163,11 +166,20 @@ public class PlaylistManagerController implements Initializable, DialogControlle
   private TreeItem<PlaylistRepresentation> draggedItem;
   private TreeCell<PlaylistRepresentation> dropZone;
 
+
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     onClose();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onSQLSave(ActionEvent e) {
+    String sql = sqlText.getText();
+    getPlaylist().setPlayListSQL(sql);
+    savePlaylist();
   }
 
   @FXML
@@ -464,6 +476,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
 
     treeView.setEditable(true);
     settingsBox.managedProperty().bindBidirectional(settingsBox.visibleProperty());
+    saveSQLBtn.setDisable(true);
 
     assetManagerSeparator.managedProperty().bindBidirectional(assetManagerSeparator.visibleProperty());
     assetManagerBtn.managedProperty().bindBidirectional(assetManagerBtn.visibleProperty());
@@ -527,7 +540,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     treeView.selectionModelProperty().get().selectedItemProperty().addListener(new ChangeListener<TreeItem<PlaylistRepresentation>>() {
       @Override
       public void changed(ObservableValue<? extends TreeItem<PlaylistRepresentation>> observable, TreeItem<PlaylistRepresentation> oldValue, TreeItem<PlaylistRepresentation> newValue) {
-        if (newValue != null) {
+        if (newValue != null && newValue.getValue() != null) {
           PlaylistRepresentation value = newValue.getValue();
           refreshView(Optional.of(value));
         }
@@ -643,6 +656,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
         if (!newValue) {
           errorContainer.setVisible(false);
           getPlaylist().setSqlError(null);
+          saveSQLBtn.setDisable(true);
         }
         getPlaylist().setSqlPlayList(newValue);
         savePlaylist();
@@ -684,13 +698,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
     sqlText.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (saveDisabled) {
-          return;
-        }
-        debouncer.debounce("sqlText", () -> {
-          getPlaylist().setPlayListSQL(newValue);
-          savePlaylist();
-        }, 500);
+        saveSQLBtn.setDisable(false);
       }
     });
 
@@ -899,6 +907,7 @@ public class PlaylistManagerController implements Initializable, DialogControlle
           if (update.isSqlPlayList()) {
             errorLabel.setText(update.getSqlError());
             errorContainer.setVisible(!StringUtils.isEmpty(update.getSqlError()));
+            saveSQLBtn.setDisable(true);
           }
           List<PlaylistGame> games = update.getGames();
           for (PlaylistGame playlistGame : games) {

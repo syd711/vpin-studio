@@ -48,7 +48,7 @@ public class PreferencesController extends SettingsSceneController implements In
   /**
    * a singleton
    */
-  private static PreferencesController instance;
+  public static PreferencesController instance;
 
   @FXML
   private Pane root;
@@ -82,6 +82,9 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private Button iScoredBtn;
+
+  @FXML
+  private Button vpsBtn;
 
   @FXML
   private Button validators_screensBtn;
@@ -184,6 +187,10 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onClose(ActionEvent event) {
+    closePreferences();
+  }
+
+  public void closePreferences() {
     FadeTransition outFader = TransitionUtil.createOutFader(root, UIDefaults.FADER_DURATION);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
@@ -315,6 +322,11 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onVPBM(ActionEvent event) throws IOException {
     load("preference-vpbm.fxml", event);
+  }
+
+  @FXML
+  private void onVps(ActionEvent event) throws IOException {
+    load("preference-vps.fxml", event);
   }
 
   @FXML

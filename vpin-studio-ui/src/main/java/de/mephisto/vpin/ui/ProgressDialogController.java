@@ -98,7 +98,7 @@ public class ProgressDialogController implements Initializable, DialogController
                       }
                     }
                     String title = model.getTitle();
-                    if (model.getMax() > 1) {
+                    if (model.getMax() > 1 && model.isShowSteps()) {
                       title = title + " (" + uiIndex + "/" + model.getMax() + ")";
                     }
                     titleLabel.setText(title);

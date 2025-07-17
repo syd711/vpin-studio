@@ -831,7 +831,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2SData(getEmulatorId(), getSelectedVersion()))
         .thenAcceptLater(data -> {
           // Ignore this old answer as a new backglass is now selected
-          if (directb2s.getEmulatorId() != data.getEmulatorId() || !directb2s.getFileName().equals(data.getFilename())) {
+          if (getEmulatorId() != data.getEmulatorId() || !getSelectedVersion().equals(data.getFilename())) {
             return;
           }
 
@@ -938,7 +938,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         })
         .thenAcceptLater(_thumbnail -> {
           // Ignore old answer when a new backglass has been selected
-          if (directb2s.getEmulatorId() != emulatorId || !directb2s.getFileName().equals(fileName)) {
+          if (getEmulatorId() != emulatorId || !getSelectedVersion().equals(fileName)) {
             return;
           }
 
@@ -970,7 +970,7 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
         })
         .thenAcceptLater(_dmdThumbnail -> {
           // Ignore old answer when a new backglass has been selected
-          if (directb2s.getEmulatorId() != emulatorId || !directb2s.getFileName().equals(fileName)) {
+          if (getEmulatorId() != emulatorId || !getSelectedVersion().equals(fileName)) {
             return;
           }
 

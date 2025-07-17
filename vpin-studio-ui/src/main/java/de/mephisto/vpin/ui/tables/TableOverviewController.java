@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -26,6 +27,7 @@ import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
@@ -81,9 +83,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
@@ -268,6 +268,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
+  private VpsSettings vpsSettings;
   private ServerSettings serverSettings;
   private IScoredSettings iScoredSettings;
 
@@ -517,10 +518,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     List<GameRepresentation> selectedGames = getSelections();
     if (selectedGames != null && !selectedGames.isEmpty()) {
       for (GameRepresentation game : selectedGames) {
-        if (client.getCompetitionService().isGameReferencedByCompetitions(game.getId())) {
-          WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-              + "\" is used by at least one competition.", "Delete all competitions for this table first.");
-          return;
+        List<CompetitionRepresentation> gameCompetitions = client.getCompetitionService().getGameCompetitions(game.getId());
+        for (CompetitionRepresentation gameCompetition : gameCompetitions) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "The table \"" + game.getGameDisplayName()
+              + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").",
+              "Delete this competition?",
+              "You need to delete all competition references before deleting a table.", "Delete Competition");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            client.getCompetitionService().deleteCompetition(gameCompetition);
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
+          else {
+            return;
+          }
         }
       }
 
@@ -693,14 +703,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   public void doReload(boolean clearCache) {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
-    this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
+    this.showVpsUpdates = !vpsSettings.isHideVPSUpdates();
 
     startReload("Loading Tables...");
 
     refreshPlaylists();
-    refreshEmulators(uiSettings);
+    refreshEmulators();
 
     this.searchTextField.setDisable(true);
     this.reloadBtn.setDisable(true);
@@ -804,7 +815,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         });
   }
 
-  private void refreshEmulators(UISettings uiSettings) {
+  private void refreshEmulators() {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     final GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
@@ -924,7 +935,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
         int nbVersions = value.getNbDirectB2S();
         FontIcon icon = null;
@@ -953,12 +964,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), uiSettings);
+      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), vpsSettings);
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new POV file or an update for the existing one is available");
@@ -988,7 +998,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
@@ -1004,7 +1014,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
 
       if (value.getAltColorType() != null) {
         Label label = new Label(value.getAltColorType().name());
@@ -1025,13 +1035,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
-      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
-      if (value.getPupPackPath() != null) {
+      boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
+      if (value.getPupPackName() != null) {
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new PUP pack or an update for the existing one is available");
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
+          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackName());
         }
       }
       else if (hasUpdate) {
@@ -1588,7 +1598,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
 
-    refreshEmulators(uiSettings);
+    refreshEmulators();
     if (this.models == null) {
       this.doReload();
     }

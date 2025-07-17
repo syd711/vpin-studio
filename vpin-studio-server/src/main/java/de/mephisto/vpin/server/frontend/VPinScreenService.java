@@ -126,7 +126,7 @@ public class VPinScreenService {
       for (int i = 1; i < monitors.size(); i++) {
         MonitorInfo second = monitors.get(i);
         if (monitor.getY() != second.getY()) {
-          errors.add("Monitor " + (i + 1) + ", named " + second.getFormattedName() + " is not aligned on top with first one");
+          errors.add("Monitor " + (i + 1) + ", named " + second.getFormattedName() + " is not aligned on top with first one: " + monitor.getY() + "px vs. " + second.getY() + "px.");
         }
       }
     }

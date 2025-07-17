@@ -69,7 +69,9 @@ public class VPinManiaScoreSynchronizeProgressModel extends ProgressModel<VpsTab
   public void processNext(ProgressResultModel progressResultModel, VpsTable next) {
     try {
       ManiaTableSyncResult result = client.getManiaService().synchronizeHighscore(next.getId());
-      progressResultModel.getResults().add(result);
+      if (result != null) {
+        progressResultModel.getResults().add(result);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to synchronize the highscore for \"" + next.getDisplayName() + "\": " + e.getMessage(), e);

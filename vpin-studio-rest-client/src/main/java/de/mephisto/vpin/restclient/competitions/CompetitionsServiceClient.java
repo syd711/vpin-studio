@@ -93,9 +93,8 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean isGameReferencedByCompetitions(int gameId) {
-    CompetitionRepresentation[] competitionRepresentations = getRestClient().get(API + "competitions/game/" + gameId, CompetitionRepresentation[].class);
-    return competitionRepresentations.length > 0;
+  public List<CompetitionRepresentation> getGameCompetitions(int gameId) {
+    return Arrays.asList(getRestClient().get(API + "competitions/game/" + gameId, CompetitionRepresentation[].class));
   }
 
   public void deleteCompetition(CompetitionRepresentation c) {

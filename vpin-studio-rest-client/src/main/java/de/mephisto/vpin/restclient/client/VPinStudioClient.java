@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.backup.BackupServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -81,6 +82,7 @@ public class VPinStudioClient implements OverlayClient {
   private final CompetitionsServiceClient competitions;
   private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
+  private final BackupServiceClient backupServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final DMDServiceClient dmdServiceClient;
   private final DMDPositionServiceClient dmdPositionServiceClient;
@@ -132,6 +134,7 @@ public class VPinStudioClient implements OverlayClient {
     this.competitions = new CompetitionsServiceClient(this);
     this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
+    this.backupServiceClient = new BackupServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
     this.dmdPositionServiceClient = new DMDPositionServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
@@ -173,6 +176,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public BackupServiceClient getBackupService() {
+    return backupServiceClient;
   }
 
   public FpServiceClient getFpService() {

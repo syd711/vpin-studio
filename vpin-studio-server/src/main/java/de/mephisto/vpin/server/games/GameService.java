@@ -110,7 +110,6 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     return getGameByVpsTable(knownGames, vpsTableId, vpsTableVersionId);
   }
 
-
   public List<Game> getGamesByVpsTableId(@NonNull String vpsTableId, @Nullable String vpsTableVersionId) {
     List<Game> knownGames = getKnownGames(-1);
     return getGamesByVpsTableId(knownGames, vpsTableId, vpsTableVersionId);

@@ -89,6 +89,7 @@ public class VPS {
 
   /**
    * The ROM is only used for the asset search in the asset dialog.
+   *
    * @param searchTerm
    * @param rom
    * @return
@@ -173,6 +174,10 @@ public class VPS {
   }
 
   public List<VpsDiffer> update() {
+    return this.update(Collections.emptyList());
+  }
+
+  public List<VpsDiffer> update(List<String> authorDenyList) {
     if (skipUpdates) {
       LOG.warn("VPS updates are skipped.");
       return Collections.emptyList();
@@ -223,7 +228,7 @@ public class VPS {
     List<VpsTable> oldTables = this.tables;
 
     if (reload() && !oldTables.isEmpty() && !this.tables.isEmpty()) {
-      List<VpsDiffer> diffs = this.diff(oldTables, this.tables);
+      List<VpsDiffer> diffs = this.diff(oldTables, this.tables, authorDenyList);
       if (!diffs.isEmpty()) {
         LOG.info("VPS download detected " + diffs.size() + " changes, notifying " + listeners.size() + " listeners...");
         for (VpsSheetChangedListener listener : listeners) {
@@ -259,14 +264,7 @@ public class VPS {
 
   //----------------- DIFFS
 
-  public VpsDiffer diffById(List<VpsTable> oldTables, List<VpsTable> newTables, String id) {
-    Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst();
-    Optional<VpsTable> newTable = newTables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst();
-
-    return new VpsDiffer(newTable.orElse(null), oldTable.orElse(null));
-  }
-
-  public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables) {
+  public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables, List<String> authorDenyList) {
     if (oldTables == null || newTables == null) {
       LOG.info("Skipping VPS diff, because lists are empty.");
       return Collections.emptyList();
@@ -276,7 +274,7 @@ public class VPS {
     List<VpsDiffer> diff = new ArrayList<>();
     for (VpsTable newTable : newTables) {
       Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId() != null && t.getId().equalsIgnoreCase(newTable.getId())).findFirst();
-      VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null));
+      VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null), authorDenyList);
       VPSChanges changes = tableDiff.getChanges();
       if (!changes.isEmpty()) {
         LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + changes.getChanges().stream().map(c -> c.getDiffType().toString()).collect(Collectors.joining(", ")));

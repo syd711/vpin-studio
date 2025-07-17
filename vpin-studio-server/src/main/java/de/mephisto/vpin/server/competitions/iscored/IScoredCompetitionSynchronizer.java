@@ -84,21 +84,26 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     }
 
     GameRoom gameRoom = IScored.getGameRoom(syncModel.getiScoredGameRoom().getUrl(), syncModel.isInvalidate());
-    List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
+    if (gameRoom != null) {
+      List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
 
-    //clean up invalid competitions
-    if (syncModel.getiScoredGameRoom().isSynchronize() || (syncModel.getGame() != null && syncModel.isManualSubscription())) {
-      if (syncModel.getGame() != null) {
-        synchronizeGame(syncModel, syncModel.getGame(), iScoredSubscriptions, knownGames);
-        LOG.info("Synchronization finished: {} ({})", syncModel.getGame().getName(), gameRoom.getUrl());
-      }
-      else {
-        List<IScoredGame> games = gameRoom.getGames();
-        for (IScoredGame game : games) {
-          synchronizeGame(syncModel, game, iScoredSubscriptions, knownGames);
-          LOG.info("Synchronization finished: {} ({})", game.getName(), gameRoom.getUrl());
+      //clean up invalid competitions
+      if (syncModel.getiScoredGameRoom().isSynchronize() || (syncModel.getGame() != null && syncModel.isManualSubscription())) {
+        if (syncModel.getGame() != null) {
+          synchronizeGame(syncModel, syncModel.getGame(), iScoredSubscriptions, knownGames);
+          LOG.info("Synchronization finished: {} ({})", syncModel.getGame().getName(), gameRoom.getUrl());
+        }
+        else {
+          List<IScoredGame> games = gameRoom.getGames();
+          for (IScoredGame game : games) {
+            synchronizeGame(syncModel, game, iScoredSubscriptions, knownGames);
+            LOG.info("Synchronization finished: {} ({})", game.getName(), gameRoom.getUrl());
+          }
         }
       }
+    }
+    else {
+      LOG.info("Cancelled sync, game room could not be loaded.");
     }
 
     LOG.info("--- ------- /iScored Sync (" + syncModel.getiScoredGameRoom().getUrl() + ")-----------------");

@@ -43,11 +43,11 @@
 x 043.png # Repeated fcTL.
 x 044.png # Missing fdAT.
 x 045.png # num_frames = 0; no default image.
-x 046.png # num_frames = 0; ignoring default image.
+046.png # num_frames = 0; ignoring default image.
 x 047.png # num_frames too low.
 x 048.png # num_frames too high by 1.
 x 049.png # num_frames too high by 2. This must equal the number of `fcTL` chunks.
-x 050.png # num_frames outside valid range.
+050.png # num_frames outside valid range.
 x 051.png # PNG tests_files/ # Not starting from 0.
 x 052.png # Gap in sequence.
 x 053.png # Duplicated sequence number.

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.HttpUtils;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -97,36 +98,36 @@ public class VpsTutorialColumn extends HBox {
     }
   }
 
-  public static boolean isFiltered(UISettings uiSettings, VPSChange change) {
-    if (uiSettings != null) {
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.b2s) && !uiSettings.isVpsBackglass()) {
+  public static boolean isFiltered(VpsSettings vpsSettings, VPSChange change) {
+    if (vpsSettings != null) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.b2s) && !vpsSettings.isVpsBackglass()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.topper) && !uiSettings.isVpsToppper()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.topper) && !vpsSettings.isVpsToppper()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pov) && !uiSettings.isVpsPOV()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pov) && !vpsSettings.isVpsPOV()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.rom) && !uiSettings.isVpsRom()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.rom) && !vpsSettings.isVpsRom()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altColor) && !uiSettings.isVpsAltColor()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altColor) && !vpsSettings.isVpsAltColor()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altSound) && !uiSettings.isVpsAltSound()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altSound) && !vpsSettings.isVpsAltSound()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pupPack) && !uiSettings.isVpsPUPPack()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pupPack) && !vpsSettings.isVpsPUPPack()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.sound) && !uiSettings.isVpsSound()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.sound) && !vpsSettings.isVpsSound()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.wheel) && !uiSettings.isVpsWheel()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.wheel) && !vpsSettings.isVpsWheel()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.tutorial) && !uiSettings.isVpsTutorial()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.tutorial) && !vpsSettings.isVpsTutorial()) {
         return true;
       }
     }

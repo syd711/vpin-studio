@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -56,6 +58,10 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
     try {
       CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(next);
       progressResultModel.addProcessed(newCmp);
+      GameRepresentation game = client.getGameService().getGame(newCmp.getGameId());
+      if (game != null) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
     } catch (Exception e) {
       LOG.error("Failed to save competitions data: " + e.getMessage(), e);
       Platform.runLater(() -> {

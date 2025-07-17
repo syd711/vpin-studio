@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +96,7 @@ public class HighscoreBackupService implements InitializingBean {
 
   public boolean restore(@NonNull Game game, @NonNull List<Game> games, @NonNull String filename) {
     String rom = game.getRom();
-    if(StringUtils.isEmpty(rom)) {
+    if (StringUtils.isEmpty(rom)) {
       rom = game.getTableName();
     }
 
@@ -122,7 +123,8 @@ public class HighscoreBackupService implements InitializingBean {
       String json = ZipUtil.readZipFile(archiveFile, DESCRIPTOR_JSON);
 
       return objectMapper.readValue(json, HighscoreBackup.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return null;
@@ -151,8 +153,8 @@ public class HighscoreBackupService implements InitializingBean {
     }
 
     File descriptorFile = new File(folder, DESCRIPTOR_JSON);
-    if (descriptorFile.exists()) {
-      descriptorFile.delete();
+    if (descriptorFile.exists() && !descriptorFile.delete()) {
+      LOG.error("Failed to delete existing backup descriptor file {}", descriptorFile.getAbsolutePath());
     }
 
     String json = objectMapper.writeValueAsString(backup);
@@ -212,20 +214,26 @@ public class HighscoreBackupService implements InitializingBean {
     return highscoreWritten;
   }
 
-  public boolean writeBackupFile(@NonNull Game game, @NonNull File romBackupFolder) {
+  @Nullable
+  public boolean writeBackupFile(@NonNull Game game, @NonNull File romBasedBackupFolder) {
     Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
     if (hs.isPresent()) {
 
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;
 
-      File target = new File(romBackupFolder, filename);
+      if (!romBasedBackupFolder.exists() && !romBasedBackupFolder.mkdirs()) {
+        LOG.error("Failed to create highscore backup folder {}", romBasedBackupFolder.getAbsolutePath());
+        return false;
+      }
+
+      File target = new File(romBasedBackupFolder, filename);
       target = FileUtils.uniqueFile(target);
 
       File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
       LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
 
-      boolean written = writeHighscoreBackup(game, game.getEmulator(), hs.get(), romBackupFolder, tempFile, filename);
+      boolean written = writeHighscoreBackup(game, game.getEmulator(), hs.get(), romBasedBackupFolder, tempFile, filename);
       if (written && !tempFile.renameTo(target)) {
         LOG.error("Failed to rename highscore zip file " + tempFile.getAbsolutePath());
         return false;

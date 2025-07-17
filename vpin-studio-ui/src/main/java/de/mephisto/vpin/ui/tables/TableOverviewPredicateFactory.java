@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,7 +15,7 @@ public class TableOverviewPredicateFactory {
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings, UISettings uiSettings) {
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings, VpsSettings vpsSettings) {
     return new Predicate<GameRepresentationModel>() {
       @Override
       public boolean test(GameRepresentationModel model) {
@@ -55,7 +56,7 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
-        if (filterSettings.isWithPupPack() && game.getPupPackPath() == null) {
+        if (filterSettings.isWithPupPack() && game.getPupPackName() == null) {
           return false;
         }
 
@@ -65,7 +66,7 @@ public class TableOverviewPredicateFactory {
 
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null) {
           for (VPSChange change : game.getVpsUpdates().getChanges()) {
-            if (!VpsTableColumn.isFiltered(uiSettings, change)) {
+            if (!VpsTableColumn.isFiltered(vpsSettings, change)) {
               continue;
             }
             return false;

@@ -2,9 +2,12 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -14,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CabinetSettingsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CabinetSettingsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -93,13 +96,96 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                      <left>
-                        <BorderPane fx:id="avatarBorderPane" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                        <BorderPane fx:id="avatarBorderPane" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
                               <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                            </BorderPane.margin>
                         </BorderPane>
                      </left>
                   </BorderPane>
+                  <Label styleClass="preference-subtitle" text="System Settings">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="preference-description" text="Various operating system related settings can be configured here." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <GridPane alignment="BASELINE_RIGHT" prefWidth="708.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="435.8000244140625" minWidth="10.0" prefWidth="338.1999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="801.600048828125" minWidth="10.0" prefWidth="369.4000244140625" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Auto-shutdown Windows after being idle for" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Spinner fx:id="idleSpinner" />
+                              <Label text="minutes" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="3.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label text="(set to '0' to disable)" />
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="43.0" styleClass="preference-label" text="System Shutdown:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Button fx:id="shutdownBtn" mnemonicParsing="false" onAction="#onShutdown" styleClass="error-title" text="Shutdown System" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Label prefHeight="40.0" prefWidth="18.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="Only enabled if connected from remote." wrapText="true" />
+                                 </tooltip>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <CheckBox fx:id="stickyKeysCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Disable Sticky Keys" />
+                  <Label styleClass="checkbox-description" text="This will change the registry key &quot;HKEY_CURRENT_USER\Control Panel\Accessibility\StickyKeys&quot;" textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="and disables the sticky keys on your cabinet." textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

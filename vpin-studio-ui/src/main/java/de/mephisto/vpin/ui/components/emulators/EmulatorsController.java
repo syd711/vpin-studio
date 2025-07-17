@@ -260,6 +260,7 @@ public class EmulatorsController implements Initializable {
       GameEmulatorRepresentation emu = new GameEmulatorRepresentation();
       emu.setSafeName(s);
       emu.setName(s);
+      emu.setId(-1);
       emu.setType(template.getType());
       emu.setDescription(template.getDescription());
       emu.setMediaDirectory(template.getMediaDirectory());

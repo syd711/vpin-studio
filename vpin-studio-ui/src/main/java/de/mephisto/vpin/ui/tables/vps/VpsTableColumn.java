@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.vps;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Pos;
@@ -20,7 +21,7 @@ import java.util.List;
 public class VpsTableColumn extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTableColumn.class);
 
-  public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, @Nullable VPSChanges updates, UISettings uiSettings) {
+  public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, @Nullable VPSChanges updates, VpsSettings vpsSettings) {
     super(3);
     try {
 
@@ -77,7 +78,7 @@ public class VpsTableColumn extends HBox {
         StringBuilder builder = new StringBuilder();
         List<VPSChange> changes = updates.getChanges();
         for (VPSChange change : changes) {
-          if (isFiltered(uiSettings, change)) {
+          if (isFiltered(vpsSettings, change)) {
             continue;
           }
           changeCounter++;
@@ -119,36 +120,36 @@ public class VpsTableColumn extends HBox {
     }
   }
 
-  public static boolean isFiltered(UISettings uiSettings, VPSChange change) {
-    if (uiSettings != null) {
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.b2s) && !uiSettings.isVpsBackglass()) {
+  public static boolean isFiltered(VpsSettings vpsSettings, VPSChange change) {
+    if (vpsSettings != null) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.b2s) && !vpsSettings.isVpsBackglass()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.topper) && !uiSettings.isVpsToppper()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.topper) && !vpsSettings.isVpsToppper()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pov) && !uiSettings.isVpsPOV()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pov) && !vpsSettings.isVpsPOV()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.rom) && !uiSettings.isVpsRom()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.rom) && !vpsSettings.isVpsRom()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altColor) && !uiSettings.isVpsAltColor()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altColor) && !vpsSettings.isVpsAltColor()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altSound) && !uiSettings.isVpsAltSound()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.altSound) && !vpsSettings.isVpsAltSound()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pupPack) && !uiSettings.isVpsPUPPack()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.pupPack) && !vpsSettings.isVpsPUPPack()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.sound) && !uiSettings.isVpsSound()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.sound) && !vpsSettings.isVpsSound()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.wheel) && !uiSettings.isVpsWheel()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.wheel) && !vpsSettings.isVpsWheel()) {
         return true;
       }
-      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.tutorial) && !uiSettings.isVpsTutorial()) {
+      if (change.getDiffType() != null && change.getDiffType().equals(VpsDiffTypes.tutorial) && !vpsSettings.isVpsTutorial()) {
         return true;
       }
     }

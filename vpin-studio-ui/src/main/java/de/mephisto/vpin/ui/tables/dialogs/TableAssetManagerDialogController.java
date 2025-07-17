@@ -649,6 +649,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append));
     }
 
+    if (game != null) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
+    }
     refreshTableMediaView();
   }
 
