@@ -10,6 +10,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -80,18 +81,29 @@ public class MameRomAliasService implements InitializingBean {
     return textFile;
   }
 
+  public void saveAliasFile(@NonNull GameEmulator emulator, @NonNull Map<String, String> mapping) {
+    StringBuilder builder = new StringBuilder();
+    for (Map.Entry<String, String> set : mapping.entrySet()) {
+      builder.append(set.getKey().trim());
+      builder.append(",");
+      builder.append(set.getValue().trim());
+      builder.append("\n");
+    }
+    saveAliasFile(emulator, builder.toString());
+  }
+
   public void saveAliasFile(@NonNull GameEmulator emulator, @NonNull String text) {
     File vpmAliasFile = getVPMAliasFile(emulator);
     try {
       File backup = new File(vpmAliasFile.getParentFile(), vpmAliasFile.getName() + ".bak");
-      if (!backup.exists()) {
+      if (backup.exists() && backup.delete()) {
         FileUtils.copyFile(vpmAliasFile, backup);
       }
 
       if (vpmAliasFile.exists() && vpmAliasFile.delete()) {
         text = text.replaceAll("\n", "\r\n");
         FileUtils.writeStringToFile(vpmAliasFile, text, Charset.defaultCharset());
-        LOG.info("Written " + vpmAliasFile.getAbsolutePath());
+        LOG.info("Written alias file " + vpmAliasFile.getAbsolutePath());
 
         clearCache(emulatorService.getVpxGameEmulators());
         invalidateAliasMappings();
@@ -158,11 +170,20 @@ public class MameRomAliasService implements InitializingBean {
     return true;
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
+  public void writeAlias(@NonNull GameEmulator gameEmulator, String rom, String alias) {
+    if (!StringUtils.isEmpty(rom) && !StringUtils.isEmpty(alias)) {
+      Map<String, String> mapping = loadAliasMapping(gameEmulator);
+      mapping.put(alias, rom);
+      saveAliasFile(gameEmulator, mapping);
+      LOG.info("Written alias mapping {},{}", alias, rom);
+    }
   }
 
   public void setGameCachingService(GameCachingService gameCachingService) {
     this.gameCachingService = gameCachingService;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
   }
 }

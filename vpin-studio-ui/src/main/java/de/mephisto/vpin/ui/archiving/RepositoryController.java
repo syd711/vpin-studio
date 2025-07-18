@@ -49,7 +49,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -493,7 +492,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     registryColumn.setCellValueFactory(cellData -> {
       ArchiveDescriptorRepresentation value = cellData.getValue();
       if (value.getPackageInfo() != null) {
-        ArchiveFileInfo reg = value.getPackageInfo().getRegistryData();
+        ArchiveFileInfo reg = value.getPackageInfo().getMameData();
         if (reg != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon("#FFFFFF", reg.toString()));
         }

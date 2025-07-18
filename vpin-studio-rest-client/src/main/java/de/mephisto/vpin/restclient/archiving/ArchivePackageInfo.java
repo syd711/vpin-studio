@@ -20,7 +20,7 @@ public class ArchivePackageInfo {
   private ArchiveFileInfo highscore;
   private ArchiveFileInfo dmd;
   private ArchiveFileInfo vpx;
-  private ArchiveFileInfo registryData;
+  private ArchiveFileInfo mameData;
 
   private String icon;
   private String thumbnail;
@@ -145,12 +145,12 @@ public class ArchivePackageInfo {
     this.vpx = vpx;
   }
 
-  public ArchiveFileInfo getRegistryData() {
-    return registryData;
+  public ArchiveFileInfo getMameData() {
+    return mameData;
   }
 
-  public void setRegistryData(ArchiveFileInfo registryData) {
-    this.registryData = registryData;
+  public void setMameData(ArchiveFileInfo mameData) {
+    this.mameData = mameData;
   }
 
   public String getIcon() {

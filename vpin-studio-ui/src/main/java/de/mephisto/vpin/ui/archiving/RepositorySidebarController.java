@@ -232,7 +232,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
         altColorLabel.setText(applyValue(altColorLabel, packageInfo.getAltColor()));
         povLabel.setText(applyValue(povLabel, packageInfo.getPov()));
         highscoreLabel.setText(applyValue(highscoreLabel, packageInfo.getHighscore()));
-        registryLabel.setText(applyValue(registryLabel, packageInfo.getRegistryData()));
+        registryLabel.setText(applyValue(registryLabel, packageInfo.getMameData()));
       }
 
       TableDetails tableDetails = descriptorRepresentation.getTableDetails();

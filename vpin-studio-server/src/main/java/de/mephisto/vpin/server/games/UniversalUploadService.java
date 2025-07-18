@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.archiving.RegistryData;
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -20,6 +20,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -81,6 +82,9 @@ public class UniversalUploadService {
 
   @Autowired
   private DiscordService discordService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -418,9 +422,11 @@ public class UniversalUploadService {
     }
 
     if (uploadDescriptor.isBackupRestoreMode()) {
-      RegistryData registryData = analysis.readWindowRegistryData();
-      if (registryData != null) {
-        mameService.saveRegistryData(registryData);
+      ArchiveMameData mameData = analysis.readMameData();
+      if (mameData != null) {
+        GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
+        mameService.saveRegistryData(mameData);
+        mameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
       }
     }
 

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.util;
 
-import de.mephisto.vpin.restclient.archiving.RegistryData;
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
@@ -279,8 +279,8 @@ public class UploaderAnalysis {
   }
 
 
-  public RegistryData readWindowRegistryData() {
-    return VpaArchiveUtil.readWindowRegistryValues(getFile());
+  public ArchiveMameData readMameData() {
+    return VpaArchiveUtil.readMameData(getFile());
   }
 
   public TableDetails getTableDetails() {

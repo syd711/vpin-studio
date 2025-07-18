@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -43,11 +42,11 @@ public class VpaArchiveUtil {
     return null;
   }
 
-  public static RegistryData readWindowRegistryValues(File file) {
+  public static ArchiveMameData readMameData(File file) {
     try {
       String text = readStringFromZip(file, ArchivePackageInfo.REGISTRY_FILENAME);
       if (text != null) {
-        return objectMapper.readValue(text, RegistryData.class);
+        return objectMapper.readValue(text, ArchiveMameData.class);
       }
     }
     catch (Exception e) {

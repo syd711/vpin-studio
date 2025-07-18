@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.mame;
 
-import de.mephisto.vpin.restclient.archiving.RegistryData;
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -68,9 +68,6 @@ public class MameService implements InitializingBean {
       if (!matches.isEmpty()) {
         mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
       }
-//      for (Game match : matches) {
-//        gameLifecycleService.notifyGameUpdated(match.getId());
-//      }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
     return true;
@@ -151,11 +148,11 @@ public class MameService implements InitializingBean {
   }
 
 
-  public void saveRegistryData(@NonNull RegistryData registryData) {
-    String rom = registryData.getRom();
+  public void saveRegistryData(@NonNull ArchiveMameData mameData) {
+    String rom = mameData.getRom();
     systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
 
-    Set<Map.Entry<String, Object>> entries = registryData.getData().entrySet();
+    Set<Map.Entry<String, Object>> entries = mameData.getRegistryData().entrySet();
     for (Map.Entry<String, Object> entry : entries) {
       String key = entry.getKey();
       Object value = entry.getValue();
@@ -164,7 +161,6 @@ public class MameService implements InitializingBean {
         systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
       }
     }
-
   }
 
   public MameOptions saveOptions(@NonNull MameOptions options) {

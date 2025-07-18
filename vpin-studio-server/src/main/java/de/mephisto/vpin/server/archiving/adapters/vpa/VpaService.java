@@ -3,23 +3,19 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import de.mephisto.vpin.restclient.archiving.ArchiveFileInfoFactory;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.archiving.RegistryData;
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
-import de.mephisto.vpin.server.highscores.HighscoreResolver;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -53,6 +49,8 @@ public class VpaService {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final static ObjectMapper objectMapper;
+
+  private final static String MAME_FOLDER = "VPinMAME";
 
   static {
     objectMapper = new ObjectMapper();
@@ -95,14 +93,12 @@ public class VpaService {
 
   public void createBackup(ArchivePackageInfo packageInfo, BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
-
-    GameEmulator emulator = emulatorService.getGameEmulator(game.getEmulatorId());
     File gameFolder = game.getGameFile().getParentFile();
 
     File romFile = game.getRomFile();
     if (romFile != null && romFile.exists()) {
       packageInfo.setRom(ArchiveFileInfoFactory.create(romFile));
-      zipFile(romFile, "VPinMAME/roms/" + romFile.getName(), zipOut);
+      zipFile(romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut);
     }
 
     File povFile = game.getPOVFile();
@@ -190,7 +186,7 @@ public class VpaService {
       File altSoundFolder = altSoundService.getAltSoundFolder(game);
       if (altSoundFolder != null) {
         packageInfo.setAltSound(ArchiveFileInfoFactory.create(altSoundFolder));
-        zipFile(altSoundFolder, "VPinMAME/altsound/" + altSoundFolder.getName(), zipOut);
+        zipFile(altSoundFolder, MAME_FOLDER + "/altsound/" + altSoundFolder.getName(), zipOut);
       }
       else {
         LOG.warn("ALT sound was detected but no folder was found.");
@@ -208,7 +204,7 @@ public class VpaService {
     File altColorFolder = altColorService.getAltColorFolder(game);
     if (altColorFolder != null && altColorFolder.exists()) {
       packageInfo.setAltColor(ArchiveFileInfoFactory.create(altColorFolder));
-      zipFile(altColorFolder, "VPinMAME/altcolor/" + altColorFolder.getName(), zipOut);
+      zipFile(altColorFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName(), zipOut);
     }
 
     zipPupPack(packageInfo, game, zipOut);
@@ -216,14 +212,16 @@ public class VpaService {
     zipTableDetails(game, tableDetails, zipOut);
 
     Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
-    if (options != null) {
-      packageInfo.setRegistryData(ArchiveFileInfoFactory.create(game.getRom(), null, null));
-
-      RegistryData registryData = new RegistryData();
-      registryData.setData(options);
-      registryData.setRom(game.getRom());
-      zipRegistryDetails(registryData, zipOut);
+    if (options == null) {
+      options = new HashMap<>();
     }
+    packageInfo.setMameData(ArchiveFileInfoFactory.create(game.getRom(), null, null));
+
+    ArchiveMameData mameData = new ArchiveMameData();
+    mameData.setRegistryData(options);
+    mameData.setRom(game.getRom());
+    mameData.setAlias(game.getRomAlias());
+    zipMameRegistryData(mameData, zipOut);
 
     writeWheelToPackageInfo(packageInfo, game);
   }
@@ -301,7 +299,7 @@ public class VpaService {
     }
   }
 
-  private void zipRegistryDetails(@NonNull RegistryData registryData, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipMameRegistryData(@NonNull ArchiveMameData registryData, BiConsumer<File, String> zipOut) throws IOException {
     String tableDetailsJson = objectMapper.writeValueAsString(registryData);
 
     File tableDetailsTmpFile = File.createTempFile("registry", "json");

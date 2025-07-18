@@ -55,7 +55,7 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
             cache.put(archiveFile.getName(), descriptor);
           }
           catch (Exception e) {
-            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage(), e);
+            LOG.error("Failed to read " + archiveFile.getAbsolutePath() + ": " + e.getMessage());
           }
         }
       }
