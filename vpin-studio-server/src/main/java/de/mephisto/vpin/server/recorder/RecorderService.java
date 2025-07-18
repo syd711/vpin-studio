@@ -85,6 +85,8 @@ public class RecorderService {
   private JobDescriptor jobDescriptor;
 
   public JobDescriptor startRecording(RecordingDataSummary recordingData) {
+    systemService.setMaintenanceMode(false);
+
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
 
     Job job = null;

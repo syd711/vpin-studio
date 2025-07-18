@@ -1,3 +1,13 @@
+## Release Notes 4.1.1
+
+## Changes
+
+- **Table Overview**
+  - Added missing cache invalidation after validator settings have been changed in the preferences. This invalidation is also triggered on a manual table overview reload now, so this might take a bit longer than before.
+- **Media Recorder**
+  - The maintenance mode is turned off automatically now when the recording is started.
+
+
 ## Release Notes 4.1.0
 
 ## Changes
