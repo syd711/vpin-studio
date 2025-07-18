@@ -426,14 +426,13 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
           new Thread(() -> {
             try {
               maniaClient.getCabinetClient().update(cabinet);
+              long duration = System.currentTimeMillis() - start;
+              LOG.info("VPin Mania table synchronization finished, {} tables synchronized in {}ms.", installedTables.size(), duration);
             }
             catch (Exception e) {
               LOG.error("Cabinet update for sync failed: {}", e.getMessage(), e);
             }
           }).start();
-
-          long duration = System.currentTimeMillis() - start;
-          LOG.info("VPin Mania table synchronization finished, {} tables synchronized in {}ms.", installedTables.size(), duration);
           return true;
         }
       }
@@ -566,6 +565,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
         ServerFX.maniaClient = maniaClient;
 
         cabinet = maniaClient.getCabinetClient().getCabinet();
+        synchronizeTables();
 
         preferencesService.addChangeListener(this);
         preferenceChanged(PreferenceNames.MANIA_SETTINGS, null, null);
