@@ -83,6 +83,10 @@ abstract public class AssetMediaPlayer extends MediaViewPane {
     }
   }
 
+  public void setSize(double fitWidth, double fitHeight) {
+
+  }
+
   public void setMediaViewSize(double fitWidth, double fitHeight) {
   }
 }

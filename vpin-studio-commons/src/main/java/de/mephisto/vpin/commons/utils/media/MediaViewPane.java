@@ -24,6 +24,9 @@ public class MediaViewPane extends Pane {
    */
   private Node child;
 
+  /** Whether Image or Video is rotated, When rotated, invert width and height role */
+  private boolean rotated;
+
   /**
    * Set the child in the middle of the Pane
    */
@@ -44,28 +47,33 @@ public class MediaViewPane extends Pane {
     double width = getWidth();
     double height = getHeight();
 
-    double fitWidth = false ? height - marginX : width - marginX;
-    double fitHeight = false ? width - marginY : height - marginY;
-
     if (child instanceof ImageView) {
-      ImageView imageView = ((ImageView) child);
-      double f = imageView.getFitWidth();
-      imageView.setFitWidth(fitWidth);
-      imageView.setFitHeight(fitHeight);
+      ((ImageView) child).setFitWidth(rotated ? height - marginX : width - marginX);
+      ((ImageView) child).setFitHeight(rotated ? width - marginY : height - marginY);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else if (child instanceof MediaView) {
-      ((MediaView) child).setFitWidth(fitWidth);
-      ((MediaView) child).setFitHeight(fitHeight);
+      ((MediaView) child).setFitWidth(rotated ? height - marginX : width - marginX);
+      ((MediaView) child).setFitHeight(rotated ? width - marginY : height - marginY);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else {
       Bounds bounds = child.getLayoutBounds();
-      child.relocate((width - bounds.getWidth()) / 2.0, (height - bounds.getHeight()) / 2);
+      child.relocate((width - bounds.getWidth()) / 2.0, (height  - bounds.getHeight()) / 2);
     }
   }
 
   public void setLoading() {
     setCenter(new ProgressIndicator());
   }
+
+  protected boolean isRotated() {
+    return rotated;
+  }
+
+  protected void setRotated(boolean rotated) {
+    this.rotated = rotated;
+  }
+
+
 }

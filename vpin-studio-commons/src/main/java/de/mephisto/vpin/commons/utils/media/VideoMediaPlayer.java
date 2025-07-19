@@ -84,11 +84,17 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setUserData(mediaItem);
       mediaView.setPreserveRatio(true);
       mediaView.setVisible(false);
-      boolean rotated = scaleMediaView();
+      scaleMediaView();
 
       if (fitHeight > 0 && fitWidth > 0) {
-        mediaView.setFitHeight(fitHeight);
-        mediaView.setFitWidth(fitWidth);
+        if(this.isRotated()) {
+          mediaView.setFitHeight(fitWidth);
+          mediaView.setFitWidth(fitHeight);
+        }
+        else {
+          mediaView.setFitHeight(fitHeight);
+          mediaView.setFitWidth(fitWidth);
+        }
       }
 
       mediaView.setVisible(true);
@@ -97,20 +103,19 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     });
   }
 
-  private boolean scaleMediaView() {
+  private void scaleMediaView() {
     if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-//        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
-        return true;
-      }
+        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
+        setRotated(true);
+       }
     }
     else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-//        mediaView.setRotate(90);
-        return true;
+        mediaView.setRotate(90);
+        setRotated(true);
       }
     }
-    return false;
   }
 
   @Override

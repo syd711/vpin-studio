@@ -47,16 +47,20 @@ public class ImageViewer extends MediaViewPane {
     imageView.setPreserveRatio(true);
     imageView.setUserData(userdata);
 
+    boolean rotated = false;
     if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
       if (image.getWidth() > image.getHeight()) {
         imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
+        rotated = true;
       }
     }
     else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
       if (image.getWidth() > image.getHeight()) {
         imageView.setRotate(90);
+        rotated = true;
       }
     }
+    setRotated(rotated);
   }
 
   public void scaleForTemplate(ImageView cardPreview) {
