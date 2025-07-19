@@ -47,14 +47,19 @@ public class MediaViewPane extends Pane {
     double width = getWidth();
     double height = getHeight();
 
+    double fitWidth = rotated ? height - marginX : width - marginX;
+    double fitHeight = rotated ? width - marginY : height - marginY;
+
     if (child instanceof ImageView) {
-      ((ImageView) child).setFitWidth(rotated ? height - marginX : width - marginX);
-      ((ImageView) child).setFitHeight(rotated ? width - marginY : height - marginY);
+      ImageView imageView = ((ImageView) child);
+      imageView.setFitWidth(fitWidth);
+      imageView.setFitHeight(fitHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else if (child instanceof MediaView) {
-      ((MediaView) child).setFitWidth(rotated ? height - marginX : width - marginX);
-      ((MediaView) child).setFitHeight(rotated ? width - marginY : height - marginY);
+      MediaView mediaView = ((MediaView) child);
+      mediaView.setFitWidth(fitWidth);
+      mediaView.setFitHeight(fitHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else {
