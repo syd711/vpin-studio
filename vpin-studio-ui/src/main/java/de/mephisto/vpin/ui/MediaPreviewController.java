@@ -56,7 +56,7 @@ public class MediaPreviewController implements Initializable, DialogController {
         imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - 80);
       }
       else {
-        assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - 20, dialogStage.getHeight() * 1 - 20);
+        assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - 80, dialogStage.getHeight() * 1 - 80);
       }
     });
   }

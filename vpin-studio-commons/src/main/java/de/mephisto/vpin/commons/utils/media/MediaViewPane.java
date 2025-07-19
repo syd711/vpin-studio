@@ -19,11 +19,17 @@ public class MediaViewPane extends Pane {
   private int marginX = 12;
   private int marginY = 12;
 
-  /** The centered child in the Pane, only one at a time */
+  /**
+   * The centered child in the Pane, only one at a time
+   */
   private Node child;
 
-  /** Whether Image or Video is rotated, When rotated, invert width and height role */
+  /**
+   * Whether Image or Video is rotated, When rotated, invert width and height role
+   */
   private boolean rotated;
+
+  private boolean responsive = true;
 
   /**
    * Set the child in the middle of the Pane
@@ -41,7 +47,11 @@ public class MediaViewPane extends Pane {
   @Override
   protected void layoutChildren() {
     super.layoutChildren();
-  
+
+    if (!responsive) {
+      return;
+    }
+
     double width = getWidth();
     double height = getHeight();
 
@@ -57,8 +67,8 @@ public class MediaViewPane extends Pane {
     }
     else {
       Bounds bounds = child.getLayoutBounds();
-      child.relocate((width - bounds.getWidth()) / 2.0, (height  - bounds.getHeight()) / 2);
-    }    
+      child.relocate((width - bounds.getWidth()) / 2.0, (height - bounds.getHeight()) / 2);
+    }
   }
 
   public void disposeMediaPane() {
@@ -74,11 +84,19 @@ public class MediaViewPane extends Pane {
     }
   }
 
+  public void setResponsive(boolean responsive) {
+    this.responsive = responsive;
+  }
+
   public void setLoading() {
     setCenter(new ProgressIndicator());
   }
 
   protected void setRotated(boolean rotated) {
     this.rotated = rotated;
+  }
+
+  public boolean isRotated() {
+    return rotated;
   }
 }

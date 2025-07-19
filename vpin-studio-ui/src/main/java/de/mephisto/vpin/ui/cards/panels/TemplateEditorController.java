@@ -810,7 +810,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this);
           //images do not have a media player
           if (assetMediaPlayer != null) {
-            assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
             mediaPlayerControl.setVisible(true);
           }
 

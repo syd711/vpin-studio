@@ -88,8 +88,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       scaleMediaView();
 
       if (fitHeight > 0 && fitWidth > 0) {
-        mediaView.setFitHeight(fitHeight);
-        mediaView.setFitWidth(fitWidth);
+        if (isRotated()) {
+          mediaView.setFitWidth(fitHeight);
+          mediaView.setFitHeight(fitWidth);
+        }
+        else {
+          mediaView.setFitHeight(fitHeight);
+          mediaView.setFitWidth(fitWidth);
+        }
       }
 
       mediaView.setVisible(true);
@@ -115,6 +121,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   @Override
   public void setMediaViewSize(double fitWidth, double fitHeight) {
+    setResponsive(fitWidth == 0);
+
     if (this.mediaView != null) {
       this.mediaView.setFitHeight(fitHeight);
       this.mediaView.setFitWidth(fitWidth);
