@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -20,6 +20,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private FrontendMediaItemRepresentation mediaItem;
   private MediaView mediaView;
   private Media media;
+
+  private double fitWidth = 0;
+  private double fitHeight = 0;
 
   private boolean invertPlayfield;
 
@@ -83,6 +86,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setPreserveRatio(true);
       mediaView.setVisible(false);
       scaleMediaView();
+
+      if (fitHeight > 0 && fitWidth > 0) {
+        mediaView.setFitHeight(fitHeight);
+        mediaView.setFitWidth(fitWidth);
+      }
+
       mediaView.setVisible(true);
 
       setCenter(mediaView);
@@ -90,12 +99,11 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   private void scaleMediaView() {
-
     if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
-       }
+      }
     }
     else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
@@ -110,6 +118,10 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     if (this.mediaView != null) {
       this.mediaView.setFitHeight(fitHeight);
       this.mediaView.setFitWidth(fitWidth);
+    }
+    else {
+      this.fitWidth = fitWidth;
+      this.fitHeight = fitHeight;
     }
   }
 

@@ -49,17 +49,16 @@ public class MediaPreviewController implements Initializable, DialogController {
     assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, item, mediaView);
 
     this.item = item;
-
-    if (assetMediaPlayer == null) {
-      new Thread(() -> {
-        Platform.runLater(() -> {
-          ImageViewer imageViewer = (ImageViewer) mediaView.getUserData();
-          imageViewer.getImageView().setFitWidth(dialogStage.getWidth() * 1 - 80);
-          imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - 80);
-        });
-      }).start();
-
-    }
+    Platform.runLater(() -> {
+      if (assetMediaPlayer == null) {
+        ImageViewer imageViewer = (ImageViewer) mediaView.getUserData();
+        imageViewer.getImageView().setFitWidth(dialogStage.getWidth() * 1 - 80);
+        imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - 80);
+      }
+      else {
+        assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - 20, dialogStage.getHeight() * 1 - 20);
+      }
+    });
   }
 
   @Override
