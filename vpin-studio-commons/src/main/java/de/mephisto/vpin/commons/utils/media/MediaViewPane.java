@@ -16,20 +16,13 @@ import javafx.scene.media.MediaView;
  */
 public class MediaViewPane extends Pane {
 
-  private int marginX = 12;
-  private int marginY = 12;
+  private int marginX = 0;
+  private int marginY = 0;
 
   /**
    * The centered child in the Pane, only one at a time
    */
   private Node child;
-
-  /**
-   * Whether Image or Video is rotated, When rotated, invert width and height role
-   */
-  private boolean rotated;
-
-  private boolean responsive = true;
 
   /**
    * Set the child in the middle of the Pane
@@ -48,21 +41,22 @@ public class MediaViewPane extends Pane {
   protected void layoutChildren() {
     super.layoutChildren();
 
-    if (!responsive) {
-      return;
-    }
-
     double width = getWidth();
     double height = getHeight();
 
+    double fitWidth = false ? height - marginX : width - marginX;
+    double fitHeight = false ? width - marginY : height - marginY;
+
     if (child instanceof ImageView) {
-      ((ImageView) child).setFitWidth(rotated ? height - marginX : width - marginX);
-      ((ImageView) child).setFitHeight(rotated ? width - marginY : height - marginY);
+      ImageView imageView = ((ImageView) child);
+      double f = imageView.getFitWidth();
+      imageView.setFitWidth(fitWidth);
+      imageView.setFitHeight(fitHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else if (child instanceof MediaView) {
-      ((MediaView) child).setFitWidth(rotated ? height - marginX : width - marginX);
-      ((MediaView) child).setFitHeight(rotated ? width - marginY : height - marginY);
+      ((MediaView) child).setFitWidth(fitWidth);
+      ((MediaView) child).setFitHeight(fitHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else {
@@ -71,32 +65,7 @@ public class MediaViewPane extends Pane {
     }
   }
 
-  public void disposeMediaPane() {
-    Tooltip.uninstall(this, null);
-    if (child != null) {
-      if (child instanceof AssetMediaPlayer) {
-        ((AssetMediaPlayer) child).disposeMedia();
-      }
-      else if (child instanceof ImageViewer) {
-        ((ImageViewer) child).disposeImage();
-      }
-      setCenter(null);
-    }
-  }
-
-  public void setResponsive(boolean responsive) {
-    this.responsive = responsive;
-  }
-
   public void setLoading() {
     setCenter(new ProgressIndicator());
-  }
-
-  protected void setRotated(boolean rotated) {
-    this.rotated = rotated;
-  }
-
-  public boolean isRotated() {
-    return rotated;
   }
 }

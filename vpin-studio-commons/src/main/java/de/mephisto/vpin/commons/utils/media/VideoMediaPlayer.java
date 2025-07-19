@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class VideoMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
-  public static final int MEDIA_SIZE = 280;
 
   private VPinScreen screen;
 
@@ -85,17 +84,11 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setUserData(mediaItem);
       mediaView.setPreserveRatio(true);
       mediaView.setVisible(false);
-      scaleMediaView();
+      boolean rotated = scaleMediaView();
 
       if (fitHeight > 0 && fitWidth > 0) {
-        if (isRotated()) {
-          mediaView.setFitWidth(fitHeight);
-          mediaView.setFitHeight(fitWidth);
-        }
-        else {
-          mediaView.setFitHeight(fitHeight);
-          mediaView.setFitWidth(fitWidth);
-        }
+        mediaView.setFitHeight(fitHeight);
+        mediaView.setFitWidth(fitWidth);
       }
 
       mediaView.setVisible(true);
@@ -104,32 +97,30 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     });
   }
 
-  private void scaleMediaView() {
+  private boolean scaleMediaView() {
     if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
-        setRotated(true);
+//        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
+        return true;
       }
     }
     else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90);
-        setRotated(true);
+//        mediaView.setRotate(90);
+        return true;
       }
     }
+    return false;
   }
 
   @Override
   public void setMediaViewSize(double fitWidth, double fitHeight) {
-    setResponsive(fitWidth == 0);
+    this.fitWidth = fitWidth;
+    this.fitHeight = fitHeight;
 
     if (this.mediaView != null) {
-      this.mediaView.setFitHeight(fitHeight);
       this.mediaView.setFitWidth(fitWidth);
-    }
-    else {
-      this.fitWidth = fitWidth;
-      this.fitHeight = fitHeight;
+      this.mediaView.setFitHeight(fitHeight);
     }
   }
 
