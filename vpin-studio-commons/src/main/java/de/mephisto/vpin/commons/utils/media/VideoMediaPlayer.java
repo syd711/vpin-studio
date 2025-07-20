@@ -84,10 +84,13 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setUserData(mediaItem);
       mediaView.setPreserveRatio(true);
       mediaView.setVisible(false);
-      scaleMediaView();
+
+      if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+        scaleMediaView();
+      }
 
       if (fitHeight > 0 && fitWidth > 0) {
-        if(this.isRotated()) {
+        if (this.isRotated()) {
           mediaView.setFitHeight(fitWidth);
           mediaView.setFitWidth(fitHeight);
         }
@@ -108,7 +111,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
-       }
+      }
     }
     else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {

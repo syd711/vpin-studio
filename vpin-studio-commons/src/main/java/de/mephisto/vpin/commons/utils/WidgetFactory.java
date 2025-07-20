@@ -909,10 +909,10 @@ public class WidgetFactory {
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
-    return addMediaItemToBorderPane(client, mediaItem, parent, null);
+    return addMediaItemToBorderPane(client, mediaItem, parent, null, null);
   }
 
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener) {
+  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener, MediaOptions mediaOptions) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
@@ -934,6 +934,7 @@ public class WidgetFactory {
     }
     else if (baseType.equals("audio")) {
       AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(mediaItem, url);
+      audioMediaPlayer.setMediaOptions(mediaOptions);
       parent.setCenter(audioMediaPlayer);
       if (listener != null) {
         audioMediaPlayer.addListener(listener);
@@ -943,6 +944,7 @@ public class WidgetFactory {
     }
     else if (baseType.equals("video") && !audioOnly) {
       VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted());
+      videoMediaPlayer.setMediaOptions(mediaOptions);
       parent.setCenter(videoMediaPlayer);
       if (listener != null) {
         videoMediaPlayer.addListener(listener);

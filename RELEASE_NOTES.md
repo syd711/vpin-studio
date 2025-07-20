@@ -4,7 +4,7 @@
 
 - **Table Overview**
   - Added missing cache invalidation after validator settings have been changed in the preferences. This invalidation is also triggered on a manual table overview reload now, so this might take a bit longer than before.
-  - Fixed miscellaneous issues in the media preview dialog.
+  - Fixed miscellaneous issues with the media preview dialog. The dialog is also resizeable now.
 - **Media Recorder**
   - The maintenance mode is turned off automatically now when the recording is started.
 

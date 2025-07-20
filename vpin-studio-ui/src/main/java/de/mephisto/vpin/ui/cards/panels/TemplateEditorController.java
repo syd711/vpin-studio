@@ -806,7 +806,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       .thenAcceptLater(frontendMedia -> {
         FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
         if (defaultMediaItem != null) {
-          assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this);
+          assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
           //images do not have a media player
           if (assetMediaPlayer != null) {
             mediaPlayerControl.setVisible(true);
