@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
  *
  */
 public class PinballYSettings extends JsonSettings {
-  private String charset;
+  private String charset = "windows-1252";
 
   public String getCharset() {
     return charset;

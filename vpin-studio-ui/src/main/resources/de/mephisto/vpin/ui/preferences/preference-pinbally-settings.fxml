@@ -18,7 +18,7 @@
       <VBox BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="FRONTEND PREFERENCES" textFill="WHITE" />
-            <ScrollPane hbarPolicy="NEVER">
+            <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
                <content>
                   <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                      <children>
@@ -30,7 +30,7 @@
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
                               <Label text="Database File Encoding:" textFill="WHITE">
@@ -40,8 +40,9 @@
                               </Label>
                               <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <Label styleClass="preference-description" text="You can check the existing code page by opening the database XML file with Notepad++." textFill="WHITE" />
                                     <VBox />
+                                    <Label styleClass="preference-description" text="The encoding should match with that of your cabinets operating system, e.g. &quot;Windows-1252&quot;." textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="You can check the encoding by opening the database XML file with an editor like Notepad++." textFill="WHITE" />
                                  </children>
                               </VBox>
                               <HBox alignment="BASELINE_LEFT" spacing="3.0" GridPane.columnIndex="1">
