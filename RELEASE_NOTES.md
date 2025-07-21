@@ -1,3 +1,10 @@
+## Release Notes 4.1.2
+
+## Changes
+
+- **File Encoding for PinballY**
+  - Unlike PinballX, PinballY does not handle UTF-8 encoded XML files very well and requires the system default encoding, e.g. "Windows-1252" for these files. PinballY users have to set this value manually in the newly introduced settings page for **PinballY**. Once set, special characters are shown correctly for the Studio and the PinballY frontend.
+
 ## Release Notes 4.1.1
 
 ## Changes
