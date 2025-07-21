@@ -63,6 +63,7 @@
                                     </Label>
                                     <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPopperSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Popper Settings" />
                                     <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballXSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="PinballX Settings" />
+                                    <Button fx:id="pinballYSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onPinballYSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="PinballY Settings" />
                                  </children>
                               </VBox>
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS">

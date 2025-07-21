@@ -7,9 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 
 public class PinballYTableParser extends PinballXTableParser {
+
+  public PinballYTableParser(Charset charset) {
+    super(charset);
+  }
 
   protected void doPreParsing(TableDetails detail, GameEmulator emu, String name) {
     super.doPreParsing(detail, emu, name);

@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.frontend.pinbally.PinballYSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -132,6 +135,17 @@ public class PinballYConnector extends BaseConnector {
   private File getPinballYSettings() {
     File pinballYFolder = getInstallationFolder();
     return new File(pinballYFolder, "/Settings.txt");
+  }
+
+  @Override
+  public PinballYSettings getSettings() {
+    try {
+      return preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS, PinballYSettings.class);
+    }
+    catch (Exception e) {
+      LOG.error("Getting pinballY settings failed: " + e.getMessage(), e);
+      return null;
+    }
   }
 
   private Properties loadPinballYSettings() {
@@ -276,7 +290,9 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     List<String> games = new ArrayList<>();
     File pinballXDb = new File(emu.getDatabase());
     if (pinballXDb.exists()) {
-      PinballYTableParser parser = new PinballYTableParser();
+      PinballYSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS);
+      Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+      PinballYTableParser parser = new PinballYTableParser(charset);
       parser.addGames(pinballXDb, games, mapTableDetails, emu);
     }
     return games;
@@ -305,7 +321,10 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   @Override
   protected void commitDb(GameEmulator emu) {
     File pinballXDb = new File(emu.getDatabase());
-    PinballYTableParser parser = new PinballYTableParser();
+
+    PinballYSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLY_SETTINGS);
+    Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+    PinballYTableParser parser = new PinballYTableParser(charset);
     parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);
   }
 

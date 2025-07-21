@@ -11,6 +11,17 @@ public class PinballXSettings extends JsonSettings {
   private String gameExPassword;
   private boolean gameExEnabled;
 
+  //unlike PinballY which might require e.g. win1252, PinballX is handling UTF-8 properly, so no UI for this field since utf8 is the studio default
+  private String charset;
+
+  public String getCharset() {
+    return charset;
+  }
+
+  public void setCharset(String charset) {
+    this.charset = charset;
+  }
+
   public String getGameExMail() {
     return gameExMail;
   }
