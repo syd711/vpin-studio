@@ -205,7 +205,12 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         FileInfo hsFileInfo = client.getGameService().getHighscoreFileInfo(gameRepresentation.getId());
-        SystemUtil.open(hsFileInfo);
+        if (hsFileInfo.getFile() != null && FilenameUtils.getExtension(hsFileInfo.getFile().getName()).toLowerCase().endsWith("txt")) {
+          SystemUtil.open(hsFileInfo);
+        }
+        else {
+          SystemUtil.openFile(hsFileInfo.getFile());
+        }
       }
     }
     catch (Exception e) {
@@ -275,7 +280,8 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
         FileInfo altColorFolder = client.getAltColorService().getAltColorFolderInfo(game.get().getId());
         if (altColorFolder != null) {
           SystemUtil.open(altColorFolder);
-        } else {
+        }
+        else {
           WidgetFactory.showAlert(Studio.stage, "Error", "No valid ALT color folder found for game \"" + game.get().getId() + "\".");
         }
       }

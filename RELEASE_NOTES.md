@@ -1,3 +1,14 @@
+## Release Notes 4.1.3
+
+## Changes
+
+- **Table Overview**
+  - Fixed several context menu actions that should only be visible or enabled for VPX games.
+- **Media Recorder**
+  - The view was made more robust in case the file that saves the view state got corrupted.
+- **Highscores**
+  - Fixed highscore resetting: The resetted nvrams are now copied again properly from https://github.com/syd711/nvrams when available and a score is resetted.
+
 ## Release Notes 4.1.2
 
 ## Changes

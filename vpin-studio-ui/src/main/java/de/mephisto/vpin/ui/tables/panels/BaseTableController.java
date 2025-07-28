@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -112,6 +113,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     this.sideBarController = sideBarController;
   }
 
+  @Nullable
   public BaseTableSettings getTableSettings() {
     if (this.baseTableSettings == null) {
       baseTableSettings = LocalUISettings.getTablePreference(this.getClass());
@@ -129,9 +131,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       this.clearBtn.setVisible(false);
     }
 
-    List<String> columnOrder = getTableSettings().getColumnOrder();
-    if (!columnOrder.isEmpty()) {
-      for (String columnName : columnOrder) {
+    BaseTableSettings tableSettings = getTableSettings();
+    if (tableSettings != null && !tableSettings.getColumnOrder().isEmpty()) {
+      for (String columnName : tableSettings.getColumnOrder()) {
         Optional<TableColumn<M, ?>> first = tableView.getColumns().stream().filter(c -> c.getId().equals(columnName)).findFirst();
         if (first.isPresent()) {
           tableView.getColumns().remove(first.get());
@@ -145,7 +147,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
     for (TableColumn<M, ?> column : new ArrayList<>(tableView.getColumns())) {
       String id = column.getId();
-      if (!columnOrder.contains(id)) {
+      if (tableSettings != null && !tableSettings.getColumnOrder().contains(id)) {
         int index = getPreferredColumnIndex(id);
         if (index != -1) {
           if (index < tableView.getColumns().size()) {

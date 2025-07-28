@@ -158,8 +158,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DMDFOLDER)) {
-      File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ? 
-        new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder()) : null;
+      File dmdProjectFolder = StringUtils.isNotEmpty(game.getDMDProjectFolder()) ?
+          new File(game.getEmulator().getGamesFolder(), game.getDMDProjectFolder()) : null;
       if (dmdProjectFolder != null && !dmdProjectFolder.exists()) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DMDFOLDER));
         if (findFirst) {
@@ -187,7 +187,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           return result;
         }
       }
-    } 
+    }
 
     if (fptOrVpx && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
@@ -574,7 +574,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      List<String> missingResources =  pupPacksService.getMissingResources(game);
+      List<String> missingResources = pupPacksService.getMissingResources(game);
       if (missingResources != null && !missingResources.isEmpty()) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, missingResources));
       }
@@ -724,7 +724,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     File nvRamFile = highscoreResolver.getNvRamFile(game);
 
     //not played and the ROM VPReg.stg entry not found
-    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !nvRamFile.exists()) {
+    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && (nvRamFile == null || !nvRamFile.exists())) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);

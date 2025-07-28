@@ -17,7 +17,7 @@ public class BaseLoadingColumn {
       TableColumn<M, M> column, BaseLoadingColumnRenderer<T, M> renderer, BaseTableController<T, M> baseTableController, boolean visible) {
     column.setVisible(visible);
     BaseTableSettings tableSettings = baseTableController.getTableSettings();
-    double columnWidth = tableSettings.getColumnWidth(column.getId());
+    double columnWidth = tableSettings != null ? tableSettings.getColumnWidth(column.getId()) : 0;
     if (columnWidth > 0) {
       column.setPrefWidth(columnWidth);
     }

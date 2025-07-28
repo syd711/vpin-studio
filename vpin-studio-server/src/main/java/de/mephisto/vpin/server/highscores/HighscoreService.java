@@ -100,8 +100,8 @@ public class HighscoreService implements InitializingBean {
       }
     }
 
-    File nvramFolder =  highscoreResolver.getNvRamFile(game);
-    if (nvramFolder.exists()) {
+    File nvramFolder = highscoreResolver.getNvRamFile(game);
+    if (nvramFolder != null && nvramFolder.exists()) {
       File[] files = nvramFolder.listFiles((dir, name) -> name.endsWith(".nv"));
       if (files != null) {
         highscoreFiles.setNvRams(Arrays.stream(files).map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList()));
@@ -151,7 +151,7 @@ public class HighscoreService implements InitializingBean {
       NVRamList nvRamList = nvRamService.getResettedNVRams();
       if (nvRamList.contains(game.getRom()) || nvRamList.contains(game.getTableName())) {
         File nvRamFile = highscoreResolver.getNvRamFile(game);
-        if (nvRamFile != null && nvRamFile.exists() && !nvRamService.copyResettedNvRam(nvRamFile)) {
+        if (nvRamFile != null && !nvRamService.copyResettedNvRam(nvRamFile)) {
           result = false;
         }
       }
