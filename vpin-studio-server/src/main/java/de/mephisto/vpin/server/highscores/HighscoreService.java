@@ -116,6 +116,7 @@ public class HighscoreService implements InitializingBean {
 
   public boolean resetHighscore(@NonNull Game game, long score) {
     try {
+      setPauseHighscoreEvents(true);
       HighscoreType highscoreType = game.getHighscoreType();
       boolean result = false;
       if (highscoreType != null) {
@@ -157,10 +158,14 @@ public class HighscoreService implements InitializingBean {
       }
 
       deleteScores(game.getId(), true);
+      scanScore(game, EventOrigin.USER_INITIATED);
       return result;
     }
     catch (Exception e) {
       LOG.error("Failed to reset highscore: " + e.getMessage(), e);
+    }
+    finally {
+      setPauseHighscoreEvents(false);
     }
     return false;
   }

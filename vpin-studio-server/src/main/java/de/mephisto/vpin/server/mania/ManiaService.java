@@ -194,10 +194,12 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
   }
 
   public boolean isOnDenyList(@NonNull Game game, @NonNull Score score) {
-    String vpsTableId = game.getExtTableId();
-    if (!StringUtils.isEmpty(vpsTableId)) {
-      List<DeniedScore> deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTableId);
-      return isOnDenyList(deniedScoresByTableId, score, game);
+    if (Features.MANIA_ENABLED && this.cabinet != null) {
+      String vpsTableId = game.getExtTableId();
+      if (!StringUtils.isEmpty(vpsTableId)) {
+        List<DeniedScore> deniedScoresByTableId = maniaClient.getHighscoreClient().getDeniedScoresByTableId(vpsTableId);
+        return isOnDenyList(deniedScoresByTableId, score, game);
+      }
     }
     return false;
   }
