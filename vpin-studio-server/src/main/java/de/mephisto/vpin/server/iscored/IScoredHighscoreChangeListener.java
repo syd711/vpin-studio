@@ -55,17 +55,24 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
     Game game = event.getGame();
     Score newScore = event.getNewScore();
+
+    if (event.isInitialScore()) {
+      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " was detected as initial (default) score.");
+      SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " was detected as initial (default) score.");
+      return;
+    }
+
     if (event.getNewScore().getPlayer() == null) {
       LOG.info("Ignored iScored highscore change, because no player set for this score.");
       SLOG.info("Ignored iScored highscore change, because no player set for this score.");
       return;
     }
 
-    if (maniaService.isOnDenyList(game, newScore)) {
-      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
-      SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
-      return;
-    }
+//    if (maniaService.isOnDenyList(game, newScore)) {
+//      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
+//      SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
+//      return;
+//    }
 
 
     List<IScoredGame> gameRoomGamesForTable = new ArrayList<>();

@@ -6,9 +6,11 @@
   - Fixed several context menu actions that should only be visible or enabled for VPX games.
 - **Media Recorder**
   - The view was made more robust in case the file that saves the view state got corrupted.
-- **Highscores Resetting**
+- **Highscores Updates + Resetting**
   - The resetted nvrams are now copied again properly from https://github.com/syd711/nvrams when available and a score is resetted.
-  - No events are fired now when a highscore reset is executed. This way, a resetted score should not end up on an iScored Game Room.
+  - No events are fired now when a highscore reset is executed. This way, a resetted score should not end up on an **iScored** Game Room.
+- **iScored Integration**  
+  - Initial highscore detections are not submitted to iScored anymore. E.g. when an nvram is created for the first time for a table, these default scores should always be ignored.
 
 ## Release Notes 4.1.2
 
