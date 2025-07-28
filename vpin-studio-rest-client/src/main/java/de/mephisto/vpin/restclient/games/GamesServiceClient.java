@@ -115,7 +115,9 @@ public class GamesServiceClient extends VPinStudioClientService {
       getRestClient().post(API + "games/delete", descriptor, Boolean.class);
       int emulatorId = game.getEmulatorId();
       List<GameRepresentation> gameRepresentations = this.allGames.get(emulatorId);
-      gameRepresentations.remove(game);
+      if (descriptor.isDeleteTable()) {
+        gameRepresentations.remove(game);
+      }
     }
     catch (Exception e) {
       LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
