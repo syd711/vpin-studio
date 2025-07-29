@@ -592,7 +592,9 @@ public class VPinStudioClient implements OverlayClient {
     RestTemplate template = new RestTemplate();
     LOG.info("HTTP Download " + restClient.getBaseUrl() + VPinStudioClientService.API + url);
     template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
-      try (FileOutputStream out = new FileOutputStream(target)) {
+      FileOutputStream out = null;
+      try {
+        out = new FileOutputStream(target);
         StreamUtils.copy(clientHttpResponse.getBody(), out);
         return target;
       }
