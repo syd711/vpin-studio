@@ -527,7 +527,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         List<CompetitionRepresentation> gameCompetitions = client.getCompetitionService().getGameCompetitions(game.getId());
         for (CompetitionRepresentation gameCompetition : gameCompetitions) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "The table \"" + game.getGameDisplayName()
-              + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").",
+                  + "\" is used by for competition \"" + gameCompetition.toString() + "\" (type: " + gameCompetition.getType() + ").",
               "Delete this competition?",
               "You need to delete all competition references before deleting a table.", "Delete Competition");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -787,7 +787,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           }
 
           GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.valueProperty().get();
-          this.importBtn.setDisable(!isAllVpxSelected );
+          this.importBtn.setDisable(!isAllVpxSelected);
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
@@ -908,18 +908,31 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureColumn(columnRom, (value, model) -> {
-      String rom = value.getRom();
+      final String rom = value.getRom();
+      if (StringUtils.isEmpty(rom)) {
+        return new Label();
+      }
+
+      String labelValue = rom;
       List<Integer> ignoredValidations = Collections.emptyList();
       if (value.getIgnoredValidations() != null) {
         ignoredValidations = value.getIgnoredValidations();
       }
       if (!StringUtils.isEmpty(value.getRomAlias())) {
-        rom = rom + " [" + value.getRomAlias() + "]";
+        labelValue = rom + " [" + value.getRomAlias() + "]";
       }
 
-      Label label = new Label(rom);
+      Label label = new Label(labelValue);
       if (!StringUtils.isEmpty(value.getRomAlias())) {
-        label.setTooltip(new Tooltip("This rom is aliased."));
+        StringBuilder builder = new StringBuilder("This ROM is aliased and uses the ROM \"" + value.getRom() + "\"");
+        List<GameRepresentation> sharedGames = getData().stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != value.getId()).collect(Collectors.toList());
+        if (!sharedGames.isEmpty()) {
+          builder.append("\n\nThe following tables share the same ROM:\n");
+          for (GameRepresentation sharedGame : sharedGames) {
+            builder.append("- " + sharedGame.getGameDisplayName());
+          }
+        }
+        label.setTooltip(new Tooltip(builder.toString()));
       }
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
         String color = WidgetFactory.ERROR_COLOR;
@@ -929,6 +942,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
       }
+
       return label;
     }, this, true);
 

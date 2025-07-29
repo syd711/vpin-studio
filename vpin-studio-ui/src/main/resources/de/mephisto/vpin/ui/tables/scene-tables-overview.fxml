@@ -45,7 +45,7 @@
                                  <TableColumn fx:id="columnPOV" minWidth="57.5999755859375" prefWidth="30.0" style="-fx-alignment: CENTER;" text="POV" />
                                  <TableColumn fx:id="columnAltSound" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
                                  <TableColumn fx:id="columnAltColor" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="ALT Color" />
-                                 <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
+                                 <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="170.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                  <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="130.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
                                  <TableColumn fx:id="columnPinVol" minWidth="130" prefWidth="120.0" style="-fx-alignment: BASELINE_CENTER;" text="PinVOL" />
