@@ -51,6 +51,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class ToolbarController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
   private final Debouncer debouncer = new Debouncer();
+
   public static final int DEBOUNCE_MS = 200;
 
   private boolean monitorOpen = false;

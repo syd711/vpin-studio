@@ -74,7 +74,8 @@ public class ArchiveUploadController implements Initializable, DialogController 
         if (progressResult.isCancelled()) {
           result = false;
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Uploading archive failed", "Please check the log file for details", "Error: " + e.getMessage());
       }
@@ -87,10 +88,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
 
-    List<String> filters = Arrays.asList("*.vpinzip", "*.zip");
-    if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
-      filters = Arrays.asList("*.vpa");
-    }
+    List<String> filters = Arrays.asList("*." + ArchiveType.VPA.name().toLowerCase());
 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Archives");
@@ -115,9 +113,13 @@ public class ArchiveUploadController implements Initializable, DialogController 
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
     List<ArchiveSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getArchiveSources());
-    repositories = repositories.stream().filter(r -> r.getType().equals(ArchiveSourceType.File.name())).collect(Collectors.toList());
+    repositories = repositories.stream().filter(r -> r.getType().equals(ArchiveSourceType.Folder.name())).collect(Collectors.toList());
     repositoryCombo.setItems(FXCollections.observableList(repositories));
     repositoryCombo.getSelectionModel().select(0);
+  }
+
+  public void setFile(File file) {
+    fileNameField.setText(file.getAbsolutePath());
   }
 
   @Override

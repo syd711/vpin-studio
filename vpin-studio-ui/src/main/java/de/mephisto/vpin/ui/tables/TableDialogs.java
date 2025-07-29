@@ -585,33 +585,11 @@ public class TableDialogs {
     }
   }
 
-  public static void openTablesBackupDialog(List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(TablesBackupController.class, "dialog-tables-backup.fxml", "Table Backup");
-    TablesBackupController controller = (TablesBackupController) stage.getUserData();
-    controller.setGames(games);
-    stage.showAndWait();
-  }
-
   public static void openTableImportDialog(GameEmulatorRepresentation emulatorRepresentation) {
     Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Importer");
     TableImportController controller = (TableImportController) stage.getUserData();
     controller.setData(emulatorRepresentation);
     stage.showAndWait();
-  }
-
-  public static void openTableInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> descriptorRepresentations) {
-    Stage stage = Dialogs.createStudioDialogStage(TableRestoreController.class, "dialog-table-restore.fxml", "Restore Tables");
-    TableRestoreController controller = (TableRestoreController) stage.getUserData();
-    controller.setData(tablesController, descriptorRepresentations);
-    stage.showAndWait();
-  }
-
-  public static ArchiveSourceRepresentation openArchiveSourceFileDialog(ArchiveSourceRepresentation source) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveSourceFileDialogController.class, "dialog-archive-source-file.fxml", "Folder Repository");
-    ArchiveSourceFileDialogController controller = (ArchiveSourceFileDialogController) stage.getUserData();
-    controller.setSource(source);
-    stage.showAndWait();
-    return controller.getArchiveSource();
   }
 
   public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
@@ -629,55 +607,10 @@ public class TableDialogs {
     return controller.getResult();
   }
 
-  public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveSourceHttpDialogController.class, "dialog-archive-source-http.fxml", "HTTP Repository");
-    ArchiveSourceHttpDialogController controller = (ArchiveSourceHttpDialogController) stage.getUserData();
-    controller.setSource(source);
-    stage.showAndWait();
-
-    return controller.getArchiveSource();
-  }
-
   public static void openVPSAssetsDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(VPSAssetsDialogController.class, "dialog-vps-assets.fxml", "Virtual Pinball Spreadsheet Assets");
     VPSAssetsDialogController controller = (VPSAssetsDialogController) stage.getUserData();
     controller.setGame(stage, game);
-    stage.showAndWait();
-  }
-
-  public static boolean openArchiveUploadDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Upload");
-    ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();
-    stage.showAndWait();
-
-    return controller.uploadFinished();
-  }
-
-  public static void openArchiveDownloadDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-archive-download.fxml", "Archive Download");
-    ArchiveDownloadDialogController controller = (ArchiveDownloadDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openVpbmArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(VpbmArchiveBundleDialogController.class, "dialog-vpbm-bundle-download.fxml", "Archive Bundle");
-    VpbmArchiveBundleDialogController controller = (VpbmArchiveBundleDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openVpaArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(VpaArchiveBundleDialogController.class, "dialog-vpa-bundle-download.fxml", "Archive Bundle");
-    VpaArchiveBundleDialogController controller = (VpaArchiveBundleDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openCopyArchiveToRepositoryDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(CopyArchiveToRepositoryDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
-    CopyArchiveToRepositoryDialogController controller = (CopyArchiveToRepositoryDialogController) stage.getUserData();
-    controller.setData(selectedItems);
     stage.showAndWait();
   }
 

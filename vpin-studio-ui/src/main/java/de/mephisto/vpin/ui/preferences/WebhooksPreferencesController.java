@@ -8,6 +8,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -37,6 +38,13 @@ public class WebhooksPreferencesController implements Initializable {
   private Button editBtn;
   private WebhookSettings webhookSettings;
 
+
+  @FXML
+  private void onLinkClick(ActionEvent event) {
+    Hyperlink link = (Hyperlink) event.getSource();
+    String linkText = link.getText();
+    Studio.browse(linkText);
+  }
 
   @FXML
   private void onReload() {

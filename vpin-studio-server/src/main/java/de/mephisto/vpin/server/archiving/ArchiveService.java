@@ -1,21 +1,27 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
+import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.archiving.adapters.vpa.ArchiveSourceAdapterFolder;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
-import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSourceAdapter;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmArchiveSource;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmArchiveSourceAdapter;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
+import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.games.UniversalUploadService;
+import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,10 +48,22 @@ public class ArchiveService implements InitializingBean {
   private ArchiveSourceRepository archiveSourceRepository;
 
   @Autowired
-  private VpbmService vpbmService;
+  private JobService jobService;
 
   @Autowired
-  private PreferencesService preferencesService;
+  private TableBackupAdapterFactory tableBackupAdapterFactory;
+
+  @Autowired
+  private EmulatorService emulatorService;
+
+  @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
+  private CardService cardService;
+
+  @Autowired
+  private UniversalUploadService universalUploadService;
 
   private ArchiveSourceAdapter defaultArchiveSourceAdapter;
 
@@ -98,12 +116,6 @@ public class ArchiveService implements InitializingBean {
   }
 
   @Nullable
-  public ArchiveDescriptor getArchiveDescriptor(@NonNull File out) {
-    Optional<ArchiveDescriptor> first = getArchiveDescriptors().stream().filter(f -> f.getFilename().equals(out.getName())).findFirst();
-    return first.orElse(null);
-  }
-
-  @Nullable
   public ArchiveDescriptor getArchiveDescriptor(long sourceId, @NonNull String filename) {
     ArchiveSourceAdapter sourceAdapter = adapterCache.get(sourceId);
     List<ArchiveDescriptor> descriptors = sourceAdapter.getArchiveDescriptors();
@@ -137,10 +149,6 @@ public class ArchiveService implements InitializingBean {
 
   public List<ArchiveSource> getArchiveSources() {
     return adapterCache.values().stream().map(ArchiveSourceAdapter::getArchiveSource).collect(Collectors.toList());
-  }
-
-  public boolean isValidArchiveDescriptor(@NonNull ArchiveDescriptor archiveDescriptor) {
-    return archiveDescriptor.getFilename() != null;
   }
 
   public ArchiveSourceAdapter getDefaultArchiveSourceAdapter() {
@@ -191,16 +199,9 @@ public class ArchiveService implements InitializingBean {
   }
 
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
-    String descriptorFilename = archiveDescriptor.getFilename();
     ArchiveType archiveType = ArchiveType.VPA;
-    if (descriptorFilename.endsWith("vpinzip")) {
-      archiveType = ArchiveType.VPBM;
-    }
 
     switch (archiveType) {
-      case VPBM: {
-        return new File(vpbmService.getArchiveFolder(), archiveDescriptor.getFilename());
-      }
       case VPA: {
         return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
       }
@@ -208,46 +209,80 @@ public class ArchiveService implements InitializingBean {
     return null;
   }
 
-  public File getArchivesFolder() {
-    ArchiveType archiveType = systemService.getArchiveType();
-    switch (archiveType) {
-      case VPBM: {
-        return vpbmService.getBundlesFolder();
+
+  public boolean restoreArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
+    try {
+      ArchiveDescriptor archiveDescriptor = getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
+      GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
+
+
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
+      jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
+      ArchiveInstallerJob job = new ArchiveInstallerJob(archiveDescriptor, universalUploadService, gameService, emulator, cardService);
+      jobDescriptor.setJob(job);
+
+      jobService.offer(jobDescriptor);
+      LOG.info("Offered restore job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+    }
+    catch (Exception e) {
+      LOG.error("Import failed: " + e.getMessage(), e);
+      return false;
+    }
+    return true;
+  }
+
+  public boolean backupTable(@NonNull BackupDescriptor exportDescriptor) {
+    List<Integer> gameIds = exportDescriptor.getGameIds();
+    boolean result = true;
+    for (Integer gameId : gameIds) {
+      Game game = gameService.getGame(gameId);
+      if (game != null && game.getGameFile().exists()) {
+        if (!backupTable(game, exportDescriptor)) {
+          result = false;
+        }
       }
-      case VPA: {
-        return new File(RESOURCES, "vpa");
+      else {
+        LOG.error("Cancelled backup for id " + game + ", invalid game data.");
+        result = false;
       }
     }
-    return null;
+    return result;
+  }
+
+  private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor) {
+    JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP);
+    descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
+    descriptor.setGameId(game.getId());
+
+    ArchiveSourceAdapter sourceAdapter = getDefaultArchiveSourceAdapter();
+    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(sourceAdapter, game);
+
+    descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
+    jobService.offer(descriptor);
+    LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
+    return true;
   }
 
   @Override
   public void afterPropertiesSet() {
-    String systemName = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_NAME);
-    if(!StringUtils.isEmpty(systemName) && systemName.contains("Syd")) {
-//      systemService.setArchiveType(ArchiveType.VPA);
-//      LOG.info("Switched archiving mode to VPA.");
-    }
-
-    //VPA
+    //VPA files
     if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
-      this.defaultArchiveSourceAdapter = new VpaArchiveSourceAdapter(archiveSource);
-      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
-    }
-
-    //VPBM
-    if (systemService.getArchiveType().equals(ArchiveType.VPBM)) {
-      File vpbmArchiveFolder = vpbmService.getArchiveFolder();
-      ArchiveSource archiveSource = new VpbmArchiveSource(vpbmArchiveFolder);
-      this.defaultArchiveSourceAdapter = new VpbmArchiveSourceAdapter(archiveSource, vpbmService);
+      this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
     //EXTERNAL
     List<ArchiveSource> all = archiveSourceRepository.findAll();
     for (ArchiveSource as : all) {
-      ArchiveSourceAdapter vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
+      ArchiveSourceAdapter vpaSourceAdapter = null;
+      try {
+        vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
+      }
+      catch (Exception e) {
+        LOG.error("Failed to create archive source: {}", e.getMessage());
+        continue;
+      }
       this.adapterCache.put(as.getId(), vpaSourceAdapter);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

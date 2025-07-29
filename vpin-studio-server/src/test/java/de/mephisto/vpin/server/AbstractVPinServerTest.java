@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.archiving.ArchiveService;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -102,13 +101,7 @@ abstract public class AbstractVPinServerTest {
   protected TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
-  protected TableInstallerAdapterFactory tableInstallerAdapterFactory;
-
-  @Autowired
   protected ArchiveService archiveService;
-
-  @Autowired
-  protected AltSoundService altSoundService;
 
   /**
    * To force usage of a given Frontend

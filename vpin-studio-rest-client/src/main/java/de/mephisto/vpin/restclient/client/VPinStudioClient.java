@@ -58,7 +58,6 @@ import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import org.apache.commons.io.IOUtils;
@@ -123,7 +122,6 @@ public class VPinStudioClient implements OverlayClient {
   private final PlaylistsServiceClient playlistsServiceClient;
   private final PlaylistMediaServiceClient playlistMediaServiceClient;
   private final MediaConversionServiceClient mediaConversionServiceClient;
-  private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
 
@@ -169,7 +167,6 @@ public class VPinStudioClient implements OverlayClient {
     this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
-    this.vpbmServiceClient = new VpbmServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
@@ -369,10 +366,6 @@ public class VPinStudioClient implements OverlayClient {
 
   public VpxServiceClient getVpxService() {
     return vpxServiceClient;
-  }
-
-  public VpbmServiceClient getVpbmService() {
-    return vpbmServiceClient;
   }
 
   @Override
@@ -602,6 +595,14 @@ public class VPinStudioClient implements OverlayClient {
       try (FileOutputStream out = new FileOutputStream(target)) {
         StreamUtils.copy(clientHttpResponse.getBody(), out);
         return target;
+      }
+      catch (Exception e) {
+        throw e;
+      }
+      finally {
+        if (out != null) {
+          out.close();
+        }
       }
     });
   }

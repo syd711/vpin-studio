@@ -3,32 +3,154 @@ package de.mephisto.vpin.restclient.archiving;
 public class ArchivePackageInfo {
   public static final int TARGET_WHEEL_SIZE_WIDTH = 100;
   public final static String ARCHIVE_FILENAME = "package-info.json";
+  public final static String REGISTRY_FILENAME = "registry.json";
 
-  private boolean directb2s;
-  private boolean pupPack;
-  private boolean rom;
-  private boolean res;
-  private boolean cfg;
-  private boolean popperMedia;
-  private boolean pov;
-  private boolean music;
-  private boolean altSound;
-  private boolean altColor;
-  private boolean highscore;
-  private boolean flexDMD;
-  private boolean ultraDMD;
-  private boolean vpx;
-  private boolean registryData;
+  private ArchiveFileInfo directb2s;
+  private ArchiveFileInfo pupPack;
+  private ArchiveFileInfo rom;
+  private ArchiveFileInfo nvRam;
+  private ArchiveFileInfo res;
+  private ArchiveFileInfo vbs;
+  private ArchiveFileInfo popperMedia;
+  private ArchiveFileInfo pov;
+  private ArchiveFileInfo ini;
+  private ArchiveFileInfo music;
+  private ArchiveFileInfo altSound;
+  private ArchiveFileInfo altColor;
+  private ArchiveFileInfo highscore;
+  private ArchiveFileInfo dmd;
+  private ArchiveFileInfo vpx;
+  private ArchiveFileInfo mameData;
 
   private String icon;
   private String thumbnail;
 
-  public boolean isRegistryData() {
-    return registryData;
+  public ArchiveFileInfo getDirectb2s() {
+    return directb2s;
   }
 
-  public void setRegistryData(boolean registryData) {
-    this.registryData = registryData;
+  public void setDirectb2s(ArchiveFileInfo directb2s) {
+    this.directb2s = directb2s;
+  }
+
+  public ArchiveFileInfo getPupPack() {
+    return pupPack;
+  }
+
+  public void setPupPack(ArchiveFileInfo pupPack) {
+    this.pupPack = pupPack;
+  }
+
+  public ArchiveFileInfo getRom() {
+    return rom;
+  }
+
+  public void setRom(ArchiveFileInfo rom) {
+    this.rom = rom;
+  }
+
+  public ArchiveFileInfo getNvRam() {
+    return nvRam;
+  }
+
+  public void setNvRam(ArchiveFileInfo nvRam) {
+    this.nvRam = nvRam;
+  }
+
+  public ArchiveFileInfo getRes() {
+    return res;
+  }
+
+  public void setRes(ArchiveFileInfo res) {
+    this.res = res;
+  }
+
+  public ArchiveFileInfo getVbs() {
+    return vbs;
+  }
+
+  public void setVbs(ArchiveFileInfo vbs) {
+    this.vbs = vbs;
+  }
+
+  public ArchiveFileInfo getPopperMedia() {
+    return popperMedia;
+  }
+
+  public void setPopperMedia(ArchiveFileInfo popperMedia) {
+    this.popperMedia = popperMedia;
+  }
+
+  public ArchiveFileInfo getPov() {
+    return pov;
+  }
+
+  public void setPov(ArchiveFileInfo pov) {
+    this.pov = pov;
+  }
+
+  public ArchiveFileInfo getIni() {
+    return ini;
+  }
+
+  public void setIni(ArchiveFileInfo ini) {
+    this.ini = ini;
+  }
+
+  public ArchiveFileInfo getMusic() {
+    return music;
+  }
+
+  public void setMusic(ArchiveFileInfo music) {
+    this.music = music;
+  }
+
+  public ArchiveFileInfo getAltSound() {
+    return altSound;
+  }
+
+  public void setAltSound(ArchiveFileInfo altSound) {
+    this.altSound = altSound;
+  }
+
+  public ArchiveFileInfo getAltColor() {
+    return altColor;
+  }
+
+  public void setAltColor(ArchiveFileInfo altColor) {
+    this.altColor = altColor;
+  }
+
+  public ArchiveFileInfo getHighscore() {
+    return highscore;
+  }
+
+  public void setHighscore(ArchiveFileInfo highscore) {
+    this.highscore = highscore;
+  }
+
+  public ArchiveFileInfo getDmd() {
+    return dmd;
+  }
+
+  public void setDmd(ArchiveFileInfo dmd) {
+    this.dmd = dmd;
+  }
+
+  public ArchiveFileInfo getVpx() {
+    return vpx;
+  }
+
+  public void setVpx(ArchiveFileInfo vpx) {
+    this.vpx = vpx;
+  }
+
+  public ArchiveFileInfo getMameData() {
+    return mameData;
+  }
+
+  public void setMameData(ArchiveFileInfo mameData) {
+    this.mameData = mameData;
   }
 
   public String getIcon() {
@@ -45,117 +167,5 @@ public class ArchivePackageInfo {
 
   public void setThumbnail(String thumbnail) {
     this.thumbnail = thumbnail;
-  }
-
-  public boolean isRes() {
-    return res;
-  }
-
-  public void setRes(boolean res) {
-    this.res = res;
-  }
-
-  public boolean isCfg() {
-    return cfg;
-  }
-
-  public void setCfg(boolean cfg) {
-    this.cfg = cfg;
-  }
-
-  public boolean isAltColor() {
-    return altColor;
-  }
-
-  public void setAltColor(boolean altColor) {
-    this.altColor = altColor;
-  }
-
-  public boolean isVpx() {
-    return vpx;
-  }
-
-  public void setVpx(boolean vpx) {
-    this.vpx = vpx;
-  }
-
-  public boolean isDirectb2s() {
-    return directb2s;
-  }
-
-  public void setDirectb2s(boolean directb2s) {
-    this.directb2s = directb2s;
-  }
-
-  public boolean isPupPack() {
-    return pupPack;
-  }
-
-  public void setPupPack(boolean pupPack) {
-    this.pupPack = pupPack;
-  }
-
-  public boolean isRom() {
-    return rom;
-  }
-
-  public void setRom(boolean rom) {
-    this.rom = rom;
-  }
-
-  public boolean isPopperMedia() {
-    return popperMedia;
-  }
-
-  public void setPopperMedia(boolean popperMedia) {
-    this.popperMedia = popperMedia;
-  }
-
-  public boolean isPov() {
-    return pov;
-  }
-
-  public void setPov(boolean pov) {
-    this.pov = pov;
-  }
-
-  public boolean isMusic() {
-    return music;
-  }
-
-  public void setMusic(boolean music) {
-    this.music = music;
-  }
-
-  public boolean isAltSound() {
-    return altSound;
-  }
-
-  public void setAltSound(boolean altSound) {
-    this.altSound = altSound;
-  }
-
-  public boolean isHighscore() {
-    return highscore;
-  }
-
-  public void setHighscore(boolean highscore) {
-    this.highscore = highscore;
-  }
-
-  public boolean isFlexDMD() {
-    return flexDMD;
-  }
-
-  public void setFlexDMD(boolean flexDMD) {
-    this.flexDMD = flexDMD;
-  }
-
-  public boolean isUltraDMD() {
-    return ultraDMD;
-  }
-
-  public void setUltraDMD(boolean ultraDMD) {
-    this.ultraDMD = ultraDMD;
   }
 }

@@ -83,7 +83,7 @@
             </Label>
             <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="The VPin Studio Server supports a public API endpoints to read game, highscore and player data." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="669.0" styleClass="preference-description" text="A detailled description can be found here:" textFill="WHITE" />
-            <Hyperlink text="https://github.com/syd711/vpin-studio/wiki/Webhooks" />
+            <Hyperlink onAction="#onLinkClick" text="https://github.com/syd711/vpin-studio/wiki/Webhooks" />
          </children>
          <padding>
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

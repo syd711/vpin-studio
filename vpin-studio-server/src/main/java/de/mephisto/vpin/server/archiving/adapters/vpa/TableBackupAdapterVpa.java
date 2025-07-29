@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
@@ -29,7 +30,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final TableDetails tableDetails;
 
   private final VpaService vpaService;
- 
+
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
                                @NonNull ArchiveSourceAdapter archiveSourceAdapter,
@@ -41,7 +42,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   }
 
   public void createBackup(JobDescriptor result) {
-
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
 
@@ -54,7 +54,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(VpaArchiveSource.FOLDER, baseName + ".vpa");
+    File target = new File(VpaArchiveSource.FOLDER, baseName + "." + ArchiveType.VPA.name().toLowerCase());
     target = FileUtils.uniqueFile(target);
     archiveDescriptor.setFilename(target.getName());
 
@@ -74,7 +74,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
     LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
 
     try (FileOutputStream fos = new FileOutputStream(tempFile);
-        ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+         ZipOutputStream zipOut = new ZipOutputStream(fos)) {
 
       vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
         result.setStatus("Packing " + fileToZip.getAbsolutePath());
@@ -129,7 +129,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   public void simulateBackup() throws IOException {
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
     vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
-      LOG.info("Backup file " + fileName + ", " + fileToZip.getAbsolutePath());
+      LOG.info("Added to backup: \"{}\" [Source {}]", fileName, fileToZip.getAbsolutePath());
     }, game, tableDetails);
   }
 }

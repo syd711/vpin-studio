@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.Arrays;
@@ -35,20 +34,16 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "archives/" + id, ArchiveDescriptorRepresentation[].class));
   }
 
-  public List<ArchiveDescriptorRepresentation> getArchiveDescriptorsFiltered() {
-    return Arrays.asList(getRestClient().get(API + "archives/filtered", ArchiveDescriptorRepresentation[].class));
-  }
-
   public List<ArchiveSourceRepresentation> getArchiveSources() {
     return Arrays.asList(getRestClient().get(API + "archives/sources", ArchiveSourceRepresentation[].class));
   }
 
-  public void deleteArchive(long sourceId, String filename) {
-    getRestClient().delete(API + "archives/descriptor/" + sourceId + "/" + filename);
+  public boolean deleteArchive(long sourceId, String filename) {
+    return getRestClient().delete(API + "archives/descriptor/" + sourceId + "/" + filename);
   }
 
-  public void deleteArchiveSource(long id) {
-    getRestClient().delete(API + "archives/source/" + id);
+  public boolean deleteArchiveSource(long id) {
+    return getRestClient().delete(API + "archives/source/" + id);
   }
 
   public ArchiveSourceRepresentation saveArchiveSource(ArchiveSourceRepresentation source) throws Exception {
@@ -89,29 +84,11 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     return executor.submit(task);
   }
 
-  public boolean installArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
-    try {
-      return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
-    } catch (Exception e) {
-      LOG.error("Failed install archive: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public boolean backupTable(BackupDescriptor exportDescriptor) throws Exception {
-    return getRestClient().post(API + "io/backup", exportDescriptor, Boolean.class);
+    return getRestClient().post(API + "archives/backup", exportDescriptor, Boolean.class);
   }
 
-  public boolean installTable(ArchiveRestoreDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "io/install", descriptor, Boolean.class);
-  }
-
-  public boolean copyToRepository(ArchiveCopyToRepositoryDescriptor descriptor) throws Exception {
-    return getRestClient().post(API + "io/copytorepository", descriptor, Boolean.class);
-  }
-
-  public String bundle(ArchiveBundleDescriptor descriptor) throws Exception {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "io/bundle", descriptor, String.class);
+  public boolean restoreTable(ArchiveRestoreDescriptor descriptor) throws Exception {
+    return getRestClient().post(API + "archives/restore", descriptor, Boolean.class);
   }
 }

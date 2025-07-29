@@ -22,9 +22,6 @@ public class UniversalUploadResource {
   @Autowired
   private UniversalUploadService universalUploadService;
 
-  @Autowired
-  private GameMediaService gameMediaService;
-
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file") MultipartFile file,
                                  @RequestParam(value = "gameId") int gameId,
@@ -47,60 +44,7 @@ public class UniversalUploadResource {
 
   @PostMapping("/process")
   public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
-    Thread.currentThread().setName("Universal Upload Thread");
-    long start = System.currentTimeMillis();
-    LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
-    try {
-      // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
-      universalUploadService.resolveLinks(uploadDescriptor);
-
-      File tempFile = new File(uploadDescriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
-      analysis.analyze();
-      analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
-
-      if (analysis.isVpxOrFpTable()) {
-        LOG.info("Importing table bundle, not media bundle.");
-
-        String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
-        File temporaryGameFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
-        importGame(temporaryGameFile, uploadDescriptor, analysis);
-      }
-
-      universalUploadService.processGameAssets(uploadDescriptor, analysis);
-    }
-    catch (Exception e) {
-      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
-      uploadDescriptor.setError("Processing failed: " + e.getMessage());
-    }
-    finally {
-      uploadDescriptor.finalizeUpload();
-      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
-    }
-    LOG.info("****************************** /Import Finished *************************************");
-    return uploadDescriptor;
-  }
-
-
-  private void importGame(File temporaryGameFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    UploadType uploadType = uploadDescriptor.getUploadType();
-    switch (uploadType) {
-      case uploadAndImport: {
-        gameMediaService.uploadAndImport(temporaryGameFile, uploadDescriptor, analysis);
-        break;
-      }
-      case uploadAndReplace: {
-        gameMediaService.uploadAndReplace(temporaryGameFile, uploadDescriptor, analysis);
-        break;
-      }
-      case uploadAndClone: {
-        gameMediaService.uploadAndClone(temporaryGameFile, uploadDescriptor, analysis);
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Unmapped upload type " + uploadType);
-      }
-    }
+    return universalUploadService.process(uploadDescriptor);
   }
 
 }

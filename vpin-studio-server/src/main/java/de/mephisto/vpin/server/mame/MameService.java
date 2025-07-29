@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mame;
 
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -23,10 +24,7 @@ import org.springframework.stereotype.Service;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -70,9 +68,6 @@ public class MameService implements InitializingBean {
       if (!matches.isEmpty()) {
         mameCache.put(romFolder.toLowerCase(), getOptions(romFolder));
       }
-//      for (Game match : matches) {
-//        gameLifecycleService.notifyGameUpdated(match.getId());
-//      }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
     return true;
@@ -106,6 +101,20 @@ public class MameService implements InitializingBean {
     return false;
   }
 
+  @Nullable
+  public Map<String, Object> getOptionsRaw(@Nullable String rom) {
+    if (rom == null) {
+      return null;
+    }
+
+    List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
+    if (romFolders.contains(rom.toLowerCase())) {
+      return systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
+    }
+    return null;
+  }
+
+
   @NonNull
   public MameOptions getOptions(@NonNull String rom) {
     if (mameCache.containsKey(rom.toLowerCase())) {
@@ -136,6 +145,22 @@ public class MameService implements InitializingBean {
 
     mameCache.put(options.getRom().toLowerCase(), options);
     return options;
+  }
+
+
+  public void saveRegistryData(@NonNull ArchiveMameData mameData) {
+    String rom = mameData.getRom();
+    systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
+
+    Set<Map.Entry<String, Object>> entries = mameData.getRegistryData().entrySet();
+    for (Map.Entry<String, Object> entry : entries) {
+      String key = entry.getKey();
+      Object value = entry.getValue();
+
+      if (value instanceof Integer) {
+        systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
+      }
+    }
   }
 
   public MameOptions saveOptions(@NonNull MameOptions options) {
@@ -238,6 +263,7 @@ public class MameService implements InitializingBean {
     File romFile = new File(getRomsFolder(), name + ".zip");
     return romFile.exists();
   }
+
   public boolean isValidRom(String name) {
     return !romValidationCache.containsKey(name);
   }

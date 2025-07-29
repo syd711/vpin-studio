@@ -385,17 +385,26 @@ public class GameMediaService {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        if (uploadDescriptor.isAutoFill()) {
-          autoMatch(game, true, false);
+        TableDetails tableDetails = analysis.getTableDetails();
+        if (tableDetails == null) {
+          if (uploadDescriptor.isAutoFill()) {
+            autoMatch(game, true, false);
+          }
+
+          tableDetails = getTableDetails(game.getId());
+          if (tableDetails != null && uploadDescriptor.isAutoFill()) {
+            tableDetails = frontendService.autoFill(game, tableDetails, false);
+          }
+
+          TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+          frontendService.saveTableDetails(game.getId(), tableDetails);
+        }
+        else {
+          //we have read the table details, including the mapping from the VPA file.
+          tableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
+          frontendService.saveTableDetails(game.getId(), tableDetails);
         }
 
-        TableDetails tableDetails = getTableDetails(game.getId());
-        if (tableDetails != null && uploadDescriptor.isAutoFill()) {
-          tableDetails = frontendService.autoFill(game, tableDetails, false);
-        }
-
-        TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
-        frontendService.saveTableDetails(game.getId(), tableDetails);
 
         uploadDescriptor.setGameId(returningGameId);
         LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");

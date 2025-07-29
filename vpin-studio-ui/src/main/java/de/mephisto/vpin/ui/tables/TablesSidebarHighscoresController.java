@@ -190,6 +190,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private void onScan() {
     this.refreshView(game);
+    if (game.isPresent()) {
+      client.getGameService().reload(this.game.get().getId());
+    }
   }
 
   @FXML

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.ArchiveUploadController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.ArchiveUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -25,7 +25,7 @@
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload To Repository">
+            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -41,13 +41,11 @@
          <center>
             <VBox>
                <children>
-                  <Label text="Backup Upload" textFill="WHITE">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-                  <Label styleClass="preference-description" text="Backup files and bundles can be uploaded here." />
-                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="The tables will be added to the repository and can be installed afterwards." />
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="The tables will be added to the backup and can be installed from there.">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin></Label>
+                  <Label layoutX="10.0" layoutY="37.0" styleClass="preference-description" text="To install an archive directly, drop it on the tables overview or into the drop-in folder." />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.5999755859375" minWidth="10.0" prefWidth="148.8" />
@@ -60,7 +58,7 @@
                      <children>
                         <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0">
+                              <TextField fx:id="fileNameField" prefHeight="30.0" prefWidth="293.0" promptText="Select .vpa files to upload.">
                                  <HBox.margin>
                                     <Insets right="12.0" />
                                  </HBox.margin>
@@ -76,7 +74,7 @@
                            </children>
                         </HBox>
                         <ComboBox fx:id="repositoryCombo" GridPane.columnIndex="1" />
-                        <Label text="Target Repository:" textFill="WHITE">
+                        <Label text="Archive Folder:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

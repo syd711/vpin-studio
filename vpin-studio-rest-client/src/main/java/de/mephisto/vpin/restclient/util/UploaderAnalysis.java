@@ -1,7 +1,10 @@
 package de.mephisto.vpin.restclient.util;
 
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
+import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -276,13 +279,28 @@ public class UploaderAnalysis {
   }
 
 
+  public ArchiveMameData readMameData() {
+    return VpaArchiveUtil.readMameData(getFile());
+  }
+
+  public TableDetails getTableDetails() {
+    try {
+      return VpaArchiveUtil.readTableDetails(getFile());
+    }
+    catch (Exception e) {
+     LOG.info("{} does not contains table details.", getFile().getAbsolutePath());
+    }
+    return null;
+  }
+
+
   public String getReadMeText() {
     return readme;
   }
 
   public void analyze() throws IOException {
     String suffix = FilenameUtils.getExtension(file.getName());
-    if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
+    if (suffix.equalsIgnoreCase(AssetType.ZIP.name()) || suffix.equalsIgnoreCase(AssetType.VPA.name())) {
       analyzeZip();
     }
     else if (suffix.equalsIgnoreCase(AssetType.RAR.name()) || suffix.equalsIgnoreCase("7z")) {
@@ -897,10 +915,6 @@ public class UploaderAnalysis {
     return false;
   }
 
-  private boolean isValidRomName(String fileName) {
-    return fileName.length() < 16 && !fileName.toLowerCase().contains("pov");
-  }
-
   public String getPupPackRootDirectory() {
     String match = null;
     for (String name : getFilteredFilenamesWithPath()) {
@@ -990,4 +1004,5 @@ public class UploaderAnalysis {
 
     return true;
   }
+
 }

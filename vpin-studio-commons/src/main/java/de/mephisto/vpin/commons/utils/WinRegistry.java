@@ -77,7 +77,7 @@ public class WinRegistry {
   public static void setUserIntValue(@NonNull String path, @NonNull String key, int value) {
     try {
       Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, path, key, value);
-      LOG.info("Written " + path + "\\" + key + " => " + value);
+      LOG.info("Written userInt " + path + "\\" + key + " => " + value);
     }
     catch (Exception e) {
       LOG.error("Failed to write value for path '" + path + "\\" + key + ": " + e.getMessage());
@@ -87,7 +87,7 @@ public class WinRegistry {
   public static void setUserValue(@NonNull String path, @NonNull String key, String value) {
     try {
       Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, path, key, value);
-      LOG.info("Written " + path + "\\" + key + " => " + value);
+      LOG.info("Written userString " + path + "\\" + key + " => " + value);
     }
     catch (Exception e) {
       LOG.error("Failed to write value for path '" + path + "\\" + key + ": " + e.getMessage());

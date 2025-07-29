@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
    <center>
       <StackPane fx:id="loaderStack">
          <BorderPane.margin>
@@ -243,7 +243,7 @@
                </children>
             </StackPane>
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+            <ComboBox fx:id="emulatorCombo" prefWidth="170.0" promptText="All VPX Tables" />
             <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
@@ -256,7 +256,7 @@
                </tooltip>
             </Button>
 
-            <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" promptText="Select Playlist..." />
+            <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="Select Playlist..." />
             <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />

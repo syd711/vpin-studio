@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ShortcutsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ShortcutsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -58,32 +58,33 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label styleClass="default-headline" text="Shortcut" GridPane.rowIndex="1" />
                               <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="Description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <Label layoutX="10.0" layoutY="18.0" styleClass="default-text" text="Ctrl+O" GridPane.rowIndex="14" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="Open the table details dialog." GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="Ctrl+I" GridPane.rowIndex="10" />
-                              <Label layoutX="317.0" layoutY="52.0" styleClass="default-text" text="Open the table assets dialog." GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="Ctrl+M" GridPane.rowIndex="13" />
-                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Toggles between the asset and table management view." GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                              <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="Ctrl+D" GridPane.rowIndex="8" />
-                              <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="Open the Virtual Pinball Spreadsheet website for the selected table." GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <Label layoutX="10.0" layoutY="152.0" styleClass="default-text" text="Ctrl+T" GridPane.rowIndex="16" />
-                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Perform table scan." GridPane.columnIndex="1" GridPane.rowIndex="16" />
-                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="Ctrl+U" GridPane.rowIndex="17" />
-                              <Label layoutX="10.0" layoutY="220.0" styleClass="default-text" text="Ctrl+R" GridPane.rowIndex="15" />
-                              <Label layoutX="247.0" layoutY="186.0" styleClass="default-text" text="Upload and import table." GridPane.columnIndex="1" GridPane.rowIndex="17" />
-                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Force reload of selected tables." GridPane.columnIndex="1" GridPane.rowIndex="15" />
-                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+L" GridPane.rowIndex="12" />
-                              <Label layoutX="247.0" layoutY="253.0" styleClass="default-text" text="Launches the table." GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                              <Label layoutX="10.0" layoutY="288.0" styleClass="default-text" text="Delete" GridPane.rowIndex="19" />
-                              <Label layoutX="247.0" layoutY="288.0" styleClass="default-text" text="Delete the table." GridPane.columnIndex="1" GridPane.rowIndex="19" />
-                              <Label layoutX="10.0" layoutY="321.0" styleClass="default-text" text="Ctrl+Shit+D" GridPane.rowIndex="21" />
-                              <Label layoutX="247.0" layoutY="321.0" styleClass="default-text" text="De-activates the selected tables." GridPane.columnIndex="1" GridPane.rowIndex="21" />
-                              <Label layoutX="10.0" layoutY="355.0" styleClass="default-text" text="Ctrl+Shit+A" GridPane.rowIndex="20" />
-                              <Label layoutX="247.0" layoutY="355.0" styleClass="default-text" text="Activates the selected tables." GridPane.columnIndex="1" GridPane.rowIndex="20" />
+                              <Label layoutX="10.0" layoutY="18.0" styleClass="default-text" text="Ctrl+O" GridPane.rowIndex="15" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="Open the table details dialog." GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                              <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="Ctrl+I" GridPane.rowIndex="11" />
+                              <Label layoutX="317.0" layoutY="52.0" styleClass="default-text" text="Open the table assets dialog." GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="Ctrl+M" GridPane.rowIndex="14" />
+                              <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Toggles between the asset and table management view." GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                              <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="Ctrl+D" GridPane.rowIndex="9" />
+                              <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="Open the Virtual Pinball Spreadsheet website for the selected table." GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                              <Label layoutX="10.0" layoutY="152.0" styleClass="default-text" text="Ctrl+T" GridPane.rowIndex="17" />
+                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Perform table scan." GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                              <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="Ctrl+U" GridPane.rowIndex="18" />
+                              <Label layoutX="10.0" layoutY="220.0" styleClass="default-text" text="Ctrl+R" GridPane.rowIndex="16" />
+                              <Label layoutX="247.0" layoutY="186.0" styleClass="default-text" text="Upload and import table." GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                              <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Force reload of selected tables." GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+L" GridPane.rowIndex="13" />
+                              <Label layoutX="247.0" layoutY="253.0" styleClass="default-text" text="Launches the table." GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                              <Label layoutX="10.0" layoutY="288.0" styleClass="default-text" text="Delete" GridPane.rowIndex="20" />
+                              <Label layoutX="247.0" layoutY="288.0" styleClass="default-text" text="Delete the table." GridPane.columnIndex="1" GridPane.rowIndex="20" />
+                              <Label layoutX="10.0" layoutY="321.0" styleClass="default-text" text="Ctrl+Shit+D" GridPane.rowIndex="22" />
+                              <Label layoutX="247.0" layoutY="321.0" styleClass="default-text" text="De-activates the selected tables." GridPane.columnIndex="1" GridPane.rowIndex="22" />
+                              <Label layoutX="10.0" layoutY="355.0" styleClass="default-text" text="Ctrl+Shit+A" GridPane.rowIndex="21" />
+                              <Label layoutX="247.0" layoutY="355.0" styleClass="default-text" text="Activates the selected tables." GridPane.columnIndex="1" GridPane.rowIndex="21" />
                               <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="F2" GridPane.rowIndex="2" />
                               <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="F3" GridPane.rowIndex="3" />
                               <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="F4" GridPane.rowIndex="4" />
@@ -94,14 +95,16 @@
                               <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Select &quot;VPS Tables&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="Select &quot;Table Statistics&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Select &quot;Table Backups&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+F" GridPane.rowIndex="9" />
-                              <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="Search table (focus the search text field)." GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <Label layoutX="10.0" layoutY="388.0" styleClass="default-text" text="Ctrl+K" GridPane.rowIndex="11" />
-                              <Label layoutX="133.0" layoutY="388.0" styleClass="default-text" text="Kills all cabinet frontend and VPX processes (Stop Action)." GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                              <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+F" GridPane.rowIndex="10" />
+                              <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="Search table (focus the search text field)." GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                              <Label layoutX="10.0" layoutY="388.0" styleClass="default-text" text="Ctrl+K" GridPane.rowIndex="12" />
+                              <Label layoutX="133.0" layoutY="388.0" styleClass="default-text" text="Kills all cabinet frontend and VPX processes (Stop Action)." GridPane.columnIndex="1" GridPane.rowIndex="12" />
                               <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="F7" GridPane.rowIndex="7" />
                               <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="Select &quot;Media Recorder&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <Label layoutX="10.0" layoutY="556.0" styleClass="default-text" text="Ctrl+W" GridPane.rowIndex="18" />
-                              <Label styleClass="default-text" text="Reset VPS Update Indicator." GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                              <Label layoutX="10.0" layoutY="556.0" styleClass="default-text" text="Ctrl+W" GridPane.rowIndex="19" />
+                              <Label styleClass="default-text" text="Reset VPS Update Indicator." GridPane.columnIndex="1" GridPane.rowIndex="19" />
+                              <Label layoutX="10.0" layoutY="282.0" styleClass="default-text" text="Ctrl+B" GridPane.rowIndex="8" />
+                              <Label layoutX="133.0" layoutY="315.0" styleClass="default-text" text="Create backup(s) from the selected table(s)." GridPane.columnIndex="1" GridPane.rowIndex="8" />
                            </children>
                         </GridPane>
                      </children>

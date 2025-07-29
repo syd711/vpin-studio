@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.ArchiveDownloadDialogController">
+<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.ArchiveDownloadDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -33,7 +33,7 @@
                      <center>
                         <HBox alignment="CENTER_LEFT" spacing="6.0" BorderPane.alignment="CENTER_LEFT">
                            <children>
-                              <TextField fx:id="fileNameField" editable="false" prefWidth="350.0">
+                              <TextField fx:id="fileNameField" editable="false" prefWidth="350.0" promptText="Select a download folder.">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>

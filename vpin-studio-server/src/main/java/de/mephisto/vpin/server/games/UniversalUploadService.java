@@ -4,10 +4,12 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -18,6 +20,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -33,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
@@ -80,6 +84,9 @@ public class UniversalUploadService {
   private DiscordService discordService;
 
   @Autowired
+  private MameRomAliasService mameRomAliasService;
+
+  @Autowired
   private PreferencesService preferencesService;
 
   @Autowired
@@ -87,6 +94,44 @@ public class UniversalUploadService {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
+    Thread.currentThread().setName("Universal Upload Thread");
+    long start = System.currentTimeMillis();
+    LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
+    try {
+      // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
+      resolveLinks(uploadDescriptor);
+
+      File tempFile = new File(uploadDescriptor.getTempFilename());
+      UploaderAnalysis analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
+      analysis.analyze();
+      analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
+
+      if (analysis.isVpxOrFpTable()) {
+        LOG.info("Importing table bundle, not media bundle.");
+
+        String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
+        File temporaryGameFile = writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
+        importGame(temporaryGameFile, uploadDescriptor, analysis);
+      }
+      else {
+        LOG.info("Skipped importing table, no game file found.");
+      }
+
+      processGameAssets(uploadDescriptor, analysis);
+    }
+    catch (Exception e) {
+      LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
+      uploadDescriptor.setError("Processing failed: " + e.getMessage());
+    }
+    finally {
+      uploadDescriptor.finalizeUpload();
+      LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
+    }
+    LOG.info("****************************** /Import Finished *************************************");
+    return uploadDescriptor;
+  }
 
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
@@ -110,6 +155,12 @@ public class UniversalUploadService {
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
     // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
     resolveLinks(uploadDescriptor);
+
+    // For backup imports, check if the AssetType was enabled
+    if (!isImportEnabled(uploadDescriptor, assetType)) {
+      LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
+      return;
+    }
 
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
@@ -144,12 +195,26 @@ public class UniversalUploadService {
     }
   }
 
+  private boolean isImportEnabled(UploadDescriptor uploadDescriptor, @NonNull AssetType assetType) {
+    if (uploadDescriptor.isBackupRestoreMode()) {
+      BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+      return backupSettings.isAssetEnabled(assetType);
+    }
+    return true;
+  }
+
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType) throws Exception {
     importArchiveBasedAssets(uploadDescriptor, analysis, assetType, false);
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType, boolean validateAssetType) throws Exception {
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
+    // For backup imports, check if the AssetType was enabled
+    if (!isImportEnabled(uploadDescriptor, assetType)) {
+      LOG.info("Skipped import of asset type \"{}\", disabled for backup imports.", assetType.name());
+      return;
+    }
+
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
       analysis = new UploaderAnalysis(Features.PUPPACKS_ENABLED, tempFile);
@@ -195,7 +260,7 @@ public class UniversalUploadService {
             break;
           }
           if (game != null) {
-            JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
+            JobDescriptor jobExecutionResult = altColorService.installAltColorFromFile(game, tempFile);
             uploadDescriptor.setError(jobExecutionResult.getError());
             gameLifecycleService.notifyGameAssetsChanged(game.getId(), assetType, updatedAssetName);
           }
@@ -333,6 +398,7 @@ public class UniversalUploadService {
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
       importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.VBS);
     }
     else {
       LOG.info("Skipped table based assets since no gameId was set for the upload.");
@@ -352,6 +418,15 @@ public class UniversalUploadService {
     }
     if (analysis.isFpTable()) {
       importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.BAM_CFG, true);
+    }
+
+    if (uploadDescriptor.isBackupRestoreMode()) {
+      ArchiveMameData mameData = analysis.readMameData();
+      if (mameData != null) {
+        GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
+        mameService.saveRegistryData(mameData);
+        mameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
+      }
     }
 
     if (analysis.isVpxOrFpTable()) {
@@ -399,6 +474,28 @@ public class UniversalUploadService {
         MessageEmbed build = embed.build();
 
         discordService.sendMessage(serverId, channelId, build);
+      }
+    }
+  }
+
+
+  public void importGame(File temporaryGameFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    UploadType uploadType = uploadDescriptor.getUploadType();
+    switch (uploadType) {
+      case uploadAndImport: {
+        gameMediaService.uploadAndImport(temporaryGameFile, uploadDescriptor, analysis);
+        break;
+      }
+      case uploadAndReplace: {
+        gameMediaService.uploadAndReplace(temporaryGameFile, uploadDescriptor, analysis);
+        break;
+      }
+      case uploadAndClone: {
+        gameMediaService.uploadAndClone(temporaryGameFile, uploadDescriptor, analysis);
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Unmapped upload type " + uploadType);
       }
     }
   }

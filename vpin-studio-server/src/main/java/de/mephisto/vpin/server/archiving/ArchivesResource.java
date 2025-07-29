@@ -1,9 +1,9 @@
 package de.mephisto.vpin.server.archiving;
 
+import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -20,9 +20,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -38,6 +36,17 @@ public class ArchivesResource {
   @Autowired
   private SystemService systemService;
 
+
+  @PostMapping("/backup")
+  public Boolean backupTable(@RequestBody BackupDescriptor descriptor) {
+    return archiveService.backupTable(descriptor);
+  }
+
+  @PostMapping("/restore")
+  public Boolean restoreArchive(@RequestBody ArchiveRestoreDescriptor descriptor) {
+    return archiveService.restoreArchive(descriptor);
+  }
+
   @GetMapping("/{sourceId}")
   public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
     List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors(sourceId);
@@ -47,18 +56,6 @@ public class ArchivesResource {
       result.add(descriptorRepresentation);
     }
     return result;
-  }
-
-
-  @GetMapping("/filtered")
-  public List<ArchiveDescriptorRepresentation> getFilteredArchives() {
-    List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors();
-    Map<String, ArchiveDescriptorRepresentation> result = new HashMap<>();
-    for (ArchiveDescriptor archiveDescriptor : descriptors) {
-      ArchiveDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
-      result.put(archiveDescriptor.getFilename(), descriptorRepresentation);
-    }
-    return new ArrayList<>(result.values());
   }
 
   @GetMapping("/sources")
@@ -118,49 +115,6 @@ public class ArchivesResource {
     } catch (IOException ex) {
       LOG.info("Error writing archive to output stream. Filename was '{}'", filename, ex);
       throw new RuntimeException("IOError writing file to output stream");
-    }
-  }
-
-  @GetMapping("/download/bundle/{sourceId}/{filename}")
-  public void downloadBundle(@PathVariable("sourceId") long sourceId,
-                             @PathVariable("filename") String fn,
-                             HttpServletResponse response) {
-    InputStream in = null;
-    OutputStream out = null;
-    String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
-    File bundleFile = new File(archiveService.getArchivesFolder(), filename);
-
-    try {
-      in = new BufferedInputStream(new FileInputStream(bundleFile));
-      out = response.getOutputStream();
-      IOUtils.copy(in, out);
-      response.flushBuffer();
-
-      LOG.info("Finished download of \"" + filename + "\"");
-      invalidateCache();
-    } catch (IOException ex) {
-      LOG.info("Error writing bundle to output stream. Filename was '{}'", filename, ex);
-      throw new RuntimeException("IOError writing bundle to output stream");
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          //
-        }
-      }
-
-      if (out != null) {
-        try {
-          out.close();
-        } catch (IOException e) {
-          //
-        }
-      }
-
-      if (bundleFile.exists() && bundleFile.delete()) {
-        LOG.info("Deleted temporary bundle file " + bundleFile.getAbsolutePath());
-      }
     }
   }
 

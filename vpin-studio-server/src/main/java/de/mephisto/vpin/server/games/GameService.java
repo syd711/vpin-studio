@@ -201,7 +201,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
 
-    if (highscoreBackupService.backup(game)) {
+    if (highscoreBackupService.backup(game) != null) {
       return highscoreService.resetHighscore(game, score);
     }
 

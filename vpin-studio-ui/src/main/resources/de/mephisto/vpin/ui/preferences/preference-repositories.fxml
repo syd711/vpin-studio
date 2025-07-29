@@ -12,24 +12,24 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TableRepositoriesPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TableRepositoriesPreferencesController">
    <top>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Repositories" />
-            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="Table repositories are servers that serve Visual Pinball archive files." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backup Folders" />
+            <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="You can add additional backup folders here, e.g. USB devices." textFill="WHITE">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can add your own server here to safely create and restore table backups." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="The devices will be refreshed on reload in the backups view." textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" />
                </VBox.margin></Label>
             <ToolBar>
               <items>
-                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHttpAdd" text="Add" textFill="WHITE">
+                  <Button layoutX="235.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFolderAdd" text="Add" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -60,7 +60,7 @@
               <columns>
                   <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Enabled" />
                 <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="URL" />
+                <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Location" />
               </columns>
             </TableView>
          </children>

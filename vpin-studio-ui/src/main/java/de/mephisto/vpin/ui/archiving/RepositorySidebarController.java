@@ -1,10 +1,11 @@
 package de.mephisto.vpin.ui.archiving;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchiveFileInfo;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
@@ -13,9 +14,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private TitledPane detailsPane;
 
   @FXML
-  private VBox repositoryAccordionVBox;
+  private TitledPane assetsPane;
 
   @FXML
   private Label sourceLabel;
@@ -49,46 +48,52 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label lastModifiedLabel;
 
   @FXML
-  private FontIcon directb2sIcon;
+  private Label directb2sLabel;
 
   @FXML
-  private FontIcon pupPackIcon;
+  private Label pupPackLabel;
 
   @FXML
-  private FontIcon romIcon;
+  private Label romLabel;
 
   @FXML
-  private FontIcon cfgIcon;
+  private Label nvramLabel;
 
   @FXML
-  private FontIcon popperIcon;
+  private Label iniLabel;
 
   @FXML
-  private FontIcon flexIcon;
+  private Label vbsLabel;
 
   @FXML
-  private FontIcon ultraIcon;
+  private Label registryLabel;
 
   @FXML
-  private FontIcon musicIcon;
+  private Label vpxLabel;
 
   @FXML
-  private FontIcon altSoundIcon;
+  private Label resLabel;
 
   @FXML
-  private FontIcon altColorIcon;
+  private Label popperLabel;
 
   @FXML
-  private FontIcon povIcon;
+  private Label dmdLabel;
 
   @FXML
-  private FontIcon resIcon;
+  private Label musicLabel;
 
   @FXML
-  private FontIcon highscoreIcon;
+  private Label altSoundLabel;
 
   @FXML
-  private FontIcon registryIcon;
+  private Label altColorLabel;
+
+  @FXML
+  private Label povLabel;
+
+  @FXML
+  private Label highscoreLabel;
 
   @FXML
   private TitledPane manifestPane;
@@ -133,9 +138,6 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label author;
 
   @FXML
-  private Label volume;
-
-  @FXML
   private Label launchCustomVar;
 
   @FXML
@@ -170,7 +172,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     repositoryAccordion.managedProperty().bindBidirectional(repositoryAccordion.visibleProperty());
-    repositoryAccordion.setExpandedPane(detailsPane);
+    repositoryAccordion.setExpandedPane(manifestPane);
     setArchiveDescriptor(Optional.empty());
   }
 
@@ -179,20 +181,22 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   }
 
   public void setArchiveDescriptor(Optional<ArchiveDescriptorRepresentation> selection) {
-    directb2sIcon.setVisible(false);
-    pupPackIcon.setVisible(false);
-    romIcon.setVisible(false);
-    popperIcon.setVisible(false);
-    flexIcon.setVisible(false);
-    ultraIcon.setVisible(false);
-    musicIcon.setVisible(false);
-    altSoundIcon.setVisible(false);
-    altColorIcon.setVisible(false);
-    resIcon.setVisible(false);
-    cfgIcon.setVisible(false);
-    povIcon.setVisible(false);
-    highscoreIcon.setVisible(false);
-    registryIcon.setVisible(false);
+    vpxLabel.setText(applyValue(vpxLabel, null));
+    directb2sLabel.setText(applyValue(directb2sLabel, null));
+    pupPackLabel.setText(applyValue(pupPackLabel, null));
+    romLabel.setText(applyValue(romLabel, null));
+    nvramLabel.setText(applyValue(nvramLabel, null));
+    resLabel.setText(applyValue(resLabel, null));
+    iniLabel.setText(applyValue(iniLabel, null));
+    vbsLabel.setText(applyValue(vbsLabel, null));
+    popperLabel.setText(applyValue(popperLabel, null));
+    dmdLabel.setText(applyValue(dmdLabel, null));
+    musicLabel.setText(applyValue(musicLabel, null));
+    altSoundLabel.setText(applyValue(altSoundLabel, null));
+    altColorLabel.setText(applyValue(altColorLabel, null));
+    povLabel.setText(applyValue(povLabel, null));
+    highscoreLabel.setText(applyValue(highscoreLabel, null));
+    registryLabel.setText(applyValue(registryLabel, null));
 
     filenameLabel.setText("-");
     filenameLabel.setTooltip(null);
@@ -213,20 +217,22 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       ArchivePackageInfo packageInfo = descriptorRepresentation.getPackageInfo();
 
       if (packageInfo != null) {
-        directb2sIcon.setVisible(packageInfo.isDirectb2s());
-        pupPackIcon.setVisible(packageInfo.isPupPack());
-        romIcon.setVisible(packageInfo.isRom());
-        resIcon.setVisible(packageInfo.isRes());
-        cfgIcon.setVisible(packageInfo.isCfg());
-        popperIcon.setVisible(packageInfo.isPopperMedia());
-        flexIcon.setVisible(packageInfo.isFlexDMD());
-        ultraIcon.setVisible(packageInfo.isUltraDMD());
-        musicIcon.setVisible(packageInfo.isMusic());
-        altSoundIcon.setVisible(packageInfo.isAltSound());
-        altColorIcon.setVisible(packageInfo.isAltColor());
-        povIcon.setVisible(packageInfo.isPov());
-        highscoreIcon.setVisible(packageInfo.isHighscore());
-        registryIcon.setVisible(packageInfo.isRegistryData());
+        vpxLabel.setText(applyValue(vpxLabel, packageInfo.getVpx()));
+        directb2sLabel.setText(applyValue(directb2sLabel, packageInfo.getDirectb2s()));
+        pupPackLabel.setText(applyValue(pupPackLabel, packageInfo.getPupPack()));
+        romLabel.setText(applyValue(romLabel, packageInfo.getRom()));
+        nvramLabel.setText(applyValue(nvramLabel, packageInfo.getNvRam()));
+        resLabel.setText(applyValue(resLabel, packageInfo.getRes()));
+        iniLabel.setText(applyValue(iniLabel, packageInfo.getIni()));
+        vbsLabel.setText(applyValue(vbsLabel, packageInfo.getVbs()));
+        popperLabel.setText(applyValue(popperLabel, packageInfo.getPopperMedia()));
+        dmdLabel.setText(applyValue(dmdLabel, packageInfo.getDmd()));
+        musicLabel.setText(applyValue(musicLabel, packageInfo.getMusic()));
+        altSoundLabel.setText(applyValue(altSoundLabel, packageInfo.getAltSound()));
+        altColorLabel.setText(applyValue(altColorLabel, packageInfo.getAltColor()));
+        povLabel.setText(applyValue(povLabel, packageInfo.getPov()));
+        highscoreLabel.setText(applyValue(highscoreLabel, packageInfo.getHighscore()));
+        registryLabel.setText(applyValue(registryLabel, packageInfo.getMameData()));
       }
 
       TableDetails tableDetails = descriptorRepresentation.getTableDetails();
@@ -248,8 +254,8 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       category.setText(StringUtils.isEmpty(tableDetails.getCategory()) ? "-" : tableDetails.getCategory());
       author.setText(StringUtils.isEmpty(tableDetails.getAuthor()) ? "-" : tableDetails.getAuthor());
       launchCustomVar.setText(StringUtils.isEmpty(tableDetails.getLaunchCustomVar()) ? "-" : tableDetails.getLaunchCustomVar());
-      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" : 
-        VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
+      keepDisplays.setText(StringUtils.isEmpty(tableDetails.getKeepDisplays()) ? "-" :
+          VPinScreen.toString(VPinScreen.keepDisplaysToScreens(tableDetails.getKeepDisplays())));
       gameRating.setText(tableDetails.getGameRating() == null ? "?" : String.valueOf(tableDetails.getGameRating()));
       dof.setText(StringUtils.isEmpty(tableDetails.getDof()) ? "-" : tableDetails.getDof());
       IPDBNum.setText(StringUtils.isEmpty(tableDetails.getIPDBNum()) ? "-" : tableDetails.getIPDBNum());
@@ -261,5 +267,16 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     else {
 
     }
+  }
+
+  private String applyValue(Label label, ArchiveFileInfo value) {
+    if (value != null) {
+      label.setTooltip(new Tooltip(value.toString()));
+      return value.toString();
+    }
+    else {
+      label.setTooltip(null);
+    }
+    return "-";
   }
 }
