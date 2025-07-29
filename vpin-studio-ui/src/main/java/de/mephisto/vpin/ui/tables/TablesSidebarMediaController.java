@@ -93,7 +93,6 @@ public class TablesSidebarMediaController implements Initializable {
   @FXML
   private BorderPane screenAudioLaunch;
 
-
   @FXML
   private Button btn_edit_Audio;
 
@@ -129,7 +128,6 @@ public class TablesSidebarMediaController implements Initializable {
 
   @FXML
   private Button btn_edit_Wheel;
-
 
   @FXML
   private Button btn_delete_Audio;
@@ -370,7 +368,7 @@ public class TablesSidebarMediaController implements Initializable {
     FrontendMediaItemRepresentation defaultMediaItem = client.getFrontendService().getDefaultFrontendMediaItem(
         gameRepresentation.getId(), VPinScreen.valueOf(screen));
     if (defaultMediaItem != null) {
-      TableDialogs.openMediaDialog(gameRepresentation, defaultMediaItem);
+      TableDialogs.openMediaDialog(Studio.stage, gameRepresentation, defaultMediaItem);
     }
   }
 
@@ -442,7 +440,9 @@ public class TablesSidebarMediaController implements Initializable {
           btn_view_GameHelp.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.GameHelp).isEmpty());
           btn_view_PlayField.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.PlayField).isEmpty());
           btn_view_Wheel.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Wheel).isEmpty());
-      
+
+          btn_delete_Audio.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Audio).isEmpty());
+          btn_delete_AudioLaunch.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.AudioLaunch).isEmpty());
           btn_delete_Topper.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Topper).isEmpty());
           btn_delete_Menu.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.Menu).isEmpty());
           btn_delete_BackGlass.setDisable(g.isEmpty() || frontendMedia.getMediaItems(VPinScreen.BackGlass).isEmpty());

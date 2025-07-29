@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private ManiaService maniaService;
+
   @Override
   public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     IScoredSettings iScoredSettings = preferencesService.getJsonPreference(PreferenceNames.ISCORED_SETTINGS, IScoredSettings.class);
@@ -51,11 +55,24 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
     Game game = event.getGame();
     Score newScore = event.getNewScore();
+
+    if (event.isInitialScore()) {
+      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " was detected as initial (default) score.");
+      SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " was detected as initial (default) score.");
+      return;
+    }
+
     if (event.getNewScore().getPlayer() == null) {
       LOG.info("Ignored iScored highscore change, because no player set for this score.");
       SLOG.info("Ignored iScored highscore change, because no player set for this score.");
       return;
     }
+
+//    if (maniaService.isOnDenyList(game, newScore)) {
+//      LOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
+//      SLOG.info("Ignored iScored highscore change, because the highscore " + newScore.getFormattedScore() + " is on the deny list.");
+//      return;
+//    }
 
 
     List<IScoredGame> gameRoomGamesForTable = new ArrayList<>();
@@ -85,7 +102,6 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
       SLOG.info("Ignored iScored highscore change, because no game room games found.");
       return;
     }
-
 
     try {
       List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();

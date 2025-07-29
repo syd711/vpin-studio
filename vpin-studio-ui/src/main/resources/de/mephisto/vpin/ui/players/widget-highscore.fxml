@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <StackPane fx:id="rootStack" alignment="CENTER_LEFT" prefWidth="0.0" styleClass="tile" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.players.WidgetPlayerScoreController">
    <children>
       <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="550.0">
@@ -26,7 +25,7 @@
          <center>
             <VBox fx:id="highscoreVBox" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="tableLabel" text="table" textFill="WHITE">
+                  <Label fx:id="tableLabel" text="Loading..." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -41,7 +40,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="nameLabel" text="name" textFill="WHITE">
+                        <Label fx:id="nameLabel" text="..." textFill="WHITE">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -50,8 +49,8 @@
                   </HBox>
                   <VBox alignment="CENTER_RIGHT">
                      <children>
-                        <Label fx:id="scoreLabel" text="score" textFill="WHITE" />
-                        <Label fx:id="changeDateLabel" text="Label" textFill="WHITE">
+                        <Label fx:id="scoreLabel" text="..." textFill="WHITE" />
+                        <Label fx:id="changeDateLabel" text="..." textFill="WHITE">
                            <font>
                               <Font size="10.0" />
                            </font>

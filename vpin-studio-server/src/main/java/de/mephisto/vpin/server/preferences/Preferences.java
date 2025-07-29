@@ -49,6 +49,8 @@ public class Preferences {
 
   private String pinballXSettings;
 
+  private String pinballYSettings;
+
   private String highscoreCardSettings;
 
   private String highscoreCardTemplates;
@@ -248,6 +250,14 @@ public class Preferences {
 
   public void setPinballXSettings(String pinballXSettings) {
     this.pinballXSettings = pinballXSettings;
+  }
+
+  public String getPinballYSettings() {
+    return pinballYSettings;
+  }
+
+  public void setPinballYSettings(String pinballYSettings) {
+    this.pinballYSettings = pinballYSettings;
   }
 
   public String getOverlaySettings() {

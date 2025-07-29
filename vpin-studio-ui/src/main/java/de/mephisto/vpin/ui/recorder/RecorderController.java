@@ -655,36 +655,41 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   @NonNull
   private HBox createScreenCell(GameRepresentation value, GameRepresentationModel model, VPinScreen screen) {
     HBox column = new HBox(3);
-    column.setAlignment(Pos.CENTER);
-    CheckBox columnCheckbox = new CheckBox();
-    columnCheckbox.setUserData(value);
-    columnCheckbox.setSelected(selection.contains(value.getId()) && selection.get(model.getGameId()).containsScreen(screen));
-    columnCheckbox.getStyleClass().add("default-text");
-    columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (!newValue) {
-          if (selection.contains(value.getId())) {
-            selection.get(value.getId()).removeScreen(screen);
+
+    if (this.active) {
+      column.setAlignment(Pos.CENTER);
+      CheckBox columnCheckbox = new CheckBox();
+      columnCheckbox.setUserData(value);
+      columnCheckbox.setSelected(selection.contains(value.getId()) && selection.get(model.getGameId()).containsScreen(screen));
+      columnCheckbox.getStyleClass().add("default-text");
+      columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (!newValue) {
+            if (selection.contains(value.getId())) {
+              selection.get(value.getId()).removeScreen(screen);
+            }
           }
-        }
-        else {
-          if (!selection.contains(value.getId())) {
-            RecordingData recordingData = createRecordingData(value.getId());
-            recordingData.clear();
-            selection.add(recordingData);
+          else {
+            if (!selection.contains(value.getId())) {
+              RecordingData recordingData = createRecordingData(value.getId());
+              recordingData.clear();
+              selection.add(recordingData);
+            }
+            selection.get(value.getId()).addScreen(screen);
           }
-          selection.get(value.getId()).addScreen(screen);
+          refreshSelection();
         }
-        refreshSelection();
-      }
-    });
-    Node assetStatus = createAssetStatus(value, model, screen, event -> {
-      TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, screen);
-    });
-    column.getChildren().add(columnCheckbox);
-    column.getChildren().add(assetStatus);
+      });
+
+      Node assetStatus = createAssetStatus(value, model, screen, event -> {
+        TableOverviewController overviewController = tablesController.getTableOverviewController();
+        TableDialogs.openTableAssetsDialog(overviewController, value, screen);
+      });
+      column.getChildren().add(columnCheckbox);
+      column.getChildren().add(assetStatus);
+    }
+
     return column;
   }
 

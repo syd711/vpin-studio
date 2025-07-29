@@ -155,6 +155,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public boolean reload() {
+    gameCachingService.clearCache();
     emulatorService.loadEmulators();
     List<GameEmulator> emulators = emulatorService.getValidGameEmulators();
     mameRomAliasService.clearCache(emulators);

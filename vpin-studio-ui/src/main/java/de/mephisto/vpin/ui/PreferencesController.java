@@ -102,6 +102,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button pinballXSettingsBtn;
 
   @FXML
+  private Button pinballYSettingsBtn;
+
+  @FXML
   private Button vpbmBtn;
 
   @FXML
@@ -320,6 +323,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onPinballYSettings(ActionEvent event) throws IOException {
+    load("preference-pinbally-settings.fxml", event);
+  }
+
+  @FXML
   private void onVPBM(ActionEvent event) throws IOException {
     load("preference-vpbm.fxml", event);
   }
@@ -452,6 +460,7 @@ public class PreferencesController extends SettingsSceneController implements In
   public void initialize(URL url, ResourceBundle resourceBundle) {
     popperSettingsBtn.managedProperty().bindBidirectional(popperSettingsBtn.visibleProperty());
     pinballXSettingsBtn.managedProperty().bindBidirectional(pinballXSettingsBtn.visibleProperty());
+    pinballYSettingsBtn.managedProperty().bindBidirectional(pinballYSettingsBtn.visibleProperty());
     repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
     notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
     vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
@@ -471,9 +480,10 @@ public class PreferencesController extends SettingsSceneController implements In
 
     // activation of custom options according to installed frontend
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
+    frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX) || frontendType.equals(FrontendType.PinballY));
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+    pinballYSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballY));
 
     notificationsButton.setVisible(!Features.IS_STANDALONE && Features.NOTIFICATIONS_ENABLED);
     overlayBtn.setVisible(!Features.IS_STANDALONE);

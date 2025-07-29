@@ -7,11 +7,13 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorScript;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.restclient.frontend.pinbally.PinballYSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.GameEntry;
+import de.mephisto.vpin.server.frontend.pinbally.PinballYTableParser;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
@@ -431,7 +433,9 @@ public class PinballXConnector extends BaseConnector {
 
     File pinballXDb = getDatabase(emu);
     if (pinballXDb.exists()) {
-      PinballXTableParser parser = new PinballXTableParser();
+      PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+      Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+      PinballYTableParser parser = new PinballYTableParser(charset);
       parser.addGames(pinballXDb, games, mapTableDetails, emu);
     }
 
@@ -474,7 +478,9 @@ public class PinballXConnector extends BaseConnector {
   @Override
   protected void commitDb(GameEmulator emu) {
     File pinballXDb = getDatabase(emu);
-    PinballXTableParser parser = new PinballXTableParser();
+    PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+    Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+    PinballYTableParser parser = new PinballYTableParser(charset);
     parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);
   }
 
@@ -607,7 +613,9 @@ public class PinballXConnector extends BaseConnector {
             playlist.setName(playlistname);
             // don't set mediaName, studio will use the name
 
-            PinballXTableParser parser = new PinballXTableParser();
+            PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+            Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+            PinballYTableParser parser = new PinballYTableParser(charset);
             List<String> _games = new ArrayList<>();
             Map<String, TableDetails> _tabledetails = new HashMap<>();
             parser.addGames(f, _games, _tabledetails, emu);
@@ -629,7 +637,9 @@ public class PinballXConnector extends BaseConnector {
   protected void savePlaylistGame(int gameId, Playlist pl) {
     if (pl.getEmulatorId() != null) {
       GameEmulator emu = getEmulator(pl.getEmulatorId());
-      PinballXTableParser parser = new PinballXTableParser();
+      PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS);
+      Charset charset = settings.getCharset() != null ? Charset.forName(settings.getCharset()) : Charset.defaultCharset();
+      PinballYTableParser parser = new PinballYTableParser(charset);
       List<GameEntry> games = pl.getGames().stream().map(pg -> getGameEntry(pg.getId())).collect(Collectors.toList());
 
       File playlistDb = new File(getDatabaseFolder(emu), pl.getName() + ".xml");

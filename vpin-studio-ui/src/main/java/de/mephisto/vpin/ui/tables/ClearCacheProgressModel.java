@@ -29,7 +29,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
     "Emulator"
   };
   private final static String[] RELOADGAMES_CACHES_WITH_MAME = {
-    "PinVol", "Frontend", "Games", "Mame", "Dmd", "System"
+    "PinVol", "Frontend", "Games", "GamesCache", "Mame", "Dmd", "System"
   };
   private final static String[] RELOADGAMES_CACHES = {
     "PinVol", "Frontend", "Games", "Dmd", "System"

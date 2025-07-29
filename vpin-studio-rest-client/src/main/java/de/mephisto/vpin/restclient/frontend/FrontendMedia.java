@@ -32,7 +32,9 @@ public class FrontendMedia {
 
     FrontendMediaItem fallback = null;
     for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
-      fallback = frontendMediaItem;
+      if (fallback == null) {
+        fallback = frontendMediaItem;
+      }
       if (frontendMediaItem.getName().contains("(SCREEN")) {
         return frontendMediaItem;
       }

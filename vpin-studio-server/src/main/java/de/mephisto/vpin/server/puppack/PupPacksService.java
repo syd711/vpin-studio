@@ -155,7 +155,7 @@ public class PupPacksService implements InitializingBean {
         if (orbitalPin) {
           msg += " (orbitalPin: " + orbitalPin + ")";
         }
-        LOG.info(msg);
+//        LOG.info(msg);
       }
       else {
         LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");

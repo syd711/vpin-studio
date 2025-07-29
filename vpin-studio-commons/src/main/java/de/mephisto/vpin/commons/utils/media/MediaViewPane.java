@@ -5,7 +5,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaView;
@@ -15,15 +14,24 @@ import javafx.scene.media.MediaView;
  * Also manage rotated images or videos
  */
 public class MediaViewPane extends Pane {
+  private int marginX = 0;
+  private int marginY = 0;
 
-  private int marginX = 12;
-  private int marginY = 12;
-
-  /** The centered child in the Pane, only one at a time */
+  /**
+   * The centered child in the Pane, only one at a time
+   */
   private Node child;
 
-  /** Whether Image or Video is rotated, When rotated, invert width and height role */
+  /**
+   * Whether Image or Video is rotated, When rotated, invert width and height role
+   */
   private boolean rotated;
+
+  protected MediaOptions mediaOptions;
+
+  public void setMediaOptions(MediaOptions mediaOptions) {
+    this.mediaOptions = mediaOptions;
+  }
 
   /**
    * Set the child in the middle of the Pane
@@ -41,36 +49,28 @@ public class MediaViewPane extends Pane {
   @Override
   protected void layoutChildren() {
     super.layoutChildren();
-  
+
     double width = getWidth();
     double height = getHeight();
 
+    double fitWidth = rotated ? height - marginX : width - marginX;
+    double fitHeight = rotated ? width - marginY : height - marginY;
+
     if (child instanceof ImageView) {
-      ((ImageView) child).setFitWidth(rotated ? height - marginX : width - marginX);
-      ((ImageView) child).setFitHeight(rotated ? width - marginY : height - marginY);
+      ImageView imageView = ((ImageView) child);
+      imageView.setFitWidth(fitWidth);
+      imageView.setFitHeight(fitHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else if (child instanceof MediaView) {
-      ((MediaView) child).setFitWidth(rotated ? height - marginX : width - marginX);
-      ((MediaView) child).setFitHeight(rotated ? width - marginY : height - marginY);
+      MediaView mediaView = ((MediaView) child);
+      mediaView.setFitWidth(fitWidth);
+      mediaView.setFitHeight(fitHeight);
       super.layoutInArea(child, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
     }
     else {
       Bounds bounds = child.getLayoutBounds();
-      child.relocate((width - bounds.getWidth()) / 2.0, (height  - bounds.getHeight()) / 2);
-    }    
-  }
-
-  public void disposeMediaPane() {
-    Tooltip.uninstall(this, null);
-    if (child != null) {
-      if (child instanceof AssetMediaPlayer) {
-        ((AssetMediaPlayer) child).disposeMedia();
-      }
-      else if (child instanceof ImageViewer) {
-        ((ImageViewer) child).disposeImage();
-      }
-      setCenter(null);
+      child.relocate((width - bounds.getWidth()) / 2.0, (height - bounds.getHeight()) / 2);
     }
   }
 
@@ -78,7 +78,13 @@ public class MediaViewPane extends Pane {
     setCenter(new ProgressIndicator());
   }
 
-  protected void setRotated(boolean rotated) {
+  protected boolean isRotated() {
+    return rotated;
+  }
+
+  public void setRotated(boolean rotated) {
     this.rotated = rotated;
   }
+
+
 }

@@ -34,12 +34,16 @@ public class PinballXTableParser extends DefaultHandler {
   /** Parser for dates */
   protected final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
 
+  private final Charset charset;
 
-  @Nullable
+  public PinballXTableParser(Charset charset) {
+    this.charset = charset;
+  }
+
+
   public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, GameEmulator emu) {
     int gamecount = 0;
-    //try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.forName("UTF-8")))) {
-    try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.defaultCharset()))) {
+    try (Reader reader = new BufferedReader(new FileReader(xmlFile, charset))) {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
@@ -234,7 +238,7 @@ public class PinballXTableParser extends DefaultHandler {
       }
     }
     
-    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb)))) {
+    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb), charset))) {
 
       writer.append("<menu>\n");
       for (GameEntry entry : games) {

@@ -223,7 +223,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
       .thenAcceptLater(updatedTemplate -> {
-          loadTemplates();  
+          loadTemplates();
           this.templateCombo.setValue(updatedTemplate);
 
           assignTemplate(updatedTemplate);
@@ -382,7 +382,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private void refreshOverlayBackgroundPreview() {
     if (assetMediaPlayer != null) {
       assetMediaPlayer.disposeMedia();
-      assetMediaPlayer.setMediaViewSize(0, 0);
     }
     mediaPlayerControl.setVisible(false);
     previewOverlayPanel.setVisible(false);
@@ -394,7 +393,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       .thenAcceptLater(frontendMedia -> {
         FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
         if (defaultMediaItem != null) {
-          assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this);
+          assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
           //images do not have a media player
           if (assetMediaPlayer != null) {
             double fitwith = stage.getWidth() - 900; // was cardPreview.getFitWidth()

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class VideoMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
-  public static final int MEDIA_SIZE = 280;
 
   private VPinScreen screen;
 
@@ -20,6 +19,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private FrontendMediaItemRepresentation mediaItem;
   private MediaView mediaView;
   private Media media;
+
+  private double fitWidth = 0;
+  private double fitHeight = 0;
 
   private boolean invertPlayfield;
 
@@ -82,7 +84,22 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setUserData(mediaItem);
       mediaView.setPreserveRatio(true);
       mediaView.setVisible(false);
-      scaleMediaView();
+
+      if (mediaOptions == null || mediaOptions.isAutoRotate()) {
+        scaleMediaView();
+      }
+
+      if (fitHeight > 0 && fitWidth > 0) {
+        if (this.isRotated()) {
+          mediaView.setFitHeight(fitWidth);
+          mediaView.setFitWidth(fitHeight);
+        }
+        else {
+          mediaView.setFitHeight(fitHeight);
+          mediaView.setFitWidth(fitWidth);
+        }
+      }
+
       mediaView.setVisible(true);
 
       setCenter(mediaView);
@@ -90,12 +107,11 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   private void scaleMediaView() {
-
     if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         setRotated(true);
-       }
+      }
     }
     else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
@@ -107,9 +123,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   @Override
   public void setMediaViewSize(double fitWidth, double fitHeight) {
+    this.fitWidth = fitWidth;
+    this.fitHeight = fitHeight;
+
     if (this.mediaView != null) {
-      this.mediaView.setFitHeight(fitHeight);
       this.mediaView.setFitWidth(fitWidth);
+      this.mediaView.setFitHeight(fitHeight);
     }
   }
 

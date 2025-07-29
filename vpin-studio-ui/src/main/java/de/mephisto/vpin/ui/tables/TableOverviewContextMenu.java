@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
@@ -169,14 +170,16 @@ public class TableOverviewContextMenu {
     vpsResetItem.setGraphic(iconVpsReset);
     ctxMenu.getItems().add(vpsResetItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+    if (game.isVpxGame()) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
-    resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
-    resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
-    ctxMenu.getItems().add(resetRatingsItem);
+      MenuItem resetRatingsItem = new MenuItem("Reset Ratings");
+      resetRatingsItem.setOnAction(actionEvent -> tableOverviewController.onResetRatings());
+      resetRatingsItem.setGraphic(WidgetFactory.createIcon("mdi2u-undo-variant"));
+      ctxMenu.getItems().add(resetRatingsItem);
+    }
 
-    if (Features.MANIA_ENABLED) {
+    if (Features.MANIA_ENABLED && game.isVpxGame()) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
       MenuItem maniaEntry = new MenuItem("Open VPin Mania Entry");
       maniaEntry.setDisable(StringUtils.isEmpty(game.getExtTableId()) || multiSelection);
@@ -206,22 +209,27 @@ public class TableOverviewContextMenu {
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem eventLogItem = new MenuItem("Event Log");
-    KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
-    eventLogItem.setAccelerator(eventLogItemKey);
-    eventLogItem.setDisable(multiSelection);
-    eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
-    eventLogItem.setDisable(!game.isEventLogAvailable());
-    eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
-    ctxMenu.getItems().add(eventLogItem);
+    if(game.isVpxGame()) {
+      MenuItem eventLogItem = new MenuItem("Event Log");
+      KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
+      eventLogItem.setAccelerator(eventLogItemKey);
+      eventLogItem.setDisable(multiSelection);
+      eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
+      eventLogItem.setDisable(!game.isEventLogAvailable());
+      eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
+      ctxMenu.getItems().add(eventLogItem);
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+      ctxMenu.getItems().add(new SeparatorMenuItem());
+    }
 
-    MenuItem pinVolItem = new MenuItem("PinVol Settings");
-    pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
+
+    if(game.isVpxGame()) {
+      MenuItem pinVolItem = new MenuItem("PinVol Settings");
+      pinVolItem.setOnAction(actionEvent -> TableDialogs.openPinVolSettings(tableView.getSelectionModel().getSelectedItems().stream().map(m -> m.getGame()).collect(Collectors.toList())));
 //    pinVolItem.setDisable(games.isEmpty());
-    pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
-    ctxMenu.getItems().add(pinVolItem);
+      pinVolItem.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
+      ctxMenu.getItems().add(pinVolItem);
+    }
 
     if (game.isVpxGame()) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
@@ -254,15 +262,7 @@ public class TableOverviewContextMenu {
 //      ctxMenu.getItems().add(importsItem);
 //    }
 
-    //Declutter
-//    ctxMenu.getItems().add(new SeparatorMenuItem());
-//    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
-//    b2sItem.setGraphic(iconBackglassManager);
-//    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
-//    ctxMenu.getItems().add(b2sItem);
-
     if (game.isVpxGame()) {
-
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
@@ -399,14 +399,18 @@ public class TableOverviewContextMenu {
       }
     }
 
-    ctxMenu.getItems().add(new SeparatorMenuItem());
+    GameEmulatorRepresentation emu = client.getEmulatorService().getGameEmulator(game.getEmulatorId());
+    if (emu.isFpEmulator() || emu.isVpxEmulator()) {
+      ctxMenu.getItems().add(new SeparatorMenuItem());
 
-    MenuItem removeItem = new MenuItem("Delete");
-    KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
-    removeItem.setAccelerator(removeItemKey);
-    removeItem.setOnAction(tableOverviewController::onDelete);
-    removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-    ctxMenu.getItems().add(removeItem);
+      MenuItem removeItem = new MenuItem("Delete");
+      KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
+      removeItem.setAccelerator(removeItemKey);
+      removeItem.setOnAction(tableOverviewController::onDelete);
+      removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+      ctxMenu.getItems().add(removeItem);
+    }
+
   }
 
   public void handleKeyEvent(KeyEvent event) {

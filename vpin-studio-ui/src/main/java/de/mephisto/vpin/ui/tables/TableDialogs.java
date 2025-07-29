@@ -314,7 +314,7 @@ public class TableDialogs {
     stage.setUserData(fxResizeHelper);
     stage.setMinWidth(860);
     stage.setMinHeight(600);
-     
+
     stage.showAndWait();
     return true;
   }
@@ -742,15 +742,15 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(GameRepresentation game, FrontendMediaItemRepresentation item) {
-    Stage stage = Dialogs.createStudioDialogStage(MediaPreviewController.class, "dialog-media-preview.fxml", game.getGameDisplayName() + " - " + item.getScreen() + " Screen");
+  public static void openMediaDialog(Stage parent, GameRepresentation game, FrontendMediaItemRepresentation item) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", game.getGameDisplayName() + " - " + item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
-
-    double height = Studio.stage.getHeight() - 200;
-    double width = height / 9 * 16;
-    stage.setWidth(width);
-    stage.setHeight(height);
     controller.setData(stage, game, item);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(800);
+    stage.setMinHeight(600);
 
     stage.showAndWait();
   }

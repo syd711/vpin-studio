@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -784,7 +785,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
                 + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
           }
 
-          this.importBtn.setDisable(false);
+          GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.valueProperty().get();
+          this.importBtn.setDisable(!isAllVpxSelected );
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
@@ -1717,7 +1719,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     super.initialize("game", "games", new TableOverviewColumnSorter(this));
 
     //manually fix new columns
-    if (!getTableSettings().getColumnOrder().contains(columnRating.getId())) {
+    BaseTableSettings tableSettings = getTableSettings();
+    if (tableSettings != null && !tableSettings.getColumnOrder().contains(columnRating.getId())) {
       tableView.getColumns().remove(columnRating);
       tableView.getColumns().add(tableView.getColumns().indexOf(columnPlaylists), columnRating);
     }

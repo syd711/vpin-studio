@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.restclient.frontend.pinbally.PinballYSettings;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.iscored.IScoredSettings;
 import de.mephisto.vpin.restclient.mania.ManiaSettings;
@@ -49,6 +50,7 @@ public interface PreferenceNames {
   String MONITORING_SETTINGS = "monitoringSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
+  String PINBALLY_SETTINGS = "pinballYSettings";
   String VPU_SETTINGS = "vpuSettings";
   String VPF_SETTINGS = "vpfSettings";
 
@@ -108,6 +110,9 @@ public interface PreferenceNames {
       }
       case PreferenceNames.PINBALLX_SETTINGS: {
         return PinballXSettings.class;
+      }
+      case PreferenceNames.PINBALLY_SETTINGS: {
+        return PinballYSettings.class;
       }
       case PreferenceNames.FILTER_SETTINGS: {
         return FilterSettings.class;

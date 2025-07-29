@@ -40,8 +40,12 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
       for (int i = 0; i < lines.size(); i++) {
         String line = lines.get(i);
 
-        //the if there is a highscore title, in that case...
-        if (titles.contains(line.trim()) && ((i+1) < titles.size())) {
+        //Check if there is a highscore title, in that case...
+        if (titles.contains(line.trim()) && ((i + 1) < titles.size())) {
+          if (i + 1 >= lines.size()) {
+            continue;
+          }
+
           String scoreLine = lines.get(i + 1);
 
           //the next line could be a raw score without a positions
@@ -72,7 +76,12 @@ public class DefaultAdapter extends ScoreListAdapterBase implements ScoreListAda
       return filterDuplicates(scores);
     }
     catch (Exception e) {
-      LOG.error("Score parsing failed for \"" + game.getGameDisplayName() + "\": {}", e.getMessage(), e);
+      if (game != null) {
+        LOG.error("Score parsing failed for \"" + game.getGameDisplayName() + "\": {}", e.getMessage(), e);
+      }
+      else {
+        LOG.error("Score parsing failed: {}", e.getMessage(), e);
+      }
       throw e;
     }
   }
