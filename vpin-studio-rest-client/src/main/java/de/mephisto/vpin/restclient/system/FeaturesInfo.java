@@ -29,7 +29,7 @@ public class FeaturesInfo {
   public boolean PLAYLIST_EXTENDED = true;
   public boolean PLAYLIST_CRUD = true;
 
-  public boolean BACKUPS_ENABLED = false;
+  public boolean BACKUPS_ENABLED = true; //highscore restore is missing!
 
   public boolean SCREEN_MANAGER_ENABLED = true;
 
