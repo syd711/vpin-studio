@@ -29,7 +29,7 @@ public class FeaturesInfo {
   public boolean PLAYLIST_EXTENDED = true;
   public boolean PLAYLIST_CRUD = true;
 
-  public boolean BACKUPS_ENABLED = true;
+  public boolean BACKUPS_ENABLED = false;
 
   public boolean SCREEN_MANAGER_ENABLED = true;
 
