@@ -154,6 +154,7 @@
                         </Label>
                      </children>
                   </HBox>
+                  <Label styleClass="preference-description" text="The filter is only applied for new updates. Existing ones are not filtered by this." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </children>
