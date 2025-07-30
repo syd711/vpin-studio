@@ -245,6 +245,28 @@
                               <Insets top="6.0" />
                            </VBox.margin>
                         </GridPane>
+                        <VBox fx:id="tablesBox">
+                           <children>
+                              <Label text="Aliased Tables" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="preference-description" text="The following tables share the same original ROM.">
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox fx:id="tableListBox">
+                                 <VBox.margin>
+                                    <Insets bottom="24.0" />
+                                 </VBox.margin>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </VBox>
                         </children>
                      <padding>
                         <Insets bottom="12.0" top="12.0" />

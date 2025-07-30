@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx;
 import com.jhlabs.image.GaussianFilter;
 import com.jhlabs.image.GrayscaleFilter;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import org.imgscalr.Scalr;
@@ -77,7 +78,7 @@ public class ImageUtil {
       Graphics g = bufferedImage.getGraphics();
       Graphics2D g2d = (Graphics2D) g.create();
       g2d.setColor(color);
-      g2d.setFont(new Font("TimesRoman", Font.BOLD, 18));
+      g2d.setFont(new Font("TimesRoman", Font.BOLD, 24));
       g2d.drawString(watermark, 12, 30);
       file.delete();
       write(bufferedImage, file);
@@ -233,7 +234,7 @@ public class ImageUtil {
       ImageIO.write(image, "JPG", imageOutputStream);
       imageOutputStream.close();
       long duration = System.currentTimeMillis() - writeDuration;
-      LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms.");
+      LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms., " + FileUtils.readableFileSize(file.length()));
     }
     finally {
       if (fileOutputStream != null) {
@@ -260,7 +261,7 @@ public class ImageUtil {
       ImageIO.write(image, "PNG", imageOutputStream);
       imageOutputStream.close();
       long duration = System.currentTimeMillis() - writeDuration;
-      LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+      LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms., " + FileUtils.readableFileSize(file.length()));
     }
     finally {
       if (fileOutputStream != null) {

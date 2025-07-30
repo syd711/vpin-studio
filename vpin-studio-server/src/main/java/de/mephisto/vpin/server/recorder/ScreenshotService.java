@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
+
+import static de.mephisto.vpin.commons.fx.ImageUtil.*;
 
 @Service
 public class ScreenshotService {
@@ -90,6 +94,7 @@ public class ScreenshotService {
     List<File> screenshotFiles = new ArrayList<>();
     List<VPinScreen> disabledScreens = monitoringSettings.getDisabledScreens();
     List<FrontendPlayerDisplay> recordingScreens = recorderService.getRecordingScreens();
+    List<BufferedImage> images = new ArrayList<>();
     for (FrontendPlayerDisplay recordingScreen : recordingScreens) {
       try {
         VPinScreen screen = recordingScreen.getScreen();
@@ -109,7 +114,8 @@ public class ScreenshotService {
             throw new Exception("Failed to delete temporary screenshot file " + target.getAbsolutePath());
           }
 
-          ImageUtil.drawTimestamp(file);
+          images.add(loadImage(file));
+          drawTimestamp(file);
           file.renameTo(target);
 
           screenshotFiles.add(target);
@@ -120,6 +126,59 @@ public class ScreenshotService {
         LOG.error("Error writing screenshot: {}", e.getMessage(), e);
       }
     }
+
+    try {
+      if (!images.isEmpty()) {
+        File summaryImage = writeScreenshotSummary(images);
+        if (summaryImage != null) {
+          drawTimestamp(summaryImage);
+          screenshotFiles.add(summaryImage);
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed writing summary timestamp: {}", e.getMessage(), e);
+    }
+
     return screenshotFiles;
+  }
+
+  private File writeScreenshotSummary(List<BufferedImage> images) {
+    try {
+      int width = 0;
+      int height = 0;
+      for (BufferedImage image : images) {
+        width += image.getWidth();
+        if (image.getHeight() > height) {
+          height = image.getHeight();
+        }
+      }
+
+      BufferedImage summaryImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+      int x = 0;
+      Graphics g = summaryImage.getGraphics();
+      for (BufferedImage image : images) {
+        g.drawImage(image, x, 0, null);
+        x += image.getWidth();
+      }
+      g.dispose();
+
+      File file = File.createTempFile("screenshot", ".jpg");
+      write(summaryImage, file);
+
+      String name = "screenshot-summary.jpg";
+      File target = new File(file.getParentFile(), name);
+      if (target.exists() && !target.delete()) {
+        throw new Exception("Failed to delete temporary screenshot file " + target.getAbsolutePath());
+      }
+
+      file.renameTo(target);
+      LOG.info("Written screenshot summary {} ({})", target.getAbsolutePath(), FileUtils.readableFileSize(target.length()));
+      return target;
+    }
+    catch (Exception e) {
+      LOG.error("Failed writing summary image: {}", e.getMessage(), e);
+    }
+    return null;
   }
 }
