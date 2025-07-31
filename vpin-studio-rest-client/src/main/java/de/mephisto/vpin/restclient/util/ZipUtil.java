@@ -226,11 +226,11 @@ public class ZipUtil {
     return fileToString;
   }
 
-  public static boolean writeZippedFile(@NonNull File file, @NonNull String filename, @NonNull File target) {
+  public static boolean writeZippedFile(@NonNull File zipFile, @NonNull String filename, @NonNull File target) {
     boolean descriptorFound = false;
     try {
       byte[] buffer = new byte[1024];
-      FileInputStream fileInputStream = new FileInputStream(file);
+      FileInputStream fileInputStream = new FileInputStream(zipFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
 
@@ -249,7 +249,7 @@ public class ZipUtil {
               fileOutputStream.write(buffer, 0, len);
             }
             fileOutputStream.close();
-            LOG.info("Unzipped \"" + target.getAbsolutePath() + "\" from zip file \"" + file.getAbsolutePath() + "\"");
+            LOG.info("Unzipped \"" + target.getAbsolutePath() + "\" from zip file \"" + zipFile.getAbsolutePath() + "\"");
           }
         }
         zis.closeEntry();
@@ -262,7 +262,7 @@ public class ZipUtil {
       return true;
     }
     catch (Exception e) {
-      LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      LOG.error("Reading of " + zipFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
 
     if (!descriptorFound) {

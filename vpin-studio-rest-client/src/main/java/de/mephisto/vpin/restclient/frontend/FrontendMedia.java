@@ -21,7 +21,7 @@ public class FrontendMedia {
   }
 
   public FrontendMediaItem getDefaultMediaItem(VPinScreen screen) {
-    if (!media.containsKey(screen.name())) {
+    if (screen == null || !media.containsKey(screen.name())) {
       return null;
     }
 

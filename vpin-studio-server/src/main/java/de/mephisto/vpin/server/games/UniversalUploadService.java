@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -20,6 +21,7 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
@@ -94,6 +96,9 @@ public class UniversalUploadService {
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
+
+  @Autowired
+  private HighscoreBackupService highscoreBackupService;
 
   public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
@@ -422,10 +427,18 @@ public class UniversalUploadService {
 
     if (uploadDescriptor.isBackupRestoreMode()) {
       ArchiveMameData mameData = analysis.readMameData();
+      GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
+
       if (mameData != null) {
-        GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
         mameService.saveRegistryData(mameData);
         mameRomAliasService.writeAlias(gameEmulator, mameData.getRom(), mameData.getAlias());
+      }
+
+      String highscoreBackupZipEntry = analysis.getFileNameWithPathForExtension(HighscoreBackupService.FILE_SUFFIX);
+      if (!StringUtils.isEmpty(highscoreBackupZipEntry)) {
+        File highscoreBackupTempFile = File.createTempFile("highscore-backup", "." + HighscoreBackupService.FILE_SUFFIX);
+        ZipUtil.writeZippedFile(analysis.getFile(), highscoreBackupZipEntry, highscoreBackupTempFile);
+        highscoreBackupService.restoreBackupFile(gameEmulator, highscoreBackupTempFile);
       }
     }
 

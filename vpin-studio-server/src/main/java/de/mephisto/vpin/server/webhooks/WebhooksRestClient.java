@@ -17,7 +17,7 @@ public class WebhooksRestClient {
       restClient.delete("");
     }
     catch (Exception e) {
-      LOG.error("Webhook delete call failed: {}", e.getMessage(), e);
+      LOG.error("Webhook delete call failed: {}", e.getMessage());
     }
   }
 
@@ -27,7 +27,7 @@ public class WebhooksRestClient {
       restClient.put("", parameters, Map.class);
     }
     catch (Exception e) {
-      LOG.error("Webhook update call failed: {}", e.getMessage(), e);
+      LOG.error("Webhook update call failed: {}", e.getMessage());
     }
   }
 
@@ -38,7 +38,7 @@ public class WebhooksRestClient {
       restClient.post("", updatedParams, Map.class);
     }
     catch (Exception e) {
-      LOG.error("Webhook create call failed: {}", e.getMessage(), e);
+      LOG.error("Webhook create call failed: {}", e.getMessage());
     }
   }
 }

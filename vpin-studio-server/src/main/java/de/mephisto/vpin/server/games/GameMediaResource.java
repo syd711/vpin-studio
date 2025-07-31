@@ -152,6 +152,9 @@ public class GameMediaResource {
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
+    if (vPinScreen == null) {
+      LOG.error("Failed to resolve screen for value {}", screen);
+    }
     Game game = frontendService.getOriginalGame(id);
     if (game != null) {
       FrontendMedia frontendMedia = frontendService.getGameMedia(game);

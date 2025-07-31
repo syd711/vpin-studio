@@ -102,7 +102,8 @@ public class HighscoreBackupService implements InitializingBean {
     }
 
     File backupRomFolder = new File(systemService.getBackupFolder(), rom);
-    boolean result = restoreBackupFile(game.getEmulator(), backupRomFolder, filename);
+    File backupFile = new File(backupRomFolder, filename);
+    boolean result = restoreBackupFile(game.getEmulator(), backupFile);
     if (result) {
       highscoreService.setPauseHighscoreEvents(true);
       for (Game allRomGames : games) {
@@ -259,27 +260,26 @@ public class HighscoreBackupService implements InitializingBean {
     return null;
   }
 
-  public boolean restoreBackupFile(@NonNull GameEmulator gameEmulator, @NonNull File backupRomFolder, @NonNull String filename) {
-    File archiveFile = new File(backupRomFolder, filename);
-    HighscoreBackup highscoreBackup = readBackupFile(archiveFile);
+  public boolean restoreBackupFile(@NonNull GameEmulator gameEmulator, @NonNull File backupFile) {
+    HighscoreBackup highscoreBackup = readBackupFile(backupFile);
     HighscoreType highscoreType = highscoreBackup.getHighscoreType();
     String rom = highscoreBackup.getRom();
 
     switch (highscoreType) {
       case NVRam: {
         File target = new File(gameEmulator.getNvramFolder(), highscoreBackup.getHighscoreFilename());
-        return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
+        return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
         File target = new File(gameEmulator.getUserFolder(), highscoreBackup.getHighscoreFilename());
-        return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
+        return ZipUtil.writeZippedFile(backupFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {
         try {
-          String json = ZipUtil.readZipFile(archiveFile, VPREG_STG_JSON);
+          String json = ZipUtil.readZipFile(backupFile, VPREG_STG_JSON);
           VPReg vpReg = new VPReg(gameEmulator.getVPRegFile(), rom, null);
           vpReg.restore(json);
-          LOG.info("Imported VPReg.stg data from " + backupRomFolder.getAbsolutePath());
+          LOG.info("Imported VPReg.stg data from " + backupFile.getParentFile().getAbsolutePath());
           return true;
         }
         catch (Exception e) {
