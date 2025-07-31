@@ -1,3 +1,10 @@
+## Release Notes 4.1.4
+
+## Changes
+
+- **Pause Menu**
+  - Added improved scaled menu icons.
+
 ## Release Notes 4.1.3
 
 ## Changes

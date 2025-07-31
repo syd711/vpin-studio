@@ -256,7 +256,7 @@ public class MenuController implements Initializable {
     }
     else if (activeSelection.getItemType().equals(PauseMenuItemTypes.iScored)) {
       try {
-        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png"));
+        Image sectionImage = new Image(PauseMenu.class.getResourceAsStream("iscored.png"));
         String resource = "menu-score-view.fxml";
         FXMLLoader loader = new FXMLLoader(MenuScoreViewController.class.getResource(resource));
         Pane widgetRoot = loader.load();

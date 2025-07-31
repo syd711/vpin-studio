@@ -43,7 +43,7 @@ public class PauseMenuItemsFactory {
       List<CompetitionRepresentation> competitions = client.getIScoredSubscriptions();
       for (CompetitionRepresentation competition : competitions) {
         if (competition.isActive() && competition.getGameId() == game.getId()) {
-          PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iScored-wheel.png")));
+          PauseMenuItem iScoredItem = new PauseMenuItem(PauseMenuItemTypes.iScored, "iScored", "iScored Game Room Scores", new Image(PauseMenu.class.getResourceAsStream("iscored.png")));
           iScoredItem.setCompetition(competition);
           pauseMenuItems.add(iScoredItem);
         }
@@ -72,10 +72,10 @@ public class PauseMenuItemsFactory {
     }
 
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
-      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");
     }
     if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
-      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "infovideo.png");
+      loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "tutorial.png");
     }
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
@@ -92,7 +92,7 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item;
     List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
     for (VpsTutorialUrls videoTutorial : videoTutorials) {
-      item = new PauseMenuItem(PauseMenuItemTypes.help, "Tutorial", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("infovideo.png")));
+      item = new PauseMenuItem(PauseMenuItemTypes.help, "Tutorial", "Tutorial: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("tutorial.png")));
       String videoUrl = "https://assets.vpin-mania.net/tutorials/kongedam/" + game.getExtTableId() + ".mp4";
       item.setVideoUrl(videoUrl);
       LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + videoUrl);
