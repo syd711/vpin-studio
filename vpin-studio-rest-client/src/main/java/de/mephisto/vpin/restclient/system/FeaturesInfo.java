@@ -21,6 +21,8 @@ public class FeaturesInfo {
   public boolean RES_EDITOR = true;
   public boolean SCREEN_VALIDATOR = false;
 
+  public boolean TABLES_SECONDARY_TOOLBAR = true;
+
   /** Whether ratings are supported */
   public boolean RATINGS = true;
 

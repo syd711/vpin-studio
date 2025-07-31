@@ -213,6 +213,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private Label validationErrorText;
 
   @FXML
+  private ToolBar secondaryToolbar;
+
+  @FXML
   private Node validationError;
 
   @FXML
@@ -226,6 +229,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private Separator importSeparator;
+
+  @FXML
+  private Separator mappingSeparator;
 
   @FXML
   private Button assetManagerViewBtn;
@@ -253,6 +259,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private Button importBtn;
+
+  @FXML
+  private Button exportBtn;
 
   @FXML
   private Separator assetManagerSeparator;
@@ -290,6 +299,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private GameEmulatorChangeListener gameEmulatorChangeListener;
   private GameStatus status;
   private VPinScreen assetScreenSelection;
+  private Parent playBtn;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -729,6 +739,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.deleteBtn.setDisable(true);
     this.uploadsButtonController.setDisable(true);
     this.importBtn.setDisable(true);
+    this.exportBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
     this.emulatorCombo.setDisable(true);
@@ -788,6 +799,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
           GameEmulatorRepresentation emulatorRepresentation = emulatorCombo.valueProperty().get();
           this.importBtn.setDisable(!isAllVpxSelected);
+          this.exportBtn.setDisable(!isAllVpxSelected);
           this.stopBtn.setDisable(false);
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
@@ -1657,6 +1669,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     deleteBtn.setDisable(c.getList().isEmpty());
     playButtonController.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
+    exportBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
     setValidationVisible(c.getList().size() != 1);
@@ -1771,10 +1784,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
     this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
     this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
+    this.exportBtn.managedProperty().bindBidirectional(this.exportBtn.visibleProperty());
+    this.secondaryToolbar.managedProperty().bindBidirectional(this.secondaryToolbar.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     FrontendUtil.replaceName(importBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(exportBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     playlistManagerBtn.setVisible(Features.PLAYLIST_CRUD);
@@ -1851,7 +1867,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
-      Parent playBtn = loader.load();
+      playBtn = loader.load();
       playButtonController = loader.getController();
       int i = toolbar.getItems().indexOf(stopBtn);
       toolbar.getItems().add(i, playBtn);
@@ -1869,6 +1885,63 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     catch (IOException e) {
       LOG.error("failed to load uploads button: " + e.getMessage(), e);
     }
+
+    if (Features.TABLES_SECONDARY_TOOLBAR) {
+      stage.widthProperty().addListener(new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+          Platform.runLater(() -> {
+            refreshToolbars();
+          });
+        }
+      });
+      Platform.runLater(() -> {
+        refreshToolbars();
+      });
+    }
+  }
+
+  private void refreshToolbars() {
+    double width = stage.getWidth();
+    if (width <= 2400) {
+      secondaryToolbar.getItems().clear();
+
+      toolbar.getItems().remove(playBtn);
+      secondaryToolbar.getItems().add(playBtn);
+      toolbar.getItems().remove(stopBtn);
+      secondaryToolbar.getItems().add(stopBtn);
+      toolbar.getItems().remove(importSeparator);
+      secondaryToolbar.getItems().add(importSeparator);
+      toolbar.getItems().remove(exportBtn);
+      secondaryToolbar.getItems().add(exportBtn);
+      toolbar.getItems().remove(importBtn);
+      secondaryToolbar.getItems().add(importBtn);
+      toolbar.getItems().remove(deleteBtn);
+      secondaryToolbar.getItems().add(deleteBtn);
+      toolbar.getItems().remove(mappingSeparator);
+      secondaryToolbar.getItems().add(mappingSeparator);
+      toolbar.getItems().remove(scanBtn);
+      secondaryToolbar.getItems().add(scanBtn);
+      toolbar.getItems().remove(validateBtn);
+      secondaryToolbar.getItems().add(validateBtn);
+
+      secondaryToolbar.setVisible(true);
+    }
+    else {
+      if (!toolbar.getItems().contains(importSeparator)) {
+        toolbar.getItems().add(playBtn);
+        toolbar.getItems().add(stopBtn);
+        toolbar.getItems().add(importSeparator);
+        toolbar.getItems().add(exportBtn);
+        toolbar.getItems().add(importBtn);
+        toolbar.getItems().add(deleteBtn);
+        toolbar.getItems().add(mappingSeparator);
+        toolbar.getItems().add(scanBtn);
+        toolbar.getItems().add(validateBtn);
+      }
+
+      secondaryToolbar.setVisible(false);
+    }
   }
 
   private void refreshViewForEmulator() {
@@ -1879,9 +1952,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
     boolean fpEmulator = newValue == null || newValue.isFpEmulator();
 
+    this.exportBtn.setVisible(Features.BACKUPS_ENABLED);
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.importSeparator.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.emulatorBtn.setDisable(newValue == null || newValue.getId() == -1);
+    this.exportBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);
     this.playButtonController.setVisible(vpxOrFpEmulator);

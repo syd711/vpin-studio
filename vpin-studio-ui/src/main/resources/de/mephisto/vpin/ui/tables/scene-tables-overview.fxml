@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TableOverviewController">
    <center>
       <StackPane fx:id="loaderStack">
          <BorderPane.margin>
@@ -200,202 +200,217 @@
       </BorderPane>
    </bottom>
    <top>
-      <ToolBar fx:id="toolbar" prefHeight="40.0" BorderPane.alignment="CENTER">
-         <items>
-            <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Toggle Filter View" />
-               </tooltip>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
-               </graphic>
-            </Button>
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
-               <font>
-                     <Font size="14.0" />
-               </font>
-               <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Reload all table data" />
-               </tooltip>
-            </Button>
-            <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-            <StackPane alignment="CENTER_RIGHT">
-               <children>
-                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
-                     <font>
-                           <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar fx:id="toolbar" prefHeight="40.0">
+               <items>
+                  <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <graphic>
-                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
-                     </graphic>
-                  </Button>
-               </children>
-            </StackPane>
-            <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-            <ComboBox fx:id="emulatorCombo" prefWidth="170.0" promptText="All VPX Tables" />
-            <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Open Emulator Manager" />
-               </tooltip>
-            </Button>
-
-            <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="Select Playlist..." />
-            <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Open Playlist Manager" />
-               </tooltip>
-            </Button>
-
-            <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-            <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Asset Manager View (Ctrl+M)" />
-               </tooltip>
-            </Button>
-            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
-               </graphic>
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <tooltip>
-                  <Tooltip text="Asset Manager (Ctrl+I)" />
-               </tooltip>
-            </Button>
-            <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Edit Table Data (Ctrl+O)" />
-               </tooltip>
-            </Button>
-            <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Edit Table Data (Ctrl+O)" />
-               </tooltip>
-            </Button>
-            <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-            <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
-               <font>
-                     <Font size="14.0" />
-               </font>
-               <graphic>
-                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
-               </graphic>
-               <tooltip>
-                     <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
-               </tooltip>
-            </Button>
-            <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
-               <children>
-                  <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
-                     </graphic>
                      <tooltip>
-                        <Tooltip text="Import existing game files into [Frontend]" />
+                        <Tooltip text="Toggle Filter View" />
                      </tooltip>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                     </graphic>
                   </Button>
-
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                      <font>
                            <Font size="14.0" />
                      </font>
                      <graphic>
-                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
+                           <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Delete table and assets (Delete)" />
+                        <Tooltip text="Reload all table data" />
                      </tooltip>
                   </Button>
-               </children>
-            </HBox>
-            <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
-               <children>
-                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
-                  <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
-                     <items>
-                        <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                  <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <StackPane alignment="CENTER_RIGHT">
+                     <children>
+                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
+                           <font>
+                                 <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
                            </graphic>
-                        </MenuItem>
-                     </items>
+                        </Button>
+                     </children>
+                  </StackPane>
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <ComboBox fx:id="emulatorCombo" prefWidth="170.0" promptText="All VPX Tables" />
+                  <Button fx:id="emulatorBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorManager" textFill="WHITE">
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2g-google-controller" iconSize="18" />
                      </graphic>
-                     <tooltip>
-                        <Tooltip text="Scans the selected tables to extract metadata" />
-                     </tooltip>
                      <font>
                         <Font size="14.0" />
                      </font>
-                  </SplitMenuButton>
-                  <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
-                     <items>
-                        <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
+                     <tooltip>
+                        <Tooltip text="Open Emulator Manager" />
+                     </tooltip>
+                  </Button>
+      
+                  <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="Select Playlist..." />
+                  <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-playlist-edit" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Open Playlist Manager" />
+                     </tooltip>
+                  </Button>
+      
+                  <Separator fx:id="assetManagerSeparator" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Asset Manager View (Ctrl+M)" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Asset Manager (Ctrl+I)" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit Table Data (Ctrl+O)" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="converterBtn" layoutX="833.0" layoutY="11.0" mnemonicParsing="false" onAction="#onConvert" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Edit Table Data (Ctrl+O)" />
+                     </tooltip>
+                  </Button>
+                  <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                  <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+                     <font>
+                           <Font size="14.0" />
+                     </font>
+                     <graphic>
+                           <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                           <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+                     </tooltip>
+                  </Button>
+                  <HBox fx:id="importUploadButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
+                     <children>
+                        <Separator fx:id="importSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                        <Button fx:id="exportBtn" mnemonicParsing="false" onAction="#onBackup" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-export-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Export the selected tables" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Import existing game files into [Frontend]" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+                           <font>
+                                 <Font size="14.0" />
+                           </font>
+                           <graphic>
+                                 <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Delete table and assets (Delete)" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="validationButtonGroup" alignment="CENTER_LEFT" spacing="3.0">
+                     <children>
+                        <Separator fx:id="mappingSeparator" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
+                        <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
+                           <items>
+                              <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                           </items>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Scans the selected tables to extract metadata" />
+                           </tooltip>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </SplitMenuButton>
+                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                           <items>
+                              <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                           </items>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
                            </graphic>
-                        </MenuItem>
-                     </items>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
-                     </tooltip>
-                  </SplitMenuButton>
-               </children>
-            </HBox>
-         </items>
-      </ToolBar>
+                           <tooltip>
+                              <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                           </tooltip>
+                        </SplitMenuButton>
+                     </children>
+                  </HBox>
+               </items>
+            </ToolBar>
+            <ToolBar fx:id="secondaryToolbar" prefHeight="40.0" prefWidth="200.0" />
+         </children>
+      </VBox>
    </top>
 </BorderPane>
