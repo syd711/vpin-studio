@@ -124,6 +124,18 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
+  public void deleteGameFile(int emulatorId, @NonNull String name) {
+    try {
+      Map<String, Object> data =new HashMap<>();
+      data.put("emulatorId", emulatorId);
+      data.put("fileName", name);
+      getRestClient().post(API + "games/deleteGameFile", data, Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete game file " + name + ": " + e.getMessage(), e);
+    }
+  }
+
   public List<GameRepresentation> getGamesByRom(String rom) {
     List<GameRepresentation> gameList = this.getVpxGamesCached();
     List<GameRepresentation> result = new ArrayList<>();

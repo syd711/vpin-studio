@@ -367,6 +367,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         GameListItem item = new GameListItem();
         item.setName(file.getName());
         item.setFileName(file.getAbsolutePath());
+        item.setFileSize(file.length());
         item.setEmuId(emulator.getId());
         list.getItems().add(item);
       }
@@ -568,6 +569,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     TableDetails tableDetails = frontendService.getTableDetails(id);
     return getGameScoreValidation(id, tableDetails);
   }
+
   public GameScoreValidation getGameScoreValidation(int id, TableDetails tableDetails) {
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());

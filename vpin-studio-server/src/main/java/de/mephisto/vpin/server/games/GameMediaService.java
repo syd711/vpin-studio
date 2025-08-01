@@ -590,6 +590,18 @@ public class GameMediaService {
     }
   }
 
+  public boolean deleteGameFile(int emulatorId, String fileName) {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    if (gameEmulator != null) {
+      File gameFile = new File(gameEmulator.getGamesDirectory(), fileName);
+      if (gameFile.exists() && gameFile.delete()) {
+        LOG.info("Delete game file {}", gameFile.getAbsolutePath());
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
     LOG.info("************* Game Deletion ************");
     boolean success = false;
