@@ -1,36 +1,32 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.commons.fx.ImageUtil;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.archiving.ArchiveFileInfoFactory;
-import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
+import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.dmd.DMDService;
-import de.mephisto.vpin.server.emulators.EmulatorService;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
-import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
-import de.mephisto.vpin.commons.fx.ImageUtil;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.function.BiConsumer;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,8 +34,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  *
@@ -58,9 +58,6 @@ public class VpaService {
     objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
-
-  @Autowired
-  private EmulatorService emulatorService;
 
   @Autowired
   private FrontendService frontendService;
@@ -89,38 +86,43 @@ public class VpaService {
   @Autowired
   private BackglassService backglassService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   //-------------------------------
 
   public void createBackup(ArchivePackageInfo packageInfo, BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
     File gameFolder = game.getGameFile().getParentFile();
 
+    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+
     File romFile = game.getRomFile();
-    if (romFile != null && romFile.exists()) {
+    if (backupSettings.isRom() && romFile != null && romFile.exists()) {
       packageInfo.setRom(ArchiveFileInfoFactory.create(romFile));
       zipFile(romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut);
     }
 
     File povFile = game.getPOVFile();
-    if (povFile.exists()) {
+    if (backupSettings.isPov() && povFile.exists()) {
       packageInfo.setPov(ArchiveFileInfoFactory.create(povFile));
       zipFile(povFile, povFile.getName(), zipOut);
     }
 
     File resFile = game.getResFile();
-    if (resFile.exists()) {
+    if (backupSettings.isRes() && resFile.exists()) {
       packageInfo.setRes(ArchiveFileInfoFactory.create(resFile));
       zipFile(resFile, resFile.getName(), zipOut);
     }
 
     File vbsFile = game.getVBSFile();
-    if (vbsFile.exists()) {
+    if (backupSettings.isVbs() && vbsFile.exists()) {
       packageInfo.setVbs(ArchiveFileInfoFactory.create(vbsFile));
       zipFile(vbsFile, vbsFile.getName(), zipOut);
     }
 
     File iniFile = game.getIniFile();
-    if (iniFile.exists()) {
+    if (backupSettings.isIni() && iniFile.exists()) {
       packageInfo.setRes(ArchiveFileInfoFactory.create(iniFile));
       zipFile(iniFile, iniFile.getName(), zipOut);
     }
@@ -131,58 +133,65 @@ public class VpaService {
       zipFile(gameFile, gameFile.getName(), zipOut);
     }
 
-    DirectB2S directB2SAndVersions = backglassService.getDirectB2SAndVersions(game);
-    if (directB2SAndVersions != null) {
-      List<String> versions = directB2SAndVersions.getVersions();
-      List<File> files = new ArrayList<>();
-      for (String version : versions) {
-        File directB2SFile = new File(gameFolder, version);
-        if (directB2SFile.exists()) {
-          files.add(directB2SFile);
-          zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+    if (backupSettings.isDirectb2s()) {
+      DirectB2S directB2SAndVersions = backglassService.getDirectB2SAndVersions(game);
+      if (directB2SAndVersions != null) {
+        List<String> versions = directB2SAndVersions.getVersions();
+        List<File> files = new ArrayList<>();
+        for (String version : versions) {
+          File directB2SFile = new File(gameFolder, version);
+          if (directB2SFile.exists()) {
+            files.add(directB2SFile);
+            zipFile(directB2SFile, directB2SFile.getName(), zipOut);
+          }
         }
-      }
-      if (!files.isEmpty()) {
-        packageInfo.setDirectb2s(ArchiveFileInfoFactory.create(files.get(0), files));
+        if (!files.isEmpty()) {
+          packageInfo.setDirectb2s(ArchiveFileInfoFactory.create(files.get(0), files));
+        }
       }
     }
 
 
     //store highscore
-    File highscoreBackupFile = highscoreBackupService.backup(game);
-    if (highscoreBackupFile != null && highscoreBackupFile.exists()) {
-      packageInfo.setHighscore(ArchiveFileInfoFactory.create(highscoreBackupFile));
-      zipFile(highscoreBackupFile, "Highscore/" + highscoreBackupFile.getName(), zipOut);
-    }
-
-    // DMDs
-    DMDPackage dmdPackage = dmdService.getDMDPackage(game);
-    if (dmdPackage != null) {
-      File dmdFolder = dmdService.getDmdFolder(game);
-      if (dmdFolder.exists()) {
-        List<File> archiveFiles = new ArrayList<>();
-        dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
-        File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
-        if (dmdFiles != null) {
-          for (File dmdFile : dmdFiles) {
-            archiveFiles.add(dmdFile);
-            zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/", zipOut);
-          }
-        }
-        packageInfo.setDmd(ArchiveFileInfoFactory.create(dmdFolder, archiveFiles));
+    if (backupSettings.isHighscore() || backupSettings.isNvRam()) {
+      File highscoreBackupFile = highscoreBackupService.backup(game);
+      if (highscoreBackupFile != null && highscoreBackupFile.exists()) {
+        packageInfo.setHighscore(ArchiveFileInfoFactory.create(highscoreBackupFile));
+        zipFile(highscoreBackupFile, "Highscore/" + highscoreBackupFile.getName(), zipOut);
       }
     }
 
+    // DMDs
+    if (backupSettings.isDmd()) {
+      DMDPackage dmdPackage = dmdService.getDMDPackage(game);
+      if (dmdPackage != null) {
+        File dmdFolder = dmdService.getDmdFolder(game);
+        if (dmdFolder.exists()) {
+          List<File> archiveFiles = new ArrayList<>();
+          dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
+          File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
+          if (dmdFiles != null) {
+            for (File dmdFile : dmdFiles) {
+              archiveFiles.add(dmdFile);
+              zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/", zipOut);
+            }
+          }
+          packageInfo.setDmd(ArchiveFileInfoFactory.create(dmdFolder, archiveFiles));
+        }
+      }
+    }
 
     //always zip music files if they are in a ROM named folder
-    File musicFolder = musicService.getMusicFolder(game);
-    if (musicFolder != null && musicFolder.exists()) {
-      packageInfo.setMusic(ArchiveFileInfoFactory.create(musicFolder));
-      zipFile(musicFolder, "Music/" + musicFolder.getName(), zipOut);
+    if (backupSettings.isMusic()) {
+      File musicFolder = musicService.getMusicFolder(game);
+      if (musicFolder != null && musicFolder.exists()) {
+        packageInfo.setMusic(ArchiveFileInfoFactory.create(musicFolder));
+        zipFile(musicFolder, "Music/" + musicFolder.getName(), zipOut);
+      }
     }
 
     // sounds
-    if (game.isAltSoundAvailable()) {
+    if (backupSettings.isAltSound() && game.isAltSoundAvailable()) {
       File altSoundFolder = altSoundService.getAltSoundFolder(game);
       if (altSoundFolder != null) {
         packageInfo.setAltSound(ArchiveFileInfoFactory.create(altSoundFolder));
@@ -202,26 +211,34 @@ public class VpaService {
 
     //colored DMD
     File altColorFolder = altColorService.getAltColorFolder(game);
-    if (altColorFolder != null && altColorFolder.exists()) {
+    if (backupSettings.isAltColor() && altColorFolder != null && altColorFolder.exists()) {
       packageInfo.setAltColor(ArchiveFileInfoFactory.create(altColorFolder));
       zipFile(altColorFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName(), zipOut);
     }
 
-    zipPupPack(packageInfo, game, zipOut);
-    zipFrontendMedia(packageInfo, game, zipOut);
+    if (backupSettings.isPupPack()) {
+      zipPupPack(packageInfo, game, zipOut);
+    }
+
+    if (backupSettings.isFrontendMedia()) {
+      zipFrontendMedia(packageInfo, game, zipOut);
+    }
+
     zipTableDetails(game, tableDetails, zipOut);
 
-    Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
-    if (options == null) {
-      options = new HashMap<>();
-    }
-    packageInfo.setMameData(ArchiveFileInfoFactory.create(game.getRom(), null, null));
+    if (backupSettings.isRegistryData()) {
+      Map<String, Object> options = mameService.getOptionsRaw(game.getRom());
+      if (options == null) {
+        options = new HashMap<>();
+      }
+      packageInfo.setMameData(ArchiveFileInfoFactory.create(game.getRom(), null, null));
 
-    ArchiveMameData mameData = new ArchiveMameData();
-    mameData.setRegistryData(options);
-    mameData.setRom(game.getRom());
-    mameData.setAlias(game.getRomAlias());
-    zipMameRegistryData(mameData, zipOut);
+      ArchiveMameData mameData = new ArchiveMameData();
+      mameData.setRegistryData(options);
+      mameData.setRom(game.getRom());
+      mameData.setAlias(game.getRomAlias());
+      zipMameRegistryData(mameData, zipOut);
+    }
 
     writeWheelToPackageInfo(packageInfo, game);
   }

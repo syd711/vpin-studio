@@ -4,13 +4,14 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.TablesBackupController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.archiving.dialogs.TablesBackupController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -52,6 +53,199 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </CheckBox>
+                        <Label styleClass="default-headline" text="Settings">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="preference-description" text="Select the data that should be stored for the backups.">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox spacing="36.0">
+                           <children>
+                              <VBox spacing="3.0">
+                                 <children>
+                                    <Label text="Table Files">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="6.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <CheckBox fx:id="vpxCheckBox" disable="true" mnemonicParsing="false" selected="true" text="Table File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="directb2sCheckBox" mnemonicParsing="false" text="DirectB2S Files" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="VPin Studio supports multiple backglass files for one table. All available .directb2s files will be restored." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <CheckBox fx:id="povCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="POV File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="resCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="RES File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="iniCheckBox" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" text="INI File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="vbsCheckBox" layoutX="10.0" layoutY="110.0" mnemonicParsing="false" text="VBS File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="dmdCheckBox" layoutX="10.0" layoutY="130.0" mnemonicParsing="false" text="DMD Files" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="musicCheckBox" layoutX="10.0" layoutY="150.0" mnemonicParsing="false" text="Music" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                              <VBox spacing="3.0">
+                                 <children>
+                                    <Label text="VPin MAME Files">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="6.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <CheckBox fx:id="romCheckBox" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="nvRamCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="NVRAM" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="altSoundCheckBox" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="altColorCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="frontendColumn" layoutX="98.0" layoutY="10.0" spacing="3.0">
+                                 <children>
+                                    <Label text="Frontend Media">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="6.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <CheckBox fx:id="popperMediaCheckBox" mnemonicParsing="false" text="Screen Media Files" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="pupPackCheckBox" layoutX="10.0" layoutY="30.0" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="134.0" layoutY="10.0" spacing="3.0">
+                                 <children>
+                                    <Label text="Additional Metadata">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets bottom="6.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="highscoreCheckBox" mnemonicParsing="false" text="Highscore Data" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="If the .nvram file is included, this represents the highscore already." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="registryDataCheckBox" mnemonicParsing="false" text="Windows Registry Entries" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="This might include the DMD position for tables." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </HBox>
                      </children>
                   </VBox>
                </center>
