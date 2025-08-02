@@ -2,11 +2,10 @@ package de.mephisto.vpin.server.archiving;
 
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.ZipUtil;
-import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,7 +37,7 @@ public class ArchivesResource {
   private VpaService vpaService;
 
   @PostMapping("/backup")
-  public Boolean backupTable(@RequestBody BackupDescriptor descriptor) {
+  public Boolean backupTable(@RequestBody BackupExportDescriptor descriptor) {
     return archiveService.backupTable(descriptor);
   }
 
@@ -48,11 +47,11 @@ public class ArchivesResource {
   }
 
   @GetMapping("/{sourceId}")
-  public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
+  public List<BackupDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
     List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors(sourceId);
-    List<ArchiveDescriptorRepresentation> result = new ArrayList<>();
+    List<BackupDescriptorRepresentation> result = new ArrayList<>();
     for (ArchiveDescriptor archiveDescriptor : descriptors) {
-      ArchiveDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
+      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
       result.add(descriptorRepresentation);
     }
     return result;
@@ -65,7 +64,7 @@ public class ArchivesResource {
   }
 
   @GetMapping("/sources")
-  public List<ArchiveSourceRepresentation> getSources() {
+  public List<BackupSourceRepresentation> getSources() {
     return archiveService.getArchiveSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());
   }
 
@@ -81,11 +80,11 @@ public class ArchivesResource {
   }
 
   @GetMapping("/game/{id}")
-  public List<ArchiveDescriptorRepresentation> getArchives(@PathVariable("id") int gameId) {
+  public List<BackupDescriptorRepresentation> getArchives(@PathVariable("id") int gameId) {
     List<ArchiveDescriptor> archiveDescriptors = archiveService.getArchiveDescriptorForGame(gameId);
-    List<ArchiveDescriptorRepresentation> result = new ArrayList<>();
+    List<BackupDescriptorRepresentation> result = new ArrayList<>();
     for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
-      ArchiveDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
+      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
       result.add(descriptorRepresentation);
     }
     return result;
@@ -154,14 +153,14 @@ public class ArchivesResource {
   }
 
   @PostMapping("/save")
-  public ArchiveSourceRepresentation save(@RequestBody ArchiveSourceRepresentation archiveSourceRepresentation) {
-    ArchiveSource update = archiveService.save(archiveSourceRepresentation);
+  public BackupSourceRepresentation save(@RequestBody BackupSourceRepresentation backupSourceRepresentation) {
+    ArchiveSource update = archiveService.save(backupSourceRepresentation);
     return toRepresentation(update);
   }
 
 
-  private ArchiveSourceRepresentation toRepresentation(ArchiveSource source) {
-    ArchiveSourceRepresentation representation = new ArchiveSourceRepresentation();
+  private BackupSourceRepresentation toRepresentation(ArchiveSource source) {
+    BackupSourceRepresentation representation = new BackupSourceRepresentation();
     representation.setType(source.getType());
     representation.setLocation(source.getLocation());
     representation.setName(source.getName());
@@ -174,9 +173,9 @@ public class ArchivesResource {
     return representation;
   }
 
-  private ArchiveDescriptorRepresentation toRepresentation(ArchiveDescriptor descriptor) {
-    ArchiveSourceRepresentation source = toRepresentation(descriptor.getSource());
-    ArchiveDescriptorRepresentation representation = new ArchiveDescriptorRepresentation();
+  private BackupDescriptorRepresentation toRepresentation(ArchiveDescriptor descriptor) {
+    BackupSourceRepresentation source = toRepresentation(descriptor.getSource());
+    BackupDescriptorRepresentation representation = new BackupDescriptorRepresentation();
     representation.setFilename(descriptor.getFilename());
     representation.setTableDetails(descriptor.getTableDetails());
     representation.setCreatedAt(descriptor.getCreatedAt());

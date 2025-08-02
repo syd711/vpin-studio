@@ -1,14 +1,14 @@
 package de.mephisto.vpin.server.archiving;
 
 
-import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
+import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 
 import java.util.Date;
 
 public class ArchiveDescriptor {
   private TableDetails tableDetails;
-  private ArchivePackageInfo packageInfo;
+  private BackupPackageInfo packageInfo;
   private ArchiveSource source;
   private Date createdAt;
   private String filename;
@@ -19,7 +19,7 @@ public class ArchiveDescriptor {
     //used for JSON serialization
   }
 
-  public ArchiveDescriptor(ArchiveSource source, TableDetails tableDetails, ArchivePackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
+  public ArchiveDescriptor(ArchiveSource source, TableDetails tableDetails, BackupPackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
     this.source = source;
     this.tableDetails = tableDetails;
     this.packageInfo = packageInfo;
@@ -37,11 +37,11 @@ public class ArchiveDescriptor {
     this.absoluteFileName = absoluteFileName;
   }
 
-  public ArchivePackageInfo getPackageInfo() {
+  public BackupPackageInfo getPackageInfo() {
     return packageInfo;
   }
 
-  public void setPackageInfo(ArchivePackageInfo packageInfo) {
+  public void setPackageInfo(BackupPackageInfo packageInfo) {
     this.packageInfo = packageInfo;
   }
 

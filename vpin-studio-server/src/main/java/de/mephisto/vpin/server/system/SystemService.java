@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
@@ -81,7 +81,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File backupFolder;
 
-  private ArchiveType archiveType = ArchiveType.VPA;
+  private BackupType backupType = BackupType.VPA;
   private FrontendType frontendType = FrontendType.Popper;
 
   @Value("${system.properties}")
@@ -97,7 +97,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
-      this.archiveType = ArchiveType.VPA;
+      this.backupType = BackupType.VPA;
 
       // Determination of the installed Frontend
       //Standalone Folder
@@ -452,12 +452,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public ArchiveType getArchiveType() {
-    return archiveType;
+  public BackupType getArchiveType() {
+    return backupType;
   }
 
-  public void setArchiveType(ArchiveType archiveType) {
-    this.archiveType = archiveType;
+  public void setArchiveType(BackupType backupType) {
+    this.backupType = backupType;
   }
 
   public List<MonitorInfo> getMonitorInfos() {

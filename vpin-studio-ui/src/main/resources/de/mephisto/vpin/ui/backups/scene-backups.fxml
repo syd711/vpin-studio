@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane fx:id="tableStack" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backups.BackupsController">
+    <children>
+        <BorderPane>
+            <center>
+                <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" BorderPane.alignment="CENTER">
+                    <columns>
+                  <TableColumn fx:id="iconColumn" minWidth="0.0" prefWidth="90.39989471435547" style="-fx-alignment: CENTER;" />
+                        <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
+                  <TableColumn fx:id="iniColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="INI" />
+                  <TableColumn fx:id="vbsColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="VBS" />
+                  <TableColumn fx:id="resColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="RES" />
+                  <TableColumn fx:id="povColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="POV" />
+                  <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="PUP Pack" />
+                  <TableColumn fx:id="popperColumn" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Frontend Media" />
+                  <TableColumn fx:id="romColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="ROM" />
+                  <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
+                  <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
+                  <TableColumn fx:id="musicColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="Music" />
+                  <TableColumn fx:id="dmdColumn" prefWidth="60.0" style="-fx-alignment: CENTER;" text="DMD" />
+                  <TableColumn fx:id="registryColumn" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Registry Data" />
+                  <TableColumn fx:id="highscoreColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Highscores" />
+                  <TableColumn fx:id="sizeColumn" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Size" />
+                  <TableColumn fx:id="createdAtColumn" minWidth="2.39996337890625" prefWidth="150.0" style="-fx-alignment: CENTER;" text="Created At" />
+                    </columns>
+                </TableView>
+            </center>
+         <top>
+            <ToolBar BorderPane.alignment="CENTER">
+              <items>
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <StackPane alignment="CENTER_RIGHT">
+                     <children>
+                        <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="200.0" promptText="Search Backups...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </StackPane>
+                  <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
+                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-restore-outline" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Restores the tables from the selected archives." />
+                     </tooltip>
+                  </Button>
+                  <Separator layoutX="637.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="Upload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Uploads an archive bundle so it can be installed afterwards." />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="downloadBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Creates a zip bundle from the selected archives and downloads it." />
+                     </tooltip>
+                  </Button>
+                  <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator fx:id="endSeparator" layoutX="806.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
+                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="folder-component" text="Open" textFill="WHITE">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                      <graphic>
+                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                      </graphic>
+                      <tooltip>
+                          <Tooltip text="Open FlexDMD installation folder" />
+                      </tooltip>
+                  </Button>
+              </items>
+            </ToolBar>
+         </top>
+        </BorderPane>
+    </children>
+   <styleClass>
+      <String fx:value="media-parent" />
+      <String fx:value="base-component" />
+   </styleClass>
+</StackPane>

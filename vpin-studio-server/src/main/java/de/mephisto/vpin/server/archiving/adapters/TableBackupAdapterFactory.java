@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving.adapters;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
@@ -24,15 +24,15 @@ public class TableBackupAdapterFactory {
   private VpaService vpaService;
 
   public TableBackupAdapter createAdapter(@NonNull Game game) {
-    ArchiveType archiveType = systemService.getArchiveType();
+    BackupType backupType = systemService.getArchiveType();
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
 
-    switch (archiveType) {
+    switch (backupType) {
       case VPA: {
         return new TableBackupAdapterVpa(vpaService, game, tableDetails);
       }
       default: {
-        throw new UnsupportedOperationException("Unkown archive type " +archiveType);
+        throw new UnsupportedOperationException("Unkown archive type " + backupType);
       }
     }
   }

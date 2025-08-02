@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.backup;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.backup.BackupDescriptor;
+import de.mephisto.vpin.restclient.backups.BackupDescriptor;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;

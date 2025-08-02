@@ -4,12 +4,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.fx.ImageUtil;
-import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.archiving.ArchiveFileInfoFactory;
-import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
-import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.backups.BackupFileInfoFactory;
+import de.mephisto.vpin.restclient.backups.BackupMameData;
+import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
@@ -32,7 +31,6 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
-import de.mephisto.vpin.server.vps.VpsInstallerFromVPU;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
@@ -109,7 +107,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
 
   //-------------------------------
 
-  public void createBackup(ArchivePackageInfo packageInfo, BiConsumer<File, String> zipOut,
+  public void createBackup(BackupPackageInfo packageInfo, BiConsumer<File, String> zipOut,
                            Game game, TableDetails tableDetails) throws IOException {
     File gameFolder = game.getGameFile().getParentFile();
 
@@ -117,37 +115,37 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
 
     File romFile = game.getRomFile();
     if (backupSettings.isRom() && romFile != null && romFile.exists()) {
-      packageInfo.setRom(ArchiveFileInfoFactory.create(romFile));
+      packageInfo.setRom(BackupFileInfoFactory.create(romFile));
       zipFile(romFile, MAME_FOLDER + "/roms/" + romFile.getName(), zipOut);
     }
 
     File povFile = game.getPOVFile();
     if (backupSettings.isPov() && povFile.exists()) {
-      packageInfo.setPov(ArchiveFileInfoFactory.create(povFile));
+      packageInfo.setPov(BackupFileInfoFactory.create(povFile));
       zipFile(povFile, povFile.getName(), zipOut);
     }
 
     File resFile = game.getResFile();
     if (backupSettings.isRes() && resFile.exists()) {
-      packageInfo.setRes(ArchiveFileInfoFactory.create(resFile));
+      packageInfo.setRes(BackupFileInfoFactory.create(resFile));
       zipFile(resFile, resFile.getName(), zipOut);
     }
 
     File vbsFile = game.getVBSFile();
     if (backupSettings.isVbs() && vbsFile.exists()) {
-      packageInfo.setVbs(ArchiveFileInfoFactory.create(vbsFile));
+      packageInfo.setVbs(BackupFileInfoFactory.create(vbsFile));
       zipFile(vbsFile, vbsFile.getName(), zipOut);
     }
 
     File iniFile = game.getIniFile();
     if (backupSettings.isIni() && iniFile.exists()) {
-      packageInfo.setRes(ArchiveFileInfoFactory.create(iniFile));
+      packageInfo.setRes(BackupFileInfoFactory.create(iniFile));
       zipFile(iniFile, iniFile.getName(), zipOut);
     }
 
     File gameFile = game.getGameFile();
     if (gameFile.exists()) {
-      packageInfo.setVpx(ArchiveFileInfoFactory.create(gameFile));
+      packageInfo.setVpx(BackupFileInfoFactory.create(gameFile));
       zipFile(gameFile, gameFile.getName(), zipOut);
     }
 
@@ -164,7 +162,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
           }
         }
         if (!files.isEmpty()) {
-          packageInfo.setDirectb2s(ArchiveFileInfoFactory.create(files.get(0), files));
+          packageInfo.setDirectb2s(BackupFileInfoFactory.create(files.get(0), files));
         }
       }
     }
@@ -174,7 +172,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
     if (backupSettings.isHighscore() || backupSettings.isNvRam()) {
       File highscoreBackupFile = highscoreBackupService.backup(game);
       if (highscoreBackupFile != null && highscoreBackupFile.exists()) {
-        packageInfo.setHighscore(ArchiveFileInfoFactory.create(highscoreBackupFile));
+        packageInfo.setHighscore(BackupFileInfoFactory.create(highscoreBackupFile));
         zipFile(highscoreBackupFile, "Highscore/" + highscoreBackupFile.getName(), zipOut);
       }
     }
@@ -194,7 +192,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
               zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/", zipOut);
             }
           }
-          packageInfo.setDmd(ArchiveFileInfoFactory.create(dmdFolder, archiveFiles));
+          packageInfo.setDmd(BackupFileInfoFactory.create(dmdFolder, archiveFiles));
         }
       }
     }
@@ -203,7 +201,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
     if (backupSettings.isMusic()) {
       File musicFolder = musicService.getMusicFolder(game);
       if (musicFolder != null && musicFolder.exists()) {
-        packageInfo.setMusic(ArchiveFileInfoFactory.create(musicFolder));
+        packageInfo.setMusic(BackupFileInfoFactory.create(musicFolder));
         zipFile(musicFolder, "Music/" + musicFolder.getName(), zipOut);
       }
     }
@@ -212,7 +210,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
     if (backupSettings.isAltSound() && game.isAltSoundAvailable()) {
       File altSoundFolder = altSoundService.getAltSoundFolder(game);
       if (altSoundFolder != null) {
-        packageInfo.setAltSound(ArchiveFileInfoFactory.create(altSoundFolder));
+        packageInfo.setAltSound(BackupFileInfoFactory.create(altSoundFolder));
         zipFile(altSoundFolder, MAME_FOLDER + "/altsound/" + altSoundFolder.getName(), zipOut);
       }
       else {
@@ -230,7 +228,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
     //colored DMD
     File altColorFolder = altColorService.getAltColorFolder(game);
     if (backupSettings.isAltColor() && altColorFolder != null && altColorFolder.exists()) {
-      packageInfo.setAltColor(ArchiveFileInfoFactory.create(altColorFolder));
+      packageInfo.setAltColor(BackupFileInfoFactory.create(altColorFolder));
       zipFile(altColorFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName(), zipOut);
     }
 
@@ -249,9 +247,9 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
       if (options == null) {
         options = new HashMap<>();
       }
-      packageInfo.setMameData(ArchiveFileInfoFactory.create(game.getRom(), null, null));
+      packageInfo.setMameData(BackupFileInfoFactory.create(game.getRom(), null, null));
 
-      ArchiveMameData mameData = new ArchiveMameData();
+      BackupMameData mameData = new BackupMameData();
       mameData.setRegistryData(options);
       mameData.setRom(game.getRom());
       mameData.setAlias(game.getRomAlias());
@@ -293,7 +291,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
     return totalSizeExpected;
   }
 
-  private void zipFrontendMedia(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
+  private void zipFrontendMedia(BackupPackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
     VPinScreen[] values = VPinScreen.values();
     List<File> screenFiles = new ArrayList<>();
     for (VPinScreen value : values) {
@@ -317,36 +315,36 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
     }
 
     if (!screenFiles.isEmpty()) {
-      packageInfo.setPopperMedia(ArchiveFileInfoFactory.create(game.getGameName(), null, screenFiles));
+      packageInfo.setPopperMedia(BackupFileInfoFactory.create(game.getGameName(), null, screenFiles));
     }
   }
 
   /**
    * Archives the PUP pack
    */
-  private void zipPupPack(ArchivePackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
+  private void zipPupPack(BackupPackageInfo packageInfo, Game game, BiConsumer<File, String> zipOut) {
     PupPack pupPack = pupPacksService.getPupPack(game);
     if (pupPack != null) {
       File pupackFolder = pupPack.getPupPackFolder();
       LOG.info("Packing {}", pupackFolder.getAbsolutePath());
       zipFile(pupackFolder, "PUPPack/" + pupackFolder.getName(), zipOut);
-      packageInfo.setPupPack(ArchiveFileInfoFactory.create(pupackFolder));
+      packageInfo.setPupPack(BackupFileInfoFactory.create(pupackFolder));
     }
   }
 
-  private void zipMameRegistryData(@NonNull ArchiveMameData registryData, BiConsumer<File, String> zipOut) throws IOException {
+  private void zipMameRegistryData(@NonNull BackupMameData registryData, BiConsumer<File, String> zipOut) throws IOException {
     String tableDetailsJson = objectMapper.writeValueAsString(registryData);
 
     File tableDetailsTmpFile = File.createTempFile("registry", "json");
     tableDetailsTmpFile.deleteOnExit();
     Files.write(tableDetailsTmpFile.toPath(), tableDetailsJson.getBytes());
-    zipFile(tableDetailsTmpFile, ArchivePackageInfo.REGISTRY_FILENAME, zipOut);
+    zipFile(tableDetailsTmpFile, BackupPackageInfo.REGISTRY_FILENAME, zipOut);
     if (!tableDetailsTmpFile.delete()) {
       LOG.warn("Failed to delete temporary registry.json file {}", tableDetailsTmpFile.getName());
     }
   }
 
-  private void writeWheelToPackageInfo(ArchivePackageInfo packageInfo, Game game) throws IOException {
+  private void writeWheelToPackageInfo(BackupPackageInfo packageInfo, Game game) throws IOException {
     //store wheel icon as archive preview
     File originalFile = frontendService.getWheelImage(game);
     File mediaFile = originalFile;
@@ -358,7 +356,7 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
       }
 
       BufferedImage image = ImageUtil.loadImage(mediaFile);
-      BufferedImage resizedImage = ImageUtil.resizeImage(image, ArchivePackageInfo.TARGET_WHEEL_SIZE_WIDTH);
+      BufferedImage resizedImage = ImageUtil.resizeImage(image, BackupPackageInfo.TARGET_WHEEL_SIZE_WIDTH);
 
       byte[] bytes = ImageUtil.toBytes(resizedImage);
       packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));

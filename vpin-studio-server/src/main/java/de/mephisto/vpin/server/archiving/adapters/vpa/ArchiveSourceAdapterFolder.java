@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
-import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
-import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
+import de.mephisto.vpin.restclient.backups.BackupType;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSource;
@@ -46,12 +46,12 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
 
   public List<ArchiveDescriptor> getArchiveDescriptors() {
     if (cache.isEmpty()) {
-      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + ArchiveType.VPA.name().toLowerCase()));
+      File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + BackupType.VPA.name().toLowerCase()));
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
-            ArchivePackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
+            BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
             ArchiveDescriptor descriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
             cache.put(archiveFile.getName(), descriptor);
           }

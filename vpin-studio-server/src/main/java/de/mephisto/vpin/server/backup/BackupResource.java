@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.backup;
 
-import de.mephisto.vpin.restclient.backup.BackupDescriptor;
 import de.mephisto.vpin.server.VPinStudioServer;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
@@ -172,7 +172,7 @@ public class ArchiveService implements InitializingBean {
     }
   }
 
-  public ArchiveSource save(ArchiveSourceRepresentation representation) {
+  public ArchiveSource save(BackupSourceRepresentation representation) {
     Optional<ArchiveSource> byId = archiveSourceRepository.findById(representation.getId());
     ArchiveSource archiveSource = null;
     if (byId.isPresent()) {
@@ -201,9 +201,9 @@ public class ArchiveService implements InitializingBean {
   }
 
   public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
-    ArchiveType archiveType = ArchiveType.VPA;
+    BackupType backupType = BackupType.VPA;
 
-    switch (archiveType) {
+    switch (backupType) {
       case VPA: {
         return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
       }
@@ -233,7 +233,7 @@ public class ArchiveService implements InitializingBean {
     return true;
   }
 
-  public boolean backupTable(@NonNull BackupDescriptor exportDescriptor) {
+  public boolean backupTable(@NonNull BackupExportDescriptor exportDescriptor) {
     List<Integer> gameIds = exportDescriptor.getGameIds();
     boolean result = true;
     for (Integer gameId : gameIds) {
@@ -251,7 +251,7 @@ public class ArchiveService implements InitializingBean {
     return result;
   }
 
-  private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor) {
+  private boolean backupTable(@NonNull Game game, @NonNull BackupExportDescriptor exportDescriptor) {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP);
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
@@ -268,7 +268,7 @@ public class ArchiveService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     //VPA files
-    if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
+    if (systemService.getArchiveType().equals(BackupType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
       this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(vpaService, archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);

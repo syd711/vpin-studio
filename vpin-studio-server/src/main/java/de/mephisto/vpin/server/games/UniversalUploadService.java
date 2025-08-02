@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
-import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.backups.BackupMameData;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -14,7 +14,6 @@ import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -434,7 +433,7 @@ public class UniversalUploadService {
     if (uploadDescriptor.isBackupRestoreMode()) {
       File tempFile = new File(uploadDescriptor.getTempFilename());
       ZipFile zipFile = vpaService.createProtectedArchive(tempFile);
-      ArchiveMameData mameData = VpaArchiveUtil.readMameData(zipFile);
+      BackupMameData mameData = VpaArchiveUtil.readMameData(zipFile);
       GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
       if (mameData != null) {

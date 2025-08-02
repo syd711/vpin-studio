@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.archiving.ArchivingDialogs;
+import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -145,7 +145,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case VPA: {
-        ArchivingDialogs.openArchiveUploadDialog(file);
+        BackupDialogs.openArchiveUploadDialog(file);
         break;
       }
       default: {

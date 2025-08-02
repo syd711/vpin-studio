@@ -8,10 +8,9 @@ import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
 import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
-import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
+import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.backup.BackupServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -80,13 +79,12 @@ public class VPinStudioClient implements OverlayClient {
 
   private final AltSoundServiceClient altSoundServiceClient;
   private final AltColorServiceClient altColorServiceClient;
-  private final ArchiveServiceClient archiveServiceClient;
+  private final BackupServiceClient backupServiceClient;
   private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
   private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
-  private final BackupServiceClient backupServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final DMDServiceClient dmdServiceClient;
   private final DMDPositionServiceClient dmdPositionServiceClient;
@@ -132,12 +130,11 @@ public class VPinStudioClient implements OverlayClient {
     this.alxServiceClient = new AlxServiceClient(this);
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
-    this.archiveServiceClient = new ArchiveServiceClient(this);
+    this.backupServiceClient = new BackupServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
     this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
-    this.backupServiceClient = new BackupServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
     this.dmdPositionServiceClient = new DMDPositionServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
@@ -308,8 +305,8 @@ public class VPinStudioClient implements OverlayClient {
     return altSoundServiceClient;
   }
 
-  public ArchiveServiceClient getArchiveService() {
-    return archiveServiceClient;
+  public BackupServiceClient getArchiveService() {
+    return backupServiceClient;
   }
 
   public AssetServiceClient getAssetService() {

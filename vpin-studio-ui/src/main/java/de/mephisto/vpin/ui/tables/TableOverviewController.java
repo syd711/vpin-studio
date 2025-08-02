@@ -30,7 +30,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.archiving.ArchivingDialogs;
+import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
@@ -470,7 +470,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onBackup() {
     List<GameRepresentation> selectedItems = getSelections();
-    ArchivingDialogs.openTablesBackupDialog(selectedItems);
+    BackupDialogs.openTablesBackupDialog(selectedItems);
   }
 
   @FXML

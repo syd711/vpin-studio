@@ -1,9 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
-import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backup.BackupDescriptor;
+import de.mephisto.vpin.restclient.backups.BackupDescriptor;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.PreferenceType;

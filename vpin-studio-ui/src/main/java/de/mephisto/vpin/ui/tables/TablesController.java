@@ -9,8 +9,8 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.archiving.RepositoryController;
-import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
+import de.mephisto.vpin.ui.backups.BackupsController;
+import de.mephisto.vpin.ui.backups.BackupsSidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -67,7 +67,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
   private AlxController alxController;
-  private RepositoryController repositoryController;
+  private BackupsController backupsController;
 
   public static TablesController INSTANCE;
 
@@ -107,7 +107,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
 
   @FXML
-  private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
+  private BackupsSidebarController backupsSideBarController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -244,10 +244,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       if (Features.BACKUPS_ENABLED) {
-        FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
+        FXMLLoader loader = new FXMLLoader(BackupsController.class.getResource("scene-backups.fxml"));
         Parent repositoryRoot = loader.load();
-        repositoryController = loader.getController();
-        repositoryController.setRootController(this);
+        backupsController = loader.getController();
+        backupsController.setRootController(this);
         tableRepositoryTab.setContent(repositoryRoot);
       }
       else {
@@ -298,7 +298,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     });
 
     tablesSideBarController.setVisible(true);
-    repositorySideBarController.setVisible(false);
+    backupsSideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
 
     Platform.runLater(() -> {
@@ -362,7 +362,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     int selectedTab = getSelectedTab(newValue.intValue());
     Platform.runLater(() -> {
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
-      repositorySideBarController.setVisible(selectedTab == TAB_REPOSITORY);
+      backupsSideBarController.setVisible(selectedTab == TAB_REPOSITORY);
       vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
 
       if (selectedTab == TAB_TABLE) {
@@ -386,7 +386,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         toggleSidebarBtn.setDisable(true);
       }
       else if (selectedTab == TAB_REPOSITORY) {
-        repositoryController.onViewActivated(null);
+        backupsController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
@@ -434,8 +434,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return tablesSideBarController;
   }
 
-  public RepositorySidebarController getRepositorySideBarController() {
-    return repositorySideBarController;
+  public BackupsSidebarController getRepositorySideBarController() {
+    return backupsSideBarController;
   }
 
   public TableOverviewController getTableOverviewController() {
@@ -628,7 +628,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         return alxController;
       }
       case TAB_REPOSITORY: {
-        return repositoryController;
+        return backupsController;
       }
       case TAB_RECORDER: {
         return recorderController;
