@@ -1,19 +1,19 @@
 package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.commons.BackupSourceType;
-import de.mephisto.vpin.server.backups.adapters.vpa.ArchiveSourceAdapterFolder;
+import de.mephisto.vpin.server.backups.adapters.vpa.BackupSourceAdapterFolder;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 
-public class ArchiveSourceAdapterFactory {
+public class BackupSourceAdapterFactory {
 
-  public static ArchiveSourceAdapter create(ArchiveService archiveService, ArchiveSource source, VpaService vpaService) {
+  public static BackupSourceAdapter create(BackupService backupService, BackupSource source, VpaService vpaService) {
     BackupSourceType backupSourceType = BackupSourceType.valueOf(source.getType());
     switch (backupSourceType) {
       case Folder: {
-        return new ArchiveSourceAdapterFolder(vpaService, source);
+        return new BackupSourceAdapterFolder(vpaService, source);
       }
       case Http: {
-        return new ArchiveSourceAdapterHttpServer(archiveService, source);
+        return new BackupSourceAdapterHttpServer(backupService, source);
       }
       default: {
         throw new UnsupportedOperationException("Invalid source type: " + backupSourceType);

@@ -1,24 +1,17 @@
 package de.mephisto.vpin.restclient.backups;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -45,8 +38,8 @@ public class BackupServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "backups/sources", BackupSourceRepresentation[].class));
   }
 
-  public boolean deleteArchive(long sourceId, String filename) {
-    return getRestClient().delete(API + "backups/descriptor/" + sourceId + "/" + filename);
+  public boolean deleteBackup(long sourceId, String filename) {
+    return getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
   }
 
   public boolean deleteArchiveSource(long id) {

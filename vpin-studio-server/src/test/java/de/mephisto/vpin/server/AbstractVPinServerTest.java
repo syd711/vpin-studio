@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.server.backups.ArchiveService;
+import de.mephisto.vpin.server.backups.BackupService;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
@@ -100,7 +100,7 @@ abstract public class AbstractVPinServerTest {
   protected TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
-  protected ArchiveService archiveService;
+  protected BackupService backupService;
 
   /**
    * To force usage of a given Frontend

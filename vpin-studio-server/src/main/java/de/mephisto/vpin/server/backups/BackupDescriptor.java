@@ -6,20 +6,20 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 
 import java.util.Date;
 
-public class ArchiveDescriptor {
+public class BackupDescriptor {
   private TableDetails tableDetails;
   private BackupPackageInfo packageInfo;
-  private ArchiveSource source;
+  private BackupSource source;
   private Date createdAt;
   private String filename;
   private String absoluteFileName;
   private long size;
 
-  public ArchiveDescriptor() {
+  public BackupDescriptor() {
     //used for JSON serialization
   }
 
-  public ArchiveDescriptor(ArchiveSource source, TableDetails tableDetails, BackupPackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
+  public BackupDescriptor(BackupSource source, TableDetails tableDetails, BackupPackageInfo packageInfo, Date createdAt, String filename, String absoluteFileName, long size) {
     this.source = source;
     this.tableDetails = tableDetails;
     this.packageInfo = packageInfo;
@@ -77,11 +77,11 @@ public class ArchiveDescriptor {
     this.tableDetails = tableDetails;
   }
 
-  public ArchiveSource getSource() {
+  public BackupSource getSource() {
     return source;
   }
 
-  public void setSource(ArchiveSource source) {
+  public void setSource(BackupSource source) {
     this.source = source;
   }
 }

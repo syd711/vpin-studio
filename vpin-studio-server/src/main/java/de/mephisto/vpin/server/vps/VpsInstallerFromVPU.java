@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.SilentCssErrorHandler;
 import org.htmlunit.UnexpectedPage;
 import org.htmlunit.WebClient;
 import org.htmlunit.WebWindow;
@@ -19,6 +21,7 @@ import org.htmlunit.html.HtmlPage;
 
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
+import org.slf4j.LoggerFactory;
 
 public class VpsInstallerFromVPU implements VpsInstaller {
 
@@ -31,6 +34,7 @@ public class VpsInstallerFromVPU implements VpsInstaller {
   @Override
   public String login() throws IOException {
     try (final WebClient webClient = new WebClient()) {
+      webClient.setCssErrorHandler(new SilentCssErrorHandler());
       webClient.getOptions().setThrowExceptionOnScriptError(false);
       webClient.getOptions().setJavaScriptEnabled(false);
 

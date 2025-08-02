@@ -16,25 +16,25 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterHttpServer.class);
+public class BackupSourceAdapterHttpServer implements BackupSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(BackupSourceAdapterHttpServer.class);
 
-  private final ArchiveService archiveService;
-  private final ArchiveSource source;
-  private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
+  private final BackupService backupService;
+  private final BackupSource source;
+  private final Map<String, BackupDescriptor> cache = new HashMap<>();
 
-  public ArchiveSourceAdapterHttpServer(ArchiveService archiveService, ArchiveSource source) {
-    this.archiveService = archiveService;
+  public BackupSourceAdapterHttpServer(BackupService backupService, BackupSource source) {
+    this.backupService = backupService;
     this.source = source;
     disableSslVerification();
   }
 
   @Override
-  public File export(ArchiveDescriptor archiveDescriptor) {
+  public File export(BackupDescriptor backupDescriptor) {
     throw new UnsupportedOperationException("not supported for http");
   }
 
-  public void downloadArchive(ArchiveDescriptor descriptor, File target) {
+  public void downloadArchive(BackupDescriptor descriptor, File target) {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
     try {
@@ -70,7 +70,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
     }
   }
 
-  public void downloadDescriptor(ArchiveDescriptor descriptor, File target) {
+  public void downloadDescriptor(BackupDescriptor descriptor, File target) {
     BufferedInputStream in = null;
     BufferedOutputStream out = null;
     try {
@@ -100,7 +100,7 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
     }
   }
 
-  public List<ArchiveDescriptor> getArchiveDescriptors() {
+  public List<BackupDescriptor> getBackupDescriptors() {
 //    if (cache.isEmpty()) {
 //      String location = this.source.getLocation();
 //      if (!location.endsWith("/")) {
@@ -142,23 +142,23 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
     return new ArrayList<>(cache.values());
   }
 
-  public ArchiveSource getArchiveSource() {
+  public BackupSource getBackupSource() {
     return source;
   }
 
   @Override
-  public boolean delete(ArchiveDescriptor descriptor) {
+  public boolean delete(BackupDescriptor descriptor) {
     throw new UnsupportedOperationException("Delete not supported for HTTP sources.");
   }
 
   @Override
-  public InputStream getArchiveInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
+  public InputStream getBackupInputStream(BackupDescriptor backupDescriptor) throws IOException {
     String location = this.source.getLocation();
     if (!location.endsWith("/")) {
       location += "/";
     }
 
-    String name = archiveDescriptor.getFilename();
+    String name = backupDescriptor.getFilename();
     location += URLEncoder.encode(name, StandardCharsets.UTF_8).replace("+", "%20");
 
     HttpURLConnection conn = getConnection(location);
@@ -168,8 +168,8 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   private HttpURLConnection getConnection(String location) {
     HttpURLConnection conn = null;
     try {
-      String login = getArchiveSource().getLogin();
-      String password = PasswordUtil.decrypt(getArchiveSource().getPassword());
+      String login = getBackupSource().getLogin();
+      String password = PasswordUtil.decrypt(getBackupSource().getPassword());
 
       URL url = new URL(location);
       conn = (HttpURLConnection) url.openConnection();
@@ -243,6 +243,6 @@ public class ArchiveSourceAdapterHttpServer implements ArchiveSourceAdapter {
   @Override
   public void invalidate() {
     cache.clear();
-    LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
+    LOG.info("Invalidated archive source \"" + this.getBackupSource() + "\"");
   }
 }

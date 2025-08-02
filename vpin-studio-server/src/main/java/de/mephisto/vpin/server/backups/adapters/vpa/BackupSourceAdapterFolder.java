@@ -4,9 +4,9 @@ import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.server.backups.ArchiveDescriptor;
-import de.mephisto.vpin.server.backups.ArchiveSource;
-import de.mephisto.vpin.server.backups.ArchiveSourceAdapter;
+import de.mephisto.vpin.server.backups.BackupDescriptor;
+import de.mephisto.vpin.server.backups.BackupSource;
+import de.mephisto.vpin.server.backups.BackupSourceAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,25 +17,25 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
-public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterFolder.class);
+public class BackupSourceAdapterFolder implements BackupSourceAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(BackupSourceAdapterFolder.class);
 
   private final VpaService vpaService;
-  private final ArchiveSource source;
+  private final BackupSource source;
   private final File archiveFolder;
-  private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
+  private final Map<String, BackupDescriptor> cache = new HashMap<>();
 
-  public ArchiveSourceAdapterFolder(VpaService vpaService, ArchiveSource source) {
+  public BackupSourceAdapterFolder(VpaService vpaService, BackupSource source) {
     this.vpaService = vpaService;
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
   }
 
   @Override
-  public File export(ArchiveDescriptor archiveDescriptor) {
-    Optional<ArchiveDescriptor> first = getArchiveDescriptors().stream().filter(d -> d.getFilename().equals(archiveDescriptor.getFilename())).findFirst();
+  public File export(BackupDescriptor backupDescriptor) {
+    Optional<BackupDescriptor> first = getBackupDescriptors().stream().filter(d -> d.getFilename().equals(backupDescriptor.getFilename())).findFirst();
     if (first.isPresent()) {
-      return new File(archiveFolder, archiveDescriptor.getFilename());
+      return new File(archiveFolder, backupDescriptor.getFilename());
     }
     return null;
   }
@@ -44,7 +44,7 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
     return archiveFolder;
   }
 
-  public List<ArchiveDescriptor> getArchiveDescriptors() {
+  public List<BackupDescriptor> getBackupDescriptors() {
     if (cache.isEmpty()) {
       File[] vpaFiles = archiveFolder.listFiles((dir, name) -> name.endsWith("." + BackupType.VPA.name().toLowerCase()));
       if (vpaFiles != null) {
@@ -52,7 +52,7 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
           try {
             TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
             BackupPackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
-            ArchiveDescriptor descriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
+            BackupDescriptor descriptor = new BackupDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
             cache.put(archiveFile.getName(), descriptor);
           }
           catch (Exception e) {
@@ -64,12 +64,12 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
     return new ArrayList<>(cache.values());
   }
 
-  public ArchiveSource getArchiveSource() {
+  public BackupSource getBackupSource() {
     return source;
   }
 
   @Override
-  public boolean delete(ArchiveDescriptor descriptor) {
+  public boolean delete(BackupDescriptor descriptor) {
     File file = new File(archiveFolder, descriptor.getFilename());
     LOG.info("Deleting {}", file.getAbsolutePath());
     if (!Desktop.getDesktop().moveToTrash(file)) {
@@ -84,15 +84,15 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
   }
 
   @Override
-  public FileInputStream getArchiveInputStream(ArchiveDescriptor archiveDescriptor) throws IOException {
-    File file = new File(archiveFolder, archiveDescriptor.getFilename());
+  public FileInputStream getBackupInputStream(BackupDescriptor backupDescriptor) throws IOException {
+    File file = new File(archiveFolder, backupDescriptor.getFilename());
     return new FileInputStream(file);
   }
 
   @Override
   public void invalidate() {
     cache.clear();
-    getArchiveDescriptors();
-    LOG.info("Invalidated archive source \"" + this.getArchiveSource() + "\"");
+    getBackupDescriptors();
+    LOG.info("Invalidated archive source \"" + this.getBackupSource() + "\"");
   }
 }

@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
-import de.mephisto.vpin.server.system.SystemBackupService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -26,35 +24,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "backups")
-public class ArchivesResource {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchivesResource.class);
+public class BackupResource {
+  private final static Logger LOG = LoggerFactory.getLogger(BackupResource.class);
 
   @Autowired
-  private ArchiveService archiveService;
+  private BackupService backupService;
 
   @Autowired
   private VpaService vpaService;
 
   @PostMapping("/backup")
   public Boolean backupTable(@RequestBody BackupExportDescriptor descriptor) {
-    return archiveService.backupTable(descriptor);
+    return backupService.backupTable(descriptor);
   }
 
   @PostMapping("/restore")
-  public Boolean restoreArchive(@RequestBody ArchiveRestoreDescriptor descriptor) {
-    return archiveService.restoreArchive(descriptor);
+  public Boolean restoreBackup(@RequestBody ArchiveRestoreDescriptor descriptor) {
+    return backupService.restoreBackup(descriptor);
   }
 
   @GetMapping("/{sourceId}")
-  public List<BackupDescriptorRepresentation> getArchives(@PathVariable("sourceId") long sourceId) {
-    List<ArchiveDescriptor> descriptors = archiveService.getArchiveDescriptors(sourceId);
+  public List<BackupDescriptorRepresentation> getBackups(@PathVariable("sourceId") long sourceId) {
+    List<BackupDescriptor> descriptors = backupService.getBackupDescriptors(sourceId);
     List<BackupDescriptorRepresentation> result = new ArrayList<>();
-    for (ArchiveDescriptor archiveDescriptor : descriptors) {
-      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
+    for (BackupDescriptor backupDescriptor : descriptors) {
+      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(backupDescriptor);
       result.add(descriptorRepresentation);
     }
     return result;
@@ -68,26 +65,26 @@ public class ArchivesResource {
 
   @GetMapping("/sources")
   public List<BackupSourceRepresentation> getSources() {
-    return archiveService.getArchiveSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());
+    return backupService.getBackupSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());
   }
 
-  @DeleteMapping("/descriptor/{sourceId}/{filename}")
-  public boolean deleteArchive(@PathVariable("sourceId") long sourceId,
-                               @PathVariable("filename") String filename) {
-    return archiveService.deleteArchiveDescriptor(sourceId, filename);
+  @DeleteMapping("/{sourceId}/{filename}")
+  public boolean deleteBackup(@PathVariable("sourceId") long sourceId,
+                              @PathVariable("filename") String filename) {
+    return backupService.deleteBackup(sourceId, filename);
   }
 
   @DeleteMapping("/source/{id}")
   public boolean deleteArchiveSource(@PathVariable("id") long id) {
-    return archiveService.deleteArchiveSource(id);
+    return backupService.deleteBackupSource(id);
   }
 
   @GetMapping("/game/{id}")
-  public List<BackupDescriptorRepresentation> getArchives(@PathVariable("id") int gameId) {
-    List<ArchiveDescriptor> archiveDescriptors = archiveService.getArchiveDescriptorForGame(gameId);
+  public List<BackupDescriptorRepresentation> getBackups(@PathVariable("id") int gameId) {
+    List<BackupDescriptor> backupDescriptors = backupService.getBackupDescriptorForGame(gameId);
     List<BackupDescriptorRepresentation> result = new ArrayList<>();
-    for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
-      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(archiveDescriptor);
+    for (BackupDescriptor backupDescriptor : backupDescriptors) {
+      BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(backupDescriptor);
       result.add(descriptorRepresentation);
     }
     return result;
@@ -95,7 +92,7 @@ public class ArchivesResource {
 
   @GetMapping("/invalidate")
   public boolean invalidateCache() {
-    archiveService.invalidateCache();
+    backupService.invalidateCache();
     return true;
   }
 
@@ -108,19 +105,20 @@ public class ArchivesResource {
     String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
 
     try {
-      ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(sourceId, filename);
-      ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(sourceId);
+      BackupDescriptor backupDescriptor = backupService.getBackupDescriptors(sourceId, filename);
+      BackupSourceAdapter sourceAdapter = backupService.getArchiveSourceAdapter(sourceId);
 
-      in = sourceAdapter.getArchiveInputStream(archiveDescriptor);
+      in = sourceAdapter.getBackupInputStream(backupDescriptor);
       out = response.getOutputStream();
       IOUtils.copy(in, out);
       response.flushBuffer();
       in.close();
       out.close();
 
-      LOG.info("Finished download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Finished download of \"" + backupDescriptor.getTableDetails().getGameDisplayName() + "\"");
       invalidateCache();
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       LOG.info("Error writing archive to output stream. Filename was '{}'", filename, ex);
       throw new RuntimeException("IOError writing file to output stream");
     }
@@ -134,8 +132,8 @@ public class ArchivesResource {
         LOG.error("Archive upload request did not contain a file object.");
         return null;
       }
-      ArchiveSourceAdapter sourceAdapter = archiveService.getArchiveSourceAdapter(repositoryId);
-      File out = new File(sourceAdapter.getArchiveSource().getLocation(), file.getOriginalFilename());
+      BackupSourceAdapter sourceAdapter = backupService.getArchiveSourceAdapter(repositoryId);
+      File out = new File(sourceAdapter.getBackupSource().getLocation(), file.getOriginalFilename());
 
       if (file.getOriginalFilename().endsWith(".zip")) {
         out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
@@ -143,12 +141,13 @@ public class ArchivesResource {
 
       if (UploadUtil.upload(file, out)) {
         if (file.getOriginalFilename().endsWith(".zip")) {
-          ZipUtil.unzip(out, new File(sourceAdapter.getArchiveSource().getLocation()));
+          ZipUtil.unzip(out, new File(sourceAdapter.getBackupSource().getLocation()));
         }
 
-        archiveService.invalidateCache();
+        backupService.invalidateCache();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Archive upload failed: " + e.getMessage(), e);
       return JobDescriptorFactory.error("Archive upload failed: " + e.getMessage());
     }
@@ -157,12 +156,12 @@ public class ArchivesResource {
 
   @PostMapping("/save")
   public BackupSourceRepresentation save(@RequestBody BackupSourceRepresentation backupSourceRepresentation) {
-    ArchiveSource update = archiveService.save(backupSourceRepresentation);
+    BackupSource update = backupService.save(backupSourceRepresentation);
     return toRepresentation(update);
   }
 
 
-  private BackupSourceRepresentation toRepresentation(ArchiveSource source) {
+  private BackupSourceRepresentation toRepresentation(BackupSource source) {
     BackupSourceRepresentation representation = new BackupSourceRepresentation();
     representation.setType(source.getType());
     representation.setLocation(source.getLocation());
@@ -176,7 +175,7 @@ public class ArchivesResource {
     return representation;
   }
 
-  private BackupDescriptorRepresentation toRepresentation(ArchiveDescriptor descriptor) {
+  private BackupDescriptorRepresentation toRepresentation(BackupDescriptor descriptor) {
     BackupSourceRepresentation source = toRepresentation(descriptor.getSource());
     BackupDescriptorRepresentation representation = new BackupDescriptorRepresentation();
     representation.setFilename(descriptor.getFilename());

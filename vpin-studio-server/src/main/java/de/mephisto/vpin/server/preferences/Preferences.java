@@ -39,6 +39,7 @@ public class Preferences {
   private String discordBotToken;
 
   private String discordBotAllowList;
+
   private String backupSettings;
 
   private String rankingPoints;

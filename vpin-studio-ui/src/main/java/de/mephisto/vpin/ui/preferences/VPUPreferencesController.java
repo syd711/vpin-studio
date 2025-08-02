@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
@@ -21,13 +22,14 @@ public class VPUPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VPUPreferencesController.class);
   public static final int DEBOUNCE_MS = 300;
 
-  private final Debouncer debouncer = new Debouncer();
-
   @FXML
   private TextField loginText;
 
   @FXML
   private PasswordField passwordText;
+
+  @FXML
+  private Button saveBtn;
 
   private VPUSettings settings;
 
@@ -35,16 +37,26 @@ public class VPUPreferencesController implements Initializable {
   private void onConnectionTest() {
     String error = null;
     try {
+      loginText.setDisable(true);
+      passwordText.setDisable(true);
+      saveBtn.setDisable(true);
+
+      settings.setLogin(loginText.getText().trim());
+      settings.setPassword(passwordText.getText().trim());
+      saveSettings();
       error = client.getVpsService().checkInstallLogin("vpuniverse.com");
     } catch (Exception e) {
       error = e.getMessage();
     }
+    finally {
+      loginText.setDisable(false);
+      passwordText.setDisable(false);
+      saveBtn.setDisable(false);
+    }
     // report to user
     if (error == null) {
       WidgetFactory.showInformation(stage, "VPU Account", "Login test successful!");
-      settings.setLogin(loginText.getText().trim());
-      settings.setPassword(passwordText.getText().trim());
-      saveSettings();
+
     }
     else {
       WidgetFactory.showAlert(stage, "VPU Account Error", "Login test not successful!", error);

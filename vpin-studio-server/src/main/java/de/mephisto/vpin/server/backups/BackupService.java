@@ -9,8 +9,8 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.backups.adapters.vpa.ArchiveSourceAdapterFolder;
-import de.mephisto.vpin.server.backups.adapters.vpa.VpaArchiveSource;
+import de.mephisto.vpin.server.backups.adapters.vpa.BackupSourceAdapterFolder;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaBackupSource;
 import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -34,8 +34,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ArchiveService implements InitializingBean {
-  private final static Logger LOG = LoggerFactory.getLogger(ArchiveService.class);
+public class BackupService implements InitializingBean {
+  private final static Logger LOG = LoggerFactory.getLogger(BackupService.class);
 
   @Autowired
   private SystemService systemService;
@@ -44,7 +44,7 @@ public class ArchiveService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private ArchiveSourceRepository archiveSourceRepository;
+  private BackupSourceRepository backupSourceRepository;
 
   @Autowired
   private JobService jobService;
@@ -67,14 +67,14 @@ public class ArchiveService implements InitializingBean {
   @Autowired
   private VpaService vpaService;
 
-  private ArchiveSourceAdapter defaultArchiveSourceAdapter;
+  private BackupSourceAdapter defaultBackupSourceAdapter;
 
-  private final Map<Long, ArchiveSourceAdapter> adapterCache = new LinkedHashMap<>();
+  private final Map<Long, BackupSourceAdapter> backupSourcesCache = new LinkedHashMap<>();
 
-  public List<ArchiveDescriptor> getArchiveDescriptorForGame(int gameId) {
+  public List<BackupDescriptor> getBackupDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
 
-    return getArchiveDescriptors().stream().filter(ArchiveDescriptor -> {
+    return getBackupDescriptors().stream().filter(ArchiveDescriptor -> {
       TableDetails manifest = ArchiveDescriptor.getTableDetails();
       if (manifest == null) {
         return false;
@@ -86,11 +86,11 @@ public class ArchiveService implements InitializingBean {
   }
 
   @NonNull
-  public List<ArchiveDescriptor> getArchiveDescriptors() {
-    List<ArchiveDescriptor> result = new ArrayList<>();
-    for (ArchiveSourceAdapter adapter : adapterCache.values()) {
-      if (adapter.getArchiveSource().isEnabled()) {
-        List<ArchiveDescriptor> descriptors = adapter.getArchiveDescriptors();
+  public List<BackupDescriptor> getBackupDescriptors() {
+    List<BackupDescriptor> result = new ArrayList<>();
+    for (BackupSourceAdapter adapter : backupSourcesCache.values()) {
+      if (adapter.getBackupSource().isEnabled()) {
+        List<BackupDescriptor> descriptors = adapter.getBackupDescriptors();
         result.addAll(descriptors);
       }
     }
@@ -104,24 +104,24 @@ public class ArchiveService implements InitializingBean {
   }
 
   @NonNull
-  public List<ArchiveDescriptor> getArchiveDescriptors(long sourceId) {
-    ArchiveSourceAdapter adapter = getArchiveSourceAdapter(sourceId);
-    List<ArchiveDescriptor> archiveDescriptors = adapter.getArchiveDescriptors();
-    archiveDescriptors.sort((o1, o2) -> {
+  public List<BackupDescriptor> getBackupDescriptors(long sourceId) {
+    BackupSourceAdapter adapter = getArchiveSourceAdapter(sourceId);
+    List<BackupDescriptor> backupDescriptors = adapter.getBackupDescriptors();
+    backupDescriptors.sort((o1, o2) -> {
       if (o1.getFilename() != null && o2.getFilename() != null) {
         return o1.getFilename().compareTo(o2.getFilename());
       }
       return o1.getTableDetails().getGameDisplayName().compareTo(o2.getTableDetails().getGameDisplayName());
     });
 
-    return archiveDescriptors;
+    return backupDescriptors;
   }
 
   @Nullable
-  public ArchiveDescriptor getArchiveDescriptor(long sourceId, @NonNull String filename) {
-    ArchiveSourceAdapter sourceAdapter = adapterCache.get(sourceId);
-    List<ArchiveDescriptor> descriptors = sourceAdapter.getArchiveDescriptors();
-    for (ArchiveDescriptor descriptor : descriptors) {
+  public BackupDescriptor getBackupDescriptors(long sourceId, @NonNull String filename) {
+    BackupSourceAdapter sourceAdapter = backupSourcesCache.get(sourceId);
+    List<BackupDescriptor> descriptors = sourceAdapter.getBackupDescriptors();
+    for (BackupDescriptor descriptor : descriptors) {
       String descriptorFilename = descriptor.getFilename();
       if (filename.equals(descriptorFilename)) {
         return descriptor;
@@ -130,101 +130,101 @@ public class ArchiveService implements InitializingBean {
     return null;
   }
 
-  public boolean deleteArchiveDescriptor(long sourceId, @NonNull String filename) {
-    List<ArchiveDescriptor> descriptors = adapterCache.get(sourceId).getArchiveDescriptors();
-    Optional<ArchiveDescriptor> first = descriptors.stream().filter(ArchiveDescriptor -> ArchiveDescriptor.getFilename().equals(filename)).findFirst();
+  public boolean deleteBackup(long sourceId, @NonNull String filename) {
+    List<BackupDescriptor> descriptors = backupSourcesCache.get(sourceId).getBackupDescriptors();
+    Optional<BackupDescriptor> first = descriptors.stream().filter(ArchiveDescriptor -> ArchiveDescriptor.getFilename().equals(filename)).findFirst();
     if (first.isPresent()) {
-      ArchiveDescriptor descriptor = first.get();
+      BackupDescriptor descriptor = first.get();
       return getArchiveSourceAdapter(sourceId).delete(descriptor);
     }
     return false;
   }
 
-  public boolean deleteArchiveSource(long id) {
-    if (adapterCache.containsKey(id)) {
-      this.adapterCache.remove(id);
-      this.archiveSourceRepository.deleteById(id);
+  public boolean deleteBackupSource(long id) {
+    if (backupSourcesCache.containsKey(id)) {
+      this.backupSourcesCache.remove(id);
+      this.backupSourceRepository.deleteById(id);
       return true;
     }
     return false;
   }
 
-  public List<ArchiveSource> getArchiveSources() {
-    return adapterCache.values().stream().map(ArchiveSourceAdapter::getArchiveSource).collect(Collectors.toList());
+  public List<BackupSource> getBackupSources() {
+    return backupSourcesCache.values().stream().map(BackupSourceAdapter::getBackupSource).collect(Collectors.toList());
   }
 
-  public ArchiveSourceAdapter getDefaultArchiveSourceAdapter() {
-    return this.defaultArchiveSourceAdapter;
+  public BackupSourceAdapter getDefaultArchiveSourceAdapter() {
+    return this.defaultBackupSourceAdapter;
   }
 
-  public ArchiveSourceAdapter getArchiveSourceAdapter(long sourceId) {
-    return adapterCache.get(sourceId);
+  public BackupSourceAdapter getArchiveSourceAdapter(long sourceId) {
+    return backupSourcesCache.get(sourceId);
   }
 
-  public File export(ArchiveDescriptor archiveDescriptor) {
-    return getDefaultArchiveSourceAdapter().export(archiveDescriptor);
+  public File export(BackupDescriptor backupDescriptor) {
+    return getDefaultArchiveSourceAdapter().export(backupDescriptor);
   }
 
   public void invalidateCache() {
-    Set<Map.Entry<Long, ArchiveSourceAdapter>> entries = adapterCache.entrySet();
-    for (Map.Entry<Long, ArchiveSourceAdapter> entry : entries) {
+    Set<Map.Entry<Long, BackupSourceAdapter>> entries = backupSourcesCache.entrySet();
+    for (Map.Entry<Long, BackupSourceAdapter> entry : entries) {
       entry.getValue().invalidate();
     }
   }
 
-  public ArchiveSource save(BackupSourceRepresentation representation) {
-    Optional<ArchiveSource> byId = archiveSourceRepository.findById(representation.getId());
-    ArchiveSource archiveSource = null;
+  public BackupSource save(BackupSourceRepresentation representation) {
+    Optional<BackupSource> byId = backupSourceRepository.findById(representation.getId());
+    BackupSource backupSource = null;
     if (byId.isPresent()) {
-      archiveSource = byId.get();
+      backupSource = byId.get();
     }
     else {
-      archiveSource = new ArchiveSource();
-      archiveSource.setCreatedAt(new Date());
-      archiveSource.setType(representation.getType());
+      backupSource = new BackupSource();
+      backupSource.setCreatedAt(new Date());
+      backupSource.setType(representation.getType());
     }
 
-    archiveSource.setLocation(representation.getLocation());
-    archiveSource.setName(representation.getName());
-    archiveSource.setAuthenticationType(representation.getAuthenticationType());
-    archiveSource.setLogin(representation.getLogin());
-    archiveSource.setPassword(representation.getPassword());
-    archiveSource.setEnabled(representation.isEnabled());
-    archiveSource.setSettings(representation.getSettings());
+    backupSource.setLocation(representation.getLocation());
+    backupSource.setName(representation.getName());
+    backupSource.setAuthenticationType(representation.getAuthenticationType());
+    backupSource.setLogin(representation.getLogin());
+    backupSource.setPassword(representation.getPassword());
+    backupSource.setEnabled(representation.isEnabled());
+    backupSource.setSettings(representation.getSettings());
 
-    ArchiveSource updatedSource = archiveSourceRepository.saveAndFlush(archiveSource);
-    adapterCache.remove(updatedSource.getId());
+    BackupSource updatedSource = backupSourceRepository.saveAndFlush(backupSource);
+    backupSourcesCache.remove(updatedSource.getId());
 
-    adapterCache.put(updatedSource.getId(), ArchiveSourceAdapterFactory.create(this, updatedSource, vpaService));
+    backupSourcesCache.put(updatedSource.getId(), BackupSourceAdapterFactory.create(this, updatedSource, vpaService));
     LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
     return updatedSource;
   }
 
-  public File getTargetFile(ArchiveDescriptor archiveDescriptor) {
+  public File getTargetFile(BackupDescriptor backupDescriptor) {
     BackupType backupType = BackupType.VPA;
 
     switch (backupType) {
       case VPA: {
-        return new File(VpaArchiveSource.FOLDER, archiveDescriptor.getFilename());
+        return new File(VpaBackupSource.FOLDER, backupDescriptor.getFilename());
       }
     }
     return null;
   }
 
 
-  public boolean restoreArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
+  public boolean restoreBackup(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
-      ArchiveDescriptor archiveDescriptor = getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
+      BackupDescriptor backupDescriptor = getBackupDescriptors(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
       GameEmulator emulator = emulatorService.getGameEmulator(installDescriptor.getEmulatorId());
 
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
-      jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
-      ArchiveInstallerJob job = new ArchiveInstallerJob(archiveDescriptor, universalUploadService, gameService, emulator, cardService);
+      jobDescriptor.setTitle("Restoring \"" + backupDescriptor.getFilename() + "\"");
+      BackupInstallerJob job = new BackupInstallerJob(backupDescriptor, universalUploadService, gameService, emulator, cardService);
       jobDescriptor.setJob(job);
 
       jobService.offer(jobDescriptor);
-      LOG.info("Offered restore job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
+      LOG.info("Offered restore job for \"" + backupDescriptor.getTableDetails().getGameDisplayName() + "\"");
     }
     catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
@@ -258,7 +258,7 @@ public class ArchiveService implements InitializingBean {
 
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game);
 
-    ArchiveSourceAdapter sourceAdapter = getDefaultArchiveSourceAdapter();
+    BackupSourceAdapter sourceAdapter = getDefaultArchiveSourceAdapter();
     descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
@@ -269,23 +269,23 @@ public class ArchiveService implements InitializingBean {
   public void afterPropertiesSet() {
     //VPA files
     if (systemService.getArchiveType().equals(BackupType.VPA)) {
-      ArchiveSource archiveSource = new VpaArchiveSource();
-      this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(vpaService, archiveSource);
-      this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
+      BackupSource backupSource = new VpaBackupSource();
+      this.defaultBackupSourceAdapter = new BackupSourceAdapterFolder(vpaService, backupSource);
+      this.backupSourcesCache.put(backupSource.getId(), this.defaultBackupSourceAdapter);
     }
 
     //EXTERNAL
-    List<ArchiveSource> all = archiveSourceRepository.findAll();
-    for (ArchiveSource as : all) {
-      ArchiveSourceAdapter vpaSourceAdapter = null;
+    List<BackupSource> all = backupSourceRepository.findAll();
+    for (BackupSource as : all) {
+      BackupSourceAdapter vpaSourceAdapter = null;
       try {
-        vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as, vpaService);
+        vpaSourceAdapter = BackupSourceAdapterFactory.create(this, as, vpaService);
       }
       catch (Exception e) {
         LOG.error("Failed to create archive source: {}", e.getMessage());
         continue;
       }
-      this.adapterCache.put(as.getId(), vpaSourceAdapter);
+      this.backupSourcesCache.put(as.getId(), vpaSourceAdapter);
     }
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

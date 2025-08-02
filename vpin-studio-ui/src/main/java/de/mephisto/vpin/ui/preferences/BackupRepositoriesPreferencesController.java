@@ -2,21 +2,25 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.AuthenticationProvider;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
+import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -36,6 +40,12 @@ public class BackupRepositoriesPreferencesController implements Initializable {
 
   @FXML
   private Button deleteBtn;
+
+  @FXML
+  private Button providerBtn;
+
+  @FXML
+  private ComboBox<AuthenticationProvider> providerCombo;
 
   @FXML
   private Button editBtn;
@@ -64,7 +74,8 @@ public class BackupRepositoriesPreferencesController implements Initializable {
       if (sourceRepresentation != null) {
         try {
           client.getArchiveService().saveArchiveSource(sourceRepresentation);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
         }
         onReload();
@@ -78,7 +89,8 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     if (sourceRepresentation != null) {
       try {
         client.getArchiveService().saveArchiveSource(sourceRepresentation);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
       }
       onReload();
@@ -91,7 +103,8 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     if (sourceRepresentation != null) {
       try {
         client.getArchiveService().saveArchiveSource(sourceRepresentation);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving repository: " + e.getMessage());
       }
       onReload();
@@ -106,10 +119,29 @@ public class BackupRepositoriesPreferencesController implements Initializable {
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getArchiveService().deleteArchiveSource(selectedItem.getId());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
-        } finally {
+        }
+        finally {
           onReload();
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onProvider() {
+    AuthenticationProvider value = providerCombo.getValue();
+    if(value != null) {
+      switch (value) {
+        case VPF: {
+          PreferencesController.open("vpf");
+          break;
+        }
+        case VPU: {
+          PreferencesController.open("vpu");
+          break;
         }
       }
     }
@@ -128,6 +160,21 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     tableView.setPlaceholder(new Label("              No table repository found.\nAdd a table repository to download tables from."));
     deleteBtn.setDisable(true);
     editBtn.setDisable(true);
+
+    List<AuthenticationProvider> providers = new ArrayList<>(Arrays.asList(AuthenticationProvider.VPF, AuthenticationProvider.VPU));
+    providers.add(0, null);
+    providerCombo.setItems(FXCollections.observableList(providers));
+
+    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+    providerCombo.setValue(backupSettings.getAuthenticationProvider());
+
+    providerCombo.valueProperty().addListener(new ChangeListener<AuthenticationProvider>() {
+      @Override
+      public void changed(ObservableValue<? extends AuthenticationProvider> observable, AuthenticationProvider oldValue, AuthenticationProvider newValue) {
+        backupSettings.setAuthenticationProvider(newValue);
+        client.getPreferenceService().setJsonPreference(backupSettings);
+      }
+    });
 
     nameColumn.setCellValueFactory(cellData -> {
       BackupSourceRepresentation value = cellData.getValue();

@@ -9,13 +9,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class TableBackupJob implements Job {
   private final FrontendService frontendService;
-  private final ArchiveSourceAdapter sourceAdapter;
+  private final BackupSourceAdapter sourceAdapter;
   private final TableBackupAdapter tableBackupAdapter;
   private final BackupExportDescriptor backupExportDescriptor;
   private int gameId;
 
   public TableBackupJob(@NonNull FrontendService frontendService,
-                        @NonNull ArchiveSourceAdapter sourceAdapter,
+                        @NonNull BackupSourceAdapter sourceAdapter,
                         @NonNull TableBackupAdapter tableBackupAdapter,
                         @NonNull BackupExportDescriptor backupExportDescriptor,
                         int gameId) {

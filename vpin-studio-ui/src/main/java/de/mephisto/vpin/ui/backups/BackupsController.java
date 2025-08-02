@@ -265,7 +265,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           for (BackupDescriptorRepresentation selectedItem : selectedItems) {
-            boolean b = client.getArchiveService().deleteArchive(selectedItem.getSource().getId(), selectedItem.getFilename());
+            boolean b = client.getArchiveService().deleteBackup(selectedItem.getSource().getId(), selectedItem.getFilename());
             if (!b) {
               WidgetFactory.showAlert(stage, "Error", "Failed to delete \"" + selectedItem.getFilename() + "\"");
             }

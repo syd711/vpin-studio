@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.server.backups.ArchiveDescriptor;
+import de.mephisto.vpin.server.backups.BackupDescriptor;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -39,21 +39,21 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
   }
 
   public void createBackup(JobDescriptor result) {
-    ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
+    BackupDescriptor backupDescriptor = new BackupDescriptor();
     BackupPackageInfo packageInfo = new BackupPackageInfo();
 
-    archiveDescriptor.setCreatedAt(new Date());
-    archiveDescriptor.setTableDetails(tableDetails);
-    archiveDescriptor.setPackageInfo(packageInfo);
+    backupDescriptor.setCreatedAt(new Date());
+    backupDescriptor.setTableDetails(tableDetails);
+    backupDescriptor.setPackageInfo(packageInfo);
 
     result.setStatus("Calculating export size of " + game.getGameDisplayName());
     long totalSizeExpected = vpaService.calculateTotalSize(game);
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
     String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    File target = new File(VpaArchiveSource.FOLDER, baseName + "." + BackupType.VPA.name().toLowerCase());
+    File target = new File(VpaBackupSource.FOLDER, baseName + "." + BackupType.VPA.name().toLowerCase());
     target = FileUtils.uniqueFile(target);
-    archiveDescriptor.setFilename(target.getName());
+    backupDescriptor.setFilename(target.getName());
 
     File tempFile = new File(target.getParentFile(), target.getName() + ".bak");
 
@@ -119,7 +119,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
       }
     }
 
-    archiveDescriptor.setSize(target.length());
+    backupDescriptor.setSize(target.length());
   }
 
   public void simulateBackup() throws IOException {

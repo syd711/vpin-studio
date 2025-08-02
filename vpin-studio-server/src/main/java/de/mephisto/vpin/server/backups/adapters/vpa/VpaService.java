@@ -96,10 +96,11 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private VpsService vpsService;
+
   private VPFSettings vpfSettings;
   private VPUSettings vpuSettings;
-
-  private VpsService vpsService;
 
   public ZipFile createProtectedArchive(@NonNull File target) {
     return VpaArchiveUtil.createZipFile(target);
@@ -396,19 +397,23 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (PreferenceNames.VPF_SETTINGS.equalsIgnoreCase(propertyName)) {
       vpfSettings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
-      new Thread(() -> {
-        if(vpsService.checkLogin("vpuniverse.com") == null) {
-          VpaArchiveUtil.PASSWORD = vpfSettings.getPassword();
-        };
-      }).start();
+      if (vpfSettings.getPassword() != null) {
+        new Thread(() -> {
+          if (vpsService.checkLogin("vpforums.org") == null) {
+            VpaArchiveUtil.PASSWORD = vpfSettings.getPassword();
+          }
+        }).start();
+      }
     }
     if (PreferenceNames.VPU_SETTINGS.equalsIgnoreCase(propertyName)) {
       vpuSettings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
-      new Thread(() -> {
-        if(vpsService.checkLogin("vpforums.org") == null) {
-          VpaArchiveUtil.PASSWORD = vpuSettings.getPassword();
-        };
-      }).start();
+      if (vpuSettings.getPassword() != null) {
+        new Thread(() -> {
+          if (vpsService.checkLogin("vpuniverse.com") == null) {
+            VpaArchiveUtil.PASSWORD = vpuSettings.getPassword();
+          }
+        }).start();
+      }
     }
   }
 

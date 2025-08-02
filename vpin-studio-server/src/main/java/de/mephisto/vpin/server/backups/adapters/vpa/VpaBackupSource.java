@@ -2,13 +2,13 @@ package de.mephisto.vpin.server.backups.adapters.vpa;
 
 import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.BackupType;
-import de.mephisto.vpin.server.backups.ArchiveSource;
+import de.mephisto.vpin.server.backups.BackupSource;
 import de.mephisto.vpin.server.system.SystemService;
 
 import java.io.File;
 import java.util.Date;
 
-public class VpaArchiveSource extends ArchiveSource {
+public class VpaBackupSource extends BackupSource {
   public final static long DEFAULT_ARCHIVE_SOURCE_ID = -1;
 
   public final static File FOLDER = new File(SystemService.RESOURCES, BackupType.VPA.name().toLowerCase() + "/");
@@ -19,7 +19,7 @@ public class VpaArchiveSource extends ArchiveSource {
     }
   }
 
-  public VpaArchiveSource() {
+  public VpaBackupSource() {
 
   }
 

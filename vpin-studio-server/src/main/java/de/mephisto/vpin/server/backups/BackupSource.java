@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ArchiveSources")
+@Table(name = "BackupSources")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ArchiveSource {
+public class BackupSource {
 
   @Column(nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
@@ -117,12 +117,12 @@ public class ArchiveSource {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof ArchiveSource)) return false;
+    if (!(o instanceof BackupSource)) return false;
 
-    ArchiveSource archiveSource = (ArchiveSource) o;
+    BackupSource backupSource = (BackupSource) o;
 
-    if (!id.equals(archiveSource.id)) return false;
-    return location.equals(archiveSource.location);
+    if (!id.equals(backupSource.id)) return false;
+    return location.equals(backupSource.location);
   }
 
   @Override

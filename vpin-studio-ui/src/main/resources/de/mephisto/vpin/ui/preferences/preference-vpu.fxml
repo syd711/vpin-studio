@@ -63,7 +63,7 @@
                               <Font size="14.0" />
                            </font>
                         </PasswordField>
-                        <Button mnemonicParsing="false" onAction="#onConnectionTest" text="Save" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button mnemonicParsing="false" onAction="#onConnectionTest" text="Save" fx:id="saveBtn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

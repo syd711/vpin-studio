@@ -8,10 +8,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
-import org.htmlunit.Page;
-import org.htmlunit.UnexpectedPage;
-import org.htmlunit.WebClient;
-import org.htmlunit.WebWindow;
+import org.htmlunit.*;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
@@ -33,6 +30,7 @@ public class VpsInstallerFromVPF implements VpsInstaller {
   @Override
   public String login() throws IOException {
     try (final WebClient webClient = new WebClient()) {
+      webClient.setCssErrorHandler(new SilentCssErrorHandler());
       webClient.getOptions().setThrowExceptionOnScriptError(false);
       webClient.getOptions().setJavaScriptEnabled(false);
 
