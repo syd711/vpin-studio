@@ -1,7 +1,7 @@
-package de.mephisto.vpin.server.archiving;
+package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.server.AbstractVPinServerTest;
-import de.mephisto.vpin.server.archiving.adapters.vpa.TableBackupAdapterVpa;
+import de.mephisto.vpin.server.backups.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.games.Game;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

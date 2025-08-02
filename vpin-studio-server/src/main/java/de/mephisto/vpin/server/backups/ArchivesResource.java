@@ -1,11 +1,12 @@
-package de.mephisto.vpin.server.archiving;
+package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
+import de.mephisto.vpin.server.system.SystemBackupService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -24,9 +26,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
-@RequestMapping(API_SEGMENT + "archives")
+@RequestMapping(API_SEGMENT + "backups")
 public class ArchivesResource {
   private final static Logger LOG = LoggerFactory.getLogger(ArchivesResource.class);
 

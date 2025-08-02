@@ -76,7 +76,7 @@ public class BackupRestoreProgressModel extends ProgressModel<String> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, String entry) {
     try {
-      client.getBackupService().restore(file, descriptor);
+      client.getSystemService().restoreSystemBackup(file, descriptor);
       PreferencesController.instance.closePreferences();
     }
     catch (Exception ex) {

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.archiving;
+package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;

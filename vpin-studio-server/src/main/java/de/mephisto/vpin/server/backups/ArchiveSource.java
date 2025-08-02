@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.archiving;
+package de.mephisto.vpin.server.backups;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

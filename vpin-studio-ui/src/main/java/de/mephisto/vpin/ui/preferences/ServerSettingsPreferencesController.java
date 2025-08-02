@@ -118,10 +118,8 @@ public class ServerSettingsPreferencesController implements Initializable {
     File selection = fileChooser.showOpenDialog(Studio.stage);
     if (selection != null) {
       try {
-        String json = client.getBackupService().backup();
-        if (json != null) {
-          String backup = client.getBackupService().backup();
-
+        String backup = client.getSystemService().backupSystem();
+        if (backup != null) {
           String name = "VPin-Studio-Backup[" + new SimpleDateFormat("yyyy-MM-dd--HH-mm").format(new Date()) + "].json";
           File file = new File(selection, name);
           FileOutputStream fileOutputStream = new FileOutputStream(file);

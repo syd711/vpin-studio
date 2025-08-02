@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -49,8 +49,8 @@ public class BackupRepositoriesPreferencesController implements Initializable {
       }
 
       BackupSourceRepresentation sourceRepresentation = null;
-      ArchiveSourceType archiveSourceType = ArchiveSourceType.valueOf(selectedItem.getType());
-      switch (archiveSourceType) {
+      BackupSourceType backupSourceType = BackupSourceType.valueOf(selectedItem.getType());
+      switch (backupSourceType) {
         case Folder: {
           sourceRepresentation = BackupDialogs.openArchiveSourceFolderDialog(selectedItem);
           break;

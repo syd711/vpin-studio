@@ -1,5 +1,5 @@
 package de.mephisto.vpin.commons;
 
-public enum ArchiveSourceAuthenticationType {
+public enum BackupSourceAuthenticationType {
   Basic,
 }

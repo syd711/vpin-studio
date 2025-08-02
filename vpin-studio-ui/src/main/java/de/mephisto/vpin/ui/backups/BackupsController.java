@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backups;
 
-import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
@@ -552,10 +552,10 @@ public class BackupsController implements Initializable, StudioFXController, Stu
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       BackupSourceRepresentation archiveSource = sourceCombo.getValue();
 
-      deleteBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
-      addArchiveBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()));
-      restoreBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || newSelection == null);
-      downloadBtn.setDisable(!archiveSource.getType().equals(ArchiveSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
+      deleteBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || newSelection == null);
+      addArchiveBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()));
+      restoreBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || newSelection == null);
+      downloadBtn.setDisable(!archiveSource.getType().equals(BackupSourceType.Folder.name()) || tableView.getSelectionModel().getSelectedItems().size() == 0);
       openFolderButton.setDisable(newSelection == null);
 
 
@@ -583,9 +583,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
     });
 
     sourceComboChangeListener = (observable, oldValue, newValue) -> {
-      addArchiveBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
-      restoreBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
-      downloadBtn.setDisable(!newValue.getType().equals(ArchiveSourceType.Folder.name()));
+      addArchiveBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
+      restoreBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
+      downloadBtn.setDisable(!newValue.getType().equals(BackupSourceType.Folder.name()));
 
       tableView.getSelectionModel().clearSelection();
       doReload();

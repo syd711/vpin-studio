@@ -1,9 +1,9 @@
-package de.mephisto.vpin.server.archiving.adapters;
+package de.mephisto.vpin.server.backups.adapters;
 
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.server.archiving.adapters.vpa.TableBackupAdapterVpa;
-import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
+import de.mephisto.vpin.server.backups.adapters.vpa.TableBackupAdapterVpa;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;

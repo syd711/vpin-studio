@@ -367,20 +367,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return Collections.emptyList();
   }
 
-  public boolean isDotNetInstalled() {
-    try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("dotnet", "--list-sdks"));
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      String out = standardOutputFromCommand.toString();
-      return out.contains("sdk") & out.contains("dotnet");
-    }
-    catch (Exception e) {
-      LOG.error("Failed to execute .net check: " + e.getMessage(), e);
-    }
-    return false;
-  }
-
   public File getBadgeFile(String badge) {
     File folder = new File(RESOURCES, COMPETITION_BADGES);
     return new File(folder, badge + ".png");

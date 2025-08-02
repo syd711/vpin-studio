@@ -1,8 +1,8 @@
-package de.mephisto.vpin.server.archiving.adapters.vpa;
+package de.mephisto.vpin.server.backups.adapters.vpa;
 
-import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.restclient.backups.BackupType;
-import de.mephisto.vpin.server.archiving.ArchiveSource;
+import de.mephisto.vpin.server.backups.ArchiveSource;
 import de.mephisto.vpin.server.system.SystemService;
 
 import java.io.File;
@@ -30,7 +30,7 @@ public class VpaArchiveSource extends ArchiveSource {
 
   @Override
   public String getType() {
-    return ArchiveSourceType.Folder.name();
+    return BackupSourceType.Folder.name();
   }
 
   @Override

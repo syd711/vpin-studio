@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
-import de.mephisto.vpin.commons.ArchiveSourceAuthenticationType;
-import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.commons.BackupSourceAuthenticationType;
+import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.util.PasswordUtil;
@@ -56,14 +56,14 @@ public class BackupSourceHttpDialogController implements Initializable, DialogCo
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(ArchiveSourceType.Http.name());
+    this.source.setType(BackupSourceType.Http.name());
     this.source.setName(nameField.getText());
     this.source.setLocation(urlField.getText());
     this.source.setLogin(loginField.getText());
     this.source.setEnabled(enabledCheckbox.isSelected());
 
     if(basicAuthCheckbox.isSelected()) {
-      this.source.setAuthenticationType(ArchiveSourceAuthenticationType.Basic.name());
+      this.source.setAuthenticationType(BackupSourceAuthenticationType.Basic.name());
     }
 
     this.source.setPassword(PasswordUtil.encrypt(passwordField.getText()));
@@ -123,7 +123,7 @@ public class BackupSourceHttpDialogController implements Initializable, DialogCo
       urlField.setText(source.getLocation());
       enabledCheckbox.setSelected(source.isEnabled());
       loginField.setText(source.getLogin());
-      basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(ArchiveSourceAuthenticationType.Basic.name()));
+      basicAuthCheckbox.setSelected(source.getAuthenticationType() != null & source.getAuthenticationType().equals(BackupSourceAuthenticationType.Basic.name()));
       passwordField.setText(PasswordUtil.decrypt(source.getPassword()));
     }
     validateInput();

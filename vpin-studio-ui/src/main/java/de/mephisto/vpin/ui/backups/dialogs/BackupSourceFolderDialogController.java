@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
-import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import javafx.event.ActionEvent;
@@ -52,7 +52,7 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(ArchiveSourceType.Folder.name());
+    this.source.setType(BackupSourceType.Folder.name());
     this.source.setName(nameField.getText());
     this.source.setLocation(folderField.getText());
     this.source.setEnabled(enabledCheckbox.isSelected());

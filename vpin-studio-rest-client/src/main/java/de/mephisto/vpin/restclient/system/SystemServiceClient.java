@@ -1,14 +1,24 @@
 package de.mephisto.vpin.restclient.system;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.RestClient;
+import de.mephisto.vpin.restclient.backups.BackupDescriptor;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 
 /*********************************************************************************************************************
  * System
@@ -18,6 +28,36 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public SystemServiceClient(VPinStudioClient client) {
     super(client);
+  }
+
+  private final static ObjectMapper objectMapper = new ObjectMapper();
+
+  static {
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
+  public String backupSystem() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "system/backup/create", new HashMap<>(), String.class);
+  }
+
+  public boolean restoreSystemBackup(@NonNull File file, @NonNull BackupDescriptor backupDescriptor) throws Exception {
+    try {
+      String url = getRestClient().getBaseUrl() + API + "system/backup/restore";
+      HttpEntity upload = createUpload(file, -1, null, null, null);
+      LinkedMultiValueMap<String, Object> map = (LinkedMultiValueMap<String, Object>) upload.getBody();
+
+      String backupDescriptorJson = objectMapper.writeValueAsString(backupDescriptor);
+      map.add("backupDescriptor", backupDescriptorJson);
+      new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      finalizeUpload(upload);
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Backup upload failed: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public Date getStartupTime() {
@@ -32,11 +72,6 @@ public class SystemServiceClient extends VPinStudioClientService {
   public boolean isLocal() {
     String url = getRestClient().getBaseUrl();
     return url.contains("localhost") || url.contains("127.0.0.1");
-  }
-
-  public String backup() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/backup", String.class);
   }
 
   public void shutdown() {
@@ -57,26 +92,6 @@ public class SystemServiceClient extends VPinStudioClientService {
   public void systemShutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/systemshutdown", Boolean.class);
-  }
-
-  public boolean autostartInstalled() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/installed", Boolean.class));
-  }
-
-  public boolean autostartInstall() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/install", Boolean.class));
-  }
-
-  public boolean autostartUninstall() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/autostart/uninstall", Boolean.class));
-  }
-
-  public boolean isDotNetInstalled() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return Boolean.TRUE.equals(restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/dotnet", Boolean.class));
   }
 
   public void startServerUpdate(String version) {

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.archiving;
+package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupType;
@@ -7,11 +7,11 @@ import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
-import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
-import de.mephisto.vpin.server.archiving.adapters.vpa.ArchiveSourceAdapterFolder;
-import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
-import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
+import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
+import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.backups.adapters.vpa.ArchiveSourceAdapterFolder;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaArchiveSource;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;

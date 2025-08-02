@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.backups.dialogs;
 
-import de.mephisto.vpin.commons.ArchiveSourceType;
+import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.backups.BackupType;
@@ -113,7 +113,7 @@ public class BackupUploadController implements Initializable, DialogController {
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
     List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getArchiveSources());
-    repositories = repositories.stream().filter(r -> r.getType().equals(ArchiveSourceType.Folder.name())).collect(Collectors.toList());
+    repositories = repositories.stream().filter(r -> r.getType().equals(BackupSourceType.Folder.name())).collect(Collectors.toList());
     repositoryCombo.setItems(FXCollections.observableList(repositories));
     repositoryCombo.getSelectionModel().select(0);
   }

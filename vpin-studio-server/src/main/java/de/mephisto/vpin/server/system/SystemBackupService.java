@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.backup;
+package de.mephisto.vpin.server.system;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +24,8 @@ import java.beans.PropertyDescriptor;
 import java.util.*;
 
 @Service
-public class BackupService {
-  private final static Logger LOG = LoggerFactory.getLogger(BackupService.class);
+public class SystemBackupService {
+  private final static Logger LOG = LoggerFactory.getLogger(SystemBackupService.class);
 
   @Autowired
   private VpsEntryService vpsEntryService;

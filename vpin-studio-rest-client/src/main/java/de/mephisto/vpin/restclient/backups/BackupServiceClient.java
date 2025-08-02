@@ -37,56 +37,25 @@ public class BackupServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  private final static ObjectMapper objectMapper = new ObjectMapper();
-
-  static {
-    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-  }
-
-
-  public String backup() {
-    final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.postForObject(getRestClient().getBaseUrl() + API + "backup/create", new HashMap<>(), String.class);
-  }
-
-  public boolean restore(@NonNull File file, @NonNull BackupDescriptor backupDescriptor) throws Exception {
-    try {
-      String url = getRestClient().getBaseUrl() + API + "backup/restore";
-      HttpEntity upload = createUpload(file, -1, null, null, null);
-      LinkedMultiValueMap<String, Object> map = (LinkedMultiValueMap<String, Object>) upload.getBody();
-
-      String backupDescriptorJson = objectMapper.writeValueAsString(backupDescriptor);
-      map.add("backupDescriptor", backupDescriptorJson);
-      new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
-      finalizeUpload(upload);
-      return true;
-    }
-    catch (Exception e) {
-      LOG.error("Backup upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
   public List<BackupDescriptorRepresentation> getArchiveDescriptors(long id) {
-    return Arrays.asList(getRestClient().get(API + "archives/" + id, BackupDescriptorRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "backups/" + id, BackupDescriptorRepresentation[].class));
   }
 
   public List<BackupSourceRepresentation> getArchiveSources() {
-    return Arrays.asList(getRestClient().get(API + "archives/sources", BackupSourceRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "backups/sources", BackupSourceRepresentation[].class));
   }
 
   public boolean deleteArchive(long sourceId, String filename) {
-    return getRestClient().delete(API + "archives/descriptor/" + sourceId + "/" + filename);
+    return getRestClient().delete(API + "backups/descriptor/" + sourceId + "/" + filename);
   }
 
   public boolean deleteArchiveSource(long id) {
-    return getRestClient().delete(API + "archives/source/" + id);
+    return getRestClient().delete(API + "backups/source/" + id);
   }
 
   public BackupSourceRepresentation saveArchiveSource(BackupSourceRepresentation source) throws Exception {
     try {
-      return getRestClient().post(API + "archives/save", source, BackupSourceRepresentation.class);
+      return getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
     } catch (Exception e) {
       LOG.error("Failed to save archive source: " + e.getMessage(), e);
       throw e;
@@ -94,16 +63,16 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public List<BackupDescriptorRepresentation> getArchiveDescriptorsForGame(int gameId) {
-    return Arrays.asList(getRestClient().get(API + "archives/game/" + gameId, BackupDescriptorRepresentation[].class));
+    return Arrays.asList(getRestClient().get(API + "backups/game/" + gameId, BackupDescriptorRepresentation[].class));
   }
 
   public boolean invalidateArchiveCache() {
-    return getRestClient().get(API + "archives/invalidate", Boolean.class);
+    return getRestClient().get(API + "backups/invalidate", Boolean.class);
   }
 
   public JobDescriptor uploadArchive(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + "archives/upload/";
+      String url = getRestClient().getBaseUrl() + API + "backups/upload/";
       HttpEntity upload = createUpload(file, repositoryId, null, AssetType.ARCHIVE, listener);
       JobDescriptor body = createUploadTemplate().exchange(url, HttpMethod.POST, upload, JobDescriptor.class).getBody();
       finalizeUpload(upload);
@@ -123,10 +92,10 @@ public class BackupServiceClient extends VPinStudioClientService {
   }
 
   public boolean backupTable(BackupExportDescriptor exportDescriptor) {
-    return getRestClient().post(API + "archives/backup", exportDescriptor, Boolean.class);
+    return getRestClient().post(API + "backups/backup", exportDescriptor, Boolean.class);
   }
 
   public boolean restoreTable(ArchiveRestoreDescriptor descriptor) {
-    return getRestClient().post(API + "archives/restore", descriptor, Boolean.class);
+    return getRestClient().post(API + "backups/restore", descriptor, Boolean.class);
   }
 }

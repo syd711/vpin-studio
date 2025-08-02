@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.archiving;
+package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -10,8 +10,6 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.io.File;
 
 public class ArchiveInstallerJob implements Job {
   private final ArchiveDescriptor archiveDescriptor;

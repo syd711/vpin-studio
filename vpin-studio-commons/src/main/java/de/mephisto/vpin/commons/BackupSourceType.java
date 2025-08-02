@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons;
 
-public enum ArchiveSourceType {
+public enum BackupSourceType {
   Folder,
   Http
 }

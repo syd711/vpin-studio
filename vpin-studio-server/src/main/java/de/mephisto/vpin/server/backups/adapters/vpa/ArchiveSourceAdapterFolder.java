@@ -1,12 +1,12 @@
-package de.mephisto.vpin.server.archiving.adapters.vpa;
+package de.mephisto.vpin.server.backups.adapters.vpa;
 
 import de.mephisto.vpin.restclient.backups.BackupPackageInfo;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
-import de.mephisto.vpin.server.archiving.ArchiveSource;
-import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
+import de.mephisto.vpin.server.backups.ArchiveDescriptor;
+import de.mephisto.vpin.server.backups.ArchiveSource;
+import de.mephisto.vpin.server.backups.ArchiveSourceAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
