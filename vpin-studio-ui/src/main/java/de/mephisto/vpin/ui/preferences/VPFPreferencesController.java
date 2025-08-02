@@ -42,6 +42,9 @@ public class VPFPreferencesController implements Initializable {
     // report to user
     if (error == null) {
       WidgetFactory.showInformation(stage, "VPF Account", "Login test successful!");
+      settings.setLogin(loginText.getText().trim());
+      settings.setPassword(passwordText.getText().trim());
+      saveSettings();
     }
     else {
       WidgetFactory.showAlert(stage, "VPF Account Error", "Login test not successful!", error);
@@ -53,16 +56,7 @@ public class VPFPreferencesController implements Initializable {
     settings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
 
     loginText.setText(settings.getLogin());
-    loginText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("loginText", () -> {
-      settings.setLogin(t1);
-      saveSettings();
-    }, DEBOUNCE_MS));
-
     passwordText.setPromptText("<enter password to change it>");
-    passwordText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("passwordText", () -> {
-      settings.setPassword(t1);
-      saveSettings();
-    }, DEBOUNCE_MS));
   }
 
   private void saveSettings() {

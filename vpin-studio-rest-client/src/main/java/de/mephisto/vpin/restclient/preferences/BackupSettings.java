@@ -65,6 +65,9 @@ public class BackupSettings extends JsonSettings {
       case VPX: {
         return vpx;
       }
+      case ROM: {
+        return rom;
+      }
     }
     return false;
   }

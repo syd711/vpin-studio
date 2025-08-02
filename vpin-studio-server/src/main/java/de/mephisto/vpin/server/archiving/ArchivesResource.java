@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -34,8 +35,7 @@ public class ArchivesResource {
   private ArchiveService archiveService;
 
   @Autowired
-  private SystemService systemService;
-
+  private VpaService vpaService;
 
   @PostMapping("/backup")
   public Boolean backupTable(@RequestBody BackupDescriptor descriptor) {
@@ -56,6 +56,12 @@ public class ArchivesResource {
       result.add(descriptorRepresentation);
     }
     return result;
+  }
+
+
+  @GetMapping("/authenticated")
+  public Boolean authenticated() {
+    return vpaService.isAuthenticated();
   }
 
   @GetMapping("/sources")

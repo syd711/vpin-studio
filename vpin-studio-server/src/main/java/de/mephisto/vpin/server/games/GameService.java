@@ -166,6 +166,23 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   /**
+   * Should only be triggered manually
+   */
+  public boolean reloadEmulator(int emulatorId) {
+    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+    if(emulator != null) {
+      mameRomAliasService.clearCache(Arrays.asList(emulator));
+      gameCachingService.clearCacheForEmulator(emulatorId);
+    }
+
+    emulatorService.loadEmulators();
+    highscoreService.refreshAvailableScores();
+    gameCachingService.clearCache();
+    getKnownGames(emulatorId);
+    return true;
+  }
+
+  /**
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public Game reload(int gameId) {

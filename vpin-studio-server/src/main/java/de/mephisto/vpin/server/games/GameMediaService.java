@@ -406,8 +406,7 @@ public class GameMediaService {
         }
         else {
           //we have read the table details, including the mapping from the VPA file.
-          ZipFile zipFile = vpaService.createProtectedArchive(analysis.getFile());
-          TableDetails tableDetails = VpaArchiveUtil.readTableDetails(zipFile);
+          TableDetails tableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
           tableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
           frontendService.saveTableDetails(game.getId(), tableDetails);
         }

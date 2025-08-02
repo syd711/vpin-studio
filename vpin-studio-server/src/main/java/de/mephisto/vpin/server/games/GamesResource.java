@@ -78,6 +78,11 @@ public class GamesResource {
     return gameService.reload(gameId);
   }
 
+  @GetMapping("/reloadEmulator/{emulatorId}")
+  public boolean reloadEmulator(@PathVariable("emulatorId") int emulatorId) {
+    return gameService.reloadEmulator(emulatorId);
+  }
+
   @GetMapping("/unknowns")
   public List<Integer> getUnknownGameIds() {
     return gameService.getUnknownGames();

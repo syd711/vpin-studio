@@ -11,8 +11,8 @@ public class FeaturesInfo {
   public boolean NOTIFICATIONS_ENABLED = true;
   public boolean VPX_MONITORING = false;
 
-  public boolean VP_UNIVERSE = false;
-  public boolean VP_FORUMS = false;
+  public boolean VP_UNIVERSE = true;
+  public boolean VP_FORUMS = true;
   public boolean AUTO_INSTALLER = false;
 
   public boolean DROP_IN_FOLDER = true;

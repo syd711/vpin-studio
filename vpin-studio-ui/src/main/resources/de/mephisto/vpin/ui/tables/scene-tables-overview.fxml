@@ -223,7 +223,7 @@
                            <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Reload all table data" />
+                        <Tooltip text="Execute a full reload of all tables from all emulators" />
                      </tooltip>
                   </Button>
                   <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
@@ -257,6 +257,18 @@
                         <Tooltip text="Open Emulator Manager" />
                      </tooltip>
                   </Button>
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEmulatorReload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Reload selected emulator" />
+                     </tooltip>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" />
       
                   <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="180.0" promptText="Select Playlist..." />
                   <Button fx:id="playlistManagerBtn" layoutX="704.0" layoutY="11.0" mnemonicParsing="false" onAction="#onPlaylistManager" textFill="WHITE">
@@ -336,10 +348,10 @@
                               <Font size="14.0" />
                            </font>
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-export-outline" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Export the selected tables" />
+                              <Tooltip text="Backup the selected tables" />
                            </tooltip>
                         </Button>
                         <Button fx:id="importBtn" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">

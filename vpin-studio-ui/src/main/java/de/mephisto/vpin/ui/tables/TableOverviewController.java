@@ -300,6 +300,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private GameStatus status;
   private VPinScreen assetScreenSelection;
   private Parent playBtn;
+  private Parent uploadsButton;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -701,6 +702,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
   }
 
+
+  @FXML
+  public void onEmulatorReload() {
+    GameEmulatorRepresentation value = emulatorCombo.getValue();
+    if (value != null) {
+      ProgressDialog.createProgressDialog(ClearCacheProgressModel.getReloadGamesClearCacheModel(value.getId()));
+      this.doReload();
+    }
+  }
 
   @FXML
   public void onReload() {
@@ -1878,7 +1888,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     try {
       FXMLLoader loader = new FXMLLoader(UploadsButtonController.class.getResource("uploads-btn.fxml"));
-      Parent uploadsButton = loader.load();
+      uploadsButton = loader.load();
       uploadsButtonController = loader.getController();
       importUploadButtonGroup.getChildren().add(1, uploadsButton);
     }
@@ -1906,6 +1916,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (width <= 2400) {
       secondaryToolbar.getItems().clear();
 
+      toolbar.getItems().remove(uploadsButton);
+      secondaryToolbar.getItems().add(uploadsButton);
       toolbar.getItems().remove(playBtn);
       secondaryToolbar.getItems().add(playBtn);
       toolbar.getItems().remove(stopBtn);
@@ -1929,6 +1941,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else {
       if (!toolbar.getItems().contains(importSeparator)) {
+        toolbar.getItems().add(uploadsButton);
         toolbar.getItems().add(playBtn);
         toolbar.getItems().add(stopBtn);
         toolbar.getItems().add(importSeparator);

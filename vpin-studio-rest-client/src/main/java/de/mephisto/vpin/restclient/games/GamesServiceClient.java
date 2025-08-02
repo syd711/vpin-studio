@@ -71,6 +71,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation reload(int gameId) {
     return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
   }
+  public boolean reloadEmulator(int emulatorId) {
+    return getRestClient().get(API + "games/reloadEmulator/" + emulatorId, Boolean.class);
+  }
 
   public void playGame(int id, String altExe, String option) {
     try {

@@ -444,8 +444,8 @@ public class UniversalUploadService {
 
       String highscoreBackupZipEntry = analysis.getFileNameWithPathForExtension(HighscoreBackupService.FILE_SUFFIX);
       if (!StringUtils.isEmpty(highscoreBackupZipEntry)) {
-        File highscoreBackupTempFile = File.createTempFile("highscore-backup", "." + HighscoreBackupService.FILE_SUFFIX);
-        ZipUtil.writeZippedFile(analysis.getFile(), highscoreBackupZipEntry, highscoreBackupTempFile);
+        File highscoreBackupTempFile = VpaArchiveUtil.extractFile(zipFile, highscoreBackupZipEntry);
+        uploadDescriptor.getTempFiles().add(highscoreBackupTempFile);
         highscoreBackupService.restoreBackupFile(gameEmulator, highscoreBackupTempFile);
       }
     }
