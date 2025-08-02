@@ -48,6 +48,11 @@
             <artifactId>htmlunit</artifactId>
             <version>4.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.11.5</version>
+        </dependency>
 
         <dependency>
             <groupId>com.drewnoakes</groupId>

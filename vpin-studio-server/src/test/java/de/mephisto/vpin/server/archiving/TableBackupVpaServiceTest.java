@@ -37,8 +37,7 @@ public class TableBackupVpaServiceTest extends AbstractVPinServerTest {
   private void importExport(String tableName) {
     try {
       Game game = gameService.getGameByFilename(1, tableName);
-      TableBackupAdapterVpa adapter = (TableBackupAdapterVpa) 
-        tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
+      TableBackupAdapterVpa adapter = (TableBackupAdapterVpa) tableBackupAdapterFactory.createAdapter(game);
       adapter.simulateBackup();
     }
     catch (IOException ioe) {

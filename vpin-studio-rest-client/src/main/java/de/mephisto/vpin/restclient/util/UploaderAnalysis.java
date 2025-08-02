@@ -4,7 +4,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
 import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -51,6 +50,10 @@ public class UploaderAnalysis {
   private String pupFolder;
 
   public UploaderAnalysis(boolean supportPupPacks, File file) {
+    this(supportPupPacks, file, null);
+  }
+
+  public UploaderAnalysis(boolean supportPupPacks, File file, String password) {
     this.supportPupPacks = supportPupPacks;
     this.file = file;
   }
@@ -277,22 +280,6 @@ public class UploaderAnalysis {
     }
     return result;
   }
-
-
-  public ArchiveMameData readMameData() {
-    return VpaArchiveUtil.readMameData(getFile());
-  }
-
-  public TableDetails getTableDetails() {
-    try {
-      return VpaArchiveUtil.readTableDetails(getFile());
-    }
-    catch (Exception e) {
-     LOG.info("{} does not contains table details.", getFile().getAbsolutePath());
-    }
-    return null;
-  }
-
 
   public String getReadMeText() {
     return readme;

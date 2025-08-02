@@ -6,15 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.lingala.zip4j.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class VpaArchiveUtil {
   private final static Logger LOG = LoggerFactory.getLogger(VpaArchiveUtil.class);
@@ -26,7 +23,7 @@ public class VpaArchiveUtil {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  public static TableDetails readTableDetails(File file) throws JsonProcessingException {
+  public static TableDetails readTableDetails(ZipFile file) throws JsonProcessingException {
     String text = readStringFromZip(file, TableDetails.ARCHIVE_FILENAME);
     if (text != null) {
       return objectMapper.readValue(text, TableDetails.class);
@@ -34,7 +31,7 @@ public class VpaArchiveUtil {
     return null;
   }
 
-  public static ArchivePackageInfo readPackageInfo(File file) throws Exception {
+  public static ArchivePackageInfo readPackageInfo(ZipFile file) throws Exception {
     String text = readStringFromZip(file, ArchivePackageInfo.ARCHIVE_FILENAME);
     if (text != null) {
       return objectMapper.readValue(text, ArchivePackageInfo.class);
@@ -42,7 +39,7 @@ public class VpaArchiveUtil {
     return null;
   }
 
-  public static ArchiveMameData readMameData(File file) {
+  public static ArchiveMameData readMameData(ZipFile file) {
     try {
       String text = readStringFromZip(file, ArchivePackageInfo.REGISTRY_FILENAME);
       if (text != null) {
@@ -56,21 +53,24 @@ public class VpaArchiveUtil {
   }
 
   @Nullable
-  public static String readStringFromZip(File file, String fileName) {
-    try (ZipFile zipFile = new ZipFile(file)) {
-      Enumeration<? extends ZipEntry> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = entries.nextElement();
-        if (entry.getName().equals(fileName)) {
-          InputStream stream = zipFile.getInputStream(entry);
-          String text = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-          stream.close();
-          return text;
-        }
+  public static String readStringFromZip(ZipFile zipFile, String fileName) {
+    String tempDir = System.getProperty("java.io.tmpdir");
+    File target = new File(tempDir, fileName);
+
+    try {
+      if (target.exists() && !target.delete()) {
+        LOG.error("Failed to delete temporary archive file {}", target.getAbsolutePath());
       }
+      zipFile.extractFile(fileName, tempDir);
+      return FileUtils.readFileToString(target, "utf8");
     }
     catch (Exception e) {
-      LOG.error("Failed to read {}: {}", file.getAbsolutePath(), e.getMessage(), e);
+      LOG.error("Failed to read {}: {}", fileName, e.getMessage(), e);
+    }
+    finally {
+      if (target.exists() && !target.delete()) {
+        LOG.error("Failed to delete temporary archive file {}", target.getAbsolutePath());
+      }
     }
     //ignore
     return null;

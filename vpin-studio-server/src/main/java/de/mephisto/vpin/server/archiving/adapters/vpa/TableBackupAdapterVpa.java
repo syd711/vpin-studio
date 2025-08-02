@@ -9,31 +9,28 @@ import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
-import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
-import java.util.zip.ZipOutputStream;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
+
   private final Game game;
   private final TableDetails tableDetails;
-
   private final VpaService vpaService;
 
 
   public TableBackupAdapterVpa(@NonNull VpaService vpaService,
-                               @NonNull ArchiveSourceAdapter archiveSourceAdapter,
                                @NonNull Game game,
                                @NonNull TableDetails tableDetails) {
     this.vpaService = vpaService;
@@ -73,9 +70,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
     LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
 
-    try (FileOutputStream fos = new FileOutputStream(tempFile);
-         ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-
+    try {
+      ZipFile zipOut = vpaService.createProtectedArchive(tempFile);
       vpaService.createBackup(packageInfo, (fileToZip, fileName) -> {
         result.setStatus("Packing " + fileToZip.getAbsolutePath());
         if (result.getProgress() < 1 && tempFile.exists()) {

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSource;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
+import net.lingala.zip4j.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,13 @@ import java.util.List;
 public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveSourceAdapterFolder.class);
 
+  private final VpaService vpaService;
   private final ArchiveSource source;
   private final File archiveFolder;
   private final Map<String, ArchiveDescriptor> cache = new HashMap<>();
 
-  public ArchiveSourceAdapterFolder(ArchiveSource source) {
+  public ArchiveSourceAdapterFolder(VpaService vpaService, ArchiveSource source) {
+    this.vpaService = vpaService;
     this.source = source;
     this.archiveFolder = new File(source.getLocation());
   }
@@ -49,8 +52,9 @@ public class ArchiveSourceAdapterFolder implements ArchiveSourceAdapter {
       if (vpaFiles != null) {
         for (File archiveFile : vpaFiles) {
           try {
-            TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
-            ArchivePackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(archiveFile);
+            ZipFile protectedArchive = vpaService.createProtectedArchive(archiveFile);
+            TableDetails manifest = VpaArchiveUtil.readTableDetails(protectedArchive);
+            ArchivePackageInfo packageInfo = VpaArchiveUtil.readPackageInfo(protectedArchive);
             ArchiveDescriptor descriptor = new ArchiveDescriptor(source, manifest, packageInfo, new Date(archiveFile.lastModified()), archiveFile.getName(), archiveFile.getAbsolutePath(), archiveFile.length());
             cache.put(archiveFile.getName(), descriptor);
           }

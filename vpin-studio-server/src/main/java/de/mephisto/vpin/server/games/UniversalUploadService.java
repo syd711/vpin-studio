@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
+import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
@@ -32,6 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -99,6 +102,9 @@ public class UniversalUploadService {
 
   @Autowired
   private HighscoreBackupService highscoreBackupService;
+
+  @Autowired
+  private VpaService vpaService;
 
   public UploadDescriptor process(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
@@ -426,7 +432,9 @@ public class UniversalUploadService {
     }
 
     if (uploadDescriptor.isBackupRestoreMode()) {
-      ArchiveMameData mameData = analysis.readMameData();
+      File tempFile = new File(uploadDescriptor.getTempFilename());
+      ZipFile zipFile = vpaService.createProtectedArchive(tempFile);
+      ArchiveMameData mameData = VpaArchiveUtil.readMameData(zipFile);
       GameEmulator gameEmulator = emulatorService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
       if (mameData != null) {

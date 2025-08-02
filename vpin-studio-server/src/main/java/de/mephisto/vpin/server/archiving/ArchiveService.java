@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.archiving.adapters.vpa.ArchiveSourceAdapterFolder;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
+import de.mephisto.vpin.server.archiving.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
@@ -31,8 +32,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.mephisto.vpin.server.system.SystemService.RESOURCES;
 
 @Service
 public class ArchiveService implements InitializingBean {
@@ -64,6 +63,9 @@ public class ArchiveService implements InitializingBean {
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private VpaService vpaService;
 
   private ArchiveSourceAdapter defaultArchiveSourceAdapter;
 
@@ -193,7 +195,7 @@ public class ArchiveService implements InitializingBean {
     ArchiveSource updatedSource = archiveSourceRepository.saveAndFlush(archiveSource);
     adapterCache.remove(updatedSource.getId());
 
-    adapterCache.put(updatedSource.getId(), ArchiveSourceAdapterFactory.create(this, updatedSource));
+    adapterCache.put(updatedSource.getId(), ArchiveSourceAdapterFactory.create(this, updatedSource, vpaService));
     LOG.info("(Re)created archive source adapter \"" + updatedSource + "\"");
     return updatedSource;
   }
@@ -254,9 +256,9 @@ public class ArchiveService implements InitializingBean {
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 
-    ArchiveSourceAdapter sourceAdapter = getDefaultArchiveSourceAdapter();
-    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(sourceAdapter, game);
+    TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game);
 
+    ArchiveSourceAdapter sourceAdapter = getDefaultArchiveSourceAdapter();
     descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
@@ -268,7 +270,7 @@ public class ArchiveService implements InitializingBean {
     //VPA files
     if (systemService.getArchiveType().equals(ArchiveType.VPA)) {
       ArchiveSource archiveSource = new VpaArchiveSource();
-      this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(archiveSource);
+      this.defaultArchiveSourceAdapter = new ArchiveSourceAdapterFolder(vpaService, archiveSource);
       this.adapterCache.put(archiveSource.getId(), this.defaultArchiveSourceAdapter);
     }
 
@@ -277,7 +279,7 @@ public class ArchiveService implements InitializingBean {
     for (ArchiveSource as : all) {
       ArchiveSourceAdapter vpaSourceAdapter = null;
       try {
-        vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as);
+        vpaSourceAdapter = ArchiveSourceAdapterFactory.create(this, as, vpaService);
       }
       catch (Exception e) {
         LOG.error("Failed to create archive source: {}", e.getMessage());

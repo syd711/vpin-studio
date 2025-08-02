@@ -600,20 +600,13 @@ public class RepositoryController implements Initializable, StudioFXController, 
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
-    ArchiveDescriptorRepresentation archiveDescriptor = tableView.getSelectionModel().getSelectedItem();
-    if (archiveDescriptor != null) {
-      NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, archiveDescriptor.getFilename()));
-    }
-
-    if (this.tableView.getItems().isEmpty()) {
-      this.doReload();
-    }
-
+    this.doReload();
     EventManager.getInstance().addListener(this);
   }
 
   @Override
   public void onViewDeactivated() {
+    EventManager.getInstance().removeListener(this);
   }
 
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {

@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
-import de.mephisto.vpin.ui.archiving.dialogs.TablesBackupController;
+import de.mephisto.vpin.ui.archiving.dialogs.TablesBackupDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.collections.ObservableList;
@@ -16,8 +16,8 @@ import java.util.List;
 public class ArchivingDialogs {
 
   public static void openTablesBackupDialog(List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(TablesBackupController.class, "dialog-tables-backup.fxml", "Table Backup");
-    TablesBackupController controller = (TablesBackupController) stage.getUserData();
+    Stage stage = Dialogs.createStudioDialogStage(TablesBackupDialogController.class, "dialog-tables-backup.fxml", "Table Backup");
+    TablesBackupDialogController controller = (TablesBackupDialogController) stage.getUserData();
     controller.setGames(games);
     stage.showAndWait();
   }
@@ -53,8 +53,8 @@ public class ArchivingDialogs {
   }
 
   public static void openArchiveRestoreDialog(List<ArchiveDescriptorRepresentation> archives) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveRestoreController.class, "dialog-archive-restore.fxml", "Restore");
-    ArchiveRestoreController controller = (ArchiveRestoreController) stage.getUserData();
+    Stage stage = Dialogs.createStudioDialogStage(ArchiveRestoreDialogController.class, "dialog-archive-restore.fxml", "Restore");
+    ArchiveRestoreDialogController controller = (ArchiveRestoreDialogController) stage.getUserData();
     controller.setData(archives);
     stage.showAndWait();
   }

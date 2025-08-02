@@ -28,6 +28,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import net.lingala.zip4j.ZipFile;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,10 @@ public class VpaService {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  public ZipFile createProtectedArchive(@NonNull File target) {
+    return new ZipFile(target, "password".toCharArray());
+  }
 
   //-------------------------------
 
