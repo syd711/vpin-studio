@@ -400,6 +400,11 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
   }
 
   @FXML
+  private void onVpsPrefs() {
+    PreferencesController.open("vps");
+  }
+
+  @FXML
   private void onPrefsScreenValidators() {
     PreferencesController.open("validators_screens");
   }
