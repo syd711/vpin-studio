@@ -460,6 +460,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
+    gameDetails.setIgnoreUpdates(game.isIgnoreUpdates());
     gameDetails.setNotes(game.getComment());
     gameDetails.setCardsDisabled(game.isCardDisabled());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));

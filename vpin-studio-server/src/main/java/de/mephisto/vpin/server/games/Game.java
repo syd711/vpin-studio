@@ -88,9 +88,19 @@ public class Game {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  private boolean ignoreUpdates = false;
+
   private int rating = 0;
 
   public Game() {
+  }
+
+  public boolean isIgnoreUpdates() {
+    return ignoreUpdates;
+  }
+
+  public void setIgnoreUpdates(boolean ignoreUpdates) {
+    this.ignoreUpdates = ignoreUpdates;
   }
 
   public List<CompetitionType> getCompetitionTypes() {

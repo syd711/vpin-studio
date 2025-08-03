@@ -150,6 +150,10 @@ public class WidgetFactory {
     return addUpdateIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
   }
 
+  public static HBox createCheckAndIgnoredIcon(String tooltip) {
+    return addIgnoredIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
+  }
+
   public static FontIcon createUpdateStar() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(14);
@@ -279,6 +283,19 @@ public class WidgetFactory {
     Label icon2 = new Label();
     icon2.setTooltip(new Tooltip(tooltip));
     icon2.setGraphic(createUpdateIcon());
+
+    root.getChildren().addAll(icon2, icon1);
+    return root;
+  }
+
+  public static HBox addIgnoredIcon(FontIcon icon, String tooltip) {
+    HBox root = new HBox(3);
+    root.setAlignment(Pos.CENTER);
+    Label icon1 = new Label();
+    icon1.setGraphic(icon);
+    Label icon2 = new Label();
+    icon2.setTooltip(new Tooltip(tooltip));
+    icon2.setGraphic(createIcon("mdi2b-bell-cancel-outline"));
 
     root.getChildren().addAll(icon2, icon1);
     return root;

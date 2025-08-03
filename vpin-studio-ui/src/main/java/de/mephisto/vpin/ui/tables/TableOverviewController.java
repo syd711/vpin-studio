@@ -1016,12 +1016,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
-      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().getVpsUpdates(), vpsSettings);
+      return new VpsTableColumn(model.getGame().getExtTableId(), model.getGame().getExtTableVersionId(), value.isDisabled(), model.getGame().isIgnoreUpdates(), model.getGame().getVpsUpdates(), vpsSettings);
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
+        if (model.getGame().isIgnoreUpdates()) {
+          return WidgetFactory.createCheckAndIgnoredIcon("Updates for this table are ignored.");
+        }
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new POV file or an update for the existing one is available");
         }
@@ -1052,6 +1055,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
+        if (model.getGame().isIgnoreUpdates()) {
+          return WidgetFactory.createCheckAndIgnoredIcon("Updates for this table are ignored.");
+        }
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new ALT sound bundle or an update for the existing one is available");
         }
@@ -1089,6 +1095,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
       boolean hasUpdate = this.showVpsUpdates && vpsSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackName() != null) {
+        if (model.getGame().isIgnoreUpdates()) {
+          return WidgetFactory.createCheckAndIgnoredIcon("Updates for this table are ignored.");
+        }
         if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("A new PUP pack or an update for the existing one is available");
         }
@@ -1925,20 +1934,25 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (width <= 2400) {
       secondaryToolbar.getItems().clear();
 
+      toolbar.getItems().remove(assetManagerSeparator);
+      toolbar.getItems().remove(assetManagerViewBtn);
+      secondaryToolbar.getItems().add(assetManagerViewBtn);
+      toolbar.getItems().remove(assetManagerBtn);
+      secondaryToolbar.getItems().add(assetManagerBtn);
+      toolbar.getItems().remove(tableEditBtn);
+      secondaryToolbar.getItems().add(tableEditBtn);
+      toolbar.getItems().remove(converterBtn);
+      secondaryToolbar.getItems().add(converterBtn);
+      toolbar.getItems().remove(deleteSeparator);
+      secondaryToolbar.getItems().add(deleteSeparator);
       toolbar.getItems().remove(uploadsButton);
       secondaryToolbar.getItems().add(uploadsButton);
       toolbar.getItems().remove(playBtn);
       secondaryToolbar.getItems().add(playBtn);
       toolbar.getItems().remove(stopBtn);
       secondaryToolbar.getItems().add(stopBtn);
-      toolbar.getItems().remove(importSeparator);
-      secondaryToolbar.getItems().add(importSeparator);
-      toolbar.getItems().remove(exportBtn);
-      secondaryToolbar.getItems().add(exportBtn);
-      toolbar.getItems().remove(importBtn);
-      secondaryToolbar.getItems().add(importBtn);
-      toolbar.getItems().remove(deleteBtn);
-      secondaryToolbar.getItems().add(deleteBtn);
+      toolbar.getItems().remove(importUploadButtonGroup);
+      secondaryToolbar.getItems().add(importUploadButtonGroup);
       toolbar.getItems().remove(mappingSeparator);
       secondaryToolbar.getItems().add(mappingSeparator);
       toolbar.getItems().remove(scanBtn);
@@ -1949,14 +1963,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       secondaryToolbar.setVisible(true);
     }
     else {
-      if (!toolbar.getItems().contains(importSeparator)) {
+      if (!toolbar.getItems().contains(validateBtn)) {
+        toolbar.getItems().add(assetManagerSeparator);
+        toolbar.getItems().add(assetManagerViewBtn);
+        toolbar.getItems().add(assetManagerBtn);
+        toolbar.getItems().add(tableEditBtn);
+        toolbar.getItems().add(converterBtn);
+        toolbar.getItems().add(deleteSeparator);
         toolbar.getItems().add(uploadsButton);
         toolbar.getItems().add(playBtn);
         toolbar.getItems().add(stopBtn);
-        toolbar.getItems().add(importSeparator);
-        toolbar.getItems().add(exportBtn);
-        toolbar.getItems().add(importBtn);
-        toolbar.getItems().add(deleteBtn);
+        toolbar.getItems().add(importUploadButtonGroup);
         toolbar.getItems().add(mappingSeparator);
         toolbar.getItems().add(scanBtn);
         toolbar.getItems().add(validateBtn);

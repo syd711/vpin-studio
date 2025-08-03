@@ -74,6 +74,7 @@ public class GameRepresentation {
 
   private boolean cardDisabled;
   private boolean eventLogAvailable;
+  private boolean ignoreUpdates;
 
   private VPSChanges vpsUpdates = new VPSChanges();
 
@@ -87,6 +88,14 @@ public class GameRepresentation {
   private boolean altSoundAvailable;
 
   private int nbDirectB2S = -1;
+
+  public boolean isIgnoreUpdates() {
+    return ignoreUpdates;
+  }
+
+  public void setIgnoreUpdates(boolean ignoreUpdates) {
+    this.ignoreUpdates = ignoreUpdates;
+  }
 
   public List<CompetitionType> getCompetitionTypes() {
     return competitionTypes;
