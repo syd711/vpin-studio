@@ -469,8 +469,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onBackup() {
-    List<GameRepresentation> selectedItems = getSelections();
-    BackupDialogs.openTablesBackupDialog(selectedItems);
+    JFXFuture.supplyAsync(() -> {
+      return client.getAuthenticationService().isAuthenticated();
+    }).thenAcceptLater(authenticated -> {
+      if (authenticated) {
+        List<GameRepresentation> selectedItems = getSelections();
+        BackupDialogs.openTablesBackupDialog(selectedItems);
+      }
+      else {
+        WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
+      }
+    });
   }
 
   @FXML
