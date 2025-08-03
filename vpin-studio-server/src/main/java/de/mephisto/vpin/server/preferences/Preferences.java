@@ -78,6 +78,8 @@ public class Preferences {
 
   private String vpsSettings;
 
+  private String authenticationSettings;
+
   private String webhookSettings;
 
   private String iScoredSettings;
@@ -107,6 +109,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getAuthenticationSettings() {
+    return authenticationSettings;
+  }
+
+  public void setAuthenticationSettings(String authenticationSettings) {
+    this.authenticationSettings = authenticationSettings;
+  }
 
   public String getIScoredSettings() {
     return iScoredSettings;

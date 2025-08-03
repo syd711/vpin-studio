@@ -57,6 +57,8 @@ import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
+import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import org.apache.commons.io.IOUtils;
@@ -79,6 +81,7 @@ public class VPinStudioClient implements OverlayClient {
 
   private final AltSoundServiceClient altSoundServiceClient;
   private final AltColorServiceClient altColorServiceClient;
+  private final VpAuthenticationServiceClient authenticationServiceClient;
   private final BackupServiceClient backupServiceClient;
   private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
@@ -127,6 +130,7 @@ public class VPinStudioClient implements OverlayClient {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
     this.preferencesServiceClient = new PreferencesServiceClient(this);
 
+    this.authenticationServiceClient = new VpAuthenticationServiceClient(this);
     this.alxServiceClient = new AlxServiceClient(this);
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
@@ -175,6 +179,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public VpAuthenticationServiceClient getAuthenticationService() {
+    return authenticationServiceClient;
   }
 
   public BackupServiceClient getBackupService() {

@@ -77,11 +77,6 @@ public class VpsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vps/changeDate", Date.class);
   }
 
-  public String checkInstallLogin(String link) {
-    String encodedLink = URLEncoder.encode(link, StandardCharsets.UTF_8); 
-    return getRestClient().get(API + "vps/installLogin/" + encodedLink, String.class);
-  }
-
   public List<VpsInstallLink> getInstallLinks(String link) {
     String encodedLink = URLEncoder.encode(link, StandardCharsets.UTF_8);    
     return Arrays.asList(getRestClient().get(API + "vps/installLinks/" + encodedLink, VpsInstallLink[].class));

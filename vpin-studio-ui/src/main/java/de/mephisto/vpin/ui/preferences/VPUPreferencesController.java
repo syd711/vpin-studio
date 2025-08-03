@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
+import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,8 +32,6 @@ public class VPUPreferencesController implements Initializable {
   @FXML
   private Button saveBtn;
 
-  private VPUSettings settings;
-
   @FXML
   private void onConnectionTest() {
     String error = null;
@@ -40,11 +40,9 @@ public class VPUPreferencesController implements Initializable {
       passwordText.setDisable(true);
       saveBtn.setDisable(true);
 
-      settings.setLogin(loginText.getText().trim());
-      settings.setPassword(passwordText.getText().trim());
-      saveSettings();
-      error = client.getVpsService().checkInstallLogin("vpuniverse.com");
-    } catch (Exception e) {
+      error = client.getAuthenticationService().login(AuthenticationProvider.VPU, loginText.getText().trim(), passwordText.getText().trim());
+    }
+    catch (Exception e) {
       error = e.getMessage();
     }
     finally {
@@ -64,20 +62,10 @@ public class VPUPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    settings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
+    VPUSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
 
     loginText.setText(settings.getLogin());
+    passwordText.setText(settings.getPassword());
     passwordText.setPromptText("<enter password to change it>");
   }
-
-  private void saveSettings() {
-    try {
-      client.getPreferenceService().setJsonPreference(settings);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to update VPU settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Error", "Failed to update VP Universe settings: " + e.getMessage());
-    }
-  }
-
 }

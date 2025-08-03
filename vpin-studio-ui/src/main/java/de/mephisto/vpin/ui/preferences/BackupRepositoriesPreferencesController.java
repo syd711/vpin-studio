@@ -3,10 +3,9 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backups.AuthenticationProvider;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
-import de.mephisto.vpin.restclient.preferences.BackupSettings;
-import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backups.BackupDialogs;
@@ -133,7 +132,7 @@ public class BackupRepositoriesPreferencesController implements Initializable {
   @FXML
   private void onProvider() {
     AuthenticationProvider value = providerCombo.getValue();
-    if(value != null) {
+    if (value != null) {
       switch (value) {
         case VPF: {
           PreferencesController.open("vpf");
@@ -165,14 +164,14 @@ public class BackupRepositoriesPreferencesController implements Initializable {
     providers.add(0, null);
     providerCombo.setItems(FXCollections.observableList(providers));
 
-    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-    providerCombo.setValue(backupSettings.getAuthenticationProvider());
+    AuthenticationSettings authenticationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.AUTHENTICATION_SETTINGS, AuthenticationSettings.class);
+    providerCombo.setValue(authenticationSettings.getAuthenticationProvider());
 
     providerCombo.valueProperty().addListener(new ChangeListener<AuthenticationProvider>() {
       @Override
       public void changed(ObservableValue<? extends AuthenticationProvider> observable, AuthenticationProvider oldValue, AuthenticationProvider newValue) {
-        backupSettings.setAuthenticationProvider(newValue);
-        client.getPreferenceService().setJsonPreference(backupSettings);
+        authenticationSettings.setAuthenticationProvider(newValue);
+        client.getPreferenceService().setJsonPreference(authenticationSettings);
       }
     });
 

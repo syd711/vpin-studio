@@ -614,14 +614,14 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   public void refreshView() {
     toolbar.getItems().stream().forEach(i -> i.setDisable(true));
     JFXFuture.supplyAsync(() -> {
-      return client.getBackupService().authenticate();
-    }).thenAcceptLater(authenticate -> {
-      if (authenticate == null) {
+      return client.getAuthenticationService().isAuthenticated();
+    }).thenAcceptLater(authenticated -> {
+      if (authenticated) {
         toolbar.getItems().stream().forEach(i -> i.setDisable(false));
         this.doReload();
       }
       else {
-        WidgetFactory.showInformation(stage, "Authentication Required", authenticate);
+        WidgetFactory.showInformation(stage, "Authentication Required", "Go to the backup settings for more details.");
       }
     });
   }

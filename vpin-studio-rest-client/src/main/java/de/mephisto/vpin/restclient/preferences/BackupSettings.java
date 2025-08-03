@@ -3,12 +3,9 @@ package de.mephisto.vpin.restclient.preferences;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.backups.AuthenticationProvider;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 
 public class BackupSettings extends JsonSettings {
-  private AuthenticationProvider authenticationProvider;
-  private boolean authenticated;
-
   private boolean directb2s = true;
   private boolean pupPack = true;
   private boolean rom = true;
@@ -25,22 +22,6 @@ public class BackupSettings extends JsonSettings {
   private boolean dmd = true;
   private boolean vpx = true;
   private boolean registryData = true;
-
-  public boolean isAuthenticated() {
-    return authenticated;
-  }
-
-  public void setAuthenticated(boolean authenticated) {
-    this.authenticated = authenticated;
-  }
-
-  public AuthenticationProvider getAuthenticationProvider() {
-    return authenticationProvider;
-  }
-
-  public void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
-    this.authenticationProvider = authenticationProvider;
-  }
 
   public boolean isAssetEnabled(AssetType assetType) {
     switch (assetType) {

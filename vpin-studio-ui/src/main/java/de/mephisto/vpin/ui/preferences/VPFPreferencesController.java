@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,8 +32,6 @@ public class VPFPreferencesController implements Initializable {
   @FXML
   private Button saveBtn;
 
-  private VPFSettings settings;
-
   @FXML
   private void onConnectionTest() {
     String error = null;
@@ -41,10 +40,7 @@ public class VPFPreferencesController implements Initializable {
       passwordText.setDisable(true);
       saveBtn.setDisable(true);
 
-      settings.setLogin(loginText.getText().trim());
-      settings.setPassword(passwordText.getText().trim());
-      saveSettings();
-      error = client.getVpsService().checkInstallLogin("vpforums.org");
+      error = client.getAuthenticationService().login(AuthenticationProvider.VPF, loginText.getText().trim(), passwordText.getText().trim());
     }
     catch (Exception e) {
       error = e.getMessage();
@@ -66,20 +62,10 @@ public class VPFPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    settings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
+    VPFSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
 
     loginText.setText(settings.getLogin());
+    passwordText.setText(settings.getPassword());
     passwordText.setPromptText("<enter password to change it>");
   }
-
-  private void saveSettings() {
-    try {
-      client.getPreferenceService().setJsonPreference(settings);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to update VPF settings: " + e.getMessage(), e);
-      WidgetFactory.showAlert(stage, "Error", "Failed to update VP Forums settings: " + e.getMessage());
-    }
-  }
-
 }

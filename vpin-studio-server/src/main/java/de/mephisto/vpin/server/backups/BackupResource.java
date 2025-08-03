@@ -54,11 +54,6 @@ public class BackupResource {
     return result;
   }
 
-  @GetMapping("/authenticated")
-  public String authenticated() {
-    return backupService.authenticate();
-  }
-
   @GetMapping("/sources")
   public List<BackupSourceRepresentation> getSources() {
     return backupService.getBackupSources().stream().map(source -> toRepresentation(source)).collect(Collectors.toList());

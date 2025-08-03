@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.backups;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.backups.AuthenticationProvider;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
@@ -10,9 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.preferences.BackupSettings;
-import de.mephisto.vpin.restclient.vpf.VPFSettings;
-import de.mephisto.vpin.restclient.vpu.VPUSettings;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.backups.adapters.vpa.BackupSourceAdapterFolder;
@@ -29,7 +26,7 @@ import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpauthenticators.VPAuthenticationService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +38,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,13 +72,13 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   private UniversalUploadService universalUploadService;
 
   @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
   private VpaService vpaService;
 
   @Autowired
-  private VpsService vpsService;
+  private VPAuthenticationService vpAuthenticationService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   private BackupSourceAdapter defaultBackupSourceAdapter;
 
@@ -122,7 +118,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
 
   @NonNull
   public List<BackupDescriptor> getBackupSourceDescriptors(long sourceId) {
-    if (authenticate() != null) {
+    if (!vpAuthenticationService.isAuthenticated()) {
       return Collections.emptyList();
     }
 
@@ -286,101 +282,21 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     return true;
   }
 
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    try {
-      if (PreferenceNames.VPF_SETTINGS.equalsIgnoreCase(propertyName)) {
-        BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-        backupSettings.setAuthenticated(false);
-        preferencesService.savePreference(backupSettings, true);
-        authenticate();
+    if (PreferenceNames.AUTHENTICATION_SETTINGS.equalsIgnoreCase(propertyName)) {
+      AuthenticationSettings authenticationSettings = preferencesService.getJsonPreference(PreferenceNames.AUTHENTICATION_SETTINGS, AuthenticationSettings.class);
+      if (authenticationSettings.isAuthenticated() && !StringUtils.isEmpty(authenticationSettings.getToken())) {
+        VpaArchiveUtil.setPassword(authenticationSettings.getToken());
       }
-      if (PreferenceNames.VPU_SETTINGS.equalsIgnoreCase(propertyName)) {
-        BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-        backupSettings.setAuthenticated(false);
-        preferencesService.savePreference(backupSettings, true);
-        authenticate();
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Preference change failed: {}", e.getMessage(), e);
-    }
-  }
-
-  public String authenticate() {
-    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-    if (backupSettings.isAuthenticated()) {
-      return null;
-    }
-
-    try {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      Future<String> submit = executor.submit(new Callable<String>() {
-        @Override
-        public String call() throws Exception {
-          Thread.currentThread().setName("Backup Service Authenticator");
-          BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
-          AuthenticationProvider authenticationProvider = backupSettings.getAuthenticationProvider();
-          if (authenticationProvider == null) {
-            LOG.info("Skipped authentication, no provider selected.");
-            return "No authentication provider selected. Please choose and configure an authentication provider from the backup settings";
-          }
-
-          LOG.info("Authentication using " + authenticationProvider);
-          String password = null;
-          switch (authenticationProvider) {
-            case VPF: {
-              VPFSettings vpfSettings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
-              if (!StringUtils.isEmpty(vpfSettings.getLogin()) && !StringUtils.isEmpty(vpfSettings.getPassword())) {
-                String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
-                LOG.info(msg);
-                return msg;
-              }
-
-              password = vpfSettings.getLogin();
-              break;
-            }
-            case VPU: {
-              VPUSettings vpuSettings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
-              if (!StringUtils.isEmpty(vpuSettings.getLogin()) && !StringUtils.isEmpty(vpuSettings.getPassword())) {
-                String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
-                LOG.info(msg);
-                return msg;
-              }
-
-              password = vpuSettings.getLogin();
-              break;
-            }
-            default: {
-              return "Invalid authentication provider";
-            }
-          }
-
-          String message = vpsService.checkLogin(authenticationProvider.getUrl());
-          if (message == null) {
-            LOG.info("Login successful, login state saved.");
-            VpaArchiveUtil.setPassword(password);
-            backupSettings.setAuthenticated(true);
-            preferencesService.savePreference(backupSettings);
-          }
-          return message;
-        }
-      });
-
-      return submit.get(5, TimeUnit.SECONDS);
-    }
-    catch (Exception e) {
-      String msg = "Timeout running backup authentication, please try again later. (" + e.getMessage() + ")";
-      LOG.error(msg + ": {}", e.getMessage());
-      return msg;
     }
   }
 
   @Override
   public void afterPropertiesSet() {
+    preferenceChanged(PreferenceNames.AUTHENTICATION_SETTINGS, null, null);
     preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.VPU_SETTINGS, null, null);
-    preferenceChanged(PreferenceNames.VPF_SETTINGS, null, null);
 
     //VPA files
     if (systemService.getArchiveType().equals(BackupType.VPA)) {
