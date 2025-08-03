@@ -33,9 +33,6 @@ public class BackupResource {
   @Autowired
   private BackupService backupService;
 
-  @Autowired
-  private VpaService vpaService;
-
   @PostMapping("/backup")
   public Boolean backupTable(@RequestBody BackupExportDescriptor descriptor) {
     return backupService.backupTable(descriptor);
@@ -48,7 +45,7 @@ public class BackupResource {
 
   @GetMapping("/{sourceId}")
   public List<BackupDescriptorRepresentation> getBackups(@PathVariable("sourceId") long sourceId) {
-    List<BackupDescriptor> descriptors = backupService.getBackupDescriptors(sourceId);
+    List<BackupDescriptor> descriptors = backupService.getBackupSourceDescriptors(sourceId);
     List<BackupDescriptorRepresentation> result = new ArrayList<>();
     for (BackupDescriptor backupDescriptor : descriptors) {
       BackupDescriptorRepresentation descriptorRepresentation = toRepresentation(backupDescriptor);
@@ -57,10 +54,9 @@ public class BackupResource {
     return result;
   }
 
-
   @GetMapping("/authenticated")
-  public Boolean authenticated() {
-    return vpaService.isAuthenticated();
+  public String authenticated() {
+    return backupService.authenticate();
   }
 
   @GetMapping("/sources")
@@ -97,7 +93,7 @@ public class BackupResource {
   }
 
   @GetMapping("/download/file/{sourceId}/{filename}")
-  public void downloadArchiveFile(@PathVariable("sourceId") long sourceId,
+  public void downloadBackupFile(@PathVariable("sourceId") long sourceId,
                                   @PathVariable("filename") String fn,
                                   HttpServletResponse response) {
     InputStream in = null;
@@ -106,7 +102,7 @@ public class BackupResource {
 
     try {
       BackupDescriptor backupDescriptor = backupService.getBackupDescriptors(sourceId, filename);
-      BackupSourceAdapter sourceAdapter = backupService.getArchiveSourceAdapter(sourceId);
+      BackupSourceAdapter sourceAdapter = backupService.getBackupSourceAdapter(sourceId);
 
       in = sourceAdapter.getBackupInputStream(backupDescriptor);
       out = response.getOutputStream();
@@ -132,7 +128,7 @@ public class BackupResource {
         LOG.error("Archive upload request did not contain a file object.");
         return null;
       }
-      BackupSourceAdapter sourceAdapter = backupService.getArchiveSourceAdapter(repositoryId);
+      BackupSourceAdapter sourceAdapter = backupService.getBackupSourceAdapter(repositoryId);
       File out = new File(sourceAdapter.getBackupSource().getLocation(), file.getOriginalFilename());
 
       if (file.getOriginalFilename().endsWith(".zip")) {

@@ -55,6 +55,10 @@ public class BackupServiceClient extends VPinStudioClientService {
     }
   }
 
+  public String authenticate() {
+    return getRestClient().get(API + "backups/authenticated", String.class);
+  }
+
   public List<BackupDescriptorRepresentation> getArchiveDescriptorsForGame(int gameId) {
     return Arrays.asList(getRestClient().get(API + "backups/game/" + gameId, BackupDescriptorRepresentation[].class));
   }

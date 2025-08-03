@@ -1,12 +1,18 @@
 package de.mephisto.vpin.server.backups;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.AuthenticationProvider;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupType;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
+import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.backups.adapters.vpa.BackupSourceAdapterFolder;
@@ -20,9 +26,13 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,10 +41,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
-public class BackupService implements InitializingBean {
+public class BackupService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(BackupService.class);
 
   @Autowired
@@ -65,7 +76,13 @@ public class BackupService implements InitializingBean {
   private UniversalUploadService universalUploadService;
 
   @Autowired
+  private PreferencesService preferencesService;
+
+  @Autowired
   private VpaService vpaService;
+
+  @Autowired
+  private VpsService vpsService;
 
   private BackupSourceAdapter defaultBackupSourceAdapter;
 
@@ -74,7 +91,7 @@ public class BackupService implements InitializingBean {
   public List<BackupDescriptor> getBackupDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
 
-    return getBackupDescriptors().stream().filter(ArchiveDescriptor -> {
+    return getBackupSourceDescriptors().stream().filter(ArchiveDescriptor -> {
       TableDetails manifest = ArchiveDescriptor.getTableDetails();
       if (manifest == null) {
         return false;
@@ -86,7 +103,7 @@ public class BackupService implements InitializingBean {
   }
 
   @NonNull
-  public List<BackupDescriptor> getBackupDescriptors() {
+  public List<BackupDescriptor> getBackupSourceDescriptors() {
     List<BackupDescriptor> result = new ArrayList<>();
     for (BackupSourceAdapter adapter : backupSourcesCache.values()) {
       if (adapter.getBackupSource().isEnabled()) {
@@ -104,8 +121,12 @@ public class BackupService implements InitializingBean {
   }
 
   @NonNull
-  public List<BackupDescriptor> getBackupDescriptors(long sourceId) {
-    BackupSourceAdapter adapter = getArchiveSourceAdapter(sourceId);
+  public List<BackupDescriptor> getBackupSourceDescriptors(long sourceId) {
+    if (authenticate() != null) {
+      return Collections.emptyList();
+    }
+
+    BackupSourceAdapter adapter = getBackupSourceAdapter(sourceId);
     List<BackupDescriptor> backupDescriptors = adapter.getBackupDescriptors();
     backupDescriptors.sort((o1, o2) -> {
       if (o1.getFilename() != null && o2.getFilename() != null) {
@@ -135,7 +156,7 @@ public class BackupService implements InitializingBean {
     Optional<BackupDescriptor> first = descriptors.stream().filter(ArchiveDescriptor -> ArchiveDescriptor.getFilename().equals(filename)).findFirst();
     if (first.isPresent()) {
       BackupDescriptor descriptor = first.get();
-      return getArchiveSourceAdapter(sourceId).delete(descriptor);
+      return getBackupSourceAdapter(sourceId).delete(descriptor);
     }
     return false;
   }
@@ -153,16 +174,16 @@ public class BackupService implements InitializingBean {
     return backupSourcesCache.values().stream().map(BackupSourceAdapter::getBackupSource).collect(Collectors.toList());
   }
 
-  public BackupSourceAdapter getDefaultArchiveSourceAdapter() {
+  public BackupSourceAdapter getDefaultBackupSource() {
     return this.defaultBackupSourceAdapter;
   }
 
-  public BackupSourceAdapter getArchiveSourceAdapter(long sourceId) {
+  public BackupSourceAdapter getBackupSourceAdapter(long sourceId) {
     return backupSourcesCache.get(sourceId);
   }
 
   public File export(BackupDescriptor backupDescriptor) {
-    return getDefaultArchiveSourceAdapter().export(backupDescriptor);
+    return getDefaultBackupSource().export(backupDescriptor);
   }
 
   public void invalidateCache() {
@@ -258,7 +279,7 @@ public class BackupService implements InitializingBean {
 
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(game);
 
-    BackupSourceAdapter sourceAdapter = getDefaultArchiveSourceAdapter();
+    BackupSourceAdapter sourceAdapter = getDefaultBackupSource();
     descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
     jobService.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
@@ -266,7 +287,101 @@ public class BackupService implements InitializingBean {
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    try {
+      if (PreferenceNames.VPF_SETTINGS.equalsIgnoreCase(propertyName)) {
+        BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+        backupSettings.setAuthenticated(false);
+        preferencesService.savePreference(backupSettings, true);
+        authenticate();
+      }
+      if (PreferenceNames.VPU_SETTINGS.equalsIgnoreCase(propertyName)) {
+        BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+        backupSettings.setAuthenticated(false);
+        preferencesService.savePreference(backupSettings, true);
+        authenticate();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Preference change failed: {}", e.getMessage(), e);
+    }
+  }
+
+  public String authenticate() {
+    BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+    if (backupSettings.isAuthenticated()) {
+      return null;
+    }
+
+    try {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<String> submit = executor.submit(new Callable<String>() {
+        @Override
+        public String call() throws Exception {
+          Thread.currentThread().setName("Backup Service Authenticator");
+          BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+          AuthenticationProvider authenticationProvider = backupSettings.getAuthenticationProvider();
+          if (authenticationProvider == null) {
+            LOG.info("Skipped authentication, no provider selected.");
+            return "No authentication provider selected. Please choose and configure an authentication provider from the backup settings";
+          }
+
+          LOG.info("Authentication using " + authenticationProvider);
+          String password = null;
+          switch (authenticationProvider) {
+            case VPF: {
+              VPFSettings vpfSettings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
+              if (!StringUtils.isEmpty(vpfSettings.getLogin()) && !StringUtils.isEmpty(vpfSettings.getPassword())) {
+                String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
+                LOG.info(msg);
+                return msg;
+              }
+
+              password = vpfSettings.getLogin();
+              break;
+            }
+            case VPU: {
+              VPUSettings vpuSettings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
+              if (!StringUtils.isEmpty(vpuSettings.getLogin()) && !StringUtils.isEmpty(vpuSettings.getPassword())) {
+                String msg = "Missing credentials for authentication provider " + authenticationProvider + ", login and password need to be set.";
+                LOG.info(msg);
+                return msg;
+              }
+
+              password = vpuSettings.getLogin();
+              break;
+            }
+            default: {
+              return "Invalid authentication provider";
+            }
+          }
+
+          String message = vpsService.checkLogin(authenticationProvider.getUrl());
+          if (message == null) {
+            LOG.info("Login successful, login state saved.");
+            VpaArchiveUtil.setPassword(password);
+            backupSettings.setAuthenticated(true);
+            preferencesService.savePreference(backupSettings);
+          }
+          return message;
+        }
+      });
+
+      return submit.get(5, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      String msg = "Timeout running backup authentication, please try again later. (" + e.getMessage() + ")";
+      LOG.error(msg + ": {}", e.getMessage());
+      return msg;
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() {
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.VPU_SETTINGS, null, null);
+    preferenceChanged(PreferenceNames.VPF_SETTINGS, null, null);
+
     //VPA files
     if (systemService.getArchiveType().equals(BackupType.VPA)) {
       BackupSource backupSource = new VpaBackupSource();

@@ -15,4 +15,16 @@ public enum AuthenticationProvider {
     }
     return null;
   }
+
+  public String getUrl() {
+    switch (this) {
+      case VPF: {
+        return "vpforums.org";
+      }
+      case VPU: {
+        return "vpuniverse.com";
+      }
+    }
+    return null;
+  }
 }

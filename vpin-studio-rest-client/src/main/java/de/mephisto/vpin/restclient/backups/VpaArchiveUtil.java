@@ -21,11 +21,16 @@ public class VpaArchiveUtil {
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
-  public static String PASSWORD = null;
+  private static String PASSWORD = null;
 
   static {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
+
+  public static void setPassword(String password) {
+    PASSWORD = password;
+    LOG.info("Updated backup password.");
   }
 
   public static ZipFile createZipFile(File target) {

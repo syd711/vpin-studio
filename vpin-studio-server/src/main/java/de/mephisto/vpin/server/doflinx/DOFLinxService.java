@@ -48,7 +48,7 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   public boolean toggleAutoStart() {
     try {
       dofLinxSettings.setAutostart(!dofLinxSettings.isAutostart());
-      preferencesService.savePreference(PreferenceNames.DOFLINX_SETTINGS, dofLinxSettings);
+      preferencesService.savePreference(dofLinxSettings);
       return dofLinxSettings.isAutostart();
     }
     catch (Exception e) {

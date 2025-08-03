@@ -113,7 +113,7 @@ public class SystemBackupService {
           }
           values.put(name, sourceBean.getPropertyValue(name));
         }
-        preferencesService.savePreference(values);
+        preferencesService.savePreferenceMap(values);
         LOG.info("Updated preferences from restored values.");
 
       }

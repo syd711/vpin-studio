@@ -32,7 +32,7 @@ public class CardServiceTest extends AbstractVPinServerTest {
     String useDMD = VPinScreen.DMD.name();
     CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     cardSettings.setPopperScreen(useDMD);
-    preferencesService.savePreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    preferencesService.savePreference(cardSettings);
 
     List<CardTemplate> templates = cardTemplatesService.getTemplates();
     CardTemplate template = templates.stream()

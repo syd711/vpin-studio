@@ -76,7 +76,11 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
     return defaultValue;
   }
 
-  public synchronized boolean savePreference(Map<String, Object> values) throws Exception {
+  public synchronized boolean savePreferenceMap(Map<String, Object> values) throws Exception {
+    return savePreferenceMap(values, false);
+  }
+
+  public synchronized boolean savePreferenceMap(Map<String, Object> values, boolean silent) throws Exception {
     BeanWrapper bean = new BeanWrapperImpl(preferences);
 
     Map<String, Object> oldValues = new HashMap<>();
@@ -88,25 +92,31 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       bean.setPropertyValue(entry.getKey(), entry.getValue());
     }
     preferencesRepository.saveAndFlush(preferences);
-    notifyChangeListeners(values, oldValues);
+    if (!silent) {
+      notifyChangeListeners(values, oldValues);
+    }
     return true;
   }
 
-  public boolean savePreference(String key, Object value) throws Exception {
+  public boolean savePreference(String key, Object value, boolean silent) throws Exception {
     Map<String, Object> values = new HashMap<>();
     values.put(key, value);
-    return savePreference(values);
+    return savePreferenceMap(values, silent);
   }
 
-  public boolean savePreference(String key, JsonSettings value) throws Exception {
+  public boolean savePreference(JsonSettings value) throws Exception {
+    return this.savePreference(value, false);
+  }
+
+  public boolean savePreference(JsonSettings value, boolean silent) throws Exception {
     if (value != null) {
       String json = value.toJson();
-      return savePreference(key, json);
+      return savePreference(value.getSettingsName(), json, silent);
     }
 
     Map<String, Object> values = new HashMap<>();
-    values.put(key, value);
-    return savePreference(key, values);
+    values.put(value.getSettingsName(), value);
+    return savePreference(value.getSettingsName(), values, silent);
   }
 
   public Asset saveAvatar(byte[] bytes, String mimeType) {
@@ -182,11 +192,11 @@ public class PreferencesService implements InitializingBean, PreferenceChangedLi
       boolean stickyKeysEnabled = systemService.isStickyKeysEnabled();
       if (stickyKeysEnabled && !serverSettings.isStickyKeysEnabled()) {
         serverSettings.setStickyKeysEnabled(true);
-        savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        savePreference(serverSettings);
       }
       if (!stickyKeysEnabled && serverSettings.isStickyKeysEnabled()) {
         serverSettings.setStickyKeysEnabled(false);
-        savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        savePreference(serverSettings);
       }
     }
     catch (Exception e) {

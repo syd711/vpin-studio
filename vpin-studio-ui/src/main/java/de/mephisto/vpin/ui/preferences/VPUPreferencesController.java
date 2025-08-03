@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;

@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.backups.AuthenticationProvider;
 
 public class BackupSettings extends JsonSettings {
   private AuthenticationProvider authenticationProvider;
+  private boolean authenticated;
 
   private boolean directb2s = true;
   private boolean pupPack = true;
@@ -24,6 +25,14 @@ public class BackupSettings extends JsonSettings {
   private boolean dmd = true;
   private boolean vpx = true;
   private boolean registryData = true;
+
+  public boolean isAuthenticated() {
+    return authenticated;
+  }
+
+  public void setAuthenticated(boolean authenticated) {
+    this.authenticated = authenticated;
+  }
 
   public AuthenticationProvider getAuthenticationProvider() {
     return authenticationProvider;

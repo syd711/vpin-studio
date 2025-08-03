@@ -15,8 +15,6 @@ import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
-import de.mephisto.vpin.restclient.vpf.VPFSettings;
-import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -27,11 +25,9 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.music.MusicService;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
-import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +48,7 @@ import java.util.function.BiConsumer;
  *
  */
 @Service
-public class VpaService implements PreferenceChangedListener, InitializingBean {
+public class VpaService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpaService.class);
 
   private final static ObjectMapper objectMapper;
@@ -95,12 +91,6 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
 
   @Autowired
   private PreferencesService preferencesService;
-
-  @Autowired
-  private VpsService vpsService;
-
-  private VPFSettings vpfSettings;
-  private VPUSettings vpuSettings;
 
   public ZipFile createProtectedArchive(@NonNull File target) {
     return VpaArchiveUtil.createZipFile(target);
@@ -394,38 +384,6 @@ public class VpaService implements PreferenceChangedListener, InitializingBean {
   }
 
   @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (PreferenceNames.VPF_SETTINGS.equalsIgnoreCase(propertyName)) {
-      vpfSettings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
-      if (vpfSettings.getPassword() != null) {
-        new Thread(() -> {
-          if (vpsService.checkLogin("vpforums.org") == null) {
-            VpaArchiveUtil.PASSWORD = vpfSettings.getPassword();
-          }
-        }).start();
-      }
-    }
-    if (PreferenceNames.VPU_SETTINGS.equalsIgnoreCase(propertyName)) {
-      vpuSettings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
-      if (vpuSettings.getPassword() != null) {
-        new Thread(() -> {
-          if (vpsService.checkLogin("vpuniverse.com") == null) {
-            VpaArchiveUtil.PASSWORD = vpuSettings.getPassword();
-          }
-        }).start();
-      }
-    }
-  }
-
-  public Boolean isAuthenticated() {
-    vpfSettings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
-    return null;
-  }
-
-  @Override
   public void afterPropertiesSet() {
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.VPU_SETTINGS, null, null);
-    preferenceChanged(PreferenceNames.VPF_SETTINGS, null, null);
   }
 }

@@ -61,7 +61,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private static final int TAB_VPS = 2;
   private static final int TAB_STATISTICS = 3;
   private static final int TAB_RECORDER = 4;
-  private static final int TAB_REPOSITORY = 5;
+  private static final int TAB_BACKUPS = 5;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
@@ -160,8 +160,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         PreferencesController.open("settings_client");
         break;
       }
-      case TAB_REPOSITORY: {
-        PreferencesController.open("repositories");
+      case TAB_BACKUPS: {
+        PreferencesController.open("backups");
         break;
       }
       case TAB_RECORDER: {
@@ -362,7 +362,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     int selectedTab = getSelectedTab(newValue.intValue());
     Platform.runLater(() -> {
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
-      backupsSideBarController.setVisible(selectedTab == TAB_REPOSITORY);
+      backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
       vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
 
       if (selectedTab == TAB_TABLE) {
@@ -385,7 +385,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (selectedTab == TAB_REPOSITORY) {
+      else if (selectedTab == TAB_BACKUPS) {
         backupsController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
@@ -421,7 +421,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       return TAB_STATISTICS;
     }
     if (tabPane.getTabs().contains(tableRepositoryTab) && cnt++ == index) {
-      return TAB_REPOSITORY;
+      return TAB_BACKUPS;
     }
     if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
       return TAB_RECORDER;
@@ -627,7 +627,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       case TAB_STATISTICS: {
         return alxController;
       }
-      case TAB_REPOSITORY: {
+      case TAB_BACKUPS: {
         return backupsController;
       }
       case TAB_RECORDER: {

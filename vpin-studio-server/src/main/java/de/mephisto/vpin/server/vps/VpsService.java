@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
-import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;

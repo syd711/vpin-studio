@@ -84,7 +84,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
         if (lastGamePlayed != null && lastGamePlayed.getId() != game.getId()) {
           highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
         }
-        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
+        preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId(), false);
       }
     }
     catch (Exception e) {

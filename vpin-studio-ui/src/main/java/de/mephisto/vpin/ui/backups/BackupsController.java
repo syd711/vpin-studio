@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.backups;
 
 import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupFileInfo;
@@ -70,6 +71,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   @FXML
   private Button downloadBtn;
+
+  @FXML
+  private Button reloadBtn;
 
   @FXML
   private TextField searchTextField;
@@ -142,6 +146,9 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   @FXML
   private Button clearBtn;
+
+  @FXML
+  private ToolBar toolbar;
 
   private Parent loadingOverlay;
 
@@ -600,8 +607,23 @@ public class BackupsController implements Initializable, StudioFXController, Stu
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
-    this.doReload();
+    refreshView();
     EventManager.getInstance().addListener(this);
+  }
+
+  public void refreshView() {
+    toolbar.getItems().stream().forEach(i -> i.setDisable(true));
+    JFXFuture.supplyAsync(() -> {
+      return client.getBackupService().authenticate();
+    }).thenAcceptLater(authenticate -> {
+      if (authenticate == null) {
+        toolbar.getItems().stream().forEach(i -> i.setDisable(false));
+        this.doReload();
+      }
+      else {
+        WidgetFactory.showInformation(stage, "Authentication Required", authenticate);
+      }
+    });
   }
 
   @Override

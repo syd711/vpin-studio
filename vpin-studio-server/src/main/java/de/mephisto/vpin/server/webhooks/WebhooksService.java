@@ -98,7 +98,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
       List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> !s.getUuid().equals(webhookSet.getUuid())).collect(Collectors.toList()));
       collect.add(webhookSet);
       webhookSettings.setSets(collect);
-      preferencesService.savePreference(PreferenceNames.WEBHOOK_SETTINGS, webhookSettings);
+      preferencesService.savePreference(webhookSettings);
       return webhookSet;
     }
     catch (Exception e) {
@@ -118,7 +118,7 @@ public class WebhooksService implements InitializingBean, PreferenceChangedListe
     try {
       List<WebhookSet> collect = new ArrayList<>(webhookSettings.getSets().stream().filter(s -> s.getUuid().equals(uuid)).collect(Collectors.toList()));
       webhookSettings.setSets(collect);
-      preferencesService.savePreference(PreferenceNames.WEBHOOK_SETTINGS, webhookSettings);
+      preferencesService.savePreference(webhookSettings);
       return true;
     }
     catch (Exception e) {
