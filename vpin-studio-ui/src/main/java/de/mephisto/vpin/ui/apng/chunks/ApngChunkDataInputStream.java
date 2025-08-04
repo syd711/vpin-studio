@@ -84,8 +84,16 @@ public class ApngChunkDataInputStream extends DataInputStream {
     return header;
   }
 
+  public boolean isInterlaced() {
+    return header.getInterlaceMethod() != 0;
+  }
+
   public int getColorType() {
     return header.getColorType();
+  }
+
+  public int getBitDepth() {
+    return header.getBitDepth();
   }
 
   public boolean hasTransparency() {
@@ -94,9 +102,6 @@ public class ApngChunkDataInputStream extends DataInputStream {
 
   public int[] getTransparentColor() {
     return transparentColor;
-  }
-  public int getTransparentColorint() {
-    return -1;
   }
 
   public int getAvailableFrames() {
