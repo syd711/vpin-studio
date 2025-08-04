@@ -1,11 +1,21 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.restclient.mediasources.MediaSourceRepresentation;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
+import de.mephisto.vpin.ui.backups.dialogs.BackupSourceFolderDialogController;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 
 public class PreferencesDialogs {
+  public static MediaSourceRepresentation openMediaSourceFolderDialog(MediaSourceRepresentation source) {
+    Stage stage = Dialogs.createStudioDialogStage(MediaSourceFolderDialogController.class, "dialog-media-source-folder.fxml", "Media Source");
+    MediaSourceFolderDialogController controller = (MediaSourceFolderDialogController) stage.getUserData();
+    controller.setSource(source);
+    stage.showAndWait();
+    return controller.getMediaSource();
+  }
+
   public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {
     Stage stage = Dialogs.createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bot-allowlist-dialog.fxml", "Bot Allow-List");
     DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();

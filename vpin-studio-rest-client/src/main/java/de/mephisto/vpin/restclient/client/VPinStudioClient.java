@@ -40,6 +40,7 @@ import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
+import de.mephisto.vpin.restclient.mediasources.MediaSourcesServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -106,6 +107,7 @@ public class VPinStudioClient implements OverlayClient {
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final MameServiceClient mameServiceClient;
+  private final MediaSourcesServiceClient mediaSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
@@ -157,6 +159,7 @@ public class VPinStudioClient implements OverlayClient {
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
+    this.mediaSourcesServiceClient = new MediaSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.resServiceClient = new ResServiceClient(this);
@@ -179,6 +182,10 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public MediaSourcesServiceClient getMediaSourcesService() {
+    return mediaSourcesServiceClient;
   }
 
   public VpAuthenticationServiceClient getAuthenticationService() {
