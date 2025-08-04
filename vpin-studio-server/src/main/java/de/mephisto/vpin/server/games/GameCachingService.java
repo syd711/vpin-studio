@@ -268,7 +268,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     LOG.info("Game fetch for emulator " + emulator.getName() + " took " + duration + "ms / " + gamesByEmulator.size() + " games / " + avg + "ms avg.");
   }
 
-
   private boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     boolean newGame = (gameDetails == null);
@@ -365,6 +364,7 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
+    game.setIgnoreUpdates(gameDetails.getIgnoreUpdates() != null ? gameDetails.getIgnoreUpdates() : false);
     game.setVrRoomEnabled(gameDetails.getVrRoomEnabled() != null ? gameDetails.getVrRoomEnabled() : false);
     game.setVrRoomSupport(gameDetails.getVrRoomSupport() != null ? gameDetails.getVrRoomSupport() : false);
     game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);

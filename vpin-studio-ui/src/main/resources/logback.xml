@@ -49,6 +49,7 @@
     <logger name="javafx.fxml" level="ERROR"/>
     <logger name="javafx" level="ERROR"/>
     <logger name="org.jnativehook" level="ERROR"/>
+    <logger name="org.htmlunit" level="ERROR"/>
     <logger name="net.java.games.input" level="ERROR"/>
     <logger name="net.dv8tion.jda.api" level="ERROR"/>
     <root level="INFO">

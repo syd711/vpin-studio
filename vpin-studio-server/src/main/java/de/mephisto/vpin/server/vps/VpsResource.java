@@ -55,12 +55,6 @@ public class VpsResource {
     return vpsService.getChangeDate();
   }
 
-  @GetMapping("/installLogin/{link}")
-  public String checkLogin(@PathVariable("link") String link) {
-    String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
-    return vpsService.checkLogin(decodedLink);
-  }
-
   @GetMapping("/installLinks/{link}")
   public List<VpsInstallLink> getInstallLinks(@PathVariable("link") String link) {
     String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);

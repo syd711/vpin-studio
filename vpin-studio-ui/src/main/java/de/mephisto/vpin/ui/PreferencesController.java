@@ -266,7 +266,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onVpaRepositories(ActionEvent event) throws IOException {
-    load("preference-repositories.fxml", event);
+    load("preference-backups.fxml", event);
   }
 
   @FXML

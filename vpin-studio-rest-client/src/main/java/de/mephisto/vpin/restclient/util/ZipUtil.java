@@ -1,6 +1,9 @@
 package de.mephisto.vpin.restclient.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,6 +151,41 @@ public class ZipUtil {
     }
     zipOut.closeEntry();
     fis.close();
+  }
+
+
+  public static void zipFile(File fileToZip, String fileName, net.lingala.zip4j.ZipFile zipOut) throws IOException {
+    if (fileToZip.isHidden()) {
+      return;
+    }
+
+    if (fileToZip.isDirectory()) {
+      LOG.info("Zipping " + fileToZip.getCanonicalPath());
+
+      if (!fileName.endsWith("/")) {
+        fileName = fileName + "/";
+      }
+
+      File[] children = fileToZip.listFiles();
+      if (children != null) {
+        for (File childFile : children) {
+          ZipParameters zipParameters = new ZipParameters();
+          zipParameters.setEncryptFiles(true);
+          zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+          zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+          zipParameters.setFileNameInZip(fileName + childFile.getName());
+          zipOut.addFile(childFile, zipParameters);
+        }
+      }
+      return;
+    }
+
+    ZipParameters zipParameters = new ZipParameters();
+    zipParameters.setEncryptFiles(true);
+    zipParameters.setCompressionLevel(CompressionLevel.HIGHER);
+    zipParameters.setEncryptionMethod(EncryptionMethod.AES);
+    zipParameters.setFileNameInZip(fileName);
+    zipOut.addFile(fileToZip, zipParameters);
   }
 
   public static void zipFolder(File sourceDirPath, File targetZip, ZipProgressable progressable) throws IOException {

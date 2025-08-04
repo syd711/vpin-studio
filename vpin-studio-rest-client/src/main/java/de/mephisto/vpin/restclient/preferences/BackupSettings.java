@@ -3,9 +3,9 @@ package de.mephisto.vpin.restclient.preferences;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 
 public class BackupSettings extends JsonSettings {
-
   private boolean directb2s = true;
   private boolean pupPack = true;
   private boolean rom = true;
@@ -64,6 +64,9 @@ public class BackupSettings extends JsonSettings {
       }
       case VPX: {
         return vpx;
+      }
+      case ROM: {
+        return rom;
       }
     }
     return false;

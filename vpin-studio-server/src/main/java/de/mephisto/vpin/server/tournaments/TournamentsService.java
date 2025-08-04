@@ -115,7 +115,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
 
           ManiaSettings settings = preferencesService.getJsonPreference(PreferenceNames.MANIA_SETTINGS, ManiaSettings.class);
           settings.setEnabled(true);
-          preferencesService.savePreference(PreferenceNames.MANIA_SETTINGS, settings);
+          preferencesService.savePreference(settings);
 
           if (settings.isShowOnlineStatus()) {
             cabinet.getStatus().setStatus(CabinetOnlineStatus.online);

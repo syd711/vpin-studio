@@ -78,6 +78,11 @@ public class GamesResource {
     return gameService.reload(gameId);
   }
 
+  @GetMapping("/reloadEmulator/{emulatorId}")
+  public boolean reloadEmulator(@PathVariable("emulatorId") int emulatorId) {
+    return gameService.reloadEmulator(emulatorId);
+  }
+
   @GetMapping("/unknowns")
   public List<Integer> getUnknownGameIds() {
     return gameService.getUnknownGames();
@@ -154,6 +159,7 @@ public class GamesResource {
   public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id) {
     return gameService.getGameScoreValidation(id);
   }
+
   @PostMapping("/scorevalidation/{id}")
   public GameScoreValidation getGameScoreValidation(@PathVariable("id") int id, @RequestBody TableDetails tableDetails) {
     return gameService.getGameScoreValidation(id, tableDetails);
@@ -172,7 +178,7 @@ public class GamesResource {
   @GetMapping("/highscorefile/{id}/fileinfo")
   public FileInfo getHighscoreFileInfo(@PathVariable("id") int gameId) {
     File hsfile = gameService.getHighscoreFile(gameId);
-    return hsfile != null? FileInfo.file(hsfile, hsfile.getParentFile()) : null;
+    return hsfile != null ? FileInfo.file(hsfile, hsfile.getParentFile()) : null;
   }
 
   @GetMapping("/scorehistory/{id}")
@@ -202,6 +208,13 @@ public class GamesResource {
   @PostMapping("/delete")
   public boolean delete(@RequestBody DeleteDescriptor descriptor) {
     return gameMediaService.deleteGame(descriptor);
+  }
+
+  @PostMapping("/deleteGameFile")
+  public boolean deleteGameFile(@RequestBody Map<String, Object> data) {
+    int emulatorId = (int) data.get("emulatorId");
+    String fileName = (String) data.get("fileName");
+    return gameMediaService.deleteGameFile(emulatorId, fileName);
   }
 
   @PostMapping("/reset")

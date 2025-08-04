@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.mame;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
+import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.dmd.DMDInfoZone;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -148,7 +148,7 @@ public class MameService implements InitializingBean {
   }
 
 
-  public void saveRegistryData(@NonNull ArchiveMameData mameData) {
+  public void saveRegistryData(@NonNull BackupMameData mameData) {
     String rom = mameData.getRom();
     systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
 

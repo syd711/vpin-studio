@@ -9,8 +9,8 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
-import de.mephisto.vpin.ui.archiving.RepositoryController;
-import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
+import de.mephisto.vpin.ui.backups.BackupsController;
+import de.mephisto.vpin.ui.backups.BackupsSidebarController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -61,13 +61,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private static final int TAB_VPS = 2;
   private static final int TAB_STATISTICS = 3;
   private static final int TAB_RECORDER = 4;
-  private static final int TAB_REPOSITORY = 5;
+  private static final int TAB_BACKUPS = 5;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
   private AlxController alxController;
-  private RepositoryController repositoryController;
+  private BackupsController backupsController;
 
   public static TablesController INSTANCE;
 
@@ -107,7 +107,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private TablesSidebarController tablesSideBarController; //fxml magic! Not unused
 
   @FXML
-  private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
+  private BackupsSidebarController backupsSideBarController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -160,8 +160,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         PreferencesController.open("settings_client");
         break;
       }
-      case TAB_REPOSITORY: {
-        PreferencesController.open("repositories");
+      case TAB_BACKUPS: {
+        PreferencesController.open("backups");
         break;
       }
       case TAB_RECORDER: {
@@ -244,10 +244,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
     try {
       if (Features.BACKUPS_ENABLED) {
-        FXMLLoader loader = new FXMLLoader(RepositoryController.class.getResource("scene-repository.fxml"));
+        FXMLLoader loader = new FXMLLoader(BackupsController.class.getResource("scene-backups.fxml"));
         Parent repositoryRoot = loader.load();
-        repositoryController = loader.getController();
-        repositoryController.setRootController(this);
+        backupsController = loader.getController();
+        backupsController.setRootController(this);
         tableRepositoryTab.setContent(repositoryRoot);
       }
       else {
@@ -298,7 +298,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     });
 
     tablesSideBarController.setVisible(true);
-    repositorySideBarController.setVisible(false);
+    backupsSideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
 
     Platform.runLater(() -> {
@@ -362,7 +362,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     int selectedTab = getSelectedTab(newValue.intValue());
     Platform.runLater(() -> {
       tableOverviewController.setVisible(selectedTab == TAB_TABLE);
-      repositorySideBarController.setVisible(selectedTab == TAB_REPOSITORY);
+      backupsSideBarController.setVisible(selectedTab == TAB_BACKUPS);
       vpsTablesSidebarController.setVisible(selectedTab == TAB_VPS);
 
       if (selectedTab == TAB_TABLE) {
@@ -385,8 +385,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (selectedTab == TAB_REPOSITORY) {
-        repositoryController.onViewActivated(null);
+      else if (selectedTab == TAB_BACKUPS) {
+        backupsController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
@@ -421,7 +421,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       return TAB_STATISTICS;
     }
     if (tabPane.getTabs().contains(tableRepositoryTab) && cnt++ == index) {
-      return TAB_REPOSITORY;
+      return TAB_BACKUPS;
     }
     if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
       return TAB_RECORDER;
@@ -434,8 +434,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return tablesSideBarController;
   }
 
-  public RepositorySidebarController getRepositorySideBarController() {
-    return repositorySideBarController;
+  public BackupsSidebarController getRepositorySideBarController() {
+    return backupsSideBarController;
   }
 
   public TableOverviewController getTableOverviewController() {
@@ -627,8 +627,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       case TAB_STATISTICS: {
         return alxController;
       }
-      case TAB_REPOSITORY: {
-        return repositoryController;
+      case TAB_BACKUPS: {
+        return backupsController;
       }
       case TAB_RECORDER: {
         return recorderController;

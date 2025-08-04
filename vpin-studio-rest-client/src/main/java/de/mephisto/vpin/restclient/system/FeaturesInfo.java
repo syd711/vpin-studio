@@ -11,8 +11,8 @@ public class FeaturesInfo {
   public boolean NOTIFICATIONS_ENABLED = true;
   public boolean VPX_MONITORING = false;
 
-  public boolean VP_UNIVERSE = false;
-  public boolean VP_FORUMS = false;
+  public boolean VP_UNIVERSE = true;
+  public boolean VP_FORUMS = true;
   public boolean AUTO_INSTALLER = false;
 
   public boolean DROP_IN_FOLDER = true;
@@ -20,6 +20,8 @@ public class FeaturesInfo {
   public boolean RECORDER = true;
   public boolean RES_EDITOR = true;
   public boolean SCREEN_VALIDATOR = false;
+
+  public boolean TABLES_SECONDARY_TOOLBAR = true;
 
   /** Whether ratings are supported */
   public boolean RATINGS = true;

@@ -383,7 +383,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
 
       maniaServiceCache.clear();
-      preferencesService.savePreference(PreferenceNames.MANIA_SETTINGS, maniaSettings);
+      preferencesService.savePreference(maniaSettings);
     }
     catch (Exception e) {
       LOG.error("Mania Registration failed: {}", e.getMessage(), e);

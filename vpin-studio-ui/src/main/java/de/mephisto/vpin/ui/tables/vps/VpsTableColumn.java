@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.*;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -21,7 +21,7 @@ import java.util.List;
 public class VpsTableColumn extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTableColumn.class);
 
-  public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, @Nullable VPSChanges updates, VpsSettings vpsSettings) {
+  public VpsTableColumn(@Nullable String vpsTableId, @Nullable String vpsTableVersionId, boolean disabled, boolean ignoreUpdates, @Nullable VPSChanges updates, VpsSettings vpsSettings) {
     super(3);
     try {
 
@@ -73,43 +73,13 @@ public class VpsTableColumn extends HBox {
 
       label = new Label();
 
-      int changeCounter = 0;
-      if (updates != null && !updates.isEmpty() && vpsTable != null) {
-        StringBuilder builder = new StringBuilder();
-        List<VPSChange> changes = updates.getChanges();
-        for (VPSChange change : changes) {
-          if (isFiltered(vpsSettings, change)) {
-            continue;
-          }
-          changeCounter++;
-          String changeValue = change.toString(vpsTable);
-          if (changeValue != null) {
-            builder.append(changeValue);
-            builder.append("\n");
-          }
-        }
-
-        if (changeCounter > 0) {
-          FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-          if (disabled) {
-            updateIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
-            ;
-          }
-          label.setGraphic(updateIcon);
-
-          String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the reset action from the context menu.";
-          Tooltip tt = new Tooltip(tooltip);
-          tt.setStyle("-fx-font-weight: bold;");
-          tt.setWrapText(true);
-          tt.setMaxWidth(400);
-          label.setTooltip(tt);
-        }
+      if (ignoreUpdates) {
+        FontIcon ignoredIcon = WidgetFactory.createIcon("mdi2b-bell-cancel-outline");
+        label.setGraphic(ignoredIcon);
+        label.setTooltip(new Tooltip("Updates for this table are ignored."));
       }
-
-      if (changeCounter == 0) {
-        label.setText(" - ");
-        label.setTooltip(new Tooltip("No updates available."));
-        label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
+      else {
+        applyChanges(label, vpsTable, updates, disabled, vpsSettings);
       }
 
       this.getChildren().add(label);
@@ -117,6 +87,47 @@ public class VpsTableColumn extends HBox {
     catch (Exception e) {
       LOG.error("Failed to render VPS table container: " + e.getMessage(), e);
       this.getChildren().add(new Label("ERROR"));
+    }
+  }
+
+  private void applyChanges(Label label, VpsTable vpsTable, VPSChanges updates, boolean disabled, VpsSettings vpsSettings) {
+    int changeCounter = 0;
+    if (updates != null && !updates.isEmpty() && vpsTable != null) {
+      StringBuilder builder = new StringBuilder();
+      List<VPSChange> changes = updates.getChanges();
+      for (VPSChange change : changes) {
+        if (isFiltered(vpsSettings, change)) {
+          continue;
+        }
+        changeCounter++;
+        String changeValue = change.toString(vpsTable);
+        if (changeValue != null) {
+          builder.append(changeValue);
+          builder.append("\n");
+        }
+      }
+
+      if (changeCounter > 0) {
+        FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+        if (disabled) {
+          updateIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          ;
+        }
+        label.setGraphic(updateIcon);
+
+        String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the reset action from the context menu.";
+        Tooltip tt = new Tooltip(tooltip);
+        tt.setStyle("-fx-font-weight: bold;");
+        tt.setWrapText(true);
+        tt.setMaxWidth(400);
+        label.setTooltip(tt);
+      }
+    }
+
+    if (changeCounter == 0) {
+      label.setText(" - ");
+      label.setTooltip(new Tooltip("No updates available."));
+      label.setStyle(disabled ? WidgetFactory.DISABLED_TEXT_STYLE : WidgetFactory.DEFAULT_TEXT_STYLE);
     }
   }
 

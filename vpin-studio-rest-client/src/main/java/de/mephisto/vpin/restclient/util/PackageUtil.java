@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+
 import java.io.File;
 import java.util.Arrays;
 
@@ -16,10 +18,13 @@ public class PackageUtil {
 
   public static String contains(File file, String suffix) {
     String fileName = file.getName().toLowerCase();
-    if (fileName.endsWith(".zip") || fileName.endsWith(".vpa")) {
+    if (fileName.endsWith(".zip")) {
       return ZipUtil.contains(file, suffix);
     }
-    if (fileName.endsWith(".rar") || fileName.endsWith(".7z")) {
+    else if(fileName.endsWith(".vpa")) {
+      return VpaArchiveUtil.contains(file, suffix);
+    }
+    else if (fileName.endsWith(".rar") || fileName.endsWith(".7z")) {
       return RarUtil.contains(file, suffix);
     }
     throw new UnsupportedOperationException("No package support for " + file.getName());
@@ -27,10 +32,13 @@ public class PackageUtil {
 
   public static boolean unpackTargetFile(File archiveFile, File targetFile, String name) {
     String archiveName = archiveFile.getName().toLowerCase();
-    if (archiveName.endsWith(".zip") || archiveName.endsWith(".vpa")) {
+    if (archiveName.endsWith(".zip")) {
       return ZipUtil.unzipTargetFile(archiveFile, targetFile, name);
     }
-    if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
+    else if (archiveName.endsWith(".vpa")) {
+      return VpaArchiveUtil.extractFile(archiveFile, targetFile, name);
+    }
+    else if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
       return RarUtil.unrarTargetFile(archiveFile, targetFile, name);
     }
     throw new UnsupportedOperationException("No package support for " + archiveFile.getName());

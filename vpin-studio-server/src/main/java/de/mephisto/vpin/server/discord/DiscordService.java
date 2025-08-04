@@ -721,10 +721,10 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (!StringUtils.isEmpty(serverId)) {
           GuildInfo guild = this.discordClient.getGuildById(Long.parseLong(serverId));
           if (guild == null) {
-            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
-            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_GUILD_ID, null, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null, false);
+            preferencesService.savePreference(PreferenceNames.DISCORD_DYNAMIC_SUBSCRIPTIONS, false, false);
             status.setValid(false);
           }
         }
@@ -732,7 +732,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (!StringUtils.isEmpty(channelId)) {
           DiscordChannel channel = this.getChannel(Long.parseLong(serverId), Long.parseLong(channelId));
           if (channel == null) {
-            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CATEGORY_ID, null, false);
             status.setValid(false);
           }
         }
@@ -740,7 +740,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (!StringUtils.isEmpty(categoryId)) {
           Category category = this.discordClient.getCategory(Long.parseLong(serverId), Long.parseLong(categoryId));
           if (category == null) {
-            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null);
+            preferencesService.savePreference(PreferenceNames.DISCORD_CHANNEL_ID, null, false);
             status.setValid(false);
           }
         }

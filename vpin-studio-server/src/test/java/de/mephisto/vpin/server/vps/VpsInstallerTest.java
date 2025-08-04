@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.Ignore;
-import org.junit.jupiter.api.Test;
 
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;

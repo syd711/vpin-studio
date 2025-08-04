@@ -3,7 +3,16 @@ package de.mephisto.vpin.restclient.games;
 public class GameListItem {
   private String name;
   private String fileName;
+  private long fileSize;
   private int emuId;
+
+  public long getFileSize() {
+    return fileSize;
+  }
+
+  public void setFileSize(long fileSize) {
+    this.fileSize = fileSize;
+  }
 
   public String getFileName() {
     return fileName;

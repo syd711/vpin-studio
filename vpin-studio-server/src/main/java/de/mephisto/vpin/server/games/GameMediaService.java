@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.dmd.DMDService;
@@ -106,6 +108,9 @@ public class GameMediaService {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private VpaService vpaService;
 
   /**
    * moved from VpsService to break circular dependency.
@@ -385,13 +390,12 @@ public class GameMediaService {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        TableDetails tableDetails = analysis.getTableDetails();
-        if (tableDetails == null) {
+        if (!uploadDescriptor.isBackupRestoreMode()) {
           if (uploadDescriptor.isAutoFill()) {
             autoMatch(game, true, false);
           }
 
-          tableDetails = getTableDetails(game.getId());
+          TableDetails tableDetails = getTableDetails(game.getId());
           if (tableDetails != null && uploadDescriptor.isAutoFill()) {
             tableDetails = frontendService.autoFill(game, tableDetails, false);
           }
@@ -401,6 +405,7 @@ public class GameMediaService {
         }
         else {
           //we have read the table details, including the mapping from the VPA file.
+          TableDetails tableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
           tableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
           frontendService.saveTableDetails(game.getId(), tableDetails);
         }
@@ -588,6 +593,18 @@ public class GameMediaService {
         }
       }
     }
+  }
+
+  public boolean deleteGameFile(int emulatorId, String fileName) {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    if (gameEmulator != null) {
+      File gameFile = new File(gameEmulator.getGamesDirectory(), fileName);
+      if (gameFile.exists() && gameFile.delete()) {
+        LOG.info("Delete game file {}", gameFile.getAbsolutePath());
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {

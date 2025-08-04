@@ -462,7 +462,7 @@ public class DMDPositionService {
         ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS);
         serverSettings.setDisableDmdViaIni(dmdinfo.isDisableViaIni());
         serverSettings.setDisableDmdInMame(dmdinfo.isDisableInVpinMame());
-        preferenceService.savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        preferenceService.savePreference(serverSettings);
       }
       catch (Exception e) {
         LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());
@@ -508,7 +508,7 @@ public class DMDPositionService {
       try {
         ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS);
         serverSettings.setDisableBackglassScore(dmdinfo.isDisableBackglassScores());
-        preferenceService.savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+        preferenceService.savePreference(serverSettings);
       }
       catch (Exception e) {
         LOG.error("Cannot save server preference for disable options, exception ignored : " + e.getMessage());

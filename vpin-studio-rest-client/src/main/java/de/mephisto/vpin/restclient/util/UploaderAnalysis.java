@@ -1,12 +1,12 @@
 package de.mephisto.vpin.restclient.util;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveMameData;
-import de.mephisto.vpin.restclient.archiving.VpaArchiveUtil;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.model.FileHeader;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -51,6 +51,10 @@ public class UploaderAnalysis {
   private String pupFolder;
 
   public UploaderAnalysis(boolean supportPupPacks, File file) {
+    this(supportPupPacks, file, null);
+  }
+
+  public UploaderAnalysis(boolean supportPupPacks, File file, String password) {
     this.supportPupPacks = supportPupPacks;
     this.file = file;
   }
@@ -278,30 +282,17 @@ public class UploaderAnalysis {
     return result;
   }
 
-
-  public ArchiveMameData readMameData() {
-    return VpaArchiveUtil.readMameData(getFile());
-  }
-
-  public TableDetails getTableDetails() {
-    try {
-      return VpaArchiveUtil.readTableDetails(getFile());
-    }
-    catch (Exception e) {
-     LOG.info("{} does not contains table details.", getFile().getAbsolutePath());
-    }
-    return null;
-  }
-
-
   public String getReadMeText() {
     return readme;
   }
 
   public void analyze() throws IOException {
     String suffix = FilenameUtils.getExtension(file.getName());
-    if (suffix.equalsIgnoreCase(AssetType.ZIP.name()) || suffix.equalsIgnoreCase(AssetType.VPA.name())) {
+    if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
       analyzeZip();
+    }
+    else if (suffix.equalsIgnoreCase(AssetType.VPA.name())) {
+      analyzeVpa();
     }
     else if (suffix.equalsIgnoreCase(AssetType.RAR.name()) || suffix.equalsIgnoreCase("7z")) {
       analyzeRar();
@@ -336,6 +327,25 @@ public class UploaderAnalysis {
     }
   }
 
+  private void analyzeVpa() throws IOException {
+    long analysisStart = System.currentTimeMillis();
+    ZipFile zipFile = VpaArchiveUtil.createZipFile(file);
+    try {
+      List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+      for (FileHeader nextEntry : fileHeaders) {
+        analyze(zipFile, nextEntry);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open " + file.getAbsolutePath());
+      throw e;
+    }
+    finally {
+      LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
+      zipFile.close();
+    }
+  }
+
   private void analyzeRar() throws IOException {
     long analysisStart = System.currentTimeMillis();
     RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
@@ -364,6 +374,16 @@ public class UploaderAnalysis {
     boolean checkReadme = analyze(formattedName, directory, size);
     if (checkReadme) {
       readReadme(archiveEntry, formattedName);
+    }
+  }
+
+  private void analyze(ZipFile zipFile, FileHeader fileHeader) {
+    String formattedName = fileHeader.getFileName();
+    boolean checkReadme = analyze(formattedName, fileHeader.isDirectory(), fileHeader.getUncompressedSize());
+    if (checkReadme) {
+      if (formattedName.toLowerCase().endsWith(".txt") && formattedName.toLowerCase().contains("read")) {
+        this.readme = VpaArchiveUtil.readStringFromZip(zipFile, fileHeader.getFileName());
+      }
     }
   }
 

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
 @RequestMapping(API_SEGMENT + "system")
@@ -60,6 +62,33 @@ public class SystemResource {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private SystemBackupService systemBackupService;
+
+  @PostMapping("/backup/create")
+  public String createBackup() {
+    try {
+      return systemBackupService.create();
+    }
+    catch (Exception e) {
+      LOG.error("Backup creation failed: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Backup creation failed: " + e.getMessage());
+    }
+  }
+
+  @PostMapping("/backup/restore")
+  public Boolean restoreBackup(@RequestParam(value = "file") MultipartFile file,
+                               @RequestParam(value = "backupDescriptor") String backupDescriptor) {
+    try {
+      String json = new String(file.getBytes());
+      return systemBackupService.restore(json, backupDescriptor);
+    }
+    catch (Exception e) {
+      LOG.error("Backup restore failed: {}", e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Backup restoring failed: " + e.getMessage());
+    }
+  }
 
   @GetMapping("/startupTime")
   public Date startupTime() {
@@ -316,35 +345,6 @@ public class SystemResource {
     return true;
   }
 
-  @GetMapping("/autostart/installed")
-  public boolean autostart() {
-    return new File("./server.vbs").exists();
-  }
-
-  @GetMapping("/autostart/install")
-  public boolean installService() {
-    try {
-      File disabled = new File("./server.vbs.bak");
-      File file = new File("./server.vbs");
-      if (disabled.exists()) {
-        FileUtils.moveFile(disabled, file);
-        return true;
-      }
-      return ServerInstallationUtil.install();
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  @GetMapping("/autostart/uninstall")
-  public boolean uninstallService() throws IOException {
-    File file = new File("./server.vbs");
-    File disabled = new File("./server.vbs.bak");
-    FileUtils.moveFile(file, disabled);
-    return true;
-  }
-
   @GetMapping("/version")
   public String version() {
     return systemService.getVersion();
@@ -359,11 +359,6 @@ public class SystemResource {
   @GetMapping("/badges")
   public List<String> getCompetitionBadges() {
     return systemService.getCompetitionBadges();
-  }
-
-  @GetMapping("/dotnet")
-  public boolean isDotNetInstalled() {
-    return systemService.isDotNetInstalled();
   }
 
   @PostMapping("/text")

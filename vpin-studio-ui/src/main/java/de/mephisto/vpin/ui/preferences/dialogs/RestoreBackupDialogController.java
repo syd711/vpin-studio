@@ -1,12 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.JFXFuture;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.backup.BackupDescriptor;
-import de.mephisto.vpin.ui.PreferencesController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.restclient.backups.BackupDescriptor;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
@@ -27,8 +22,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import static de.mephisto.vpin.ui.Studio.client;
 
 public class RestoreBackupDialogController implements Initializable, DialogController, ChangeListener<Boolean> {
   private final static Logger LOG = LoggerFactory.getLogger(RestoreBackupDialogController.class);

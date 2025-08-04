@@ -50,7 +50,7 @@ public class PINemHiService implements InitializingBean {
   public boolean toggleAutoStart() {
     try {
       this.enabled = !enabled;
-      preferencesService.savePreference(PreferenceNames.PINEMHI_AUTOSTART_ENABLED, enabled);
+      preferencesService.savePreference(PreferenceNames.PINEMHI_AUTOSTART_ENABLED, enabled, false);
       return enabled;
     }
     catch (Exception e) {

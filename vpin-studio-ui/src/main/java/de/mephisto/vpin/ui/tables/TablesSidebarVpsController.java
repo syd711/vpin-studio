@@ -92,6 +92,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button openTableVersionBtn;
 
   @FXML
+  private Button openTableLinkBtn;
+
+  @FXML
   private SplitMenuButton autoFillBtn;
 
   @FXML
@@ -119,6 +122,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private Button vpsResetUpdatesBtn;
 
   @FXML
+  private CheckBox updatesCheckbox;
+
+  @FXML
   private Button vpsLinkResetBtn;
 
   @FXML
@@ -135,6 +141,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private List<GameRepresentation> games = new ArrayList<>();
 
   private TablesSidebarController tablesSidebarController;
+  private IgnoreUpdatesChangeListener ignoreUpdatesListener;
 
   // Add a public no-args constructor
   public TablesSidebarVpsController() {
@@ -286,12 +293,18 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     updatedLabel.setText("-");
     ipdbLink.setText("");
     openTableVersionBtn.setDisable(true);
+    openTableLinkBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     autoFillBtn.setDisable(games.isEmpty());
     vpsResetUpdatesBtn.setDisable(true);
 
+    updatesCheckbox.selectedProperty().removeListener(ignoreUpdatesListener);
+
     if (!games.isEmpty()) {
       GameRepresentation game = games.get(0);
+      this.updatesCheckbox.setSelected(game.isIgnoreUpdates());
+      this.updatesCheckbox.selectedProperty().addListener(ignoreUpdatesListener);
+
       vpsResetUpdatesBtn.setDisable(game.getVpsUpdates().isEmpty() && this.games.size() == 1);
 
       String vpsTableId = game.getExtTableId();
@@ -310,7 +323,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         }
       }
 
-      openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableId));
+      openTableLinkBtn.setDisable(StringUtils.isEmpty(vpsTableId));
       openTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
       copyTableVersionBtn.setDisable(StringUtils.isEmpty(vpsTableVersionId));
 
@@ -646,6 +659,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(null, this.nameField, this, collect);
 
+    this.ignoreUpdatesListener = new IgnoreUpdatesChangeListener();
+
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     client.getPreferenceService().addListener(this);
   }
@@ -655,6 +670,16 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (key.equals(PreferenceNames.VPS_SETTINGS)) {
       vpsSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VPS_SETTINGS, VpsSettings.class);
       this.vpsResetUpdatesBtn.setVisible(!vpsSettings.isHideVPSUpdates());
+    }
+  }
+
+  class IgnoreUpdatesChangeListener implements ChangeListener<Boolean> {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      GameRepresentation gameRepresentation = games.get(0);
+      gameRepresentation.setIgnoreUpdates(newValue);
+      client.getGameService().saveGame(gameRepresentation);
+      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
     }
   }
 }

@@ -66,7 +66,9 @@ public class GameDetails {
 
   private int nvOffset;
 
-  private Boolean cardsDisabled;
+  private Boolean cardsDisabled = false;
+
+  private Boolean ignoreUpdates = true;
 
   private Boolean foundControllerStop = true;
 
@@ -80,6 +82,13 @@ public class GameDetails {
   private String dmdGameName;
   private String dmdProjectFolder;
 
+  public Boolean getIgnoreUpdates() {
+    return ignoreUpdates;
+  }
+
+  public void setIgnoreUpdates(Boolean ignoreUpdates) {
+    this.ignoreUpdates = ignoreUpdates;
+  }
 
   public Boolean getVrRoomSupport() {
     return vrRoomSupport;

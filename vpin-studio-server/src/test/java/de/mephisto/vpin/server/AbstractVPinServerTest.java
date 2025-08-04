@@ -1,13 +1,12 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.server.altsound.AltSoundService;
-import de.mephisto.vpin.server.archiving.ArchiveService;
-import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
+import de.mephisto.vpin.server.backups.BackupService;
+import de.mephisto.vpin.server.backups.adapters.TableBackupAdapterFactory;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
@@ -101,7 +100,7 @@ abstract public class AbstractVPinServerTest {
   protected TableBackupAdapterFactory tableBackupAdapterFactory;
 
   @Autowired
-  protected ArchiveService archiveService;
+  protected BackupService backupService;
 
   /**
    * To force usage of a given Frontend
@@ -136,7 +135,7 @@ abstract public class AbstractVPinServerTest {
       frontendService.deleteGames(1);
       clearVPinStudioDatabase();
 
-      systemService.setArchiveType(ArchiveType.VPA);
+      systemService.setArchiveType(BackupType.VPA);
 
       frontendService.importGame(EM_TABLE, 1);
       frontendService.importGame(VPREG_TABLE, 1);

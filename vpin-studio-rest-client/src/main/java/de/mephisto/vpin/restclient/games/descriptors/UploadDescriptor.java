@@ -31,6 +31,7 @@ public class UploadDescriptor {
   private boolean async;
   private boolean acceptAllAudioAsMusic;
   private String patchVersion;
+
   private boolean backupRestoreMode = false;
 
   private List<String> excludedFiles = new ArrayList<>();

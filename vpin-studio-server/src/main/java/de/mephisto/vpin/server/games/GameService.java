@@ -166,6 +166,23 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   /**
+   * Should only be triggered manually
+   */
+  public boolean reloadEmulator(int emulatorId) {
+    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+    if(emulator != null) {
+      mameRomAliasService.clearCache(Arrays.asList(emulator));
+      gameCachingService.clearCacheForEmulator(emulatorId);
+    }
+
+    emulatorService.loadEmulators();
+    highscoreService.refreshAvailableScores();
+    gameCachingService.clearCache();
+    getKnownGames(emulatorId);
+    return true;
+  }
+
+  /**
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public Game reload(int gameId) {
@@ -367,6 +384,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         GameListItem item = new GameListItem();
         item.setName(file.getName());
         item.setFileName(file.getAbsolutePath());
+        item.setFileSize(file.length());
         item.setEmuId(emulator.getId());
         list.getItems().add(item);
       }
@@ -442,6 +460,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
+    gameDetails.setIgnoreUpdates(game.isIgnoreUpdates());
     gameDetails.setNotes(game.getComment());
     gameDetails.setCardsDisabled(game.isCardDisabled());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
@@ -568,6 +587,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     TableDetails tableDetails = frontendService.getTableDetails(id);
     return getGameScoreValidation(id, tableDetails);
   }
+
   public GameScoreValidation getGameScoreValidation(int id, TableDetails tableDetails) {
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());

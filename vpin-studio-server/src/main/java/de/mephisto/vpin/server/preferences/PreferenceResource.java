@@ -61,13 +61,13 @@ public class PreferenceResource {
 
   @PutMapping
   public boolean put(@RequestBody Map<String, Object> values) throws Exception {
-    return preferencesService.savePreference(values);
+    return preferencesService.savePreferenceMap(values);
   }
 
   @PutMapping(value = "/json/{key}")
   public boolean put(@PathVariable("key") String key, @RequestBody Map<String, Object> values) throws Exception {
     String json = (String) values.get("data");
-    return preferencesService.savePreference(key, json);
+    return preferencesService.savePreference(key, json, false);
   }
 
   static class PreferenceEntry {
