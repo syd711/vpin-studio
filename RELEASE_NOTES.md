@@ -18,4 +18,6 @@
 
 ## Bugfixes
 
+- The maintenance video is now always displayed on the primary screen.
+
 ## VPin Mania

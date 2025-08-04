@@ -20,22 +20,39 @@ public class ApngPalette
     this.palette = palette;
   }
 
+  public boolean hasTransparency() {
+    return palette.length == 4;
+  }
+
   /**
    * Gets an ARGB value by index.
    */
   public int get(int nIdx) {
-    final byte nA = (byte) 0xff;
     final byte nR = palette[0][nIdx];
     final byte nG = palette[1][nIdx];
     final byte nB = palette[2][nIdx];
+    final byte nA = hasTransparency() ? palette[3][nIdx] : (byte) 0xff;
     return nA << 24 | nR << 16 | nG << 8 | nB;
+  }
+
+  public byte getRed(int nIdx) {
+    return palette[0][nIdx];
+  }
+  public byte getGreen(int nIdx) {
+    return palette[1][nIdx];
+  }
+  public byte getBlue(int nIdx) {
+    return palette[2][nIdx];
+  }
+  public byte getAlpha(int nIdx) {
+    return hasTransparency() ? palette[3][nIdx] : (byte) 0xff;
   }
 
   /**
    * Gets the number of palette entries.
    */
   public int length() {
-    return palette.length;
+    return palette[0].length;
   }
 
   /**

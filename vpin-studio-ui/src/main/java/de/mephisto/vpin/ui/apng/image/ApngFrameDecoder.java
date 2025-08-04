@@ -8,7 +8,6 @@ import de.mephisto.vpin.ui.apng.chunks.ApngChunkDataInputStream;
 import de.mephisto.vpin.ui.apng.chunks.ApngDecoder;
 import de.mephisto.vpin.ui.apng.chunks.ApngFrameControl;
 import de.mephisto.vpin.ui.apng.chunks.ApngHeader;
-import de.mephisto.vpin.ui.apng.chunks.ApngPalette;
 import de.mephisto.vpin.ui.apng.image.ApngFrameDecoder;
 
 public class ApngFrameDecoder implements Closeable {
@@ -46,7 +45,8 @@ public class ApngFrameDecoder implements Closeable {
     // is null for non-animated PNG and when default image is not part of the animation
     ApngFrameControl frameControl = stream.getLastFrameControl();
 
-    ApngDecoder decoder = new ApngDecoder(stream.getHeader(), stream.getTransparentColor());
+    // create after nextDat() is reached so that palette is discovered
+    ApngDecoder decoder = new ApngDecoder(stream);
 
     ApngFrame next = null;
     // case of first frame
@@ -81,7 +81,8 @@ public class ApngFrameDecoder implements Closeable {
         // for the first frame, the two blend modes are functionally equivalent due to the clearing of the output buffer, so ignore
         decoder.decode(next, frameControl, frameData, false);
       }
-    } else if (frameData != null) {
+    } 
+    else if (frameData != null) {
       // dispose the current image with the currentFrameControl
       next = decoder.dispose(currentImage, prevImage, currentFrameControl, frameControl.getDelayMillis());
       // secondary frames
@@ -110,16 +111,20 @@ public class ApngFrameDecoder implements Closeable {
   }
 
   public int getColorType() {
-    return stream.getColorType();
-  }
+    int colorType = stream.getColorType();
+    boolean hasTransparency = stream.hasTransparency();
 
-  public boolean hasTransparency() {
-    return stream.hasTransparency();
-  }
-
-  public byte[][] getPalette() {
-    ApngPalette palette = stream.getPalette();
-    return palette != null ? palette.asBytes() : null;
+    if (colorType == ApngDecoder.PNG_COLOR_PALETTE) {
+      return hasTransparency ? ApngDecoder.PNG_COLOR_RGB_ALPHA : ApngDecoder.PNG_COLOR_RGB;
+    }
+    else if (colorType == ApngDecoder.PNG_COLOR_GRAY && hasTransparency) {
+      return ApngDecoder.PNG_COLOR_GRAY_ALPHA;
+    }
+    else if (colorType == ApngDecoder.PNG_COLOR_RGB && hasTransparency) {
+      return ApngDecoder.PNG_COLOR_RGB_ALPHA;
+    }
+    // else
+    return colorType;
   }
 
   public int getAnimationNumPlays() {

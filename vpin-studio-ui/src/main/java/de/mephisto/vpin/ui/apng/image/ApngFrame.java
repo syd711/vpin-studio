@@ -2,11 +2,11 @@ package de.mephisto.vpin.ui.apng.image;
 
 public class ApngFrame {
 
-  int width;
-  int height;
-  int bpp;
-  int delayMillis;
-  byte[] bytes;
+  private int width;
+  private int height;
+  private int bpp;
+  private int delayMillis;
+  private byte[] bytes;
 
   public ApngFrame(int width, int height, int bpp, int delayMillis) {
     this.width = width;

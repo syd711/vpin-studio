@@ -1,10 +1,5 @@
 package de.mephisto.vpin.commons;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
@@ -13,9 +8,13 @@ import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
-
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.util.OSUtil;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A small demo that tests the Win32 monitor API.
@@ -46,11 +45,17 @@ public class MonitorInfoUtil {
     }
   }
 
+  public static MonitorInfo getPrimaryMonitor() {
+    Optional<MonitorInfo> monitorInfo = getMonitors().stream().filter(m -> m.isPrimary()).findFirst();
+    return monitorInfo.orElse(null);
+  }
+
+
   public static List<MonitorInfo> getMonitors() {
     List<MonitorInfo> monitors = new ArrayList<>();
     if (OSUtil.isWindows() && !FORCE_USE_GRAPHICS_ENVIRONMENT) {
 
-      int[] index = { 1 };
+      int[] index = {1};
       User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
         @Override
         public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam) {
