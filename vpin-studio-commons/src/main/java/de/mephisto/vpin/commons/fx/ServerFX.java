@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.FrontendScreensManager;
+import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
@@ -11,6 +12,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -312,13 +314,11 @@ public class ServerFX extends Application {
   public void start(Stage primaryStage) throws Exception {
     INSTANCE = this;
 
-    OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-
     this.overlayStage = primaryStage;
     Platform.setImplicitExit(false);
 
     root = new BorderPane();
-    MonitorInfo screen = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
+    MonitorInfo screen = MonitorInfoUtil.getPrimaryMonitor();
     final Scene scene = new Scene(root, screen.getWidth(), screen.getHeight(), true, SceneAntialiasing.BALANCED);
     scene.setCursor(Cursor.NONE);
 
