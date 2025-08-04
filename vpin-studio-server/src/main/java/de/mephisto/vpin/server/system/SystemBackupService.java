@@ -115,7 +115,6 @@ public class SystemBackupService {
         }
         preferencesService.savePreferenceMap(values);
         LOG.info("Updated preferences from restored values.");
-
       }
 
       if (backupDescriptor.isVpsComments()) {
@@ -153,7 +152,7 @@ public class SystemBackupService {
               game.setCardDisabled((Boolean) gameEntry.get("highscoreCardsDisabled"));
             }
 
-//            gameService.save(game);
+            gameService.save(game);
             LOG.info("Restored game settings for \"" + game.getGameFileName() + "\"");
           }
         }
