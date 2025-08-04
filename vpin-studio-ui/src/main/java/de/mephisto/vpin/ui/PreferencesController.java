@@ -69,6 +69,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button backglassBtn;
 
   @FXML
+  private Button mediaSourcesBtn;
+
+  @FXML
   private Button settings_clientBtn;
 
   @FXML
@@ -216,6 +219,11 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onCabinetSettings(ActionEvent event) throws IOException {
     load("preference-settings-cabinet.fxml", event);
+  }
+
+  @FXML
+  private void onMediaSources(ActionEvent event) throws IOException {
+    load("preference-media-sources.fxml", event);
   }
 
   @FXML
