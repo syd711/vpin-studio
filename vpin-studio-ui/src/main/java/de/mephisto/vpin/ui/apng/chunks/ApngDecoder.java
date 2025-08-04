@@ -209,7 +209,7 @@ public class ApngDecoder {
       byte g = line[i], a = line[i + bd];
       if (composeAlpha) {
         byte ai = image[oPos + 1];
-        byte af = (byte) (a + ai * (255 - a) / 255.0);
+        byte af = (byte) ((a & 0xFF) + (ai & 0xFF) * (0xFF - (a & 0xFF)) / 255.0);
         g = composeAlpha(image[oPos + 0], g, ai, a, af);
         a = af;
       }
@@ -224,7 +224,7 @@ public class ApngDecoder {
       byte r = line[i], g = line[i + bd], b = line[i + 2 * bd], a = line[i + 3 * bd];
       if (composeAlpha) {
         byte ai = image[oPos + 3];
-        byte af = (byte) (a + ai * (255 - a) / 255.0);
+        byte af = (byte) ((a & 0xFF) + (ai & 0xFF) * (0xFF - (a & 0xFF)) / 255.0);
         r = composeAlpha(image[oPos + 0], r, ai, a, af);
         g = composeAlpha(image[oPos + 1], g, ai, a, af);
         b = composeAlpha(image[oPos + 2], b, ai, a, af);
@@ -274,7 +274,7 @@ public class ApngDecoder {
       byte a = palette.getAlpha(idx);
       if (composeAlpha) {
         byte ai = image[oPos + 3];
-        byte af = (byte) (a + ai * (255 - a) / 255.0);
+        byte af = (byte) ((a & 0xFF) + (ai & 0xFF) * (0xFF - (a & 0xFF)) / 255.0);
         r = composeAlpha(image[oPos + 0], r, ai, a, af);
         g = composeAlpha(image[oPos + 1], g, ai, a, af);
         b = composeAlpha(image[oPos + 2], b, ai, a, af);
@@ -288,14 +288,14 @@ public class ApngDecoder {
     image[oPos + 2] = b;
   }
 
-  protected void copy_upsamplePalette(byte line[], byte image[], int pos, int w, int step, boolean composeAlpha) {
+  protected void copy_upsamplePalette(byte line[], byte image[], int pos, int w, int step, int bpp, boolean composeAlpha) {
     int samplesInByte = 8 / bitDepth;
     int maxV = (1 << bitDepth) - 1;
     for (int i = 0, k = 0; i < w; k++, i += samplesInByte) {
       int p = (w - i < samplesInByte) ? w - i : samplesInByte;
       int in = line[k] >> (samplesInByte - p) * bitDepth;
       for (int pp = p - 1; pp >= 0; --pp) {
-        int oPos = pos + (i + pp) * step;
+        int oPos = pos + (i + pp) * step * bpp;
         copy_palette_index(image, oPos, in & maxV, composeAlpha);
         in >>= bitDepth;
       }
@@ -316,7 +316,7 @@ public class ApngDecoder {
   // palette based image is decoded here on the fly, when copied from scanLine into image
   protected void copyPalette(byte[] line, byte[] image, int pos, int w, int step, int bpp, boolean composeAlpha) {
     if (bitDepth < 8) {
-      copy_upsamplePalette(line, image, pos, w, step, composeAlpha);
+      copy_upsamplePalette(line, image, pos, w, step, bpp, composeAlpha);
     } else {
       copy_palette(line, image, pos, step, bpp, bitDepth / 8, composeAlpha);
     }
@@ -380,12 +380,13 @@ public class ApngDecoder {
       // Foreground is full transparent.
       return background;
     }
-    else if (alphaFg == (byte) 255) {
+    else if ((alphaFg & 0xFF) == 0XFF) {
       // Foreground is full opaque.
       return foreground;
     }
     else {
-      double colorFinal = (alphaFg * foreground + alphaBg * background * ((byte) 255 - alphaFg));
+      double colorFinal = (alphaFg & 0xFF) * (foreground & 0xFF) 
+        + (alphaBg & 0xFF) * (background & 0xFF) * (255 - (alphaFg & 0xFF));
       return (byte) (colorFinal / alphaFinal);
     }
   }

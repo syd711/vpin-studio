@@ -145,12 +145,14 @@ public class ApngTests extends Application {
     ImageView iv = new ImageView();
 
     HBox pane = new HBox(iv);
-    pane.setBackground(Background.fill(Color.ANTIQUEWHITE));
+    pane.setBackground(Background.fill(Color.WHITE));
     pane.setPadding(new Insets(10));
     layout.setCenter(pane);
 
-    LinkedHashMap<String, String> tests = getTests();
+    // First test to start with
     int[] currentTest = { 0 };
+
+    LinkedHashMap<String, String> tests = getTests();
     loadTest(iv, label, tests, currentTest[0]);
 
     Button prevTest = new Button("Previous Test");
