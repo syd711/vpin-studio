@@ -77,6 +77,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private Accordion accordion;
 
   @FXML
+  private LayerEditorOverlayController layerEditorOverlayController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
   private LayerEditorBackgroundController layerEditorBackgroundController; //fxml magic! Not unused -> id + "Controller"
   @FXML
   private LayerEditorLayoutController layerEditorLayoutController; //fxml magic! Not unused -> id + "Controller"
@@ -100,7 +102,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private Parent waitOverlay;
 
-  /** The ive preview component */
+  /** The live preview component */
   private CardGraphicsHighscore cardPreview = new CardGraphicsHighscore(false);
 
   @FXML
@@ -293,6 +295,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setBean(cardTemplate);
 
     templateBeanBinder.setPaused(true);
+    layerEditorOverlayController.setTemplate(cardTemplate);
     layerEditorBackgroundController.setTemplate(cardTemplate);
     layerEditorLayoutController.setTemplate(cardTemplate);
     layerEditorCanvasController.setTemplate(cardTemplate);
@@ -491,6 +494,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder = new BeanBinder(this);
       templateBeanBinder.setBean(this.getCardTemplate());
 
+      layerEditorOverlayController.initialize(this);
       layerEditorBackgroundController.initialize(this);
       layerEditorLayoutController.initialize(this);
       layerEditorCanvasController.initialize(this);
