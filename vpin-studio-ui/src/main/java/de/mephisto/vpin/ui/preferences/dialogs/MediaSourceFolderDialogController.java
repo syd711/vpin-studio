@@ -53,8 +53,8 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
   @FXML
   private void onSaveClick(ActionEvent e) {
     this.source.setType(MediaSourceType.FileSystem);
-    this.source.setName(nameField.getText());
-    this.source.setLocation(folderField.getText());
+    this.source.setName(nameField.getText().trim());
+    this.source.setLocation(folderField.getText().trim());
     this.source.setEnabled(enabledCheckbox.isSelected());
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
