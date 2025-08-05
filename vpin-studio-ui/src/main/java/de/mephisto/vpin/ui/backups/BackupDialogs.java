@@ -32,7 +32,7 @@ public class BackupDialogs {
   }
 
   public static BackupSourceRepresentation openArchiveSourceFolderDialog(BackupSourceRepresentation source) {
-    Stage stage = Dialogs.createStudioDialogStage(BackupSourceFolderDialogController.class, "dialog-backup-source-folder.fxml", "Folder Repository");
+    Stage stage = Dialogs.createStudioDialogStage(BackupSourceFolderDialogController.class, "dialog-backup-source-folder.fxml", "Backup Folder");
     BackupSourceFolderDialogController controller = (BackupSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();

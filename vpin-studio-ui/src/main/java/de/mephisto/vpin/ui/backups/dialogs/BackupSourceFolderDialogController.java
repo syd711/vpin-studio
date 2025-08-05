@@ -89,6 +89,11 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
       source.setName(t1);
       validateInput();
     });
+
+    folderField.textProperty().addListener((observableValue, s, t1) -> {
+      source.setLocation(t1);
+      validateInput();
+    });
     this.validateInput();
 
     this.nameField.requestFocus();
@@ -96,9 +101,9 @@ public class BackupSourceFolderDialogController implements Initializable, Dialog
 
   private void validateInput() {
     String name = nameField.getText();
-    String initials = folderField.getText();
+    String folder = folderField.getText();
 
-    saveBtn.setDisable(StringUtils.isEmpty(name) || StringUtils.isEmpty(initials));
+    saveBtn.setDisable(StringUtils.isEmpty(name) || StringUtils.isEmpty(folder));
   }
 
   @Override

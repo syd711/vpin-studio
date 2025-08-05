@@ -1,8 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
-import de.mephisto.vpin.commons.BackupSourceType;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.mediasources.MediaSourceRepresentation;
+import de.mephisto.vpin.restclient.mediasources.MediaSource;
 import de.mephisto.vpin.restclient.mediasources.MediaSourceType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,7 +41,7 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
   @FXML
   private Button folderBtn;
 
-  private MediaSourceRepresentation source;
+  private MediaSource source;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -83,7 +82,7 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    source = new MediaSourceRepresentation();
+    source = new MediaSource();
     folderBtn.setVisible(client.getSystemService().isLocal());
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
@@ -107,11 +106,11 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
     this.source = null;
   }
 
-  public MediaSourceRepresentation getMediaSource() {
+  public MediaSource getMediaSource() {
     return source;
   }
 
-  public void setSource(MediaSourceRepresentation source) {
+  public void setSource(MediaSource source) {
     if (source != null) {
       this.source = source;
       nameField.setText(source.getName());

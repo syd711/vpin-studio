@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.mediasources.MediaSourceRepresentation;
+import de.mephisto.vpin.restclient.mediasources.MediaSource;
 import de.mephisto.vpin.restclient.mediasources.MediaSourceType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
@@ -21,16 +21,16 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class MediaSourcesPreferencesController implements Initializable {
 
   @FXML
-  private TableView<MediaSourceRepresentation> tableView;
+  private TableView<MediaSource> tableView;
 
   @FXML
-  private TableColumn<MediaSourceRepresentation, String> nameColumn;
+  private TableColumn<MediaSource, String> nameColumn;
 
   @FXML
-  private TableColumn<MediaSourceRepresentation, String> urlColumn;
+  private TableColumn<MediaSource, String> urlColumn;
 
   @FXML
-  private TableColumn<MediaSourceRepresentation, String> enabledColumn;
+  private TableColumn<MediaSource, String> enabledColumn;
 
   @FXML
   private Button deleteBtn;
@@ -40,13 +40,9 @@ public class MediaSourcesPreferencesController implements Initializable {
 
   @FXML
   private void onEdit() {
-    MediaSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    MediaSource selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      if (selectedItem.getId() < 0) {
-        return;
-      }
-
-      MediaSourceRepresentation sourceRepresentation = null;
+      MediaSource sourceRepresentation = null;
       MediaSourceType backupSourceType = selectedItem.getType();
       switch (backupSourceType) {
         case FileSystem: {
@@ -69,7 +65,7 @@ public class MediaSourcesPreferencesController implements Initializable {
 
   @FXML
   private void onSourceAdd() {
-    MediaSourceRepresentation sourceRepresentation = PreferencesDialogs.openMediaSourceFolderDialog(null);
+    MediaSource sourceRepresentation = PreferencesDialogs.openMediaSourceFolderDialog(new MediaSource());
     if (sourceRepresentation != null) {
       try {
         client.getMediaSourcesService().saveMediaSource(sourceRepresentation);
@@ -83,7 +79,7 @@ public class MediaSourcesPreferencesController implements Initializable {
 
   @FXML
   private void onDelete() {
-    MediaSourceRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+    MediaSource selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Media Source \"" + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -101,7 +97,7 @@ public class MediaSourcesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    List<MediaSourceRepresentation> sources = client.getMediaSourcesService().getMediaSources();
+    List<MediaSource> sources = client.getMediaSourcesService().getMediaSources();
     tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
   }
@@ -113,17 +109,17 @@ public class MediaSourcesPreferencesController implements Initializable {
     editBtn.setDisable(true);
 
     nameColumn.setCellValueFactory(cellData -> {
-      MediaSourceRepresentation value = cellData.getValue();
+      MediaSource value = cellData.getValue();
       return new SimpleObjectProperty(value.getName());
     });
 
     urlColumn.setCellValueFactory(cellData -> {
-      MediaSourceRepresentation value = cellData.getValue();
+      MediaSource value = cellData.getValue();
       return new SimpleObjectProperty(value.getLocation());
     });
 
     enabledColumn.setCellValueFactory(cellData -> {
-      MediaSourceRepresentation value = cellData.getValue();
+      MediaSource value = cellData.getValue();
       if (value.isEnabled()) {
         return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
       }
@@ -131,13 +127,13 @@ public class MediaSourcesPreferencesController implements Initializable {
     });
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-      boolean disable = newSelection == null || newSelection.getId() < 0;
+      boolean disable = newSelection == null;
       deleteBtn.setDisable(disable);
       editBtn.setDisable(disable);
     });
 
     tableView.setRowFactory(tv -> {
-      TableRow<MediaSourceRepresentation> row = new TableRow<>();
+      TableRow<MediaSource> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
           onEdit();

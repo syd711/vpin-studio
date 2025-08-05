@@ -14,9 +14,9 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
 
   private static final int CACHE_SIZE = 300;
 
-  private TableAssetsAdapter delegate;
+  private final TableAssetsAdapter delegate;
 
-  private List<TableAssetCacheResult> cache = new ArrayList<>();
+  private final List<TableAssetCacheResult> cache = new ArrayList<>();
 
   public CacheTableAssetsAdapter(TableAssetsAdapter delegate) {
     this.delegate = delegate;

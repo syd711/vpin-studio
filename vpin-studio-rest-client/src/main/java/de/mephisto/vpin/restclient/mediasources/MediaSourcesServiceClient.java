@@ -18,21 +18,21 @@ public class MediaSourcesServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public List<MediaSourceRepresentation> getMediaSource(long id) {
-    return Arrays.asList(getRestClient().get(API + "mediasources/" + id, MediaSourceRepresentation[].class));
+  public List<MediaSource> getMediaSource(String id) {
+    return Arrays.asList(getRestClient().get(API + "mediasources/" + id, MediaSource[].class));
   }
 
-  public List<MediaSourceRepresentation> getMediaSources() {
-    return Arrays.asList(getRestClient().get(API + "mediasources", MediaSourceRepresentation[].class));
+  public List<MediaSource> getMediaSources() {
+    return Arrays.asList(getRestClient().get(API + "mediasources", MediaSource[].class));
   }
 
-  public boolean deleteMediaSource(long id) {
+  public boolean deleteMediaSource(String id) {
     return getRestClient().delete(API + "mediasources/" + id);
   }
 
-  public MediaSourceRepresentation saveMediaSource(MediaSourceRepresentation source) throws Exception {
+  public MediaSource saveMediaSource(MediaSource source) throws Exception {
     try {
-      return getRestClient().post(API + "mediasources/save", source, MediaSourceRepresentation.class);
+      return getRestClient().post(API + "mediasources/save", source, MediaSource.class);
     } catch (Exception e) {
       LOG.error("Failed to save archive source: " + e.getMessage(), e);
       throw e;

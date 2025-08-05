@@ -80,6 +80,8 @@ public class Preferences {
 
   private String authenticationSettings;
 
+  private String mediaSourcesSettings;
+
   private String webhookSettings;
 
   private String iScoredSettings;
@@ -109,6 +111,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getMediaSourcesSettings() {
+    return mediaSourcesSettings;
+  }
+
+  public void setMediaSourcesSettings(String mediaSourcesSettings) {
+    this.mediaSourcesSettings = mediaSourcesSettings;
+  }
 
   public String getAuthenticationSettings() {
     return authenticationSettings;

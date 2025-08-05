@@ -57,6 +57,8 @@ public interface PreferenceNames {
 
   String AUTHENTICATION_SETTINGS = "authenticationSettings";
 
+  String MEDIA_SOURCES_SETTINGS = "mediaSourcesSettings";
+
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";
@@ -148,6 +150,9 @@ public interface PreferenceNames {
         return VpsSettings.class;
       }
       case PreferenceNames.AUTHENTICATION_SETTINGS: {
+        return AuthenticationSettings.class;
+      }
+      case PreferenceNames.MEDIA_SOURCES_SETTINGS: {
         return AuthenticationSettings.class;
       }
       default: {

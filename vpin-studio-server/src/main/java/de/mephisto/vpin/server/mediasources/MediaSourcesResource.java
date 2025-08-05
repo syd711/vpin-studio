@@ -1,13 +1,12 @@
 package de.mephisto.vpin.server.mediasources;
 
+import de.mephisto.vpin.restclient.mediasources.MediaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -25,17 +24,17 @@ public class MediaSourcesResource {
   }
 
   @GetMapping("/{sourceId}")
-  public List<MediaSource> getMediaSource(@PathVariable("sourceId") long sourceId) {
+  public MediaSource getMediaSource(@PathVariable("sourceId") String sourceId) {
     return mediaSourcesService.getMediaSource(sourceId);
   }
 
   @DeleteMapping("/{sourceId}")
-  public boolean deleteMediaSource(@PathVariable("sourceId") long sourceId) {
+  public boolean deleteMediaSource(@PathVariable("sourceId") String sourceId) throws Exception {
     return mediaSourcesService.deleteMediaSource(sourceId);
   }
 
   @PostMapping("/save")
-  public MediaSource save(@RequestBody MediaSource mediaSource) {
+  public MediaSource save(@RequestBody MediaSource mediaSource) throws Exception {
     return mediaSourcesService.save(mediaSource);
   }
 }

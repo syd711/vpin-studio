@@ -17,7 +17,7 @@
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Media Servers" />
+            <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Media Sources" />
             <Label layoutX="34.0" layoutY="105.0" styleClass="preference-description" text="You can configure additional media sources here." textFill="WHITE" />
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="They will be automatically added to the asset search." textFill="WHITE">
                <VBox.margin>
