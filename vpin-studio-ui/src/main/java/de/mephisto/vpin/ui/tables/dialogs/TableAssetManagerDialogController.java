@@ -56,6 +56,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -782,6 +783,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     serverAssetsList.setPlaceholder(new Label("          Press the search button\nto find assets for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
 
     if (!isEmbeddedMode()) {
       EventManager.getInstance().addListener(this);

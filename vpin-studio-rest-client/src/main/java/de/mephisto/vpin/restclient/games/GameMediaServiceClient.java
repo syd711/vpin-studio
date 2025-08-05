@@ -150,6 +150,11 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + gameId + "/"
           + URLEncoder.encode(url.substring(1), StandardCharsets.UTF_8);
     }
+    else if(url.startsWith("file")) {
+      // add API and do an URK encoding that will be decoded by spring-boot
+      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + gameId + "/"
+          + URLEncoder.encode(url, StandardCharsets.UTF_8);
+    }
     return url;
   }
 }

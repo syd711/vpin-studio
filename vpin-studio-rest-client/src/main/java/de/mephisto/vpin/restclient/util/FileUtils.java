@@ -279,4 +279,25 @@ public class FileUtils {
     String base2 = FilenameUtils.getBaseName(file2);
     return base1.equalsIgnoreCase(base2);
   }
+
+  public static void findFileRecursive(File directory, List<String> extensions, String term, List<File> result) {
+    if (!directory.isDirectory()) {
+      return;
+    }
+
+    File[] files = directory.listFiles();
+    if (files != null) {
+      for (File file : files) {
+        if (file.isDirectory()) {
+          findFileRecursive(file, extensions, term, result);
+        }
+        else {
+          String ext = FilenameUtils.getExtension(file.getName());
+          if (extensions.contains(ext.toLowerCase()) && file.getName().toLowerCase().contains(term.toLowerCase())) {
+            result.add(file);
+          }
+        }
+      }
+    }
+  }
 }

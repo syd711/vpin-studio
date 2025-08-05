@@ -84,6 +84,9 @@ public class TableAsset {
 
   @Override
   public String toString() {
+    if (emulator == null) {
+      return name + "  [" + this.author + "]";
+    }
     return name + "  [" + this.emulator + "/" + this.author + "]";
   }
 
