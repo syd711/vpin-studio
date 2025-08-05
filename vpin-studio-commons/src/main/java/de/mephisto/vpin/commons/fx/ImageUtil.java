@@ -23,6 +23,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.Date;
 
@@ -118,6 +120,13 @@ public class ImageUtil {
     g.rotate(angle, w / 2, h / 2);
     g.drawRenderedImage(image, null);
     return result;
+  }
+
+  public static BufferedImage clone(BufferedImage image) {
+    ColorModel cm = image.getColorModel();
+    boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+    WritableRaster raster = image.copyData(null);
+    return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
   }
 
   public static void setDefaultColor(GraphicsContext g, String fontColor) {

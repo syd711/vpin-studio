@@ -63,6 +63,12 @@ public class BeanBinder {
     });
   }
 
+  public void bindRadioButton(RadioButton radio, String property) {
+    radio.selectedProperty().addListener((observableValue, s, t1) -> {
+      setProperty(property, t1);
+    });
+  }
+
   public void bindCheckbox(CheckBox checkbox, String property) {
     checkbox.selectedProperty().addListener((observableValue, s, t1) -> {
       setProperty(property, t1);
@@ -230,7 +236,7 @@ public class BeanBinder {
     return defaultValue;
   }
 
-  private void setProperty(String property, Object value) {
+  public void setProperty(String property, Object value) {
     setProperty(property, value, false);
   }
 

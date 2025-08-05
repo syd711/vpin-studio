@@ -30,6 +30,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
   private Image cacheBackground;
   private BufferedImage cacheBackgroundImage;
+  private BufferedImage cacheFinalImage;
 
   /**
    * Indication on relative times
@@ -58,27 +59,30 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     if (!template.isTransparentBackground()) {
      // if the backgroundImage has Changed, in all cases effect must be re-applied
       if (imageDirty || hasEffectsChanged(template)) {
+        cacheFinalImage = ImageUtil.clone(cacheBackgroundImage);
         if (template.getBlur() > 0) {
-          cacheBackgroundImage = ImageUtil.blurImage(cacheBackgroundImage, template.getBlur());
+          cacheFinalImage = ImageUtil.blurImage(cacheFinalImage, template.getBlur());
           lt.pulse("blurImage()");
         }
 
         if (template.isGrayScale()) {
-          cacheBackgroundImage = ImageUtil.grayScaleImage(cacheBackgroundImage);
+          cacheFinalImage = ImageUtil.grayScaleImage(cacheFinalImage);
           lt.pulse("grayScaleImage()");
         }
 
         float alphaWhite = template.getAlphaWhite();
         float alphaBlack = template.getAlphaBlack();
-        ImageUtil.applyAlphaComposites(cacheBackgroundImage, alphaWhite, alphaBlack);
+        ImageUtil.applyAlphaComposites(cacheFinalImage, alphaWhite, alphaBlack);
         lt.pulse("applyAlphaComposites()");
   
         imageDirty = true;
       }
+    } else {
+      cacheFinalImage = cacheBackgroundImage;
     }
 
     if (imageDirty) {
-      cacheBackground = SwingFXUtils.toFXImage(cacheBackgroundImage, null);
+      cacheBackground = SwingFXUtils.toFXImage(cacheFinalImage, null);
       lt.pulse("toFXImage()");
     }
 
