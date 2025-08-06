@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.mediasources.MediaSource;
-import de.mephisto.vpin.restclient.mediasources.MediaSourceType;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class MediaSourceFolderDialogController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(MediaSourceFolderDialogController.class);
+public class TableAssetSourceFolderDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(TableAssetSourceFolderDialogController.class);
   private static File lastFolderSelection;
 
   @FXML
@@ -41,7 +41,7 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
   @FXML
   private Button folderBtn;
 
-  private MediaSource source;
+  private TableAssetSource source;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -52,7 +52,7 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    this.source.setType(MediaSourceType.FileSystem);
+    this.source.setType(TableAssetSourceType.FileSystem);
     this.source.setName(nameField.getText().trim());
     this.source.setLocation(folderField.getText().trim());
     this.source.setEnabled(enabledCheckbox.isSelected());
@@ -64,14 +64,14 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
   @FXML
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
-    if (MediaSourceFolderDialogController.lastFolderSelection != null) {
-      chooser.setInitialDirectory(MediaSourceFolderDialogController.lastFolderSelection);
+    if (TableAssetSourceFolderDialogController.lastFolderSelection != null) {
+      chooser.setInitialDirectory(TableAssetSourceFolderDialogController.lastFolderSelection);
     }
-    chooser.setTitle("Select Backup Folder");
+    chooser.setTitle("Select Folder");
     File targetFolder = chooser.showDialog(stage);
     if (targetFolder != null) {
       folderField.setText(targetFolder.getAbsolutePath());
-      MediaSourceFolderDialogController.lastFolderSelection = targetFolder;
+      TableAssetSourceFolderDialogController.lastFolderSelection = targetFolder;
 
       if(StringUtils.isEmpty(nameField.getText())) {
         nameField.setText(targetFolder.getAbsolutePath());
@@ -82,7 +82,7 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    source = new MediaSource();
+    source = new TableAssetSource();
     folderBtn.setVisible(client.getSystemService().isLocal());
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
@@ -106,11 +106,11 @@ public class MediaSourceFolderDialogController implements Initializable, DialogC
     this.source = null;
   }
 
-  public MediaSource getMediaSource() {
+  public TableAssetSource getTableAssetSource() {
     return source;
   }
 
-  public void setSource(MediaSource source) {
+  public void setSource(TableAssetSource source) {
     if (source != null) {
       this.source = source;
       nameField.setText(source.getName());

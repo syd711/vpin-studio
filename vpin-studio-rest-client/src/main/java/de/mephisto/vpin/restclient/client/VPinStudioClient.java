@@ -40,7 +40,7 @@ import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
-import de.mephisto.vpin.restclient.mediasources.MediaSourcesServiceClient;
+import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -58,7 +58,6 @@ import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationProvider;
 import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
@@ -107,7 +106,7 @@ public class VPinStudioClient implements OverlayClient {
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final MameServiceClient mameServiceClient;
-  private final MediaSourcesServiceClient mediaSourcesServiceClient;
+  private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
@@ -159,7 +158,7 @@ public class VPinStudioClient implements OverlayClient {
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
-    this.mediaSourcesServiceClient = new MediaSourcesServiceClient(this);
+    this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.resServiceClient = new ResServiceClient(this);
@@ -184,8 +183,8 @@ public class VPinStudioClient implements OverlayClient {
     return restClient.getHost();
   }
 
-  public MediaSourcesServiceClient getMediaSourcesService() {
-    return mediaSourcesServiceClient;
+  public TableAssetSourcesServiceClient getMediaSourcesService() {
+    return tableAssetSourcesServiceClient;
   }
 
   public VpAuthenticationServiceClient getAuthenticationService() {

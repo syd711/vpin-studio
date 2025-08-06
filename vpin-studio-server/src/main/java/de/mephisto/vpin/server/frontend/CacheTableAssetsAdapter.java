@@ -1,8 +1,9 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.OutputStream;
@@ -23,8 +24,8 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public TableAssetConf getTableAssetConf() {
-    return delegate.getTableAssetConf();
+  public TableAssetSource getAssetSource() {
+    return delegate.getAssetSource();
   }
 
   @Override
@@ -73,8 +74,8 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public void writeAsset(OutputStream out, String url) throws Exception {
-    delegate.writeAsset(out, url);
+  public void writeAsset(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
+    delegate.writeAsset(out, tableAsset);
   }
 
   @Override

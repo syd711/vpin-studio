@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -20,12 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Service
 public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter {
@@ -37,15 +32,17 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   @Value("${pinballX.mediaserver.refreshInterval:3}")
   private int refreshInterval;
 
-  /** the refresh timer to keep the index up-to-date */
+  /**
+   * the refresh timer to keep the index up-to-date
+   */
   private Timer refreshTimer;
 
   public PinballXAssetsIndexAdapter() {
   }
 
   @Override
-  public TableAssetConf getTableAssetConf() {
-    TableAssetConf conf = new TableAssetConf();
+  public TableAssetSource getAssetSource() {
+    TableAssetSource conf = new TableAssetSource();
     conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
     conf.setAssetSearchIcon("gameex.png");
     return conf;
@@ -111,11 +108,12 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   //-------------------------------------
 
   @Override
-  public void writeAsset(OutputStream out, @NonNull String url) throws Exception {
+  public void writeAsset(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
     FTPClient ftp = null;
     try {
       ftp = open();
 
+      String url = tableAsset.getUrl();
       String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
       decodeUrl = decodeUrl.substring(1);
       LOG.info("downloading " + decodeUrl);

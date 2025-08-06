@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import org.apache.poi.ss.formula.functions.T;
 import org.junit.Test;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
@@ -95,7 +97,9 @@ public class PinballXAssetsIndexAdapterTest {
     Path tempPath = Files.createTempFile("test", "temp");
     File temp = tempPath.toFile();
     try (FileOutputStream fout = new FileOutputStream(temp)) {
-      adapter.writeAsset(fout, url);
+      TableAsset tableAsset = new TableAsset();
+      tableAsset.setUrl(url);
+      adapter.writeAsset(fout, tableAsset);
       assertTrue(temp.exists());
       assertEquals(11634196, Files.size(tempPath));
     }

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
@@ -46,8 +46,8 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   );
 
   @Override
-  public TableAssetConf getTableAssetConf() {
-    TableAssetConf conf = new TableAssetConf();
+  public TableAssetSource getAssetSource() {
+    TableAssetSource conf = new TableAssetSource();
     conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
     conf.setAssetSearchIcon("gameex.png");
     return conf;
@@ -223,7 +223,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   //-------------------------------------
 
   @Override
-  public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
+  public void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception {
 //
 //    FTPClient ftp = null;
 //    try {

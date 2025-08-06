@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
@@ -94,8 +94,8 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   //---------------- Assets---------------------------------------------------------------------------------------------
 
-  public TableAssetConf getTableAssetsConf() {
-    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/search/conf", TableAssetConf.class);
+  public TableAssetSource getTableAssetsConf() {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/search/conf", TableAssetSource.class);
   }
 
   public synchronized TableAssetSearch searchTableAsset(int gameId, VPinScreen screen, String term) throws Exception {

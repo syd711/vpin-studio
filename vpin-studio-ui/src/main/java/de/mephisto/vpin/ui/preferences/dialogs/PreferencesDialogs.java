@@ -1,18 +1,18 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
-import de.mephisto.vpin.restclient.mediasources.MediaSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 
 public class PreferencesDialogs {
-  public static MediaSource openMediaSourceFolderDialog(MediaSource source) {
-    Stage stage = Dialogs.createStudioDialogStage(MediaSourceFolderDialogController.class, "dialog-media-source-folder.fxml", "Media Source");
-    MediaSourceFolderDialogController controller = (MediaSourceFolderDialogController) stage.getUserData();
+  public static TableAssetSource openMediaSourceFolderDialog(TableAssetSource source) {
+    Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceFolderDialogController.class, "dialog-asset-source-folder.fxml", "Media Source");
+    TableAssetSourceFolderDialogController controller = (TableAssetSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
-    return controller.getMediaSource();
+    return controller.getTableAssetSource();
   }
 
   public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {

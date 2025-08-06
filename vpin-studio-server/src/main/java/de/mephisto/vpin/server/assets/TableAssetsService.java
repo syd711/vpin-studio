@@ -1,29 +1,24 @@
 package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.mediasources.MediaSource;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.mediasources.MediaSourcesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TableAssetsService {
@@ -33,20 +28,21 @@ public class TableAssetsService {
   private FrontendService frontendService;
 
   @Autowired
-  private MediaSourcesService mediaSourcesService;
+  private TableAssetAdapterFactory tableAssetAdapterFactory;
+
+  private final List<TableAssetsAdapter> tableAssetsAdapters = new ArrayList<>();
 
   public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, int gameId, @NonNull String term) throws Exception {
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     List<TableAsset> result = new ArrayList<>();
-    if (adapter != null) {
-      result = new ArrayList<>(adapter.search(emulatorType.name(), screen.getSegment(), term));
-    }
-
-    List<MediaSource> mediaSources = mediaSourcesService.getMediaSources();
-    for (MediaSource mediaSource : mediaSources) {
-      result.addAll(mediaSourcesService.search(mediaSource, emulatorType, screen, gameId, term));
-    }
-
+    getAllAdapters().stream().forEach(adapter -> {
+      try {
+        List<TableAsset> search = adapter.search(emulatorType.name(), screen.getSegment(), term);
+        result.addAll(search);
+      }
+      catch (Exception e) {
+        LOG.error("Asset search using {} failed: {}", adapter, e.getMessage(), e);
+      }
+    });
     return result;
   }
 
@@ -58,14 +54,14 @@ public class TableAssetsService {
         return tableAsset;
       }
     }
-
-    List<MediaSource> mediaSources = mediaSourcesService.getMediaSources();
-    for (MediaSource mediaSource : mediaSources) {
-      Optional<TableAsset> tableAsset = mediaSourcesService.get(mediaSource, emulatorType, screen, gameId, folder, name);
-      if (tableAsset.isPresent()) {
-        return tableAsset;
-      }
-    }
+//
+//    List<MediaSource> mediaSources = mediaSourcesService.getMediaSources();
+//    for (MediaSource mediaSource : mediaSources) {
+//      Optional<TableAsset> tableAsset = mediaSourcesService.get(mediaSource, emulatorType, screen, gameId, folder, name);
+//      if (tableAsset.isPresent()) {
+//        return tableAsset;
+//      }
+//    }
 
 
     return Optional.empty();
@@ -81,25 +77,11 @@ public class TableAssetsService {
           return;
         }
       }
-
-      String decoded = URLDecoder.decode(asset.getUrl(), StandardCharsets.UTF_8);
-      String fileName = decoded.substring("file:///".length());
-      File source = new File(fileName);
-      if (source.exists()) {
-        try {
-          FileUtils.copyFile(source, target);
-          LOG.info("Copied {} to {}", source.getAbsolutePath(), target.getAbsolutePath());
-        }
-        catch (Exception e) {
-          //do not log URL
-          LOG.error("Failed to execute media item copy: " + e.getClass().getSimpleName(), e);
-        }
-      }
-
     }
   }
 
-  public void download(OutputStream out, String url) {
+  public void download(@NonNull OutputStream out, @NonNull TableAsset tableAsset) {
+    String url = tableAsset.getUrl();
     if (url.startsWith("file")) {
       try {
         String urlString = URLDecoder.decode(url, StandardCharsets.UTF_8);
@@ -115,15 +97,15 @@ public class TableAssetsService {
     }
 
     TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
-    if (adapter != null) {
-      try {
-        adapter.writeAsset(out, url);
-      }
-      catch (Exception e) {
-        //do not log URL
-        LOG.error("Failed to execute download: {}", e.getMessage(), e);
-      }
-    }
+//    if (adapter != null) {
+//      try {
+//        adapter.writeAsset(out, url);
+//      }
+//      catch (Exception e) {
+//        //do not log URL
+//        LOG.error("Failed to execute download: {}", e.getMessage(), e);
+//      }
+//    }
   }
 
   public boolean testConnection() {
@@ -140,6 +122,24 @@ public class TableAssetsService {
       adapter.invalidateMediaCache();
       LOG.info("Invalidated media cache.");
     }
+    tableAssetsAdapters.forEach(TableAssetsAdapter::invalidateMediaCache);
     return true;
+  }
+
+  public void invalidateMediaSources(List<TableAssetSource> tableAssetSources) {
+    tableAssetsAdapters.clear();
+    tableAssetSources.stream().forEach(source -> {
+      tableAssetsAdapters.add(tableAssetAdapterFactory.createAdapter(source));
+    });
+  }
+
+  private List<TableAssetsAdapter> getAllAdapters() {
+    List<TableAssetsAdapter> result = new ArrayList<>();
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
+    if (adapter != null) {
+      result.add(adapter);
+    }
+    result.addAll(tableAssetsAdapters);
+    return result;
   }
 }

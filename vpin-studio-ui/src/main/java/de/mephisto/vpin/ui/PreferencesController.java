@@ -223,7 +223,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onMediaSources(ActionEvent event) throws IOException {
-    load("preference-media-sources.fxml", event);
+    load("preference-asset-sources.fxml", event);
   }
 
   @FXML

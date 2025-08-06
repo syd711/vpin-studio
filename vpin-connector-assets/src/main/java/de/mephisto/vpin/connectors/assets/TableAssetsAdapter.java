@@ -1,12 +1,14 @@
 package de.mephisto.vpin.connectors.assets;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 
 public interface TableAssetsAdapter {
 
-  TableAssetConf getTableAssetConf();
+  TableAssetSource getAssetSource();
 
   List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception;
 
@@ -15,9 +17,9 @@ public interface TableAssetsAdapter {
   /**
    * Download the asset and write it to the stream
    * @param outputStream the stream to write on
-   * @param urlString The URL of the asset
+   * @param tableAsset The asset
    */
-  void writeAsset(OutputStream outputStream, String urlString) throws Exception;
+  void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception;
 
   /**
    * Test the connection to the remote search server

@@ -8,7 +8,7 @@ import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -56,7 +56,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -682,7 +681,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       openDataManager.managedProperty().bindBidirectional(openDataManager.visibleProperty());
     }
 
-    TableAssetConf tableAssetConf = client.getGameMediaService().getTableAssetsConf();
+    TableAssetSource tableAssetSource = client.getGameMediaService().getTableAssetsConf();
 
     if (!isEmbeddedMode()) {
       helpBtn.managedProperty().bindBidirectional(helpBtn.visibleProperty());
@@ -750,7 +749,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
-    assetSearchBox.setVisible(tableAssetConf != null);
+    assetSearchBox.setVisible(tableAssetSource != null);
 
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
@@ -872,8 +871,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     else {
       clearCacheBtn.setVisible(Features.MEDIA_CACHE);
 
-      if (tableAssetConf != null && tableAssetConf.getAssetSearchIcon() != null) {
-        frontendImage.setImage(new Image(Studio.class.getResourceAsStream(tableAssetConf.getAssetSearchIcon())));
+      if (tableAssetSource != null && tableAssetSource.getAssetSearchIcon() != null) {
+        frontendImage.setImage(new Image(Studio.class.getResourceAsStream(tableAssetSource.getAssetSearchIcon())));
       }
       //if (tableAssetConf != null && tableAssetConf.getAssetSearchLabel() != null) {
       //    assetSearchLabel.setText(tableAssetConf.getAssetSearchLabel());
