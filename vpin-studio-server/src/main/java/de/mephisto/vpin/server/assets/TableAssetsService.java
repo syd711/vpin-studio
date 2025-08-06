@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 
 @Service
 public class TableAssetsService {
@@ -31,17 +33,27 @@ public class TableAssetsService {
 
   private final List<TableAssetsAdapter> tableAssetsAdapters = new ArrayList<>();
 
+  private final ExecutorService executorService = Executors.newCachedThreadPool();
+
   public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
+    List<Callable<List<TableAsset>>> tasks = new ArrayList<>();
     getAllAdapters().forEach(adapter -> {
-      try {
-        List<TableAsset> search = adapter.search(emulatorType.name(), screen.getSegment(), term);
-        result.addAll(search);
-      }
-      catch (Exception e) {
-        LOG.error("Asset search using {} failed: {}", adapter, e.getMessage(), e);
-      }
+      tasks.add(() -> {
+        try {
+          return adapter.search(emulatorType.name(), screen.getSegment(), term);
+        }
+        catch (Exception e) {
+          LOG.error("Asset search using {} failed: {}", adapter, e.getMessage(), e);
+        }
+        return Collections.emptyList();
+      });
     });
+
+    List<Future<List<TableAsset>>> searches = executorService.invokeAll(tasks);
+    for (Future<List<TableAsset>> search : searches) {
+      result.addAll(search.get(15, TimeUnit.SECONDS));
+    }
     return result;
   }
 
