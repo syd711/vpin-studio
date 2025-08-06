@@ -11,15 +11,14 @@ import java.util.List;
  *
  */
 public class TableAssetSourcesSettings extends JsonSettings {
-  private List<TableAssetSource> tableAssetSources = new ArrayList<>();
+  private List<TableAssetSource> sources = new ArrayList<>();
 
-
-  public List<TableAssetSource> getMediaSources() {
-    return tableAssetSources;
+  public List<TableAssetSource> getSources() {
+    return sources;
   }
 
-  public void setMediaSources(List<TableAssetSource> tableAssetSources) {
-    this.tableAssetSources = tableAssetSources;
+  public void setSources(List<TableAssetSource> sources) {
+    this.sources = sources;
   }
 
   @Override

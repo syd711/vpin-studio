@@ -53,7 +53,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
 
       if (sourceRepresentation != null) {
         try {
-          client.getMediaSourcesService().saveAssetSource(sourceRepresentation);
+          client.getAssetSourcesService().saveAssetSource(sourceRepresentation);
         }
         catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error saving media source: " + e.getMessage());
@@ -68,7 +68,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
     TableAssetSource sourceRepresentation = PreferencesDialogs.openMediaSourceFolderDialog(new TableAssetSource());
     if (sourceRepresentation != null) {
       try {
-        client.getMediaSourcesService().saveAssetSource(sourceRepresentation);
+        client.getAssetSourcesService().saveAssetSource(sourceRepresentation);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error saving media source: " + e.getMessage());
@@ -84,7 +84,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Media Source \"" + selectedItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getMediaSourcesService().deleteAssetSource(selectedItem.getId());
+          client.getAssetSourcesService().deleteAssetSource(selectedItem.getId());
         }
         catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error deleting \"" + selectedItem.getName() + "\": " + e.getMessage());
@@ -97,7 +97,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
   }
 
   private void onReload() {
-    List<TableAssetSource> sources = client.getMediaSourcesService().getAssetSources();
+    List<TableAssetSource> sources = client.getAssetSourcesService().getAssetSources();
     tableView.setItems(FXCollections.observableList(sources));
     tableView.refresh();
   }

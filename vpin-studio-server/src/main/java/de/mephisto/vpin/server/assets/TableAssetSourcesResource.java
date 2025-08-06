@@ -21,7 +21,7 @@ public class TableAssetSourcesResource {
   }
 
   @GetMapping("/{sourceId}")
-  public TableAssetSource getMediaSource(@PathVariable("sourceId") String sourceId) {
+  public TableAssetSource getSource(@PathVariable("sourceId") String sourceId) {
     return tableAssetSourcesService.getAssetSource(sourceId);
   }
 

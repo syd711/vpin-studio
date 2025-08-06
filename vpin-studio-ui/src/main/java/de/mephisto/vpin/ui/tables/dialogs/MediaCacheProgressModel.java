@@ -16,7 +16,7 @@ public class MediaCacheProgressModel extends ProgressModel<String> {
 
   public MediaCacheProgressModel() {
     super("Rebuilding Search Index");
-    assetSources = client.getMediaSourcesService().getAssetSources().stream().map(s -> s.getId()).collect(Collectors.toList());
+    assetSources = client.getAssetSourcesService().getAssetSources().stream().map(s -> s.getId()).collect(Collectors.toList());
     this.iterator = assetSources.iterator();
   }
 

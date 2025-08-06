@@ -183,7 +183,7 @@ public class VPinStudioClient implements OverlayClient {
     return restClient.getHost();
   }
 
-  public TableAssetSourcesServiceClient getMediaSourcesService() {
+  public TableAssetSourcesServiceClient getAssetSourcesService() {
     return tableAssetSourcesServiceClient;
   }
 

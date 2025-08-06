@@ -32,17 +32,17 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
 
   @Nullable
   public TableAssetSource getAssetSource(String sourceId) {
-    Optional<TableAssetSource> first = tableAssetSourcesSettings.getMediaSources().stream().filter(m -> m.getId().equalsIgnoreCase(sourceId)).findFirst();
+    Optional<TableAssetSource> first = tableAssetSourcesSettings.getSources().stream().filter(m -> m.getId().equalsIgnoreCase(sourceId)).findFirst();
     return first.orElse(null);
   }
 
   @NonNull
   public List<TableAssetSource> getAssetSources() {
-    return tableAssetSourcesSettings.getMediaSources();
+    return tableAssetSourcesSettings.getSources();
   }
 
   public boolean deleteAssetSource(String id) throws Exception {
-    List<TableAssetSource> filtered = tableAssetSourcesSettings.getMediaSources().stream().filter(m -> !m.getId().equalsIgnoreCase(id)).collect(Collectors.toList());
+    List<TableAssetSource> filtered = tableAssetSourcesSettings.getSources().stream().filter(m -> !m.getId().equalsIgnoreCase(id)).collect(Collectors.toList());
     tableAssetSourcesSettings.setMediaSources(filtered);
     preferencesService.savePreference(tableAssetSourcesSettings);
     tableAssetsService.invalidateMediaSources(filtered);
@@ -50,7 +50,7 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
   }
 
   public TableAssetSource save(TableAssetSource tableAssetSource) throws Exception {
-    List<TableAssetSource> filtered = new ArrayList<>(tableAssetSourcesSettings.getMediaSources().stream().filter(m -> !m.getId().equalsIgnoreCase(tableAssetSource.getId())).collect(Collectors.toList()));
+    List<TableAssetSource> filtered = new ArrayList<>(tableAssetSourcesSettings.getSources().stream().filter(m -> !m.getId().equalsIgnoreCase(tableAssetSource.getId())).collect(Collectors.toList()));
     filtered.add(tableAssetSource);
     tableAssetSourcesSettings.setMediaSources(filtered);
     preferencesService.savePreference(tableAssetSourcesSettings);
