@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -43,6 +44,11 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   @Override
   public TableAssetSource getAssetSource() {
     TableAssetSource conf = new TableAssetSource();
+    conf.setType(TableAssetSourceType.PinballX);
+    conf.setLocation("PinballX");
+    conf.setEnabled(true);
+    conf.setName("PinballX");
+    conf.setId(TableAssetSourceType.PinballX.name());
     conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
     conf.setAssetSearchIcon("gameex.png");
     return conf;
