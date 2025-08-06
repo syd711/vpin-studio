@@ -170,7 +170,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
    */
   public boolean reloadEmulator(int emulatorId) {
     GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
-    if(emulator != null) {
+    if (emulator != null) {
       mameRomAliasService.clearCache(Arrays.asList(emulator));
       gameCachingService.clearCacheForEmulator(emulatorId);
     }
@@ -194,9 +194,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     List<Integer> gameIds = new ArrayList<>(getGameIds());
     List<Integer> filtered = new ArrayList<>();
     for (Integer id : gameIds) {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(id);
-      if (gameDetails == null) {
-        filtered.add(id);
+      try {
+        GameDetails gameDetails = gameDetailsRepository.findByPupId(id);
+        if (gameDetails == null) {
+          filtered.add(id);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to fetch game with id {}: {}", id, e.getMessage());
       }
     }
     return filtered;
