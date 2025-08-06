@@ -88,7 +88,7 @@ public class GameMediaResource {
     Game game = frontendService.getOriginalGame(search.getGameId());
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
-    List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getGameId(), search.getTerm());
+    List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
     search.setResult(result);
     return search;
   }
@@ -136,7 +136,7 @@ public class GameMediaResource {
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
     String name = decode.substring(decode.lastIndexOf("/") + 1);
-    Optional<TableAsset> result = tableAssetsService.get(emulatorType, vPinScreen, gameId, folder, name);
+    Optional<TableAsset> result = tableAssetsService.get(emulatorType, vPinScreen, folder, name);
     if (result.isEmpty()) {
       throw new ResponseStatusException(NOT_FOUND);
     }

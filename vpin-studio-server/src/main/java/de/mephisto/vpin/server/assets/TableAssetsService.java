@@ -32,7 +32,7 @@ public class TableAssetsService {
 
   private final List<TableAssetsAdapter> tableAssetsAdapters = new ArrayList<>();
 
-  public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, int gameId, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
     getAllAdapters().stream().forEach(adapter -> {
       try {
@@ -46,7 +46,7 @@ public class TableAssetsService {
     return result;
   }
 
-  public Optional<TableAsset> get(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, int gameId, @NonNull String folder, @NonNull String name) throws Exception {
+  public Optional<TableAsset> get(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String folder, @NonNull String name) throws Exception {
     TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       Optional<TableAsset> tableAsset = adapter.get(emulatorType.name(), screen.getSegment(), folder, name);
