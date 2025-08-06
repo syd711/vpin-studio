@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.connectors.assets.TableAssetSourceType.FileSystem;
-
 @Service
 public class TableAssetAdapterFactory {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetAdapterFactory.class);

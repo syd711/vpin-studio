@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +11,6 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 @RestController
 @RequestMapping(API_SEGMENT + "assetsources")
 public class TableAssetSourcesResource {
-  private final static Logger LOG = LoggerFactory.getLogger(TableAssetSourcesResource.class);
 
   @Autowired
   private TableAssetSourcesService tableAssetSourcesService;

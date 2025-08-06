@@ -7,18 +7,17 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TableAssetsService {
@@ -34,7 +33,7 @@ public class TableAssetsService {
 
   public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
-    getAllAdapters().stream().forEach(adapter -> {
+    getAllAdapters().forEach(adapter -> {
       try {
         List<TableAsset> search = adapter.search(emulatorType.name(), screen.getSegment(), term);
         result.addAll(search);
@@ -46,80 +45,54 @@ public class TableAssetsService {
     return result;
   }
 
-  public Optional<TableAsset> get(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String folder, @NonNull String name) throws Exception {
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
-    if (adapter != null) {
-      Optional<TableAsset> tableAsset = adapter.get(emulatorType.name(), screen.getSegment(), folder, name);
-      if (tableAsset.isPresent()) {
-        return tableAsset;
-      }
+  public Optional<TableAsset> get(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String assetSourceId, @NonNull String folder, @NonNull String name) throws Exception {
+    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    if (adapter.isPresent()) {
+      //TODO add cache here since we never search in parallel
+      TableAssetsAdapter tableAssetsAdapter = adapter.get();
+      return tableAssetsAdapter.get(emulatorType.name(), screen.getSegment(), folder, name);
     }
-//
-//    List<MediaSource> mediaSources = mediaSourcesService.getMediaSources();
-//    for (MediaSource mediaSource : mediaSources) {
-//      Optional<TableAsset> tableAsset = mediaSourcesService.get(mediaSource, emulatorType, screen, gameId, folder, name);
-//      if (tableAsset.isPresent()) {
-//        return tableAsset;
-//      }
-//    }
-
-
     return Optional.empty();
   }
 
   public void download(@NonNull TableAsset asset, @NonNull File target) {
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
-    if (adapter != null) {
+    String assetSourceId = asset.getSourceId();
+    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    if (adapter.isPresent()) {
       if (target.exists()) {
-        LOG.info("Asset " + target.getName() + " already exists and will be replaced.");
+        LOG.info("Asset \"{}\" already exists and will be replaced.", target.getName());
         if (!target.delete()) {
-          LOG.error("Failed to delete existing asset " + target.getAbsolutePath());
+          LOG.error("Failed to delete existing asset {}", target.getAbsolutePath());
           return;
         }
       }
-    }
-  }
-
-  public void download(@NonNull OutputStream out, @NonNull TableAsset tableAsset) {
-    String url = tableAsset.getUrl();
-    if (url.startsWith("file")) {
-      try {
-        String urlString = URLDecoder.decode(url, StandardCharsets.UTF_8);
-        String fileName = urlString.substring("file:///".length());
-        fileName = fileName.replaceAll("@2x", "");
-        File f = new File(fileName);
-        IOUtils.copy(new FileInputStream(f), out);
-        return;
+      try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
+        adapter.get().writeAsset(fileOutputStream, asset);
+        LOG.info("Downloaded file {}", target.getAbsolutePath());
       }
       catch (Exception e) {
-        LOG.error("Failed to execute file download: {}", e.getMessage(), e);
+        LOG.error("Failed to execute download: {}", e.getMessage(), e);
       }
     }
-
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
-//    if (adapter != null) {
-//      try {
-//        adapter.writeAsset(out, url);
-//      }
-//      catch (Exception e) {
-//        //do not log URL
-//        LOG.error("Failed to execute download: {}", e.getMessage(), e);
-//      }
-//    }
   }
 
-  public boolean testConnection() {
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
-    if (adapter != null) {
-      return adapter.testConnection();
+  public void download(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
+    String assetSourceId = tableAsset.getSourceId();
+    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    if (adapter.isPresent()) {
+      adapter.get().writeAsset(out, tableAsset);
     }
-    return false;
   }
 
-  public boolean invalidateMediaCache() {
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
-    if (adapter != null) {
-      adapter.invalidateMediaCache();
+  public boolean testConnection(@NonNull String assetSourceId) {
+    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    return adapter.map(TableAssetsAdapter::testConnection).orElse(false);
+  }
+
+  public boolean invalidateMediaCache(@NonNull String assetSourceId) {
+    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    if (adapter.isPresent()) {
+      adapter.get().invalidateMediaCache();
       LOG.info("Invalidated media cache.");
     }
     tableAssetsAdapters.forEach(TableAssetsAdapter::invalidateMediaCache);
@@ -128,7 +101,7 @@ public class TableAssetsService {
 
   public void invalidateMediaSources(List<TableAssetSource> tableAssetSources) {
     tableAssetsAdapters.clear();
-    tableAssetSources.stream().forEach(source -> {
+    tableAssetSources.forEach(source -> {
       tableAssetsAdapters.add(tableAssetAdapterFactory.createAdapter(source));
     });
   }

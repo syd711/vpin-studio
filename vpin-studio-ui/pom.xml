@@ -94,7 +94,11 @@
             <artifactId>vpin-connector-discord</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-assets</artifactId>
+            <version>1.1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.reactfx</groupId>
             <artifactId>reactfx</artifactId>
@@ -184,7 +188,6 @@
             <artifactId>controlsfx</artifactId>
             <version>11.1.2</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

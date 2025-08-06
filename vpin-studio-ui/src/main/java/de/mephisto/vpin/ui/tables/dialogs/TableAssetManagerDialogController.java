@@ -309,8 +309,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       LOG.info("No mimetype found for asset " + tableAsset);
       return;
     }
-
-    String baseType = mimeType.split("/")[0];
     String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
     Studio.browse(assetUrl);
   }

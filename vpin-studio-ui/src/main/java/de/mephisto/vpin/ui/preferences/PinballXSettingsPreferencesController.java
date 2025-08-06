@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,7 +44,7 @@ public class PinballXSettingsPreferencesController implements Initializable {
     boolean connected = false;
     String error = null;
     try {
-      connected = client.getGameMediaService().testConnection();
+      connected = client.getGameMediaService().testConnection(TableAssetSourceType.PinballX.name());
     } catch (Exception e) {
       error = e.getMessage();
     }

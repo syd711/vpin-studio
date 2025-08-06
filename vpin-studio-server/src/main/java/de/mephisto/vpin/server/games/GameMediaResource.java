@@ -115,18 +115,19 @@ public class GameMediaResource {
     }
   }
 
-  @GetMapping("/assets/test")
-  public boolean testConnection() {
-    return tableAssetsService.testConnection();
+  @GetMapping("/assets/{assetSourceId}/test")
+  public boolean testConnection(@PathVariable("assetSourceId") String assetSourceId) {
+    return tableAssetsService.testConnection(assetSourceId);
   }
 
-  @GetMapping("/assets/invalidateMediaCache")
-  public boolean invalidateMediaCache() {
-    return tableAssetsService.invalidateMediaCache();
+  @GetMapping("/assets/{assetSourceId}/invalidateMediaCache")
+  public boolean invalidateMediaCache(@PathVariable("assetSourceId") String assetSourceId) {
+    return tableAssetsService.invalidateMediaCache(assetSourceId);
   }
 
-  @GetMapping("/assets/d/{screen}/{gameId}/{url}")
+  @GetMapping("/assets/d/{screen}/{assetSourceId}/{gameId}/{url}")
   public ResponseEntity<StreamingResponseBody> getMedia(@PathVariable("screen") String screen,
+                                                        @PathVariable("assetSourceId") String assetSourceId,
                                                         @PathVariable("gameId") int gameId,
                                                         @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
@@ -136,7 +137,7 @@ public class GameMediaResource {
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
     String name = decode.substring(decode.lastIndexOf("/") + 1);
-    Optional<TableAsset> result = tableAssetsService.get(emulatorType, vPinScreen, folder, name);
+    Optional<TableAsset> result = tableAssetsService.get(emulatorType, vPinScreen, assetSourceId, folder, name);
     if (result.isEmpty()) {
       throw new ResponseStatusException(NOT_FOUND);
     }
@@ -146,7 +147,12 @@ public class GameMediaResource {
         .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
         .header("X-Frame-Options", "SAMEORIGIN")
         .body(out -> {
-          tableAssetsService.download(out, tableAsset);
+          try {
+            tableAssetsService.download(out, tableAsset);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to stream media {} from {}: {}", name, assetSourceId, e.getMessage(), e);
+          }
         });
   }
 

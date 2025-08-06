@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,12 +132,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   /**
    * Returns the error message or null in case of success
    */
-  public boolean testConnection() throws Exception {
-    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/test", Boolean.class);
+  public boolean testConnection(@NonNull String assetSourceId) throws Exception {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/" + assetSourceId + "/test", Boolean.class);
   }
 
-  public boolean invalidateMediaCache() {
-    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/invalidateMediaCache", Boolean.class);
+  public boolean invalidateMediaCache(@NonNull String assetSourceId) {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/" + assetSourceId + "/invalidateMediaCache", Boolean.class);
   }
 
   /**
@@ -147,13 +148,8 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     String url = tableAsset.getUrl();
     if (url.startsWith("/")) {
       // add API and do an URK encoding that will be decoded by spring-boot
-      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + gameId + "/"
+      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + tableAsset.getSourceId() + "/" + gameId + "/"
           + URLEncoder.encode(url.substring(1), StandardCharsets.UTF_8);
-    }
-    else if(url.startsWith("file")) {
-      // add API and do an URK encoding that will be decoded by spring-boot
-      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + gameId + "/"
-          + URLEncoder.encode(url, StandardCharsets.UTF_8);
     }
     return url;
   }
