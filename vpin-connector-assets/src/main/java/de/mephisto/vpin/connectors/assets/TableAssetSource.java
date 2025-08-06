@@ -1,5 +1,6 @@
 package de.mephisto.vpin.connectors.assets;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class TableAssetSource {
@@ -66,5 +67,26 @@ public class TableAssetSource {
 
   public void setAssetSearchIcon(String assetSearchIcon) {
     this.assetSearchIcon = assetSearchIcon;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    TableAssetSource that = (TableAssetSource) o;
+    return enabled == that.enabled && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(location, that.location) && type == that.type && Objects.equals(assetSearchLabel, that.assetSearchLabel) && Objects.equals(assetSearchIcon, that.assetSearchIcon);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, location, enabled, type, assetSearchLabel, assetSearchIcon);
+  }
+
+  @Override
+  public String toString() {
+    return "TableAssetSource{" +
+        "id='" + id + '\'' +
+        ", name='" + name + '\'' +
+        ", type=" + type +
+        '}';
   }
 }
