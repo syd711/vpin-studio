@@ -215,11 +215,10 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     TableAsset asset = new TableAsset();
     asset.setEmulator(emulator);
     asset.setScreen(screenSegment);
-
     asset.setMimeType(MimeTypeUtil.determineMimeType(FilenameUtils.getExtension(filename).toLowerCase()));
     String url = "/" + URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8);
     asset.setUrl(url);
-    asset.setSourceId(folder);
+    asset.setSourceId(TableAssetSourceType.PinballX.name());
     asset.setName(filename);
     asset.setLength(file.getSize());
 
