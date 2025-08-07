@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -71,6 +73,17 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     this.source.setLocation(folderField.getText().trim());
     this.source.setEnabled(enabledCheckbox.isSelected());
 
+    if (allScreensCheckbox.isSelected()) {
+      this.source.setSupportedScreens(Collections.emptyList());
+    }
+    else {
+      List<String> screens = this.screenCheckboxes.stream().filter(CheckBox::isSelected).map(c -> {
+        VPinScreen screen = (VPinScreen) c.getUserData();
+        return screen.name();
+      }).collect(Collectors.toList());
+      this.source.setSupportedScreens(screens);
+    }
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
@@ -103,9 +116,6 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     allScreensCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue) {
-          source.setSupportedScreens(Collections.emptyList());
-        }
         setCheckboxesDisabled(newValue);
       }
     });
@@ -114,7 +124,9 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     for (FrontendPlayerDisplay frontendDisplay : frontendDisplays) {
       CheckBox checkBox = new CheckBox(frontendDisplay.getName());
       checkBox.setUserData(frontendDisplay.getScreen());
+      checkBox.setSelected(source.getSupportedScreens().contains(frontendDisplay.getScreen().name()));
       screensPanel.getChildren().add(checkBox);
+      screenCheckboxes.add(checkBox);
     }
 
 
