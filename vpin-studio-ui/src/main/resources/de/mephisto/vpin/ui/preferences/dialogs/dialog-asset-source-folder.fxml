@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.TableAssetSourceFolderDialogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.TableAssetSourceFolderDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -43,7 +43,7 @@
          <children>
             <GridPane hgap="3.0" vgap="3.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="73.399951171875" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="388.2000732421875" minWidth="10.0" prefWidth="80.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="368.6000244140625" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="699.3999176025391" minWidth="10.0" prefWidth="134.19997558593747" />
               </columnConstraints>
@@ -103,7 +103,43 @@
                      </children>
                   </HBox>
                </children>
+               <VBox.margin>
+                  <Insets bottom="3.0" />
+               </VBox.margin>
             </GridPane>
+            <HBox>
+               <children>
+                  <Label prefWidth="80.0" text="Screens:" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <VBox fx:id="screensPanel" spacing="6.0">
+                     <children>
+                        <HBox spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="allScreensCheckbox" mnemonicParsing="false" selected="true" text="Used for all screens" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" text="󰘥" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The media source is searched for all screens.  Otherwise limit the media source to a screen to one or more of the supported screens below." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
          </children>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

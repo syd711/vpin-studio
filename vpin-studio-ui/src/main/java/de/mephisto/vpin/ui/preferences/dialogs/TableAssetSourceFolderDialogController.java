@@ -3,12 +3,16 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -39,8 +46,15 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
   private CheckBox enabledCheckbox;
 
   @FXML
+  private CheckBox allScreensCheckbox;
+
+  @FXML
+  private VBox screensPanel;
+
+  @FXML
   private Button folderBtn;
 
+  private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private TableAssetSource source;
 
   @FXML
@@ -73,7 +87,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       folderField.setText(targetFolder.getAbsolutePath());
       TableAssetSourceFolderDialogController.lastFolderSelection = targetFolder;
 
-      if(StringUtils.isEmpty(nameField.getText())) {
+      if (StringUtils.isEmpty(nameField.getText())) {
         nameField.setText(targetFolder.getAbsolutePath());
       }
     }
@@ -85,6 +99,25 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     source = new TableAssetSource();
     folderBtn.setVisible(client.getSystemService().isLocal());
 
+    allScreensCheckbox.setSelected(source.getSupportedScreens().isEmpty());
+    allScreensCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          source.setSupportedScreens(Collections.emptyList());
+        }
+        setCheckboxesDisabled(newValue);
+      }
+    });
+
+    List<FrontendPlayerDisplay> frontendDisplays = client.getFrontendService().getScreenSummary(false).getFrontendDisplays();
+    for (FrontendPlayerDisplay frontendDisplay : frontendDisplays) {
+      CheckBox checkBox = new CheckBox(frontendDisplay.getName());
+      checkBox.setUserData(frontendDisplay.getScreen());
+      screensPanel.getChildren().add(checkBox);
+    }
+
+
     nameField.textProperty().addListener((observableValue, s, t1) -> {
       source.setName(t1);
       validateInput();
@@ -92,6 +125,10 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     this.validateInput();
 
     this.nameField.requestFocus();
+  }
+
+  private void setCheckboxesDisabled(boolean b) {
+    screenCheckboxes.forEach(c -> c.setDisable(b));
   }
 
   private void validateInput() {
