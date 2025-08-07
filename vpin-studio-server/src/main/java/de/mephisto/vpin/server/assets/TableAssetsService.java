@@ -15,11 +15,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TableAssetsService {
@@ -38,7 +36,9 @@ public class TableAssetsService {
   public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
     List<Callable<List<TableAsset>>> tasks = new ArrayList<>();
-    getAllAdapters().forEach(adapter -> {
+
+    List<TableAssetsAdapter> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name()))).collect(Collectors.toList());
+    applicableAdapters.forEach(adapter -> {
       tasks.add(() -> {
         try {
           return adapter.search(emulatorType.name(), screen.getSegment(), term);

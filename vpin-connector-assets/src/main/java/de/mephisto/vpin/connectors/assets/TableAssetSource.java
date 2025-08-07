@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.assets;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class TableAssetSource {
@@ -11,6 +13,32 @@ public class TableAssetSource {
 
   private String assetSearchLabel;
   private String assetSearchIcon;
+
+  private List<String> supportedScreens = new ArrayList<>();
+
+  public boolean supportsScreens(List<String> screenNames) {
+    if (supportedScreens == null || supportedScreens.isEmpty()) {
+      return true;
+    }
+
+    for (String supportedScreen : supportedScreens) {
+      for (String screenName : screenNames) {
+        if (screenName.toLowerCase().contains(supportedScreen)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  public List<String> getSupportedScreens() {
+    return supportedScreens;
+  }
+
+  public void setSupportedScreens(List<String> supportedScreens) {
+    this.supportedScreens = supportedScreens;
+  }
 
   public TableAssetSourceType getType() {
     return type;
