@@ -8,11 +8,24 @@ public class TableAssetSource {
   private String location;
   private boolean enabled;
   private TableAssetSourceType type;
+  private AssetLookupStrategy lookupStrategy = AssetLookupStrategy.autoDetect;
 
   private String assetSearchLabel;
   private String assetSearchIcon;
 
   private List<String> supportedScreens = new ArrayList<>();
+
+  public AssetLookupStrategy getLookupStrategy() {
+    if (lookupStrategy == null) {
+      lookupStrategy = AssetLookupStrategy.autoDetect;
+    }
+    return lookupStrategy;
+  }
+
+  public void setLookupStrategy(AssetLookupStrategy lookupStrategy) {
+    this.lookupStrategy = lookupStrategy;
+  }
+
 
   public boolean supportsScreen(String screen) {
     return supportsScreens(Arrays.asList(screen));

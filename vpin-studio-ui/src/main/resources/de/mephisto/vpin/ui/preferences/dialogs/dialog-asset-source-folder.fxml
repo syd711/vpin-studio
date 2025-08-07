@@ -128,7 +128,23 @@
                <children>
                   <VBox fx:id="autoDetectBox" prefWidth="400.0" styleClass="selection-panel">
                      <children>
-                        <RadioButton fx:id="autoDetectRadio" mnemonicParsing="false" text="Selected Screens" textFill="WHITE" wrapText="true">
+                        <RadioButton fx:id="autoDetectRadio" mnemonicParsing="false" text="Auto-Detect" textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </RadioButton>
+                        <Label fx:id="uploadAndReplaceDescription1" styleClass="checkbox-description" text="The asset type will be determined by its name and path. If the match fails, the file will be excluded from the results." textFill="WHITE" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
+                  </VBox>
+                  <VBox fx:id="screensBox" prefWidth="400.0" styleClass="selection-panel">
+                     <children>
+                        <RadioButton fx:id="screensRadio" mnemonicParsing="false" text="Selected Screens" textFill="WHITE" wrapText="true">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -138,27 +154,11 @@
                         </RadioButton>
                         <Label styleClass="checkbox-description" text="The media source will only be used when assets for the selected asset types are searched." textFill="WHITE" wrapText="true" />
                         <Label layoutX="23.0" layoutY="43.0" styleClass="checkbox-description" text="If no asset is selected, media source will be used for all asset types." textFill="WHITE" wrapText="true" />
-                        <VBox fx:id="screensPanel" minHeight="50.0">
+                        <VBox fx:id="screensPanel" minHeight="50.0" spacing="6.0">
                            <VBox.margin>
-                              <Insets left="26.0" />
+                              <Insets left="26.0" top="12.0" />
                            </VBox.margin>
                         </VBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
-                  </VBox>
-                  <VBox fx:id="screensBox" prefWidth="400.0" styleClass="selection-panel">
-                     <children>
-                        <RadioButton fx:id="screensRadio" mnemonicParsing="false" text="Auto-Detect" textFill="WHITE" wrapText="true">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription1" styleClass="checkbox-description" text="The asset type will be determined by its name and path. If the match fails, the file will be excluded from the results." textFill="WHITE" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

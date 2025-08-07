@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -37,7 +38,8 @@ public class TableAssetsService {
     List<TableAsset> result = new ArrayList<>();
     List<Callable<List<TableAsset>>> tasks = new ArrayList<>();
 
-    List<TableAssetsAdapter> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name()))).collect(Collectors.toList());
+    List<TableAssetsAdapter> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect)
+        || a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name()))).collect(Collectors.toList());
     applicableAdapters.forEach(adapter -> {
       tasks.add(() -> {
         try {

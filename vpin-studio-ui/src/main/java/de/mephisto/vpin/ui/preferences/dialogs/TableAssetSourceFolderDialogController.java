@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -77,6 +78,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     this.source.setName(nameField.getText().trim());
     this.source.setLocation(folderField.getText().trim());
     this.source.setEnabled(enabledCheckbox.isSelected());
+    this.source.setLookupStrategy(autoDetectRadio.isSelected() ? AssetLookupStrategy.autoDetect : AssetLookupStrategy.screens);
 
     List<String> screens = this.screenCheckboxes.stream().filter(CheckBox::isSelected).map(c -> {
       VPinScreen screen = (VPinScreen) c.getUserData();
@@ -140,12 +142,10 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
   }
 
   public void setSource(TableAssetSource source) {
-    if (source != null) {
-      this.source = source;
-      nameField.setText(source.getName());
-      folderField.setText(source.getLocation());
-      enabledCheckbox.setSelected(source.isEnabled());
-    }
+    this.source = source;
+    nameField.setText(source.getName());
+    folderField.setText(source.getLocation());
+    enabledCheckbox.setSelected(source.isEnabled());
 
 
     ToggleGroup toggleGroup = new ToggleGroup();
@@ -153,8 +153,15 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     autoDetectRadio.setToggleGroup(toggleGroup);
 
     autoDetectRadio.setSelected(true);
-    autoDetectBox.getStyleClass().add("selection-panel-selected");
 
+    if (source.getLookupStrategy().equals(AssetLookupStrategy.screens)) {
+      screensBox.getStyleClass().add("selection-panel-selected");
+    }
+    else {
+      autoDetectBox.getStyleClass().add("selection-panel-selected");
+    }
+
+    screensRadio.setSelected(source.getLookupStrategy().equals(AssetLookupStrategy.screens));
     screensRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -170,6 +177,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       }
     });
 
+    autoDetectRadio.setSelected(source.getLookupStrategy().equals(AssetLookupStrategy.autoDetect));
     autoDetectRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

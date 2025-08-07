@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -27,28 +28,34 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(FileSystemTableAssetAdapter.class);
 
   @NonNull
-  private final TableAssetSource tableAssetSource;
+  private final TableAssetSource source;
 
-  public FileSystemTableAssetAdapter(@NonNull TableAssetSource tableAssetSource) {
-    this.tableAssetSource = tableAssetSource;
+  public FileSystemTableAssetAdapter(@NonNull TableAssetSource source) {
+    this.source = source;
   }
 
   @Override
   public TableAssetSource getAssetSource() {
-    return tableAssetSource;
+    return source;
   }
 
   @Override
   public List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception {
-    if (tableAssetSource.isEnabled() && tableAssetSource.supportsScreen(screenSegment)) {
-      File folder = new File(tableAssetSource.getLocation());
-      if (folder.exists() && folder.isDirectory()) {
-        List<File> result = new ArrayList<>();
-        de.mephisto.vpin.restclient.util.FileUtils.findFileRecursive(folder, Arrays.asList("png", "apng", "mov", "mp4", "mp3", "ogg", "mkv"), term, result);
-        return result.stream().map(f -> {
-          return toTableAsset(tableAssetSource, EmulatorType.valueOf(emulatorName), screenSegment, f);
-        }).collect(Collectors.toList());
-      }
+    if (!source.isEnabled()) {
+      return Collections.emptyList();
+    }
+
+    if (source.getLookupStrategy().equals(AssetLookupStrategy.screens) && !source.supportsScreen(screenSegment)) {
+      return Collections.emptyList();
+    }
+
+    File folder = new File(source.getLocation());
+    if (folder.exists() && folder.isDirectory()) {
+      List<File> result = new ArrayList<>();
+      de.mephisto.vpin.restclient.util.FileUtils.findFileRecursive(folder, Arrays.asList("png", "apng", "mov", "mp4", "mp3", "ogg", "mkv"), term, result);
+      return result.stream().map(f -> {
+        return toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, f);
+      }).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
@@ -56,7 +63,7 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
   @Override
   public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
     File f = new File(folder, name);
-    return Optional.of(toTableAsset(tableAssetSource, EmulatorType.valueOf(emulatorName), screenSegment, f));
+    return Optional.of(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, f));
   }
 
   @Override
@@ -68,7 +75,7 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
     if (source.exists()) {
       try {
         FileUtils.copyFile(source, outputStream);
-        LOG.info("Copied {} from {}", source.getAbsolutePath(), tableAssetSource);
+        LOG.info("Copied {} from {}", source.getAbsolutePath(), this.source);
       }
       catch (Exception e) {
         //do not log URL
@@ -109,18 +116,18 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
   public boolean equals(Object o) {
     if (o == null || getClass() != o.getClass()) return false;
     FileSystemTableAssetAdapter that = (FileSystemTableAssetAdapter) o;
-    return Objects.equals(tableAssetSource, that.tableAssetSource);
+    return Objects.equals(source, that.source);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(tableAssetSource);
+    return Objects.hashCode(source);
   }
 
   @Override
   public String toString() {
     return "FileSystemTableAssetAdapter{" +
-        "mediaSource=" + tableAssetSource +
+        "mediaSource=" + source +
         '}';
   }
 }
