@@ -40,7 +40,7 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
 
   @Override
   public List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception {
-    if (tableAssetSource.isEnabled()) {
+    if (tableAssetSource.isEnabled() && tableAssetSource.supportsScreen(screenSegment)) {
       File folder = new File(tableAssetSource.getLocation());
       if (folder.exists() && folder.isDirectory()) {
         List<File> result = new ArrayList<>();
