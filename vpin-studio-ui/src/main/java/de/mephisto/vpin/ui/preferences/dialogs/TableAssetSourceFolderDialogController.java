@@ -3,12 +3,14 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +19,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -39,8 +44,24 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
   private CheckBox enabledCheckbox;
 
   @FXML
+  private VBox screensPanel;
+
+  @FXML
   private Button folderBtn;
 
+  @FXML
+  private RadioButton screensRadio;
+
+  @FXML
+  private RadioButton autoDetectRadio;
+
+  @FXML
+  private VBox autoDetectBox;
+
+  @FXML
+  private VBox screensBox;
+
+  private List<CheckBox> screenCheckboxes = new ArrayList<>();
   private TableAssetSource source;
 
   @FXML
@@ -56,6 +77,12 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     this.source.setName(nameField.getText().trim());
     this.source.setLocation(folderField.getText().trim());
     this.source.setEnabled(enabledCheckbox.isSelected());
+
+    List<String> screens = this.screenCheckboxes.stream().filter(CheckBox::isSelected).map(c -> {
+      VPinScreen screen = (VPinScreen) c.getUserData();
+      return screen.name();
+    }).collect(Collectors.toList());
+    this.source.setSupportedScreens(screens);
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -73,7 +100,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       folderField.setText(targetFolder.getAbsolutePath());
       TableAssetSourceFolderDialogController.lastFolderSelection = targetFolder;
 
-      if(StringUtils.isEmpty(nameField.getText())) {
+      if (StringUtils.isEmpty(nameField.getText())) {
         nameField.setText(targetFolder.getAbsolutePath());
       }
     }
@@ -82,7 +109,6 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    source = new TableAssetSource();
     folderBtn.setVisible(client.getSystemService().isLocal());
 
     nameField.textProperty().addListener((observableValue, s, t1) -> {
@@ -90,8 +116,11 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       validateInput();
     });
     this.validateInput();
-
     this.nameField.requestFocus();
+  }
+
+  private void setCheckboxesDisabled(boolean b) {
+    screenCheckboxes.forEach(c -> c.setDisable(b));
   }
 
   private void validateInput() {
@@ -117,6 +146,54 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
       folderField.setText(source.getLocation());
       enabledCheckbox.setSelected(source.isEnabled());
     }
+
+
+    ToggleGroup toggleGroup = new ToggleGroup();
+    screensRadio.setToggleGroup(toggleGroup);
+    autoDetectRadio.setToggleGroup(toggleGroup);
+
+    autoDetectRadio.setSelected(true);
+    autoDetectBox.getStyleClass().add("selection-panel-selected");
+
+    screensRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          if (!screensBox.getStyleClass().contains("selection-panel-selected")) {
+            screensBox.getStyleClass().add("selection-panel-selected");
+          }
+          autoDetectBox.getStyleClass().remove("selection-panel-selected");
+        }
+        else {
+          screensBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    autoDetectRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          if (!autoDetectBox.getStyleClass().contains("selection-panel-selected")) {
+            autoDetectBox.getStyleClass().add("selection-panel-selected");
+          }
+          screensBox.getStyleClass().remove("selection-panel-selected");
+        }
+        else {
+          autoDetectBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    for (VPinScreen screen : VPinScreen.values()) {
+      CheckBox checkBox = new CheckBox(screen.name());
+      checkBox.getStyleClass().add("default-text");
+      checkBox.setUserData(screen);
+      checkBox.setSelected(source.getSupportedScreens().contains(screen.name()));
+      screensPanel.getChildren().add(checkBox);
+      screenCheckboxes.add(checkBox);
+    }
+
     validateInput();
   }
 }

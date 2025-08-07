@@ -4,10 +4,11 @@ import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.stage.Stage;
 
 public class PreferencesDialogs {
-  public static TableAssetSource openMediaSourceFolderDialog(TableAssetSource source) {
+  public static TableAssetSource openMediaSourceFolderDialog(@NonNull TableAssetSource source) {
     Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceFolderDialogController.class, "dialog-asset-source-folder.fxml", "Media Source");
     TableAssetSourceFolderDialogController controller = (TableAssetSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
