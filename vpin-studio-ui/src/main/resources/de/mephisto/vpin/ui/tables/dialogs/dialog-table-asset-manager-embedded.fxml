@@ -55,6 +55,17 @@
                                              </graphic>
                                           </Button>
                                          <ComboBox fx:id="assetSourceComboBox" prefWidth="180" />
+                                         <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" textFill="WHITE">
+                                            <font>
+                                               <Font size="14.0" />
+                                            </font>
+                                            <graphic>
+                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
+                                            </graphic>
+                                            <tooltip>
+                                               <Tooltip text="Rebuilds the search index to fetch the latest assets." />
+                                            </tooltip>
+                                         </Button>
                                       </items>
                                     </ToolBar>
                                  </top>

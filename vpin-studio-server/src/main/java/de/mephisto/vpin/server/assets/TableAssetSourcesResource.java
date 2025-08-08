@@ -20,7 +20,6 @@ public class TableAssetSourcesResource {
     return tableAssetSourcesService.getAssetSources();
   }
 
-
   @GetMapping("/default")
   public TableAssetSource getDefaultSource() {
     return tableAssetSourcesService.getDefaultAssetSource();

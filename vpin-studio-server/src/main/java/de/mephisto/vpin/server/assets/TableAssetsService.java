@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -31,31 +32,25 @@ public class TableAssetsService {
   @Autowired
   private TableAssetAdapterFactory tableAssetAdapterFactory;
 
-  private final List<TableAssetsAdapter> tableAssetsAdapters = new ArrayList<>();
+  private final List<TableAssetsAdapter<Game>> tableAssetsAdapters = new ArrayList<>();
 
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-  /**
-   * Searching assets by source, emulator and type
-   *
-   * @param source       If null, all adapters will be used.
-   * @param emulatorType
-   * @param screen
-   * @param term
-   * @return
-   * @throws Exception
-   */
-  public List<TableAsset> search(@Nullable TableAssetSource source, @NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@Nullable TableAssetSource source,
+                                 @NonNull EmulatorType emulatorType,
+                                 @NonNull VPinScreen screen,
+                                 @Nullable Game game,
+                                 @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
     List<Callable<List<TableAsset>>> tasks = new ArrayList<>();
 
-    List<TableAssetsAdapter> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect)
+    List<TableAssetsAdapter<Game>> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect)
         || a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name()))).collect(Collectors.toList());
 
     if (source != null) {
-      Optional<TableAssetsAdapter> matchingSource = applicableAdapters.stream().filter(a -> a.getAssetSource().getId().equals(source.getId())).findFirst();
+      Optional<TableAssetsAdapter<Game>> matchingSource = applicableAdapters.stream().filter(a -> a.getAssetSource().getId().equals(source.getId())).findFirst();
+      applicableAdapters.clear();
       if (matchingSource.isPresent()) {
-        applicableAdapters.clear();
         applicableAdapters.add(matchingSource.get());
       }
     }
@@ -63,7 +58,7 @@ public class TableAssetsService {
     applicableAdapters.forEach(adapter -> {
       tasks.add(() -> {
         try {
-          return adapter.search(emulatorType.name(), screen.getSegment(), term);
+          return adapter.search(emulatorType.name(), screen.getSegment(), game, term);
         }
         catch (Exception e) {
           LOG.error("Asset search using {} failed: {}", adapter, e.getMessage(), e);
@@ -79,19 +74,23 @@ public class TableAssetsService {
     return result;
   }
 
-  public Optional<TableAsset> get(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String assetSourceId, @NonNull String folder, @NonNull String name) throws Exception {
-    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+  public Optional<TableAsset> get(@Nullable TableAssetSource source,
+                                  @NonNull EmulatorType emulatorType,
+                                  @NonNull VPinScreen screen,
+                                  @Nullable Game game,
+                                  @NonNull String folder,
+                                  @NonNull String name) throws Exception {
+    Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> source == null || a.getAssetSource().getId().equalsIgnoreCase(source.getId())).findFirst();
     if (adapter.isPresent()) {
-      //TODO add cache here since we never search in parallel
-      TableAssetsAdapter tableAssetsAdapter = adapter.get();
-      return tableAssetsAdapter.get(emulatorType.name(), screen.getSegment(), folder, name);
+      TableAssetsAdapter<Game> tableAssetsAdapter = adapter.get();
+      return tableAssetsAdapter.get(emulatorType.name(), screen.getSegment(), game, folder, name);
     }
     return Optional.empty();
   }
 
   public void download(@NonNull TableAsset asset, @NonNull File target) {
     String assetSourceId = asset.getSourceId();
-    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
     if (adapter.isPresent()) {
       if (target.exists()) {
         LOG.info("Asset \"{}\" already exists and will be replaced.", target.getName());
@@ -112,19 +111,19 @@ public class TableAssetsService {
 
   public void download(@NonNull OutputStream out, @NonNull TableAsset tableAsset) throws Exception {
     String assetSourceId = tableAsset.getSourceId();
-    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
     if (adapter.isPresent()) {
       adapter.get().writeAsset(out, tableAsset);
     }
   }
 
   public boolean testConnection(@NonNull String assetSourceId) {
-    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
     return adapter.map(TableAssetsAdapter::testConnection).orElse(false);
   }
 
   public boolean invalidateMediaCache(@NonNull String assetSourceId) {
-    Optional<TableAssetsAdapter> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
+    Optional<TableAssetsAdapter<Game>> adapter = getAllAdapters().stream().filter(a -> a.getAssetSource().getId().equalsIgnoreCase(assetSourceId)).findFirst();
     if (adapter.isPresent()) {
       adapter.get().invalidateMediaCache();
       LOG.info("Invalidated media cache.");
@@ -140,9 +139,9 @@ public class TableAssetsService {
     });
   }
 
-  private List<TableAssetsAdapter> getAllAdapters() {
-    List<TableAssetsAdapter> result = new ArrayList<>();
-    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
+  private List<TableAssetsAdapter<Game>> getAllAdapters() {
+    List<TableAssetsAdapter<Game>> result = new ArrayList<>();
+    TableAssetsAdapter<Game> adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       result.add(adapter);
     }

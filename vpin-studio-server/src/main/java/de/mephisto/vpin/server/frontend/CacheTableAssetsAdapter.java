@@ -3,7 +3,9 @@ package de.mephisto.vpin.server.frontend;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.OutputStream;
@@ -11,15 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CacheTableAssetsAdapter implements TableAssetsAdapter {
+public class CacheTableAssetsAdapter implements TableAssetsAdapter<Game> {
 
   private static final int CACHE_SIZE = 300;
 
-  private final TableAssetsAdapter delegate;
+  private final TableAssetsAdapter<Game> delegate;
 
   private final List<TableAssetCacheResult> cache = new ArrayList<>();
 
-  public CacheTableAssetsAdapter(TableAssetsAdapter delegate) {
+  public CacheTableAssetsAdapter(TableAssetsAdapter<Game> delegate) {
     this.delegate = delegate;
   }
 
@@ -29,8 +31,8 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
-    return delegate.get(emulatorName, screenSegment, folder, name);
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, @Nullable Game game, String folder, String name) throws Exception {
+    return delegate.get(emulatorName, screenSegment, game, folder, name);
   }
 
   private synchronized TableAssetCacheResult getCached(String screenSegment, String term) {
@@ -53,7 +55,7 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception {
+  public List<TableAsset> search(String emulatorName, String screenSegment, @Nullable Game game, String term) throws Exception {
 
     TableAssetCacheResult cached = getCached(screenSegment, term);
     if (cached != null) {
@@ -63,7 +65,7 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
     cached = new TableAssetCacheResult();
     cached.term = term;
     cached.screen = screenSegment;
-    cached.result = delegate.search(emulatorName, screenSegment, term);
+    cached.result = delegate.search(emulatorName, screenSegment, game, term);
 
     cache.add(cached);
     if (cache.size() > CACHE_SIZE) {

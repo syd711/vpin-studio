@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -70,6 +71,9 @@ public class GameMediaResource {
   private GameLifecycleService gameLifecycleService;
 
   @Autowired
+  private GameService gameService;
+
+  @Autowired
   private TableAssetSourcesService tableAssetSourcesService;
 
   @GetMapping("/{id}")
@@ -89,11 +93,11 @@ public class GameMediaResource {
 
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
-    Game game = frontendService.getOriginalGame(search.getGameId());
+    Game game = gameService.getGame(search.getGameId());
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
     TableAssetSource source = tableAssetSourcesService.getAssetSource(search.getAssetSourceId());
 
-    List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen(), search.getTerm());
+    List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen(), game, search.getTerm());
     search.setResult(result);
     return search;
   }
@@ -136,13 +140,15 @@ public class GameMediaResource {
                                                         @PathVariable("gameId") int gameId,
                                                         @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    Game game = frontendService.getOriginalGame(gameId);
+    Game game = gameService.getGame(gameId);
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
     String name = decode.substring(decode.lastIndexOf("/") + 1);
-    Optional<TableAsset> result = tableAssetsService.get(emulatorType, vPinScreen, assetSourceId, folder, name);
+
+    TableAssetSource source = tableAssetSourcesService.getAssetSource(assetSourceId);
+    Optional<TableAsset> result = tableAssetsService.get(source, emulatorType, vPinScreen, game, folder, name);
     if (result.isEmpty()) {
       throw new ResponseStatusException(NOT_FOUND);
     }

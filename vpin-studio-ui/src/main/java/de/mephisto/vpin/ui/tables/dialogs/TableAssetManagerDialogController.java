@@ -27,6 +27,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -173,6 +174,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button openDataManager;
 
   @FXML
+  private Button assetSourceBtn;
+
+  @FXML
   private Button addAudioBlank;
 
   @FXML
@@ -256,6 +260,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Platform.runLater(() -> {
       PlaylistDialogs.openPlaylistManager(this.overviewController, playlist);
     });
+  }
+
+  @FXML
+  private void onAssetSourceEdit(ActionEvent e) {
+    AssetSourceModel selectedItem = assetSourceComboBox.getSelectionModel().getSelectedItem();
+    if (selectedItem != null && selectedItem.getSource() != null) {
+      PreferencesDialogs.openMediaSourceFolderDialog(selectedItem.getSource());
+    }
   }
 
   @FXML
@@ -700,9 +712,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       assetSourceComboBox.getSelectionModel().select(0);
     }
 
+    assetSourceBtn.setDisable(true);
     assetSourceComboBox.valueProperty().addListener(new ChangeListener<AssetSourceModel>() {
       @Override
       public void changed(ObservableValue<? extends AssetSourceModel> observable, AssetSourceModel oldValue, AssetSourceModel newValue) {
+        assetSourceBtn.setDisable(newValue == null || newValue.getSource() == null || newValue.getSource().isProvided());
         onSearch();
       }
     });

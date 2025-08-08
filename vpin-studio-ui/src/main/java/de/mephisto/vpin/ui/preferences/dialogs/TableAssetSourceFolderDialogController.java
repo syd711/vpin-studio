@@ -1,10 +1,12 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.AssetLookupStrategy;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.ui.Studio;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -62,7 +64,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
   @FXML
   private VBox screensBox;
 
-  private List<CheckBox> screenCheckboxes = new ArrayList<>();
+  private final List<CheckBox> screenCheckboxes = new ArrayList<>();
   private TableAssetSource source;
 
   @FXML
@@ -73,7 +75,7 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
   }
 
   @FXML
-  private void onSaveClick(ActionEvent e) {
+  private void onSaveClick(ActionEvent event) {
     this.source.setType(TableAssetSourceType.FileSystem);
     this.source.setName(nameField.getText().trim());
     this.source.setLocation(folderField.getText().trim());
@@ -86,7 +88,14 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
     }).collect(Collectors.toList());
     this.source.setSupportedScreens(screens);
 
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    try {
+      client.getAssetSourcesService().saveAssetSource(source);
+    }
+    catch (Exception e) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Error saving media source: " + e.getMessage());
+    }
+
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     stage.close();
   }
 
@@ -135,10 +144,6 @@ public class TableAssetSourceFolderDialogController implements Initializable, Di
   @Override
   public void onDialogCancel() {
     this.source = null;
-  }
-
-  public TableAssetSource getTableAssetSource() {
-    return source;
   }
 
   public void setSource(TableAssetSource source) {

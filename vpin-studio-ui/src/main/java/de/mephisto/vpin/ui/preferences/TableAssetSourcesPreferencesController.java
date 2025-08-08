@@ -46,35 +46,18 @@ public class TableAssetSourcesPreferencesController implements Initializable {
       TableAssetSourceType backupSourceType = selectedItem.getType();
       switch (backupSourceType) {
         case FileSystem: {
-          sourceRepresentation = PreferencesDialogs.openMediaSourceFolderDialog(selectedItem);
+          PreferencesDialogs.openMediaSourceFolderDialog(selectedItem);
           break;
         }
       }
-
-      if (sourceRepresentation != null) {
-        try {
-          client.getAssetSourcesService().saveAssetSource(sourceRepresentation);
-        }
-        catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving media source: " + e.getMessage());
-        }
-        onReload();
-      }
+      onReload();
     }
   }
 
   @FXML
   private void onSourceAdd() {
-    TableAssetSource sourceRepresentation = PreferencesDialogs.openMediaSourceFolderDialog(new TableAssetSource());
-    if (sourceRepresentation != null) {
-      try {
-        client.getAssetSourcesService().saveAssetSource(sourceRepresentation);
-      }
-      catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error saving media source: " + e.getMessage());
-      }
-      onReload();
-    }
+    PreferencesDialogs.openMediaSourceFolderDialog(new TableAssetSource());
+    onReload();
   }
 
   @FXML

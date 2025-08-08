@@ -8,12 +8,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.stage.Stage;
 
 public class PreferencesDialogs {
-  public static TableAssetSource openMediaSourceFolderDialog(@NonNull TableAssetSource source) {
+  public static void openMediaSourceFolderDialog(@NonNull TableAssetSource source) {
     Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceFolderDialogController.class, "dialog-asset-source-folder.fxml", "Media Source");
     TableAssetSourceFolderDialogController controller = (TableAssetSourceFolderDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
-    return controller.getTableAssetSource();
   }
 
   public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {

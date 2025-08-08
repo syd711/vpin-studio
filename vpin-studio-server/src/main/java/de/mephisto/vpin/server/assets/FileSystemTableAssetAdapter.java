@@ -6,7 +6,9 @@ import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * And asset search service based on the local filesystem
  */
-public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
+public class FileSystemTableAssetAdapter implements TableAssetsAdapter<Game> {
   private final static Logger LOG = LoggerFactory.getLogger(FileSystemTableAssetAdapter.class);
 
   @NonNull
@@ -40,7 +42,7 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception {
+  public List<TableAsset> search(String emulatorName, String screenSegment, @Nullable Game game, String term) throws Exception {
     if (!source.isEnabled()) {
       return Collections.emptyList();
     }
@@ -62,7 +64,7 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, @Nullable Game game, String folder, String name) throws Exception {
     File f = new File(folder, name);
     return Optional.of(toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, f));
   }
