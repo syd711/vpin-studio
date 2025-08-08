@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,31 @@ public class TableAssetsService {
 
   private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-  public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
+  /**
+   * Searching assets by source, emulator and type
+   *
+   * @param source       If null, all adapters will be used.
+   * @param emulatorType
+   * @param screen
+   * @param term
+   * @return
+   * @throws Exception
+   */
+  public List<TableAsset> search(@Nullable TableAssetSource source, @NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
     List<TableAsset> result = new ArrayList<>();
     List<Callable<List<TableAsset>>> tasks = new ArrayList<>();
 
     List<TableAssetsAdapter> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect)
         || a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name()))).collect(Collectors.toList());
+
+    if (source != null) {
+      Optional<TableAssetsAdapter> matchingSource = applicableAdapters.stream().filter(a -> a.getAssetSource().getId().equals(source.getId())).findFirst();
+      if (matchingSource.isPresent()) {
+        applicableAdapters.clear();
+        applicableAdapters.add(matchingSource.get());
+      }
+    }
+
     applicableAdapters.forEach(adapter -> {
       tasks.add(() -> {
         try {

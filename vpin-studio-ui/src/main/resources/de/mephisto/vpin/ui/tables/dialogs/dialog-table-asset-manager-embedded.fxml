@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
@@ -45,7 +46,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                        <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
+                                        <Button mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -53,6 +54,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                              </graphic>
                                           </Button>
+                                         <ComboBox fx:id="assetSourceComboBox" prefWidth="180" />
                                       </items>
                                     </ToolBar>
                                  </top>

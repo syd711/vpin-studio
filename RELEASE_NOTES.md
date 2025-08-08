@@ -19,5 +19,6 @@
 ## Bugfixes
 
 - The maintenance video is now always displayed on the primary screen.
+- Fixed modal mode toggling of the asset manager dialog.
 
 ## VPin Mania

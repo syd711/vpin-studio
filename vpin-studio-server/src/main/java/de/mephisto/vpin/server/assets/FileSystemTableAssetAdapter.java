@@ -49,6 +49,7 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter {
       return Collections.emptyList();
     }
 
+    //TODO automatch
     File folder = new File(source.getLocation());
     if (folder.exists() && folder.isDirectory()) {
       List<File> result = new ArrayList<>();

@@ -10,6 +10,7 @@ import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
+import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
@@ -20,7 +21,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.restclient.converter.MediaConversionCommand;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -29,7 +29,10 @@ import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.playlistmanager.PlaylistDialogs;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -69,10 +72,9 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
@@ -164,6 +166,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private ListView<TableAsset> serverAssetsList;
 
+  @FXML
+  private ComboBox<AssetSourceModel> assetSourceComboBox;
 
   @FXML
   private Button openDataManager;
@@ -527,7 +531,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Platform.runLater(() -> {
       String term = searchField.getText().trim();
       if (!StringUtils.isEmpty(term)) {
-        TableAssetSearch assetSearch = searchMedia(screen, term);
+        TableAssetSource source = null;
+        if (assetSourceComboBox.isVisible()) {
+          source = assetSourceComboBox.getValue().getSource();
+        }
+        TableAssetSearch assetSearch = searchMedia(source, screen, term);
         ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
@@ -546,9 +554,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
-  private TableAssetSearch searchMedia(VPinScreen screen, String term) {
+  private TableAssetSearch searchMedia(TableAssetSource source, VPinScreen screen, String term) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
-        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), screen, term));
+        new TableAssetSearchProgressModel("Asset Search", game == null ? -1 : game.getId(), source, screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
       return (TableAssetSearch) results.get(0);
@@ -668,12 +676,36 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     assetSearchBox.managedProperty().bindBidirectional(assetSearchBox.visibleProperty());
+    assetSourceComboBox.managedProperty().bindBidirectional(assetSourceComboBox.visibleProperty());
     renameBtn.managedProperty().bindBidirectional(renameBtn.visibleProperty());
 
     if (openPlaylistManagerBtn != null) {
       openPlaylistManagerBtn.managedProperty().bindBidirectional(openPlaylistManagerBtn.visibleProperty());
       openPlaylistManagerBtn.setVisible(false);
     }
+
+    List<TableAssetSource> assetSources = new ArrayList<>(client.getAssetSourcesService().getAssetSources());
+    assetSourceComboBox.setVisible(!assetSources.isEmpty());
+    if (!assetSources.isEmpty()) {
+      assetSources.add(0, null);
+
+      TableAssetSource defaultAssetSource = client.getAssetSourcesService().getDefaultAssetSource();
+      if (defaultAssetSource != null) {
+        assetSources.add(1, client.getAssetSourcesService().getDefaultAssetSource());
+      }
+    }
+    List<AssetSourceModel> assetSourceModels = assetSources.stream().map(AssetSourceModel::new).collect(Collectors.toList());
+    assetSourceComboBox.setItems(FXCollections.observableList(assetSourceModels));
+    if (!assetSourceComboBox.getItems().isEmpty()) {
+      assetSourceComboBox.getSelectionModel().select(0);
+    }
+
+    assetSourceComboBox.valueProperty().addListener(new ChangeListener<AssetSourceModel>() {
+      @Override
+      public void changed(ObservableValue<? extends AssetSourceModel> observable, AssetSourceModel oldValue, AssetSourceModel newValue) {
+        onSearch();
+      }
+    });
 
     if (openDataManager != null) {
       openDataManager.managedProperty().bindBidirectional(openDataManager.visibleProperty());
@@ -739,11 +771,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           }
         }
       });
-   
+
       installedAssetsToolbar.widthProperty().addListener((obs, o, n) -> {
         reshapeToolbar(n);
       });
-    } 
+    }
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
@@ -867,7 +899,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       assetList.prefHeightProperty().bind(root.prefHeightProperty());
     }
     else {
-      clearCacheBtn.setVisible(Features.MEDIA_CACHE);
+      clearCacheBtn.setVisible(Features.MEDIA_CACHE || !client.getAssetSourcesService().getAssetSources().isEmpty());
 
       if (tableAssetSource != null && tableAssetSource.getAssetSearchIcon() != null) {
         frontendImage.setImage(new Image(Studio.class.getResourceAsStream(tableAssetSource.getAssetSearchIcon())));
@@ -1212,7 +1244,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     JFXFuture.supplyAsync(() -> {
       if (isPlaylistMode()) {
-       return client.getPlaylistMediaService().getPlaylistMedia(this.playlist.getId());
+        return client.getPlaylistMediaService().getPlaylistMedia(this.playlist.getId());
       }
       else {
         if (this.game == null) {
@@ -1329,5 +1361,25 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   public void setStage(Stage stage) {
     this.localStage = stage;
+  }
+
+  class AssetSourceModel {
+    private final TableAssetSource source;
+
+    public AssetSourceModel(TableAssetSource source) {
+      this.source = source;
+    }
+
+    @Override
+    public String toString() {
+      if (source == null) {
+        return "All Asset Sources";
+      }
+      return source.getName();
+    }
+
+    public TableAssetSource getSource() {
+      return source;
+    }
   }
 }

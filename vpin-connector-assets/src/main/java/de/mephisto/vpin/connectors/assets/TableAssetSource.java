@@ -1,5 +1,7 @@
 package de.mephisto.vpin.connectors.assets;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.*;
 
 public class TableAssetSource {
@@ -14,6 +16,11 @@ public class TableAssetSource {
   private String assetSearchIcon;
 
   private List<String> supportedScreens = new ArrayList<>();
+
+  @JsonIgnore
+  public boolean isProvided() {
+    return TableAssetSourceType.PinballX.equals(this.type) || TableAssetSourceType.PinUPPopper.equals(this.type);
+  }
 
   public AssetLookupStrategy getLookupStrategy() {
     if (lookupStrategy == null) {

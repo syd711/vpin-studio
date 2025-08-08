@@ -66,7 +66,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </TextField>
-                                    <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
+                                    <Button mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -74,6 +74,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                        </graphic>
                                     </Button>
+                                    <ComboBox fx:id="assetSourceComboBox" prefWidth="180" />
                                     <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="Rebuild Search Index" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />

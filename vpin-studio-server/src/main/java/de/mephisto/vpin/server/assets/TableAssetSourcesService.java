@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesSettings;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -28,12 +30,36 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
   @Autowired
   private TableAssetsService tableAssetsService;
 
+  @Autowired
+  private FrontendService frontendService;
+
   private TableAssetSourcesSettings tableAssetSourcesSettings;
 
   @Nullable
-  public TableAssetSource getAssetSource(String sourceId) {
+  public TableAssetSource getDefaultAssetSource() {
+    TableAssetsAdapter tableAssetAdapter = frontendService.getTableAssetAdapter();
+    if (tableAssetAdapter != null) {
+      return tableAssetAdapter.getAssetSource();
+    }
+    return null;
+  }
+
+
+  @Nullable
+  public TableAssetSource getAssetSource(@Nullable String sourceId) {
+    if (sourceId == null) {
+      return null;
+    }
     Optional<TableAssetSource> first = tableAssetSourcesSettings.getSources().stream().filter(m -> m.getId().equalsIgnoreCase(sourceId)).findFirst();
-    return first.orElse(null);
+    if (first.isPresent()) {
+      return first.get();
+    }
+
+    TableAssetSource defaultAssetSource = getDefaultAssetSource();
+    if (defaultAssetSource != null && defaultAssetSource.getId().equals(sourceId)) {
+      return defaultAssetSource;
+    }
+    return null;
   }
 
   @NonNull

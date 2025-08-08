@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.assets;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,11 @@ public class TableAssetSourcesServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "assetsources/" + id, TableAssetSource[].class));
   }
 
+  @Nullable
+  public TableAssetSource getDefaultAssetSource() {
+    return getRestClient().get(API + "assetsources/default", TableAssetSource.class);
+  }
+
   public List<TableAssetSource> getAssetSources() {
     return Arrays.asList(getRestClient().get(API + "assetsources", TableAssetSource[].class));
   }
@@ -34,7 +40,8 @@ public class TableAssetSourcesServiceClient extends VPinStudioClientService {
   public TableAssetSource saveAssetSource(TableAssetSource source) throws Exception {
     try {
       return getRestClient().post(API + "assetsources/save", source, TableAssetSource.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save archive source: " + e.getMessage(), e);
       throw e;
     }

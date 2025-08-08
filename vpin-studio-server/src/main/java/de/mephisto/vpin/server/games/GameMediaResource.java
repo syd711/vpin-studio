@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.server.assets.TableAssetSourcesService;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
@@ -68,6 +69,9 @@ public class GameMediaResource {
   @Autowired
   private GameLifecycleService gameLifecycleService;
 
+  @Autowired
+  private TableAssetSourcesService tableAssetSourcesService;
+
   @GetMapping("/{id}")
   public FrontendMedia getGameMedia(@PathVariable("id") int id) {
     Game game = frontendService.getOriginalGame(id);
@@ -87,8 +91,9 @@ public class GameMediaResource {
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
     Game game = frontendService.getOriginalGame(search.getGameId());
     EmulatorType emulatorType = game != null && game.getEmulator() != null ? game.getEmulator().getType() : EmulatorType.VisualPinball;
+    TableAssetSource source = tableAssetSourcesService.getAssetSource(search.getAssetSourceId());
 
-    List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
+    List<TableAsset> result = tableAssetsService.search(source, emulatorType, search.getScreen(), search.getTerm());
     search.setResult(result);
     return search;
   }

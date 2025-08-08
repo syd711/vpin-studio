@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/search/conf", TableAssetSource.class);
   }
 
-  public synchronized TableAssetSearch searchTableAsset(int gameId, VPinScreen screen, String term) throws Exception {
+  public synchronized TableAssetSearch searchTableAsset(@Nullable TableAssetSource source, int gameId, VPinScreen screen, String term) throws Exception {
     term = term.replaceAll("/", "");
     term = term.replaceAll("&", " ");
     term = term.replaceAll(",", " ");
@@ -108,11 +109,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     search.setGameId(gameId);
     search.setTerm(term);
     search.setScreen(screen);
+    search.setAssetSourceId(source != null ? source.getId() : null);
     TableAssetSearch result = getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/search", search, TableAssetSearch.class);
     if (result != null) {
       if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
         String[] split = term.trim().split(" ");
-        return searchTableAsset(gameId, screen, split[0]);
+        return searchTableAsset(source, gameId, screen, split[0]);
       }
       return result;
     }

@@ -20,6 +20,12 @@ public class TableAssetSourcesResource {
     return tableAssetSourcesService.getAssetSources();
   }
 
+
+  @GetMapping("/default")
+  public TableAssetSource getDefaultSource() {
+    return tableAssetSourcesService.getDefaultAssetSource();
+  }
+
   @GetMapping("/{sourceId}")
   public TableAssetSource getSource(@PathVariable("sourceId") String sourceId) {
     return tableAssetSourcesService.getAssetSource(sourceId);
