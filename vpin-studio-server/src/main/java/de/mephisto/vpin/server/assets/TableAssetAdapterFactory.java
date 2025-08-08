@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static de.mephisto.vpin.connectors.assets.TableAssetSourceType.TutorialVideos;
+
 @Service
 public class TableAssetAdapterFactory {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetAdapterFactory.class);
@@ -17,6 +19,10 @@ public class TableAssetAdapterFactory {
     TableAssetsAdapter adapter = null;
     switch (type) {
       case FileSystem: {
+        adapter = new FileSystemTableAssetAdapter(tableAssetSource);
+        break;
+      }
+      case TutorialVideos: {
         adapter = new FileSystemTableAssetAdapter(tableAssetSource);
         break;
       }

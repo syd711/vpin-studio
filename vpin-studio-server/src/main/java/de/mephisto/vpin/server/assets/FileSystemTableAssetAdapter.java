@@ -26,14 +26,12 @@ import java.util.stream.Collectors;
 /**
  * And asset search service based on the local filesystem
  */
-public class FileSystemTableAssetAdapter implements TableAssetsAdapter<Game> {
+public class FileSystemTableAssetAdapter extends DefaultTableAssetAdapter implements TableAssetsAdapter<Game> {
   private final static Logger LOG = LoggerFactory.getLogger(FileSystemTableAssetAdapter.class);
 
-  @NonNull
-  private final TableAssetSource source;
 
   public FileSystemTableAssetAdapter(@NonNull TableAssetSource source) {
-    this.source = source;
+    super(source);
   }
 
   @Override
@@ -51,16 +49,19 @@ public class FileSystemTableAssetAdapter implements TableAssetsAdapter<Game> {
       return Collections.emptyList();
     }
 
-    //TODO automatch
+    List<File> result = new ArrayList<>();
     File folder = new File(source.getLocation());
     if (folder.exists() && folder.isDirectory()) {
-      List<File> result = new ArrayList<>();
       de.mephisto.vpin.restclient.util.FileUtils.findFileRecursive(folder, Arrays.asList("png", "apng", "mov", "mp4", "mp3", "ogg", "mkv"), term, result);
-      return result.stream().map(f -> {
-        return toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, f);
-      }).collect(Collectors.toList());
     }
-    return Collections.emptyList();
+
+    if (source.getLookupStrategy().equals(AssetLookupStrategy.autoDetect)) {
+      result = result.stream().filter(f -> matches(screenSegment, f.getAbsolutePath())).collect(Collectors.toList());
+    }
+
+    return result.stream().map(f -> {
+      return toTableAsset(source, EmulatorType.valueOf(emulatorName), screenSegment, f);
+    }).collect(Collectors.toList());
   }
 
   @Override
