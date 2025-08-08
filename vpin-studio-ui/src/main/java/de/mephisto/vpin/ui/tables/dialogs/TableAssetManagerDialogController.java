@@ -266,7 +266,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onAssetSourceEdit(ActionEvent e) {
     AssetSourceModel selectedItem = assetSourceComboBox.getSelectionModel().getSelectedItem();
     if (selectedItem != null && selectedItem.getSource() != null) {
-      PreferencesDialogs.openMediaSourceFolderDialog(selectedItem.getSource());
+      PreferencesDialogs.openMediaSource(selectedItem.getSource());
     }
   }
 
@@ -716,7 +716,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     assetSourceComboBox.valueProperty().addListener(new ChangeListener<AssetSourceModel>() {
       @Override
       public void changed(ObservableValue<? extends AssetSourceModel> observable, AssetSourceModel oldValue, AssetSourceModel newValue) {
-        assetSourceBtn.setDisable(newValue == null || newValue.getSource() == null || newValue.getSource().isProvided());
+        assetSourceBtn.setDisable(newValue == null || newValue.getSource() == null || newValue.getSource().isSystemSource());
         onSearch();
       }
     });

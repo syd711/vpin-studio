@@ -19,8 +19,12 @@ public class TableAssetSource {
 
   @JsonIgnore
   public boolean isProvided() {
+    return TableAssetSourceType.TutorialVideos.equals(this.type);
+  }
+
+  @JsonIgnore
+  public boolean isSystemSource() {
     return TableAssetSourceType.PinballX.equals(this.type) ||
-        TableAssetSourceType.TutorialVideos.equals(this.type) ||
         TableAssetSourceType.PinUPPopper.equals(this.type);
   }
 
@@ -47,6 +51,10 @@ public class TableAssetSource {
 
     for (String supportedScreen : supportedScreens) {
       for (String screenName : screenNames) {
+        if (supportedScreen.equalsIgnoreCase("GameSelect") && screenName.equalsIgnoreCase("Other2") ||
+            supportedScreen.equalsIgnoreCase("Other2") && screenName.equalsIgnoreCase("GameSelect")) {
+          return true;
+        }
         if (screenName.toLowerCase().contains(supportedScreen) || supportedScreen.contains(screenName)) {
           return true;
         }

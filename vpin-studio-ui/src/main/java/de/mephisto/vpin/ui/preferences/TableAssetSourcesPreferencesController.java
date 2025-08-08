@@ -45,21 +45,16 @@ public class TableAssetSourcesPreferencesController implements Initializable {
   private void onEdit() {
     TableAssetSource selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      TableAssetSource sourceRepresentation = null;
-      TableAssetSourceType backupSourceType = selectedItem.getType();
-      switch (backupSourceType) {
-        case FileSystem: {
-          PreferencesDialogs.openMediaSourceFolderDialog(selectedItem);
-          break;
-        }
-      }
+      PreferencesDialogs.openMediaSource(selectedItem);
       onReload();
     }
   }
 
   @FXML
   private void onSourceAdd() {
-    PreferencesDialogs.openMediaSourceFolderDialog(new TableAssetSource());
+    TableAssetSource source = new TableAssetSource();
+    source.setType(TableAssetSourceType.FileSystem);
+    PreferencesDialogs.openMediaSource(source);
     onReload();
   }
 
@@ -122,7 +117,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
-      deleteBtn.setDisable(disable || newSelection.isProvided());
+      deleteBtn.setDisable(disable || newSelection.isProvided() || newSelection.isSystemSource());
       editBtn.setDisable(disable);
     });
 

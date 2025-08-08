@@ -1,16 +1,42 @@
 package de.mephisto.vpin.ui.preferences.dialogs;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.stage.Stage;
 
 public class PreferencesDialogs {
-  public static void openMediaSourceFolderDialog(@NonNull TableAssetSource source) {
+  public static void openMediaSource(@NonNull TableAssetSource source) {
+    TableAssetSourceType backupSourceType = source.getType();
+    switch (backupSourceType) {
+      case FileSystem: {
+        PreferencesDialogs.openMediaSourceFolderDialog(source);
+        break;
+      }
+      case TutorialVideos: {
+        PreferencesDialogs.openMediaSourceWebAssetDialog(source);
+        break;
+      }
+      default:
+        WidgetFactory.showAlert(Studio.stage, "Error", "Adapter not supported.");
+    }
+  }
+
+  private static void openMediaSourceFolderDialog(@NonNull TableAssetSource source) {
     Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceFolderDialogController.class, "dialog-asset-source-folder.fxml", "Media Source");
     TableAssetSourceFolderDialogController controller = (TableAssetSourceFolderDialogController) stage.getUserData();
+    controller.setSource(source);
+    stage.showAndWait();
+  }
+
+  private static void openMediaSourceWebAssetDialog(@NonNull TableAssetSource source) {
+    Stage stage = Dialogs.createStudioDialogStage(TableAssetSourceWebAssetDialogController.class, "dialog-asset-source-web-asset.fxml", "Media Source");
+    TableAssetSourceWebAssetDialogController controller = (TableAssetSourceWebAssetDialogController) stage.getUserData();
     controller.setSource(source);
     stage.showAndWait();
   }
