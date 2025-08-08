@@ -6,7 +6,9 @@ import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -29,7 +31,7 @@ import java.util.*;
  * @Deprecated
  */
 @Service
-public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter {
+public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter<Game> {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsAdapter.class);
 
   // for exclusive search : if searching for an emulators, will exclude all folders below except the one searched
@@ -60,12 +62,12 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   }
 
   @Override
-  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, @Nullable Game game, String folder, String name) throws Exception {
     return Optional.empty();
   }
 
   @Override
-  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @Nullable Game game, @NonNull String term) throws Exception {
     if (term.length() < 3) {
       return Collections.emptyList();
     }

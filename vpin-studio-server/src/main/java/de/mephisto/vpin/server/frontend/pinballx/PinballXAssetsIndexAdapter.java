@@ -6,7 +6,9 @@ import de.mephisto.vpin.connectors.assets.TableAssetSourceType;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -24,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
-public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter {
+public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter<Game> {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsIndexAdapter.class);
 
@@ -93,7 +95,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   }
 
   @Override
-  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @Nullable Game game, @NonNull String term) throws Exception {
     if (term.length() < 3) {
       return Collections.emptyList();
     }
@@ -105,7 +107,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   }
 
   @Override
-  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, @Nullable Game game, String folder, String name) throws Exception {
     EmulatorType emutype = EmulatorType.valueOf(emulatorName);
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
     return getIndex().get(emutype, screen, folder, name);
