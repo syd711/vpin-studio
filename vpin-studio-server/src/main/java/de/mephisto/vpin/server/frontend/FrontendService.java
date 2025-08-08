@@ -636,7 +636,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return frontendMedia;
   }
 
-  public TableAssetsAdapter getTableAssetAdapter() {
+  public TableAssetsAdapter<Game> getTableAssetAdapter() {
     return getFrontendConnector().getTableAssetAdapter();
   }
 

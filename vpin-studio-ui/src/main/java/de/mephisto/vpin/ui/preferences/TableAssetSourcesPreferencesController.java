@@ -33,6 +33,9 @@ public class TableAssetSourcesPreferencesController implements Initializable {
   private TableColumn<TableAssetSource, String> enabledColumn;
 
   @FXML
+  private TableColumn<TableAssetSource, String> providedColumn;
+
+  @FXML
   private Button deleteBtn;
 
   @FXML
@@ -101,6 +104,14 @@ public class TableAssetSourcesPreferencesController implements Initializable {
       return new SimpleObjectProperty(value.getLocation());
     });
 
+    providedColumn.setCellValueFactory(cellData -> {
+      TableAssetSource value = cellData.getValue();
+      if (value.isProvided()) {
+        return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+      }
+      return new SimpleObjectProperty(new Label());
+    });
+
     enabledColumn.setCellValueFactory(cellData -> {
       TableAssetSource value = cellData.getValue();
       if (value.isEnabled()) {
@@ -111,7 +122,7 @@ public class TableAssetSourcesPreferencesController implements Initializable {
 
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       boolean disable = newSelection == null;
-      deleteBtn.setDisable(disable);
+      deleteBtn.setDisable(disable || newSelection.isProvided());
       editBtn.setDisable(disable);
     });
 

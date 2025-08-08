@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -28,6 +29,9 @@ public class TableAssetsService {
 
   @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private VpsService vpsService;
 
   @Autowired
   private TableAssetAdapterFactory tableAssetAdapterFactory;
@@ -135,7 +139,7 @@ public class TableAssetsService {
   public void invalidateMediaSources(List<TableAssetSource> tableAssetSources) {
     tableAssetsAdapters.clear();
     tableAssetSources.forEach(source -> {
-      tableAssetsAdapters.add(tableAssetAdapterFactory.createAdapter(source));
+      tableAssetsAdapters.add(tableAssetAdapterFactory.createAdapter(vpsService, source));
     });
   }
 

@@ -55,6 +55,7 @@
             <TableView fx:id="tableView" prefWidth="750.0" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
               <columns>
                   <TableColumn fx:id="enabledColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Enabled" />
+                  <TableColumn fx:id="providedColumn" prefWidth="76.80004501342773" style="-fx-alignment: BASELINE_CENTER;" text="Provided" />
                 <TableColumn fx:id="nameColumn" prefWidth="324.00001525878906" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
                 <TableColumn fx:id="urlColumn" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Location" />
               </columns>

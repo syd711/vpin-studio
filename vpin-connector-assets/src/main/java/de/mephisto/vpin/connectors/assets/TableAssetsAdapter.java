@@ -25,7 +25,7 @@ public interface TableAssetsAdapter<T> {
   /**
    * Test the connection to the remote search server
    *
-   * @return true if connection successfull
+   * @return true if connection successfully
    */
   boolean testConnection();
 

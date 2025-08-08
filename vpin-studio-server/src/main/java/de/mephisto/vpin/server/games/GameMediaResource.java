@@ -87,7 +87,7 @@ public class GameMediaResource {
 
   @GetMapping("/assets/search/conf")
   public TableAssetSource getTableAssetConf() throws Exception {
-    TableAssetsAdapter assetAdapter = frontendService.getTableAssetAdapter();
+    TableAssetsAdapter<Game> assetAdapter = frontendService.getTableAssetAdapter();
     return assetAdapter != null ? assetAdapter.getAssetSource() : null;
   }
 

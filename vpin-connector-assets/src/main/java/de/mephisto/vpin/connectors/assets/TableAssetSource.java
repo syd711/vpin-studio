@@ -19,7 +19,9 @@ public class TableAssetSource {
 
   @JsonIgnore
   public boolean isProvided() {
-    return TableAssetSourceType.PinballX.equals(this.type) || TableAssetSourceType.PinUPPopper.equals(this.type);
+    return TableAssetSourceType.PinballX.equals(this.type) ||
+        TableAssetSourceType.TutorialVideos.equals(this.type) ||
+        TableAssetSourceType.PinUPPopper.equals(this.type);
   }
 
   public AssetLookupStrategy getLookupStrategy() {

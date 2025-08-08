@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.TableAssetSourcesSettings;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -37,20 +38,19 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
 
   @Nullable
   public TableAssetSource getDefaultAssetSource() {
-    TableAssetsAdapter tableAssetAdapter = frontendService.getTableAssetAdapter();
+    TableAssetsAdapter<Game> tableAssetAdapter = frontendService.getTableAssetAdapter();
     if (tableAssetAdapter != null) {
       return tableAssetAdapter.getAssetSource();
     }
     return null;
   }
 
-
   @Nullable
   public TableAssetSource getAssetSource(@Nullable String sourceId) {
     if (sourceId == null) {
       return null;
     }
-    Optional<TableAssetSource> first = tableAssetSourcesSettings.getSources().stream().filter(m -> m.getId().equalsIgnoreCase(sourceId)).findFirst();
+    Optional<TableAssetSource> first = getAssetSources().stream().filter(m -> m.getId().equalsIgnoreCase(sourceId)).findFirst();
     if (first.isPresent()) {
       return first.get();
     }
@@ -64,7 +64,7 @@ public class TableAssetSourcesService implements PreferenceChangedListener, Init
 
   @NonNull
   public List<TableAssetSource> getAssetSources() {
-    return tableAssetSourcesSettings.getSources();
+    return TableAssetDefaultSourcesFactory.createDefaults(tableAssetSourcesSettings.getSources());
   }
 
   public boolean deleteAssetSource(String id) throws Exception {
