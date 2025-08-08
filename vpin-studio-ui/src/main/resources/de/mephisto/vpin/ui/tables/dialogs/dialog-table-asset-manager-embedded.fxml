@@ -55,6 +55,17 @@
                                              </graphic>
                                           </Button>
                                          <ComboBox fx:id="assetSourceComboBox" prefWidth="180" />
+                                         <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit">
+                                            <font>
+                                               <Font size="14.0" />
+                                            </font>
+                                            <graphic>
+                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                            </graphic>
+                                            <tooltip>
+                                               <Tooltip text="Configure Asset Source" />
+                                            </tooltip>
+                                         </Button>
                                          <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" textFill="WHITE">
                                             <font>
                                                <Font size="14.0" />
