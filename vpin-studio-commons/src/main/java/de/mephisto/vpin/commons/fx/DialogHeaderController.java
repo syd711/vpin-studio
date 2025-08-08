@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import javafx.beans.property.BooleanProperty;
@@ -29,7 +30,9 @@ public class DialogHeaderController implements Initializable {
   @FXML
   private Label titleLabel;
 
-  /** The dirty indicator */
+  /**
+   * The dirty indicator
+   */
   private BooleanProperty dirty = new SimpleBooleanProperty(false);
 
   @FXML
@@ -56,6 +59,12 @@ public class DialogHeaderController implements Initializable {
     Object userData = stage.getUserData();
     if (userData instanceof DialogController) {
       ((DialogController) userData).setModality(modal);
+    }
+    else if (userData instanceof FXResizeHelper) {
+      Object controller = ((FXResizeHelper) userData).getUserData();
+      if(controller instanceof DialogController) {
+        ((DialogController) controller).setModality(modal);
+      }
     }
   }
 
@@ -118,7 +127,7 @@ public class DialogHeaderController implements Initializable {
   public BooleanProperty dirtyProperty() {
     return dirty;
   }
-  
+
   protected void updateTitle() {
     String title = titleLabel.getText();
     if (dirty.get() && !title.endsWith(dirtySuffix)) {

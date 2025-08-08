@@ -31,6 +31,8 @@ public class FXResizeHelper {
   private double mWidthStore, mHeightStore, mXStore, mYStore;
   private boolean verticalOnly;
 
+  private Object userData;
+
   public FXResizeHelper(Stage stage, int dt, int rt) {
     this(stage, dt, rt, false);
   }
@@ -55,6 +57,14 @@ public class FXResizeHelper {
 
     createListener();
     launch();
+  }
+
+  public Object getUserData() {
+    return userData;
+  }
+
+  public void setUserData(Object userData) {
+    this.userData = userData;
   }
 
   /**
