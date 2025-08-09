@@ -14,12 +14,16 @@ public class TableAssetSource {
 
   private String assetSearchLabel;
   private String assetSearchIcon;
+  private boolean provided;
 
   private List<String> supportedScreens = new ArrayList<>();
 
-  @JsonIgnore
+  public void setProvided(boolean provided) {
+    this.provided = provided;
+  }
+
   public boolean isProvided() {
-    return TableAssetSourceType.TutorialVideos.equals(this.type);
+    return provided;
   }
 
   @JsonIgnore
@@ -55,7 +59,7 @@ public class TableAssetSource {
             supportedScreen.equalsIgnoreCase("Other2") && screenName.equalsIgnoreCase("GameSelect")) {
           return true;
         }
-        if (screenName.toLowerCase().contains(supportedScreen) || supportedScreen.contains(screenName)) {
+        if (screenName.toLowerCase().contains(supportedScreen.toLowerCase()) || supportedScreen.toLowerCase().contains(screenName.toLowerCase())) {
           return true;
         }
       }

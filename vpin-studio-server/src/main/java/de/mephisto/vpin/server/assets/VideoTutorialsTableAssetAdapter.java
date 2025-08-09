@@ -96,8 +96,10 @@ public class VideoTutorialsTableAssetAdapter extends DefaultTableAssetAdapter im
   }
 
   @NotNull
-  private static TableAsset toTableAsset(@NotNull TableAssetSource tableAssetSource, @NotNull EmulatorType emulator,
-                                         @NotNull String screenSegment, @NonNull VpsTable vpsTable) {
+  private static TableAsset toTableAsset(@NotNull TableAssetSource tableAssetSource,
+                                         @NotNull EmulatorType emulator,
+                                         @NotNull String screenSegment,
+                                         @NonNull VpsTable vpsTable) {
     TableAsset asset = new TableAsset();
     asset.setEmulator(null);
     asset.setScreen(screenSegment);

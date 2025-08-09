@@ -22,6 +22,10 @@ public class PreferencesDialogs {
         PreferencesDialogs.openMediaSourceWebAssetDialog(source);
         break;
       }
+      case SuperHacRepo: {
+        PreferencesDialogs.openMediaSourceWebAssetDialog(source);
+        break;
+      }
       default:
         WidgetFactory.showAlert(Studio.stage, "Error", "Adapter not supported.");
     }

@@ -41,7 +41,7 @@
                                  <top>
                                     <ToolBar BorderPane.alignment="CENTER">
                                       <items>
-                                          <TextField fx:id="searchField" prefHeight="30.0" prefWidth="255.0" promptText="Asset Search">
+                                          <TextField fx:id="searchField" prefHeight="30.0" prefWidth="235.0" promptText="Asset Search">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -54,7 +54,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                              </graphic>
                                           </Button>
-                                         <ComboBox fx:id="assetSourceComboBox" prefWidth="180" />
+                                         <ComboBox fx:id="assetSourceComboBox" prefWidth="200" />
                                          <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit">
                                             <font>
                                                <Font size="14.0" />

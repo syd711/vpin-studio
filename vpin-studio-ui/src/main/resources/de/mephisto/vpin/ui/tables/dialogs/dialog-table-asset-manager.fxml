@@ -55,7 +55,7 @@
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                        </graphic>
                                     </Button>
-                                    <ComboBox fx:id="assetSourceComboBox" prefWidth="180" />
+                                    <ComboBox fx:id="assetSourceComboBox" prefWidth="200" />
                                     <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit">
                                        <font>
                                           <Font size="14.0" />

@@ -26,6 +26,10 @@ public class TableAssetAdapterFactory {
         adapter = new VideoTutorialsTableAssetAdapter(vpsService, tableAssetSource);
         break;
       }
+      case SuperHacRepo: {
+        adapter = new SuperHacTableAssetAdapter(tableAssetSource);
+        break;
+      }
       default:
         throw new IllegalStateException("Unexpected value: " + type);
     }

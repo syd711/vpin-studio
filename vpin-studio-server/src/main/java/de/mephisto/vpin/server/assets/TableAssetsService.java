@@ -48,11 +48,16 @@ public class TableAssetsService {
     List<TableAsset> result = new ArrayList<>();
     List<Callable<List<TableAsset>>> tasks = new ArrayList<>();
 
-    List<TableAssetsAdapter<Game>> applicableAdapters = getAllAdapters().stream().filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect)
-        || a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name()))).collect(Collectors.toList());
+    List<TableAssetsAdapter<Game>> applicableAdapters = getAllAdapters().stream()
+        .filter(a -> a.getAssetSource().isEnabled())
+        .filter(a -> a.getAssetSource().getLookupStrategy().equals(AssetLookupStrategy.autoDetect) || a.getAssetSource().supportsScreens(Arrays.asList(screen.getSegment(), screen.name())))
+        .collect(Collectors.toList());
 
     if (source != null) {
-      Optional<TableAssetsAdapter<Game>> matchingSource = applicableAdapters.stream().filter(a -> a.getAssetSource().getId().equals(source.getId())).findFirst();
+      Optional<TableAssetsAdapter<Game>> matchingSource = applicableAdapters.stream()
+          .filter(a -> a.getAssetSource().isEnabled())
+          .filter(a -> a.getAssetSource().getId().equals(source.getId()))
+          .findFirst();
       applicableAdapters.clear();
       if (matchingSource.isPresent()) {
         applicableAdapters.add(matchingSource.get());
