@@ -94,7 +94,7 @@ public class MameService implements InitializingBean {
 
   public boolean clearCacheFor(@Nullable String rom) {
     if (!StringUtils.isEmpty(rom)) {
-      mameCache.remove(rom);
+      mameCache.remove(rom.toLowerCase());
       getOptions(rom);
       return true;
     }
@@ -108,7 +108,7 @@ public class MameService implements InitializingBean {
     }
 
     List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
-    if (romFolders.contains(rom.toLowerCase())) {
+    if (romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom)) {
       return systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
     }
     return null;
@@ -124,7 +124,7 @@ public class MameService implements InitializingBean {
     List<String> romFolders = systemService.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     MameOptions options = new MameOptions();
     options.setRom(rom);
-    options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
+    options.setExistInRegistry(romFolders.contains(rom.toLowerCase()) || romFolders.contains(rom));
 
     Map<String, Object> values = systemService.getCurrentUserValues(MAME_REG_FOLDER_KEY +
         (options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY));
@@ -368,8 +368,7 @@ public class MameService implements InitializingBean {
   public File getMameFolder() {
     File vpxFolder = systemService.resolveVpx64InstallFolder();
     if (vpxFolder != null && vpxFolder.exists()) {
-      File mameFolder = new File(vpxFolder, "VPinMAME");
-      return mameFolder;
+      return new File(vpxFolder, "VPinMAME");
     }
     return null;
   }
@@ -458,8 +457,7 @@ public class MameService implements InitializingBean {
 
   public File getDmdDeviceIni() {
     File mameFolder = getMameFolder();
-    File ini = new File(mameFolder, "DMDDevice.ini");
-    return ini;
+    return new File(mameFolder, "DMDDevice.ini");
   }
 
 
