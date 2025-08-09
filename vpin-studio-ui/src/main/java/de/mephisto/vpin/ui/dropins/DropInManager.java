@@ -112,7 +112,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       HBox box = new HBox(3);
       box.setAlignment(Pos.CENTER_RIGHT);
       Button btn = new Button("Delete All");
-      HBox.setMargin(btn, new Insets(3, 0, 3, 3));
+      HBox.setMargin(btn, new Insets(0, 0, 3, 3));
       btn.getStyleClass().add("default-text");
       btn.setTextFill(Paint.valueOf("#ff3333"));
       btn.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline", "#ff3333"));
