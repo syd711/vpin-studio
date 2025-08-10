@@ -45,27 +45,6 @@
                   <VBox BorderPane.alignment="CENTER">
                      <children>
                         <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="The selected table(s) will be archived and will be available in the &quot;Table Backups&quot; section when finished." />
-                        <CheckBox fx:id="removeFromPlaylistCheckbox" mnemonicParsing="false" text="Remove from all playlists" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </CheckBox>
-                        <Label styleClass="default-headline" text="Settings">
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <Label styleClass="preference-description" text="Select the data that should be stored for the backups.">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
                         <HBox spacing="36.0">
                            <children>
                               <VBox spacing="3.0">
@@ -160,11 +139,26 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
-                                    <CheckBox fx:id="altColorCheckBox" layoutX="10.0" layoutY="70.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </CheckBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                       <children>
+                                          <CheckBox fx:id="altColorCheckBox" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The backups of this asset type will be included in the backup file." wrapText="true" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                               <VBox fx:id="frontendColumn" layoutX="98.0" layoutY="10.0" spacing="3.0">
@@ -243,8 +237,20 @@
                               </VBox>
                            </children>
                            <VBox.margin>
-                              <Insets top="12.0" />
+                              <Insets top="24.0" />
                            </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT">
+                           <VBox.margin>
+                              <Insets top="24.0" />
+                           </VBox.margin>
+                           <children>
+                              <CheckBox fx:id="removeFromPlaylistCheckbox" mnemonicParsing="false" text="Remove table from all playlists" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
                         </HBox>
                      </children>
                   </VBox>
@@ -255,12 +261,12 @@
                         <Font size="18.0" />
                      </font>
                      <BorderPane.margin>
-                        <Insets bottom="12.0" top="24.0" />
+                        <Insets bottom="12.0" top="12.0" />
                      </BorderPane.margin>
                   </Label>
                </top>
                <padding>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets bottom="12.0" left="12.0" right="12.0" />
                </padding>
             </BorderPane>
          </center>
@@ -294,12 +300,12 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="- Backups are intended for personal use only. DO NOT SHARE THEM anywhere!" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="error-title" text="- Backups are intended for personal use only. DO NOT SHARE THEM ANYWHERE!" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="30.0" styleClass="error-title" text="- Value the authors work by only downloading tables and assets from official sources, like vpuniverse.com." textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="30.0" styleClass="error-title" text="- Value the authors work by only downloading tables from official sources, like vpuniverse.com.    " textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
