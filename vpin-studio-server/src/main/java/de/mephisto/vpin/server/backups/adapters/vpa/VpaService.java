@@ -210,17 +210,21 @@ public class VpaService implements InitializingBean {
     }
 
     // Cfg
-//    File cfgFile = game.getCfgFile();
-//    if (cfgFile != null && cfgFile.exists()) {
-//      packageInfo.setIni(true);
-//      zipFile(cfgFile, baseFolder + "/VPinMAME/cfg/" + cfgFile.getName(), zipOut);
-//    }
+    File cfgFile = game.getCfgFile();
+    if (cfgFile != null && cfgFile.exists()) {
+      packageInfo.setCfg(BackupFileInfoFactory.create(cfgFile));
+      zipFile(cfgFile, MAME_FOLDER + "/cfg/" + cfgFile.getName(), zipOut);
+    }
 
     //colored DMD
     File altColorFolder = altColorService.getAltColorFolder(game);
     if (backupSettings.isAltColor() && altColorFolder != null && altColorFolder.exists()) {
-      packageInfo.setAltColor(BackupFileInfoFactory.create(altColorFolder));
       zipFile(altColorFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName(), zipOut);
+      File backupsFolder = new File(altColorFolder, "backups");
+      if (backupsFolder.exists()) {
+        zipFile(backupsFolder, MAME_FOLDER + "/altcolor/" + altColorFolder.getName() + "/backups", zipOut);
+      }
+      packageInfo.setAltColor(BackupFileInfoFactory.create(altColorFolder));
     }
 
     if (backupSettings.isPupPack()) {
