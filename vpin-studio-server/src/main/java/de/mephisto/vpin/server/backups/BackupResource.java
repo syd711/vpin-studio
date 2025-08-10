@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
-import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -71,7 +70,7 @@ public class BackupResource {
   }
 
   @GetMapping("/game/{id}")
-  public List<BackupDescriptorRepresentation> getBackups(@PathVariable("id") int gameId) {
+  public List<BackupDescriptorRepresentation> getBackupsForGame(@PathVariable("id") int gameId) {
     List<BackupDescriptor> backupDescriptors = backupService.getBackupDescriptorForGame(gameId);
     List<BackupDescriptorRepresentation> result = new ArrayList<>();
     for (BackupDescriptor backupDescriptor : backupDescriptors) {

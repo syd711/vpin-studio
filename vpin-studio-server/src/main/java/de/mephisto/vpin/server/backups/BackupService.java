@@ -87,8 +87,8 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
   public List<BackupDescriptor> getBackupDescriptorForGame(int gameId) {
     Game game = gameService.getGame(gameId);
 
-    return getBackupSourceDescriptors().stream().filter(ArchiveDescriptor -> {
-      TableDetails manifest = ArchiveDescriptor.getTableDetails();
+    return getBackupSourceDescriptors().stream().filter(backupDescriptor -> {
+      TableDetails manifest = backupDescriptor.getTableDetails();
       if (manifest == null) {
         return false;
       }
