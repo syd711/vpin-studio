@@ -281,7 +281,7 @@ public class SystemResource {
     systemService.killProcesses("javaw.exe");
     File uiZip = new File("./", Updater.UI_ZIP);
     if (uiZip.exists()) {
-      if (!ZipUtil.unzip(uiZip, new File("./"))) {
+      if (!ZipUtil.unzip(uiZip, new File("./"), null)) {
         LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
         return false;
       }

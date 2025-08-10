@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.restclient.util;
 
 public interface UnzipChangeListener {
 

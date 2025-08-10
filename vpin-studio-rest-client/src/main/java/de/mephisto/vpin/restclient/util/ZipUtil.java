@@ -15,35 +15,63 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
 
-  public static boolean unzip(@NonNull File archiveFile, @NonNull File destinationDir) {
-    return unzip(archiveFile, destinationDir, false, null, Collections.emptyList());
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File destinationDir, @Nullable UnzipChangeListener listener) {
+    return unzip(archiveFile, destinationDir, false, null, Collections.emptyList(), listener);
   }
 
   public static boolean unzip(@NonNull File archiveFile, @NonNull File targetFolder, boolean log, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
+    return unzip(archiveFile, targetFolder, log, archiveFolder, suffixAllowList, null);
+  }
+
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File targetFolder, boolean log, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList, @Nullable UnzipChangeListener listener) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
+
+      ZipFile zipFile = new ZipFile(archiveFile);
+      int total = zipFile.size();
+      zipFile.close();
+
+      int index = 0;
       while (zipEntry != null) {
         if (zipEntry.isDirectory()) {
           //ignore, we will create folder for files only
         }
         else {
+          if (listener != null) {
+            boolean continueOp = listener.unzipping(zipEntry.getName(), index, total);
+            if (!continueOp) {
+              zis.closeEntry();
+              break;
+            }
+          }
+
+          index++;
+
           String entryName = zipEntry.getName().replaceAll("\\\\", "/");
           String suffix = FilenameUtils.getExtension(entryName);
           boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
           if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
             String itempath = entryName;
             if (archiveFolder != null) {
+              if (!itempath.startsWith(archiveFolder)) {
+                zis.closeEntry();
+                zipEntry = zis.getNextEntry();
+                continue;
+              }
               itempath = itempath.substring(archiveFolder.length());
             }
+
+
             File targetFile = new File(targetFolder, itempath);
             // fix for targetFile-created archives
             File parent = targetFile.getParentFile();
@@ -71,6 +99,9 @@ public class ZipUtil {
     }
     catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      if (listener != null) {
+        listener.onError("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
+      }
       return false;
     }
   }

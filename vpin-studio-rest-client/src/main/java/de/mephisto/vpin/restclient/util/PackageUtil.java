@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
@@ -46,16 +47,16 @@ public class PackageUtil {
     throw new UnsupportedOperationException("No package support for " + archiveFile.getName());
   }
 
-  public static boolean unpackTargetFolder(File archiveFile, File targetFolder, String archiveFolderName, List<String> suffixesAllowList) {
+  public static boolean unpackTargetFolder(File archiveFile, File targetFolder, String archiveFolderName, List<String> suffixesAllowList, @Nullable UnzipChangeListener listener) {
     String archiveName = archiveFile.getName().toLowerCase();
     if (archiveName.endsWith(".zip")) {
-      return ZipUtil.unzip(archiveFile, targetFolder, true, archiveFolderName, suffixesAllowList);
+      return ZipUtil.unzip(archiveFile, targetFolder, true, archiveFolderName, suffixesAllowList, listener);
     }
     else if (archiveName.endsWith(".vpa")) {
       return VpaArchiveUtil.extractFolder(archiveFile, targetFolder, archiveFolderName, suffixesAllowList);
     }
     else if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
-      return RarUtil.unrar(archiveFile, targetFolder, archiveFolderName, suffixesAllowList);
+      return RarUtil.unrar(archiveFile, targetFolder, archiveFolderName, suffixesAllowList, listener);
     }
     throw new UnsupportedOperationException("No package support for " + archiveFile.getName());
   }

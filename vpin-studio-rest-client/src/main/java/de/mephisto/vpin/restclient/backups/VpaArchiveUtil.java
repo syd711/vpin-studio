@@ -119,6 +119,9 @@ public class VpaArchiveUtil {
           if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
             String itempath = entryName;
             if (archiveFolder != null) {
+              if (!itempath.startsWith(archiveFolder)) {
+                continue;
+              }
               itempath = itempath.substring(archiveFolder.length());
             }
             File target = new File(targetFolder, itempath);

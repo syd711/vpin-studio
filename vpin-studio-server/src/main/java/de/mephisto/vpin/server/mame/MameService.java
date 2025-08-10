@@ -150,15 +150,17 @@ public class MameService implements InitializingBean {
 
   public void saveRegistryData(@NonNull BackupMameData mameData) {
     String rom = mameData.getRom();
-    systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
-
     Set<Map.Entry<String, Object>> entries = mameData.getRegistryData().entrySet();
-    for (Map.Entry<String, Object> entry : entries) {
-      String key = entry.getKey();
-      Object value = entry.getValue();
+    if (!entries.isEmpty()) {
+      systemService.createUserKey(MAME_REG_FOLDER_KEY + rom);
 
-      if (value instanceof Integer) {
-        systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
+      for (Map.Entry<String, Object> entry : entries) {
+        String key = entry.getKey();
+        Object value = entry.getValue();
+
+        if (value instanceof Integer) {
+          systemService.setUserValue(MAME_REG_FOLDER_KEY + rom, key, (Integer) value);
+        }
       }
     }
   }
@@ -353,7 +355,7 @@ public class MameService implements InitializingBean {
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
-      if(PackageUtil.unpackTargetFile(tempFile, out, nvFileName)) {
+      if (PackageUtil.unpackTargetFile(tempFile, out, nvFileName)) {
         LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
       }
       else {

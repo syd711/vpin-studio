@@ -171,7 +171,7 @@ public class VpaService implements InitializingBean {
     // DMDs
     if (backupSettings.isDmd()) {
       DMDPackage dmdPackage = dmdService.getDMDPackage(game);
-      if (dmdPackage != null) {
+      if (dmdPackage != null && dmdPackage.isValid()) {
         File dmdFolder = dmdService.getDmdFolder(game);
         if (dmdFolder.exists()) {
           List<File> archiveFiles = new ArrayList<>();

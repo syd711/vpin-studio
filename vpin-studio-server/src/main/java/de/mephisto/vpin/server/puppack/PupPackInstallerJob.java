@@ -2,12 +2,14 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.server.util.UnzipChangeListener;
+import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.restclient.util.UnzipChangeListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Collections;
 
 public class PupPackInstallerJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackInstallerJob.class);
@@ -34,7 +36,8 @@ public class PupPackInstallerJob implements Job {
   @Override
   public void execute(JobDescriptor result) {
     LOG.info("Starting PUP pack installation of '" + pupTmpArchive.getAbsolutePath() + "' to '" + pupVideosFolder.getAbsolutePath() + "', using archive root folder + '" + pupPackFolderInArchive + "' and ROM '" + rom + "'");
-    PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, pupPackFolderInArchive, rom, new UnzipChangeListener() {
+    File pupFolder = new File(pupVideosFolder, rom);
+    PackageUtil.unpackTargetFolder(pupTmpArchive, pupFolder, pupPackFolderInArchive, Collections.emptyList(), new UnzipChangeListener() {
       @Override
       public boolean unzipping(String name, int index, int total) {
         double progress = (double) (100 * index / total) / 100;

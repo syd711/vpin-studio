@@ -62,4 +62,7 @@ public class DMDPackage {
     this.files = files;
   }
 
+  public boolean isValid() {
+    return !getFiles().isEmpty();
+  }
 }

@@ -1,9 +1,10 @@
 package de.mephisto.vpin.server.backups;
 
-import de.mephisto.vpin.restclient.games.descriptors.*;
-import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.backups.BackupDescriptorRepresentation;
 import de.mephisto.vpin.restclient.backups.BackupSourceRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.BackupExportDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -88,8 +92,8 @@ public class BackupResource {
 
   @GetMapping("/download/file/{sourceId}/{filename}")
   public void downloadBackupFile(@PathVariable("sourceId") long sourceId,
-                                  @PathVariable("filename") String fn,
-                                  HttpServletResponse response) {
+                                 @PathVariable("filename") String fn,
+                                 HttpServletResponse response) {
     InputStream in = null;
     OutputStream out = null;
     String filename = URLDecoder.decode(fn, StandardCharsets.UTF_8);
@@ -124,16 +128,7 @@ public class BackupResource {
       }
       BackupSourceAdapter sourceAdapter = backupService.getBackupSourceAdapter(repositoryId);
       File out = new File(sourceAdapter.getBackupSource().getLocation(), file.getOriginalFilename());
-
-      if (file.getOriginalFilename().endsWith(".zip")) {
-        out = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), ".zip");
-      }
-
       if (UploadUtil.upload(file, out)) {
-        if (file.getOriginalFilename().endsWith(".zip")) {
-          ZipUtil.unzip(out, new File(sourceAdapter.getBackupSource().getLocation()));
-        }
-
         backupService.invalidateCache();
       }
     }

@@ -115,23 +115,40 @@ public class RarUtil {
   }
 
   public static boolean unrar(@NonNull File archiveFile, @NonNull File targetFolder, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
+    return unrar(archiveFile, targetFolder, archiveFolder, suffixAllowList, null);
+  }
+
+  public static boolean unrar(@NonNull File archiveFile, @NonNull File targetFolder, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList, @Nullable UnzipChangeListener listener) {
     boolean success = true;
     try {
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
       IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+      int total = inArchive.getNumberOfItems();
+      int index = 0;
 
       for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
         if (item.isFolder()) {
           //ignore
         }
         else {
+          if (listener != null) {
+            boolean continueOp = listener.unzipping(item.getPath(), index, total);
+            if (!continueOp) {
+              break;
+            }
+          }
+          index++;
+
           String entryName = item.getPath().replaceAll("\\\\", "/");
           String suffix = FilenameUtils.getExtension(entryName);
           boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
           if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
             String itempath = entryName;
             if (archiveFolder != null) {
+              if (!itempath.startsWith(archiveFolder)) {
+                continue;
+              }
               itempath = itempath.substring(archiveFolder.length());
             }
             File target = new File(targetFolder, itempath);
@@ -165,6 +182,9 @@ public class RarUtil {
     }
     catch (Exception e) {
       success = false;
+      if (listener != null) {
+        listener.onError("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
+      }
       LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
     return success;
