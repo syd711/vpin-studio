@@ -22,15 +22,13 @@ public class AltSoundUploadController extends BaseUploadController {
 
   private GameRepresentation game;
 
-  private String rom;
-  
   public AltSoundUploadController() {
     super(AssetType.ALT_SOUND, false, true, PackageUtil.ARCHIVE_SUFFIXES);
   }
 
   protected UploadProgressModel createUploadModel() {
-    return new AltSoundUploadProgressModel(game != null ? game.getId() : -1, "ALT Sound Upload", 
-      getSelection(), getSelectedEmulatorId(), rom, finalizer);
+    return new AltSoundUploadProgressModel(game != null ? game.getId() : -1, "ALT Sound Upload",
+        getSelection(), getSelectedEmulatorId(), game.getRom(), finalizer);
   }
 
   public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis uploaderAnalysis, Runnable finalizer) {
@@ -41,26 +39,14 @@ public class AltSoundUploadController extends BaseUploadController {
   @Override
   protected void startAnalysis() {
     tableLabel.setText("-");
-    romLabel.setText("-");  
-  }
-
-  @Override
-  protected String validateAnalysis(UploaderAnalysis uploaderAnalysis) {
-    rom = uploaderAnalysis.getRomFromAltSoundPack();
-    return super.validateAnalysis(uploaderAnalysis);
+    romLabel.setText("-");
   }
 
   @Override
   protected void endAnalysis(String validation, UploaderAnalysis uploaderAnalysis) {
-    if (rom != null) {
-        //TODO Question here, seems that rom is not mandatory for altsound upload
-        // but if rom is mandatory, simply return an error message 
-        romLabel.setText(rom);
-      GameRepresentation gameRepresentation = Studio.client.getGameService().getFirstGameByRom(rom);
-      if (gameRepresentation != null) {
-        tableLabel.setText(gameRepresentation.getGameDisplayName());
-      }
-    }
+    romLabel.setText(game.getRom());
+    tableLabel.setText(game.getGameDisplayName());
+
     super.endAnalysis(validation, uploaderAnalysis);
   }
 }

@@ -147,7 +147,7 @@ public class AssetFilterPanelController implements Initializable {
 
     assetAltSoundLabel.setText("- ALT Sound");
     if (assetAltSoundLabel.isVisible()) {
-      assetAltSoundLabel.setText("- ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
+      assetAltSoundLabel.setText("- ALT Sound");
     }
 
     assetsView.setVisible(assetBackglassLabel.isVisible()

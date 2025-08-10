@@ -353,8 +353,12 @@ public class MameService implements InitializingBean {
       if (out.exists() && !out.delete()) {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
-      PackageUtil.unpackTargetFile(tempFile, out, nvFileName);
-      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+      if(PackageUtil.unpackTargetFile(tempFile, out, nvFileName)) {
+        LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
+      }
+      else {
+        LOG.warn("Installing mame asset " + assetType.name() + " failed: " + out.getAbsolutePath());
+      }
     }
     else {
       if (out.exists() && !out.delete()) {

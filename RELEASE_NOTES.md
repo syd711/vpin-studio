@@ -21,6 +21,7 @@
 - The maintenance video is now always displayed on the primary screen.
 - Fixed modal mode toggling of the asset manager dialog.
 - Fixed MAME settings status for some tables (e.g. Addams Family) caused by upper case ROM names.
-- Fixed "Missing Backglass or PUP Pack" validator which sometimes raised a false positive when the PUP pack detection wasn't finished. 
+- Fixed "Missing Backglass or PUP Pack" validator which sometimes raised a false positive when the PUP pack detection wasn't finished.
+- Fixed ALT sound upload so that a game selection is mandatory now. This enforces the correct ROM name to be used from the game instead of guessing it from the uploading file.
 
 ## VPin Mania

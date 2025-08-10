@@ -112,7 +112,11 @@ public class AltSoundResource {
       analysis.analyze();
 
       universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.ALT_SOUND);
-      gameService.resetUpdate(analysis.getRomFromAltSoundPack(), VpsDiffTypes.altSound);
+
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        gameService.resetUpdate(game.getRom(), VpsDiffTypes.altSound);
+      }
       return descriptor;
     }
     catch (Exception e) {

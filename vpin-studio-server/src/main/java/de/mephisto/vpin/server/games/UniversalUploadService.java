@@ -4,9 +4,9 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.backups.BackupMameData;
 import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
@@ -237,19 +237,17 @@ public class UniversalUploadService {
 
     switch (assetType) {
       case ALT_SOUND: {
-        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
-          String rom = analysis.getRomFromAltSoundPack();
-          if (game != null && StringUtils.isEmpty(rom)) {
-            rom = game.getRom();
-          }
-          if (game != null && StringUtils.isEmpty(rom)) {
+        if (game != null && (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null)) {
+          String rom = game.getRom();
+          if (StringUtils.isEmpty(rom)) {
             rom = game.getScannedRom();
           }
           if (StringUtils.isEmpty(rom)) {
             rom = FilenameUtils.getBaseName(uploadDescriptor.getOriginalUploadFileName());
           }
           if (!StringUtils.isEmpty(rom)) {
-            JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), rom, tempFile);
+            String altSoundFolder = analysis.getAltSoundFolder();
+            JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), rom, tempFile, altSoundFolder);
             uploadDescriptor.setError(jobExecutionResult.getError());
             gameLifecycleService.notifyGameAssetsChanged(assetType, rom);
           }

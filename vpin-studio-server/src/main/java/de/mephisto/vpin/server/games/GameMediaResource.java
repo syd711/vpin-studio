@@ -169,6 +169,7 @@ public class GameMediaResource {
 
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
+    screen = screen.replaceAll("@2x", "");
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     if (vPinScreen == null) {
       LOG.error("Failed to resolve screen for value {}", screen);

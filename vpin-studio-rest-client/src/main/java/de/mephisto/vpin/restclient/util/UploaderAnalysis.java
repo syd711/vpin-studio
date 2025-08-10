@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
-import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -203,21 +203,6 @@ public class UploaderAnalysis {
   public String getPUPPackFolder() {
     getRomFromPupPack();
     return pupFolder;
-  }
-
-  public String getRomFromAltSoundPack() {
-    for (String name : getFilteredFilenamesWithPath()) {
-      if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv") || name.contains("altsound.csv") || name.contains("g-sound.csv")) {
-        if (name.contains("/")) {
-          name = name.substring(0, name.lastIndexOf("/"));
-          if (name.contains("/")) {
-            name = name.substring(name.lastIndexOf("/") + 1);
-          }
-          return name;
-        }
-      }
-    }
-    return null;
   }
 
   public String getRomFromArchive() {
@@ -463,6 +448,9 @@ public class UploaderAnalysis {
   public String getFileNameForAssetType(AssetType assetType) {
     for (String file : getFilteredFilenamesWithPath()) {
       String fileName = getFileName(file);
+      if (AssetType.INI.equals(assetType) && fileName.equalsIgnoreCase("altsound.ini")) {
+        continue;
+      }
       if (fileName.toLowerCase().endsWith("." + assetType.name().toLowerCase())) {
         return fileName;
       }

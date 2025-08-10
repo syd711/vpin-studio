@@ -5,15 +5,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.model.FileHeader;
+import net.sf.sevenzipjbinding.ExtractOperationResult;
+import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
+import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.List;
 
 public class VpaArchiveUtil {
@@ -98,28 +104,44 @@ public class VpaArchiveUtil {
     return null;
   }
 
-  public static boolean extractFile(File archiveFile, File targetFile, String name) {
+  public static boolean extractFolder(@NonNull File archiveFile, @NonNull File targetFolder, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
     ZipFile zipFile = createZipFile(archiveFile);
     try {
-      FileHeader fileHeader = zipFile.getFileHeader(name);
-      if (targetFile.exists() && targetFile.isFile() && !targetFile.delete()) {
-        LOG.error("Failed to delete target extraction file {}", targetFile.getAbsolutePath());
-        return false;
-      }
-//      File t = new File(targetFile.getParentFile(), name);
-//      if (t.exists() && t.isFile() && !t.delete()) {
-//        LOG.error("Failed to delete target extraction file {}", t.getAbsolutePath());
-//        return false;
-//      }
-
-      zipFile.extractFile(fileHeader, targetFile.getParentFile().getAbsolutePath(), targetFile.getName());
-      if (targetFile.exists()) {
-        LOG.info("Written temporary vpa archive file {} / {}", targetFile.getAbsolutePath(), de.mephisto.vpin.restclient.util.FileUtils.readableFileSize(targetFile.length()));
-        return true;
+      List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+      for (FileHeader fileHeader : fileHeaders) {
+        if (fileHeader.isDirectory()) {
+          //ignore
+        }
+        else {
+          String entryName = fileHeader.getFileName().replaceAll("\\\\", "/");
+          String suffix = FilenameUtils.getExtension(entryName);
+          boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
+          if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
+            String itempath = entryName;
+            if (archiveFolder != null) {
+              itempath = itempath.substring(archiveFolder.length());
+            }
+            File target = new File(targetFolder, itempath);
+            // delete existing file and don't simply write in it
+            // that would corrupt the file in case conten tto be comied is smaller than previous size
+            if (target.isFile() && target.exists() && !target.delete()) {
+              LOG.error("Failed to delete existing unrar target file {}", target.getAbsolutePath());
+            }
+            else {
+              // folder creation
+              File parent = target.getParentFile();
+              if (!parent.isDirectory() && !parent.mkdirs()) {
+                throw new IOException("Failed to create directory " + parent);
+              }
+            }
+            zipFile.extractFile(fileHeader, target.getParentFile().getAbsolutePath(), target.getName());
+            LOG.info("Encrypted unzipped \"{}\": {}", target.getAbsolutePath(), itempath);
+          }
+        }
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to extract from {}: {}", archiveFile.getAbsolutePath(), e.getMessage(), e);
+      LOG.error("Failed to extract folder {} from {}: {}", archiveFolder, archiveFile.getAbsolutePath(), e.getMessage(), e);
     }
     finally {
       try {
@@ -132,14 +154,59 @@ public class VpaArchiveUtil {
     return false;
   }
 
-  public static File extractFile(ZipFile zipFile, String file) {
+  public static boolean extractFile(File archiveFile, File targetFile, String name) {
+    ZipFile zipFile = createZipFile(archiveFile);
+    FileHeader fileHeader = null;
+    try {
+      fileHeader = zipFile.getFileHeader(name);
+      if (fileHeader == null) {
+        List<FileHeader> fileHeaders = zipFile.getFileHeaders();
+        for (FileHeader header : fileHeaders) {
+          if (header.getFileName().endsWith(name)) {
+            fileHeader = header;
+            break;
+          }
+        }
+      }
+
+      if (fileHeader == null) {
+        LOG.error("No matching file {} found in {}", name, archiveFile.getAbsolutePath());
+        return false;
+      }
+
+      if (targetFile.exists() && targetFile.isFile() && !targetFile.delete()) {
+        LOG.error("Failed to delete target extraction file {}", targetFile.getAbsolutePath());
+        return false;
+      }
+
+      zipFile.extractFile(fileHeader, targetFile.getParentFile().getAbsolutePath(), targetFile.getName());
+      if (targetFile.exists()) {
+        LOG.info("Written temporary vpa archive file {} / {}", targetFile.getAbsolutePath(), de.mephisto.vpin.restclient.util.FileUtils.readableFileSize(targetFile.length()));
+        return true;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to extract {} from {}: {}", fileHeader, archiveFile.getAbsolutePath(), e.getMessage(), e);
+    }
+    finally {
+      try {
+        zipFile.close();
+      }
+      catch (IOException e) {
+        //ignore
+      }
+    }
+    return false;
+  }
+
+  public static File extractFile(ZipFile zipFile, String fileName) {
     try {
       String tempDir = System.getProperty("java.io.tmpdir");
-      File tmp = new File(tempDir, file);
+      File tmp = new File(tempDir, fileName);
       if (tmp.exists() && !tmp.delete()) {
         LOG.error("Failed to delete {}", tmp.getAbsolutePath());
       }
-      FileHeader fileHeader = zipFile.getFileHeader(file);
+      FileHeader fileHeader = zipFile.getFileHeader(fileName);
       zipFile.extractFile(fileHeader, tmp.getParentFile().getAbsolutePath(), tmp.getName());
       tmp.deleteOnExit();
       return tmp;

@@ -82,10 +82,6 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
       }
-      case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
-        return;
-      }
       case VPX: {
         TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis);
         return;
@@ -104,6 +100,10 @@ public class UploadAnalysisDispatcher {
     }
 
     switch (assetType) {
+      case ALT_SOUND: {
+        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
+        return;
+      }
       case DIRECTB2S: {
         TableDialogs.openBackglassUpload(null, Studio.stage, game, file, finalizer);
         return;

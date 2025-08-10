@@ -1,15 +1,19 @@
 package de.mephisto.vpin.restclient.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.model.enums.CompressionLevel;
 import net.lingala.zip4j.model.enums.EncryptionMethod;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -17,37 +21,43 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ZipUtil.class);
 
-  public static boolean unzip(File archiveFile, File destinationDir) {
-    return unzip(archiveFile, destinationDir, false);
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File destinationDir) {
+    return unzip(archiveFile, destinationDir, false, null, Collections.emptyList());
   }
 
-  public static boolean unzip(File archiveFile, File destinationDir, boolean log) {
+  public static boolean unzip(@NonNull File archiveFile, @NonNull File targetFolder, boolean log, @Nullable String archiveFolder, @NonNull List<String> suffixAllowList) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
       while (zipEntry != null) {
-        File newFile = new File(destinationDir, zipEntry.getName());
-        LOG.info("Writing " + newFile.getAbsolutePath());
         if (zipEntry.isDirectory()) {
-          if (!newFile.isDirectory() && !newFile.mkdirs()) {
-            throw new IOException("Failed to create directory " + newFile);
-          }
+          //ignore, we will create folder for files only
         }
         else {
-          // fix for Windows-created archives
-          File parent = newFile.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
+          String entryName = zipEntry.getName().replaceAll("\\\\", "/");
+          String suffix = FilenameUtils.getExtension(entryName);
+          boolean isTargetFolder = archiveFolder == null || entryName.startsWith(archiveFolder);
+          if (suffixAllowList.isEmpty() || suffixAllowList.contains(suffix.toLowerCase()) || isTargetFolder) {
+            String itempath = entryName;
+            if (archiveFolder != null) {
+              itempath = itempath.substring(archiveFolder.length());
+            }
+            File targetFile = new File(targetFolder, itempath);
+            // fix for targetFile-created archives
+            File parent = targetFile.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+            FileOutputStream fos = new FileOutputStream(targetFile);
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              fos.write(buffer, 0, len);
+            }
+            fos.close();
+            LOG.info("Unpacked {}", targetFile.getAbsolutePath());
           }
-          FileOutputStream fos = new FileOutputStream(newFile);
-          int len;
-          while ((len = zis.read(buffer)) > 0) {
-            fos.write(buffer, 0, len);
-          }
-          fos.close();
-          LOG.info("Unpacked {}", newFile.getAbsolutePath());
         }
         zis.closeEntry();
         zipEntry = zis.getNextEntry();
