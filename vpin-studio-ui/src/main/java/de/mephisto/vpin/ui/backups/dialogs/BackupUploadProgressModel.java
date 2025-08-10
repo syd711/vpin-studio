@@ -55,7 +55,7 @@ public class BackupUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      currentUploadFuture = backupServiceClient.uploadArchiveFuture(next, (int) repositoryId, percent -> {
+      currentUploadFuture = backupServiceClient.uploadBackupFuture(next, (int) repositoryId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

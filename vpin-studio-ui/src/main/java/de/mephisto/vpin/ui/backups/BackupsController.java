@@ -239,7 +239,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
       }
 
       BackupSourceRepresentation value = sourceCombo.getValue();
-      archives = client.getArchiveService().getArchiveDescriptors(value.getId());
+      archives = client.getArchiveService().getBackupsForSource(value.getId());
 
       Platform.runLater(() -> {
         data = FXCollections.observableList(filterArchives(archives));
@@ -690,7 +690,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
 
   private void refreshRepositoryCombo() {
     sourceCombo.valueProperty().removeListener(sourceComboChangeListener);
-    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getArchiveSources());
+    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getBackupSources());
     sourceCombo.setItems(FXCollections.observableList(repositories));
     sourceCombo.getSelectionModel().select(0);
     sourceCombo.valueProperty().addListener(sourceComboChangeListener);

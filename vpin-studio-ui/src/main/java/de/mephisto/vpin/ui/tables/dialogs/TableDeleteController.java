@@ -226,7 +226,7 @@ public class TableDeleteController implements Initializable, DialogController {
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     if (Features.BACKUPS_ENABLED) {
       for (GameRepresentation selectedGame : selectedGames) {
-        boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
+        boolean hasNoArchives = client.getArchiveService().getBackupsForGame(selectedGame.getId()).isEmpty();
         if (hasNoArchives) {
           this.validationContainer.setVisible(true);
           this.validationDescription.setVisible(true);

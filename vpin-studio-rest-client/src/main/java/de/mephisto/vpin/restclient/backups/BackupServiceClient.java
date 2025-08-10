@@ -30,11 +30,11 @@ public class BackupServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public List<BackupDescriptorRepresentation> getArchiveDescriptors(long id) {
-    return Arrays.asList(getRestClient().get(API + "backups/" + id, BackupDescriptorRepresentation[].class));
+  public List<BackupDescriptorRepresentation> getBackupsForSource(long sourceId) {
+    return Arrays.asList(getRestClient().get(API + "backups/" + sourceId, BackupDescriptorRepresentation[].class));
   }
 
-  public List<BackupSourceRepresentation> getArchiveSources() {
+  public List<BackupSourceRepresentation> getBackupSources() {
     return Arrays.asList(getRestClient().get(API + "backups/sources", BackupSourceRepresentation[].class));
   }
 
@@ -42,11 +42,11 @@ public class BackupServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "backups/" + sourceId + "/" + filename);
   }
 
-  public boolean deleteArchiveSource(long id) {
+  public boolean deleteBackupSource(long id) {
     return getRestClient().delete(API + "backups/source/" + id);
   }
 
-  public BackupSourceRepresentation saveArchiveSource(BackupSourceRepresentation source) throws Exception {
+  public BackupSourceRepresentation saveBackupSource(BackupSourceRepresentation source) throws Exception {
     try {
       return getRestClient().post(API + "backups/save", source, BackupSourceRepresentation.class);
     } catch (Exception e) {
@@ -55,7 +55,7 @@ public class BackupServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<BackupDescriptorRepresentation> getArchiveDescriptorsForGame(int gameId) {
+  public List<BackupDescriptorRepresentation> getBackupsForGame(int gameId) {
     return Arrays.asList(getRestClient().get(API + "backups/game/" + gameId, BackupDescriptorRepresentation[].class));
   }
 
@@ -63,7 +63,7 @@ public class BackupServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "backups/invalidate", Boolean.class);
   }
 
-  public JobDescriptor uploadArchive(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
+  public JobDescriptor uploadBackup(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "backups/upload/";
       HttpEntity upload = createUpload(file, repositoryId, null, AssetType.ARCHIVE, listener);
@@ -76,9 +76,9 @@ public class BackupServiceClient extends VPinStudioClientService {
     }
   }
 
-  public Future<JobDescriptor> uploadArchiveFuture(File file, int repositoryId, FileUploadProgressListener listener) {
+  public Future<JobDescriptor> uploadBackupFuture(File file, int repositoryId, FileUploadProgressListener listener) {
     Callable<JobDescriptor> task = () -> {
-      return this.uploadArchive(file, repositoryId, listener);
+      return this.uploadBackup(file, repositoryId, listener);
     };
 
     return executor.submit(task);

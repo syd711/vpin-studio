@@ -112,7 +112,7 @@ public class BackupUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getArchiveSources());
+    List<BackupSourceRepresentation> repositories = new ArrayList<>(client.getArchiveService().getBackupSources());
     repositories = repositories.stream().filter(r -> r.getType().equals(BackupSourceType.Folder.name())).collect(Collectors.toList());
     repositoryCombo.setItems(FXCollections.observableList(repositories));
     repositoryCombo.getSelectionModel().select(0);
