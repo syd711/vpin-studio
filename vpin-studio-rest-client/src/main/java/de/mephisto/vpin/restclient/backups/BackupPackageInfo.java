@@ -14,6 +14,7 @@ public class BackupPackageInfo {
   private BackupFileInfo popperMedia;
   private BackupFileInfo pov;
   private BackupFileInfo ini;
+  private BackupFileInfo cfg;
   private BackupFileInfo music;
   private BackupFileInfo altSound;
   private BackupFileInfo altColor;
@@ -24,6 +25,14 @@ public class BackupPackageInfo {
 
   private String icon;
   private String thumbnail;
+
+  public BackupFileInfo getCfg() {
+    return cfg;
+  }
+
+  public void setCfg(BackupFileInfo cfg) {
+    this.cfg = cfg;
+  }
 
   public BackupFileInfo getDirectb2s() {
     return directb2s;
