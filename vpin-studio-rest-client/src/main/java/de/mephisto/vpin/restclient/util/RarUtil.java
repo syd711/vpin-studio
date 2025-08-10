@@ -106,7 +106,8 @@ public class RarUtil {
     return written;
   }
 
-  public static void unrar(File archiveFile, File targetFolder) {
+  public static boolean unrar(File archiveFile, File targetFolder) {
+    boolean success = true;
     try {
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
@@ -119,7 +120,7 @@ public class RarUtil {
         else {
           String entryName = item.getPath().replaceAll("\\\\", "/");
           File target = new File(targetFolder, item.getPath());
-          
+
           // delete existing file and don't simply write in it 
           // that would corrupt the file in case conten tto be comied is smaller than previous size
           if (target.exists()) {
@@ -148,7 +149,11 @@ public class RarUtil {
       randomAccessFile.close();
     }
     catch (Exception e) {
+      success = false;
       LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+    finally {
+      return success;
     }
   }
 
