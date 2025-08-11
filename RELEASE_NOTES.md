@@ -22,7 +22,7 @@
 - **Monitoring View / Screenshots**
   - Added a summary screenshot to the screenshot bundle which contains all screens as one image, including a timestamp.
 - **Drop-In Folder**
-  - Added option to move the upload file to the trash bin.
+  - Added option to move the uploaded file to the trash bin.
 
 ## Bugfixes
 
