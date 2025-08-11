@@ -24,7 +24,7 @@
 
 ## Bugfixes
 
-- The maintenance video is now always displayed on the primary screen.
+- Fixed maintenance video, so it is now always displayed on the primary screen.
 - Fixed modal mode toggling of the asset manager dialog.
 - Fixed MAME settings status for some tables (e.g. Addams Family) caused by upper case ROM names.
 - Fixed "Missing Backglass or PUP Pack" validator which sometimes raised a false positive when the PUP pack detection wasn't finished.

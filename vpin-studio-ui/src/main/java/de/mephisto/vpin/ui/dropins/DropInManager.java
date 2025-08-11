@@ -8,7 +8,6 @@ import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -16,7 +15,6 @@ import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -52,6 +50,8 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   private Stream<Path> stream;
   private int itemCount;
   private int itemLimit = 50;
+
+  private boolean enabled = false;
 
   public static DropInManager getInstance() {
     if (instance == null) {
@@ -89,17 +89,19 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     localSettingsChanged(LocalUISettings.DROP_IN_FOLDER_ENABLED, LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER_ENABLED));
   }
 
+  public boolean isDropInFile(@NonNull File file) {
+    if (enabled && dropinsFolder != null && dropinsFolder.exists()) {
+      String path = dropinsFolder.getAbsolutePath();
+      return file.getAbsolutePath().startsWith(path);
+    }
+    return false;
+  }
+
   /**
    * Should run on JavaFX Thread !
    */
   public void reload() {
     this.dropInsBtn.getItems().clear();
-
-
-    itemCount = 0;
-    itemLimit = 100;
-
-    //TODO skipped a "Load More Item..." button for now and simply limit the items
     itemCount = 0;
     itemLimit = 100;
 
@@ -180,7 +182,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   public void localSettingsChanged(@NonNull String key, @Nullable String value) {
     if (key.equals(LocalUISettings.DROP_IN_FOLDER_ENABLED)) {
       if (value != null) {
-        boolean enabled = Boolean.parseBoolean(value);
+        enabled = Boolean.parseBoolean(value);
         LOG.info("Drop-in monitoring enabled: " + enabled);
         Platform.runLater(() -> {
           dropInsBtn.setVisible(enabled);
