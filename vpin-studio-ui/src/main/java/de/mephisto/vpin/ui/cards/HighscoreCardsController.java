@@ -50,7 +50,6 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HighscoreCardsController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);

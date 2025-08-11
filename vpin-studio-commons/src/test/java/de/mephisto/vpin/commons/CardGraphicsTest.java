@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -31,7 +31,7 @@ public class CardGraphicsTest extends Application {
     CountDownLatch countDownLatch = new CountDownLatch(1);
     Platform.startup(() -> {
       try {
-        HighscoreCardResolution res = HighscoreCardResolution.HDReady;
+        CardResolution res = CardResolution.HDReady;
         CardGraphicsHighscore graphics = generateHighscore(true);
         graphics.resize(res.toWidth(), res.toHeight());
         BufferedImage image = graphics.snapshot();
@@ -75,7 +75,7 @@ public class CardGraphicsTest extends Application {
     }
 
     CardData data = CardDataMock.create();
-    graphics.setData(data);
+    graphics.setData(data, CardResolution.HD);
 
     return graphics;
   }

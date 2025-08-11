@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.*;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -85,11 +85,11 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
   }
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
     // background
     transparentBackgroundRadio.setSelected(cardTemplate.isTransparentBackground());
-    defaultBackgroundRadio.setSelected(cardTemplate.isUseDirectB2S());
-    fallbackBackgroundRadio.setSelected(!cardTemplate.isTransparentBackground() && !cardTemplate.isUseDirectB2S());
+    defaultBackgroundRadio.setSelected(cardTemplate.isUseDefaultBackground());
+    fallbackBackgroundRadio.setSelected(!cardTemplate.isTransparentBackground() && !cardTemplate.isUseDefaultBackground());
 
     grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
     brightenSlider.setValue(cardTemplate.getAlphaWhite());
@@ -107,12 +107,17 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
 
   }
 
-  public void initBindings(BeanBinder templateBeanBinder) {
+  public void initBindings(CardTemplateBinder templateBeanBinder) {
 
     ToggleGroup radioGroup = new ToggleGroup();
     transparentBackgroundRadio.setToggleGroup(radioGroup);
     defaultBackgroundRadio.setToggleGroup(radioGroup);
     fallbackBackgroundRadio.setToggleGroup(radioGroup);
+
+    // TODO OLE : make pane invisible for time being, to be implemented
+    defaultBackgroundPane.setVisible(false);
+    defaultBackgroundPane.setManaged(false);
+
 
     radioGroup.selectedToggleProperty().addListener((obs, o, n) -> {
       transparentBackgroundPane.setDisable(n != transparentBackgroundRadio);
@@ -155,5 +160,9 @@ public class LayerEditorBackgroundController extends LayerEditorBaseController {
         }
       }
     });
+  }
+
+  @Override
+  public void bindDragBox(PositionResizer dragBox) {
   }
 }

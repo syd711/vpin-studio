@@ -1,8 +1,8 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.ui.util.PositionResizer;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -11,28 +11,35 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
   @FXML
   private Spinner<Integer> wheelSizeSpinner;
   @FXML
-  private Spinner<Integer> wheelImageSpinner;
+  private Spinner<Integer> wheelImageXSpinner;
+  @FXML
+  private Spinner<Integer> wheelImageYSpinner;
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate) {
-    BeanBinder.setIconVisibility(settingsPane, cardTemplate.isRenderWheelIcon());
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isRenderWheelIcon());
 
-    wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
-    wheelSizeSpinner.getValueFactory().setValue(cardTemplate.getWheelSize());
+    LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", res.toWidth());
+    LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", res.toWidth());
+    LayerSubEditorPositionController.setValue(wheelImageYSpinner, cardTemplate, "wheelY", res.toHeight());
   }
 
   @Override
-  public void initBindings(BeanBinder templateBeanBinder) {
+  public void initBindings(CardTemplateBinder templateBeanBinder) {
     templateBeanBinder.bindVisibilityIcon(settingsPane, "renderWheelIcon");
 
-    templateBeanBinder.bindSpinner(wheelSizeSpinner, "wheelSize");
-    templateBeanBinder.bindSpinner(wheelImageSpinner, "wheelPadding");
+    LayerSubEditorPositionController.bindSpinner(wheelSizeSpinner, "wheelSize", templateBeanBinder, 0, 1920, true);
+    LayerSubEditorPositionController.bindSpinner(wheelImageXSpinner, "wheelX", templateBeanBinder, 0, 1920, true);
+    LayerSubEditorPositionController.bindSpinner(wheelImageYSpinner, "wheelY", templateBeanBinder, 0, 1920, false);
   }
 
+  @Override
   public void bindDragBox(PositionResizer dragBox) {
     // force aspect ratio of 1 for Wheel
     dragBox.setAspectRatio(1.0);
 
+    bindSpinner(wheelImageXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
+    bindSpinner(wheelImageYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
     bindSpinner(wheelSizeSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
   }
 }

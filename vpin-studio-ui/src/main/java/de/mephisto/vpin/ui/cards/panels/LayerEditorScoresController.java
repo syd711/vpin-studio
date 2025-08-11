@@ -2,7 +2,8 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
+import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -34,7 +35,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   
   @FXML
   private void onFontScoreSelect() {
-    BeanBinder templateBeanBinder = templateEditorController.getBeanBinder();
+    CardTemplateBinder templateBeanBinder = templateEditorController.getBeanBinder();
     templateBeanBinder.openFontSelector("score", scoreFontLabel);
   }
 
@@ -52,10 +53,13 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   }
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate) {
-    BeanBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
-    BeanBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
-    BeanBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+    CardTemplateBinder.setFontLabel(scoreFontLabel, cardTemplate, "score");
+    CardTemplateBinder.setColorPickerValue(fontColorSelector, cardTemplate, "fontColor");
+    CardTemplateBinder.setColorPickerValue(friendsFontColorSelector, cardTemplate, "friendsFontColor");
+
+    positionController.setTemplate("scores", cardTemplate, res);
+
     maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
     rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
     renderFriendsHighscore.setSelected(cardTemplate.isRenderFriends());
@@ -65,7 +69,7 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   }
 
   @Override
-  public void initBindings(BeanBinder templateBeanBinder) {
+  public void initBindings(CardTemplateBinder templateBeanBinder) {
     friendsFontColorSelector.managedProperty().bindBidirectional(friendsFontColorSelector.visibleProperty());
     renderFriendsHighscore.managedProperty().bindBidirectional(renderFriendsHighscore.visibleProperty());
 
@@ -74,6 +78,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
 
     templateBeanBinder.bindColorPicker(fontColorSelector, "fontColor");
     templateBeanBinder.bindColorPicker(friendsFontColorSelector, "friendsFontColor");
+
+    positionController.initBindings("scores", templateBeanBinder);
 
     templateBeanBinder.bindCheckbox(renderPositionsCheckbox, "renderPositions");
     templateBeanBinder.bindCheckbox(renderScoreDatesCheckbox, "renderScoreDates");
@@ -88,5 +94,10 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
       renderScoreDatesCheckbox.setDisable(t1);
       renderFriendsHighscore.setDisable(t1);
     });
+  }
+
+  @Override
+  public void bindDragBox(PositionResizer dragBox) {
+    positionController.bindDragBox(dragBox);
   }
 }

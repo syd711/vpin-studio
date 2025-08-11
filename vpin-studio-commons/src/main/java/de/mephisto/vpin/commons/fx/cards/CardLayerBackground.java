@@ -61,7 +61,8 @@ public class CardLayerBackground extends Canvas implements CardLayer {
       if (imageDirty || hasEffectsChanged(template)) {
         cacheFinalImage = ImageUtil.clone(cacheBackgroundImage);
         if (template.getBlur() > 0) {
-          cacheFinalImage = ImageUtil.blurImage(cacheFinalImage, template.getBlur());
+          //cacheFinalImage = ImageUtil.blurImage(cacheFinalImage, template.getBlur());
+          cacheFinalImage = ImageUtil.fastBlur(cacheFinalImage, template.getBlur());
           lt.pulse("blurImage()");
         }
 
@@ -96,17 +97,20 @@ public class CardLayerBackground extends Canvas implements CardLayer {
 
     if (template.getBorderWidth() > 0) {
       g.setStroke(Paint.valueOf(template.getFontColor()));
-      double strokeWidthX = template.getBorderWidth() * zoomX;
-      double strokeWidthY = template.getBorderWidth() * zoomY;
-      g.setLineWidth(strokeWidthX);
+      double strokeWidthX = template.getBorderWidth() * zoomX / 2;
+      double strokeWidthY = template.getBorderWidth() * zoomY / 2;
+      g.setLineWidth(strokeWidthX * 2);
       // left
-      g.strokeLine(strokeWidthX / 2, strokeWidthY / 2, strokeWidthX / 2, height - strokeWidthY);
-      // Top 
-      g.strokeLine(strokeWidthX / 2, strokeWidthY / 2, width - strokeWidthX, strokeWidthY / 2);
+      g.strokeLine(strokeWidthX, strokeWidthX, strokeWidthX, height - strokeWidthX);
       // Right
-      g.strokeLine(width - strokeWidthX, strokeWidthY / 2, width - strokeWidthX, height - strokeWidthY);
+      g.strokeLine(width - strokeWidthX, strokeWidthX, width - strokeWidthX, height - strokeWidthX);
+
+      g.setLineWidth(strokeWidthY * 2);
+      // Top 
+      g.strokeLine(strokeWidthY, strokeWidthY, width - strokeWidthY, strokeWidthY);
       // Bottom
-      g.strokeLine(strokeWidthX / 2, height - strokeWidthY, width - strokeWidthX, height - strokeWidthY);
+      g.strokeLine(strokeWidthY, height - strokeWidthY, width - strokeWidthY, height - strokeWidthY);
+
       lt.pulse("drawBorder()");
     }
   }
@@ -127,7 +131,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     }
 
     BufferedImage backgroundImage = null;
-    if (template.isUseDirectB2S() && data != null && data.getBackgroundUrl() != null) {
+    if (template.isUseDefaultBackground() && data != null && data.getBackgroundUrl() != null) {
       try {
         URL url = new URL(data.getBackgroundUrl());
         backgroundImage = ImageIO.read(url);
@@ -171,7 +175,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
   private boolean hasBackroundChanged(CardTemplate template, @Nullable CardData data) {
     boolean hasChanged = false;
     // check on CardData
-    if (template.isUseDirectB2S() && data != null) {
+    if (template.isUseDefaultBackground() && data != null) {
       if (cacheBackgroundUrl == null || !cacheBackgroundUrl.equals(data.getBackgroundUrl())) {
         cacheBackgroundUrl = data.getBackgroundUrl();
         hasChanged = true;

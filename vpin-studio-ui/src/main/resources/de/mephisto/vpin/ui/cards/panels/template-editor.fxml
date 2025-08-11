@@ -30,9 +30,9 @@
                   <fx:include fx:id="layerEditorBackground" source="template-editor-background.fxml" />
                   <fx:include fx:id="layerEditorLayout" source="template-editor-layout.fxml" />
                   <fx:include fx:id="layerEditorCanvas" source="template-editor-canvas.fxml" />
+                  <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
                   <fx:include fx:id="layerEditorTitle" source="template-editor-title.fxml" />
                   <fx:include fx:id="layerEditorTableName" source="template-editor-tablename.fxml" />
-                  <fx:include fx:id="layerEditorWheel" source="template-editor-wheel.fxml" />
                   <fx:include fx:id="layerEditorScores" source="template-editor-scores.fxml" />
                </panes>
             </Accordion>

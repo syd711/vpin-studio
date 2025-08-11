@@ -1,7 +1,8 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
+import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -22,7 +23,7 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
 
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate) {
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
     borderSlider.setValue(cardTemplate.getBorderWidth());
     paddingSpinner.getValueFactory().setValue(cardTemplate.getPadding());
 
@@ -33,7 +34,7 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
   }
 
   @Override
-  public void initBindings(BeanBinder templateBeanBinder) {
+  public void initBindings(CardTemplateBinder templateBeanBinder) {
     templateBeanBinder.bindSlider(borderSlider, "borderWidth");
     templateBeanBinder.bindSpinner(paddingSpinner, "padding");
 
@@ -42,4 +43,10 @@ public class LayerEditorLayoutController extends LayerEditorBaseController {
     templateBeanBinder.bindSpinner(marginBottomSpinner, "marginBottom");
     templateBeanBinder.bindSpinner(marginLeftSpinner, "marginLeft");
   }
+
+  @Override
+  public void bindDragBox(PositionResizer dragBox) {
+    //positionController.bindDragBox(dragBox);
+  }
+
 }

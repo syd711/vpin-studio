@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.cards;
 
 import de.mephisto.vpin.commons.fx.cards.CardLayerText.CardLayerTextType;
 import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
@@ -23,13 +24,11 @@ public class CardGraphicsHighscore extends Pane {
   /** Whether autosize is active or not, depends on how it is embeded ? */
   private boolean resizable;
 
-  private boolean maintainAspectRatio = true;
-
-  private double zoomX = 1;
-  private double zoomY = 1;
+  private boolean maintainAspectRatio = false;
 
   private CardTemplate template;
   private CardData data;
+  private CardResolution res;
 
   CardLayerBackground backgroundLayer = new CardLayerBackground();
   CardLayerCanvas canvasLayer = new CardLayerCanvas();
@@ -38,8 +37,8 @@ public class CardGraphicsHighscore extends Pane {
   CardLayerWheel wheelLayer = new CardLayerWheel();
   CardLayerScores scoresLayer = new CardLayerScores();
 
-  List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, titleLayer, 
-      tableNameLayer, wheelLayer, scoresLayer);
+  List<CardLayer> layers = Arrays.asList(backgroundLayer, canvasLayer, wheelLayer, titleLayer, 
+      tableNameLayer, scoresLayer);
 
   /** Activate the layers to visualize the disposition */
   private boolean debug = false;
@@ -49,11 +48,6 @@ public class CardGraphicsHighscore extends Pane {
     this.resizable = resizable;
     for (CardLayer layer : layers) {
       getChildren().add((Node) layer);
-    }
-    // add a temporary debug layer
-    if (debug) {
-      debugLayer = new CardLayerDebug(layers);
-      getChildren().add(debugLayer);
     }
   }
 
@@ -70,12 +64,8 @@ public class CardGraphicsHighscore extends Pane {
     this.maintainAspectRatio = maintainAspectRatio;
   }
 
-  public double getZoomX() {
-    return zoomX;
-  }
-
-  public double getZoomY() {
-    return zoomY;
+  public CardResolution getCardResolution() {
+    return res;
   }
 
   @Override
@@ -83,8 +73,9 @@ public class CardGraphicsHighscore extends Pane {
     return resizable;
   }
 
-  public void setData(CardData data) {
+  public void setData(CardData data, CardResolution res) {
     this.data = data;
+    this.res = res;
     this.requestLayout();
   }
 
@@ -105,9 +96,9 @@ public class CardGraphicsHighscore extends Pane {
     // a WIDTH uppercase refers to template coordinate and width lowercase, refer to the image
     // then width = WIDTH * zoomX and height = HEIGHT * zoomY
 
-    this.zoomX = template.getRatioXFor(width);
+    double zoomX = res == null ? 1.0 : width / res.toWidth();
     double WIDTH = width / zoomX;
-    this.zoomY = template.getRatioYFor(height);
+    double zoomY = res == null ? 1.0 : height / res.toHeight();
     double HEIGHT = height / zoomY;
 
     if (maintainAspectRatio) {
@@ -123,21 +114,34 @@ public class CardGraphicsHighscore extends Pane {
 
     if (template.isRenderCanvas()) {
       canvasLayer.setVisible(true);
-      resizeRelocate(canvasLayer, template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), zoomX, zoomY);
+      resizeRelocate(canvasLayer, 
+        WIDTH * template.getCanvasX() / 100, HEIGHT * template.getCanvasY() / 100, 
+        WIDTH * template.getCanvasWidth() / 100, HEIGHT * template.getCanvasHeight() / 100, 
+        zoomX, zoomY);
     }
     else {
       canvasLayer.setVisible(false);
     }
 
+    if (template.isRenderWheelIcon()) {
+      wheelLayer.setVisible(true);
+
+      double wheelSize = WIDTH * template.getWheelSize() / 100;
+      resizeRelocate(wheelLayer, 
+        WIDTH * template.getWheelX() / 100, HEIGHT * template.getWheelY() / 100, 
+        wheelSize, wheelSize, zoomX, zoomY);
+    }
+    else {
+      wheelLayer.setVisible(false);
+    }
+
     // textLayers occupy the full width of the card and text is centered in it
-    int currentY = template.getMarginTop();
     if (template.isRenderTitle()) {
       titleLayer.setVisible(true);
-      int titleFontSize = template.getTitleFontSize();
-      resizeRelocate(titleLayer, template.getMarginLeft(), currentY, 
-            WIDTH - template.getMarginLeft() - template.getMarginRight(), 
-            titleFontSize, zoomX, zoomY);
-      currentY += titleFontSize + template.getPadding();
+      resizeRelocate(titleLayer, 
+        WIDTH * template.getTitleX() / 100, HEIGHT * template.getTitleY() / 100, 
+        WIDTH * template.getTitleWidth() / 100, HEIGHT * template.getTitleHeight() / 100, 
+        zoomX, zoomY);
     }
     else {
       titleLayer.setVisible(false);
@@ -145,36 +149,33 @@ public class CardGraphicsHighscore extends Pane {
 
     if (template.isRenderTableName()) {
       tableNameLayer.setVisible(true);
-      int tableFontSize = template.getTableFontSize();
-      resizeRelocate(tableNameLayer, template.getMarginLeft(), currentY, 
-            WIDTH - template.getMarginLeft() - template.getMarginRight(), 
-            tableFontSize, zoomX, zoomY);
-      currentY += tableFontSize + template.getPadding();
+      resizeRelocate(tableNameLayer, 
+        WIDTH * template.getTableX() / 100, HEIGHT * template.getTableY() / 100, 
+        WIDTH * template.getTableWidth() / 100, HEIGHT * template.getTableHeight() / 100, 
+        zoomX, zoomY);
     }
     else {
       tableNameLayer.setVisible(false);
     }
 
-    int scoreX = template.getMarginLeft();
-
-    if (template.isRenderWheelIcon()) {
-      wheelLayer.setVisible(true);
-      int wheelY = currentY + template.getTableFontSize() / 2;
-      resizeRelocate(wheelLayer, template.getMarginLeft(), wheelY, template.getWheelSize(), template.getWheelSize(), zoomX, zoomY);
-      scoreX += template.getWheelSize() + template.getWheelPadding();
-    }
-    else {
-      wheelLayer.setVisible(false);
-    }
-
     scoresLayer.setVisible(true);
-    resizeRelocate(scoresLayer, scoreX, currentY, 
-      WIDTH - scoreX - template.getMarginRight(), 
-      HEIGHT - currentY - template.getMarginBottom(), zoomX, zoomY);
-
+    resizeRelocate(scoresLayer, 
+      WIDTH * template.getScoresX() / 100, HEIGHT * template.getScoresY() / 100, 
+      WIDTH * template.getScoresWidth() / 100, HEIGHT * template.getScoresHeight() / 100, 
+      zoomX, zoomY);
 
     if (debug) {
+      // add a temporary debug layer
+      if (debugLayer == null) {
+        debugLayer = new CardLayerDebug(layers);
+        getChildren().add(debugLayer);
+      }
       resizeRelocate(debugLayer, 0, 0, WIDTH, HEIGHT, zoomX, zoomY);
+    } else {
+      if (debugLayer != null) {
+        getChildren().remove(debugLayer);
+        debugLayer = null;
+      }
     }
   }
 
@@ -215,7 +216,7 @@ public class CardGraphicsHighscore extends Pane {
     // look from top to bottom
     for (int i = layers.size() - 1; i>=0; i--) {
       CardLayer layer = layers.get(i);
-      if (layer.isSelectable() && contains(layer, x, y)) {
+      if (layer.isSelectable() && layer.isVisible() && contains(layer, x, y)) {
         return layer;
       }
     }
@@ -229,6 +230,5 @@ public class CardGraphicsHighscore extends Pane {
     double lh = layer.getHeight();
     return (x >= lx && x < lx + lw && y >= ly && y < ly + lh);
   }
-
 
 }
