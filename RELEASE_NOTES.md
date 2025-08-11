@@ -11,6 +11,8 @@
   - **VPS Updates Indicators**: You can disable VPS updates for a table now. The checkbox for this can be found in the sidebar VP spreadsheet section. Note that updates are still recorded for the table, but not visualized anymore.
 - **Table Imports**
   - The table import dialog has been improved. The file size is now shown too. Also, you can directly delete .vpx of .fp files so get rid of file corpses.
+- **Table Deletions**:
+  - The last selection of the deletion dialog is remembered now.
 - **Pause Menu**
   - Added pause menu support for stand-alone mode of VPX.
 - **Monitoring View / Screenshots**
@@ -24,4 +26,3 @@
 - Fixed "Missing Backglass or PUP Pack" validator which sometimes raised a false positive when the PUP pack detection wasn't finished.
 - Fixed ALT sound upload so that a game selection is mandatory now. This enforces the correct ROM name to be used from the game instead of guessing it from the uploading file.
 
-## VPin Mania
