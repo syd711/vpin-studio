@@ -457,7 +457,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onView(ActionEvent e) {
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
-      TableDialogs.openMediaDialog(stage, game, selectedItem);
+      TableDialogs.openMediaDialog(stage, selectedItem);
     }
   }
 

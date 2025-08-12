@@ -13,7 +13,6 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -41,7 +40,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -160,33 +158,33 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
     JFXFuture.supplyAsync(() -> {
-      if (force) {
-        client.getGameService().clearCache();
-      }
-      return client.getGameService().getVpxGamesCached();
-    })
-    .thenAcceptLater(games -> {
-        this.games = games;
-        filterGames(games);
-        tableView.setItems(data);
-        templateEditorPane.setVisible(!data.isEmpty());
-
-        tableView.refresh();
-        if (selection != null) {
-          final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
-          if (updatedGame.isPresent()) {
-            GameRepresentation gameRepresentation = updatedGame.get();
-            tableView.getSelectionModel().select(gameRepresentation);
+          if (force) {
+            client.getGameService().clearCache();
           }
-        }
-        else if (!games.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
-        setBusy(false);
-        Platform.runLater(() -> {
-          tableView.requestFocus();
+          return client.getGameService().getVpxGamesCached();
+        })
+        .thenAcceptLater(games -> {
+          this.games = games;
+          filterGames(games);
+          tableView.setItems(data);
+          templateEditorPane.setVisible(!data.isEmpty());
+
+          tableView.refresh();
+          if (selection != null) {
+            final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
+            if (updatedGame.isPresent()) {
+              GameRepresentation gameRepresentation = updatedGame.get();
+              tableView.getSelectionModel().select(gameRepresentation);
+            }
+          }
+          else if (!games.isEmpty()) {
+            tableView.getSelectionModel().select(0);
+          }
+          setBusy(false);
+          Platform.runLater(() -> {
+            tableView.requestFocus();
+          });
         });
-      });
   }
 
   private void setBusy(boolean b) {
@@ -221,8 +219,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private void onOpenDefaultPicture() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
     if (game != null) {
-      ByteArrayInputStream s = client.getBackglassServiceClient().getDefaultPicture(game);
-      MediaUtil.openMedia(s);
+      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game));
     }
   }
 
@@ -552,24 +549,24 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     if (gameRepresentation.isPresent()) {
       JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameRepresentation.get().getId()))
-      .thenAcceptLater(refreshedGame -> {
-        tableView.getSelectionModel().getSelectedItems().removeListener(this);
-        GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-        tableView.getSelectionModel().clearSelection();
+          .thenAcceptLater(refreshedGame -> {
+            tableView.getSelectionModel().getSelectedItems().removeListener(this);
+            GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+            tableView.getSelectionModel().clearSelection();
 
-        int index = data.indexOf(refreshedGame);
-        if (index != -1) {
-          data.remove(index);
-          data.add(index, refreshedGame);
-        }
-        tableView.getSelectionModel().getSelectedItems().addListener(this);
+            int index = data.indexOf(refreshedGame);
+            if (index != -1) {
+              data.remove(index);
+              data.add(index, refreshedGame);
+            }
+            tableView.getSelectionModel().getSelectedItems().addListener(this);
 
-        if (selection != null && data.contains(refreshedGame)) {
-          tableView.getSelectionModel().select(refreshedGame);
-        }
+            if (selection != null && data.contains(refreshedGame)) {
+              tableView.getSelectionModel().select(refreshedGame);
+            }
 
-        tableView.refresh();
-      });
+            tableView.refresh();
+          });
     }
   }
 

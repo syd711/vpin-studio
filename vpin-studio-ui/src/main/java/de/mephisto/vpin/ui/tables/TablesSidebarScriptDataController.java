@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
@@ -132,9 +133,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   @FXML
   private void onScreenshotView() {
     if (this.game.isPresent()) {
-      String url = client.getURL("vpx/screenshot/" + game.get().getId());
-      InputStream cachedUrlImage = client.getCachedUrlImage(url);
-      MediaUtil.openMedia(cachedUrlImage);
+      TableDialogs.openMediaDialog(Studio.stage, "Table Screenshot", Studio.client.getRestClient().getBaseUrl() + VPinStudioClientService.API + "vpx/screenshot/" + game.get().getId());
     }
   }
 

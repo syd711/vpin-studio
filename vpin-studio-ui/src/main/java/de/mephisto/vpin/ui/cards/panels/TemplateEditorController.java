@@ -1,13 +1,7 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
-import de.mephisto.vpin.commons.fx.cards.CardLayer;
-import de.mephisto.vpin.commons.fx.cards.CardLayerBackground;
-import de.mephisto.vpin.commons.fx.cards.CardLayerCanvas;
-import de.mephisto.vpin.commons.fx.cards.CardLayerScores;
-import de.mephisto.vpin.commons.fx.cards.CardLayerText;
-import de.mephisto.vpin.commons.fx.cards.CardLayerWheel;
+import de.mephisto.vpin.commons.fx.cards.*;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
@@ -27,6 +21,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
@@ -46,15 +41,16 @@ import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -104,7 +100,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private Parent waitOverlay;
 
-  /** The live preview component */
+  /**
+   * The live preview component
+   */
   private CardGraphicsHighscore cardPreview = new CardGraphicsHighscore(false);
 
   @FXML
@@ -125,7 +123,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private Label resolutionLabel;
 
-  /** the different dragboxes */
+  /**
+   * the different dragboxes
+   */
   private List<PositionResizer> dragBoxes = new ArrayList<>();
 
   public Debouncer cardTemplateSaveDebouncer = new Debouncer();
@@ -142,8 +142,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      ByteArrayInputStream s = client.getHighscoreCardsService().getHighscoreCard(gameRepresentation.get());
-      MediaUtil.openMedia(s);
+      TableDialogs.openMediaDialog(Studio.stage, "Highscore Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get()));
     }
   }
 
@@ -204,16 +203,16 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       selection.setName(s);
       selection.setId(null);
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(selection))
-      .thenAcceptLater(newTemplate -> {
-          loadTemplates();
-          this.templateCombo.setValue(newTemplate);
+          .thenAcceptLater(newTemplate -> {
+            loadTemplates();
+            this.templateCombo.setValue(newTemplate);
 
-          highscoreCardsController.refresh(gameRepresentation, templates, false);
-        })
-      .onErrorLater(ex -> {
-          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-        });
+            highscoreCardsController.refresh(gameRepresentation, templates, false);
+          })
+          .onErrorLater(ex -> {
+            LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+          });
     }
   }
 
@@ -226,17 +225,17 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       cardTemplate.setName(s);
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
-      .thenAcceptLater(updatedTemplate -> {
-          loadTemplates();
-          this.templateCombo.setValue(updatedTemplate);
+          .thenAcceptLater(updatedTemplate -> {
+            loadTemplates();
+            this.templateCombo.setValue(updatedTemplate);
 
-          assignTemplate(updatedTemplate);
-          highscoreCardsController.refresh(gameRepresentation, templates, true);
-        })
-      .onErrorLater(ex -> {
-        LOG.error("Failed to rename template: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-      });
+            assignTemplate(updatedTemplate);
+            highscoreCardsController.refresh(gameRepresentation, templates, true);
+          })
+          .onErrorLater(ex -> {
+            LOG.error("Failed to rename template: " + ex.getMessage(), ex);
+            WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+          });
     }
   }
 
@@ -275,10 +274,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private void saveAllTemplates(List<CardTemplate> items) {
     ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Save Templates", items,
-    item -> "Saving Highscore Card Templates " + item.getName() + "...", 
-    item -> {
-      client.getHighscoreCardTemplatesClient().save(item);
-    }));
+        item -> "Saving Highscore Card Templates " + item.getName() + "...",
+        item -> {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }));
     WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
   }
 
@@ -356,11 +355,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private void onGenerateClick() {
     JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
-      .thenLater(() -> refreshPreview(this.gameRepresentation, true))
-      .onErrorLater(e -> {
-        LOG.error("Failed to save template: " + e.getMessage());
-        WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
-      });
+        .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+        .onErrorLater(e -> {
+          LOG.error("Failed to save template: " + e.getMessage());
+          WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+        });
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
@@ -378,18 +377,18 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       refreshOverlayBackgroundPreview();
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
-        .thenAcceptLater(cardData -> {
-          CardResolution res = templateBeanBinder.getResolution();
+          .thenAcceptLater(cardData -> {
+            CardResolution res = templateBeanBinder.getResolution();
 
-          String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
-          cardData.addBaseUrl(baseurl);
-          cardPreview.setData(cardData, res);
+            String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
+            cardData.addBaseUrl(baseurl);
+            cardPreview.setData(cardData, res);
 
-          previewStack.getChildren().remove(waitOverlay);
-          this.openImageBtn.setDisable(false);
-          this.generateBtn.setDisable(false);
-          this.generateAllBtn.setDisable(false);
-        });
+            previewStack.getChildren().remove(waitOverlay);
+            this.openImageBtn.setDisable(false);
+            this.generateBtn.setDisable(false);
+            this.generateAllBtn.setDisable(false);
+          });
     }
   }
 
@@ -405,26 +404,26 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
 
       JFXFuture.supplyAsync(() -> client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId()))
-      .thenAcceptLater(frontendMedia -> {
-        FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
-        if (defaultMediaItem != null) {
-          assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
-          //images do not have a media player
-          if (assetMediaPlayer != null) {
-            double fitwith = stage.getWidth() - 900; // was cardPreview.getFitWidth()
-            double fitheight = stage.getHeight() - 200; // was cardPreview.getFitHeight()
-            assetMediaPlayer.setSize(fitwith, fitheight);
-            mediaPlayerControl.setVisible(true);
-          }
+          .thenAcceptLater(frontendMedia -> {
+            FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
+            if (defaultMediaItem != null) {
+              assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
+              //images do not have a media player
+              if (assetMediaPlayer != null) {
+                double fitwith = stage.getWidth() - 900; // was cardPreview.getFitWidth()
+                double fitheight = stage.getHeight() - 200; // was cardPreview.getFitHeight()
+                assetMediaPlayer.setSize(fitwith, fitheight);
+                mediaPlayerControl.setVisible(true);
+              }
 
-          if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
-            ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
-            // FIXME OLE imageViewer.scaleForTemplate(cardPreview);
-          }
+              if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
+                ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
+                // FIXME OLE imageViewer.scaleForTemplate(cardPreview);
+              }
 
-          previewOverlayPanel.setVisible(true);
-        }
-      });
+              previewOverlayPanel.setVisible(true);
+            }
+          });
     }
   }
 
@@ -441,12 +440,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private void saveCardTemplate(CardTemplate cardTemplate) {
     cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
       JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
-        .thenLater(() -> refreshPreview(this.gameRepresentation, true))
-        .onErrorLater(e -> {
-          LOG.error("Failed to save template: " + e.getMessage());
-          WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
-        });
-      }, 1000);
+          .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+          .onErrorLater(e -> {
+            LOG.error("Failed to save template: " + e.getMessage());
+            WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+          });
+    }, 1000);
   }
 
   @Override
@@ -617,7 +616,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.select();
       dragBox.addToPane(cardPreview);
       dragBoxes.add(dragBox);
-    }   
+    }
   }
 
   protected LayerEditorBaseController layerToController(CardLayer layer) {
@@ -629,8 +628,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
     else if (layer instanceof CardLayerText) {
       switch (((CardLayerText) layer).getType()) {
-      case Title: return layerEditorTitleController;
-      case TableName: return layerEditorTableNameController;
+        case Title:
+          return layerEditorTitleController;
+        case TableName:
+          return layerEditorTableNameController;
       }
     }
     else if (layer instanceof CardLayerWheel) {

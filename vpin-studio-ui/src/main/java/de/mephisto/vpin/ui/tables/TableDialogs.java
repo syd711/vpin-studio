@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -674,10 +675,23 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(Stage parent, GameRepresentation game, FrontendMediaItemRepresentation item) {
-    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", game.getGameDisplayName() + " - " + item.getScreen() + " Screen", "dialog-media-preview");
+  public static void openMediaDialog(Stage parent, FrontendMediaItemRepresentation item) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
-    controller.setData(stage, game, item);
+    controller.setData(stage, item);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(800);
+    stage.setMinHeight(600);
+
+    stage.showAndWait();
+  }
+
+  public static void openMediaDialog(@NonNull Stage parent, @NonNull String title, @NonNull String url) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", title, "dialog-media-preview");
+    MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
+    controller.setData(stage, url);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);

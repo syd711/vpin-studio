@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -76,7 +74,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + g.getGameDisplayName() + "\"?",
-        "This will re-generate the existing default background.", null, "Generate Background");
+          "This will re-generate the existing default background.", null, "Generate Background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(g.getId());
         this.refreshView(this.game);
@@ -87,8 +85,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   @FXML
   private void onDefaultBackgroundView() {
     if (game.isPresent()) {
-      ByteArrayInputStream image = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get());
-      MediaUtil.openMedia(image);
+      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", Studio.client.getBackglassServiceClient().getDefaultPictureUrl(game.get()));
     }
   }
 
@@ -114,20 +111,23 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
           Platform.runLater(() -> {
             rawDefaultBackgroundImage.setVisible(true);
             rawDefaultBackgroundImage.setImage(image);
-  
+
             if (image.getWidth() > 300 && g.isDefaultBackgroundAvailable()) {
               openDefaultPictureBtn.setDisable(false);
               resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-            } else {
+            }
+            else {
               resolutionLabel.setText("");
             }
           });
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to load default background: " + e.getMessage(), e);
         }
       }, "Default Background Loader...").start();
 
-    } else {
+    }
+    else {
       resolutionLabel.setText("");
     }
   }
