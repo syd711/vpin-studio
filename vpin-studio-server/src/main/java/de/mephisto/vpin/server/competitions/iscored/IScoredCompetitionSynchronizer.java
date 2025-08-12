@@ -25,12 +25,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class IScoredCompetitionSynchronizer implements InitializingBean, ApplicationListener<ApplicationReadyEvent>, TableStatusChangeListener, PreferenceChangedListener {
@@ -154,6 +154,13 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
         continue;
       }
 
+      IScoredGameRoom iScoredGameRoom = anyGameRoomMatch.get();
+      if (game.isGameHidden() && iScoredGameRoom.isIgnoreHidden()) {
+        deleteSubscription(iScoredSubscriptions, iScoredSubscription);
+        LOG.info("Deleted competition {} because the matching game is hidden", iScoredSubscription);
+        continue;
+      }
+
       //get game depending on if versions are enabled.
       Game gameByVpsTable = null;
       if (game.isAllVersionsEnabled()) {
@@ -188,6 +195,13 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
    */
   private void synchronizeGame(IScoredSyncModel syncModel, IScoredGame game, List<Competition> iScoredSubscriptions, List<Game> knownGames) {
     if (!game.isVpsTagged()) {
+      LOG.info("Skipped synchronization of iScored game \"{}\": Game is not VPS tagged.", game.getName());
+      return;
+    }
+
+    IScoredGameRoom iScoredGameRoom = syncModel.getiScoredGameRoom();
+    if (game.isGameHidden() && iScoredGameRoom.isIgnoreHidden()) {
+      LOG.info("Skipped synchronization of iScored game \"{}\": Game is hidden and ignored for synchronization.", game.getName());
       return;
     }
 
@@ -207,11 +221,9 @@ public class IScoredCompetitionSynchronizer implements InitializingBean, Applica
     }
 
     if (matches.isEmpty()) {
-      //no matching table available.
+      LOG.info("Skipped synchronization of iScored game \"{}\": No local game found that matches this VPS settings (all versions enabled: {}).", game.getName(), game.isAllVersionsEnabled());
       return;
     }
-
-    IScoredGameRoom iScoredGameRoom = syncModel.getiScoredGameRoom();
 
     Competition competition = new Competition();
     competition.setType(CompetitionType.ISCORED.name());
