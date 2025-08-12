@@ -24,7 +24,10 @@
 - **Drop-In Folder**
   - Added option to move the uploaded file to the trash bin.
 - **Image Previews**
-  - All image preview action button have been reworked and using the build in image preview dialog now. 
+  - All image preview action button have been reworked and using the build in image preview dialog now.
+- **iScored Subscription**
+  - Improved logging about game subscription synchronizations.
+  - Added additional "Ignore Hidden" configuration option for games rooms. This option skips the synchronization of games that are not public visible to the user.
 
 ## Bugfixes
 
