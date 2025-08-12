@@ -23,6 +23,8 @@
   - Added a summary screenshot to the screenshot bundle which contains all screens as one image, including a timestamp.
 - **Drop-In Folder**
   - Added option to move the uploaded file to the trash bin.
+- **Image Previews**
+  - All image preview action button have been reworked and using the build in image preview dialog now. 
 
 ## Bugfixes
 
