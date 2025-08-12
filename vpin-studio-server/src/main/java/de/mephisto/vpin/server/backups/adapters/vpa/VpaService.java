@@ -176,13 +176,7 @@ public class VpaService implements InitializingBean {
         if (dmdFolder.exists()) {
           List<File> archiveFiles = new ArrayList<>();
           dmdPackage.setModificationDate(new Date(dmdFolder.lastModified()));
-          File[] dmdFiles = dmdFolder.listFiles((dir, name) -> new File(dir, name).isFile());
-          if (dmdFiles != null) {
-            for (File dmdFile : dmdFiles) {
-              archiveFiles.add(dmdFile);
-              zipFile(dmdFile, "DMD/" + dmdPackage.getName() + "/", zipOut);
-            }
-          }
+          zipFile(dmdFolder, "DMD/" + dmdPackage.getName() + "/", zipOut);
           packageInfo.setDmd(BackupFileInfoFactory.create(dmdFolder, archiveFiles));
         }
       }
@@ -281,6 +275,11 @@ public class VpaService implements InitializingBean {
 
     if (game.getDirectB2SFile().exists()) {
       totalSizeExpected += game.getDirectB2SFile().length();
+    }
+
+    DMDPackage dmdPackage = dmdService.getDMDPackage(game);
+    if (dmdPackage != null && dmdPackage.isValid()) {
+      totalSizeExpected += dmdPackage.getSize();
     }
 
     return totalSizeExpected;

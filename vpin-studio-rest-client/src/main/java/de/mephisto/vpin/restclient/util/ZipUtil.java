@@ -195,13 +195,13 @@ public class ZipUtil {
   }
 
 
-  public static void zipFile(File fileToZip, String fileName, net.lingala.zip4j.ZipFile zipOut) throws IOException {
+  public static void zipFileEncrypted(File fileToZip, String fileName, net.lingala.zip4j.ZipFile zipOut) throws IOException {
     if (fileToZip.isHidden()) {
       return;
     }
 
     if (fileToZip.isDirectory()) {
-      LOG.info("Zipping " + fileToZip.getCanonicalPath());
+      LOG.info("Zipping [{}]: {}", fileToZip.getAbsolutePath(), fileName);
 
       if (!fileName.endsWith("/")) {
         fileName = fileName + "/";
@@ -216,8 +216,13 @@ public class ZipUtil {
           zipParameters.setEncryptionMethod(EncryptionMethod.AES);
           zipParameters.setFileNameInZip(fileName + childFile.getName());
           zipOut.addFile(childFile, zipParameters);
+
+          if (childFile.isDirectory()) {
+            zipFileEncrypted(childFile, fileName + childFile.getName(), zipOut);
+          }
         }
       }
+
       return;
     }
 
