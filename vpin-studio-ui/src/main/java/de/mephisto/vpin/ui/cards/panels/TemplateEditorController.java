@@ -3,7 +3,10 @@ package de.mephisto.vpin.ui.cards.panels;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.cards.CardLayer;
+import de.mephisto.vpin.commons.fx.cards.CardLayerBackground;
 import de.mephisto.vpin.commons.fx.cards.CardLayerCanvas;
+import de.mephisto.vpin.commons.fx.cards.CardLayerScores;
+import de.mephisto.vpin.commons.fx.cards.CardLayerText;
 import de.mephisto.vpin.commons.fx.cards.CardLayerWheel;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -11,6 +14,7 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -18,14 +22,12 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
 import de.mephisto.vpin.ui.util.*;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -128,7 +130,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   public Debouncer cardTemplateSaveDebouncer = new Debouncer();
 
-  private BeanBinder templateBeanBinder;
+  private CardTemplateBinder templateBeanBinder;
 
   private HighscoreCardsController highscoreCardsController;
   private AssetMediaPlayer assetMediaPlayer;
@@ -284,7 +286,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     return this.templateCombo.getValue();
   }
 
-  public BeanBinder getBeanBinder() {
+  public CardTemplateBinder getBeanBinder() {
     return templateBeanBinder;
   }
 
@@ -292,17 +294,25 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
     renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
 
+    // interrupt propety changes
+    templateBeanBinder.setPaused(true);
+
+    // set the bean  and resolution
     templateBeanBinder.setBean(cardTemplate);
 
-    templateBeanBinder.setPaused(true);
-    layerEditorOverlayController.setTemplate(cardTemplate);
-    layerEditorBackgroundController.setTemplate(cardTemplate);
-    layerEditorLayoutController.setTemplate(cardTemplate);
-    layerEditorCanvasController.setTemplate(cardTemplate);
-    layerEditorTitleController.setTemplate(cardTemplate);
-    layerEditorTableNameController.setTemplate(cardTemplate);
-    layerEditorWheelController.setTemplate(cardTemplate);
-    layerEditorScoresController.setTemplate(cardTemplate);
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    CardResolution res = cardSettings.getCardResolution();
+    templateBeanBinder.setResolution(res);
+
+    layerEditorOverlayController.setTemplate(cardTemplate, res);
+    layerEditorBackgroundController.setTemplate(cardTemplate, res);
+    layerEditorLayoutController.setTemplate(cardTemplate, res);
+    layerEditorCanvasController.setTemplate(cardTemplate, res);
+    layerEditorTitleController.setTemplate(cardTemplate, res);
+    layerEditorTableNameController.setTemplate(cardTemplate, res);
+    layerEditorWheelController.setTemplate(cardTemplate, res);
+    layerEditorScoresController.setTemplate(cardTemplate, res);
+
     templateBeanBinder.setPaused(false);
 
     cardPreview.setTemplate(cardTemplate);
@@ -359,7 +369,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     this.generateAllBtn.setDisable(true);
     mediaPlayerControl.setVisible(false);
 
-    cardPreview.setData(null);
+    cardPreview.setData(null, null);
 
     if (game.isPresent()) {
       previewStack.getChildren().remove(waitOverlay);
@@ -369,9 +379,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
         .thenAcceptLater(cardData -> {
+          CardResolution res = templateBeanBinder.getResolution();
+
           String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
           cardData.addBaseUrl(baseurl);
-          cardPreview.setData(cardData);
+          cardPreview.setData(cardData, res);
 
           previewStack.getChildren().remove(waitOverlay);
           this.openImageBtn.setDisable(false);
@@ -483,6 +495,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       // selector
       cardPreview.setOnMousePressed(e -> onDragboxEnter(e));
+      previewPanel.setOnMousePressed(e -> onDragboxExit(e));
     }
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
@@ -491,7 +504,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   private void initBindings() {
     try {
-      templateBeanBinder = new BeanBinder(this);
+      templateBeanBinder = new CardTemplateBinder(this);
       templateBeanBinder.setBean(this.getCardTemplate());
 
       layerEditorOverlayController.initialize(this);
@@ -509,17 +522,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   private void loadTemplates() {
-    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
-    HighscoreCardResolution res = cardSettings.getCardResolution();
     this.templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-    if (res != null) {
-      for (CardTemplate template : templates) {
-        if (template.getReferenceWidth() < 0 || template.getReferenceHeight() < 0) {
-          template.setReferenceWidth(res.toWidth());
-          template.setReferenceHeight(res.toHeight());
-        }
-      }
-    }
     templateCombo.setItems(FXCollections.observableList(templates));
   }
 
@@ -564,9 +567,17 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   //------------------------------------------- SELECTION ---
 
   public void onDragboxEnter(MouseEvent e) {
-      CardLayer layer = cardPreview.selectCardLayer(e.getX(), e.getY());
-      loadDragBoxes(layer);
-      e.consume();
+    CardLayer layer = cardPreview.selectCardLayer(e.getX(), e.getY());
+    loadDragBoxes(layer);
+    e.consume();
+  }
+
+  public void onDragboxExit(MouseEvent e) {
+    for (PositionResizer dragBox : dragBoxes) {
+      dragBox.removeFromPane(cardPreview);
+    }
+    dragBoxes.clear();
+    e.consume();
   }
 
   private void loadDragBoxes(CardLayer layer) {
@@ -581,26 +592,23 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       // The canvas box
       PositionResizer dragBox = new PositionResizer();
 
-      CardTemplate cardtemplate = getCardTemplate();
-      dragBox.setBounds(0, 0, cardtemplate.getReferenceWidth(), cardtemplate.getReferenceHeight());
+      CardResolution res = cardPreview.getCardResolution();
+      double zoomX = res == null ? 1.0 : cardPreview.getWidth() / res.toWidth();
+      double WIDTH = cardPreview.getWidth() / zoomX;
+      double zoomY = res == null ? 1.0 : cardPreview.getHeight() / res.toHeight();
+      double HEIGHT = cardPreview.getHeight() / zoomY;
 
       // keep the order of setters !
-      double zoomX = cardPreview.getZoomX();
-      double zoomY = cardPreview.getZoomY();
       dragBox.setZoomX(zoomX);
       dragBox.setZoomY(zoomY);
+      dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
 
       dragBox.setWidth((int) (layer.getWidth() / zoomX));
       dragBox.setHeight((int) (layer.getHeight() / zoomY));
       dragBox.setX((int) (layer.getLocX() / zoomX));
       dragBox.setY((int) (layer.getLocY() / zoomY));
 
-      if (layer instanceof CardLayerCanvas) {
-        layerEditorCanvasController.bindDragBox(dragBox);
-      }
-      else if (layer instanceof CardLayerWheel) {
-        layerEditorWheelController.bindDragBox(dragBox);
-      }
+      layerToController(layer).bindDragBox(dragBox);
 
       dragBox.selectProperty().addListener((obs, oldV, newV) -> {
         //templateBeanBinder.setPaused(newV);
@@ -610,6 +618,29 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.addToPane(cardPreview);
       dragBoxes.add(dragBox);
     }   
+  }
+
+  protected LayerEditorBaseController layerToController(CardLayer layer) {
+    if (layer instanceof CardLayerBackground) {
+      return layerEditorLayoutController;
+    }
+    else if (layer instanceof CardLayerCanvas) {
+      return layerEditorCanvasController;
+    }
+    else if (layer instanceof CardLayerText) {
+      switch (((CardLayerText) layer).getType()) {
+      case Title: return layerEditorTitleController;
+      case TableName: return layerEditorTableNameController;
+      }
+    }
+    else if (layer instanceof CardLayerWheel) {
+      return layerEditorWheelController;
+    }
+    else if (layer instanceof CardLayerScores) {
+      return layerEditorScoresController;
+    }
+    //else
+    throw new RuntimeException("CardLayer not mapped");
   }
 
   //-----------------------------------------

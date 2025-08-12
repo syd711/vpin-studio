@@ -153,6 +153,7 @@ public class Score {
     return new Score(this.createdAt, this.gameId, "???", this.player, this.rawScore, this.score, this.position);
   }
 
+  @JsonIgnore
   public boolean isDenied(DeniedScore deniedScore) {
     try {
 //      return String.valueOf(deniedScore.getScore()).equals(String.valueOf(numScore))
@@ -164,6 +165,7 @@ public class Score {
     }
   }
 
+  @JsonIgnore
   public boolean isSkipped() {
     return getPlayerInitials().equals("???") || getScore() == 0;
   }

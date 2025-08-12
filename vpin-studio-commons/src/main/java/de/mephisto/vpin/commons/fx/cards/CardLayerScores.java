@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.cards;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -36,13 +39,14 @@ public class CardLayerScores extends Canvas implements CardLayer {
     List<TextBlock> textBlocks = new ArrayList<>();
     TextBlock textBlock = new TextBlock(template);
     if (data != null) {
-      for (String score : data.getScores()) {
-        boolean external = false;
-        if (StringUtils.startsWith(score, CardData.MARKER_EXTERNAL_SCORE)) {
-          external = true;
-          score = StringUtils.removeStart(score, CardData.MARKER_EXTERNAL_SCORE);
+      if (template.isRawScore()) {
+        addCardDataScoreFromRaw(textBlock, data.getRawScore());
+      } else {
+        List<ScoreRepresentation> scores = data.getScores();
+        if (template.getMaxScores() > 0 && scores.size() > template.getMaxScores()) {
+          scores = scores.subList(0, template.getMaxScores());
         }
-        textBlock.addLine(score, external);
+        addCardDataScoreFromScoreList(textBlock, scores, template.isRenderPositions(), template.isRenderScoreDates());
       }
     }
 
@@ -227,6 +231,61 @@ public class CardLayerScores extends Canvas implements CardLayer {
 
     public boolean isEmpty() {
       return lines.isEmpty();
+    }
+  }
+
+/*
+
+    if (summary != null) {
+      cardData.setRawScore(summary.getRaw());
+      List<String> scores = template.isRawScore() ? 
+          getCardDataScoreFromRaw(summary): 
+          getCardDataScoreFromScoreList(summary, template.isRenderPositions(), template.isRenderScoreDates());
+      cardData.setScores(scores);
+    }
+
+*/
+
+  private void addCardDataScoreFromRaw(TextBlock text, String raw) {
+    String formattedRaw = ScoreFormatUtil.formatRaw(raw);
+    for (String line : formattedRaw.split("\n")) {
+      if (StringUtils.isNotEmpty(line)) {
+        text.addLine(line, false);
+      }
+    }
+  }
+
+  public void addCardDataScoreFromScoreList(TextBlock text, List<ScoreRepresentation> scores, boolean renderPositions, boolean renderDate) {
+    //calc max length of scores
+    int scoreLength = 0;
+    int initialsLength = 0;
+    int maxPosition = 0;
+    for (ScoreRepresentation score : scores) {
+      scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
+      initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
+      maxPosition = Math.max(maxPosition, score.getPosition());
+    }
+    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+
+    for (ScoreRepresentation score : scores) {
+      String renderString = "";
+      if (renderPositions) {
+        renderString += StringUtils.leftPad(Integer.toString(score.getPosition()), maxPosition > 9 ? 2 : 1);
+        renderString += ". ";
+      }
+
+      renderString += StringUtils.rightPad(score.getPlayerInitials(), initialsLength);
+      renderString += "   ";
+
+      String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
+      renderString += scoreText;
+
+      if (renderDate && score.hasPlayer() && score.getCreatedAt() != null) {
+        renderString += "  ";
+        renderString += df.format(score.getCreatedAt());
+      }
+
+      text.addLine(renderString, score.isExternal());
     }
   }
 }

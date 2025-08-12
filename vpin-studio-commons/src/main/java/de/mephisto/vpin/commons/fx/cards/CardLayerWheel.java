@@ -13,11 +13,6 @@ public class CardLayerWheel extends ImageView implements CardLayer {
   private Image cacheImage;
 
   @Override
-  public boolean isSelectable() {
-    return true;
-  }
-
-  @Override
   public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
 
     if (data != null && hasChanged(data)) {

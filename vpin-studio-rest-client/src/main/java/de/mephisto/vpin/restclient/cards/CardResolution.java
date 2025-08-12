@@ -1,10 +1,11 @@
-package de.mephisto.vpin.restclient.highscores;
+package de.mephisto.vpin.restclient.cards;
 
-public enum HighscoreCardResolution {
+
+public enum CardResolution {
   qHD, HDReady, HD;
 
 
-  public static HighscoreCardResolution valueOfString(String newValue) {
+  public static CardResolution valueOfString(String newValue) {
     switch (newValue) {
       case "960 x 540": {
         return qHD;

@@ -46,6 +46,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ColorPicker>
+
                   <Label text="Alpha Percentage:" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -59,78 +60,15 @@
                         <Insets bottom="12.0" top="6.0" />
                      </padding>
                   </Slider>
-                  <HBox spacing="12.0">
-                     <children>
-                        <VBox>
-                           <children>
-                              <Label text="Position X" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="3.0" />
-                                 </padding>
-                              </Label>
-                              <Spinner fx:id="canvasXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                           </children>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="10.0">
-                           <children>
-                              <Label text="Position Y" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="3.0" />
-                                 </padding>
-                              </Label>
-                              <Spinner fx:id="canvasYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-                  <HBox layoutX="22.0" layoutY="175.0" spacing="12.0">
-                     <children>
-                        <VBox>
-                           <children>
-                              <Label text="Width" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="3.0" />
-                                 </padding>
-                              </Label>
-                              <Spinner fx:id="canvasWidthSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                           </children>
-                        </VBox>
-                        <VBox layoutX="10.0" layoutY="10.0">
-                           <children>
-                              <Label text="Height" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <padding>
-                                    <Insets top="3.0" />
-                                 </padding>
-                              </Label>
-                              <Spinner fx:id="canvasHeightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
-                           </children>
-                        </VBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </HBox>
+
+                  <fx:include fx:id="position" source="template-subeditor-position.fxml" />
+
                   <Label text="Border Radius" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
-                     <padding>
-                        <Insets top="3.0" />
-                     </padding>
                      <VBox.margin>
-                        <Insets top="12.0" />
+                           <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
                   <Spinner fx:id="canvasBorderRadiusSpinner" editable="true" maxWidth="110.0" styleClass="widget-default" />

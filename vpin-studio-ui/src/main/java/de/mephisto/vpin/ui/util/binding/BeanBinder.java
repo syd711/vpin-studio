@@ -17,12 +17,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BeanBinder {
+public class BeanBinder<T> {
   private final static Logger LOG = LoggerFactory.getLogger(BeanBinder.class);
 
   private BindingChangedListener listener;
 
-  private Object bean;
+  private T bean;
 
   private boolean paused;
 
@@ -30,11 +30,11 @@ public class BeanBinder {
     this.listener = listener;
   }
 
-  public void setBean(Object bean) {
+  public void setBean(T bean) {
     this.bean = bean;
   }
 
-  public Object getBean() {
+  public T getBean() {
     return bean;
   }
 

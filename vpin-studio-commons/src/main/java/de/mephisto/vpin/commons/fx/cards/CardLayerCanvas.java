@@ -13,11 +13,6 @@ import javafx.scene.shape.Rectangle;
 public class CardLayerCanvas extends Rectangle implements CardLayer {
 
   @Override
-  public boolean isSelectable() {
-    return true;
-  }
-
-  @Override
   public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
 
     int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);

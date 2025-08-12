@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx;
 
 import com.jhlabs.image.GaussianFilter;
+import com.jhlabs.image.BoxBlurFilter;
 import com.jhlabs.image.GrayscaleFilter;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.FileUtils;
@@ -24,7 +25,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.Date;
 
@@ -123,10 +123,11 @@ public class ImageUtil {
   }
 
   public static BufferedImage clone(BufferedImage image) {
-    ColorModel cm = image.getColorModel();
-    boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-    WritableRaster raster = image.copyData(null);
-    return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+    BufferedImage b = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+    Graphics2D g = b.createGraphics();
+    g.drawImage(image, 0, 0, null);
+    g.dispose();
+    return b;
   }
 
   public static void setDefaultColor(GraphicsContext g, String fontColor) {
@@ -214,6 +215,11 @@ public class ImageUtil {
     return filter.filter(originalImage, null);
   }
 
+  public static BufferedImage boxBlurImage(BufferedImage originalImage, int radius) {
+    BoxBlurFilter filter = new BoxBlurFilter(2*radius, 2*radius, 1);
+    return filter.filter(originalImage, null);
+  }
+
   public static BufferedImage grayScaleImage(BufferedImage originalImage) {
     GrayscaleFilter filter = new GrayscaleFilter();
     return filter.filter(originalImage, null);
@@ -276,6 +282,130 @@ public class ImageUtil {
       if (fileOutputStream != null) {
         fileOutputStream.close();
       }
+    }
+  }
+
+  public static BufferedImage fastBlur(BufferedImage src, int radius) {
+      int width = src.getWidth();
+      int height = src.getHeight();
+
+      ColorModel destCM = src.getColorModel();
+      BufferedImage dst = new BufferedImage(destCM, destCM.createCompatibleWritableRaster(src.getWidth(), src.getHeight()), 
+        destCM.isAlphaPremultiplied(), null);
+
+      int[] srcPixels = new int[width * height];
+      int[] dstPixels = new int[width * height];
+
+      // Unmanages the image
+      src.getRGB(0, 0, width, height, srcPixels, 0, width);
+      // horizontal pass
+      blur(srcPixels, dstPixels, width, height, radius);
+      // vertical pass
+      blur(dstPixels, srcPixels, height, width, radius);
+      // the result is now stored in srcPixels due to the 2nd pass
+      dst.setRGB(0, 0, width, height, srcPixels, 0, width);
+
+      return dst;
+  }
+
+  /**
+   * <p>Blurs the source pixels into the destination pixels. The force of
+   * the blur is specified by the radius which must be greater than 0.</p>
+   * <p>The source and destination pixels arrays are expected to be in the
+   * INT_ARGB format.</p>
+   * <p>After this method is executed, dstPixels contains a transposed and
+   * filtered copy of srcPixels.</p>
+   *
+   * @param srcPixels the source pixels
+   * @param dstPixels the destination pixels
+   * @param width the width of the source picture
+   * @param height the height of the source picture
+   * @param radius the radius of the blur effect
+   */
+  private static void blur(int[] srcPixels, int[] dstPixels, int width, int height, int radius) {
+    final int windowSize = radius * 2 + 1;
+    final int radiusPlusOne = radius + 1;
+
+    int sumAlpha;
+    int sumRed;
+    int sumGreen;
+    int sumBlue;
+
+    int srcIndex = 0;
+    int dstIndex;
+    int pixel;
+
+    int[] sumLookupTable = new int[256 * windowSize];
+    for (int i = 0; i < sumLookupTable.length; i++) {
+      sumLookupTable[i] = i / windowSize;
+    }
+
+    int[] indexLookupTable = new int[radiusPlusOne];
+    if (radius < width) {
+      for (int i = 0; i < indexLookupTable.length; i++) {
+        indexLookupTable[i] = i;
+      }
+    } else {
+      for (int i = 0; i < width; i++) {
+        indexLookupTable[i] = i;
+      }
+      for (int i = width; i < indexLookupTable.length; i++) {
+        indexLookupTable[i] = width - 1;
+      }
+    }
+
+    for (int y = 0; y < height; y++) {
+      sumAlpha = sumRed = sumGreen = sumBlue = 0;
+      dstIndex = y;
+
+      pixel = srcPixels[srcIndex];
+      sumAlpha += radiusPlusOne * ((pixel >> 24) & 0xFF);
+      sumRed   += radiusPlusOne * ((pixel >> 16) & 0xFF);
+      sumGreen += radiusPlusOne * ((pixel >>  8) & 0xFF);
+      sumBlue  += radiusPlusOne * ( pixel        & 0xFF);
+
+      for (int i = 1; i <= radius; i++) {
+        pixel = srcPixels[srcIndex + indexLookupTable[i]];
+        sumAlpha += (pixel >> 24) & 0xFF;
+        sumRed   += (pixel >> 16) & 0xFF;
+        sumGreen += (pixel >>  8) & 0xFF;
+        sumBlue  +=  pixel        & 0xFF;
+      }
+
+      for (int x = 0; x < width; x++) {
+        dstPixels[dstIndex] = sumLookupTable[sumAlpha] << 24 |
+                              sumLookupTable[sumRed]   << 16 |
+                              sumLookupTable[sumGreen] <<  8 |
+                              sumLookupTable[sumBlue];
+        dstIndex += height;
+
+        int nextPixelIndex = x + radiusPlusOne;
+        if (nextPixelIndex >= width) {
+          nextPixelIndex = width - 1;
+        }
+
+        int previousPixelIndex = x - radius;
+        if (previousPixelIndex < 0) {
+          previousPixelIndex = 0;
+        }
+
+        int nextPixel = srcPixels[srcIndex + nextPixelIndex];
+        int previousPixel = srcPixels[srcIndex + previousPixelIndex];
+
+        sumAlpha += (nextPixel     >> 24) & 0xFF;
+        sumAlpha -= (previousPixel >> 24) & 0xFF;
+
+        sumRed += (nextPixel     >> 16) & 0xFF;
+        sumRed -= (previousPixel >> 16) & 0xFF;
+
+        sumGreen += (nextPixel     >> 8) & 0xFF;
+        sumGreen -= (previousPixel >> 8) & 0xFF;
+
+        sumBlue += nextPixel & 0xFF;
+        sumBlue -= previousPixel & 0xFF;
+      }
+
+      srcIndex += width;
     }
   }
 }

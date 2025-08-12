@@ -2,9 +2,11 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
+import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.util.*;
 
@@ -18,8 +20,16 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   private Label titleFontLabel;
 
   @FXML
+  private CheckBox titleUseDefaultColor;
+  @FXML
+  private VBox titleColorBox;
+  @FXML
+  private ColorPicker titleFontColorSelector;
+
+
+  @FXML
   private void onFontTitleSelect() {
-    BeanBinder templateBeanBinder = templateEditorController.getBeanBinder();
+    CardTemplateBinder templateBeanBinder = templateEditorController.getBeanBinder();
     templateBeanBinder.openFontSelector("title", titleFontLabel);
   }
 
@@ -37,17 +47,35 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   }
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate) {
-    BeanBinder.setIconVisibility(settingsPane, cardTemplate.isRenderTitle());
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isRenderTitle());
 
     titleText.setText(cardTemplate.getTitle());
-    BeanBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
+    CardTemplateBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
+    
+    titleUseDefaultColor.setSelected(cardTemplate.isRawScore());
+    CardTemplateBinder.setColorPickerValue(titleFontColorSelector, cardTemplate, "titleColor");
+
+    positionController.setTemplate("title", cardTemplate, res);
   }
 
   @Override
-  public void initBindings(BeanBinder templateBeanBinder) {
+  public void initBindings(CardTemplateBinder templateBeanBinder) {
     templateBeanBinder.bindVisibilityIcon(settingsPane, "renderTitle");
 
     templateBeanBinder.bindTextField(titleText, "title");
+
+    templateBeanBinder.bindCheckbox(titleUseDefaultColor, "titleUseDefaultColor");
+    titleUseDefaultColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      titleColorBox.setDisable(t1);
+    });
+    templateBeanBinder.bindColorPicker(titleFontColorSelector, "titleColor");
+
+    positionController.initBindings("title", templateBeanBinder);
+  }
+
+  @Override
+  public void bindDragBox(PositionResizer dragBox) {
+    positionController.bindDragBox(dragBox);
   }
 }

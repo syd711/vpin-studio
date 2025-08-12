@@ -1,8 +1,9 @@
 package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -17,14 +18,14 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
 
 
   @Override
-  public void setTemplate(CardTemplate cardTemplate) {
-    BeanBinder.setIconVisibility(settingsPane, cardTemplate.isOverlayMode());
+  public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
+    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isOverlayMode());
 
     // background
     screensComboBox.setDisable(!cardTemplate.isOverlayMode());
   }
 
-  public void initBindings(BeanBinder templateBeanBinder) {
+  public void initBindings(CardTemplateBinder templateBeanBinder) {
     templateBeanBinder.bindVisibilityIcon(settingsPane, "overlayMode");
 
     List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
@@ -41,4 +42,9 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
 
     templateBeanBinder.bindComboBox(screensComboBox, "overlayScreen");
   }
+
+  @Override
+  public void bindDragBox(PositionResizer dragBox) {
+  }
+
 }

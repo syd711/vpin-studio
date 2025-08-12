@@ -4,10 +4,10 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
+import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -25,8 +25,10 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.commons.fx.ImageUtil;
 import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
@@ -37,11 +39,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -58,6 +61,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
 
   @Autowired
   private DefaultPictureService directB2SService;
+
+  @Autowired
+  private VpsService vpsService;
 
   @Autowired
   private FrontendService frontendService;
@@ -139,16 +145,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
    */
   public synchronized boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
-      // enrich template with reference
-      if (template.getReferenceWidth() < 0 || template.getReferenceHeight() < 0) {
-        HighscoreCardResolution res = cardSettings.getCardResolution();
-        if (res != null) {
-          template.setReferenceWidth(res.toWidth());
-          template.setReferenceHeight(res.toHeight());
-          // FIXME should that modification be stored back ? 
-        }
-      }
-
       ScoreSummary summary = getScoreSummary(game, template, generateSampleCard);
       Platform.runLater(() -> {
         Thread.currentThread().setName("FX Card Generator Thread for " + game.getGameDisplayName());
@@ -270,14 +266,15 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
   }
 
   private BufferedImage generateCard(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+    CardResolution res = cardSettings.getCardResolution();
+
     CardGraphicsHighscore cardGraphics = new CardGraphicsHighscore(false);
     cardGraphics.setTemplate(template);
 
     CardData data = getCardData(game, summary, template);
     data.addBaseUrl("http://localhost:" + systemService.getServerPort() + "/" + VPinStudioServer.API_SEGMENT);
-    cardGraphics.setData(data);
+    cardGraphics.setData(data, res);
     // resize the cards to the needed resolution    
-    HighscoreCardResolution res = cardSettings.getCardResolution();
     cardGraphics.resize(res.toWidth(), res.toHeight());
 
     // then export image
@@ -290,76 +287,41 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return getCardData(game, summary, template);
   }
 
-  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) {
+  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
     CardData cardData = new CardData();
-    
+
+    VpsTable vpsTable = null;
+    String vpsTableId = game.getExtTableId();
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      vpsTable = vpsService.getTableById(vpsTableId);
+    }
+    if (vpsTable != null) {
+      cardData.setVpsName(vpsTable.getName());
+      cardData.setManufacturer(vpsTable.getManufacturer());
+      cardData.setYear(vpsTable.getYear() > 0 ? vpsTable.getYear() : null);
+      cardData.setVpsTableId(vpsTableId);
+    }
+
+    cardData.setGameId(game.getId());
     cardData.setGameDisplayName(game.getGameDisplayName());
+    cardData.setGameName(game.getGameName());
 
     cardData.setWheelUrl("media/" + game.getId() + "/" + VPinScreen.Wheel);
     cardData.setBackgroundUrl("assets/defaultbackground/" + game.getId());
-
+    
     if (summary != null) {
       cardData.setRawScore(summary.getRaw());
-      List<String> scores = template.isRawScore() ? 
-          getCardDataScoreFromRaw(summary): 
-          getCardDataScoreFromScoreList(summary, template.isRenderPositions(), template.isRenderScoreDates());
+
+      ObjectMapper mapper = new ObjectMapper();
+      ArrayList<ScoreRepresentation> scores = new ArrayList<>();
+      for (Score score : summary.getScores()) {
+        String s = mapper.writeValueAsString(score);
+        scores.add(mapper.readValue(s, ScoreRepresentation.class));
+      }
       cardData.setScores(scores);
     }
 
     return cardData;
-  }
-
-  private List<String> getCardDataScoreFromRaw(ScoreSummary summary) {
-    String raw = ScoreFormatUtil.formatRaw(summary.getRaw());
-    List<String> cds = new ArrayList<>();
-    for (String line : raw.split("\n")) {
-      if (StringUtils.isNotEmpty(line)) {
-        cds.add(line);
-      }
-    }
-    return cds;
-  }
-
-  public List<String> getCardDataScoreFromScoreList(ScoreSummary summary, boolean renderPositions, boolean renderDate) {
-    List<String> cds = new ArrayList<>();
-
-    //calc max length of scores
-    int scoreLength = 0;
-    int initialsLength = 0;
-    int maxPosition = 0;
-    for (Score score : summary.getScores()) {
-      scoreLength = Math.max(scoreLength, score.getFormattedScore().length());
-      initialsLength = Math.max(initialsLength, score.getPlayerInitials().length());
-      maxPosition = Math.max(maxPosition, score.getPosition());
-    }
-    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
-
-    for (Score score : summary.getScores()) {
-      String renderString = "";
-      if (renderPositions) {
-        renderString += StringUtils.leftPad(Integer.toString(score.getPosition()), maxPosition > 9 ? 2 : 1);
-        renderString += ". ";
-      }
-
-      renderString += StringUtils.rightPad(score.getPlayerInitials(), initialsLength);
-      renderString += "   ";
-
-      String scoreText = StringUtils.leftPad(score.getFormattedScore(), scoreLength);
-      renderString += scoreText;
-
-      if (renderDate && score.getPlayer() != null && score.getCreatedAt() != null) {
-        renderString += "  ";
-        renderString += df.format(score.getCreatedAt());
-      }
-
-      // add a marker for external/friend scores
-      if (score.isExternal()) {
-        renderString = CardData.MARKER_EXTERNAL_SCORE + renderString;
-      }
-
-      cds.add(renderString);
-    }
-    return cds;
   }
 
   private File getCardSampleFile() {

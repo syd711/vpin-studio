@@ -4,53 +4,87 @@ import de.mephisto.vpin.restclient.JsonSettings;
 
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class CardTemplate extends JsonSettings {
   public final static String DEFAULT = "Default";
 
   private Long id;
   private String name = DEFAULT;
 
-  /** This dimensions are used as a reference to calculate the ratio between the template dimensions and the displayed dimensions 
-   * Used to calculate ratioX = displayWidth / referenceWidth or 1 if referenceWidth < 0
-  */
-  private int referenceWidth = -1;
-  private int referenceHeight = -1;
+  private Integer version = null;
 
+  private double backgroundX = 0;
+  private double backgroundY = 0;
+  private double backgroundWidth = 100.0;
+  private double backgroundHeight = 100.0;
+  private double zoom = 1.0;
+  private boolean useDmdPositions = false;
+  private boolean fullScreen = true;
 
   private int alphaBlack = 33;
   private int alphaWhite = 1;
-  private String background = "Old Bumbers";
+  private int blur = 6;
+  private boolean grayScale = false;
+
   private int borderWidth = 1;
+  private String borderColor = "#FFFFFF";
+
+  /**@deprecated no more used */
   private int padding = 10;
+
+  private double scoresX = 30;
+  private double scoresY = 40;
+  private double scoresWidth = 70;
+  private double scoresHeight = 60;
+
   private int marginTop = 10;
   private int marginRight = 10;
   private int marginBottom = 10;
   private int marginLeft = 10;
+
+  private double wheelX = 0.0;
+  private double wheelY = 50.0;
+  private double wheelSize = 30.0;
+  /**@deprecated no more used */
   private int wheelPadding = 32;
+
   private int rowMargin = 5;
-  private int wheelSize = 200;
-  private int blur = 6;
-  private String fontColor = "#FFFFFF";
-  private String friendsFontColor = "#CCCCCC";
-  private boolean grayScale = false;
   private boolean rawScore = true;
   private int maxScores = 0;
+
+  private String fontColor = "#FFFFFF";
+  private String friendsFontColor = "#CCCCCC";
 
   private String scoreFontName = "Monospaced";
   private int scoreFontSize = 90;
   private String scoreFontStyle = "Regular";
+
+  private boolean tableUseVpsName = false;
+  private boolean tableRenderManufacturer = true;
+  private boolean tableRenderYear = true;
   private String tableFontName = "Impact";
   private int tableFontSize = 72;
   private String tableFontStyle = "Regular";
+  private boolean tableUseDefaultColor = true;
+  private String tableColor;
+  private double tableX = 20.0;
+  private double tableY = 20.0;
+  private double tableWidth = 100.0;
+  private double tableHeight = 20.0;
+
+  private String title = "Highscores";
   private String titleFontName = "Cambria";
   private int titleFontSize = 120;
   private String titleFontStyle = "Regular";
-  private String title = "Highscores";
+  private boolean titleUseDefaultColor = true;
+  private String titleColor;
+  private double titleX = 0;
+  private double titleY = 0;
+  private double titleWidth = 100;
+  private double titleHeight = 20;
 
-  private boolean useDirectB2S = true;
-
+  // Background images
+  private boolean useDefaultBackground = true;
+  private String background = "Old Bumbers";
   private boolean transparentBackground = false;
   private int transparentPercentage = 0;
 
@@ -59,10 +93,10 @@ public class CardTemplate extends JsonSettings {
   private boolean renderWheelIcon = true;
   private boolean renderCanvas = false;
 
-  private int canvasX = 100;
-  private int canvasY = 100;
-  private int canvasWidth = 100;
-  private int canvasHeight = 100;
+  private double canvasX = 10;
+  private double canvasY = 10;
+  private double canvasWidth = 90;
+  private double canvasHeight = 90;
   private String canvasBackground;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
@@ -73,6 +107,73 @@ public class CardTemplate extends JsonSettings {
 
   private boolean overlayMode = false;
   private String overlayScreen = null;
+
+
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
+  //----------------------------------------
+
+  public double getBackgroundX() {
+    return backgroundX;
+  }
+
+  public void setBackgroundX(double backgroundX) {
+    this.backgroundX = backgroundX;
+  }
+
+  public double getBackgroundY() {
+    return backgroundY;
+  }
+
+  public void setBackgroundY(double backgroundY) {
+    this.backgroundY = backgroundY;
+  }
+
+  public double getBackgroundWidth() {
+    return backgroundWidth;
+  }
+
+  public void setBackgroundWidth(double backgroundWidth) {
+    this.backgroundWidth = backgroundWidth;
+  }
+
+  public double getBackgroundHeight() {
+    return backgroundHeight;
+  }
+
+  public void setBackgroundHeight(double backgroundHeight) {
+    this.backgroundHeight = backgroundHeight;
+  }
+
+  public double getZoom() {
+    return zoom;
+  }
+
+  public void setZoom(double zoom) {
+    this.zoom = zoom;
+  }
+
+  public boolean isUseDmdPositions() {
+    return useDmdPositions;
+  }
+
+  public void setUseDmdPositions(boolean useDmdPositions) {
+    this.useDmdPositions = useDmdPositions;
+  }
+
+  public boolean isFullScreen() {
+    return fullScreen;
+  }
+
+  public void setFullScreen(boolean fullScreen) {
+    this.fullScreen = fullScreen;
+  }
 
   public String getFriendsFontColor() {
     return friendsFontColor;
@@ -130,35 +231,35 @@ public class CardTemplate extends JsonSettings {
     this.renderCanvas = renderCanvas;
   }
 
-  public int getCanvasX() {
+  public double getCanvasX() {
     return canvasX;
   }
 
-  public void setCanvasX(int canvasX) {
+  public void setCanvasX(double canvasX) {
     this.canvasX = canvasX;
   }
 
-  public int getCanvasY() {
+  public double getCanvasY() {
     return canvasY;
   }
 
-  public void setCanvasY(int canvasY) {
+  public void setCanvasY(double canvasY) {
     this.canvasY = canvasY;
   }
 
-  public int getCanvasWidth() {
+  public double getCanvasWidth() {
     return canvasWidth;
   }
 
-  public void setCanvasWidth(int canvasWidth) {
+  public void setCanvasWidth(double canvasWidth) {
     this.canvasWidth = canvasWidth;
   }
 
-  public int getCanvasHeight() {
+  public double getCanvasHeight() {
     return canvasHeight;
   }
 
-  public void setCanvasHeight(int canvasHeight) {
+  public void setCanvasHeight(double canvasHeight) {
     this.canvasHeight = canvasHeight;
   }
 
@@ -194,12 +295,60 @@ public class CardTemplate extends JsonSettings {
     this.renderScoreDates = renderscoreDate;
   }
 
-  public int getWheelSize() {
+  public double getWheelX() {
+    return wheelX;
+  }
+
+  public void setWheelX(double wheelX) {
+    this.wheelX = wheelX;
+  }
+
+  public double getWheelY() {
+    return wheelY;
+  }
+
+  public void setWheelY(double wheelY) {
+    this.wheelY = wheelY;
+  }
+
+  public double getWheelSize() {
     return wheelSize;
   }
 
-  public void setWheelSize(int wheelSize) {
+  public void setWheelSize(double wheelSize) {
     this.wheelSize = wheelSize;
+  }
+  
+  public double getScoresX() {
+    return scoresX;
+  }
+
+  public void setScoresX(double scoreX) {
+    this.scoresX = scoreX;
+  }
+
+  public double getScoresY() {
+    return scoresY;
+  }
+
+  public void setScoresY(double scoreY) {
+    this.scoresY = scoreY;
+  }
+
+  public double getScoresWidth() {
+    return scoresWidth;
+  }
+
+  public void setScoresWidth(double scoreWidth) {
+    this.scoresWidth = scoreWidth;
+  }
+
+  public double getScoresHeight() {
+    return scoresHeight;
+  }
+
+  public void setScoresHeight(double scoreHeight) {
+    this.scoresHeight = scoreHeight;
   }
 
   public int getMarginTop() {
@@ -322,23 +471,7 @@ public class CardTemplate extends JsonSettings {
     this.borderWidth = borderWidth;
   }
 
-  public int getPadding() {
-    return padding;
-  }
-
-  public void setPadding(int padding) {
-    this.padding = padding;
-  }
-
-  public int getWheelPadding() {
-    return wheelPadding;
-  }
-
-  public void setWheelPadding(int wheelPadding) {
-    this.wheelPadding = wheelPadding;
-  }
-
-  public int getRowMargin() {
+ public int getRowMargin() {
     return rowMargin;
   }
 
@@ -425,6 +558,78 @@ public class CardTemplate extends JsonSettings {
   public void setTableFontStyle(String tableFontStyle) {
     this.tableFontStyle = tableFontStyle;
   }
+  
+  public boolean isTableUseVpsName() {
+    return tableUseVpsName;
+  }
+
+  public void setTableUseVpsName(boolean tableUseVpsName) {
+    this.tableUseVpsName = tableUseVpsName;
+  }
+
+  public boolean isTableRenderYear() {
+    return tableRenderYear;
+  }
+
+  public void setTableRenderYear(boolean tableRenderYear) {
+    this.tableRenderYear = tableRenderYear;
+  }
+
+  public boolean isTableRenderManufacturer() {
+    return tableRenderManufacturer;
+  }
+
+  public void setTableRenderManufacturer(boolean tableRenderManufacturer) {
+    this.tableRenderManufacturer = tableRenderManufacturer;
+  }
+
+  public boolean isTableUseDefaultColor() {
+    return tableUseDefaultColor;
+  }
+
+  public void setTableUseDefaultColor(boolean tableUseDefaultColor) {
+    this.tableUseDefaultColor = tableUseDefaultColor;
+  }
+
+  public String getTableColor() {
+    return tableColor;
+  }
+
+  public void setTableColor(String tableColor) {
+    this.tableColor = tableColor;
+  }
+
+  public double getTableX() {
+    return tableX;
+  }
+
+  public void setTableX(double tableX) {
+    this.tableX = tableX;
+  }
+
+  public double getTableY() {
+    return tableY;
+  }
+
+  public void setTableY(double tableY) {
+    this.tableY = tableY;
+  }
+
+  public double getTableWidth() {
+    return tableWidth;
+  }
+
+  public void setTableWidth(double tableWidth) {
+    this.tableWidth = tableWidth;
+  }
+
+  public double getTableHeight() {
+    return tableHeight;
+  }
+
+  public void setTableHeight(double tableHeight) {
+    this.tableHeight = tableHeight;
+  }
 
   public String getTitleFontName() {
     return titleFontName;
@@ -458,38 +663,68 @@ public class CardTemplate extends JsonSettings {
     this.title = title;
   }
 
-  public boolean isUseDirectB2S() {
-    return useDirectB2S;
+  public boolean isTitleUseDefaultColor() {
+    return titleUseDefaultColor;
   }
 
-  public void setUseDirectB2S(boolean useDirectB2S) {
-    this.useDirectB2S = useDirectB2S;
+  public void setTitleUseDefaultColor(boolean titleUseDefaultColor) {
+    this.titleUseDefaultColor = titleUseDefaultColor;
   }
 
-  public int getReferenceWidth() {
-    return referenceWidth;
+  public String getTitleColor() {
+    return titleColor;
   }
 
-  public void setReferenceWidth(int referenceWidth) {
-    this.referenceWidth = referenceWidth;
+  public void setTitleColor(String titleColor) {
+    this.titleColor = titleColor;
   }
 
-  public int getReferenceHeight() {
-    return referenceHeight;
+  public double getTitleX() {
+    return titleX;
   }
 
-  public void setReferenceHeight(int referenceHeight) {
-    this.referenceHeight = referenceHeight;
+  public void setTitleX(double titleX) {
+    this.titleX = titleX;
   }
 
-  @JsonIgnore
-  public double getRatioXFor(double width) {
-    return referenceWidth < 0 ? 1 : width / referenceWidth;
+  public double getTitleY() {
+    return titleY;
   }
 
-  @JsonIgnore
-  public double getRatioYFor(double height) {
-    return referenceHeight < 0 ? 1 : height / referenceHeight;
+  public void setTitleY(double titleY) {
+    this.titleY = titleY;
+  }
+
+  public double getTitleWidth() {
+    return titleWidth;
+  }
+
+  public void setTitleWidth(double titleWidth) {
+    this.titleWidth = titleWidth;
+  }
+
+  public double getTitleHeight() {
+    return titleHeight;
+  }
+
+  public void setTitleHeight(double titleHeight) {
+    this.titleHeight = titleHeight;
+  }
+
+  public String getBorderColor() {
+    return borderColor;
+  }
+
+  public void setBorderColor(String borderColor) {
+    this.borderColor = borderColor;
+  }
+
+  public boolean isUseDefaultBackground() {
+    return useDefaultBackground;
+  }
+
+  public void setUseDefaultBackground(boolean useDefaultBackground) {
+    this.useDefaultBackground = useDefaultBackground;
   }
 
   @Override
@@ -513,6 +748,49 @@ public class CardTemplate extends JsonSettings {
   @Override
   public String getSettingsName() {
     return null;
+  }
+
+  //-------------------------------------- deprecated but kept to parse old template ---
+
+  /**
+   * @deprecated fo not use anymore
+   */
+  public int getPadding() {
+    return padding;
+  }
+  /**
+   * @deprecated fo not use anymore
+   */
+  public void setPadding(int padding) {
+    this.padding = padding;
+  }
+
+ 
+
+  /**
+   * @deprecated use getWheelRightPadding())
+   */
+  public int getWheelPadding() {
+    return wheelPadding;
+  }
+  /**
+   * @deprecated use setWheelRightPadding())
+   */
+  public void setWheelPadding(int wheelPadding) {
+    this.wheelPadding = wheelPadding;
+  }
+
+  /**
+   * @deprecated use isUseDefault())
+   */
+  public boolean isUseDirectB2S() {
+    return isUseDefaultBackground();
+  }
+  /**
+   * @deprecated use setUseDefault()
+   */
+  public void setUseDirectB2S(boolean useDirectB2S) {
+    setUseDefaultBackground(useDirectB2S);
   }
 
 }

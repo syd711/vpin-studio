@@ -21,6 +21,32 @@
          <content>
             <VBox styleClass="accordion-container" >
               <children>
+
+                <HBox spacing="12.0">
+                  <children>
+                      <VBox spacing="3.0">
+                        <children>
+                            <Label text="Position X" textFill="WHITE">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                            </Label>
+                            <Spinner fx:id="wheelImageXSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                      <VBox spacing="3.0">
+                        <children>
+                            <Label text="Position Y" textFill="WHITE">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                            </Label>
+                            <Spinner fx:id="wheelImageYSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                        </children>
+                      </VBox>
+                  </children>
+                </HBox>
+
                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                     <children>
                       <Label text="Wheel Size" textFill="WHITE">
@@ -38,40 +64,15 @@
                       </Label>
                     </children>
                     <VBox.margin>
-                      <Insets top="6.0" />
+                      <Insets top="12.0" />
                     </VBox.margin>
                 </HBox>
                 <Spinner fx:id="wheelSizeSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" >
                     <VBox.margin>
-                      <Insets top="6.0" />
+                      <Insets top="3.0" />
                     </VBox.margin>
                 </Spinner>
 
-                <HBox alignment="CENTER_LEFT" spacing="6.0">
-                    <children>
-                      <Label text="Wheel Image Padding:" textFill="WHITE">
-                          <font>
-                            <Font size="14.0" />
-                          </font>
-                      </Label>
-                      <Label>
-                          <graphic>
-                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                          </graphic>
-                          <tooltip>
-                            <Tooltip text="The horizontal gutter space between the wheel and the scores text." />
-                          </tooltip>
-                      </Label>
-                    </children>
-                    <VBox.margin>
-                      <Insets top="12.0" />
-                    </VBox.margin>
-                </HBox>
-                <Spinner fx:id="wheelImageSpinner" editable="true" prefWidth="70.0" styleClass="widget-default">
-                    <VBox.margin>
-                      <Insets top="6.0" />
-                    </VBox.margin>
-                </Spinner>
 
               </children>
               <padding>
