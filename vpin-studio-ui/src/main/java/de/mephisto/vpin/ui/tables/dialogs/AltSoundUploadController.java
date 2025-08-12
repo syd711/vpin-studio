@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -33,6 +34,14 @@ public class AltSoundUploadController extends BaseUploadController {
 
   public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis uploaderAnalysis, Runnable finalizer) {
     this.game = game;
+    if (this.game != null) {
+      this.romLabel.setText(this.game.getRom());
+      this.tableLabel.setText(this.game.getGameDisplayName());
+
+      GameEmulatorRepresentation gameEmulator = Studio.client.getEmulatorService().getGameEmulator(this.game.getEmulatorId());
+      this.emulatorCombo.setValue(gameEmulator);
+    }
+
     super.setFile(stage, file, uploaderAnalysis, finalizer);
   }
 
