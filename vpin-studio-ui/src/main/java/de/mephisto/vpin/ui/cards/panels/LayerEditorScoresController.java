@@ -100,4 +100,8 @@ public class LayerEditorScoresController extends LayerEditorBaseController {
   public void bindDragBox(PositionResizer dragBox) {
     positionController.bindDragBox(dragBox);
   }
+  @Override
+  public void unbindDragBox(PositionResizer dragBox) {
+    positionController.unbindDragBox(dragBox);
+  }
 }

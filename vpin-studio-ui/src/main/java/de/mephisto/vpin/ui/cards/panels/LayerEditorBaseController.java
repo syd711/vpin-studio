@@ -37,15 +37,10 @@ public abstract class LayerEditorBaseController {
 
   public abstract void bindDragBox(PositionResizer dragBox);
 
+  public abstract void unbindDragBox(PositionResizer dragBox);
+
+
   //---------------------------------------- Common Utilities ---
 
-  protected void bindSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
-                             ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {
-    IntegerSpinnerValueFactory factory = (IntegerSpinnerValueFactory) spinner.getValueFactory();
-    spinner.setEditable(true);
-    factory.valueProperty().bindBidirectional(property);
-    factory.minProperty().bind(minProperty);
-    factory.maxProperty().bind(maxProperty);
-  }
 
 }

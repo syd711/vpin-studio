@@ -53,7 +53,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
     titleText.setText(cardTemplate.getTitle());
     CardTemplateBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
     
-    titleUseDefaultColor.setSelected(cardTemplate.isRawScore());
+    titleUseDefaultColor.setSelected(cardTemplate.isTitleUseDefaultColor());
     CardTemplateBinder.setColorPickerValue(titleFontColorSelector, cardTemplate, "titleColor");
 
     positionController.setTemplate("title", cardTemplate, res);
@@ -77,5 +77,9 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
   @Override
   public void bindDragBox(PositionResizer dragBox) {
     positionController.bindDragBox(dragBox);
+  }
+  @Override
+  public void unbindDragBox(PositionResizer dragBox) {
+    positionController.unbindDragBox(dragBox);
   }
 }

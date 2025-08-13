@@ -574,17 +574,19 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     if (id > 0 && models != null) {
       // When a game is updated or added, the associated backglass in table + view should be updated
       // If it is a new game, this backglass sis discovered and added into the table as a new row
-      DirectB2S b2s = client.getBackglassServiceClient().getDirectB2S(id);
-      if (b2s != null) {
-        reloadItem(b2s);
-      }
-      else {
-        // detection of deletion for a table
-        Optional<DirectB2SModel> model = models.stream().filter(m -> m.getGameId() == id).findFirst();
-        if (model.isPresent()) {    
-          models.remove(model.get());
+      JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2S(id))
+      .thenAcceptLater(b2s -> {
+        if (b2s != null) {
+          reloadItem(b2s);
         }
-      }
+        else {
+          // detection of deletion for a table
+          Optional<DirectB2SModel> model = models.stream().filter(m -> m.getGameId() == id).findFirst();
+          if (model.isPresent()) {    
+            models.remove(model.get());
+          }
+        }
+      });
     }
   }
 

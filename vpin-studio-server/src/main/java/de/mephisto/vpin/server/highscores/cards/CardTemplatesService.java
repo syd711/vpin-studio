@@ -111,12 +111,12 @@ public class CardTemplatesService {
   //-------------------------------------------------- Template version management
 
   private CardTemplate checkVersion(CardTemplate template) {
-
     Integer version = template.getVersion();
     if (version == null || version == 1) {
       template = upgradeFromVersion1(template);
     }
     template.setVersion(CURRENT_VERSION);
+
     return template;
   }
 
@@ -125,21 +125,37 @@ public class CardTemplatesService {
     CardSettings cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
     CardResolution res = cardSettings.getCardResolution();
     if (res != null) {
-      int width = res.toWidth();
-      int height = res.toHeight();
-
-      template.setWheelSize(template.getWheelSize() / width);
+      double width = res.toWidth();
+      double height = res.toHeight();
 
       template.setCanvasX(template.getCanvasX() / width);
       template.setCanvasY(template.getCanvasY() / height);
       template.setCanvasWidth(template.getCanvasWidth() / width);
       template.setCanvasHeight(template.getCanvasHeight() / height);
 
-      // padding = 10;
-      // marginTop = 10;
-      // marginRight = 10;
-      // marginBottom = 10;
-      // marginLeft = 10;
+      double currentY = template.getMarginTop();
+      template.setTitleY(currentY / height);
+      template.setTitleHeight(template.getTitleFontSize() / height);
+
+      currentY += template.getTitleFontSize() + template.getPadding();
+      template.setTableY(currentY / height);
+      template.setTableHeight(template.getTableFontSize() / height);
+
+      currentY += template.getTableFontSize() + template.getPadding();
+      template.setWheelY(currentY / height);
+      template.setScoresY(currentY / height);
+      template.setScoresHeight((height - currentY - template.getMarginBottom()) / height);
+
+
+      double currentX = template.getMarginLeft();
+      template.setWheelX(currentX / width);
+      if (template.isRenderWheelIcon()) {
+        currentX += template.getWheelSize() + template.getPadding();
+      }
+      template.setWheelSize(template.getWheelSize() / width);
+
+      template.setScoresX(currentX / width);
+      template.setScoresWidth((width - currentX - template.getMarginRight()) / width);
     }
     return template;
   }
