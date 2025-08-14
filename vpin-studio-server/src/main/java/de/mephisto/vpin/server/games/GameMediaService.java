@@ -405,9 +405,16 @@ public class GameMediaService {
         }
         else {
           //we have read the table details, including the mapping from the VPA file.
-          TableDetails tableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
-          tableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
-          frontendService.saveTableDetails(game.getId(), tableDetails);
+          TableDetails newTableDetails = getTableDetails(game.getId());
+          TableDetails backedUpTableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
+          backedUpTableDetails.setGameName(newTableDetails.getGameName());
+          backedUpTableDetails.setGameFileName(newTableDetails.getGameFileName());
+          backedUpTableDetails.setDateAdded(new Date());
+          backedUpTableDetails.setTourneyId(null);
+          backedUpTableDetails.setWebGameId(null);
+          backedUpTableDetails.setLastPlayed(null);
+          backedUpTableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
+          frontendService.saveTableDetails(game.getId(), backedUpTableDetails);
         }
 
 
