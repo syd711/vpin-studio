@@ -119,7 +119,9 @@ public class BackupUploadController implements Initializable, DialogController {
   }
 
   public void setFile(File file) {
-    fileNameField.setText(file.getAbsolutePath());
+    if(file != null) {
+      fileNameField.setText(file.getAbsolutePath());
+    }
   }
 
   @Override
