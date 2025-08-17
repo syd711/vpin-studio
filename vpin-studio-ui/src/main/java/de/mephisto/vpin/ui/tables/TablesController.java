@@ -49,7 +49,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -352,7 +354,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
   }
 
-
   private void refreshTabSelection(Number oldValue, Number newValue) {
     int oldTab = getSelectedTab(oldValue.intValue());
     StudioFXController controller = getController(oldTab);
@@ -533,6 +534,20 @@ public class TablesController implements Initializable, StudioFXController, Stud
           this.tableOverviewController.reloadItem(game);
           if (recorderController != null) {
             this.recorderController.reloadItem(game);
+          }
+        }
+        else {
+          Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+          if (first.isPresent()) {
+            this.tableOverviewController.getTableView().getItems().remove(first.get());
+            this.tableOverviewController.getTableView().refresh();
+          }
+          if (recorderController != null) {
+            first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+            if (first.isPresent()) {
+              this.recorderController.getTableView().getItems().remove(first.get());
+              this.recorderController.getTableView().refresh();
+            }
           }
         }
       });
