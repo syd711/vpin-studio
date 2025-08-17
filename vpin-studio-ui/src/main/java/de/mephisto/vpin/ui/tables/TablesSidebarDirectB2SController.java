@@ -19,7 +19,6 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SStartAsExe;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.util.JFXHelper;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -35,8 +34,6 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -271,12 +268,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   @FXML
   private void onOpenDirectB2SBackground() {
     if (tableData != null) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
-        MediaUtil.openMedia(in);
-      }
-      catch (IOException ioe) {
-        LOG.error("Cannot open media for game " + game.get().getId(), ioe);
-      }
+      String url = client.getBackglassServiceClient().getDirectB2sBackgroundUrl(tableData.getEmulatorId(), tableData.getFilename());
+      TableDialogs.openMediaDialog(Studio.stage, "Backglass", url);
     }
   }
 

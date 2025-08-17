@@ -35,8 +35,8 @@ public class PupPackInstallerJob implements Job {
 
   @Override
   public void execute(JobDescriptor result) {
-    LOG.info("Starting PUP pack installation of '" + pupTmpArchive.getAbsolutePath() + "' to '" + pupVideosFolder.getAbsolutePath() + "', using archive root folder + '" + pupPackFolderInArchive + "' and ROM '" + rom + "'");
     File pupFolder = new File(pupVideosFolder, rom);
+    LOG.info("Starting PUP pack installation of '" + pupTmpArchive.getAbsolutePath() + "' to '" + pupFolder.getAbsolutePath() + "', using archive root folder + '" + pupPackFolderInArchive + "' and ROM '" + rom + "'");
     PackageUtil.unpackTargetFolder(pupTmpArchive, pupFolder, pupPackFolderInArchive, Collections.emptyList(), new UnzipChangeListener() {
       @Override
       public boolean unzipping(String name, int index, int total) {

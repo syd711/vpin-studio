@@ -345,7 +345,7 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE+2);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE + 2);
 
     String nameLower = playlist.getName().toLowerCase();
     String iconLiteral = "mdi2v-view-list";
@@ -930,6 +930,14 @@ public class WidgetFactory {
     return addMediaItemToBorderPane(client, mediaItem, parent, null, null);
   }
 
+  public static AssetMediaPlayer addMediaItemToBorderPane(String url, BorderPane parent) {
+    Image image = new Image(url);
+    ImageViewer imageViewer = new ImageViewer(url, image);
+    parent.setCenter(imageViewer);
+    parent.setUserData(imageViewer);
+    return null;
+  }
+
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener, MediaOptions mediaOptions) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
@@ -940,7 +948,7 @@ public class WidgetFactory {
     boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
-    url += "/" +  URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+    url += "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 

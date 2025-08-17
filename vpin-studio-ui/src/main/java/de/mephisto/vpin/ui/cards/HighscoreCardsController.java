@@ -13,7 +13,6 @@ import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,7 +31,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -177,8 +175,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   private void onOpenDefaultPicture() {
     GameRepresentation game = getSelection();
     if (game != null) {
-      ByteArrayInputStream s = client.getBackglassServiceClient().getDefaultPicture(game);
-      MediaUtil.openMedia(s);
+      TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game));
     }
   }
 

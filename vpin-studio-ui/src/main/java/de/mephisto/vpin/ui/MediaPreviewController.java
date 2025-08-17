@@ -7,7 +7,6 @@ import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaOptions;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +47,28 @@ public class MediaPreviewController implements Initializable, DialogController, 
 
   }
 
-  public void setData(Stage dialogStage, GameRepresentation game, FrontendMediaItemRepresentation item) {
+  public void setData(Stage dialogStage, String url) {
+    this.dialogStage = dialogStage;
+
+    MediaOptions mediaOptions = new MediaOptions();
+    mediaOptions.setAutoRotate(false);
+    assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(url, mediaView);
+    Platform.runLater(() -> {
+      if (assetMediaPlayer == null) {
+        ImageViewer imageViewer = (ImageViewer) mediaView.getUserData();
+        imageViewer.getImageView().setFitWidth(dialogStage.getWidth() * 1 - MARGIN);
+        imageViewer.getImageView().setFitHeight(dialogStage.getHeight() * 1 - MARGIN);
+      }
+      else {
+        assetMediaPlayer.setMediaViewSize(dialogStage.getWidth() * 1 - MARGIN, dialogStage.getHeight() * 1 - MARGIN);
+      }
+    });
+
+    dialogStage.widthProperty().addListener(this);
+    dialogStage.heightProperty().addListener(this);
+  }
+
+  public void setData(Stage dialogStage, FrontendMediaItemRepresentation item) {
     this.dialogStage = dialogStage;
 
     MediaOptions mediaOptions = new MediaOptions();

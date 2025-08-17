@@ -81,7 +81,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
           }
         }
         try {
-          ZipUtil.zipFile(fileToZip, fileName, zipOut);
+          ZipUtil.zipFileEncrypted(fileToZip, fileName, zipOut);
         }
         catch (IOException ioe) {
           LOG.error("Cannot add in zip " + fileName, ioe);
@@ -99,7 +99,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter {
 
       result.setStatus("Packing " + manifestFile.getAbsolutePath());
       result.setProgress(1);
-      ZipUtil.zipFile(manifestFile, BackupPackageInfo.ARCHIVE_FILENAME, zipOut);
+      ZipUtil.zipFileEncrypted(manifestFile, BackupPackageInfo.ARCHIVE_FILENAME, zipOut);
       manifestFile.delete();
     }
     catch (Exception e) {
