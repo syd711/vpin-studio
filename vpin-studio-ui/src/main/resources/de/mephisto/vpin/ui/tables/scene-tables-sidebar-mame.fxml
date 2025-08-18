@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMameController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarMameController">
     <center>
       <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -159,7 +159,7 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.2000732421875" minWidth="10.0" prefWidth="115.2000732421875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="227.9999267578125" minWidth="10.0" prefWidth="227.9999267578125" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.60009765625" minWidth="10.0" prefWidth="215.0" />
                           </columnConstraints>
@@ -178,7 +178,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy VPS Table URL" />
+                                          <Tooltip text="Copy ROM alias" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -224,7 +224,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy VPS Table URL" />
+                                          <Tooltip text="Copy ROM name" />
                                        </tooltip>
                                     </Button>
                                     <Label>
