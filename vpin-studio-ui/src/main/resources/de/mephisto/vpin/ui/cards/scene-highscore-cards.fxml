@@ -23,7 +23,7 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <center>
-      <SplitPane fx:id="splitPane" dividerPositions="0.5">
+      <SplitPane fx:id="splitPane" dividerPositions="0.3">
          <items>
             <BorderPane prefWidth="440.0">
                <center>
