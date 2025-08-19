@@ -149,7 +149,7 @@
                            </VBox.margin>
                         </Label>
                         <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
-                        <Label layoutX="10.0" layoutY="10.0" text="Table Alias Settings" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="10.0" text="Table ROM Settings" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -159,13 +159,14 @@
                         </Label>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.2000732421875" minWidth="10.0" prefWidth="115.2000732421875" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="227.9999267578125" minWidth="10.0" prefWidth="227.9999267578125" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.60009765625" minWidth="10.0" prefWidth="215.0" />
                           </columnConstraints>
                           <rowConstraints>
                               <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -178,7 +179,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy VPS Table URL" />
+                                          <Tooltip text="Copy ROM alias" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -224,7 +225,7 @@
                                           <Font size="14.0" />
                                        </font>
                                        <tooltip>
-                                          <Tooltip text="Copy VPS Table URL" />
+                                          <Tooltip text="Copy ROM name" />
                                        </tooltip>
                                     </Button>
                                     <Label>
@@ -240,6 +241,16 @@
                                     </Label>
                                  </children>
                               </HBox>
+                              <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="NVOffset:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="nvOffsetLabel" layoutX="130.0" layoutY="45.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
                            </children>
                            <VBox.margin>
                               <Insets top="6.0" />
