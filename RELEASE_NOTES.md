@@ -11,6 +11,7 @@
   - **Added optional column "Tutorials"** also to the regular table overview. This way, users can easier see if there will be a tutorial available in the pause menu.
   - **Improved ROM column**: The tooltip of a ROM displays additional alias information now. In addition to that, you can use the table search field to filter games by their ROM name or alias.
   - **Improved VPin MAME section**: In addition to the alias mapping, the section shows also the tables which share the same ROM.
+  - **NVOffset Management** For the tables that are shown with the same ROM usage, you can edit the nvoffset now too. The script is immediately updated, so you don't even need to open the script editor anymore for this.
   - **Responsive Toolbar**: Since a lot of users use the Studio with a full HD monitor a second toolbar row has been added so that all toolbar actions are visible all time.
   - **VPS Updates Indicators**: You can disable VPS updates for a table now. The checkbox for this can be found in the sidebar VP spreadsheet section. Note that updates are still recorded for the table, but not visualized anymore.
 - **Table Imports**
@@ -29,6 +30,7 @@
   - Improved logging about game subscription synchronizations.
   - Added additional "Ignore Hidden" configuration option for games rooms. This option skips the synchronization of games that are not public visible to the user.
 
+
 ## Bugfixes
 
 - Fixed maintenance video, so it is now always displayed on the primary screen.
@@ -36,4 +38,4 @@
 - Fixed MAME settings status for some tables (e.g. Addams Family) caused by upper case ROM names.
 - Fixed "Missing Backglass or PUP Pack" validator which sometimes raised a false positive when the PUP pack detection wasn't finished.
 - Fixed ALT sound upload so that a game selection is mandatory now. This enforces the correct ROM name to be used from the game instead of guessing it from the uploading file.
-
+- Fixed initial selection of the backglass manager: When you press the backglass button from the backglass sidebar in the tables overview, the backglass manager tab initializes with the correct selection again.
