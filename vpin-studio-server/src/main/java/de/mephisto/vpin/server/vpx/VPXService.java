@@ -6,9 +6,9 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.slf4j.Logger;
@@ -25,8 +25,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -291,6 +294,35 @@ public class VPXService implements InitializingBean {
       LOG.error("No game found reading checksum");
     }
     return null;
+  }
+
+  public boolean setNvOffset(Game game, int nvOffset, boolean keepVbsFiles) throws Exception {
+    if (game.isVpxGame() && game.getNvOffset() != nvOffset) {
+      String script = VPXUtil.exportVBS(game.getGameFile(), true);
+      List<String> lines = Arrays.stream(script.split("\n")).filter(l -> !l.contains("NVOffset(")).collect(Collectors.toList());
+
+      boolean replaced = false;
+      StringBuilder builder = new StringBuilder();
+      for (String line : lines) {
+        if (line.matches("^\\s*\\.GameName\\s*=\\s*cGameName")) {
+          builder.append(line);
+          builder.append("\tNVOffset ($nvOffset)");
+          builder.append("\n");
+
+          replaced = true;
+        }
+        else {
+          builder.append(line);
+          builder.append("\n");
+        }
+      }
+
+      if (replaced) {
+        VPXUtil.importVBS(game.getGameFile(), builder.toString(), keepVbsFiles);
+        return true;
+      }
+    }
+    return false;
   }
 
   //------------------------------------------

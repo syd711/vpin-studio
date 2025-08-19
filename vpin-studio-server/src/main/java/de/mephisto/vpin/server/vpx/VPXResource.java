@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameCachingService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -51,6 +52,9 @@ public class VPXResource {
   @Autowired
   private UniversalUploadService universalUploadService;
 
+  @Autowired
+  private GameCachingService gameCachingService;
+
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
     return vpxService.getScript(gameService.getGame(id));
@@ -85,6 +89,20 @@ public class VPXResource {
     String source = (String) values.get("source");
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     return vpxService.importVBS(gameService.getGame(id), source, serverSettings.isKeepVbsFiles());
+  }
+
+  @PutMapping("/nvoffset/{gameId}")
+  public int setNvOffset(@PathVariable("gameId") int gameId, @RequestBody Map<String, Object> values) throws Exception {
+    int nvOffset = (Integer) values.get("nvOffset");
+    Game game = gameService.getGame(gameId);
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    boolean replaced = vpxService.setNvOffset(game, nvOffset, serverSettings.isKeepVbsFiles());
+    if (replaced) {
+      gameCachingService.scanGame(game.getId());
+      gameCachingService.invalidate(game.getId());
+      return gameCachingService.getGame(game.getId()).getNvOffset();
+    }
+    return -1;
   }
 
 
