@@ -28,11 +28,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,9 +47,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.Studio.Features;
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.Studio.*;
 
 /**
  *
@@ -392,8 +392,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       @Override
       protected CheckStyle isChecked(DirectB2SModel model) {
         return !model.hasDmd() ? CheckStyle.NONE :
-          model.isFullDmd() ? CheckStyle.CHECKED : 
-            model.hasWrongFullDMDRatioError()? CheckStyle.ERROR : CheckStyle.WARNING;
+            model.isFullDmd() ? CheckStyle.CHECKED :
+                model.hasWrongFullDMDRatioError() ? CheckStyle.ERROR : CheckStyle.WARNING;
       }
 
       @Override
@@ -501,7 +501,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
             // Pass Game to sidebar so that it also updates the Game section
             backglassManagerSideBarController.setGame(game, model.isGameAvailable());
           });
-      
+
       int validationCode = model.getValidationCode();
       if (validationCode > 0) {
         setValidationVisible(true);
@@ -512,7 +512,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       else {
         setValidationVisible(false);
       }
-
     }
   }
 
@@ -522,7 +521,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
 
       // at calling time, the list may not have been populated so register a listener in that case
-      if (models != null) {
+      if (models != null && !models.isEmpty()) {
         selectGame(gameBaseName);
       }
       else {
@@ -581,7 +580,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       else {
         // detection of deletion for a table
         Optional<DirectB2SModel> model = models.stream().filter(m -> m.getGameId() == id).findFirst();
-        if (model.isPresent()) {    
+        if (model.isPresent()) {
           models.remove(model.get());
         }
       }
@@ -640,8 +639,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         }
         tableView.getSelectionModel().select(selectedIndex);
         selection = getSelectedModel();
-        nbCheck ++;
-      } 
+        nbCheck++;
+      }
       while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
       return selection.getGameId();
     }
@@ -660,8 +659,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         tableView.getSelectionModel().select(selectedIndex);
         selection = getSelectedModel();
         //this.
-        nbCheck ++;
-      } 
+        nbCheck++;
+      }
       while (selection.getGameId() <= 0 && nbCheck < tableView.getItems().size());
       return selection.getGameId();
     }

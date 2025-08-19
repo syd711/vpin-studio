@@ -186,6 +186,40 @@ public class TablesSidebarMameController implements Initializable {
   }
 
   @FXML
+  private void onNvOffset(int gameId) {
+    GameRepresentation game = client.getGameService().getGame(gameId);
+    int nvOffset = game.getNvOffset();
+    if (nvOffset == 0) {
+      nvOffset = 1;
+    }
+    String value = WidgetFactory.showInputDialog(Studio.stage, "NVOffset", "Enter the new NVOffset value for the table.", null, null, String.valueOf(nvOffset));
+    if (value != null) {
+      try {
+        nvOffset = Integer.parseInt(value);
+      }
+      catch (NumberFormatException e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid NVOffset value.", "Please input a numeric value.");
+        onNvOffset(gameId);
+        return;
+      }
+
+      try {
+        int nvOffset1 = client.getVpxService().setNvOffset(gameId, nvOffset);
+        if (nvOffset1 == -1) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "The NVOffset value has not been set. The script analysis failed.", "Use the script editor to set the value manually.");
+        }
+        else {
+          EventManager.getInstance().notifyTableChange(gameId, game.getRom(), null);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to set nvoffset value: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Setting NVOffset failed: " + e.getMessage(), "Use the script editor to set the value manually.");
+      }
+    }
+  }
+
+  @FXML
   private void onVPMAlias() {
     try {
       if (game.isPresent()) {
