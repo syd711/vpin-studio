@@ -19,8 +19,8 @@ import javafx.scene.shape.StrokeType;
 
 public class PositionResizer {
 
-  private static int handleSize = 6, handleSize2 = handleSize / 2;
-  private static int minSize = 8;
+  private int handleSize = 6, handleSize2 = handleSize / 2;
+  private int minSize = 8;
 
   /** The color of the box */
   private ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.LIME);
@@ -35,8 +35,11 @@ public class PositionResizer {
   private int moveY = 0;
   private boolean resizeCentered = false;
 
-  private int _areaMinX = -1, areaMaxX = -1, areaMinY = -1, areaMaxY = -1;
-  private boolean acceptOutsidePart = true;
+  private int areaMinX = -1, areaMaxX = -1, areaMinY = -1, areaMaxY = -1;
+  private boolean acceptOutsideClicked = false;
+
+  private boolean acceptOutsidePart = false;
+  private int minInside = 0;
 
   private ObjectProperty<Integer>  xProperty, xMinProperty, xMaxProperty;
   private ObjectProperty<Integer>  yProperty, yMinProperty, yMaxProperty;
@@ -67,12 +70,8 @@ public class PositionResizer {
     xMinProperty = new SimpleObjectProperty<Integer>(0);
     xMaxProperty = new SimpleObjectProperty<Integer>(0);
     xProperty.addListener((v, o, x) -> {
-      if (areaMaxX >= 0) {
-        if (acceptOutsidePart) {
-
-        } else {
-          widthMaxProperty.set(areaMaxX - x.intValue());
-        }
+      if (areaMaxX >= 0 && !acceptOutsideClicked) {
+        widthMaxProperty.set(Math.max(areaMaxX - x.intValue(), minSize));
       }
       srFill.setX(x.intValue() * zoomX);
       srBnd.setX(x.intValue() * zoomX);
@@ -86,8 +85,8 @@ public class PositionResizer {
     yMinProperty = new SimpleObjectProperty<Integer>(0);
     yMaxProperty = new SimpleObjectProperty<Integer>(0);
     yProperty.addListener((v, o, y) -> {
-      if (areaMaxY >= 0 && !acceptOutsidePart) {
-        heightMaxProperty.set(areaMaxY - y.intValue());
+      if (areaMaxY >= 0 && !acceptOutsideClicked) {
+        heightMaxProperty.set(Math.max(areaMaxY - y.intValue(), minSize));
       }
       srFill.setY(y.intValue() * zoomY);
       srBnd.setY(y.intValue() * zoomY);
@@ -101,19 +100,15 @@ public class PositionResizer {
     widthMinProperty = new SimpleObjectProperty<Integer>(0);
     widthMaxProperty = new SimpleObjectProperty<Integer>(0);
     widthProperty.addListener((v, o, width) -> {
-      if (!processing) {
-        processing = true;
-        if (areaMaxX >= 0 && xProperty.get() + width.intValue() > areaMaxX) {
-          width = areaMaxX - xProperty.get();
-        }
-        double newwidth = checkWidth(width.intValue());
-        widthProperty.set((int) newwidth);
-        ensureHeightRatio(newwidth);
-        processing = false;
+        if (areaMaxX >= 0 && !acceptOutsideClicked) {
+        xMaxProperty.set(Math.max(areaMaxX - width.intValue(), xProperty.get()));
       }
-      if (areaMaxX >= 0) {
-        xMaxProperty.set(areaMaxX - width.intValue());
+      if (areaMinX >= 0 && acceptOutsideClicked) {
+        xMinProperty.set(areaMinX - width.intValue() + minInside);
       }
+
+      ensureHeightRatio(width);
+
       srFill.setWidth(width.intValue() * zoomX);
       srBnd.setWidth(width.intValue() * zoomX);
       for (int i = 1; i <= 2; i++) {
@@ -126,19 +121,15 @@ public class PositionResizer {
     heightMinProperty = new SimpleObjectProperty<Integer>(0);
     heightMaxProperty = new SimpleObjectProperty<Integer>(0);
     heightProperty.addListener((v, o, height) -> {
-      if (!processing) {
-        processing = true;
-        if (areaMaxY >= 0 && yProperty.get() + height.intValue() > areaMaxY) {
-          height = areaMaxY - yProperty.get();
-        }
-        double newheight = checkHeight(height.intValue());
-        heightProperty.set((int) newheight);
-        ensureWidthRatio(newheight);
-        processing = false;
+      if (areaMaxY >= 0 && !acceptOutsideClicked) {
+        yMaxProperty.set(Math.max(areaMaxY - height.intValue(), yProperty.get()));
       }
-      if (areaMaxY >= 0) {
-        yMaxProperty.set(areaMaxY - height.intValue());
+      if (areaMinY >= 0 && acceptOutsideClicked) {
+        yMinProperty.set(areaMinY - height.intValue() + minInside);
       }
+
+      ensureWidthRatio(height);
+
       srFill.setHeight(height.intValue() * zoomY);
       srBnd.setHeight(height.intValue() * zoomY);
       for (int i = 0; i <= 2; i++) {
@@ -148,8 +139,6 @@ public class PositionResizer {
       }
     });
   }
-
-  boolean processing = false;
 
   public void addToPane(Pane pane) {
     pane.getChildren().add(srFill);
@@ -161,10 +150,6 @@ public class PositionResizer {
     pane.getChildren().remove(srFill);
     pane.getChildren().remove(overlay);
     pane.removeEventFilter(MouseEvent.MOUSE_PRESSED, eventHandler);
-  }
-
-  private boolean isResizeCentered(int move) {
-    return /*move == 0 ||*/ resizeCentered;
   }
 
   //-------------------
@@ -226,12 +211,12 @@ public class PositionResizer {
   }
 
   protected void setInternalX(int newX) {
-    int bufferX = acceptOutsidePart ? widthProperty.get() - minSize : 0;
-    if (_areaMinX >= 0 && newX + bufferX < _areaMinX) {
-      newX = _areaMinX - bufferX;
+    int bufferX = acceptOutsideClicked ? widthProperty.get() - minInside : 0;
+    if (areaMinX >= 0 && newX + bufferX < areaMinX) {
+      newX = areaMinX - bufferX;
     }
-    if (areaMaxX >= 0 && newX + widthProperty.get() > areaMaxX) {
-      newX = areaMaxX - widthProperty.get();
+    if (areaMaxX >= 0 && newX + widthProperty.get() - bufferX > areaMaxX) {
+      newX = areaMaxX - widthProperty.get() + bufferX;
     }
     xProperty.set(newX);
   }
@@ -244,14 +229,15 @@ public class PositionResizer {
     setInternalY(newY);
   }
 
-  protected void setInternalY(int y) {
-    if (areaMinY >= 0 && y < areaMinY) {
-      y = areaMinY;
+  protected void setInternalY(int newY) {
+    int bufferY = acceptOutsideClicked ? heightProperty.get() - minInside : 0;
+    if (areaMinY >= 0 && newY + bufferY < areaMinY) {
+      newY = areaMinY - bufferY;
     }
-    if (areaMaxY >= 0 && y + heightProperty.get() > areaMaxY) {
-      y = areaMaxY - heightProperty.get();
+    if (areaMaxY >= 0 && newY + heightProperty.get() - bufferY > areaMaxY) {
+      newY = areaMaxY - heightProperty.get() + bufferY;
     }
-    yProperty.set(y);
+    yProperty.set(newY);
   }
 
   public int getWidth() {
@@ -273,7 +259,11 @@ public class PositionResizer {
   public void setAspectRatio(Double aspectRatio) {
     this.aspectRatio = aspectRatio;
     if (aspectRatio != null && isSelected()) {
-      ensureWidthRatio(heightProperty.get());
+      double newHeight = heightProperty.get();
+      if (newHeight * aspectRatio > widthMaxProperty.get()) {
+        newHeight = widthMaxProperty.get() / aspectRatio;
+      }
+      ensureWidthRatio(newHeight);
     }
   }
 
@@ -302,6 +292,13 @@ public class PositionResizer {
     return new BoundingBox(getX(), getY(), getWidth(), getHeight());
   }
 
+  public void setAcceptOutsidePart(boolean acceptOutsidePart, int minInside) {
+    this.acceptOutsidePart = acceptOutsidePart;
+    this.minInside = acceptOutsidePart ? minInside : 0;
+    recalculateMinMax();
+  }
+
+
   public Object getUserData() {
     return userData;
   }
@@ -320,22 +317,22 @@ public class PositionResizer {
   }
 
   public void setBounds(int minX, int minY, int maxX, int maxY) {
-    _areaMinX = minX;
-    areaMinY = minY;
-    areaMaxX = maxX;
-    areaMaxY = maxY;
-    //this.acceptOutsidePart = acceptOutsidePart;
+    this.areaMinX = minX;
+    this.areaMinY = minY;
+    this.areaMaxX = maxX;
+    this.areaMaxY = maxY;
+    recalculateMinMax();
+  }
 
-    int bufferX = acceptOutsidePart ? widthProperty.get() - minSize : 0;
-
+  private void recalculateMinMax() {
     // set max then min to avoid error
-    xMaxProperty.set(areaMaxX - widthProperty.get() < _areaMinX - bufferX ? _areaMinX - bufferX : areaMaxX - widthProperty.get());
-    xMinProperty.set(_areaMinX - bufferX);
-    yMaxProperty.set(areaMaxY - heightProperty.get() < areaMinY ? areaMinY : areaMaxY - heightProperty.get());
-    yMinProperty.set(areaMinY);
-    widthMaxProperty.set(areaMaxX - xProperty.get() < minSize ? minSize : areaMaxX - xProperty.get());
+    xMaxProperty.set(acceptOutsideClicked ? areaMaxX - minInside : Math.max(areaMaxX - widthProperty.get(), areaMinX));
+    xMinProperty.set(acceptOutsideClicked ? areaMinX - widthProperty.get() + minInside : areaMinX);
+    yMaxProperty.set(acceptOutsideClicked ? areaMaxY - minInside : Math.max(areaMaxY - heightProperty.get(), areaMinY + minInside));
+    yMinProperty.set(acceptOutsideClicked ? areaMinY - heightProperty.get() + minInside : areaMinY);
+    widthMaxProperty.set(acceptOutsideClicked ? 2 * 2000 : Math.max(areaMaxX - xProperty.get(), minSize));
     widthMinProperty.set(minSize);
-    heightMaxProperty.set(areaMaxY - yProperty.get() < minSize ? minSize : areaMaxY - yProperty.get());
+    heightMaxProperty.set(acceptOutsideClicked ? 2 * 2000 : Math.max(areaMaxY - yProperty.get(), minSize));
     heightMinProperty.set(minSize);
   }
 
@@ -347,11 +344,11 @@ public class PositionResizer {
       switch (code) {
         case LEFT:
           if (event.isControlDown() || event.isShiftDown()) {
-            moveFrom(-1, 0, event.isShiftDown());
+            moveFrom(-1, 0, event.isShiftDown(), event.isControlDown());
             moveXPos(xProperty.get() - 1);
           }
           else if (event.isAltDown()) {
-            moveFrom(+1, 0, false);
+            moveFrom(+1, 0, false, event.isControlDown());
             moveXPos(xProperty.get() + widthProperty.get() - 1);
           }
           else {
@@ -360,11 +357,11 @@ public class PositionResizer {
           return true;
         case RIGHT:
           if (event.isControlDown() || event.isShiftDown()) {
-            moveFrom(-1, 0, event.isShiftDown());
+            moveFrom(-1, 0, event.isShiftDown(), event.isControlDown());
             moveXPos(xProperty.get() + 1);
           }
           else if (event.isAltDown()) {
-            moveFrom(+1, 0, false);
+            moveFrom(+1, 0, false, event.isControlDown());
             moveXPos(xProperty.get() + widthProperty.get() + 1);
           }
           else {
@@ -373,11 +370,11 @@ public class PositionResizer {
           return true;
         case UP:
           if (event.isControlDown() || event.isShiftDown()) {
-            moveFrom(0, -1, event.isShiftDown());
+            moveFrom(0, -1, event.isShiftDown(), event.isControlDown());
             moveYPos(yProperty.get() - 1);
           }
           else if (event.isAltDown()) {
-            moveFrom(0, +1, false);
+            moveFrom(0, +1, false, event.isControlDown());
             moveYPos(yProperty.get() + heightProperty.get() - 1);
           }
           else {
@@ -386,11 +383,11 @@ public class PositionResizer {
           return true;
         case DOWN:
           if (event.isControlDown() || event.isShiftDown()) {
-            moveFrom(0, -1, event.isShiftDown());
+            moveFrom(0, -1, event.isShiftDown(), event.isControlDown());
             moveYPos(yProperty.get() + 1);
           }
           else if (event.isAltDown()) {
-            moveFrom(0, +1, false);
+            moveFrom(0, +1, false, event.isControlDown());
             moveYPos(yProperty.get() + heightProperty.get() + 1);
           }
           else {
@@ -506,7 +503,7 @@ public class PositionResizer {
     for (int i = 0; i <= 2; i++) {
       for (int j = 0; j <= 2; j++) {
         if (source == handles[i][j]) {
-          moveFrom(i-1, j-1, me.isShiftDown());
+          moveFrom(i-1, j-1, me.isShiftDown(), me.isControlDown());
         }
       }
     }
@@ -517,6 +514,14 @@ public class PositionResizer {
     int x = (int) ((me.getX() + sX) / zoomX);
     int y = (int) ((me.getY() + sY) / zoomY);
     Object source = me.getSource();
+  
+    boolean oldValue = acceptOutsideClicked;
+    this.acceptOutsideClicked = acceptOutsidePart && (me.isControlDown()
+      || xProperty.get() < areaMinX || xProperty.get() + widthProperty.get() > areaMaxX
+      || yProperty.get() < areaMinY || yProperty.get() + heightProperty.get() > areaMaxY);
+    if (oldValue != acceptOutsideClicked) {
+      recalculateMinMax();
+    }
 
     if (source == srBnd) {
       relocateInArea(x, y);
@@ -557,47 +562,91 @@ public class PositionResizer {
 
   //-----------------------------------------
 
-  private void moveFrom(int moveX, int moveY, boolean resizeCentered) {
+  private void moveFrom(int moveX, int moveY, boolean shiftDown, boolean controlDown) {
     this.moveX = moveX;
     this.moveY = moveY;
-    this.resizeCentered = resizeCentered;
+    this.resizeCentered = shiftDown;
+
+    if (acceptOutsidePart && moveX < 0 && xProperty.get() < areaMinX) {
+      this.acceptOutsideClicked = true;
+    }
+    else if (acceptOutsidePart && moveX > 0 && xProperty.get() + widthProperty.get() > areaMaxX) {
+      this.acceptOutsideClicked = true;
+    }
+    else if (acceptOutsidePart && moveY < 0 && yProperty.get() < areaMinY) {
+      this.acceptOutsideClicked = true;
+    }
+    else if (acceptOutsidePart && moveY > 0 && yProperty.get() + heightProperty.get() > areaMaxX) {
+      this.acceptOutsideClicked = true;
+    }
+    else {
+      this.acceptOutsideClicked = acceptOutsidePart && (controlDown
+        || xProperty.get() < areaMinX || xProperty.get() + widthProperty.get() > areaMaxX
+        || yProperty.get() < areaMinY || yProperty.get() + heightProperty.get() > areaMaxY);
+    }
 
     this.sWidth = widthProperty.get();
     this.sHeight = aspectRatio != null ? (int) (sWidth / aspectRatio) : heightProperty.get();
     this.centerX = xProperty.get() + sWidth / 2;
     this.centerY = yProperty.get() + sHeight / 2;
+
+    recalculateMinMax();
   }
 
   private void moveXPos(int newX) {
     int x1 = 0, x2 = 0;
-    boolean resizeCentered = isResizeCentered(aspectRatio != null ? moveY : -1);
 
-    int bufferX = acceptOutsidePart ? widthProperty.get() - minSize : 0;
+    int bufferX = acceptOutsideClicked ? widthProperty.get() - minInside : 0;
 
     if (moveX < 0) {
       x1 = newX; 
-      if (_areaMinX >= 0 && x1 < _areaMinX - bufferX) {
-        x1 = _areaMinX - bufferX;
+      if (areaMinX >= 0 && !acceptOutsideClicked && x1 < areaMinX - bufferX) {
+        x1 = areaMinX - bufferX;
       }
-      x2 = resizeCentered ? centerX + (centerX - x1) : xProperty.get() + widthProperty.get();
-      if (resizeCentered && areaMaxX >= 0 && x2 > areaMaxX) {
-        x1 = centerX + (centerX - areaMaxX);
-        x2 = areaMaxX;
+      if (areaMaxX >= 0 && x1 + minInside > areaMaxX) {
+        x1 = areaMaxX - minInside;
+      }
+
+      if (resizeCentered) {
+        x2 = centerX + (centerX - x1);
+
+        if (areaMinX >= 0 && x2 < areaMinX + minInside) {
+          x2 = areaMinX + minInside;
+          x1 = centerX - (x2 - centerX);
+        }
+        if (areaMaxX >= 0 && !acceptOutsideClicked && x2 > areaMaxX) {
+          x2 = areaMaxX;
+          x1 = centerX - (x2 - centerX);
+        }
+      }
+      else {
+        x2 = xProperty.get() + widthProperty.get();
       }
     }
     else if (moveX > 0) {
       x2 = newX;
-      if (_areaMinX >= 0 && x2 < _areaMinX + minSize) {
-        x2 = _areaMinX + minSize;
+      if (areaMinX >= 0 && x2 < areaMinX + minInside) {
+        x2 = areaMinX + minInside;
       }
-      if (areaMaxX >= 0 && x2 > areaMaxX) {
+      if (areaMaxX >= 0 && !acceptOutsideClicked && x2 > areaMaxX) {
         x2 = areaMaxX;
       }
-      x1 = resizeCentered ? centerX - (x2 - centerX) : xProperty.get();
-      if (resizeCentered && _areaMinX >= 0 && x1 < _areaMinX - bufferX) {
-        x1 = _areaMinX - bufferX;
-        x2 = centerX + (centerX - _areaMinX + bufferX);
+
+	    if (resizeCentered) {
+        x1 =  centerX - (x2 - centerX);
+
+        if (areaMinX >= 0 && !acceptOutsideClicked && x1 < areaMinX - bufferX) {
+          x1 = areaMinX - bufferX;
+          x2 = centerX + (centerX - x1);
+        }
+        if (areaMaxX >= 0 && x1 + minInside > areaMaxX) {
+          x1 = areaMaxX - minInside;
+          x2 = centerX + (centerX - areaMaxX);
+        }
       }
+      else {
+		    x1 = xProperty.get();
+		  }
     }
     
     if (moveX != 0) {
@@ -611,36 +660,65 @@ public class PositionResizer {
         x1 = (int) (resizeCentered ? centerX - width / 2 : x2 - width);
         xProperty.set(x1);
       }
+
       widthProperty.set((int) width);
-      ensureHeightRatio(width);
     }
   }
 
   private void moveYPos(int newY) {
     int y1 = 0, y2 = 0;
-    boolean resizeCentered = isResizeCentered(aspectRatio != null ? moveX : -1);
+
+    int bufferY = acceptOutsideClicked ? heightProperty.get() - minInside : 0;
 
     if (moveY < 0) {
       y1 = newY; 
-      if (areaMinY >= 0 && y1 < areaMinY) {
-        y1 = areaMinY;
+      if (areaMinY >= 0 && !acceptOutsideClicked && y1 < areaMinY - bufferY) {
+        y1 = areaMinY - bufferY;
       }
-      y2 = resizeCentered ? centerY + (centerY - y1) : yProperty.get() + heightProperty.get();
-      if (resizeCentered && areaMaxY >= 0 && y2 > areaMaxY) {
-        y1 = centerY + (centerY - areaMaxY);
-        y2 = areaMaxY;
+      if (areaMaxY >= 0 && y1 + minInside > areaMaxY) {
+        y1 = areaMaxY - minInside;
+      }
+
+      if (resizeCentered) {
+        y2 = centerY + (centerY - y1);
+
+        if (areaMinY >= 0 && y2 < areaMinY + minInside) {
+          y2 = areaMinY + minInside;
+          y1 = centerY - (y2 - centerY);
+        }
+        if (areaMaxY >= 0 && !acceptOutsideClicked && y2 > areaMaxY) {
+          y2 = areaMaxY;
+          y1 = centerY - (y2 - centerY);
+        }
+      }
+      else {
+        y2 = yProperty.get() + heightProperty.get();
       }
     }
     else if (moveY > 0) {
       y2 = newY;
-      if (areaMaxY >= 0 && y2 > areaMaxY) {
+      if (areaMinY >= 0 && y2 < areaMinY + minInside) {
+        y2 = areaMinY + minInside;
+      }
+      if (areaMaxY >= 0 && !acceptOutsideClicked && y2 > areaMaxY) {
         y2 = areaMaxY;
       }
-      y1 = resizeCentered ? centerY - (y2 - centerY) : yProperty.get();
-      if (resizeCentered && areaMinY >= 0 && y1 < areaMinY) {
-        y1 = areaMinY;
-        y2 = centerY + (centerY - areaMinY);
+
+	    if (resizeCentered) {
+        y1 =  centerY - (y2 - centerY);
+
+        if (areaMinY >= 0 && !acceptOutsideClicked && y1 < areaMinY - bufferY) {
+          y1 = areaMinY - bufferY;
+          y2 = centerY + (centerY - y1);
+        }
+        if (areaMaxY >= 0 && y1 + minInside > areaMaxY) {
+          y1 = areaMaxY - minInside;
+          y2 = centerY + (centerY - areaMaxY);
+        }
       }
+      else {
+		    y1 = yProperty.get();
+		  }
     }
     
     if (moveY != 0) {
@@ -649,48 +727,71 @@ public class PositionResizer {
         height = minSize;
       }
       height = checkHeight(height);
-/*
-      if (moveY < 0) {
-        y1 = (int) (y2 - height);
-        yProperty.set(y1);
-      }
-      else if (moveY > 0 && resizeCentered) {
-        y1 = (int) (centerY - height / 2);
-        yProperty.set(y1);
-      }
-      if (resizeCentered) {
-        int x = centerX - widthProperty.get() / 2;
-        xProperty.set(x);
-      }
-*/
 
-    if (moveY < 0 || resizeCentered) {
+      if (moveY < 0 || resizeCentered) {
         y1 = (int) (resizeCentered ? centerY - height / 2 : y2 - height);
         yProperty.set(y1);
       }
+
       heightProperty.set((int) height);
-      ensureWidthRatio(height);
     }
   }
 
   private double checkWidth(double width) {
     if (aspectRatio != null) {
-      boolean resizeCentered = isResizeCentered(moveX);
-      double newHeight = width / aspectRatio;
 
-      if (moveY < 0 || resizeCentered) {
-        double y1 = resizeCentered ? centerY - newHeight / 2 : yProperty.get() + heightProperty.get() - newHeight;
-        if (areaMinY >= 0 && y1 < areaMinY) {
-          double h = resizeCentered ? 2 * (centerY - areaMinY) :
-            yProperty.get() + heightProperty.get() - areaMinY;
-          return h *  aspectRatio;
+      if (resizeCentered || moveY == 0) {
+      	double y1 = centerY - width / aspectRatio / 2;
+        double y2 = y1 + width / aspectRatio;
+
+        if (areaMinY >= 0 && !acceptOutsideClicked && y1 < areaMinY) {
+          y1 = areaMinY;
+          width = (int) (2 * (centerY - y1) * aspectRatio);
+          y2 = y1 + width / aspectRatio;
         }
-      } 
-      if (moveY > 0 || resizeCentered) {
-        double y2 = resizeCentered ? centerY + newHeight / 2 : yProperty.get() + newHeight;
-        if (areaMaxY >= 0 && y2 > areaMaxY) {
-          double h = resizeCentered ? 2 * (areaMaxY - centerY) :
-            areaMaxY - yProperty.get();
+        if (areaMinY >= 0 && y2 < areaMinY + minInside) {
+          y2 = areaMinY + minInside;
+          width = (int) (2 * (y2 - centerY) * aspectRatio);
+          y1 = y2 - width / aspectRatio;
+        }
+
+        if (areaMaxY >= 0 && y1 > areaMaxY - minInside) {
+          y1 = areaMaxY - minInside;
+          width = (int) (2 * (centerY - y1) * aspectRatio);
+          y2 = y1 + width / aspectRatio;
+        }
+        if (areaMaxY >= 0 && !acceptOutsideClicked && y2 > areaMaxY) {
+          y2 = areaMaxY;
+          width = (int) (2 * (y2 - centerY) * aspectRatio);
+          y1 = y2 - width / aspectRatio;
+        }
+
+        yProperty.set((int) y1);
+        heightProperty.set((int) (width / aspectRatio));
+        return width;
+      }
+      else if (moveY < 0) {
+        int bufferY = acceptOutsideClicked ? heightProperty.get() - minInside : 0;
+      	double y1 = yProperty.get() + heightProperty.get() - width / aspectRatio;
+        if (areaMinY >= 0 && y1 < areaMinY - bufferY) {
+          y1 = areaMinY - bufferY;
+          double newHeight = yProperty.get() + heightProperty.get() - areaMinY + bufferY;
+          yProperty.set((int) y1);
+          heightProperty.set((int) newHeight);
+          return newHeight * aspectRatio;
+  		  }
+      }
+      else if (moveY > 0) {
+      	double y2 = yProperty.get() + width / aspectRatio;
+        if (areaMinY >= 0 && y2 < areaMinY + minInside) {
+          y2 = areaMinY + minInside;
+          double newHeight = y2 - yProperty.get();
+          heightProperty.set((int) newHeight);
+          return newHeight * aspectRatio;
+        }
+        if (areaMaxY >= 0 && !acceptOutsideClicked && y2 > areaMaxY) {
+          y2 = areaMaxY;
+          double h = resizeCentered ? 2 * (y2 - centerY) : y2 - yProperty.get();
           return h * aspectRatio;
         }
       }
@@ -702,7 +803,7 @@ public class PositionResizer {
     if (aspectRatio != null) {
       double height = width / aspectRatio;
       if (heightProperty.get() != height) {
-        if (isResizeCentered(moveX)) {
+        if (resizeCentered) {
           yProperty.set(centerY - (int) (height / 2));
         }
         else if (moveY < 0) {
@@ -715,23 +816,57 @@ public class PositionResizer {
 
   private double checkHeight(double height) {
     if (aspectRatio != null) {
-      boolean resizeCentered = isResizeCentered(moveX);
-      double newWidth = height * aspectRatio;
 
-      if (moveY < 0 || resizeCentered) {
-        int bufferX = acceptOutsidePart ? widthProperty.get() - minSize : 0;
-      	double x1 = resizeCentered ? centerX - newWidth / 2 : xProperty.get() + widthProperty.get() - newWidth;
-        if (_areaMinX >=0 && x1 < _areaMinX - bufferX) {
-          double w = resizeCentered ? 2 * (centerX - _areaMinX + bufferX) :
-            xProperty.get() + widthProperty.get() - _areaMinX + bufferX;
-          return w /  aspectRatio;
-		}
+      if (resizeCentered || moveX == 0) {
+      	double x1 = centerX - height * aspectRatio / 2;
+        double x2 = x1 + height * aspectRatio;
+        if (areaMinX >= 0 && !acceptOutsideClicked && x1 < areaMinX) {
+          x1 = areaMinX;
+          height = (int) (2 * (centerX - x1) / aspectRatio);
+          x2 = x1 + height * aspectRatio;
+        }
+        if (areaMinX >= 0 && x2 < areaMinX + minInside) {
+          x2 = areaMinX + minInside;
+          height = (int) (2 * (x2 - centerX) / aspectRatio);
+          x1 = x2 - height * aspectRatio;
+        }
+        if (areaMaxX >= 0 && x1 > areaMaxX - minInside) {
+          x1 = areaMaxX - minInside;
+          height = (int) (2 * (centerX - x1) / aspectRatio);
+          x2 = x1 + height * aspectRatio;
+        }
+        if (areaMaxX >= 0 && !acceptOutsideClicked && x2 > areaMaxX) {
+          x2 = areaMaxX;
+          height = (int) (2 * (x2 - centerX) / aspectRatio);
+          x1 = x2 - height * aspectRatio;
+        }
+
+        xProperty.set((int) x1);
+        widthProperty.set((int) (height * aspectRatio));
+        return height;
       }
-      if (moveY > 0 || resizeCentered) {
-      	double x2 = resizeCentered ? centerX + newWidth / 2 : xProperty.get() + newWidth;
-        if (areaMaxX >= 0 && x2 > areaMaxX) {
-          double w = resizeCentered ? 2 * (areaMaxX - centerX) :
-            areaMaxX - xProperty.get();
+      else if (moveX < 0) {
+        int bufferX = acceptOutsideClicked ? widthProperty.get() - minInside : 0;
+      	double x1 = xProperty.get() + widthProperty.get() - height * aspectRatio;
+        if (areaMinX >= 0 && x1 < areaMinX - bufferX) {
+          x1 = areaMinX - bufferX;
+          double newWidth = xProperty.get() + widthProperty.get() - areaMinX + bufferX;
+          xProperty.set((int) x1);
+          widthProperty.set((int) newWidth);
+          return newWidth /  aspectRatio;
+  		  }
+      }
+      else if (moveX > 0) {
+      	double x2 = xProperty.get() + height * aspectRatio;
+        if (areaMinX >= 0 && x2 < areaMinX + minInside) {
+          x2 = areaMinX + minInside;
+          double newWidth = x2 - xProperty.get();
+          widthProperty.set((int) newWidth);
+          return newWidth / aspectRatio;
+        }
+        if (areaMaxX >= 0 && !acceptOutsideClicked && x2 > areaMaxX) {
+          x2 = areaMaxX;
+          double w = resizeCentered ? 2 * (x2 - centerX) : x2 - xProperty.get();
           return w / aspectRatio;
         }
       }
@@ -743,7 +878,7 @@ public class PositionResizer {
     if (aspectRatio != null) {
       double width = height * aspectRatio;
       if (widthProperty.get() != width) {
-        if (isResizeCentered(moveY)) {
+        if (resizeCentered) {
           xProperty.set(centerX - (int) (width / 2));
         }
         else if (moveX < 0) {
@@ -760,14 +895,14 @@ public class PositionResizer {
   }
 
   public void centerHorizontally() {
-    int bufferX = acceptOutsidePart ? widthProperty.get() - minSize : 0;
+    int bufferX = acceptOutsideClicked ? widthProperty.get() - minInside : 0;
 
-    if (_areaMinX >= 0 && areaMaxX > _areaMinX - bufferX) {
-      double offset = (areaMaxX - _areaMinX + bufferX - widthProperty.get()) / 2;
+    if (areaMinX >= 0 && areaMaxX > areaMinX - bufferX) {
+      double offset = (areaMaxX - areaMinX + bufferX - widthProperty.get()) / 2;
       if (offset < 0) {
         offset = 0;
       }
-      setInternalX(_areaMinX - bufferX + (int) offset);
+      setInternalX(areaMinX - bufferX + (int) offset);
     }
   }
 

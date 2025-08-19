@@ -126,7 +126,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private Label resolutionLabel;
 
   /**
-   * the different dragboxes
+   * the dragboxes, today only used at a time
    */
   private List<PositionResizer> dragBoxes = new ArrayList<>();
 
@@ -533,7 +533,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     if (width > 0 && height > 0) {
       double aspectRatio = 16.0 / 9.0;
-    Insets in = previewPanel.getInsets();
+      Insets in = previewPanel.getInsets();
       double newWidth = width - in.getLeft() - in.getRight();
       double newHeight = height - in.getTop() - in.getBottom();
       double offSetX = 0;
@@ -563,6 +563,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         }
       }
       cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
+
+      // in case dragboxes was here, deselect it
+      unloadDragBoxes();
 
       Rectangle cliprect = new Rectangle(newWidth, newHeight);
       cardPreview.setClip(cliprect);
@@ -615,6 +618,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.setZoomX(zoomX);
       dragBox.setZoomY(zoomY);
       dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
+      dragBox.setAcceptOutsidePart(true, 50);
 
       dragBox.setWidth((int) (layer.getWidth() / zoomX));
       dragBox.setHeight((int) (layer.getHeight() / zoomY));

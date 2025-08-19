@@ -1,13 +1,16 @@
 package de.mephisto.vpin.ui.util;
 
 import javafx.application.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.*;
 import javafx.scene.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -16,12 +19,11 @@ import javafx.scene.shape.StrokeType;
 import javafx.geometry.*;
 
 /**
- * Very inspired from 
+ * Test linkage with Spinner
  */
-public class PositionResizerDemo2 extends Application {
+public class PositionResizerDemo3 extends Application {
 
   PositionResizer resizer;
-  PositionSelection selection;
 
   @Override
   public void start(final Stage stage) {
@@ -31,7 +33,7 @@ public class PositionResizerDemo2 extends Application {
 
     int margin = 50;
 
-    Label label = new Label("Draw a rectangle, then move and resize, it should stay within the dashed-grey area");
+    Label label = new Label("Demo the link between Resizer and Spinners. Click shift for resizing on center and Ctrl for going outside bounds");
     HBox topbar = new HBox(label);
     topbar.setPadding(new Insets(margin));
     layout.setTop(topbar);
@@ -42,6 +44,22 @@ public class PositionResizerDemo2 extends Application {
     pane.setPrefHeight(400);
     layout.setCenter(pane);
 
+    Spinner<Integer> xSpinner = new Spinner<>();
+    Label xMin = new Label(), xMax = new Label();
+    Spinner<Integer> ySpinner = new Spinner<>();
+    Label yMin = new Label(), yMax = new Label();
+    Spinner<Integer> widthSpinner = new Spinner<>();
+    Label wMin = new Label(), wMax = new Label();
+    Spinner<Integer> heightSpinner = new Spinner<>();
+    Label hMin = new Label(), hMax = new Label();
+
+    VBox vbox = new VBox(
+        new Label("x"), xSpinner, xMin, xMax,
+        new Label("y"), ySpinner, yMin, yMax,
+        new Label("width"), widthSpinner, wMin, wMax,
+        new Label("height"), heightSpinner, hMin, hMax);
+    layout.setRight(vbox);
+
     Bounds area = new BoundingBox(100 + margin, margin, 600-margin*2, 400-margin*2);
     addAreaBorder(pane, area);
 
@@ -50,7 +68,6 @@ public class PositionResizerDemo2 extends Application {
     aspectRatio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        selection.setAspectRatio(newValue? 4.0 : null);
         resizer.setAspectRatio(newValue? 4.0 : null);
       }
     });
@@ -60,13 +77,12 @@ public class PositionResizerDemo2 extends Application {
     keepInBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        selection.setBounds(newValue? area : null);
         resizer.setBounds(newValue? area : null);
       }
     });
 
-    CheckBox acceptOutsidePart = new CheckBox("Accept Outside Part");
-    acceptOutsidePart.setSelected(true);
+    CheckBox acceptOutsidePart = new CheckBox("Accept Outside Part (allow ctrl key)");
+    acceptOutsidePart.setSelected(false);
     acceptOutsidePart.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -74,13 +90,7 @@ public class PositionResizerDemo2 extends Application {
       }
     });
 
-
-    Button snapCenter = new Button("Snap Center");
-    snapCenter.setOnAction(e -> {
-      resizer.centerHorizontally();
-    });
-
-    HBox toolbar = new HBox(aspectRatio, snapCenter, keepInBox, acceptOutsidePart);
+    HBox toolbar = new HBox(aspectRatio, keepInBox, acceptOutsidePart);
     toolbar.setPadding(new Insets(15));
     toolbar.setSpacing(20);
     layout.setBottom(toolbar);
@@ -92,21 +102,30 @@ public class PositionResizerDemo2 extends Application {
     });
 
     resizer = new PositionResizer();
+    resizer.setX(200);
+    resizer.setY(200);
+    resizer.setWidth(200);
+    resizer.setHeight(120);
+    resizer.addToPane(pane);
+    resizer.setBounds(area);
 
-    // add a selector in the pane
-    selection = new PositionSelection(pane,
-      () -> {
-        resizer.removeFromPane(pane);
-      }, 
-      rect -> {
-        resizer.setX((int) rect.getMinX());
-        resizer.setY((int) rect.getMinY());
-        resizer.setWidth((int) rect.getWidth());
-        resizer.setHeight((int) rect.getHeight());
-        resizer.setBounds(area);
-        resizer.addToPane(pane);
-      });
-      selection.setBounds(area);
+    configureSpinner(xSpinner, xMin, xMax, resizer.xProperty(), resizer.xMinProperty(), resizer.xMaxProperty());
+    configureSpinner(ySpinner, yMin, yMax, resizer.yProperty(), resizer.yMinProperty(), resizer.yMaxProperty());
+    configureSpinner(widthSpinner, wMin, wMax, resizer.widthProperty(), resizer.widthMinProperty(), resizer.widthMaxProperty());
+    configureSpinner(heightSpinner, hMin, hMax, resizer.heightProperty(), resizer.heightMinProperty(), resizer.heightMaxProperty());
+  }
+
+  private void configureSpinner(Spinner<Integer> spinner, Label min, Label max, ObjectProperty<Integer> property,
+                              ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {
+
+    IntegerSpinnerValueFactory factory = new IntegerSpinnerValueFactory(minProperty.get(), maxProperty.get());
+    spinner.setValueFactory(factory);
+    spinner.setEditable(true);
+    factory.valueProperty().bindBidirectional(property);
+    factory.minProperty().bind(minProperty);
+    factory.maxProperty().bind(maxProperty);
+    min.textProperty().bind(minProperty.asString());
+    max.textProperty().bind(maxProperty.asString());
   }
 
   private void addAreaBorder(Pane pane, Bounds area) {
