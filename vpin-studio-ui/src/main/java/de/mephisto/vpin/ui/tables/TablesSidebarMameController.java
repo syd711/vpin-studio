@@ -134,6 +134,9 @@ public class TablesSidebarMameController implements Initializable {
   private Label labelRomAlias;
 
   @FXML
+  private Label nvOffsetLabel;
+
+  @FXML
   private Label labelRom;
 
 
@@ -312,6 +315,7 @@ public class TablesSidebarMameController implements Initializable {
     dataScrollPane.setVisible(gameOptional.isPresent());
 
     labelRomAlias.setText("-");
+    nvOffsetLabel.setText("-");
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
     copyRomBtn.setDisable(true);
@@ -338,35 +342,41 @@ public class TablesSidebarMameController implements Initializable {
     if (gameOptional.isPresent()) {
       GameRepresentation game = gameOptional.get();
 
-      if (!StringUtils.isEmpty(game.getRomAlias())) {
-        labelRomAlias.setText(game.getRomAlias());
-        copyRomAliasBtn.setDisable(false);
+      labelRomAlias.setText(game.getRomAlias());
+      copyRomAliasBtn.setDisable(false);
 
-        List<GameRepresentation> data = tablesSidebarController.getTableOverviewController().getData();
-        String rom = game.getRom();
-        List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).collect(Collectors.toList());
-        if (!sharedGames.isEmpty()) {
-          tablesBox.setVisible(true);
-          tableListBox.getChildren().removeAll(tableListBox.getChildren());
-          for (GameRepresentation sharedGame : sharedGames) {
-            HBox row = new HBox(3);
-            Label label = new Label("- " + sharedGame.getGameDisplayName());
-            label.setPrefWidth(494);
-            label.setStyle("");
-            label.getStyleClass().add("default-text");
+      if (game.getNvOffset() > 0) {
+        nvOffsetLabel.setText(String.valueOf(game.getNvOffset()));
+      }
 
-            Button button = new Button("", WidgetFactory.createIcon("mdi2l-lead-pencil"));
-            button.setOnAction(new EventHandler<ActionEvent>() {
-              @Override
-              public void handle(ActionEvent event) {
-                TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), sharedGame);
-              }
-            });
-
-            row.getChildren().add(label);
-            row.getChildren().add(button);
-            tableListBox.getChildren().add(row);
+      List<GameRepresentation> data = tablesSidebarController.getTableOverviewController().getData();
+      String rom = game.getRom();
+      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).collect(Collectors.toList());
+      if (!sharedGames.isEmpty()) {
+        tablesBox.setVisible(true);
+        tableListBox.getChildren().removeAll(tableListBox.getChildren());
+        for (GameRepresentation sharedGame : sharedGames) {
+          HBox row = new HBox(3);
+          String title = "\"" + sharedGame.getGameDisplayName() + "\"";
+          if (game.getNvOffset() > 0) {
+            title += " [NVOffset: " + game.getNvOffset() + "]";
           }
+          Label label = new Label("- " + title);
+          label.setPrefWidth(494);
+          label.setStyle("");
+          label.getStyleClass().add("default-text");
+
+          Button button = new Button("", WidgetFactory.createIcon("mdi2l-lead-pencil"));
+          button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), sharedGame);
+            }
+          });
+
+          row.getChildren().add(label);
+          row.getChildren().add(button);
+          tableListBox.getChildren().add(row);
         }
       }
 

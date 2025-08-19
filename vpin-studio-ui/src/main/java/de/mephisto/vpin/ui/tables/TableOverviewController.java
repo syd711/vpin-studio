@@ -1964,22 +1964,28 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else {
       if (!toolbar.getItems().contains(validateBtn)) {
-        toolbar.getItems().add(assetManagerSeparator);
-        toolbar.getItems().add(assetManagerViewBtn);
-        toolbar.getItems().add(assetManagerBtn);
-        toolbar.getItems().add(tableEditBtn);
-        toolbar.getItems().add(converterBtn);
-        toolbar.getItems().add(deleteSeparator);
-        toolbar.getItems().add(uploadsButton);
-        toolbar.getItems().add(playBtn);
-        toolbar.getItems().add(stopBtn);
-        toolbar.getItems().add(importUploadButtonGroup);
-        toolbar.getItems().add(mappingSeparator);
-        toolbar.getItems().add(scanBtn);
-        toolbar.getItems().add(validateBtn);
+        addToToolbar(toolbar, assetManagerSeparator);
+        addToToolbar(toolbar, assetManagerViewBtn);
+        addToToolbar(toolbar, assetManagerBtn);
+        addToToolbar(toolbar, tableEditBtn);
+        addToToolbar(toolbar, converterBtn);
+        addToToolbar(toolbar, deleteSeparator);
+        addToToolbar(toolbar, uploadsButton);
+        addToToolbar(toolbar, playBtn);
+        addToToolbar(toolbar, stopBtn);
+        addToToolbar(toolbar, importUploadButtonGroup);
+        addToToolbar(toolbar, mappingSeparator);
+        addToToolbar(toolbar, scanBtn);
+        addToToolbar(toolbar, validateBtn);
       }
 
       secondaryToolbar.setVisible(false);
+    }
+  }
+
+  private void addToToolbar(ToolBar toolbar, Parent btn) {
+    if (!toolbar.getItems().contains(btn)) {
+      toolbar.getItems().add(btn);
     }
   }
 
