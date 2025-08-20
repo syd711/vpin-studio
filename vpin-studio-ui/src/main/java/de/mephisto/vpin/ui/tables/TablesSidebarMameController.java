@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -125,6 +126,9 @@ public class TablesSidebarMameController implements Initializable {
   private Button reloadBtn;
 
   @FXML
+  private Button scriptBtn;
+
+  @FXML
   private Button copyRomAliasBtn;
 
   @FXML
@@ -193,6 +197,11 @@ public class TablesSidebarMameController implements Initializable {
     if (this.game.isPresent()) {
       onNvOffset(this.game.get().getId());
     }
+  }
+
+  @FXML
+  public void onScriptEdit() {
+    VBSManager.getInstance().edit(this.game);
   }
 
   private void onNvOffset(int gameId) {
@@ -371,6 +380,7 @@ public class TablesSidebarMameController implements Initializable {
     nvOffsetLabel.setText("-");
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
+    scriptBtn.setDisable(true);
     copyRomBtn.setDisable(true);
     aliasBtn.setDisable(gameOptional.isEmpty());
     nvOffsetBtn.setDisable(true);
@@ -399,6 +409,7 @@ public class TablesSidebarMameController implements Initializable {
       nvOffsetBtn.setDisable(!HighscoreType.NVRam.equals(game.getHighscoreType()));
       labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       copyRomAliasBtn.setDisable(false);
+      scriptBtn.setDisable(false);
 
       if (game.getNvOffset() > 0) {
         nvOffsetLabel.setText(String.valueOf(game.getNvOffset()));

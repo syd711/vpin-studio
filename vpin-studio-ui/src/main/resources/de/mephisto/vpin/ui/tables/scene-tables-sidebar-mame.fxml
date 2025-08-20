@@ -264,6 +264,17 @@
                                           <Tooltip text="Edit NVOffset" />
                                        </tooltip>
                                     </Button>
+                                    <Button fx:id="scriptBtn" layoutX="163.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScriptEdit">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-document-edit-outline" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Edit table script" />
+                                       </tooltip>
+                                    </Button>
                                     <Label>
                                        <font>
                                           <Font size="14.0" />
