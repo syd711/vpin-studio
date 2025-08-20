@@ -874,13 +874,15 @@ public class BackglassManagerSidebarController extends BaseSideBarController<Dir
     formToPosition.setDisable(true);
 
     if (gameId > 0) {
-      JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getTableSettings(gameId))
-          .thenAcceptLater((tableSettings) -> {
+      JFXFuture.supplyAllAsync(
+              () -> client.getBackglassServiceClient().getTableSettings(gameId),
+              () -> client.getBackglassServiceClient().getServerSettings())
+          .thenAcceptLater((objs) -> {
             this.refreshingCounter++;
 
-            this.tableSettings = tableSettings;
+            this.tableSettings = (DirectB2STableSettings) objs[0];
+            DirectB2ServerSettings serverSettings = (DirectB2ServerSettings) objs[1];
 
-            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
             boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
             startAsExeServer.setSelected(serverLaunchAsExe);
             startAsExeServer.setDisable(true);

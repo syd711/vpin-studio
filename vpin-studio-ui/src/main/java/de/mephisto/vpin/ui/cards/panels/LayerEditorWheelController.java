@@ -38,8 +38,14 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
     // force aspect ratio of 1 for Wheel
     dragBox.setAspectRatio(1.0);
 
-    bindSpinner(wheelImageXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
-    bindSpinner(wheelImageYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
-    bindSpinner(wheelSizeSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
+    LayerSubEditorPositionController.bindSpinner(wheelImageXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
+    LayerSubEditorPositionController.bindSpinner(wheelImageYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
+    LayerSubEditorPositionController.bindSpinner(wheelSizeSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
+  }
+  @Override
+  public void unbindDragBox(PositionResizer dragBox) {
+    LayerSubEditorPositionController.unbindSpinner(wheelImageXSpinner);
+    LayerSubEditorPositionController.unbindSpinner(wheelImageYSpinner);
+    LayerSubEditorPositionController.unbindSpinner(wheelSizeSpinner);
   }
 }

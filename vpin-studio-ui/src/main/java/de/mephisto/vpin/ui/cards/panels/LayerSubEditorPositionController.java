@@ -23,10 +23,10 @@ public class LayerSubEditorPositionController {
   private Spinner<Integer> heightSpinner;
 
   public void initBindings(String prefix, CardTemplateBinder binder) {
-    bindSpinner(xSpinner, prefix + "X", binder, 0, 1920, true);
-    bindSpinner(ySpinner, prefix + "Y", binder, 0, 1080, false);
-    bindSpinner(widthSpinner, prefix + "Width", binder, 0, 1920, true);
-    bindSpinner(heightSpinner, prefix + "Height", binder, 0, 1080, false);
+    bindSpinner(xSpinner, prefix + "X", binder, 0, 16000, true);
+    bindSpinner(ySpinner, prefix + "Y", binder, 0, 9000, false);
+    bindSpinner(widthSpinner, prefix + "Width", binder, 0, 16000, true);
+    bindSpinner(heightSpinner, prefix + "Height", binder, 0, 9000, false);
   }
 
   protected static void bindSpinner(Spinner<Integer> spinner, String property, CardTemplateBinder binder, int min, int max, boolean useWidth) {
@@ -35,7 +35,7 @@ public class LayerSubEditorPositionController {
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
       CardResolution res = binder.getResolution();
       int size = useWidth ? res.toWidth(): res.toHeight();
-      double val = Double.parseDouble(String.valueOf(t1)) / size * 100;
+      double val = Double.parseDouble(String.valueOf(t1)) / size;
       binder.setProperty(property, val);
     });
   }
@@ -51,9 +51,26 @@ public class LayerSubEditorPositionController {
 
   protected static void setValue(Spinner<Integer> spinner, CardTemplate cardTemplate, String property, int size) {
     try {
+      IntegerSpinnerValueFactory factory = (IntegerSpinnerValueFactory) spinner.getValueFactory();
+
       double percent = (double) PropertyUtils.getProperty(cardTemplate, property);
-      int val = (int) (percent * size / 100.0);
-      spinner.getValueFactory().setValue(val);
+      int val = (int) (percent * size);
+
+      if (!factory.maxProperty().isBound()) {
+        factory.maxProperty().set(size);
+      }
+      else {
+        size = factory.maxProperty().get();
+      }
+
+      if (val < 0) {
+        val = 0;
+      }
+      if (val > size) {
+        val = size;
+      }
+      factory.setValue(val);
+
     } catch (Exception e) {
       throw new RuntimeException("Failed to read property " + property + ": " + e.getMessage());
     }
@@ -68,7 +85,7 @@ public class LayerSubEditorPositionController {
     bindSpinner(heightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
   }
 
-  protected void bindSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
+  protected static void bindSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
                              ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {
     IntegerSpinnerValueFactory factory = (IntegerSpinnerValueFactory) spinner.getValueFactory();
     spinner.setEditable(true);
@@ -76,4 +93,20 @@ public class LayerSubEditorPositionController {
     factory.minProperty().bind(minProperty);
     factory.maxProperty().bind(maxProperty);
   }
+
+
+  public void unbindDragBox(PositionResizer dragBox) {
+    unbindSpinner(xSpinner);
+    unbindSpinner(ySpinner);
+    unbindSpinner(widthSpinner);
+    unbindSpinner(heightSpinner);
+  }
+
+  protected static void unbindSpinner(Spinner<Integer> spinner) {
+    IntegerSpinnerValueFactory factory = (IntegerSpinnerValueFactory) spinner.getValueFactory();
+    factory.valueProperty().unbind();
+    factory.minProperty().unbind();
+    factory.maxProperty().unbind();
+  }
+
 }

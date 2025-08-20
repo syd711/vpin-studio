@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -353,7 +354,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
   }
 
-
   private void refreshTabSelection(Number oldValue, Number newValue) {
     int oldTab = getSelectedTab(oldValue.intValue());
     StudioFXController controller = getController(oldTab);
@@ -522,33 +522,35 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
-      if (selection != null && !refreshList.contains(selection)) {
+      if (selection != null && !refreshList.contains(selection.getId())) {
         refreshList.add(selection.getId());
       }
     }
 
     for (Integer gameId : refreshList) {
-      GameRepresentation game = client.getGameService().getGame(gameId);
-      if (game != null) {
-        this.tableOverviewController.reloadItem(game);
-        if (recorderController != null) {
-          this.recorderController.reloadItem(game);
-        }
-      }
-      else {
-        Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-        if (first.isPresent()) {
-          this.tableOverviewController.getTableView().getItems().remove(first.get());
-          this.tableOverviewController.getTableView().refresh();
-        }
-        if (recorderController != null) {
-          first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
-          if (first.isPresent()) {
-            this.recorderController.getTableView().getItems().remove(first.get());
-            this.recorderController.getTableView().refresh();
+      JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameId))
+      .thenAcceptLater(game -> {
+        if (game != null) {
+          this.tableOverviewController.reloadItem(game);
+          if (recorderController != null) {
+            this.recorderController.reloadItem(game);
           }
         }
-      }
+        else {
+          Optional<GameRepresentationModel> first = this.tableOverviewController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+          if (first.isPresent()) {
+            this.tableOverviewController.getTableView().getItems().remove(first.get());
+            this.tableOverviewController.getTableView().refresh();
+          }
+          if (recorderController != null) {
+            first = this.recorderController.getTableView().getItems().stream().filter(t -> t.getGameId() == gameId).findFirst();
+            if (first.isPresent()) {
+              this.recorderController.getTableView().getItems().remove(first.get());
+              this.recorderController.getTableView().refresh();
+            }
+          }
+        }
+      });
     }
 
     // also refresh playlists as the addition/modification of tables may impact them

@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.BaseTableSettings;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -281,7 +280,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   }
 
   protected void applyTableCount() {
-    labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
+    if (labelCount != null) {
+      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
+    }
   }
 
   //----------------------
@@ -300,7 +301,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       this.reloadBtn.setDisable(true);
     }
 
-    this.labelCount.setText(null);
+    if (labelCount != null) {
+      this.labelCount.setText(null);
+    }
   }
 
   /**
@@ -418,6 +421,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     return tableView.getSelectionModel().getSelectedItem();
   }
 
+  public List<M> getSelectedModels() {
+    return tableView.getSelectionModel().getSelectedItems();
+  }
+
   public T getSelection() {
     M selection = getSelectedModel();
     return selection != null ? selection.getBean() : null;
@@ -436,6 +443,15 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public void selectBeanInModel(T bean, boolean scrollToModel) {
     Optional<M> model = models.stream().filter(m -> m.sameBean(bean)).findFirst();
     setSelection(model.orElse(null), scrollToModel);
+  }
+
+  public void setSelectionOrFirst(M model) {
+    if (model == null) {
+      tableView.getSelectionModel().select(0);
+    }
+    else {
+      setSelection(model, true);
+    }
   }
 
   public void setSelection(M model, boolean scrollToModel) {

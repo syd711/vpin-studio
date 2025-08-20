@@ -33,6 +33,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -40,6 +41,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -124,7 +126,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private Label resolutionLabel;
 
   /**
-   * the different dragboxes
+   * the dragboxes, today only used at a time
    */
   private List<PositionResizer> dragBoxes = new ArrayList<>();
 
@@ -186,11 +188,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private void onCreate(ActionEvent e) {
-    CardTemplate selection = this.templateCombo.getValue();
+    CardTemplate template = this.templateCombo.getValue();
     String gameName = gameRepresentation.get().getGameName();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + selection.getName() + "\" will be used as default.", gameName);
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
     if (!StringUtils.isEmpty(s)) {
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
 
@@ -200,19 +202,14 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         return;
       }
 
-      selection.setName(s);
-      selection.setId(null);
-      JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(selection))
-          .thenAcceptLater(newTemplate -> {
-            loadTemplates();
-            this.templateCombo.setValue(newTemplate);
-
-            highscoreCardsController.refresh(gameRepresentation, templates, false);
-          })
-          .onErrorLater(ex -> {
-            LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-          });
+      template.setName(s);
+      template.setId(null);
+      JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
+      .thenAcceptLater(newTemplate -> loadTemplates(newTemplate))
+      .onErrorLater(ex -> {
+          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+        });
     }
   }
 
@@ -225,17 +222,15 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       cardTemplate.setName(s);
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
-          .thenAcceptLater(updatedTemplate -> {
-            loadTemplates();
-            this.templateCombo.setValue(updatedTemplate);
-
-            assignTemplate(updatedTemplate);
-            highscoreCardsController.refresh(gameRepresentation, templates, true);
-          })
-          .onErrorLater(ex -> {
-            LOG.error("Failed to rename template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-          });
+      .thenAcceptLater(updatedTemplate -> {
+          loadTemplates(updatedTemplate);
+          assignTemplate(updatedTemplate);
+          //highscoreCardsController.refresh(gameRepresentation, templates, true);
+        })
+      .onErrorLater(ex -> {
+        LOG.error("Failed to rename template: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+      });
     }
   }
 
@@ -250,11 +245,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         Platform.runLater(() -> {
           CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
 
-          loadTemplates();
-          this.templateCombo.setValue(defaultTemplate);
+          loadTemplates(defaultTemplate);
 
           assignTemplate(defaultTemplate);
-          highscoreCardsController.refresh(gameRepresentation, templates, true);
+          //highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
@@ -462,7 +456,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      loadTemplates();
+      loadTemplates(null);
 
       templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
         @Override
@@ -471,7 +465,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
             setTemplate(newValue);
             if (gameRepresentation.isPresent()) {
               assignTemplate(newValue);
-              highscoreCardsController.refresh(gameRepresentation, templates, false);
+              //highscoreCardsController.refresh(gameRepresentation, templates, false);
             }
           }
         }
@@ -490,7 +484,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       // Resize handlers
       previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
       previewStack.heightProperty().addListener((obs, o, n) -> resizeCardPreview(previewStack.getWidth(), n.doubleValue(), false));
+
       previewPanel.getChildren().add(cardPreview);
+      resizeCardPreview(previewStack.getWidth(), previewStack.getHeight(), true);
 
       // selector
       cardPreview.setOnMousePressed(e -> onDragboxEnter(e));
@@ -520,9 +516,15 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
-  private void loadTemplates() {
-    this.templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-    templateCombo.setItems(FXCollections.observableList(templates));
+  private void loadTemplates(CardTemplate selectedTemplate) {
+    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
+    .thenAcceptLater(templates -> {
+      this.templates = templates;
+      templateCombo.setItems(FXCollections.observableList(templates));
+      if (selectedTemplate != null) {
+        this.templateCombo.setValue(selectedTemplate);
+      }
+    });
   }
 
   private void resizeCardPreview(double width, double height, boolean forceWidth) {
@@ -531,8 +533,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     if (width > 0 && height > 0) {
       double aspectRatio = 16.0 / 9.0;
-      double newWidth = width;
-      double newHeight = height;
+      Insets in = previewPanel.getInsets();
+      double newWidth = width - in.getLeft() - in.getRight();
+      double newHeight = height - in.getTop() - in.getBottom();
       double offSetX = 0;
       double offSetY = 0;
       if (forceWidth) {
@@ -560,32 +563,46 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         }
       }
       cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
+
+      // in case dragboxes was here, deselect it
+      unloadDragBoxes();
+
+      Rectangle cliprect = new Rectangle(newWidth, newHeight);
+      cardPreview.setClip(cliprect);
     }
   }
 
   //------------------------------------------- SELECTION ---
 
   public void onDragboxEnter(MouseEvent e) {
+    unloadDragBoxes();
+
     CardLayer layer = cardPreview.selectCardLayer(e.getX(), e.getY());
     loadDragBoxes(layer);
+
     e.consume();
   }
 
   public void onDragboxExit(MouseEvent e) {
-    for (PositionResizer dragBox : dragBoxes) {
-      dragBox.removeFromPane(cardPreview);
-    }
-    dragBoxes.clear();
+    unloadDragBoxes();
     e.consume();
   }
 
-  private void loadDragBoxes(CardLayer layer) {
+  private void unloadDragBoxes() {
     // first delete previous boxes
     for (PositionResizer dragBox : dragBoxes) {
       dragBox.removeFromPane(cardPreview);
+
+      if (dragBox.getUserData() instanceof CardLayer) {
+        CardLayer layer = (CardLayer) dragBox.getUserData();
+        layerToController(layer).unbindDragBox(dragBox);
+      }
     }
     dragBoxes.clear();
+  }
 
+
+  private void loadDragBoxes(CardLayer layer) {
     if (layer != null) {
 
       // The canvas box
@@ -601,6 +618,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.setZoomX(zoomX);
       dragBox.setZoomY(zoomY);
       dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
+      dragBox.setAcceptOutsidePart(true, 50);
 
       dragBox.setWidth((int) (layer.getWidth() / zoomX));
       dragBox.setHeight((int) (layer.getHeight() / zoomY));
@@ -608,13 +626,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       dragBox.setY((int) (layer.getLocY() / zoomY));
 
       layerToController(layer).bindDragBox(dragBox);
+      dragBox.setUserData(layer);
 
-      dragBox.selectProperty().addListener((obs, oldV, newV) -> {
-        //templateBeanBinder.setPaused(newV);
-      });
-
-      dragBox.select();
       dragBox.addToPane(cardPreview);
+      dragBox.select();
       dragBoxes.add(dragBox);
     }
   }
@@ -646,8 +661,22 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   //-----------------------------------------
 
+  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
+    if (templates != null) {
+      if (game.getTemplateId() != null) {
+        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
+        if (first.isPresent()) {
+          return first.get();
+        }
+      }
+      // else 
+      return templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().orElse(null);
+    }
+    return null;
+  }
+
   private void assignTemplate(CardTemplate newValue) {
-    List<GameRepresentation> selection = highscoreCardsController.getSelection();
+    List<GameRepresentation> selection = highscoreCardsController.getSelections();
     ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, newValue.getId()));
   }
 
@@ -655,17 +684,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     this.highscoreCardsController = highscoreCardsController;
   }
 
-  public void selectTable(Optional<GameRepresentation> gameRepresentation, boolean refresh) {
+  public void selectTable(Optional<GameRepresentation> gameRepresentation) {
     this.gameRepresentation = gameRepresentation;
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      CardTemplate template = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
-      if (game.getTemplateId() != null) {
-        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
-        if (first.isPresent()) {
-          template = first.get();
-        }
-      }
+      CardTemplate template = getCardTemplateForGame(game);
+
       if (template.equals(templateCombo.getValue())) {
         setTemplate(template);
       }

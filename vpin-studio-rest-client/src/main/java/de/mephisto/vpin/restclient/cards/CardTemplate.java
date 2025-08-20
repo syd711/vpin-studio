@@ -14,8 +14,8 @@ public class CardTemplate extends JsonSettings {
 
   private double backgroundX = 0;
   private double backgroundY = 0;
-  private double backgroundWidth = 100.0;
-  private double backgroundHeight = 100.0;
+  private double backgroundWidth = 1.0;
+  private double backgroundHeight = 1.0;
   private double zoom = 1.0;
   private boolean useDmdPositions = false;
   private boolean fullScreen = true;
@@ -31,10 +31,10 @@ public class CardTemplate extends JsonSettings {
   /**@deprecated no more used */
   private int padding = 10;
 
-  private double scoresX = 30;
-  private double scoresY = 40;
-  private double scoresWidth = 70;
-  private double scoresHeight = 60;
+  private double scoresX = 0.3;
+  private double scoresY = 0.4;
+  private double scoresWidth = 0.7;
+  private double scoresHeight = 0.6;
 
   private int marginTop = 10;
   private int marginRight = 10;
@@ -42,8 +42,8 @@ public class CardTemplate extends JsonSettings {
   private int marginLeft = 10;
 
   private double wheelX = 0.0;
-  private double wheelY = 50.0;
-  private double wheelSize = 30.0;
+  private double wheelY = 0.5;
+  private double wheelSize = 0.3;
   /**@deprecated no more used */
   private int wheelPadding = 32;
 
@@ -66,10 +66,10 @@ public class CardTemplate extends JsonSettings {
   private String tableFontStyle = "Regular";
   private boolean tableUseDefaultColor = true;
   private String tableColor;
-  private double tableX = 20.0;
-  private double tableY = 20.0;
-  private double tableWidth = 100.0;
-  private double tableHeight = 20.0;
+  private double tableX = 0.0;
+  private double tableY = 0.2;
+  private double tableWidth = 1.0;
+  private double tableHeight = 0.2;
 
   private String title = "Highscores";
   private String titleFontName = "Cambria";
@@ -79,8 +79,8 @@ public class CardTemplate extends JsonSettings {
   private String titleColor;
   private double titleX = 0;
   private double titleY = 0;
-  private double titleWidth = 100;
-  private double titleHeight = 20;
+  private double titleWidth = 1.0;
+  private double titleHeight = 0.2;
 
   // Background images
   private boolean useDefaultBackground = true;
@@ -93,10 +93,10 @@ public class CardTemplate extends JsonSettings {
   private boolean renderWheelIcon = true;
   private boolean renderCanvas = false;
 
-  private double canvasX = 10;
-  private double canvasY = 10;
-  private double canvasWidth = 90;
-  private double canvasHeight = 90;
+  private double canvasX = 0.1;
+  private double canvasY = 0.1;
+  private double canvasWidth = 0.8;
+  private double canvasHeight = 0.8;
   private String canvasBackground;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;

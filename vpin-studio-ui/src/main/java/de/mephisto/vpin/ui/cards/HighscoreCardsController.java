@@ -1,39 +1,30 @@
 package de.mephisto.vpin.ui.cards;
 
-import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.mania.util.ManiaUrlFactory;
+import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.TableDialogs;
-import de.mephisto.vpin.ui.util.Keys;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -49,10 +40,10 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class HighscoreCardsController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation>, StudioEventListener {
-  private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
+public class HighscoreCardsController extends BaseTableController<GameRepresentation, GameRepresentationModel>
+    implements Initializable, StudioFXController, StudioEventListener {
 
-  private final Debouncer debouncer = new Debouncer();
+  private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
   @FXML
   private Label resolutionLabel;
@@ -66,30 +57,18 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private ImageView rawDirectB2SImage;
 
-  //table components
-  @FXML
-  private TableView<GameRepresentation> tableView;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnDisplayName;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentation, Label> columnTemplate;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTemplate;
 
   @FXML
-  private TableColumn<GameRepresentation, Node> columnStatus;
-
-  @FXML
-  private MenuButton filterButton;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnStatus;
 
   @FXML
   private Button tableEditBtn;
-
-  @FXML
-  private TextField searchField;
-
-  @FXML
-  private StackPane loaderStack;
 
   @FXML
   private TitledPane defaultBackgroundTitlePane;
@@ -97,16 +76,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private BorderPane templateEditorPane;
 
-  private ObservableList<GameRepresentation> data;
-  private List<GameRepresentation> games;
 
   private final List<String> ignoreList = new ArrayList<>();
 
-  private Parent tablesLoadingOverlay;
 
-  private long lastKeyInputTime = System.currentTimeMillis();
-  private String lastKeyInput = "";
-  private List<CardTemplate> cardTemplates;
   private TemplateEditorController templateEditorController;
 
   public HighscoreCardsController() {
@@ -114,13 +87,13 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onBackgroundReset() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    GameRepresentation game = getSelection();
     if (game != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + game.getGameDisplayName() + "\"?",
           "This will re-generate the existing default background.", null, "Generate Background");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(game.getId());
-        refreshRawPreview(Optional.of(game));
+        refreshRawPreview(game);
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
     }
@@ -128,20 +101,15 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   @FXML
   private void onTableEdit() {
-    GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    GameRepresentation selection = getSelection();
     if (selection != null) {
       NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(selection.getId()));
     }
   }
 
   @FXML
-  private void onReloadPressed() {
-    onReload(true);
-  }
-
-  @FXML
   private void onManiaTable() {
-    GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    GameRepresentation selection = getSelection();
     if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
       Studio.browse(ManiaUrlFactory.createTableUrl(selection.getExtTableId(), selection.getExtTableVersionId()));
     }
@@ -152,78 +120,66 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     PreferencesController.open("highscore_cards");
   }
 
+  //------------
+
   @FXML
-  private void onReload(boolean force) {
-    setBusy(true);
-    GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-
-    JFXFuture.supplyAsync(() -> {
-          if (force) {
-            client.getGameService().clearCache();
-          }
-          return client.getGameService().getVpxGamesCached();
-        })
-        .thenAcceptLater(games -> {
-          this.games = games;
-          filterGames(games);
-          tableView.setItems(data);
-          templateEditorPane.setVisible(!data.isEmpty());
-
-          tableView.refresh();
-          if (selection != null) {
-            final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
-            if (updatedGame.isPresent()) {
-              GameRepresentation gameRepresentation = updatedGame.get();
-              tableView.getSelectionModel().select(gameRepresentation);
-            }
-          }
-          else if (!games.isEmpty()) {
-            tableView.getSelectionModel().select(0);
-          }
-          setBusy(false);
-          Platform.runLater(() -> {
-            tableView.requestFocus();
-          });
-        });
+  private void onReload() {
+    doReload(true);
   }
 
-  private void setBusy(boolean b) {
-    Platform.runLater(() -> {
-      if (b) {
-        tableView.setVisible(false);
-        if (!loaderStack.getChildren().contains(tablesLoadingOverlay)) {
-          loaderStack.getChildren().add(tablesLoadingOverlay);
+  private void doReload(boolean force) {
+    startReload("Loading Tables...");
+
+    GameRepresentationModel selectedItem = getSelectedModel();
+
+    JFXFuture.supplyAsync(() -> {
+      if (force) {
+        client.getGameService().clearCache();
+      }
+      return client.getGameService().getVpxGamesCached();
+    })
+    .onErrorSupply(e -> {
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Loading tables failed: " + e.getMessage()));
+      return Collections.emptyList();
+    })
+    .thenAcceptLater(games -> {
+        setItems(games);
+
+        if (games.isEmpty()) {
+          tableView.setPlaceholder(new Label("No tables found"));
         }
-      }
-      else {
-        tableView.setVisible(true);
-        loaderStack.getChildren().remove(tablesLoadingOverlay);
-      }
+        templateEditorPane.setVisible(!games.isEmpty());
+
+        tableView.refresh();
+        tableView.requestFocus();
+
+        setSelectionOrFirst(selectedItem);
+
+        endReload();
     });
   }
 
+
   @FXML
   private void onDefaultPictureUpload() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    GameRepresentation game = getSelection();
     if (game != null) {
       boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game);
       if (uploaded) {
-        refreshRawPreview(Optional.of(game));
-        onReloadPressed();
-        templateEditorController.selectTable(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), true);
+        reloadItem(game);
       }
     }
   }
 
   @FXML
   private void onOpenDefaultPicture() {
-    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    GameRepresentation game = getSelection();
     if (game != null) {
       TableDialogs.openMediaDialog(Studio.stage, "Default Picture", client.getBackglassServiceClient().getDefaultPictureUrl(game));
     }
   }
 
-  private void refreshRawPreview(Optional<GameRepresentation> game) {
+  private void refreshRawPreview(GameRepresentation game) {
     if (!defaultBackgroundTitlePane.isExpanded()) {
       return;
     }
@@ -233,9 +189,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       openDefaultPictureBtn.setVisible(false);
       rawDirectB2SImage.setImage(null);
 
-      if (game.isPresent()) {
+      if (game != null) {
         openDefaultPictureBtn.setTooltip(new Tooltip("Open directb2s image"));
-        InputStream input = client.getBackglassServiceClient().getDefaultPicture(game.get());
+        InputStream input = client.getBackglassServiceClient().getDefaultPicture(game);
         Image image = new Image(input);
         rawDirectB2SImage.setImage(image);
         input.close();
@@ -251,99 +207,45 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
   }
 
-  private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
-    List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
-    templateEditorPane.setVisible(game.isPresent());
-    tableEditBtn.setDisable(game.isEmpty());
-    maniaBtn.setDisable(game.isEmpty() || StringUtils.isEmpty(game.get().getExtTableId()));
+  @Override
+  public void refreshView(GameRepresentationModel model) {
+    GameRepresentation game = model != null ? model.getBean(): null;
 
-    if (game.isPresent()) {
-      breadcrumb.add(game.get().getGameDisplayName());
-    }
-    else {
-      templateEditorPane.setVisible(false);
+    templateEditorPane.setVisible(model != null);
+    tableEditBtn.setDisable(model == null);
+    maniaBtn.setDisable(game == null || StringUtils.isEmpty(game.getExtTableId()));
+
+    List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
+    if (game != null) {
+      breadcrumb.add(game.getGameDisplayName());
     }
     NavigationController.setBreadCrumb(breadcrumb);
-    templateEditorController.selectTable(game, regenerate);
+
+    templateEditorController.selectTable(Optional.of(game));
     refreshRawPreview(game);
   }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
-    Optional<GameRepresentation> selectedItem = Optional.ofNullable(tableView.getSelectionModel().getSelectedItem());
+
     if (options != null && options.getGameId() > 0) {
-      selectedItem = tableView.getItems().stream().filter(g -> g.getId() == options.getGameId()).findFirst();
-      if (selectedItem.isPresent()) {
-        GameRepresentation game = selectedItem.get();
-        tableView.getSelectionModel().clearSelection();
-        tableView.getSelectionModel().select(game);
-        tableView.scrollTo(game);
+      GameRepresentationModel selectedItem = tableView.getItems().stream().filter(g -> g.getGameId() == options.getGameId()).findFirst().orElse(null);
+      if (selectedItem != null) {
+        setSelection(selectedItem, true);
       }
     }
-    templateEditorController.selectTable(selectedItem, false);
-    refreshRawPreview(selectedItem);
-
-    refreshPreview(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
+    //templateEditorController.selectTable(selectedItem, false);
+    //refreshRawPreview(selectedItem);
+    //refreshPreview(getSelection());
   }
 
-  private void filterGames(List<GameRepresentation> games) {
-    List<GameRepresentation> filtered = new ArrayList<>();
-    String filterValue = searchField.textProperty().getValue();
-
-    List<Integer> emuIds = new ArrayList<>();
-    ObservableList<MenuItem> items = this.filterButton.getItems();
-    for (MenuItem item : items) {
-      CheckBox checkBox = (CheckBox) ((CustomMenuItem) item).getContent();
-      GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) checkBox.getUserData();
-      if (checkBox.isSelected()) {
-        emuIds.add(emulatorRepresentation.getId());
-      }
-    }
-
-    filterButton.getStyleClass().remove("filter-button-selected");
-    if (emuIds.size() != client.getEmulatorService().getVpxGameEmulators().size()) {
-      filterButton.getStyleClass().add("filter-button-selected");
-      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
-    }
-    else {
-      filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu-outline"));
-    }
-
-
-    for (GameRepresentation game : games) {
-      if (game.getHighscoreType() == null) {
-        continue;
-      }
-
-      if (!emuIds.contains(game.getEmulatorId())) {
-        continue;
-      }
-
-      if (game.getGameDisplayName().toLowerCase().contains(filterValue.toLowerCase())) {
-        filtered.add(game);
-      }
-    }
-
-    data = FXCollections.observableList(filtered);
-  }
-
-  private GameRepresentation getSelectedTable() {
-    return this.tableView.getSelectionModel().getSelectedItem();
-  }
-
-  @Override
-  public void onChanged(Change<? extends GameRepresentation> c) {
-    if (c.getList().isEmpty()) {
-      refreshPreview(Optional.empty(), false);
-    }
-    else {
-      refreshPreview(Optional.ofNullable(c.getList().get(0)), false);
-    }
-  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize("Highscore ", "backglasses", new HighscoreCardsColumnSorter(this));
+    super.loadFilterPanel("scene-highscore-cards-filter.fxml");
+
     maniaBtn.managedProperty().bindBidirectional(maniaBtn.visibleProperty());
     maniaBtn.setVisible(Features.MANIA_ENABLED);
 
@@ -354,8 +256,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     maniaBtn.setGraphic(iconMania);
 
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
-
-    cardTemplates = client.getHighscoreCardTemplatesClient().getTemplates();
 
     try {
       FXMLLoader loader = new FXMLLoader(TemplateEditorController.class.getResource("template-editor.fxml"));
@@ -375,19 +275,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       LOG.error("Failed to init card editor: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      tablesLoadingOverlay = loader.load();
-      tablesLoadingOverlay.setTranslateY(-100);
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Tables...");
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
-
-    columnStatus.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
       boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
       if (!defaultBackgroundAvailable) {
         Label label = new Label();
@@ -399,18 +287,17 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
-        return new SimpleObjectProperty<>(label);
+        return label;
       }
 
       FontIcon checkIcon = WidgetFactory.createCheckIcon();
       if (value.isCardDisabled()) {
         checkIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
       }
-      return new SimpleObjectProperty<>(checkIcon);
-    });
+      return checkIcon;
+    }, this, true);
 
-    columnDisplayName.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
+    BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
       label.setTooltip(new Tooltip(value.getGameDisplayName()));
       label.getStyleClass().add("default-text");
@@ -418,169 +305,65 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         label.setStyle("-fx-text-fill: " + DISABLED_COLOR);
         label.setTooltip(new Tooltip("The card generation is disabled for this game."));
       }
+      return label;
+    }, this, true);
 
-      return new SimpleObjectProperty<>(label);
-    });
-
-    columnTemplate.setCellValueFactory(cellData -> {
-      GameRepresentation value = cellData.getValue();
-
-      CardTemplate template = cardTemplates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
-      if (value.getTemplateId() != null) {
-        Optional<CardTemplate> first = cardTemplates.stream().filter(g -> g.getId().equals(value.getTemplateId())).findFirst();
-        if (first.isPresent()) {
-          template = first.get();
-        }
-      }
-
-      String templateName = template.getName();
+    BaseLoadingColumn.configureColumn(columnTemplate, (value, model) -> {
+      CardTemplate template = templateEditorController.getCardTemplateForGame(value);
+      String templateName = template != null ? template.getName() : "-";
       Label label = new Label(templateName);
       label.getStyleClass().add("default-text");
-      label.setTooltip(new Tooltip(templateName));
-      return new SimpleObjectProperty<>(label);
-    });
+      if (template != null) {
+        label.setTooltip(new Tooltip(templateName));
+      }
+      return label;
+    }, this, true);
 
 
-    tableView.setItems(data);
-    tableView.setEditable(true);
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    tableView.getSelectionModel().getSelectedItems().addListener(this);
-    tableView.setSortPolicy(new Callback<TableView<GameRepresentation>, Boolean>() {
-      @Override
-      public Boolean call(TableView<GameRepresentation> gameRepresentationTableView) {
-        //GameRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
-        if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
-          TableColumn<GameRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
-          if (column.equals(columnDisplayName)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getGameDisplayName()));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-          else if (column.equals(columnTemplate)) {
-            Collections.sort(tableView.getItems(), Comparator.comparing(o -> String.valueOf(o.getTemplateId())));
-            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-              Collections.reverse(tableView.getItems());
-            }
-            return true;
-          }
-        }
-        return true;
-      }
+    tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      refreshView(newSelection);
     });
-
-    tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent event) {
-        if (Keys.isSpecial(event)) {
-          return;
-        }
-
-        String text = event.getText();
-
-        long timeDiff = System.currentTimeMillis() - lastKeyInputTime;
-        if (timeDiff > 800) {
-          lastKeyInputTime = System.currentTimeMillis();
-          lastKeyInput = text;
-        }
-        else {
-          lastKeyInputTime = System.currentTimeMillis();
-          lastKeyInput = lastKeyInput + text;
-          text = lastKeyInput;
-        }
-
-        for (GameRepresentation game : data) {
-          if (game.getGameDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
-            tableView.getSelectionModel().clearSelection();
-            tableView.getSelectionModel().select(game);
-            tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
-            break;
-          }
-        }
-      }
-    });
-
-    searchField.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableView.getSelectionModel().clearSelection();
-      filterGames(games);
-      tableView.setItems(data);
-    });
-
-    List<GameEmulatorRepresentation> gameEmulators = client.getEmulatorService().getVpxGameEmulators();
-    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
-      CustomMenuItem item = new CustomMenuItem();
-      CheckBox checkBox = new CheckBox(gameEmulator.getName());
-      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
-      checkBox.setPrefHeight(30);
-      checkBox.setSelected(true);
-      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          tableView.getSelectionModel().clearSelection();
-          filterGames(games);
-          tableView.setItems(data);
-        }
-      });
-      checkBox.setUserData(gameEmulator);
-      item.setContent(checkBox);
-      filterButton.getItems().add(item);
-    }
 
     defaultBackgroundTitlePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (getSelectedTable() != null) {
-          refreshRawPreview(Optional.of(getSelectedTable()));
+        if (getSelection() != null) {
+          refreshRawPreview(getSelection());
         }
       }
     });
 
     EventManager.getInstance().addListener(this);
-    onReload(false);
-  }
 
-  public void refresh(Optional<GameRepresentation> gameRepresentation, List<CardTemplate> templates, boolean refreshAll) {
-    this.cardTemplates = templates;
-    if (refreshAll) {
-      onReload(false);
-      return;
-    }
-
-    if (gameRepresentation.isPresent()) {
-      JFXFuture.supplyAsync(() -> client.getGameService().getGame(gameRepresentation.get().getId()))
-          .thenAcceptLater(refreshedGame -> {
-            tableView.getSelectionModel().getSelectedItems().removeListener(this);
-            GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-            tableView.getSelectionModel().clearSelection();
-
-            int index = data.indexOf(refreshedGame);
-            if (index != -1) {
-              data.remove(index);
-              data.add(index, refreshedGame);
-            }
-            tableView.getSelectionModel().getSelectedItems().addListener(this);
-
-            if (selection != null && data.contains(refreshedGame)) {
-              tableView.getSelectionModel().select(refreshedGame);
-            }
-
-            tableView.refresh();
-          });
-    }
-  }
-
-  public List<GameRepresentation> getSelection() {
-    return tableView.getSelectionModel().getSelectedItems();
+    doReload(false);
   }
 
   @Override
   public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
-    this.onReloadPressed();
+    JFXFuture.supplyAsync(() -> client.getGameService().getGame(id))
+    .thenAcceptLater(refreshedGame -> {
+      if (refreshedGame != null) {
+        reloadItem(refreshedGame);
+      }
+      else {
+        // detection of deletion for a table
+        Optional<GameRepresentationModel> model = models.stream().filter(g -> g.getGameId() == id).findFirst();
+        if (model.isPresent()) {    
+          models.remove(model.get());
+        }
+      }
+    });
   }
 
   @Override
   public void tablesChanged() {
-    this.onReloadPressed();
+    doReload(false);
   }
+
+  @Override
+  protected GameRepresentationModel toModel(GameRepresentation game) {
+    return new GameRepresentationModel(game);
+  }
+
 }
