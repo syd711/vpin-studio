@@ -1,11 +1,12 @@
-package de.mephisto.vpin.ui.apng;
+package de.mephisto.vpin.commons.fx.apng;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
-import de.mephisto.vpin.ui.apng.image.ApngFrame;
-import de.mephisto.vpin.ui.apng.image.ApngFrameDecoder;
+
+import de.mephisto.vpin.commons.fx.apng.image.ApngFrame;
+import de.mephisto.vpin.commons.fx.apng.image.ApngFrameDecoder;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

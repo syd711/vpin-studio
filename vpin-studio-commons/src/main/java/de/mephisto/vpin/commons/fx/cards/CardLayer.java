@@ -32,7 +32,7 @@ public interface CardLayer {
   /**
    * The zoomX/zoomY are used to transform the CardTemplate coordinates into rendering coordinates
    */
-  void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception;
+  void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY);
 
   //------------------------------------------
 

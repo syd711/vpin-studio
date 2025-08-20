@@ -19,14 +19,11 @@ public class LayerEditorOverlayController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
-    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isOverlayMode());
-
-    // background
-    screensComboBox.setDisable(!cardTemplate.isOverlayMode());
+    setIconVisibility(cardTemplate.isOverlayMode());
   }
 
   public void initBindings(CardTemplateBinder templateBeanBinder) {
-    templateBeanBinder.bindVisibilityIcon(settingsPane, "overlayMode");
+    bindVisibilityIcon(templateBeanBinder, "overlayMode");
 
     List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     VPinScreens.remove(VPinScreen.Audio);

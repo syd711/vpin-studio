@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.apng.chunks;
+package de.mephisto.vpin.commons.fx.apng.chunks;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-import de.mephisto.vpin.ui.apng.image.ApngFrame;
+import de.mephisto.vpin.commons.fx.apng.image.ApngFrame;
 
 /**
  * Copied from PNGImageLoader

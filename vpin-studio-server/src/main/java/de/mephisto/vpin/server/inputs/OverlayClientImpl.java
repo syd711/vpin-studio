@@ -8,6 +8,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.client.ImageCache;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -47,6 +49,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
@@ -101,6 +104,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private CardService cardService;
 
   @Autowired
   private DiscordService discordService;
@@ -282,6 +288,17 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public AlxSummary getAlxSummary(int gameId) {
     return alxService.getAlxSummary(gameId);
+  }
+
+  @Override
+  public CardTemplate getCardTemplate(GameRepresentation game) {
+    return cardService.getCardTemplate(game.getTemplateId());
+  }
+
+  @Override
+  public CardData getCardData(GameRepresentation game, CardTemplate template) {
+    Game _game = gameService.getGame(game.getId());
+    return cardService.getCardData(_game,template);
   }
 
   //--------------------------

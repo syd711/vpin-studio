@@ -1,12 +1,12 @@
-package de.mephisto.vpin.ui.apng;
+package de.mephisto.vpin.commons.fx.apng;
 
 import com.sun.javafx.iio.*;
 import com.sun.javafx.iio.ImageStorage.ImageType;
 import com.sun.javafx.iio.common.*;
 
-import de.mephisto.vpin.ui.apng.chunks.ApngDecoder;
-import de.mephisto.vpin.ui.apng.image.ApngFrameDecoder;
-import de.mephisto.vpin.ui.apng.image.ApngFrame;
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngDecoder;
+import de.mephisto.vpin.commons.fx.apng.image.ApngFrame;
+import de.mephisto.vpin.commons.fx.apng.image.ApngFrameDecoder;
 
 import java.io.*;
 import java.nio.ByteBuffer;

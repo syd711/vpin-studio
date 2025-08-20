@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons;
+package de.mephisto.vpin.commons.utils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

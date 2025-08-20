@@ -13,7 +13,7 @@ import javafx.scene.shape.Rectangle;
 public class CardLayerCanvas extends Rectangle implements CardLayer {
 
   @Override
-  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
 
     int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
     String hex = Integer.toHexString(value);

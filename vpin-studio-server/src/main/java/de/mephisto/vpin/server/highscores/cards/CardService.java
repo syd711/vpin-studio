@@ -281,13 +281,23 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return cardGraphics.snapshot();
   }
 
-  public CardData getCardData(Game game, int templateId) throws Exception {
+  //-----------------------------------------
+
+  public CardTemplate getCardTemplate(Long templateId) {
+    return cardTemplatesService.getTemplate(templateId);
+  }
+
+  public CardData getCardData(Game game, int templateId) {
     CardTemplate template = cardTemplatesService.getTemplate(templateId);
+    return getCardData(game, template);
+  }
+
+  public CardData getCardData(Game game, CardTemplate template) {
     ScoreSummary summary = getScoreSummary(game, template, false);
     return getCardData(game, summary, template);
   }
 
-  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
+  private CardData getCardData(Game game, ScoreSummary summary, CardTemplate template) {
     CardData cardData = new CardData();
 
     VpsTable vpsTable = null;
@@ -315,8 +325,13 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
       ObjectMapper mapper = new ObjectMapper();
       ArrayList<ScoreRepresentation> scores = new ArrayList<>();
       for (Score score : summary.getScores()) {
-        String s = mapper.writeValueAsString(score);
-        scores.add(mapper.readValue(s, ScoreRepresentation.class));
+        try {
+          String s = mapper.writeValueAsString(score);
+          scores.add(mapper.readValue(s, ScoreRepresentation.class));
+        }
+        catch (Exception e) {
+          LOG.error("cannot decode score %s", score.getFormattedScore(), e);
+        }
       }
       cardData.setScores(scores);
     }

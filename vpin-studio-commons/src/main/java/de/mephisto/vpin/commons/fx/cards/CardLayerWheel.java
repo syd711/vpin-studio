@@ -13,13 +13,13 @@ public class CardLayerWheel extends ImageView implements CardLayer {
   private Image cacheImage;
 
   @Override
-  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
 
     if (data != null && hasChanged(data)) {
       //file exists && there is place to render it
       String wheelIconUrl = data.getWheelUrl();
       if (wheelIconUrl != null) {
-        this.cacheImage = new Image(wheelIconUrl);
+        this.cacheImage = new Image(wheelIconUrl, true);
       }
     }
 

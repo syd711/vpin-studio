@@ -259,12 +259,6 @@
                 <configuration>
                     <source>11</source>
                     <target>11</target>
-                    <compilerArgs>
-                        <arg>--add-exports</arg>
-                        <arg>javafx.graphics/com.sun.javafx.iio=ALL-UNNAMED</arg>
-                        <arg>--add-exports</arg>
-                        <arg>javafx.graphics/com.sun.javafx.iio.common=ALL-UNNAMED</arg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
 

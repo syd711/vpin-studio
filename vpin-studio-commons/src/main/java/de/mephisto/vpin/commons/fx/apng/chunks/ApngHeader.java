@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.apng.chunks;
+package de.mephisto.vpin.commons.fx.apng.chunks;
 
 /**
  * Map IHDR chunk

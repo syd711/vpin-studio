@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.apng.image;
+package de.mephisto.vpin.commons.fx.apng.image;
 
 public class ApngFrame {
 

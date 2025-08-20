@@ -1,11 +1,16 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
+import de.mephisto.vpin.commons.fx.cards.CardGraphicsHighscore;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardResolution;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -20,9 +25,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -42,6 +49,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.fx.pausemenu.PauseMenuUIDefaults.*;
 
 public class MenuController implements Initializable {
@@ -285,6 +293,30 @@ public class MenuController implements Initializable {
       catch (IOException e) {
         LOG.error("Failed to init pause component: " + e.getMessage(), e);
       }
+    }
+    else if (activeSelection.getItemType().equals(PauseMenuItemTypes.highscores)) {
+
+      ProgressIndicator indicator = new ProgressIndicator();
+      indicator.setPrefWidth(300.0);
+      indicator.setPrefHeight(300.0);
+      BorderPane.setAlignment(indicator, Pos.CENTER);
+
+      scoreView.setCenter(indicator);
+      scoreView.setVisible(true);
+
+      JFXFuture
+        .supplyAsync(() -> client.getCardTemplate(game))
+        .thenAcceptLater(template -> {
+          JFXFuture
+            .supplyAsync(() -> client.getCardData(game, template))
+            .thenAcceptLater(carddata -> {
+              CardGraphicsHighscore highscoreCard = new CardGraphicsHighscore(true);
+              highscoreCard.setTemplate(template);
+              carddata.addBaseUrl(client.getURL(""));
+              highscoreCard.setData(carddata, CardResolution.HDReady);
+              scoreView.setCenter(highscoreCard);
+            });
+        });
     }
     else if (activeSelection.getVideoUrl() != null) {
       mediaView.setVisible(true);

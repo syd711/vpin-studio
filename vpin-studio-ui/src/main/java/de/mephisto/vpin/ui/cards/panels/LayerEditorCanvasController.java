@@ -17,7 +17,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
-    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isRenderCanvas());
+    setIconVisibility(cardTemplate.isRenderCanvas());
 
     CardTemplateBinder.setColorPickerValue(canvasColorSelector, cardTemplate, "canvasBackground");
     positionController.setTemplate("canvas", cardTemplate, res);
@@ -27,7 +27,7 @@ public class LayerEditorCanvasController extends LayerEditorBaseController {
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
-    templateBeanBinder.bindVisibilityIcon(settingsPane, "renderCanvas");
+    bindVisibilityIcon(templateBeanBinder, "renderCanvas");
 
     templateBeanBinder.bindColorPicker(canvasColorSelector, "canvasBackground");
     templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, "canvasAlphaPercentage");

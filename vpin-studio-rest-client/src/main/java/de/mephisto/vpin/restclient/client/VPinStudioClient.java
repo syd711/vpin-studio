@@ -11,6 +11,8 @@ import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -480,6 +482,16 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public CardTemplate getCardTemplate(GameRepresentation game) {
+    return getHighscoreCardsService().getCardTemplate(game);
+  }
+
+  @Override
+  public CardData getCardData(GameRepresentation game, CardTemplate template) {
+    return getHighscoreCardsService().getHighscoreCardData(game, template);
+  }
+
+  @Override
   public ScoreSummaryRepresentation getCompetitionScore(long id) {
     return getCompetitionService().getCompetitionScore(id);
   }
@@ -630,4 +642,5 @@ public class VPinStudioClient implements OverlayClient {
   public void clearWheelCache() {
     getImageCache().clearWheelCache();
   }
+
 }

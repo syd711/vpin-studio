@@ -12,7 +12,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,45 +170,21 @@ public class BeanBinder<T> {
     return "#" + (format(value.getRed()) + format(value.getGreen()) + format(value.getBlue()));
   }
 
-  public void bindVisibilityIcon(TitledPane titleSettingsPane, String property) {
-    FontIcon icon = WidgetFactory.createIcon("mdi2e-eye-outline", 18, WidgetFactory.DEFAULT_COLOR);
-    icon.setOnMouseReleased(e -> {
-      try {
-        boolean visible = !getBooleanProperty(property, true);
-        setProperty(property, visible);
-        setIconVisibility(titleSettingsPane, visible);
-      } 
-      catch (Exception ex) {
-        LOG.error("Cannot read property {} from template", property, ex);
-      }
-      e.consume();
-    });
-    titleSettingsPane.setGraphic(icon);
-    titleSettingsPane.setGraphicTextGap(12);
-  }
-
-  public static void setIconVisibility(TitledPane titleSettingsPane, boolean visible) {
-    FontIcon icon = (FontIcon) titleSettingsPane.getGraphic();
-    icon.setIconLiteral(visible  ? "mdi2e-eye-outline" : "mdi2e-eye-off-outline");
-    titleSettingsPane.getContent().setDisable(!visible);
-  }
-
   //------------------------------------------------------
 
-  private static String getProperty(Object beanObject, String property, String defaultValue) {
+  private static <P> P getProperty(Object beanObject, String property, P defaultValue) {
     try {
-      String value = (String) PropertyUtils.getProperty(beanObject, property);
-      if (!StringUtils.isEmpty(value)) {
-        return value;
-      }
+      @SuppressWarnings("unchecked")
+      P value = (P) PropertyUtils.getProperty(beanObject, property);
+      return value != null ? value : defaultValue;
     }
     catch (Exception e) {
       LOG.error("Failed to read property " + property + ": " + e.getMessage());
+      return defaultValue;
     }
-    return defaultValue;
   }
 
-  private String getProperty(String property, String defaultValue) {
+  public <P> P getProperty(String property, P defaultValue) {
     return getProperty(bean, property, defaultValue);
   }
 

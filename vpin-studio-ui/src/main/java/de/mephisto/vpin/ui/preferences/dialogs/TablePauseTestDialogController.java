@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -51,7 +52,9 @@ public class TablePauseTestDialogController implements Initializable, DialogCont
 
   @FXML
   private void onTestClick(ActionEvent e) {
-    client.getSystemService().testPauseMenu(tablesCombo.getSelectionModel().getSelectedItem(), timeSpinner.getValueFactory().getValue());
+    JFXFuture.runAsync(() -> {
+      client.getSystemService().testPauseMenu(tablesCombo.getSelectionModel().getSelectedItem(), timeSpinner.getValueFactory().getValue());
+    });
   }
 
   @Override

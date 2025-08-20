@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.apng;
+package de.mephisto.vpin.commons.fx.apng;
 
 import java.io.IOException;
 import java.io.InputStream;

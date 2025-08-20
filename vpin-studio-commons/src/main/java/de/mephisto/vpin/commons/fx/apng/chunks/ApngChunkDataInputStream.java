@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.apng.chunks;
+package de.mephisto.vpin.commons.fx.apng.chunks;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;

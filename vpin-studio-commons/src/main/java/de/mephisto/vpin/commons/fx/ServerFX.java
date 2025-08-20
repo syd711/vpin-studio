@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.FrontendScreensManager;
 import de.mephisto.vpin.commons.MonitorInfoUtil;
+import de.mephisto.vpin.commons.fx.apng.ApngImageLoaderFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
@@ -70,6 +71,7 @@ public class ServerFX extends Application {
 
   public static void main(String[] args) {
     System.setProperty("java.awt.headless", "false");
+    ApngImageLoaderFactory.install();
     Application.launch(args);
   }
 

@@ -65,12 +65,7 @@ public class PauseMenuItemsFactory {
       }
     }
     item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-    InputStream imageStream = ServerFX.client.getGameMediaItem(game.getId(), cardScreen);
-    if (imageStream != null) {
-      Image scoreImage = new Image(imageStream);
-      item.setDataImage(scoreImage);
-      pauseMenuItems.add(item);
-    }
+    pauseMenuItems.add(item);
 
     if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
       loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "tutorial.png");

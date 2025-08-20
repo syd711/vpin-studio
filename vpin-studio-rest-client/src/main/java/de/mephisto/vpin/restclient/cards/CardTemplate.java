@@ -65,7 +65,7 @@ public class CardTemplate extends JsonSettings {
   private int tableFontSize = 72;
   private String tableFontStyle = "Regular";
   private boolean tableUseDefaultColor = true;
-  private String tableColor;
+  private String tableColor = "#FFFFFF";
   private double tableX = 0.0;
   private double tableY = 0.2;
   private double tableWidth = 1.0;
@@ -76,7 +76,7 @@ public class CardTemplate extends JsonSettings {
   private int titleFontSize = 120;
   private String titleFontStyle = "Regular";
   private boolean titleUseDefaultColor = true;
-  private String titleColor;
+  private String titleColor = "#FFFFFF";
   private double titleX = 0;
   private double titleY = 0;
   private double titleWidth = 1.0;

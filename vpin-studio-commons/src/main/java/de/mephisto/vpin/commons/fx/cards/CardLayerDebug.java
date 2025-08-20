@@ -20,7 +20,7 @@ public class CardLayerDebug extends Canvas implements CardLayer {
   }
 
   @Override
-  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
     GraphicsContext gc = getGraphicsContext2D();
     gc.clearRect(0, 0, getWidth(), getHeight());
 

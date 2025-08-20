@@ -18,7 +18,27 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<TitledPane fx:id="settingsPane" text="Title Settings" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorTitleController">
+<TitledPane fx:id="settingsPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorTitleController">
+   <graphic>
+      <BorderPane prefWidth="250.0">
+         <left>
+            <Label text="Title Settings" />
+         </left>
+         <right>
+            <Button fx:id="eyeBtn" mnemonicParsing="false" >
+               <font>
+                  <Font size="10.0"/>
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye-outline"/>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Toggle title visibility"/>
+               </tooltip>
+            </Button>
+         </right>
+      </BorderPane>
+   </graphic>
    <content>
       <ScrollPane hbarPolicy="NEVER">
          <content>

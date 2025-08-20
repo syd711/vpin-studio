@@ -47,7 +47,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
    CardLayerBackground/drawBorder(): 1 ms
    */
   @Override
-  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
     double width = getWidth();
     double height = getHeight();
     GraphicsContext g = getGraphicsContext2D();
@@ -120,7 +120,7 @@ public class CardLayerBackground extends Canvas implements CardLayer {
     }
   }
 
-  private @Nullable BufferedImage getBackgroundImage(@Nonnull CardTemplate template, @Nullable CardData data) throws IOException {
+  private @Nullable BufferedImage getBackgroundImage(@Nonnull CardTemplate template, @Nullable CardData data) {
 
     if (template.isTransparentBackground()) {
       BufferedImage bufferedImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
@@ -162,7 +162,11 @@ public class CardLayerBackground extends Canvas implements CardLayer {
         throw new UnsupportedOperationException("No background images have been found, " +
             "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
       }
-      backgroundImage = ImageUtil.loadImage(sourceImage);
+      try {
+        backgroundImage = ImageUtil.loadImage(sourceImage);
+      } catch (IOException e) {
+        LOG.error("Cannot load image from source %s", sourceImage.getAbsolutePath(), e);
+      }
     }
 
     if (backgroundImage != null) {

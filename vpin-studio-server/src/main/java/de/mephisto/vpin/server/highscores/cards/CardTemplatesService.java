@@ -29,7 +29,7 @@ public class CardTemplatesService {
   @Autowired
   private PreferencesService preferencesService;
 
-  public CardTemplate save(CardTemplate cardTemplate) throws Exception {
+  public CardTemplate save(CardTemplate cardTemplate) {
     if (cardTemplate.getId() != null) {
       Optional<TemplateMapping> mapping = templateMappingRepository.findById(cardTemplate.getId());
       if (mapping.isPresent()) {
@@ -52,7 +52,7 @@ public class CardTemplatesService {
     return true;
   }
 
-  public List<CardTemplate> getTemplates() throws Exception {
+  public List<CardTemplate> getTemplates() {
     List<CardTemplate> result = new ArrayList<>();
     List<TemplateMapping> all = templateMappingRepository.findAll();
     if (all.isEmpty()) {
@@ -63,7 +63,7 @@ public class CardTemplatesService {
     }
 
     for (TemplateMapping mapping : all) {
-      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
+      CardTemplate template = mapping.getTemplate();
       template = checkVersion(template);
       template.setId(mapping.getId());
       result.add(template);
@@ -71,22 +71,18 @@ public class CardTemplatesService {
     return result;
   }
 
-  public CardTemplate getTemplateForGame(Game game) throws Exception {
-    if (game.getTemplateId() != null) {
-      Optional<TemplateMapping> byId = templateMappingRepository.findById(game.getTemplateId());
-      if (byId.isPresent()) {
-        TemplateMapping mapping = byId.get();
-        CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
-        template = checkVersion(template);
-        template.setId(mapping.getId());
-        return template;
-      }
-    }
+  public CardTemplate getTemplateForGame(Game game) {
+    return getTemplateOrDefault(game.getTemplateId());
+  }
 
+  public CardTemplate getTemplateOrDefault(Long templateId) {
+      if (templateId != null) {
+      return getTemplate(templateId);
+    }
     return getCardTemplate(CardTemplate.DEFAULT);
   }
 
-  private CardTemplate getCardTemplate(String name) throws Exception {
+  private CardTemplate getCardTemplate(String name) {
     Optional<CardTemplate> first = getTemplates().stream().filter(c -> c.getName().equals(name)).findFirst();
     if (first.isEmpty()) {
       first = getTemplates().stream().filter(c -> c.getName().equals(CardTemplate.DEFAULT)).findFirst();
@@ -95,11 +91,11 @@ public class CardTemplatesService {
     return first.get();
   }
 
-  public CardTemplate getTemplate(long templateId) throws Exception {
+  public CardTemplate getTemplate(long templateId) {
     Optional<TemplateMapping> mapping = templateMappingRepository.findById(templateId);
     if (mapping.isPresent()) {
       TemplateMapping m = mapping.get();
-      CardTemplate template = CardTemplate.fromJson(CardTemplate.class, m.getTemplateJson());
+      CardTemplate template = m.getTemplate();
       template = checkVersion(template);
       template.setId(m.getId());
       return template;
@@ -110,7 +106,7 @@ public class CardTemplatesService {
 
   //-------------------------------------------------- Template version management
 
-  private CardTemplate checkVersion(CardTemplate template) throws Exception {
+  private CardTemplate checkVersion(CardTemplate template) {
     Integer version = template.getVersion();
     if (version == null || version == 1) {
       template = upgradeFromVersion1(template);

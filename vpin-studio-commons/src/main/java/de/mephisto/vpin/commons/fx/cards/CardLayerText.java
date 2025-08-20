@@ -32,7 +32,7 @@ public class CardLayerText extends Canvas implements CardLayer {
   }
 
   @Override
-  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
 
     String text = null;
     boolean useDefaultColor = true;
@@ -88,7 +88,7 @@ public class CardLayerText extends Canvas implements CardLayer {
     GraphicsContext g = getGraphicsContext2D();
     g.clearRect(0, 0, width, height);
 
-    Paint paint = Paint.valueOf(useDefaultColor ? template.getFontColor() : fontColor);
+    Paint paint = Paint.valueOf(useDefaultColor || StringUtils.isEmpty(fontColor) ? template.getFontColor() : fontColor);
     g.setFill(paint);
 
 

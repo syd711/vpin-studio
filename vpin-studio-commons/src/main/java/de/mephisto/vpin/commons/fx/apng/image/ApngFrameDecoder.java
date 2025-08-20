@@ -1,14 +1,14 @@
-package de.mephisto.vpin.ui.apng.image;
+package de.mephisto.vpin.commons.fx.apng.image;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.mephisto.vpin.ui.apng.chunks.ApngChunkDataInputStream;
-import de.mephisto.vpin.ui.apng.chunks.ApngDecoder;
-import de.mephisto.vpin.ui.apng.chunks.ApngFrameControl;
-import de.mephisto.vpin.ui.apng.chunks.ApngHeader;
-import de.mephisto.vpin.ui.apng.image.ApngFrameDecoder;
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngChunkDataInputStream;
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngDecoder;
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngFrameControl;
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngHeader;
+import de.mephisto.vpin.commons.fx.apng.image.ApngFrameDecoder;
 
 public class ApngFrameDecoder implements Closeable {
 

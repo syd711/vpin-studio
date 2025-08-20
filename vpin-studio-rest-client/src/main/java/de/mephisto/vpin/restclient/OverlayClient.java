@@ -4,6 +4,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
@@ -47,6 +49,10 @@ public interface OverlayClient {
   GameScoreValidation getGameScoreValidation(int gameId);
 
   AlxSummary getAlxSummary(int gameId);
+
+  CardTemplate getCardTemplate(GameRepresentation game);
+
+  CardData getCardData(GameRepresentation game, CardTemplate template);
 
   //------------------------------
 
@@ -105,4 +111,5 @@ public interface OverlayClient {
   FeaturesInfo getFeatures();
 
   MonitorInfo getScreenInfo(int screenId);
+
 }

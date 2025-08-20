@@ -186,15 +186,10 @@ public class CardGraphicsHighscore extends StackPane {
     layer.setHeight(height * zoomY);
     layer.relocate(x * zoomX, y * zoomY);
 
-    try {
-      if (template != null) {
-        long startTime = System.currentTimeMillis();
-        layer.draw(template, data, zoomX, zoomY);
-        LOG.debug(this.getClass().getSimpleName() + " drawn in (ms) " + (System.currentTimeMillis() - startTime));
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Error drawing layer {}", this, e);
+    if (template != null) {
+      long startTime = System.currentTimeMillis();
+      layer.draw(template, data, zoomX, zoomY);
+      LOG.debug(this.getClass().getSimpleName() + " drawn in (ms) " + (System.currentTimeMillis() - startTime));
     }
   }
   

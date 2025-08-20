@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardData;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -41,7 +42,16 @@ public class CardsResource {
     if (game != null) {
       return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId));
     }
-    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
+    throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
+  }
+
+  @GetMapping("/cardtemplate/{gameId}")
+  public CardTemplate getCardTemplate(@PathVariable("gameId") int gameId) throws Exception {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return cardService.getCardTemplate(game.getTemplateId());
+    }
+    throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
   @GetMapping("/gamedata/{gameId}/{templateId}")
@@ -50,7 +60,7 @@ public class CardsResource {
     if (game != null) {
       return cardService.getCardData(game, templateId);
     }
-    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
+    throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
 
@@ -61,7 +71,7 @@ public class CardsResource {
     if (game != null) {
       return RequestUtil.serializeImage(cardService.generateTableCardFile(game));
     }
-    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
+    throw new ResponseStatusException(NOT_FOUND, "No game found for id " + gameId);
   }
 
   @GetMapping("/generate/{gameId}")

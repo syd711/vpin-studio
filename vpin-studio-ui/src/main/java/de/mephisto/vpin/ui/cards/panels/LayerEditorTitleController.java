@@ -48,7 +48,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
-    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isRenderTitle());
+    setIconVisibility(cardTemplate.isRenderTitle());
 
     titleText.setText(cardTemplate.getTitle());
     CardTemplateBinder.setFontLabel(titleFontLabel, cardTemplate, "title");
@@ -61,7 +61,7 @@ public class LayerEditorTitleController extends LayerEditorBaseController {
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
-    templateBeanBinder.bindVisibilityIcon(settingsPane, "renderTitle");
+    bindVisibilityIcon(templateBeanBinder, "renderTitle");
 
     templateBeanBinder.bindTextField(titleText, "title");
 

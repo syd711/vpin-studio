@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.apng;
+package de.mephisto.vpin.commons.fx.apng;
 
 import java.io.File;
 import java.io.FileInputStream;

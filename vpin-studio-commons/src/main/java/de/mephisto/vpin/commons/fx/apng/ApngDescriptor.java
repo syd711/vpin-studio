@@ -1,8 +1,8 @@
-package de.mephisto.vpin.ui.apng;
+package de.mephisto.vpin.commons.fx.apng;
 
 import com.sun.javafx.iio.common.ImageDescriptor;
 
-import de.mephisto.vpin.ui.apng.chunks.ApngChunkDataInputStream;
+import de.mephisto.vpin.commons.fx.apng.chunks.ApngChunkDataInputStream;
 
 /**
  * APNG Image Descriptor

@@ -35,8 +35,21 @@ public class TemplateMapping {
     this.templateJson = templateJson;
   }
 
-  public void setCardTemplate(CardTemplate cardTemplate) throws JsonProcessingException {
-    this.templateJson = cardTemplate.toJson();
-    this.id = cardTemplate.getId();
+  public void setCardTemplate(CardTemplate cardTemplate) {
+    try {
+      this.templateJson = cardTemplate.toJson();
+      this.id = cardTemplate.getId();
+    }
+    catch (JsonProcessingException jpe) {
+      throw new RuntimeException("cannot serialize card template " + cardTemplate.getName(), jpe);
+    }
+  }
+
+  public CardTemplate getTemplate() {
+    try {
+      return CardTemplate.fromJson(CardTemplate.class, templateJson);
+    } catch (Exception e) {
+      throw new RuntimeException("cannot deserialize card template " + id, e);
+    }
   }
 }

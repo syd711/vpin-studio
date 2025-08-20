@@ -28,7 +28,7 @@ import javafx.scene.text.Text;
 public class CardLayerScores extends Canvas implements CardLayer {
 
   @Override
-  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) throws Exception {
+  public void draw(@Nonnull CardTemplate template, @Nullable CardData data, double zoomX, double zoomY) {
     double width = getWidth();
     double height = getHeight();
     GraphicsContext g = getGraphicsContext2D();

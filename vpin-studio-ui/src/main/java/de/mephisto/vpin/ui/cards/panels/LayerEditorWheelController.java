@@ -17,7 +17,7 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
 
   @Override
   public void setTemplate(CardTemplate cardTemplate, CardResolution res) {
-    CardTemplateBinder.setIconVisibility(settingsPane, cardTemplate.isRenderWheelIcon());
+    setIconVisibility(cardTemplate.isRenderWheelIcon());
 
     LayerSubEditorPositionController.setValue(wheelSizeSpinner, cardTemplate, "wheelSize", res.toWidth());
     LayerSubEditorPositionController.setValue(wheelImageXSpinner, cardTemplate, "wheelX", res.toWidth());
@@ -26,7 +26,7 @@ public class LayerEditorWheelController extends LayerEditorBaseController {
 
   @Override
   public void initBindings(CardTemplateBinder templateBeanBinder) {
-    templateBeanBinder.bindVisibilityIcon(settingsPane, "renderWheelIcon");
+    bindVisibilityIcon(templateBeanBinder, "renderWheelIcon");
 
     LayerSubEditorPositionController.bindSpinner(wheelSizeSpinner, "wheelSize", templateBeanBinder, 0, 1920, true);
     LayerSubEditorPositionController.bindSpinner(wheelImageXSpinner, "wheelX", templateBeanBinder, 0, 1920, true);
