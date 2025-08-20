@@ -689,12 +689,13 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
       CardTemplate template = getCardTemplateForGame(game);
-
-      if (template.equals(templateCombo.getValue())) {
-        setTemplate(template);
-      }
-      else {
-        templateCombo.setValue(template);
+      if (template != null) {
+        if (template.equals(templateCombo.getValue())) {
+          setTemplate(template);
+        }
+        else {
+          templateCombo.setValue(template);
+        }
       }
     }
   }

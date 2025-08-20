@@ -59,9 +59,9 @@ public class CardTemplatesService {
       CardTemplate template = new CardTemplate();
       template.setName(CardTemplate.DEFAULT);
       save(template);
+      all = templateMappingRepository.findAll();
     }
 
-    all = templateMappingRepository.findAll();
     for (TemplateMapping mapping : all) {
       CardTemplate template = CardTemplate.fromJson(CardTemplate.class, mapping.getTemplateJson());
       template = checkVersion(template);
@@ -110,13 +110,14 @@ public class CardTemplatesService {
 
   //-------------------------------------------------- Template version management
 
-  private CardTemplate checkVersion(CardTemplate template) {
+  private CardTemplate checkVersion(CardTemplate template) throws Exception {
     Integer version = template.getVersion();
     if (version == null || version == 1) {
       template = upgradeFromVersion1(template);
+      template.setVersion(CURRENT_VERSION);
+      template = save(template);
     }
-    template.setVersion(CURRENT_VERSION);
-
+  
     return template;
   }
 

@@ -247,10 +247,12 @@ public class CardLayerScores extends Canvas implements CardLayer {
 */
 
   private void addCardDataScoreFromRaw(TextBlock text, String raw) {
-    String formattedRaw = ScoreFormatUtil.formatRaw(raw);
-    for (String line : formattedRaw.split("\n")) {
-      if (StringUtils.isNotEmpty(line)) {
-        text.addLine(line, false);
+    if (raw != null) {
+      String formattedRaw = ScoreFormatUtil.formatRaw(raw);
+      for (String line : formattedRaw.split("\n")) {
+        if (StringUtils.isNotEmpty(line)) {
+          text.addLine(line, false);
+        }
       }
     }
   }

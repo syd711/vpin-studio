@@ -221,7 +221,7 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }
     NavigationController.setBreadCrumb(breadcrumb);
 
-    templateEditorController.selectTable(Optional.of(game));
+    templateEditorController.selectTable(Optional.ofNullable(game));
     refreshRawPreview(game);
   }
 
