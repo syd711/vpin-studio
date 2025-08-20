@@ -397,7 +397,7 @@ public class TablesSidebarMameController implements Initializable {
       GameRepresentation game = gameOptional.get();
 
       nvOffsetBtn.setDisable(!HighscoreType.NVRam.equals(game.getHighscoreType()));
-      labelRomAlias.setText(game.getRomAlias());
+      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       copyRomAliasBtn.setDisable(false);
 
       if (game.getNvOffset() > 0) {
