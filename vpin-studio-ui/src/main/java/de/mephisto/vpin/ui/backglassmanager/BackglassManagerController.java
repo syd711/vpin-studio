@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
@@ -28,10 +30,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -56,6 +55,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
+  public static Debouncer debouncer = new Debouncer();
 
 
   @FXML
@@ -75,6 +75,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private Button dmdPositionBtn;
+
+  @FXML
+  private SplitPane splitPane;
 
   @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> statusColumn;
@@ -320,6 +323,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @Override
   public void onViewDeactivated() {
     activeView = false;
+
+    double position = splitPane.getDividers().get(0).getPosition();
+    LocalUISettings.saveProperty("backglassesDivider", String.valueOf(position));
   }
 
   @Override
@@ -340,6 +346,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       refreshView(null);
     }
     reloadSelection();
+
+    String backglassesDivider = LocalUISettings.getString("backglassesDivider");
+    if (!StringUtils.isEmpty(backglassesDivider)) {
+      splitPane.getDividers().get(0).setPosition(Double.parseDouble(backglassesDivider));
+    }
   }
 
   private void bindTable() {
@@ -574,18 +585,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       // When a game is updated or added, the associated backglass in table + view should be updated
       // If it is a new game, this backglass sis discovered and added into the table as a new row
       JFXFuture.supplyAsync(() -> client.getBackglassServiceClient().getDirectB2S(id))
-      .thenAcceptLater(b2s -> {
-        if (b2s != null) {
-          reloadItem(b2s);
-        }
-        else {
-          // detection of deletion for a table
-          Optional<DirectB2SModel> model = models.stream().filter(m -> m.getGameId() == id).findFirst();
-          if (model.isPresent()) {    
-            models.remove(model.get());
-          }
-        }
-      });
+          .thenAcceptLater(b2s -> {
+            if (b2s != null) {
+              reloadItem(b2s);
+            }
+            else {
+              // detection of deletion for a table
+              Optional<DirectB2SModel> model = models.stream().filter(m -> m.getGameId() == id).findFirst();
+              if (model.isPresent()) {
+                models.remove(model.get());
+              }
+            }
+          });
     }
   }
 

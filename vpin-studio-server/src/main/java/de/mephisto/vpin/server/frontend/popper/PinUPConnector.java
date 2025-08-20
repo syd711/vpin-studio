@@ -646,7 +646,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         String optionString = rs.getString("GlobalOptions");
+        String gobalMediaDir = rs.getString("GlobalMediaDir");
         settings = new PopperSettings();
+        settings.setGlobalMediaDir(gobalMediaDir);
         settings.setScriptData(optionString);
       }
       rs.close();
@@ -665,8 +667,9 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     Connection connect = this.connect();
     try {
       PopperSettings options = JsonSettings.objectMapper.convertValue(data, PopperSettings.class);
-      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?, 'GlobalMediaDir'=?");
       preparedStatement.setString(1, options.toString());
+      preparedStatement.setString(2, options.getGlobalMediaDir());
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Updated of custom options");
@@ -2322,7 +2325,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
-      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(getInstallationFolder());
+      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(this);
     }
     return pinUPMediaAccessStrategy;
   }

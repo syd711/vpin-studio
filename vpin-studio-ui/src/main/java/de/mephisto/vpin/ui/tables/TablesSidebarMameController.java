@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
@@ -125,6 +126,9 @@ public class TablesSidebarMameController implements Initializable {
   private Button reloadBtn;
 
   @FXML
+  private Button scriptBtn;
+
+  @FXML
   private Button copyRomAliasBtn;
 
   @FXML
@@ -138,6 +142,9 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private Label labelRom;
+
+  @FXML
+  private Button nvOffsetBtn;
 
 
   private Optional<GameRepresentation> game = Optional.empty();
@@ -186,9 +193,24 @@ public class TablesSidebarMameController implements Initializable {
   }
 
   @FXML
+  private void onNvOffset() {
+    if (this.game.isPresent()) {
+      onNvOffset(this.game.get().getId());
+    }
+  }
+
+  @FXML
+  public void onScriptEdit() {
+    VBSManager.getInstance().edit(this.game);
+  }
+
   private void onNvOffset(int gameId) {
-    GameRepresentation game = client.getGameService().getGame(gameId);
-    int nvOffset = game.getNvOffset();
+    GameRepresentation g = client.getGameService().getGame(gameId);
+    if (g == null) {
+      return;
+    }
+
+    int nvOffset = g.getNvOffset();
     if (nvOffset == 0) {
       nvOffset = 1;
     }
@@ -203,13 +225,19 @@ public class TablesSidebarMameController implements Initializable {
         return;
       }
 
+      if (nvOffset > 0 && nvOffset == g.getNvOffset()) {
+        WidgetFactory.showInformation(Studio.stage, "NVOffset not updated", "NVOffset not updated, because it already has the value \"" + nvOffset + "\".", null);
+        onNvOffset(gameId);
+        return;
+      }
+
       try {
-        int nvOffset1 = client.getVpxService().setNvOffset(gameId, nvOffset);
+        int nvOffset1 = client.getVpxService().setNvOffset(g.getId(), nvOffset);
         if (nvOffset1 == -1) {
           WidgetFactory.showAlert(Studio.stage, "Error", "The NVOffset value has not been set. The script analysis failed.", "Use the script editor to set the value manually.");
         }
         else {
-          EventManager.getInstance().notifyTableChange(gameId, game.getRom(), null);
+          EventManager.getInstance().notifyTableChange(g.getId(), g.getRom(), null);
         }
       }
       catch (Exception e) {
@@ -352,8 +380,10 @@ public class TablesSidebarMameController implements Initializable {
     nvOffsetLabel.setText("-");
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
+    scriptBtn.setDisable(true);
     copyRomBtn.setDisable(true);
     aliasBtn.setDisable(gameOptional.isEmpty());
+    nvOffsetBtn.setDisable(true);
 
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);
@@ -376,8 +406,10 @@ public class TablesSidebarMameController implements Initializable {
     if (gameOptional.isPresent()) {
       GameRepresentation game = gameOptional.get();
 
-      labelRomAlias.setText(game.getRomAlias());
+      nvOffsetBtn.setDisable(!HighscoreType.NVRam.equals(game.getHighscoreType()));
+      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       copyRomAliasBtn.setDisable(false);
+      scriptBtn.setDisable(false);
 
       if (game.getNvOffset() > 0) {
         nvOffsetLabel.setText(String.valueOf(game.getNvOffset()));
@@ -392,24 +424,38 @@ public class TablesSidebarMameController implements Initializable {
         for (GameRepresentation sharedGame : sharedGames) {
           HBox row = new HBox(3);
           String title = "\"" + sharedGame.getGameDisplayName() + "\"";
-          if (game.getNvOffset() > 0) {
-            title += " [NVOffset: " + game.getNvOffset() + "]";
+          if (sharedGame.getNvOffset() > 0) {
+            title += " [NVOffset: " + sharedGame.getNvOffset() + "]";
           }
           Label label = new Label("- " + title);
-          label.setPrefWidth(494);
+          label.setPrefWidth(464);
           label.setStyle("");
           label.getStyleClass().add("default-text");
+          row.getChildren().add(label);
 
           Button button = new Button("", WidgetFactory.createIcon("mdi2l-lead-pencil"));
+          button.setTooltip(new Tooltip("Edit table data"));
           button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
               TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), sharedGame);
             }
           });
-
-          row.getChildren().add(label);
           row.getChildren().add(button);
+
+          if (HighscoreType.NVRam.equals(sharedGame.getHighscoreType())) {
+            Button nvOffsetButton = new Button("", WidgetFactory.createIcon("mdi2s-script-text"));
+            nvOffsetButton.setTooltip(new Tooltip("Set NVOffset"));
+            nvOffsetButton.setOnAction(new EventHandler<ActionEvent>() {
+              @Override
+              public void handle(ActionEvent event) {
+                onNvOffset(sharedGame.getId());
+              }
+            });
+
+            row.getChildren().add(nvOffsetButton);
+          }
+
           tableListBox.getChildren().add(row);
         }
       }

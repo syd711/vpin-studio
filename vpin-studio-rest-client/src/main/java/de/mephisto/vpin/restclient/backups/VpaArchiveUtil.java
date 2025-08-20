@@ -247,9 +247,4 @@ public class VpaArchiveUtil {
     }
     return null;
   }
-
-  public static void main(String[] args) throws Exception {
-    File file = new File("C:\\workspace\\vpin-studio-dev\\resources\\vpa\\Apache (Playmatic 1975).vpa");
-    extractFile(file, new File("C:\\vPinball\\pinupsystem\\POPMedia\\Visual Pinball X\\Topper\\Apache (Playmatic 1975).png"), "Screens/Other2/Apache (Playmatic 1975).png");
-  }
 }

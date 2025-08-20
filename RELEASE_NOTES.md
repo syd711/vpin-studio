@@ -1,6 +1,7 @@
 ## Release Notes 4.2.0
 
 ## Changes
+
 - **Table Backups**
   - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video for more details.
 - **Asset Sources**
@@ -26,6 +27,8 @@
   - Added option to move the uploaded file to the trash bin.
 - **Image Previews**
   - All image preview action button have been reworked and using the build in image preview dialog now.
+- **Backglass Manager**
+  - Added divider component so that the editor view is resizeable.
 - **iScored Subscription**
   - Improved logging about game subscription synchronizations.
   - Added additional "Ignore Hidden" configuration option for games rooms. This option skips the synchronization of games that are not public visible to the user.
@@ -39,3 +42,4 @@
 - Fixed "Missing Backglass or PUP Pack" validator which sometimes raised a false positive when the PUP pack detection wasn't finished.
 - Fixed ALT sound upload so that a game selection is mandatory now. This enforces the correct ROM name to be used from the game instead of guessing it from the uploading file.
 - Fixed initial selection of the backglass manager: When you press the backglass button from the backglass sidebar in the tables overview, the backglass manager tab initializes with the correct selection again.
+- Fixed saving the PinUP Popper preferences and added option to set the default media directory. 

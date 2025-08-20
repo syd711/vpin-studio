@@ -7,13 +7,13 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +91,9 @@ public class PopperSettingsPreferencesController implements Initializable {
   private CheckBox watchDog;
 
   @FXML
+  private TextField defaultMediaDirectory;
+
+  @FXML
   private Spinner<Integer> wheelUpdateMS;
 
   @FXML
@@ -111,6 +114,17 @@ public class PopperSettingsPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     popperSettings = client.getFrontendService().getSettings(PopperSettings.class);
+
+    defaultMediaDirectory.setText(popperSettings.getGlobalMediaDir());
+    defaultMediaDirectory.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        debouncer.debounce("defaultMediaDirectory", () -> {
+          popperSettings.setGlobalMediaDir(newValue);
+          save();
+        }, DEBOUNCE_MS);
+      }
+    });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0);
     delayReturn.setValueFactory(factory);
@@ -288,26 +302,27 @@ public class PopperSettingsPreferencesController implements Initializable {
   }
 
   private void save() {
-    try {
-      if (client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-          client.getFrontendService().saveSettings(popperSettings);
+    Platform.runLater(() -> {
+      try {
+        if (client.getFrontendService().isFrontendRunning()) {
+          if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+            client.getFrontendService().saveSettings(popperSettings);
+          }
+          return;
         }
-        return;
+        client.getFrontendService().saveSettings(popperSettings);
       }
-      client.getFrontendService().saveSettings(popperSettings);
-
-    }
-    catch (DatabaseLockException e) {
-      LOG.error("Failed to save custom options: " + e.getMessage(), e);
-      if (!Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        this.setDisabled(true);
+      catch (DatabaseLockException e) {
+        LOG.error("Failed to save custom options: " + e.getMessage(), e);
+        if (!Dialogs.openFrontendRunningWarning(Studio.stage)) {
+          this.setDisabled(true);
+        }
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to save PinUP Popper custom options: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinUP Popper custom options: " + e.getMessage());
-    }
+      catch (Exception e) {
+        LOG.error("Failed to save PinUP Popper custom options: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinUP Popper custom options: " + e.getMessage());
+      }
+    });
   }
 
   private void setDisabled(boolean b) {

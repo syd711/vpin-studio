@@ -299,14 +299,15 @@ public class VPXService implements InitializingBean {
   public boolean setNvOffset(Game game, int nvOffset, boolean keepVbsFiles) throws Exception {
     if (game.isVpxGame() && game.getNvOffset() != nvOffset) {
       String script = VPXUtil.exportVBS(game.getGameFile(), true);
-      List<String> lines = Arrays.stream(script.split("\n")).filter(l -> !l.contains("NVOffset(")).collect(Collectors.toList());
+      List<String> lines = Arrays.stream(script.split("\n")).filter(l -> !l.contains("NVOffset(") && !l.contains("NVOffset (")).collect(Collectors.toList());
 
-      boolean replaced = false;
+      boolean replaced = nvOffset == 0;
       StringBuilder builder = new StringBuilder();
       for (String line : lines) {
-        if (line.matches("^\\s*\\.GameName\\s*=\\s*cGameName")) {
+        if (nvOffset > 0 && line.trim().matches("^\\s*\\.GameName\\s*=\\s*cGameName")) {
           builder.append(line);
-          builder.append("\tNVOffset ($nvOffset)");
+          builder.append("\n");
+          builder.append("\t\tNVOffset (" + nvOffset + ")");
           builder.append("\n");
 
           replaced = true;

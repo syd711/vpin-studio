@@ -32,6 +32,15 @@ public class PopperSettings extends JsonSettings {
   private boolean volumeChange = true;
   private boolean useAltWheels = false;
   private boolean watchDog;
+  private String globalMediaDir;
+
+  public String getGlobalMediaDir() {
+    return globalMediaDir;
+  }
+
+  public void setGlobalMediaDir(String globalMediaDir) {
+    this.globalMediaDir = globalMediaDir;
+  }
 
   public boolean isWatchDog() {
     return watchDog;
