@@ -15,7 +15,7 @@ public class ImageUtilTest {
 
   @Test
   public void testClonePerformance() throws Exception {
-    try (InputStream in = getClass().getResourceAsStream("fx/competition-bg-default.png")) {
+    try (InputStream in = getClass().getResourceAsStream("../fx/competition-bg-default.png")) {
       BufferedImage avtr = ImageIO.read(in);
       int nb = 1000;
       long time = runNTimes(() -> ImageUtil.clone(avtr), nb);
@@ -25,7 +25,7 @@ public class ImageUtilTest {
 
   @Test
   public void testCompareBlur() throws Exception {
-    try (InputStream in = getClass().getResourceAsStream("fx/competition-bg-default.png")) {
+    try (InputStream in = getClass().getResourceAsStream("../fx/competition-bg-default.png")) {
       BufferedImage avtr = ImageIO.read(in);
       int nb = 50;
       final int radius = 150;
