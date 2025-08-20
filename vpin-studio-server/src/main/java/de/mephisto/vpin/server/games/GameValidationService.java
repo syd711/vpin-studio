@@ -292,7 +292,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
             Game otherGame = frontendService.getOriginalGame(otherGameDetails.getPupId());
             if (otherGame != null) {
-              //only complain if it is another table or has no VPS mapping
+              //only complain if it is another table or has no VPS mapping!!!!!!!!!!!!!!
               if (otherGame.getExtTableId() == null || !otherGame.getExtTableId().equals(game.getExtTableId())) {
                 result.add(ValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
                 if (findFirst) {
