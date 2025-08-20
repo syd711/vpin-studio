@@ -16,11 +16,11 @@ public class SystemSummary {
     this.systemId = systemId;
   }
 
-  public BackupType getArchiveType() {
+  public BackupType getBackupType() {
     return backupType;
   }
 
-  public void setArchiveType(BackupType backupType) {
+  public void setBackupType(BackupType backupType) {
     this.backupType = backupType;
   }
 

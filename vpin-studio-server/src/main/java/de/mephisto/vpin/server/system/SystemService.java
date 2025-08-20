@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
@@ -438,11 +437,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public BackupType getArchiveType() {
+  public BackupType getBackupType() {
     return backupType;
   }
 
-  public void setArchiveType(BackupType backupType) {
+  public void setBackupType(BackupType backupType) {
     this.backupType = backupType;
   }
 

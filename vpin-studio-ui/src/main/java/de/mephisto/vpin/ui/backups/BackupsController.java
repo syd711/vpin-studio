@@ -650,7 +650,7 @@ public class BackupsController implements Initializable, StudioFXController, Stu
     for (BackupDescriptorRepresentation archive : archives) {
       if (archive.getFilename() != null) {
         String filename = archive.getFilename().toLowerCase();
-        if (systemSummary.getArchiveType().equals(BackupType.VPA) && !filename.endsWith("." + BackupType.VPA.name().toLowerCase())) {
+        if (systemSummary.getBackupType().equals(BackupType.VPA) && !filename.endsWith("." + BackupType.VPA.name().toLowerCase())) {
           continue;
         }
 

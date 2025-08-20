@@ -13,7 +13,7 @@ public class SystemTest extends AbstractVPinServerTest {
   public void testMaintenanceMode() {
     assertTrue(systemService.getPinemhiCommandFile().exists());
     assertTrue(systemService.getBackupFolder().exists());
-    assertNotNull(systemService.getArchiveType());
+    assertNotNull(systemService.getBackupType());
 
     assertFalse(systemService.getMonitorInfos().isEmpty());
     assertFalse(systemService.getCompetitionBadges().isEmpty());

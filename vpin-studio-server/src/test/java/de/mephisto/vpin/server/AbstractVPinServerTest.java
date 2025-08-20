@@ -135,7 +135,7 @@ abstract public class AbstractVPinServerTest {
       frontendService.deleteGames(1);
       clearVPinStudioDatabase();
 
-      systemService.setArchiveType(BackupType.VPA);
+      systemService.setBackupType(BackupType.VPA);
 
       frontendService.importGame(EM_TABLE, 1);
       frontendService.importGame(VPREG_TABLE, 1);

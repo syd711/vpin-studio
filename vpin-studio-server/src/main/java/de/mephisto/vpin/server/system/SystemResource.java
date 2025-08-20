@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.system;
 
-import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.NirCmd;
@@ -195,7 +194,7 @@ public class SystemResource {
     SystemSummary info = new SystemSummary();
     try {
       info.setScreenInfos(systemService.getMonitorInfos());
-      info.setArchiveType(systemService.getArchiveType());
+      info.setBackupType(systemService.getBackupType());
       info.setSystemId(SystemUtil.getUniqueSystemId());
     }
     catch (Exception e) {

@@ -299,7 +299,7 @@ public class BackupService implements InitializingBean, PreferenceChangedListene
     preferencesService.addChangeListener(this);
 
     //VPA files
-    if (systemService.getArchiveType().equals(BackupType.VPA)) {
+    if (systemService.getBackupType().equals(BackupType.VPA)) {
       BackupSource backupSource = new VpaBackupSource();
       this.defaultBackupSourceAdapter = new BackupSourceAdapterFolder(vpaService, backupSource);
       this.backupSourcesCache.put(backupSource.getId(), this.defaultBackupSourceAdapter);

@@ -147,7 +147,7 @@ public class BackupRestoreDialogController implements Initializable, DialogContr
     }
     titleLabel.setText(title);
 
-    BackupType backupType = client.getSystemService().getSystemSummary().getArchiveType();
+    BackupType backupType = client.getSystemService().getSystemSummary().getBackupType();
     emuGrid.setVisible(backupType.equals(BackupType.VPA));
   }
 

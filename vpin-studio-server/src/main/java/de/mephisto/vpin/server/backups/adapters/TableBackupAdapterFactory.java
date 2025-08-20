@@ -24,7 +24,7 @@ public class TableBackupAdapterFactory {
   private VpaService vpaService;
 
   public TableBackupAdapter createAdapter(@NonNull Game game) {
-    BackupType backupType = systemService.getArchiveType();
+    BackupType backupType = systemService.getBackupType();
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
 
     switch (backupType) {
