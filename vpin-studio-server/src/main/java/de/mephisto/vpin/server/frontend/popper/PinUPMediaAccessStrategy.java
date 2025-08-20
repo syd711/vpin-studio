@@ -12,10 +12,10 @@ import java.io.File;
 
 public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
 
-  private File installationFolder;
+  private final PinUPConnector pinUPConnector;
 
-  public PinUPMediaAccessStrategy(File installationFolder) {
-    this.installationFolder = installationFolder;
+  public PinUPMediaAccessStrategy(PinUPConnector pinUPConnector) {
+    this.pinUPConnector = pinUPConnector;
   }
 
   @Override
@@ -32,7 +32,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
 
   @Override
   public File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen, boolean create) {
-    File defaultMedia = new File(installationFolder, "POPMedia/Default");
+    File defaultMedia = new File(pinUPConnector.getSettings().getGlobalMediaDir());
     return ensureDirExist(new File(defaultMedia, screen.getSegment()), create);
   }
 }
