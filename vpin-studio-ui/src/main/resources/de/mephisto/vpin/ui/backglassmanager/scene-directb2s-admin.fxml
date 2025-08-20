@@ -140,118 +140,111 @@
         </ToolBar>
     </top>
     <center>
-        <BorderPane fx:id="tableWrapper" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets />
-            </BorderPane.margin>
-         <center>
-            <SplitPane fx:id="splitPane" dividerPositions="0.8" styleClass="accordion-container">
-               <items>
-                      <StackPane fx:id="loaderStack">
-                          <children>
-                        <BorderPane>
+      <SplitPane fx:id="splitPane" dividerPositions="0.8" styleClass="accordion-container">
+         <items>
+                <StackPane fx:id="loaderStack">
+                    <children>
+                  <BorderPane>
+                     <center>
+                              <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                                  <children>
+                                      <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
+                                          <columns>
+                                              <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
+                                              <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
+                                              <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="# directB2S" />
+                                              <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="FullDMD" />
+                                              <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Grill" />
+                                              <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Score" />
+                                              <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="RES" />
+                                              <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Frame" />
+                                          </columns>
+                                      </TableView>
+                                  </children>
+                              </StackPane>
+                     </center>
+                     <bottom>
+                            <BorderPane BorderPane.alignment="CENTER">
+                                <top>
+                                    <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+                                    <BorderPane.margin>
+                                            <Insets bottom="3.0" />
+                                    </BorderPane.margin>
+                                    </Label>
+                                </top>
                            <center>
-                                    <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
-                                        <children>
-                                            <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;">
-                                                <columns>
-                                                    <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                                    <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
-                                                    <TableColumn fx:id="numberDirectB2SColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="# directB2S" />
-                                                    <TableColumn fx:id="fullDmdColumn" minWidth="50" style="-fx-alignment: CENTER;" text="FullDMD" />
-                                                    <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Grill" />
-                                                    <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Score" />
-                                                    <TableColumn fx:id="resColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="RES" />
-                                                    <TableColumn fx:id="frameColumn" minWidth="50" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Frame" />
-                                                </columns>
-                                            </TableView>
-                                        </children>
-                                    </StackPane>
-                           </center>
-                           <bottom>
-                                  <BorderPane BorderPane.alignment="CENTER">
-                                      <top>
-                                          <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
-                                          <BorderPane.margin>
-                                                  <Insets bottom="3.0" />
-                                          </BorderPane.margin>
-                                          </Label>
-                                      </top>
-                                 <center>
-                                          <BorderPane fx:id="validationError" BorderPane.alignment="CENTER">
-                                              <center>
-                                                  <VBox BorderPane.alignment="CENTER">
-                                                      <BorderPane.margin>
-                                                          <Insets bottom="3.0" left="12.0" top="3.0" />
-                                                      </BorderPane.margin>
-                                                      <children>
-                                                          <BorderPane>
-                                                          <left>
-                                                              <Label fx:id="validationErrorLabel" text="Loading Backglasses..." textFill="WHITE" BorderPane.alignment="CENTER">
-                                                                  <font>
-                                                                  <Font name="System Bold" size="14.0" />
-                                                                  </font>
-                                                              </Label>
-                                                          </left>
-                                                          <right>
-                                                              <HBox BorderPane.alignment="CENTER">
-                                                                  <children>
-                                                                      <!--Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="Dismiss" textFill="WHITE">
-                                                                      <font>
+                                    <BorderPane fx:id="validationError" BorderPane.alignment="CENTER">
+                                        <center>
+                                            <VBox BorderPane.alignment="CENTER">
+                                                <BorderPane.margin>
+                                                    <Insets bottom="3.0" left="12.0" top="3.0" />
+                                                </BorderPane.margin>
+                                                <children>
+                                                    <BorderPane>
+                                                    <left>
+                                                        <Label fx:id="validationErrorLabel" text="Loading Backglasses..." textFill="WHITE" BorderPane.alignment="CENTER">
+                                                            <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                            </font>
+                                                        </Label>
+                                                    </left>
+                                                    <right>
+                                                        <HBox BorderPane.alignment="CENTER">
+                                                            <children>
+                                                                <!--Hyperlink fx:id="dismissBtn" onAction="#onDismiss" text="Dismiss" textFill="WHITE">
+                                                                <font>
                                                                                       <Font size="10.0" />
                                                                                   </font>
                                                                                   <graphic>
                                                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove-outline" iconSize="18" />
                                                                                   </graphic>
                                                                                   </Hyperlink-->
-                                                                      <!--Hyperlink onAction="#onDismissAll" text="Dismiss All ..." textFill="WHITE">
-                                                                      <font>
+                                                                <!--Hyperlink onAction="#onDismissAll" text="Dismiss All ..." textFill="WHITE">
+                                                                <font>
                                                                                       <Font size="10.0" />
                                                                                   </font>
                                                                                   <graphic>
                                                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alert-remove" iconSize="18" />
                                                                                   </graphic>
                                                                                   </Hyperlink-->
-                                                                      <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="ghost-button-tiny">
-                                                                      <font>
-                                                                          <Font size="10.0" />
-                                                                      </font>
-                                                                      <graphic>
-                                                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
-                                                                      </graphic>
-                                                                      <tooltip>
-                                                                          <Tooltip text="Open Validators Settings" />
-                                                                      </tooltip>
-                                                                      </Button>
-                                                                  </children>
-                                                                  <BorderPane.margin>
-                                                                      <Insets right="6.0" />
-                                                                  </BorderPane.margin>
-                                                              </HBox>
-                                                          </right>
-                                                          </BorderPane>
-                                                          <Label fx:id="validationErrorText" textFill="WHITE">
-                                                              <font>
-                                                                  <Font name="System" size="14.0" />
-                                                              </font>
-                                                          </Label>
-                                                      </children>
-                                                  </VBox>
-                                              </center>
-                                          </BorderPane>
-                                 </center>
-                                 <BorderPane.margin>
-                                    <Insets right="12.0" top="6.0" />
-                                 </BorderPane.margin>
-                                  </BorderPane>
-                           </bottom>
-                        </BorderPane>
-                          </children>
-                      </StackPane>
-                        <fx:include fx:id="backglassManagerSideBar" minWidth="780.0" prefWidth="780.0" source="scene-directb2s-sidebar.fxml" />
-               </items>
-            </SplitPane>
-         </center>        
-        </BorderPane>
+                                                                <Button mnemonicParsing="false" onAction="#onValidationSettings" styleClass="ghost-button-tiny">
+                                                                <font>
+                                                                    <Font size="10.0" />
+                                                                </font>
+                                                                <graphic>
+                                                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
+                                                                </graphic>
+                                                                <tooltip>
+                                                                    <Tooltip text="Open Validators Settings" />
+                                                                </tooltip>
+                                                                </Button>
+                                                            </children>
+                                                            <BorderPane.margin>
+                                                                <Insets right="6.0" />
+                                                            </BorderPane.margin>
+                                                        </HBox>
+                                                    </right>
+                                                    </BorderPane>
+                                                    <Label fx:id="validationErrorText" textFill="WHITE">
+                                                        <font>
+                                                            <Font name="System" size="14.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </VBox>
+                                        </center>
+                                    </BorderPane>
+                           </center>
+                           <BorderPane.margin>
+                              <Insets right="12.0" top="6.0" />
+                           </BorderPane.margin>
+                            </BorderPane>
+                     </bottom>
+                  </BorderPane>
+                    </children>
+                </StackPane>
+                  <fx:include fx:id="backglassManagerSideBar" minWidth="700.0" source="scene-directb2s-sidebar.fxml" />
+         </items>
+      </SplitPane>
     </center>
 </BorderPane>

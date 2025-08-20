@@ -295,7 +295,7 @@
                         </GridPane>
                         <VBox fx:id="tablesBox">
                            <children>
-                              <Label text="Aliased Tables" textFill="WHITE">
+                              <Label text="Related Tables" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
