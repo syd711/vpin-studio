@@ -251,6 +251,32 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
+                              <HBox alignment="CENTER_RIGHT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                 <children>
+                                    <Button fx:id="nvOffsetBtn" mnemonicParsing="false" onAction="#onNvOffset">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2s-script-text" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Edit NVOffset" />
+                                       </tooltip>
+                                    </Button>
+                                    <Label>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="You can set an NVOffset inside the table script so that highscores are written into a unique nvram, even if the other tables share the same ROM." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                            </children>
                            <VBox.margin>
                               <Insets top="6.0" />
