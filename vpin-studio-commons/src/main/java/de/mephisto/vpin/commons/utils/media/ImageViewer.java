@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.utils.media;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -15,6 +16,12 @@ public class ImageViewer extends MediaViewPane {
   public ImageViewer(String url, Object userdata, String screenName, boolean invertPlayfield) {
     this.url = url;
     render(userdata, screenName, invertPlayfield);
+  }
+
+  public ImageViewer(String url, Image image) {
+    this.url = url;
+    this.image = image;
+    render(null, null, false);
   }
 
   public ImageViewer(FrontendMediaItemRepresentation mediaItem, Image image, boolean invertPlayfield) {
@@ -41,7 +48,7 @@ public class ImageViewer extends MediaViewPane {
     }
   }
 
-  private void displayImage(Object userdata, String screenName, boolean invertPlayfield) {
+  private void displayImage(@Nullable Object userdata, @Nullable String screenName, boolean invertPlayfield) {
     this.imageView = new ImageView(image);
     setCenter(imageView);
     imageView.setPreserveRatio(true);

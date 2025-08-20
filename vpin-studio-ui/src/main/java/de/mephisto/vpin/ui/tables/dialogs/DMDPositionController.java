@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerControllerUtils;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.PositionResizer;
 import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -194,7 +195,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
   private DirectB2sScreenRes screenres;
 
-  private List<DMDPositionResizer> dragBoxes = new ArrayList<>();
+  private List<PositionResizer> dragBoxes = new ArrayList<>();
 
   private DMDInfo dmdinfo;
 
@@ -313,7 +314,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @Override
   public void onKeyPressed(KeyEvent ke) {
-    for (DMDPositionResizer dragBox : dragBoxes) {
+    for (PositionResizer dragBox : dragBoxes) {
       if (dragBox.keyPressed(ke)) {
         ke.consume();
         return;
@@ -364,7 +365,7 @@ public class DMDPositionController implements Initializable, DialogController {
 
   @FXML
   private void onCenterX() {
-    for (DMDPositionResizer dragBox : dragBoxes) {
+    for (PositionResizer dragBox : dragBoxes) {
       if (dragBox.isSelected()) {
         dragBox.centerHorizontally();
       }
@@ -464,7 +465,7 @@ public class DMDPositionController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
         if(newValue != null) {
           DMDAspectRatio aspectRatio = (DMDAspectRatio) newValue.getUserData();
-          for (DMDPositionResizer dragBox : dragBoxes) {
+          for (PositionResizer dragBox : dragBoxes) {
             dragBox.setAspectRatio(aspectRatio.getValue());
           }
         }
@@ -851,20 +852,20 @@ public class DMDPositionController implements Initializable, DialogController {
   private void loadDragBoxes(VPinScreen onScreen, boolean forceRefresh) {
 
     // first delete previous boxes
-    for (DMDPositionResizer dragBox : dragBoxes) {
+    for (PositionResizer dragBox : dragBoxes) {
       dragBox.removeFromPane(imagepane);
     }
     dragBoxes.clear();
 
     if (!dmdinfo.isDisabled()) {
 
-      DMDPositionResizer selectedBox = null;
+      PositionResizer selectedBox = null;
       // now create new ones
       for (DMDInfoZone zone : dmdinfo.getZones()) {
         if (zone.getOnScreen().equals(onScreen)) {
 
           // The lime box that is used to position the DMD
-          DMDPositionResizer dragBox = new DMDPositionResizer();
+          PositionResizer dragBox = new PositionResizer();
           dragBox.addToPane(imagepane);
           dragBoxes.add(dragBox);
 
@@ -949,7 +950,7 @@ public class DMDPositionController implements Initializable, DialogController {
   }
 
   private DMDInfo fillDmdInfo() {
-    for (DMDPositionResizer dragBox : dragBoxes) {
+    for (PositionResizer dragBox : dragBoxes) {
       DMDInfoZone zone = (DMDInfoZone) dragBox.getUserData();
       zone.setX(dragBox.getX());
       zone.setY(dragBox.getY());

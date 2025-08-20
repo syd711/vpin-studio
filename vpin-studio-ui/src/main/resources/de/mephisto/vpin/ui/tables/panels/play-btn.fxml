@@ -9,7 +9,7 @@
 
 <HBox fx:id="root" spacing="2.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PlayButtonController">
    <children>
-      <ComboBox fx:id="launchCombo" prefWidth="180.0" styleClass="external-component" />
+      <ComboBox fx:id="launchCombo" prefWidth="210.0" styleClass="external-component" />
       <Button fx:id="launchBtn" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" textFill="WHITE">
          <graphic>
               <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />

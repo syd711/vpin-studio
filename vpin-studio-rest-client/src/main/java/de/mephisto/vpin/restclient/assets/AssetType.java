@@ -20,6 +20,8 @@ public enum AssetType {
   CRZ,
   RES,
   VNI,
+  VPA,
+  VBS,
   ALT_COLOR,
   ALT_SOUND,
   PUP_PACK,
@@ -40,7 +42,7 @@ public enum AssetType {
   CARD_BACKGROUND;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
+      ZIP, RAR, SEVENZIP, RES, DIF, INI, POV, DIRECTB2S, VNI, VPA, VPX, FPT, PAL, PAC, CRZ, CFG, BAM_CFG, NV
   };
 
   public static AssetType fromExtension(@Nullable EmulatorType emulatorType, String extension) {
@@ -111,6 +113,9 @@ public enum AssetType {
       }
       case VPX: {
         return "VPX Table";
+      }
+      case VPA: {
+        return "VPin Archive";
       }
       case DMD_PACK: {
         return "DMD Pack";
@@ -186,6 +191,9 @@ public enum AssetType {
       }
       case ROM: {
         return "*.zip";
+      }
+      case VPA: {
+        return "*.vpa";
       }
       case VPX: {
         return "*.vpx";

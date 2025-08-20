@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class PupPacksService implements InitializingBean {
@@ -49,6 +50,8 @@ public class PupPacksService implements InitializingBean {
   private GameLifecycleService gameLifecycleService;
 
   private final Map<String, PupPack> pupPackCache = new ConcurrentHashMap<>();
+
+  private AtomicBoolean pupPackScanActive = new AtomicBoolean(false);
 
   /**
    * Return where pinup player is installed, read it today from installation directory,
@@ -121,6 +124,7 @@ public class PupPacksService implements InitializingBean {
       return;
     }
 
+    pupPackScanActive.set(true);
     this.pupPackCache.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = getPupPackFolder();
@@ -138,6 +142,7 @@ public class PupPacksService implements InitializingBean {
     }
     long end = System.currentTimeMillis();
     LOG.info("Finished PUP pack scan, found " + pupPackCache.size() + " packs (" + (end - start) + "ms)");
+    pupPackScanActive.set(false);
   }
 
   public PupPack loadPupPack(File packFolder) {
@@ -179,6 +184,10 @@ public class PupPacksService implements InitializingBean {
     boolean b = frontendService.setPupPackEnabled(game, enable);
     gameLifecycleService.notifyGameAssetsChanged(game.getId(), AssetType.PUP_PACK, game.getRom());
     return b;
+  }
+
+  public boolean isScanActive() {
+    return this.pupPackScanActive.get();
   }
 
   public boolean hasPupPack(Game game) {

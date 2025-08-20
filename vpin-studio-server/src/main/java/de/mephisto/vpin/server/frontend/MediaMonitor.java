@@ -43,7 +43,7 @@ public class MediaMonitor implements FolderChangeListener {
 
   @Override
   public void notifyFolderChange(@NonNull File f, @Nullable File file) {
-    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
+//    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
     File[] list = folder.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {

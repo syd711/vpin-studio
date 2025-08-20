@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -137,6 +138,8 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setKeepAssets(keepAssetsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
+    LocalUISettings.saveJsonProperty(this.getClass().getSimpleName(), descriptor);
+
     Platform.runLater(() -> {
       ProgressDialog.createProgressDialog(new TableDeleteProgressModel(tableOverviewController, descriptor));
       for (GameRepresentation game : games) {
@@ -164,13 +167,7 @@ public class TableDeleteController implements Initializable, DialogController {
     this.pupPackCheckbox.setVisible(Features.PUPPACKS_ENABLED);
 
     this.deleteBtn.setDisable(true);
-    vpxFileCheckbox.setSelected(true);
-    iniCheckbox.setSelected(true);
-    directb2sCheckbox.setSelected(true);
-    vbsCheckbox.setSelected(true);
-    povCheckbox.setSelected(true);
-    resCheckbox.setSelected(true);
-    pinVolCheckbox.setSelected(true);
+
     confirmationCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> deleteBtn.setDisable(!newValue));
 
     deleteAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -198,6 +195,24 @@ public class TableDeleteController implements Initializable, DialogController {
         keepAssetsCheckbox.setDisable(!newValue);
       }
     });
+
+    DeleteDescriptor savedSettings = LocalUISettings.getJsonProperty(this.getClass().getSimpleName(), DeleteDescriptor.class, new DeleteDescriptor());
+    vpxFileCheckbox.setSelected(savedSettings.isDeleteTable());
+    directb2sCheckbox.setSelected(savedSettings.isDeleteDirectB2s());
+    frontendCheckbox.setSelected(savedSettings.isDeleteFromFrontend());
+    pupPackCheckbox.setSelected(savedSettings.isDeletePupPack());
+    dmdCheckbox.setSelected(savedSettings.isDeleteDMDs());
+    musicCheckbox.setSelected(savedSettings.isDeleteMusic());
+    mameConfigCheckbox.setSelected(savedSettings.isDeleteCfg());
+    highscoreCheckbox.setSelected(savedSettings.isDeleteHighscores());
+    altSoundCheckbox.setSelected(savedSettings.isDeleteAltSound());
+    altColorCheckbox.setSelected(savedSettings.isDeleteAltColor());
+    vbsCheckbox.setSelected(savedSettings.isDeleteVbs());
+    iniCheckbox.setSelected(savedSettings.isDeleteIni());
+    resCheckbox.setSelected(savedSettings.isDeleteRes());
+    povCheckbox.setSelected(savedSettings.isDeletePov());
+    pinVolCheckbox.setSelected(savedSettings.isDeletePinVol());
+    bamCfgCheckbox.setSelected(savedSettings.isDeleteBAMCfg());
   }
 
   @Override
@@ -224,15 +239,13 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    if (Features.BACKUP_VIEW_ENABLED) {
-      if (Features.ARCHIVE_ENABLED) {
-        for (GameRepresentation selectedGame : selectedGames) {
-          boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
-          if (hasNoArchives) {
-            this.validationContainer.setVisible(true);
-            this.validationDescription.setVisible(true);
-            return;
-          }
+    if (Features.BACKUPS_ENABLED) {
+      for (GameRepresentation selectedGame : selectedGames) {
+        boolean hasNoArchives = client.getArchiveService().getBackupsForGame(selectedGame.getId()).isEmpty();
+        if (hasNoArchives) {
+          this.validationContainer.setVisible(true);
+          this.validationDescription.setVisible(true);
+          return;
         }
       }
     }

@@ -71,6 +71,9 @@ public class GamesServiceClient extends VPinStudioClientService {
   public GameRepresentation reload(int gameId) {
     return getRestClient().get(API + "games/reload/" + gameId, GameRepresentation.class);
   }
+  public boolean reloadEmulator(int emulatorId) {
+    return getRestClient().get(API + "games/reloadEmulator/" + emulatorId, Boolean.class);
+  }
 
   public void playGame(int id, String altExe, String option) {
     try {
@@ -121,6 +124,18 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
     catch (Exception e) {
       LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
+    }
+  }
+
+  public void deleteGameFile(int emulatorId, @NonNull String name) {
+    try {
+      Map<String, Object> data =new HashMap<>();
+      data.put("emulatorId", emulatorId);
+      data.put("fileName", name);
+      getRestClient().post(API + "games/deleteGameFile", data, Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to delete game file " + name + ": " + e.getMessage(), e);
     }
   }
 

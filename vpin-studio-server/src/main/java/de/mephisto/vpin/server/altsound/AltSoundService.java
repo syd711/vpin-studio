@@ -7,12 +7,12 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -132,7 +133,7 @@ public class AltSoundService implements InitializingBean {
     return -1;
   }
 
-  public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive) {
+  public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive, @Nullable String archivePath) {
     GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
     File altSoundFolder = new File(gameEmulator.getAltSoundFolder(), rom);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
@@ -141,7 +142,7 @@ public class AltSoundService implements InitializingBean {
 
     LOG.info("Extracting ALT sound to " + altSoundFolder.getAbsolutePath());
 
-    AltSoundUtil.unpack(archive, altSoundFolder);
+    PackageUtil.unpackTargetFolder(archive, altSoundFolder, archivePath, Arrays.asList(".ogg", ".mp3", ".wav", ".csv", ".ini"), null);
     setAltSoundEnabled(rom, true);
     clearCache();
     return JobDescriptorFactory.empty();

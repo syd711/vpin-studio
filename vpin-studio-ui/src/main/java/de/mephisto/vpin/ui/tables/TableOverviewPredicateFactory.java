@@ -138,6 +138,7 @@ public class TableOverviewPredicateFactory {
         if (StringUtils.isNotEmpty(searchTerm)
             && !StringUtils.containsIgnoreCase(game.getGameDisplayName(), searchTerm)
             && !StringUtils.containsIgnoreCase(String.valueOf(game.getId()), searchTerm)
+            && !StringUtils.containsIgnoreCase(game.getRomAlias(), searchTerm)
             && !StringUtils.containsIgnoreCase(game.getRom(), searchTerm)) {
           return false;
         }

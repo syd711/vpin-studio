@@ -30,7 +30,8 @@ public class ApngImageViewDemo extends Application {
     File wheelIcon;
     //wheelIcon = new File("./testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Jaws.png");
     //wheelIcon = new File("./testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Jaws (Animated).gif");
-    wheelIcon = new File("./testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Jaws (Animated).apng");
+    //wheelIcon = new File("./testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Jaws (Animated).apng");
+    wheelIcon = new File("./testsystem/vPinball/PinUPSystem/POPMedia/Visual Pinball X/Wheel/Atlantis (Bally 1989).apng");
 
     try (InputStream imgStream = new FileInputStream(wheelIcon)) {
       Image image = new Image(imgStream);

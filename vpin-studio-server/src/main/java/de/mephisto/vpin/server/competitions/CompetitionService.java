@@ -3,15 +3,14 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.iscored.IScoredService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -127,8 +126,9 @@ public class CompetitionService implements InitializingBean {
       Date start = competition.getStartDate();
       Date end = competition.getEndDate();
       int gameId = competition.getGameId();
+      Game game = gameService.getGame(gameId);
       long serverId = competition.getDiscordServerId();
-      return highscoreService.getScoresBetween(gameId, start, end, serverId);
+      return highscoreService.getScoresBetween(game, start, end, serverId);
     }
     else if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       long serverId = competition.getDiscordServerId();

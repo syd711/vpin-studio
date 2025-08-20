@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import de.mephisto.vpin.connectors.assets.TableAssetSource;
+import org.apache.poi.ss.formula.functions.T;
 import org.junit.Test;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
@@ -56,24 +58,24 @@ public class PinballXAssetsIndexAdapterTest {
 
     List<TableAsset> assets;
 
-    assets = adapter.search("VisualPinball", "PlayField", "250Cc");
+    assets = adapter.search("VisualPinball", "PlayField", null, "250Cc");
     assertEquals(2, assets.size());
     assertEquals("250cc (Inder 1992).png", assets.get(0).getName());
     assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(1).getName());
     //doPrintAssets(assets);
 
     //System.out.println("----------------------------------");
-    assets = adapter.search("VisualPinball", "Wheel", "Attack from Mars");
+    assets = adapter.search("VisualPinball", "Wheel", null, "Attack from Mars");
     assertEquals(22, assets.size());
     //doPrintAssets(assets);
 
     //System.out.println("----------------------------------");
-    assets = adapter.search("VisualPinball", "Loading", "air");
+    assets = adapter.search("VisualPinball", "Loading",null,  "air");
     assertEquals(12, assets.size());
     //doPrintAssets(assets);
 
     //System.out.println("----------------------------------");
-    assets = adapter.search("VisualPinball", "GameSelect", "250Cc");
+    assets = adapter.search("VisualPinball", "GameSelect", null, "250Cc");
     assertEquals(0, assets.size());
     // useless but suppress warning...
     doPrintAssets(assets);
@@ -95,7 +97,9 @@ public class PinballXAssetsIndexAdapterTest {
     Path tempPath = Files.createTempFile("test", "temp");
     File temp = tempPath.toFile();
     try (FileOutputStream fout = new FileOutputStream(temp)) {
-      adapter.writeAsset(fout, url);
+      TableAsset tableAsset = new TableAsset();
+      tableAsset.setUrl(url);
+      adapter.writeAsset(fout, tableAsset);
       assertTrue(temp.exists());
       assertEquals(11634196, Files.size(tempPath));
     }

@@ -41,7 +41,7 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     serverSettings.setMappingVpsTableId("CUSTOM2");
     serverSettings.setMappingVpsTableVersionId("CUSTOM3");
-    preferencesService.savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    preferencesService.savePreference(serverSettings);
   }
   @AfterAll
   public void done() throws Exception {

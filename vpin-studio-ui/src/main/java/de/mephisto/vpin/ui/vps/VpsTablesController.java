@@ -242,7 +242,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
-      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), false, model.getUpdates(), null) : null;
+      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), false, false, model.getUpdates(),null) : null;
     });
 
     BaseLoadingColumn.configureLoadingColumn(commentColumn, "Loading...", (value, model) -> {
@@ -299,8 +299,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
         VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, this, true);
 
     BaseLoadingColumn.configureLoadingColumn(tutorialColumn, "Loading...", (value, model) -> {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      return new VpsTutorialColumn(value.getId(), uiSettings);
+      return new VpsTutorialColumn(value.getId());
     });
 
     BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {

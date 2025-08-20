@@ -7,10 +7,10 @@ import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.altcolor.AltColorServiceClient;
 import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
 import de.mephisto.vpin.restclient.alx.AlxServiceClient;
-import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
+import de.mephisto.vpin.restclient.backups.BackupServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.backup.BackupServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -26,7 +26,9 @@ import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
 import de.mephisto.vpin.restclient.emulators.EmulatorServiceClient;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.fp.FpServiceClient;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -38,6 +40,7 @@ import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
+import de.mephisto.vpin.restclient.assets.TableAssetSourcesServiceClient;
 import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -48,12 +51,14 @@ import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.recorder.RecorderServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.res.ResServiceClient;
+import de.mephisto.vpin.restclient.system.FeaturesInfo;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
+import de.mephisto.vpin.restclient.vpauthenticators.VpAuthenticationServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
 import org.apache.commons.io.IOUtils;
@@ -76,13 +81,13 @@ public class VPinStudioClient implements OverlayClient {
 
   private final AltSoundServiceClient altSoundServiceClient;
   private final AltColorServiceClient altColorServiceClient;
-  private final ArchiveServiceClient archiveServiceClient;
+  private final VpAuthenticationServiceClient authenticationServiceClient;
+  private final BackupServiceClient backupServiceClient;
   private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
   private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
-  private final BackupServiceClient backupServiceClient;
   private final DiscordServiceClient discordServiceClient;
   private final DMDServiceClient dmdServiceClient;
   private final DMDPositionServiceClient dmdPositionServiceClient;
@@ -101,6 +106,7 @@ public class VPinStudioClient implements OverlayClient {
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final MameServiceClient mameServiceClient;
+  private final TableAssetSourcesServiceClient tableAssetSourcesServiceClient;
   private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
@@ -118,7 +124,6 @@ public class VPinStudioClient implements OverlayClient {
   private final PlaylistsServiceClient playlistsServiceClient;
   private final PlaylistMediaServiceClient playlistMediaServiceClient;
   private final MediaConversionServiceClient mediaConversionServiceClient;
-  private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
 
@@ -126,15 +131,15 @@ public class VPinStudioClient implements OverlayClient {
     restClient = RestClient.createInstance(host, SystemUtil.getPort());
     this.preferencesServiceClient = new PreferencesServiceClient(this);
 
+    this.authenticationServiceClient = new VpAuthenticationServiceClient(this);
     this.alxServiceClient = new AlxServiceClient(this);
     this.altColorServiceClient = new AltColorServiceClient(this);
     this.altSoundServiceClient = new AltSoundServiceClient(this);
-    this.archiveServiceClient = new ArchiveServiceClient(this);
+    this.backupServiceClient = new BackupServiceClient(this);
     this.assetServiceClient = new AssetServiceClient(this);
     this.competitions = new CompetitionsServiceClient(this);
     this.componentServiceClient = new ComponentServiceClient(this);
     this.backglassServiceClient = new BackglassServiceClient(this);
-    this.backupServiceClient = new BackupServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
     this.dmdPositionServiceClient = new DMDPositionServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
@@ -153,6 +158,7 @@ public class VPinStudioClient implements OverlayClient {
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
     this.maniaServiceClient = new ManiaServiceClient(this);
+    this.tableAssetSourcesServiceClient = new TableAssetSourcesServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.resServiceClient = new ResServiceClient(this);
@@ -164,7 +170,6 @@ public class VPinStudioClient implements OverlayClient {
     this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
-    this.vpbmServiceClient = new VpbmServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
@@ -176,6 +181,14 @@ public class VPinStudioClient implements OverlayClient {
 
   public String getHost() {
     return restClient.getHost();
+  }
+
+  public TableAssetSourcesServiceClient getAssetSourcesService() {
+    return tableAssetSourcesServiceClient;
+  }
+
+  public VpAuthenticationServiceClient getAuthenticationService() {
+    return authenticationServiceClient;
   }
 
   public BackupServiceClient getBackupService() {
@@ -306,8 +319,8 @@ public class VPinStudioClient implements OverlayClient {
     return altSoundServiceClient;
   }
 
-  public ArchiveServiceClient getArchiveService() {
-    return archiveServiceClient;
+  public BackupServiceClient getArchiveService() {
+    return backupServiceClient;
   }
 
   public AssetServiceClient getAssetService() {
@@ -366,10 +379,6 @@ public class VPinStudioClient implements OverlayClient {
     return vpxServiceClient;
   }
 
-  public VpbmServiceClient getVpbmService() {
-    return vpbmServiceClient;
-  }
-
   @Override
   public DiscordServer getDiscordServer(long serverId) {
     return discordServiceClient.getDiscordServer(serverId);
@@ -391,8 +400,28 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public GameEmulatorRepresentation getGameEmulator(int emulatorId) {
+    return getEmulatorService().getGameEmulator(emulatorId);
+  }
+
+  @Override
+  public GameScoreValidation getGameScoreValidation(int gameId) {
+    return getGameService().getGameScoreValidation(gameId);
+  }
+
+  @Override
+  public AlxSummary getAlxSummary(int gameId) {
+    return getAlxService().getAlxSummary(gameId);
+  }
+
+  @Override
   public FrontendMediaRepresentation getFrontendMedia(int id) {
     return getFrontendService().getFrontendMedia(id);
+  }
+
+  @Override
+  public FrontendPlayerDisplay getScreenDisplay(VPinScreen tutorialScreen) {
+    return getFrontendService().getScreenDisplay(tutorialScreen);
   }
 
   /**
@@ -456,6 +485,11 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public VpsTable getVpsTable(String tableId) {
+    return getVpsService().getTableById(tableId);
+  }
+
+  @Override
   public VpsTableVersion getVpsTableVersion(@Nullable String tableId, @Nullable String versionId) {
     VpsTable table = getVpsService().getTableById(tableId);
     if (table != null && versionId != null) {
@@ -495,8 +529,25 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public ScoreSummaryRepresentation getRecentScoresByGame(int count, int gameId) {
+    return getGameService().getRecentScoresByGame(count, gameId);
+  }
+
+  @Override
   public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
     return getAssetService().getGameMediaItem(id, screen);
+  }
+
+  @Override
+  public MonitorInfo getScreenInfo(int id) {
+    return getSystemService().getScreenInfo(id);
+  }
+
+  //---------------------
+
+  @Override
+  public void clearPreferenceCache() {
+    getPreferenceService().clearCache();
   }
 
   @Override
@@ -514,23 +565,44 @@ public class VPinStudioClient implements OverlayClient {
     return getPlayerService().getRankedPlayers();
   }
 
-  public RestClient getRestClient() {
-    return restClient;
+  //--------------------------
+
+  @Override
+  public GameStatus startPause() {
+    return getGameStatusService().startPause();
   }
 
+  @Override
+  public GameStatus getPauseStatus() {
+    return getGameStatusService().getStatus();
+  }
+
+  @Override
+  public GameStatus finishPause() {
+    return getGameStatusService().finishPause();
+  }
+
+  @Override
+  public FeaturesInfo getFeatures() {
+    return getSystemService().getFeatures();
+  }
 
   public void clearDiscordCache() {
     restClient.clearCache("discord/");
   }
 
-
   /*********************************************************************************************************************
    * Utils
    */
+
+  public RestClient getRestClient() {
+    return restClient;
+  }
+
   public void download(@NonNull String url, @NonNull File target) throws Exception {
     RestTemplate template = new RestTemplate();
     LOG.info("HTTP Download " + restClient.getBaseUrl() + VPinStudioClientService.API + url);
-    File file = template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
+    template.execute(restClient.getBaseUrl() + VPinStudioClientService.API + url, HttpMethod.GET, null, clientHttpResponse -> {
       FileOutputStream out = null;
       try {
         out = new FileOutputStream(target);
@@ -541,7 +613,9 @@ public class VPinStudioClient implements OverlayClient {
         throw e;
       }
       finally {
-        out.close();
+        if (out != null) {
+          out.close();
+        }
       }
     });
   }

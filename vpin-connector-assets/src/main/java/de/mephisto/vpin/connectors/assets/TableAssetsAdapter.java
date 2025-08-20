@@ -1,33 +1,37 @@
 package de.mephisto.vpin.connectors.assets;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 
-public interface TableAssetsAdapter {
+public interface TableAssetsAdapter<T> {
 
-  TableAssetConf getTableAssetConf();
+  TableAssetSource getAssetSource();
 
-  List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception;
+  List<TableAsset> search(String emulatorName, String screenSegment, T game, String term) throws Exception;
 
-  Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception;
+  Optional<TableAsset> get(String emulatorName, String screenSegment, T game, String folder, String name) throws Exception;
 
   /**
    * Download the asset and write it to the stream
+   *
    * @param outputStream the stream to write on
-   * @param urlString The URL of the asset
+   * @param tableAsset   The asset
    */
-  void writeAsset(OutputStream outputStream, String urlString) throws Exception;
+  void writeAsset(@NonNull OutputStream outputStream, @NonNull TableAsset tableAsset) throws Exception;
 
   /**
    * Test the connection to the remote search server
-   * @return true if connection successfull 
+   *
+   * @return true if connection successfully
    */
   boolean testConnection();
 
   /**
-   * Invalidate the underlying cache if any. 
-   * Do nothing by default, must be overwriden when cache is used.
+   * Invalidate the underlying cache if any.
+   * Do nothing by default, must be overwritten when cache is used.
    */
   default void invalidateMediaCache() {
   }

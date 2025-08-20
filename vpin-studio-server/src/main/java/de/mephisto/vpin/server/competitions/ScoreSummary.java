@@ -12,8 +12,15 @@ public class ScoreSummary {
   private Date createdAt;
   private List<Score> scores;
 
-  public ScoreSummary(List<Score> scores, Date createdAt) {
+  public ScoreSummary() {
+    this.scores = new ArrayList<>();
+    this.raw = null;
+    this.createdAt = new Date();
+  }
+
+  public ScoreSummary(List<Score> scores, Date createdAt, String raw) {
     this.scores = scores;
+    this.raw = raw;
     this.createdAt = createdAt;
   }
 
@@ -45,17 +52,21 @@ public class ScoreSummary {
     return scores.stream().anyMatch(s -> s.matches(newScore));
   }
 
-  public void mergeExternalScores(List<Score> externalScores) {
-    for (Score externalScore : externalScores) {
-      if (!contains(externalScore)) {
-        this.scores.add(externalScore);
+  public void mergeScores(List<Score> otherScores) {
+    for (Score otherScore : otherScores) {
+      if (!contains(otherScore)) {
+        this.scores.add(otherScore);
       }
     }
-    Collections.sort(scores, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
+    sortScores();
     for (int i = 1; i <= scores.size(); i++) {
       Score score = scores.get(i - 1);
       score.setPosition(i);
     }
+  }
+
+  public void sortScores() {
+    Collections.sort(scores, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
   }
 
   public List<Score> cloneEmptyScores() {

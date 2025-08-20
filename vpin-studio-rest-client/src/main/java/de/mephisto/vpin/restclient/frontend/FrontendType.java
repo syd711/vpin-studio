@@ -9,14 +9,14 @@ import de.mephisto.vpin.restclient.system.FeaturesInfo;
 public enum FrontendType {
   Standalone(SupportType.NONE, SupportType.NONE, SupportType.NONE,false, SupportType.NONE, false, false, false, false, false, false, false, false),
   Popper    (SupportType.FULL, SupportType.FULL, SupportType.FULL, true, SupportType.FULL, true, false, true, true, true, true, true, true),
-  PinballX  (SupportType.MINI, SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true, false),
-  PinballY  (SupportType.MINI, SupportType.NONE, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false, true, false);
+  PinballX  (SupportType.MINI, SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, true, true, false),
+  PinballY  (SupportType.MINI, SupportType.NONE, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, true, true, false);
 
   enum SupportType {NONE, MINI, FULL}
 
   FrontendType(SupportType supportFields, SupportType supportEmulators, SupportType supportPlaylists, boolean supportPlaylistsCrud,
           SupportType supportStatuses, boolean supportMedias, boolean supportMediaCache,
-          boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
+          boolean supportPupPacks, boolean supportStatistics, boolean supportBackups,
           boolean supportControls, boolean supportRating, boolean supportCompetitions) {
     this.supportFields = supportFields;
     this.supportEmulators = supportEmulators;
@@ -27,7 +27,7 @@ public enum FrontendType {
     this.supportMediaCache = supportMediaCache;
     this.supportPupPacks = supportPupPacks;
     this.supportStatistics = supportStatistics;
-    this.supportArchive = supportArchive;
+    this.supportBackups = supportBackups;
     this.supportControls = supportControls;
     this.supportRating = supportRating;
     this.supportCompetitions = supportCompetitions;
@@ -67,7 +67,7 @@ public enum FrontendType {
   /** Whether statistics are recorded by the frontend */
   private boolean supportStatistics;
   /** Whether archive and VPBM are supported by the frontend */
-  private boolean supportArchive;
+  private boolean supportBackups;
   /** Whether controls are supported by the frontend */
   private boolean supportControls;
   /** Whether ratings are supported by the frontend */
@@ -88,7 +88,7 @@ public enum FrontendType {
     features.MEDIA_ENABLED &= supportMedias;
     features.PUPPACKS_ENABLED &= supportPupPacks;
     features.STATISTICS_ENABLED &= supportStatistics;
-    features.ARCHIVE_ENABLED &= supportArchive;
+    features.BACKUPS_ENABLED &= supportBackups;
     features.CONTROLS_ENABLED &= supportControls;
     features.RATINGS &= supportRating;
     features.COMPETITIONS_ENABLED &= supportCompetitions;

@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.Updater;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.shape.Rectangle;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,29 @@ public class LocalUISettings {
     for (LocalSettingsChangeListener listener : listeners) {
       listener.localSettingsChanged(key, value);
     }
+  }
+
+  public static void saveJsonProperty(@NonNull String key, @Nullable Object value) {
+    try {
+      String json = LocalJsonSettings.objectMapper.writeValueAsString(value);
+      saveProperty(key, json);
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to write json preference for {}: {}", key, e.getMessage(), e);
+    }
+  }
+
+  public static <T> T getJsonProperty(@NonNull String key, @NonNull Class<T> clazz, @Nullable T defaultValue) {
+    try {
+      String value = getString(key);
+      if (!StringUtils.isEmpty(value)) {
+        return (T) LocalJsonSettings.objectMapper.readValue(value, clazz);
+      }
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to read json preference for {}: {}", key, e.getMessage(), e);
+    }
+    return defaultValue;
   }
 
   @Nullable

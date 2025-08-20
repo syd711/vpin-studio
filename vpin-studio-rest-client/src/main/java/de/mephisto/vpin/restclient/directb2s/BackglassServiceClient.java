@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.util.ReturnMessage;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -42,6 +42,10 @@ public class BackglassServiceClient extends VPinStudioClientService {
       bytes = new byte[]{};
     }
     return new ByteArrayInputStream(bytes);
+  }
+
+  public String getDefaultPictureUrl(@NonNull GameRepresentation game) {
+    return getRestClient().getBaseUrl() + API + "assets/defaultbackground/" + game.getId();
   }
 
   public int getGameId(int emulatorId, String fileName) {
@@ -188,7 +192,8 @@ public class BackglassServiceClient extends VPinStudioClientService {
     params.put("fileName", fileName);
     try {
       return getRestClient().put(API + "directb2s", params, DirectB2S.class);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new RuntimeException(e.getMessage());
     }
   }
@@ -275,7 +280,7 @@ public class BackglassServiceClient extends VPinStudioClientService {
   // screen res management
 
   public DirectB2sScreenRes getGlobalScreenRes() {
-    return getRestClient().get(API + "directb2s/screenRes",DirectB2sScreenRes.class);
+    return getRestClient().get(API + "directb2s/screenRes", DirectB2sScreenRes.class);
   }
 
   public DirectB2sScreenRes getScreenRes(int emulatorId, String fileName, boolean tableOnly) {

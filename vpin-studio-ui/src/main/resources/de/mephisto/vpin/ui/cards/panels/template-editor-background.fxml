@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<TitledPane fx:id="settingsPane" text="Background Settings" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorBackgroundController">
+   <content>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox styleClass="accordion-container" >
+               <children>
+                  <RadioButton fx:id="transparentBackgroundRadio" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="6.0" />
+                     </VBox.margin>
+                  </RadioButton>
+                  <VBox fx:id="transparentBackgroundPane" spacing="6.0" >
+                     <children>
+                        <Label text="Alpha Percentage:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Slider fx:id="alphaPercentageSpinner">
+                        </Slider>
+                     </children>
+                  </VBox>
+
+                  <RadioButton fx:id="defaultBackgroundRadio" mnemonicParsing="false" text="Default Background" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" bottom="6.0" />
+                     </VBox.margin>
+                  </RadioButton>
+                  <VBox fx:id="defaultBackgroundPane" spacing="6.0" >
+                     <children>
+                        <Label text="Use image from media" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="mediaComboBox" prefWidth="150.0" />
+                     </children>
+                  </VBox>
+
+                  <RadioButton fx:id="fallbackBackgroundRadio" mnemonicParsing="false" text="Fallback Background" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" bottom="6.0" />
+                     </VBox.margin>
+                  </RadioButton>
+                  <VBox fx:id="fallbackBackgroundPane" spacing="6.0" >
+                     <children>
+                        <Label text="Fallback Background Image:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <ComboBox fx:id="backgroundImageCombo" prefWidth="200.0">
+                                 <HBox.margin>
+                                    <Insets top="3.0" />
+                                 </HBox.margin>
+                              </ComboBox>
+                              <Button fx:id="falbackUploadBtn" mnemonicParsing="false" onAction="#onUploadButton">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+
+                  <CheckBox fx:id="grayScaleCheckbox" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" text="Grayscale Background" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label text="Brighten Background:" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Slider fx:id="brightenSlider" maxWidth="330.0">
+                     <padding>
+                        <Insets bottom="12.0" top="6.0" />
+                     </padding>
+                  </Slider>
+                  <Label text="Darken Background:" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets top="12.0" />
+                     </padding>
+                  </Label>
+                  <Slider fx:id="darkenSlider" maxWidth="330.0">
+                     <padding>
+                        <Insets bottom="12.0" top="6.0" />
+                     </padding>
+                  </Slider>
+                  <Label text="Blur Background:" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets top="12.0" />
+                     </padding>
+                  </Label>
+                  <Slider fx:id="blurSlider" max="50.0" maxWidth="330.0">
+                     <padding>
+                        <Insets bottom="12.0" top="6.0" />
+                     </padding>
+                  </Slider>
+               </children>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </content>
+</TitledPane>

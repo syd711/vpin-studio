@@ -1,13 +1,17 @@
 package de.mephisto.vpin.ui.cards.panels;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.cards.*;
 import de.mephisto.vpin.commons.utils.JFXFuture;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
@@ -17,13 +21,10 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
-import de.mephisto.vpin.ui.tables.dialogs.DMDPositionResizer;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.*;
-import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -32,29 +33,28 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Paint;
-import javafx.stage.FileChooser;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
-import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -63,9 +63,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private ComboBox<CardTemplate> templateCombo;
-
-  @FXML
-  private StackPane previewStack;
 
   @FXML
   private Button renameBtn;
@@ -77,142 +74,38 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private Button stopBtn;
 
   @FXML
-  private Label titleFontLabel;
-
-  @FXML
-  private Label scoreFontLabel;
-
-  @FXML
-  private Label tableFontLabel;
-
-  @FXML
-  private CheckBox useDirectB2SCheckbox;
-
-  @FXML
-  private CheckBox grayScaleCheckbox;
-
-  @FXML
-  private CheckBox transparentBackgroundCheckbox;
-
-  @FXML
-  private CheckBox overlayModeCheckbox;
-
-  @FXML
-  private ColorPicker fontColorSelector;
-
-  @FXML
-  private ColorPicker friendsFontColorSelector;
-
-  @FXML
-  private ComboBox<String> backgroundImageCombo;
-
-  @FXML
-  private TextField titleText;
-
-  @FXML
-  private Slider brightenSlider;
-
-  @FXML
-  private Slider darkenSlider;
-
-  @FXML
-  private Slider blurSlider;
-
-  @FXML
-  private Slider borderSlider;
-
-  @FXML
-  private Spinner<Integer> paddingSpinner;
-
-  @FXML
-  private Spinner<Integer> wheelSizeSpinner;
-
-  @FXML
-  private Spinner<Integer> wheelImageSpinner;
-
-  @FXML
-  private Spinner<Integer> rowSeparatorSpinner;
-
-  @FXML
-  private Spinner<Integer> maxScoresSpinner;
-
-  @FXML
-  private Spinner<Integer> marginTopSpinner;
-  @FXML
-  private Spinner<Integer> marginRightSpinner;
-  @FXML
-  private Spinner<Integer> marginBottomSpinner;
-  @FXML
-  private Spinner<Integer> marginLeftSpinner;
-
-  @FXML
-  private Slider alphaPercentageSpinner;
-
-  @FXML
-  private CheckBox renderRawHighscore;
-
-  @FXML
-  private Button falbackUploadBtn;
-
-  @FXML
-  private TitledPane backgroundSettingsPane;
-
-  @FXML
   private Accordion accordion;
 
   @FXML
-  private CheckBox renderTitleCheckbox;
+  private LayerEditorOverlayController layerEditorOverlayController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorBackgroundController layerEditorBackgroundController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorLayoutController layerEditorLayoutController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorCanvasController layerEditorCanvasController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorTitleController layerEditorTitleController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorTableNameController layerEditorTableNameController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorWheelController layerEditorWheelController; //fxml magic! Not unused -> id + "Controller"
+  @FXML
+  private LayerEditorScoresController layerEditorScoresController; //fxml magic! Not unused -> id + "Controller"
 
   @FXML
-  private CheckBox renderTableNameCheckbox;
-
-  @FXML
-  private CheckBox renderWheelIconCheckbox;
-
-  @FXML
-  private CheckBox renderFriendsHighscore;
-
-  @FXML
-  private CheckBox renderPositionsCheckbox;
-
-  @FXML
-  private CheckBox renderCanvasCheckbox;
-
-  @FXML
-  private Slider canvasAlphaPercentageSlider;
-
-  @FXML
-  private ColorPicker canvasColorSelector;
-
-  @FXML
-  private Spinner<Integer> canvasXSpinner;
-
-  @FXML
-  private Spinner<Integer> canvasYSpinner;
-
-  @FXML
-  private Spinner<Integer> canvasWidthSpinner;
-
-  @FXML
-  private Spinner<Integer> canvasHeightSpinner;
-
-  @FXML
-  private Spinner<Integer> canvasBorderRadiusSpinner;
-
+  private StackPane previewStack;
   @FXML
   private Pane previewPanel;
-
   @FXML
   private BorderPane previewOverlayPanel;
 
-  @FXML
-  private ComboBox<String> screensComboBox;
+  private Parent waitOverlay;
 
-  @FXML
-  private Pane imagepane;
-
-  @FXML
-  private ImageView cardPreview;
+  /**
+   * The live preview component
+   */
+  private CardGraphicsHighscore cardPreview = new CardGraphicsHighscore(false);
 
   @FXML
   private Pane mediaPlayerControl;
@@ -232,16 +125,18 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private Label resolutionLabel;
 
-  /** the different dragboxes */
-  private List<DMDPositionResizer> dragBoxes = new ArrayList<>();
+  /**
+   * the dragboxes, today only used at a time
+   */
+  private List<PositionResizer> dragBoxes = new ArrayList<>();
 
+  public Debouncer cardTemplateSaveDebouncer = new Debouncer();
 
-  private BeanBinder templateBeanBinder;
-  private ObservableList<String> imageList;
+  private CardTemplateBinder templateBeanBinder;
 
-  private Parent waitOverlay;
   private HighscoreCardsController highscoreCardsController;
   private AssetMediaPlayer assetMediaPlayer;
+
   private Optional<GameRepresentation> gameRepresentation;
   private List<CardTemplate> templates;
 
@@ -249,8 +144,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private void onOpenImage() {
     if (gameRepresentation.isPresent()) {
-      ByteArrayInputStream s = client.getHighscoreCardsService().getHighscoreCard(gameRepresentation.get());
-      MediaUtil.openMedia(s);
+      TableDialogs.openMediaDialog(Studio.stage, "Highscore Card", client.getHighscoreCardsService().getHighscoreCardUrl(gameRepresentation.get()));
     }
   }
 
@@ -294,11 +188,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private void onCreate(ActionEvent e) {
-    CardTemplate selection = this.templateCombo.getValue();
+    CardTemplate template = this.templateCombo.getValue();
     String gameName = gameRepresentation.get().getGameName();
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + selection.getName() + "\" will be used as default.", gameName);
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + template.getName() + "\" will be used as default.", gameName);
     if (!StringUtils.isEmpty(s)) {
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
 
@@ -308,16 +202,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         return;
       }
 
-      selection.setName(s);
-      selection.setId(null);
-      JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(selection))
-      .thenAcceptLater(newTemplate -> {
-          templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(newTemplate);
-
-          highscoreCardsController.refresh(gameRepresentation, templates, false);
-        })
+      template.setName(s);
+      template.setId(null);
+      JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(template))
+      .thenAcceptLater(newTemplate -> loadTemplates(newTemplate))
       .onErrorLater(ex -> {
           LOG.error("Failed to create new template: " + ex.getMessage(), ex);
           WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
@@ -335,12 +223,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
       JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
       .thenAcceptLater(updatedTemplate -> {
-          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(updatedTemplate);
-
+          loadTemplates(updatedTemplate);
           assignTemplate(updatedTemplate);
-          highscoreCardsController.refresh(gameRepresentation, templates, true);
+          //highscoreCardsController.refresh(gameRepresentation, templates, true);
         })
       .onErrorLater(ex -> {
         LOG.error("Failed to rename template: " + ex.getMessage(), ex);
@@ -360,12 +245,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         Platform.runLater(() -> {
           CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
 
-          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(defaultTemplate);
+          loadTemplates(defaultTemplate);
 
           assignTemplate(defaultTemplate);
-          highscoreCardsController.refresh(gameRepresentation, templates, true);
+          //highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
@@ -375,97 +258,20 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
-  @FXML
-  private void onUploadButton() {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Image");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("All Images", "*.jpg", "*.png", "*.jpeg"),
-        new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-        new FileChooser.ExtensionFilter("PNG", "*.png"));
-    File file = fileChooser.showOpenDialog(stage);
-    if (file != null && file.exists()) {
-      try {
-        boolean result = client.getHighscoreCardsService().uploadHighscoreBackgroundImage(file, null);
-        if (result) {
-          String baseName = FilenameUtils.getBaseName(file.getName());
-          if (!imageList.contains(baseName)) {
-            imageList.add(baseName);
-          }
-        }
-      }
-      catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
-      }
+  public void applyFontOnAllTemplates(Consumer<CardTemplate> font) {
+    ObservableList<CardTemplate> items = templateCombo.getItems();
+    for (CardTemplate item : items) {
+      font.accept(item);
     }
-  }
-
-  @FXML
-  private void onFontTitleSelect() {
-    templateBeanBinder.bindFontSelector(getCardTemplate(), "title", titleFontLabel);
-  }
-
-  @FXML
-  private void onFontTitleApplyAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ObservableList<CardTemplate> items = templateCombo.getItems();
-      CardTemplate selection = getCardTemplate();
-      for (CardTemplate item : items) {
-        item.setTitleFontName(selection.getTitleFontName());
-        item.setTitleFontSize(selection.getTitleFontSize());
-        item.setTitleFontStyle(selection.getTitleFontStyle());
-      }
-      saveAllTemplates(items);
-    }
-  }
-
-  @FXML
-  private void onFontTableSelect() {
-    templateBeanBinder.bindFontSelector(getCardTemplate(), "table", tableFontLabel);
-  }
-
-  @FXML
-  private void onFontTableApplyAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ObservableList<CardTemplate> items = templateCombo.getItems();
-      CardTemplate selection = getCardTemplate();
-      for (CardTemplate item : items) {
-        item.setTableFontName(selection.getTableFontName());
-        item.setTableFontSize(selection.getTableFontSize());
-        item.setTableFontStyle(selection.getTableFontStyle());
-      }
-      saveAllTemplates(items);
-    }
-  }
-
-  @FXML
-  private void onFontScoreSelect() {
-    templateBeanBinder.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
-  }
-
-  @FXML
-  private void onFontScoreApplyAll() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ObservableList<CardTemplate> items = templateCombo.getItems();
-      CardTemplate selection = getCardTemplate();
-      for (CardTemplate item : items) {
-        item.setScoreFontName(selection.getScoreFontName());
-        item.setScoreFontSize(selection.getScoreFontSize());
-        item.setScoreFontStyle(selection.getScoreFontStyle());
-      }
-      saveAllTemplates(items);
-    }
+    saveAllTemplates(items);
   }
 
   private void saveAllTemplates(List<CardTemplate> items) {
     ProgressDialog.createProgressDialog(new WaitNProgressModel<>("Save Templates", items,
-    item -> "Saving Highscore Card Templates " + item.getName() + "...", 
-    item -> {
-      client.getHighscoreCardTemplatesClient().save(item);
-    }));
+        item -> "Saving Highscore Card Templates " + item.getName() + "...",
+        item -> {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }));
     WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
   }
 
@@ -473,246 +279,46 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     return this.templateCombo.getValue();
   }
 
-  private void setTemplate(CardTemplate cardTemplate) {
-    if (templateBeanBinder == null) {
-      initBindings();
-      //imagepane.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> onDragboxEnter(e));
-    }
+  public CardTemplateBinder getBeanBinder() {
+    return templateBeanBinder;
+  }
 
+  private void setTemplate(CardTemplate cardTemplate) {
     deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
     renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
 
-    templateBeanBinder.setBean(cardTemplate);
+    // interrupt propety changes
     templateBeanBinder.setPaused(true);
 
-    titleFontLabel.setText(cardTemplate.getTitleFontName() + ", " + cardTemplate.getTitleFontStyle() + ", " + cardTemplate.getTitleFontSize() + "px");
-    tableFontLabel.setText(cardTemplate.getTableFontName() + ", " + cardTemplate.getTableFontStyle() + ", " + cardTemplate.getTableFontName() + "px");
-    scoreFontLabel.setText(cardTemplate.getScoreFontName() + ", " + cardTemplate.getScoreFontStyle() + ", " + cardTemplate.getScoreFontSize() + "px");
+    // set the bean  and resolution
+    templateBeanBinder.setBean(cardTemplate);
 
-    templateBeanBinder.setColorPickerValue(fontColorSelector, getCardTemplate(), "fontColor");
-    templateBeanBinder.setColorPickerValue(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    CardResolution res = cardSettings.getCardResolution();
+    templateBeanBinder.setResolution(res);
 
-    useDirectB2SCheckbox.setSelected(cardTemplate.isUseDirectB2S());
-    backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
-    falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
-
-    grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
-    transparentBackgroundCheckbox.setSelected(cardTemplate.isTransparentBackground());
-    overlayModeCheckbox.setSelected(cardTemplate.isOverlayMode());
-    renderTableNameCheckbox.setSelected(cardTemplate.isRenderTableName());
-    renderWheelIconCheckbox.setSelected(cardTemplate.isRenderWheelIcon());
-    renderTitleCheckbox.setSelected(cardTemplate.isRenderTitle());
-
-    titleText.setText(cardTemplate.getTitle());
-    brightenSlider.setValue(cardTemplate.getAlphaWhite());
-    darkenSlider.setValue(cardTemplate.getAlphaBlack());
-    blurSlider.setValue(cardTemplate.getBlur());
-    borderSlider.setValue(cardTemplate.getBorderWidth());
-    alphaPercentageSpinner.setValue(cardTemplate.getTransparentPercentage());
-    paddingSpinner.getValueFactory().setValue(cardTemplate.getPadding());
-    wheelSizeSpinner.getValueFactory().setValue(cardTemplate.getWheelSize());
-    marginTopSpinner.getValueFactory().setValue(cardTemplate.getMarginTop());
-    marginRightSpinner.getValueFactory().setValue(cardTemplate.getMarginRight());
-    marginBottomSpinner.getValueFactory().setValue(cardTemplate.getMarginBottom());
-    marginLeftSpinner.getValueFactory().setValue(cardTemplate.getMarginLeft());
-    wheelImageSpinner.getValueFactory().setValue(cardTemplate.getWheelPadding());
-    maxScoresSpinner.getValueFactory().setValue(cardTemplate.getMaxScores());
-    rowSeparatorSpinner.getValueFactory().setValue(cardTemplate.getRowMargin());
-
-    renderFriendsHighscore.setSelected(cardTemplate.isRenderFriends());
-    renderRawHighscore.setSelected(cardTemplate.isRawScore());
-    wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
-    maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
-    rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
-    renderPositionsCheckbox.setDisable(renderRawHighscore.isSelected());
-
-    templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
-
-    renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
-    canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
-    canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
-    canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
-    canvasHeightSpinner.getValueFactory().setValue(cardTemplate.getCanvasHeight());
-   canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
-    canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
-
-    canvasAlphaPercentageSlider.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasColorSelector.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasXSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasYSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasWidthSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasHeightSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    canvasBorderRadiusSpinner.setDisable(!renderCanvasCheckbox.isSelected());
-    renderFriendsHighscore.setDisable(renderRawHighscore.isSelected());
+    layerEditorOverlayController.setTemplate(cardTemplate, res);
+    layerEditorBackgroundController.setTemplate(cardTemplate, res);
+    layerEditorLayoutController.setTemplate(cardTemplate, res);
+    layerEditorCanvasController.setTemplate(cardTemplate, res);
+    layerEditorTitleController.setTemplate(cardTemplate, res);
+    layerEditorTableNameController.setTemplate(cardTemplate, res);
+    layerEditorWheelController.setTemplate(cardTemplate, res);
+    layerEditorScoresController.setTemplate(cardTemplate, res);
 
     templateBeanBinder.setPaused(false);
 
+    cardPreview.setTemplate(cardTemplate);
     refreshPreview(this.gameRepresentation, true);
-  }
-
-
-  private void initBindings() {
-    try {
-      templateBeanBinder = new BeanBinder(this);
-      templateBeanBinder.setBean(this.getCardTemplate());
-
-      templateBeanBinder.bindFontLabel(titleFontLabel, getCardTemplate(), "title");
-      templateBeanBinder.bindFontLabel(tableFontLabel, getCardTemplate(), "table");
-      templateBeanBinder.bindFontLabel(scoreFontLabel, getCardTemplate(), "score");
-
-      templateBeanBinder.bindColorPicker(fontColorSelector, getCardTemplate(), "fontColor");
-      templateBeanBinder.bindColorPicker(friendsFontColorSelector, getCardTemplate(), "friendsFontColor");
-      templateBeanBinder.bindColorPicker(canvasColorSelector, getCardTemplate(), "canvasBackground");
-
-      templateBeanBinder.bindCheckbox(useDirectB2SCheckbox, getCardTemplate(), "useDirectB2S");
-      useDirectB2SCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          backgroundImageCombo.setDisable(newValue);
-          falbackUploadBtn.setDisable(newValue);
-        }
-      });
-      backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
-      falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
-
-      List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
-      VPinScreens.remove(VPinScreen.Audio);
-      VPinScreens.remove(VPinScreen.AudioLaunch);
-      VPinScreens.remove(VPinScreen.GameInfo);
-      VPinScreens.remove(VPinScreen.GameHelp);
-      VPinScreens.remove(VPinScreen.DMD);
-      VPinScreens.remove(VPinScreen.Wheel);
-      VPinScreens.remove(VPinScreen.Other2);
-      VPinScreens.remove(VPinScreen.PlayField);
-      VPinScreens.remove(VPinScreen.Loading);
-      screensComboBox.setItems(FXCollections.observableList(VPinScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
-      screensComboBox.setDisable(!getCardTemplate().isOverlayMode());
-
-      templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
-      templateBeanBinder.bindCheckbox(transparentBackgroundCheckbox, getCardTemplate(), "transparentBackground");
-      templateBeanBinder.bindCheckbox(renderTableNameCheckbox, getCardTemplate(), "renderTableName");
-      templateBeanBinder.bindCheckbox(renderWheelIconCheckbox, getCardTemplate(), "renderWheelIcon");
-      templateBeanBinder.bindCheckbox(renderTitleCheckbox, getCardTemplate(), "renderTitle");
-      templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
-      templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
-      templateBeanBinder.bindCheckbox(overlayModeCheckbox, getCardTemplate(), "overlayMode");
-
-      overlayModeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          screensComboBox.setDisable(!newValue);
-        }
-      });
-
-      imageList = FXCollections.observableList(new ArrayList<>(client.getHighscoreCardsService().getHighscoreBackgroundImages()));
-      backgroundImageCombo.setItems(imageList);
-      backgroundImageCombo.setCellFactory(c -> new WidgetFactory.HighscoreBackgroundImageListCell(client));
-      backgroundImageCombo.setButtonCell(new WidgetFactory.HighscoreBackgroundImageListCell(client));
-
-      templateBeanBinder.bindComboBox(backgroundImageCombo, getCardTemplate(), "background");
-      String backgroundName = getCardTemplate().getBackground();
-      if (StringUtils.isEmpty(backgroundName)) {
-        backgroundImageCombo.setValue(imageList.get(0));
-      }
-
-      templateBeanBinder.bindComboBox(screensComboBox, getCardTemplate(), "overlayScreen");
-
-      templateBeanBinder.bindTextField(titleText, getCardTemplate(), "title", "Highscores");
-      templateBeanBinder.bindSlider(brightenSlider, getCardTemplate(), "alphaWhite");
-      templateBeanBinder.bindSlider(darkenSlider, getCardTemplate(), "alphaBlack");
-      templateBeanBinder.bindSlider(blurSlider, getCardTemplate(), "blur");
-      templateBeanBinder.bindSlider(borderSlider, getCardTemplate(), "borderWidth");
-      templateBeanBinder.bindSlider(alphaPercentageSpinner, getCardTemplate(), "transparentPercentage");
-      templateBeanBinder.bindSlider(canvasAlphaPercentageSlider, getCardTemplate(), "canvasAlphaPercentage");
-      templateBeanBinder.bindSpinner(wheelSizeSpinner, getCardTemplate(), "wheelSize");
-      templateBeanBinder.bindSpinner(paddingSpinner, getCardTemplate(), "padding");
-      templateBeanBinder.bindSpinner(marginTopSpinner, getCardTemplate(), "marginTop");
-      templateBeanBinder.bindSpinner(marginRightSpinner, getCardTemplate(), "marginRight");
-      templateBeanBinder.bindSpinner(marginBottomSpinner, getCardTemplate(), "marginBottom");
-      templateBeanBinder.bindSpinner(marginLeftSpinner, getCardTemplate(), "marginLeft");
-      templateBeanBinder.bindSpinner(wheelImageSpinner, getCardTemplate(), "wheelPadding");
-      templateBeanBinder.bindSpinner(maxScoresSpinner, getCardTemplate(), "maxScores", 0, 100);
-      templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
-
-      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
-      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
-      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
-      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
-      templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
-
-      renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          wheelSizeSpinner.setDisable(!newValue);
-        }
-      });
-
-      renderTitleCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          titleText.setDisable(!newValue);
-        }
-      });
-
-      transparentBackgroundCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          overlayModeCheckbox.setDisable(!getCardTemplate().isTransparentBackground());
-          overlayModeCheckbox.setSelected(getCardTemplate().isOverlayMode());
-          screensComboBox.setDisable(!getCardTemplate().isOverlayMode() || !getCardTemplate().isTransparentBackground());
-
-          if (newValue && alphaPercentageSpinner.getValue() <= 0) {
-            alphaPercentageSpinner.setValue(50);
-          }
-        }
-      });
-
-      templateBeanBinder.bindCheckbox(renderRawHighscore, getCardTemplate(), "rawScore");
-      renderRawHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-        maxScoresSpinner.setDisable(t1);
-        wheelImageSpinner.setDisable(t1);
-        rowSeparatorSpinner.setDisable(t1);
-        renderPositionsCheckbox.setDisable(t1);
-        renderFriendsHighscore.setDisable(t1);
-      });
-
-      renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-        canvasAlphaPercentageSlider.setDisable(!t1);
-        canvasColorSelector.setDisable(!t1);
-        canvasXSpinner.setDisable(!t1);
-        canvasYSpinner.setDisable(!t1);
-        canvasWidthSpinner.setDisable(!t1);
-        canvasHeightSpinner.setDisable(!t1);
-        canvasBorderRadiusSpinner.setDisable(!t1);
-      });
-
-      titleText.setDisable(!renderTitleCheckbox.isSelected());
-      wheelSizeSpinner.setDisable(!renderWheelIconCheckbox.isSelected());
-      wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
-      maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
-      rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
-    }
-    catch (Exception e) {
-      LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
-    }
   }
 
   private void refreshTransparency() {
     boolean enabled = getCardTemplate().isTransparentBackground();
-    grayScaleCheckbox.setDisable(enabled);
-    useDirectB2SCheckbox.setDisable(enabled);
-    blurSlider.setDisable(enabled);
-    brightenSlider.setDisable(enabled);
-    darkenSlider.setDisable(enabled);
-    backgroundImageCombo.setDisable(enabled || getCardTemplate().isUseDirectB2S());
-    alphaPercentageSpinner.setDisable(!enabled);
-
     if (enabled) {
       if (!getCardTemplate().isOverlayMode()) {
         Image backgroundImage = new Image(Studio.class.getResourceAsStream("transparent.png"));
         BackgroundImage myBI = new BackgroundImage(backgroundImage,
-            BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-            BackgroundSize.DEFAULT);
+            BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         previewPanel.setBackground(new Background(myBI));
       }
       else {
@@ -724,7 +330,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       previewPanel.setBackground(new Background(new BackgroundFill(Paint.valueOf("#000000"), null, null)));
     }
   }
-
 
   @FXML
   private void onGenerate() {
@@ -744,11 +349,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private void onGenerateClick() {
     JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean()))
-      .thenLater(() -> refreshPreview(this.gameRepresentation, true))
-      .onErrorLater(e -> {
-        LOG.error("Failed to save template: " + e.getMessage());
-        WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
-      });
+        .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+        .onErrorLater(e -> {
+          LOG.error("Failed to save template: " + e.getMessage());
+          WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+        });
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
@@ -757,38 +362,28 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     this.generateAllBtn.setDisable(true);
     mediaPlayerControl.setVisible(false);
 
-    if (!game.isPresent()) {
-      return;
-    }
+    cardPreview.setData(null, null);
 
-    Platform.runLater(() -> {
+    if (game.isPresent()) {
       previewStack.getChildren().remove(waitOverlay);
       previewStack.getChildren().add(waitOverlay);
       refreshTransparency();
       refreshOverlayBackgroundPreview();
 
-      try {
-        new Thread(() -> {
-          if (regenerate) {
-            InputStream input = client.getHighscoreCardsService().getHighscoreCardPreview(game.get(), templateCombo.getValue());
-            Image image = new Image(input);
-            cardPreview.setImage(image);
-            cardPreview.setVisible(true);
-          }
+      JFXFuture.supplyAsync(() -> client.getHighscoreCardsService().getHighscoreCardData(game.get(), templateCombo.getValue()))
+          .thenAcceptLater(cardData -> {
+            CardResolution res = templateBeanBinder.getResolution();
 
-          Platform.runLater(() -> {
+            String baseurl = client.getRestClient().getBaseUrl() + VPinStudioClient.API;
+            cardData.addBaseUrl(baseurl);
+            cardPreview.setData(cardData, res);
+
             previewStack.getChildren().remove(waitOverlay);
             this.openImageBtn.setDisable(false);
             this.generateBtn.setDisable(false);
             this.generateAllBtn.setDisable(false);
           });
-
-        }).start();
-      }
-      catch (Exception e) {
-        LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
-      }
-    });
+    }
   }
 
 
@@ -803,45 +398,52 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
 
       JFXFuture.supplyAsync(() -> client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId()))
-      .thenAcceptLater(frontendMedia -> {
-        FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
-        if (defaultMediaItem != null) {
-          assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
-          //images do not have a media player
-          if (assetMediaPlayer != null) {
-            mediaPlayerControl.setVisible(true);
-          }
+          .thenAcceptLater(frontendMedia -> {
+            FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
+            if (defaultMediaItem != null) {
+              assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this, null);
+              //images do not have a media player
+              if (assetMediaPlayer != null) {
+                double fitwith = stage.getWidth() - 900; // was cardPreview.getFitWidth()
+                double fitheight = stage.getHeight() - 200; // was cardPreview.getFitHeight()
+                assetMediaPlayer.setSize(fitwith, fitheight);
+                mediaPlayerControl.setVisible(true);
+              }
 
-          if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
-            ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
-            imageViewer.scaleForTemplate(cardPreview);
-          }
+              if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
+                ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
+                // FIXME OLE imageViewer.scaleForTemplate(cardPreview);
+              }
 
-          previewOverlayPanel.setVisible(true);
-        }
-      });
+              previewOverlayPanel.setVisible(true);
+            }
+          });
     }
-  }
-
-  public void refreshPreviewSize() {
-    cardPreview.setFitWidth(stage.getWidth() - 900);
-    cardPreview.setFitHeight(stage.getHeight() - 200);
   }
 
   @Override
   public void beanPropertyChanged(Object bean, String key, Object value) {
     if (bean instanceof CardTemplate) {
-      onGenerateClick();
+      // refresh the preview immediately
+      cardPreview.setTemplate((CardTemplate) bean);
+      // and background save with debounce
+      saveCardTemplate((CardTemplate) bean);
     }
+  }
+
+  private void saveCardTemplate(CardTemplate cardTemplate) {
+    cardTemplateSaveDebouncer.debounce("cardTemplate", () -> {
+      JFXFuture.runAsync(() -> client.getHighscoreCardTemplatesClient().save(cardTemplate))
+          .thenLater(() -> refreshPreview(this.gameRepresentation, true))
+          .onErrorLater(e -> {
+            LOG.error("Failed to save template: " + e.getMessage());
+            WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+          });
+    }, 1000);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    friendsFontColorSelector.managedProperty().bindBidirectional(friendsFontColorSelector.visibleProperty());
-    renderFriendsHighscore.managedProperty().bindBidirectional(renderFriendsHighscore.visibleProperty());
-
-    friendsFontColorSelector.setVisible(Features.MANIA_ENABLED && Features.MANIA_SOCIAL_ENABLED);
-    renderFriendsHighscore.setVisible(Features.MANIA_ENABLED && Features.MANIA_SOCIAL_ENABLED);
 
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     resolutionLabel.setText("");
@@ -854,8 +456,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      templateCombo.setItems(FXCollections.observableList(templates));
+      loadTemplates(null);
 
       templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
         @Override
@@ -864,7 +465,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
             setTemplate(newValue);
             if (gameRepresentation.isPresent()) {
               assignTemplate(newValue);
-              highscoreCardsController.refresh(gameRepresentation, templates, false);
+              //highscoreCardsController.refresh(gameRepresentation, templates, false);
             }
           }
         }
@@ -873,87 +474,209 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Generating Card...");
+      ctrl.setLoadingMessage("Getting Card Data...");
 
-      accordion.setExpandedPane(backgroundSettingsPane);
+      //accordion.setExpandedPane(backgroundSettingsPane);
 
-      cardPreview.setPreserveRatio(true);
+      // Initialize bindings between CardTemplate and sidebar
+      initBindings();
+
+      // Resize handlers
+      previewStack.widthProperty().addListener((obs, o, n) -> resizeCardPreview(n.doubleValue(), previewStack.getHeight(), true));
+      previewStack.heightProperty().addListener((obs, o, n) -> resizeCardPreview(previewStack.getWidth(), n.doubleValue(), false));
+
+      previewPanel.getChildren().add(cardPreview);
+      resizeCardPreview(previewStack.getWidth(), previewStack.getHeight(), true);
+
+      // selector
+      cardPreview.setOnMousePressed(e -> onDragboxEnter(e));
+      previewPanel.setOnMousePressed(e -> onDragboxExit(e));
     }
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
     }
   }
 
-  //-------------------------------------------
+  private void initBindings() {
+    try {
+      templateBeanBinder = new CardTemplateBinder(this);
+      templateBeanBinder.setBean(this.getCardTemplate());
 
-  // imagepane 
-
-  public void onDragboxEnter(MouseEvent e) {
-    if (dragBoxes.size() == 0) {
-      loadDragBoxes(getCardTemplate());
-      e.consume();
+      layerEditorOverlayController.initialize(this);
+      layerEditorBackgroundController.initialize(this);
+      layerEditorLayoutController.initialize(this);
+      layerEditorCanvasController.initialize(this);
+      layerEditorTitleController.initialize(this);
+      layerEditorTableNameController.initialize(this);
+      layerEditorWheelController.initialize(this);
+      layerEditorScoresController.initialize(this);
+    }
+    catch (Exception e) {
+      LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
     }
   }
 
-  private void configureSpinner(Spinner<Integer> spinner, ObjectProperty<Integer> property,
-                                ReadOnlyObjectProperty<Integer> minProperty, ReadOnlyObjectProperty<Integer> maxProperty) {
-    SpinnerValueFactory<Integer> factory = spinner.getValueFactory();
-    factory.valueProperty().bindBidirectional(property);
+  private void loadTemplates(CardTemplate selectedTemplate) {
+    JFXFuture.supplyAsync(() -> client.getHighscoreCardTemplatesClient().getTemplates())
+    .thenAcceptLater(templates -> {
+      this.templates = templates;
+      templateCombo.setItems(FXCollections.observableList(templates));
+      if (selectedTemplate != null) {
+        this.templateCombo.setValue(selectedTemplate);
+      }
+    });
   }
 
-  private void loadDragBoxes(CardTemplate cardtemplate) {
+  private void resizeCardPreview(double width, double height, boolean forceWidth) {
+    // make sure the panel is full size always
+    previewPanel.resizeRelocate(0, 0, width, height);
 
-    // first delete previous boxes
-    for (DMDPositionResizer dragBox : dragBoxes) {
-      dragBox.removeFromPane(imagepane);
-    }
-    dragBoxes.clear();
-
-    if (renderCanvasCheckbox.isSelected()) {
-
-      // The canvas box
-      DMDPositionResizer dragBox = new DMDPositionResizer();
-
-      dragBox.setBounds(0, 0, 1920, 1080);
-
-      dragBox.setWidth(cardtemplate.getCanvasWidth());
-      dragBox.setHeight(cardtemplate.getCanvasHeight());
-      dragBox.setX(cardtemplate.getCanvasX());
-      dragBox.setY(cardtemplate.getCanvasY());
-  
-      double cardw = cardPreview.getFitWidth();
-      double zoom = cardw / 1920.0;
-      dragBox.setZoom(zoom);
-
-      // setup linkages between spinner and our dragbox
-      dragBox.selectProperty().addListener((obs, oldV, newV) -> {
-        if (newV) {
-          templateBeanBinder.setPaused(true);
-          configureSpinner(canvasXSpinner, dragBox.xProperty(), dragBox.xMinProperty(), dragBox.xMaxProperty());
-          configureSpinner(canvasYSpinner, dragBox.yProperty(), dragBox.yMinProperty(), dragBox.yMaxProperty());
-          configureSpinner(canvasWidthSpinner, dragBox.widthProperty(), dragBox.widthMinProperty(), dragBox.widthMaxProperty());
-          configureSpinner(canvasHeightSpinner, dragBox.heightProperty(), dragBox.heightMinProperty(), dragBox.heightMaxProperty());
+    if (width > 0 && height > 0) {
+      double aspectRatio = 16.0 / 9.0;
+      Insets in = previewPanel.getInsets();
+      double newWidth = width - in.getLeft() - in.getRight();
+      double newHeight = height - in.getTop() - in.getBottom();
+      double offSetX = 0;
+      double offSetY = 0;
+      if (forceWidth) {
+        newHeight = newWidth / aspectRatio;
+        if (newHeight > height) {
+          newHeight = height;
+          newWidth = height * aspectRatio;
+          // constraint width and center horizontally
+          offSetX = (width - newWidth) / 2;
         }
         else {
-          cardtemplate.setCanvasX((int) dragBox.getX());
-          cardtemplate.setCanvasWidth((int) dragBox.getWidth());
-          cardtemplate.setCanvasHeight((int) dragBox.getHeight());
-          dragBox.removeFromPane(imagepane);
-          dragBoxes.remove(dragBox);
-          templateBeanBinder.setPaused(false);
+          offSetY = (height - newHeight) / 2;
         }
-      });
-      dragBox.select();
+      }
+      else {
+        newWidth = newHeight * aspectRatio;
+        if (newWidth > width) {
+          newWidth = width;
+          newHeight = width / aspectRatio;
+          // constraint width and center horizontally
+          offSetY = (height - newHeight) / 2;
+        }
+        else {
+          offSetX = (width - newWidth) / 2;
+        }
+      }
+      cardPreview.resizeRelocate(offSetX, offSetY, newWidth, newHeight);
 
-      dragBox.addToPane(imagepane);
+      // in case dragboxes was here, deselect it
+      unloadDragBoxes();
+
+      Rectangle cliprect = new Rectangle(newWidth, newHeight);
+      cardPreview.setClip(cliprect);
+    }
+  }
+
+  //------------------------------------------- SELECTION ---
+
+  public void onDragboxEnter(MouseEvent e) {
+    unloadDragBoxes();
+
+    CardLayer layer = cardPreview.selectCardLayer(e.getX(), e.getY());
+    loadDragBoxes(layer);
+
+    e.consume();
+  }
+
+  public void onDragboxExit(MouseEvent e) {
+    unloadDragBoxes();
+    e.consume();
+  }
+
+  private void unloadDragBoxes() {
+    // first delete previous boxes
+    for (PositionResizer dragBox : dragBoxes) {
+      dragBox.removeFromPane(cardPreview);
+
+      if (dragBox.getUserData() instanceof CardLayer) {
+        CardLayer layer = (CardLayer) dragBox.getUserData();
+        layerToController(layer).unbindDragBox(dragBox);
+      }
+    }
+    dragBoxes.clear();
+  }
+
+
+  private void loadDragBoxes(CardLayer layer) {
+    if (layer != null) {
+
+      // The canvas box
+      PositionResizer dragBox = new PositionResizer();
+
+      CardResolution res = cardPreview.getCardResolution();
+      double zoomX = res == null ? 1.0 : cardPreview.getWidth() / res.toWidth();
+      double WIDTH = cardPreview.getWidth() / zoomX;
+      double zoomY = res == null ? 1.0 : cardPreview.getHeight() / res.toHeight();
+      double HEIGHT = cardPreview.getHeight() / zoomY;
+
+      // keep the order of setters !
+      dragBox.setZoomX(zoomX);
+      dragBox.setZoomY(zoomY);
+      dragBox.setBounds(0, 0, (int) WIDTH, (int) HEIGHT);
+      dragBox.setAcceptOutsidePart(true, 50);
+
+      dragBox.setWidth((int) (layer.getWidth() / zoomX));
+      dragBox.setHeight((int) (layer.getHeight() / zoomY));
+      dragBox.setX((int) (layer.getLocX() / zoomX));
+      dragBox.setY((int) (layer.getLocY() / zoomY));
+
+      layerToController(layer).bindDragBox(dragBox);
+      dragBox.setUserData(layer);
+
+      dragBox.addToPane(cardPreview);
+      dragBox.select();
       dragBoxes.add(dragBox);
-    }   
+    }
+  }
+
+  protected LayerEditorBaseController layerToController(CardLayer layer) {
+    if (layer instanceof CardLayerBackground) {
+      return layerEditorLayoutController;
+    }
+    else if (layer instanceof CardLayerCanvas) {
+      return layerEditorCanvasController;
+    }
+    else if (layer instanceof CardLayerText) {
+      switch (((CardLayerText) layer).getType()) {
+        case Title:
+          return layerEditorTitleController;
+        case TableName:
+          return layerEditorTableNameController;
+      }
+    }
+    else if (layer instanceof CardLayerWheel) {
+      return layerEditorWheelController;
+    }
+    else if (layer instanceof CardLayerScores) {
+      return layerEditorScoresController;
+    }
+    //else
+    throw new RuntimeException("CardLayer not mapped");
   }
 
   //-----------------------------------------
 
+  public CardTemplate getCardTemplateForGame(GameRepresentation game) {
+    if (templates != null) {
+      if (game.getTemplateId() != null) {
+        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
+        if (first.isPresent()) {
+          return first.get();
+        }
+      }
+      // else 
+      return templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().orElse(null);
+    }
+    return null;
+  }
+
   private void assignTemplate(CardTemplate newValue) {
-    List<GameRepresentation> selection = highscoreCardsController.getSelection();
+    List<GameRepresentation> selection = highscoreCardsController.getSelections();
     ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selection, newValue.getId()));
   }
 
@@ -961,17 +684,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     this.highscoreCardsController = highscoreCardsController;
   }
 
-  public void selectTable(Optional<GameRepresentation> gameRepresentation, boolean refresh) {
+  public void selectTable(Optional<GameRepresentation> gameRepresentation) {
     this.gameRepresentation = gameRepresentation;
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      CardTemplate template = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
-      if (game.getTemplateId() != null) {
-        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
-        if (first.isPresent()) {
-          template = first.get();
-        }
-      }
+      CardTemplate template = getCardTemplateForGame(game);
+
       if (template.equals(templateCombo.getValue())) {
         setTemplate(template);
       }
@@ -993,4 +711,5 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   public void onDispose() {
     this.resolutionLabel.setText("");
   }
+
 }

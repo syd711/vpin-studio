@@ -37,8 +37,9 @@ public class HighscoreBackupResources {
   public boolean backup(@PathVariable("gameId") int gameId) {
     try {
       Game game = gameService.getGame(gameId);
-      return highscoreBackupService.backup(game);
-    } catch (Exception e) {
+      return highscoreBackupService.backup(game) != null;
+    }
+    catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Creating backup failed: " + e.getMessage());
     }
   }

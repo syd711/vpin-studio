@@ -2,20 +2,22 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class MediaCacheProgressModel extends ProgressModel<String> {
   private final Iterator<String> iterator;
+  private final List<String> assetSources;
+
 
   public MediaCacheProgressModel() {
     super("Rebuilding Search Index");
-    this.iterator = Arrays.asList("Waiting for index completion...").iterator();
+    assetSources = client.getAssetSourcesService().getAssetSources().stream().map(s -> s.getId()).collect(Collectors.toList());
+    this.iterator = assetSources.iterator();
   }
 
   @Override
@@ -30,22 +32,22 @@ public class MediaCacheProgressModel extends ProgressModel<String> {
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return assetSources.size() == 1;
   }
 
   @Override
   public String nextToString(String v) {
-    return v;
+    return "Invalidating Asset Source \"" + v + "\"";
   }
 
   @Override
   public int getMax() {
-    return 1;
+    return assetSources.size();
   }
 
   @Override
-  public void processNext(ProgressResultModel progressResultModel, String tableAsset) {
-    client.getGameMediaService().invalidateMediaCache();
+  public void processNext(ProgressResultModel progressResultModel, String assetSourceId) {
+    client.getGameMediaService().invalidateMediaCache(assetSourceId);
   }
 
   @Override

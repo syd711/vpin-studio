@@ -103,7 +103,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
           }
 
           if (competition.isHighscoreReset()) {
-            if (highscoreBackupService.backup(game)) {
+            if (highscoreBackupService.backup(game) != null) {
               highscoreService.resetHighscore(game);
             }
           }

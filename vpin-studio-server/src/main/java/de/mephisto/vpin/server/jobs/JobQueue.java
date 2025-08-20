@@ -67,7 +67,7 @@ public class JobQueue implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    executor = Executors.newCachedThreadPool();
+    executor = Executors.newSingleThreadExecutor();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 }

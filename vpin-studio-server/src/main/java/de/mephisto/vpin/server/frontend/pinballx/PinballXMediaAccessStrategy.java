@@ -59,22 +59,22 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
-    // not standard but why not...
-    File mediaDir = new File(pinballXFolder, "Media/Playlists");
-    return getMediaFolder(mediaDir.getAbsolutePath(), screen, null);
-  }
-
-  @Override
   public File getEmulatorMediaFolder(@NonNull GameEmulator emu, VPinScreen screen) {
     String mediaDirectory = emu.getMediaDirectory();
     return getMediaFolder(mediaDirectory, screen, null);
   }
 
   @Override
-  public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen, boolean create) {
+    // not standard but why not...
+    File mediaDir = new File(pinballXFolder, "Media/Playlists");
+    return ensureDirExist(getMediaFolder(mediaDir.getAbsolutePath(), screen, null), create);
+  }
+
+  @Override
+  public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
-    return getMediaFolder(mediaDirectory, screen, extension);
+    return ensureDirExist(getMediaFolder(mediaDirectory, screen, extension), create);
   }
 
   private File getMediaFolder(String mediaDirectory,@NonNull  VPinScreen screen, @Nullable String extension) {

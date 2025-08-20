@@ -23,190 +23,195 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <center>
-      <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <center>
-            <BorderPane styleClass="subpanel">
+      <SplitPane fx:id="splitPane" dividerPositions="0.3">
+         <items>
+            <BorderPane prefWidth="440.0">
                <center>
-                  <SplitPane fx:id="splitPane" dividerPositions="0.23" BorderPane.alignment="CENTER">
-                    <items>
-                        <BorderPane maxWidth="440.0" minWidth="440.0" prefWidth="440.0">
-                           <center>
-                              <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
-                                 <children>
-                                    <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
-                                       <columns>
-                                          <TableColumn fx:id="columnStatus" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: BASELINE_CENTER;" />
-                                          <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                          <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
-                                       </columns>
-                                    </TableView>
-                                 </children>
-                              </StackPane>
-                           </center>
-                           <top>
-                              <ToolBar prefHeight="40.0" BorderPane.alignment="CENTER">
-                                 <items>
-                                    <MenuButton fx:id="filterButton" mnemonicParsing="false" textFill="WHITE">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Filter Tables" />
-                                       </tooltip>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </MenuButton>
-                                    <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReloadPressed" textFill="WHITE">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Reload all table data" />
-                                       </tooltip>
-                                    </Button>
-                                    <Separator layoutX="388.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
-                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="180.0" promptText="Search Table...">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
-                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                    <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Open Table in Table Overview" />
-                                       </tooltip>
-                                    </Button>
-                                    <Button fx:id="maniaBtn" layoutX="339.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
-                                       </graphic>
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Open Table on VPin Mania" />
-                                       </tooltip>
-                                    </Button>
-                                    <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
-                                       </graphic>
-                                       <tooltip>
-                                          <Tooltip text="Open Screen Validators Settings" />
-                                       </tooltip>
-                                    </Button>
-                                 </items>
-                              </ToolBar>
-                           </top>
-                           <bottom>
-                              <TitledPane fx:id="defaultBackgroundTitlePane" expanded="false" BorderPane.alignment="CENTER">
-                                 <content>
-                                    <VBox styleClass="accordion-container">
-                                       <children>
-                                          <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-parent">
-                                             <center>
-                                                <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
-                                                   <viewport>
-                                                      <Rectangle2D />
-                                                   </viewport>
-                                                </ImageView>
-                                             </center>
-                                             <top>
-                                                <ToolBar BorderPane.alignment="CENTER">
-                                                   <items>
-                                                      <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                                         </graphic>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
-                                                         </graphic>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
-                                                         <graphic>
-                                                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                                         </graphic>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Button>
-                                                   </items>
-                                                </ToolBar>
-                                             </top>
-                                          </BorderPane>
-                                          <BorderPane>
-                                             <VBox.margin>
-                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                             </VBox.margin>
-                                             <left>
-                                                <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
-                                             </left>
-                                             <right>
-                                                <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
-                                                   <BorderPane.margin>
-                                                      <Insets />
-                                                   </BorderPane.margin>
-                                                </HBox>
-                                             </right>
-                                          </BorderPane>
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="1.0" />
-                                       </padding>
-                                    </VBox>
-                                 </content>
-                                 <graphic>
-                                    <HBox spacing="6.0">
-                                       <children>
-                                          <Label text="Default Background" />
-                                          <Label>
-                                             <graphic>
-                                                <FontIcon fx:id="rawHighscoreHelp11" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Collapse this panel when not used to reduce loading time." />
-                                             </tooltip>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                 </graphic>
-                              </TitledPane>
-                           </bottom>
-                        </BorderPane>
-                        <BorderPane fx:id="templateEditorPane" />
-                    </items>
-                  </SplitPane>
+                  <StackPane fx:id="loaderStack" BorderPane.alignment="CENTER">
+                     <children>
+                        <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                           <children>
+                              <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                 <columns>
+                                    <TableColumn fx:id="columnStatus" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: BASELINE_CENTER;" />
+                                    <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                    <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </StackPane>
                </center>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
+               <top>
+                  <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
+                     <items>
+                        <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                           <font>
+                                 <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                                 <Tooltip text="Toggle Filter View" />
+                           </tooltip>
+                           <graphic>
+                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Reload all table data" />
+                           </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL" prefWidth="12.0" />
+		                <StackPane alignment="CENTER_RIGHT">
+		                    <children>
+		                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+		                            <font>
+		                                <Font size="14.0" />
+		                            </font>
+		                        </TextField>
+		                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+		                            <font>
+		                                <Font size="14.0" />
+		                            </font>
+		                            <graphic>
+		                                <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+		                            </graphic>
+		                        </Button>
+		                    </children>
+		                </StackPane>
+
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+
+                        <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Open Table in Table Overview" />
+                           </tooltip>
+                        </Button>
+
+                        <Button fx:id="maniaBtn" layoutX="339.0" layoutY="11.0" mnemonicParsing="false" onAction="#onManiaTable" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+                           </graphic>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Open Table on VPin Mania" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Open Screen Validators Settings" />
+                           </tooltip>
+                        </Button>
+                     </items>
+                  </ToolBar>
+               </top>
+               <bottom>
+                  <TitledPane fx:id="defaultBackgroundTitlePane" expanded="false" BorderPane.alignment="CENTER">
+                     <content>
+                        <VBox styleClass="accordion-container">
+                           <children>
+                              <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-parent">
+                                 <center>
+                                    <ImageView fx:id="rawDirectB2SImage" fitHeight="220.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
+                                       <viewport>
+                                          <Rectangle2D />
+                                       </viewport>
+                                    </ImageView>
+                                 </center>
+                                 <top>
+                                    <ToolBar BorderPane.alignment="CENTER">
+                                       <items>
+                                          <Button fx:id="onDefaultPictureUpload" mnemonicParsing="false" onAction="#onDefaultPictureUpload" text="Upload" textFill="WHITE">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDefaultPicture" text="View">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                          <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
+                                             <graphic>
+                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </items>
+                                    </ToolBar>
+                                 </top>
+                              </BorderPane>
+                              <BorderPane>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                 </VBox.margin>
+                                 <left>
+                                    <Label fx:id="resolutionLabel" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <right>
+                                    <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER_LEFT">
+                                       <BorderPane.margin>
+                                          <Insets />
+                                       </BorderPane.margin>
+                                    </HBox>
+                                 </right>
+                              </BorderPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="1.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                     <graphic>
+                        <HBox spacing="6.0">
+                           <children>
+                              <Label text="Default Background" />
+                              <Label>
+                                 <graphic>
+                                    <FontIcon fx:id="rawHighscoreHelp11" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Collapse this panel when not used to reduce loading time." />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </graphic>
+                  </TitledPane>
+               </bottom>
             </BorderPane>
-         </center>
-      </BorderPane>
+            <BorderPane fx:id="templateEditorPane" />
+         </items>
+      </SplitPane>
    </center>
    <padding>
       <Insets bottom="12.0" right="12.0" />

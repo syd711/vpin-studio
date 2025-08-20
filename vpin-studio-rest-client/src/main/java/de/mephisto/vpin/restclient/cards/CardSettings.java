@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 
 /**
  *
@@ -12,13 +11,13 @@ public class CardSettings extends JsonSettings {
   private int notificationTime = 0;
   private String notificationRotation = "0";
   private boolean notificationOnPopperScreen = false;
-  private HighscoreCardResolution cardResolution = HighscoreCardResolution.HDReady;
+  private CardResolution cardResolution = CardResolution.HDReady;
 
-  public HighscoreCardResolution getCardResolution() {
+  public CardResolution getCardResolution() {
     return cardResolution;
   }
 
-  public void setCardResolution(HighscoreCardResolution cardResolution) {
+  public void setCardResolution(CardResolution cardResolution) {
     this.cardResolution = cardResolution;
   }
 

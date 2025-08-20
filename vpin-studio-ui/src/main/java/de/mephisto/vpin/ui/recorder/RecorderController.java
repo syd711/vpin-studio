@@ -53,7 +53,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
@@ -83,9 +82,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private CheckBox selectAllCheckbox;
-
-  @FXML
-  private StackPane loaderStack;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
@@ -292,7 +288,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
           tableView.requestFocus();
-
 
           if (selectedItem == null) {
             tableView.getSelectionModel().select(0);

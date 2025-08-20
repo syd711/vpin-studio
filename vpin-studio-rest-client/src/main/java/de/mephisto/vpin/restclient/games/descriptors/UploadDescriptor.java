@@ -32,10 +32,20 @@ public class UploadDescriptor {
   private boolean acceptAllAudioAsMusic;
   private String patchVersion;
 
+  private boolean backupRestoreMode = false;
+
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
 
   private final List<File> tempFiles = new ArrayList<>();
+
+  public boolean isBackupRestoreMode() {
+    return backupRestoreMode;
+  }
+
+  public void setBackupRestoreMode(boolean backupRestoreMode) {
+    this.backupRestoreMode = backupRestoreMode;
+  }
 
   public String getPatchVersion() {
     return patchVersion;
@@ -97,7 +107,7 @@ public class UploadDescriptor {
 
   public void finalizeUpload() {
     File tempFile = new File(getTempFilename());
-    if (tempFile.exists() && !isAsync()) {
+    if (!isBackupRestoreMode() && tempFile.exists() && !isAsync()) {
       if (tempFile.delete()) {
         LOG.info("Finalized upload, deleted \"" + tempFile.getAbsolutePath() + "\"");
       }

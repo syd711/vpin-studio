@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.backups.BackupDialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -81,10 +82,6 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
       }
-      case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
-        return;
-      }
       case VPX: {
         TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis);
         return;
@@ -103,6 +100,10 @@ public class UploadAnalysisDispatcher {
     }
 
     switch (assetType) {
+      case ALT_SOUND: {
+        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
+        return;
+      }
       case DIRECTB2S: {
         TableDialogs.openBackglassUpload(null, Studio.stage, game, file, finalizer);
         return;
@@ -141,6 +142,10 @@ public class UploadAnalysisDispatcher {
       }
       case FRONTEND_MEDIA: {
         TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null, -1);
+        break;
+      }
+      case VPA: {
+        BackupDialogs.openArchiveUploadDialog(file);
         break;
       }
       default: {

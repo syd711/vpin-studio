@@ -242,7 +242,7 @@
                   <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                </padding>
                <bottom>
-                  <Label fx:id="validationDescription" text="The table repository contains no backup of one of the selected tables." textFill="WHITE" BorderPane.alignment="CENTER_LEFT" />
+                  <Label fx:id="validationDescription" text="The default backup folder contains no backup of the selected tables." textFill="WHITE" BorderPane.alignment="CENTER_LEFT" />
                </bottom>
             </BorderPane>
          </children>

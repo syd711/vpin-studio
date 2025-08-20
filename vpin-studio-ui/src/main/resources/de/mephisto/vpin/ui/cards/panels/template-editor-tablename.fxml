@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<TitledPane fx:id="settingsPane" text="TableName Settings" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorTableNameController">
+   <content>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox styleClass="accordion-container" >
+               <children>
+                  <Label text="Table Font" textFill="WHITE">
+                    <font>
+                      <Font name="System Bold" size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                  </Label>
+                  <BorderPane>
+                    <left>
+                      <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="170.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                    </left>
+                    <right>
+                      <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                          <children>
+                            <Button mnemonicParsing="false" onAction="#onFontTableSelect">
+                                <font>
+                                  <Font size="14.0" />
+                                </font>
+                                <graphic>
+                                  <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
+                                </graphic>
+                            </Button>
+                            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTableApplyAll">
+                                <font>
+                                  <Font size="14.0" />
+                                </font>
+                                <graphic>
+                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" onDragDetected="#onFontTableSelect" />
+                                </graphic>
+                                <tooltip>
+                                  <Tooltip text="Apply selected font settings to all templates" />
+                                </tooltip>
+                            </Button>
+                          </children>
+                      </HBox>
+                    </right>
+                  </BorderPane>
+
+                  <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <CheckBox fx:id="tableUseDefaultColor" mnemonicParsing="false" text="Use Default Color" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </CheckBox>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="When checked, the table name is rendered with the same color as the score text." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                  </HBox>
+
+                  <VBox fx:id="tableColorBox" spacing="3.0">
+                     <children>
+                        <Label text="Table Name Color" textFill="WHITE">
+                        <font>
+                           <Font size="14.0" />
+                        </font>
+                        </Label>
+                        <ColorPicker fx:id="tableFontColorSelector" >
+                        </ColorPicker>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="26.0" top="3.0" />
+                     </VBox.margin>
+                  </VBox>
+
+                  <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <CheckBox fx:id="tableUseVpsNameCheckbox" mnemonicParsing="false" text="Use Vps Name" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </CheckBox>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="Use VPS name instead of display name, allowing the manufacturer or year not to be included in the table name." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                  </HBox>
+
+                  <HBox fx:id="tableRenderManufacturerBox" alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <CheckBox fx:id="tableRenderManufacturerCheckbox" mnemonicParsing="false" text="Render Manufacturer" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </CheckBox>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="When checked, the manufacturer is included in the table name." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets left="26.0" top="6.0" />
+                    </VBox.margin>
+                  </HBox>
+
+                  <HBox fx:id="tableRenderYearBox" alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <CheckBox fx:id="tableRenderYearCheckbox" mnemonicParsing="false" text="Render Year" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </CheckBox>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="When checked, the year is included in the table name." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets left="26.0" top="6.0" bottom="12.0" />
+                    </VBox.margin>
+                  </HBox>
+
+                  <fx:include fx:id="position" source="template-subeditor-position.fxml" />
+
+               </children>
+               <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </content>
+</TitledPane>

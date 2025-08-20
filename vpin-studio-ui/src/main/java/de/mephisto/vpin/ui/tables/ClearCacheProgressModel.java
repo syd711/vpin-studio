@@ -12,45 +12,51 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
   private final static Logger LOG = LoggerFactory.getLogger(ClearCacheProgressModel.class);
 
   private final static String[] ALL_CACHES = {
-    "Mania",
-    "Hooks",
-    "NvRams",
-    "PinVol",
-    "Backglass",
-    "Discord",
-    "Image",
-    "GamesCache",
-    "Games",
-    "System",
-    "Mame",
-    "PupPack",
-    "Dmd",
-    "Frontend",
-    "Emulator"
+      "Mania",
+      "Hooks",
+      "NvRams",
+      "PinVol",
+      "Backglass",
+      "Discord",
+      "Image",
+      "GamesCache",
+      "Games",
+      "System",
+      "Mame",
+      "PupPack",
+      "Dmd",
+      "Frontend",
+      "Emulator"
   };
   private final static String[] RELOADGAMES_CACHES_WITH_MAME = {
-    "PinVol", "Frontend", "Games", "GamesCache", "Mame", "Dmd", "System"
+      "PinVol", "Frontend", "Games", "GamesCache", "Mame", "Dmd", "System"
   };
   private final static String[] RELOADGAMES_CACHES = {
-    "PinVol", "Frontend", "Games", "Dmd", "System"
+      "PinVol", "Frontend", "Games", "Dmd", "System"
   };
 
 
   private String[] caches;
+  private final int emulatorId;
   private int index;
 
-  private ClearCacheProgressModel(String title, String[] caches) {
+  private ClearCacheProgressModel(String title, String[] caches, int emulatorId) {
     super(title);
     this.caches = caches;
+    this.emulatorId = emulatorId;
     this.index = 0;
   }
 
   public static ClearCacheProgressModel getFullClearCacheModel() {
-    return new ClearCacheProgressModel("Clearing Caches", ALL_CACHES);
+    return new ClearCacheProgressModel("Clearing Caches", ALL_CACHES, TableOverviewController.ALL_VPX_ID);
   }
 
   public static ClearCacheProgressModel getReloadGamesClearCacheModel(boolean invalidateMame) {
-    return new ClearCacheProgressModel("Reloading Games", invalidateMame ? RELOADGAMES_CACHES_WITH_MAME : RELOADGAMES_CACHES);
+    return new ClearCacheProgressModel("Reloading Games", invalidateMame ? RELOADGAMES_CACHES_WITH_MAME : RELOADGAMES_CACHES, TableOverviewController.ALL_VPX_ID);
+  }
+
+  public static ClearCacheProgressModel getReloadGamesClearCacheModel(int emulatorId) {
+    return new ClearCacheProgressModel("Reloading Games", RELOADGAMES_CACHES_WITH_MAME, emulatorId);
   }
 
   @Override
@@ -92,7 +98,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
   public void processNext(ProgressResultModel progressResultModel, String cache) {
     try {
       long startTime = System.currentTimeMillis();
-      switch(cache) {
+      switch (cache) {
         case "Mania":
           client.getManiaService().clearCache();
           break;
@@ -114,12 +120,24 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
         case "Image":
           client.getImageCache().clearCache();
           break;
-        case "Games":
-          client.getGameService().clearCache();
+        case "Games": {
+          if(emulatorId == TableOverviewController.ALL_VPX_ID) {
+            client.getGameService().clearCache();
+          }
+          else {
+            client.getGameService().clearCache(emulatorId);
+          }
           break;
-        case "GamesCache":
-          client.getGameService().reload();
+        }
+        case "GamesCache": {
+          if(emulatorId == TableOverviewController.ALL_VPX_ID) {
+            client.getGameService().reload();
+          }
+          else {
+            client.getGameService().reload(emulatorId);
+          }
           break;
+        }
         case "System":
           client.getSystemService().clearCache();
           break;
@@ -140,7 +158,7 @@ public class ClearCacheProgressModel extends ProgressModel<String> {
           break;
       }
       index++;
-      
+
       // some task are so fast, that we don't even see the counter...
       if (System.currentTimeMillis() - startTime < 200) {
         Thread.sleep(200);

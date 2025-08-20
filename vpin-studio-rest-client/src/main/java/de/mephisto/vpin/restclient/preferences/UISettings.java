@@ -85,6 +85,7 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
   private boolean columnComment = false;
   private boolean columnPatchVersion = false;
+  private boolean columnTutorial = false;
 
   private LaunchConfiguration launchConfiguration;
 
@@ -97,6 +98,7 @@ public class UISettings extends JsonSettings {
   public void setLaunchConfiguration(LaunchConfiguration launchConfiguration) {
     this.launchConfiguration = launchConfiguration;
   }
+
 
   public boolean isTournamentsSidebarVisible() {
     return tournamentsSidebarVisible;
@@ -406,6 +408,14 @@ public class UISettings extends JsonSettings {
 
   public boolean isColumnPlaylists() {
     return columnPlaylists;
+  }
+
+  public boolean isColumnTutorial() {
+    return columnTutorial;
+  }
+
+  public void setColumnTutorial(boolean columnTutorial) {
+    this.columnTutorial = columnTutorial;
   }
 
   public boolean isColumnPinVol() {

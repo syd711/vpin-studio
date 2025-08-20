@@ -368,7 +368,7 @@ public class TablesSidebarMediaController implements Initializable {
     FrontendMediaItemRepresentation defaultMediaItem = client.getFrontendService().getDefaultFrontendMediaItem(
         gameRepresentation.getId(), VPinScreen.valueOf(screen));
     if (defaultMediaItem != null) {
-      TableDialogs.openMediaDialog(Studio.stage, gameRepresentation, defaultMediaItem);
+      TableDialogs.openMediaDialog(Studio.stage, defaultMediaItem);
     }
   }
 

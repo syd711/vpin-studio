@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.MonitorInfoUtil;
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.restclient.archiving.ArchiveType;
+import de.mephisto.vpin.restclient.backups.BackupType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.FeaturesInfo;
@@ -81,7 +81,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File backupFolder;
 
-  private ArchiveType archiveType = ArchiveType.VPA;
+  private BackupType backupType = BackupType.VPA;
   private FrontendType frontendType = FrontendType.Popper;
 
   @Value("${system.properties}")
@@ -97,14 +97,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private void initBaseFolders() throws VPinStudioException {
     try {
       PropertiesStore store = PropertiesStore.create(RESOURCES, systemProperties);
-      this.archiveType = ArchiveType.VPA;
-
-      //check test run
-      if (!systemProperties.contains("-test")) {
-        if (!store.containsKey(ARCHIVE_TYPE) || store.get(ARCHIVE_TYPE).equalsIgnoreCase(ArchiveType.VPBM.name())) {
-          archiveType = ArchiveType.VPBM;
-        }
-      }
+      this.backupType = BackupType.VPA;
 
       // Determination of the installed Frontend
       //Standalone Folder
@@ -305,6 +298,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return standaloneTablesFolder;
   }
 
+  public int getServerPort() {
+    return port;
+  }
+
   private void apply(FeaturesInfo features, String values, boolean enabled) {
     if (StringUtils.isNotEmpty(values)) {
       for (String value : StringUtils.split(values, ",")) {
@@ -368,20 +365,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return Arrays.stream(files).sorted().map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList());
     }
     return Collections.emptyList();
-  }
-
-  public boolean isDotNetInstalled() {
-    try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("dotnet", "--list-sdks"));
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      String out = standardOutputFromCommand.toString();
-      return out.contains("sdk") & out.contains("dotnet");
-    }
-    catch (Exception e) {
-      LOG.error("Failed to execute .net check: " + e.getMessage(), e);
-    }
-    return false;
   }
 
   public File getBadgeFile(String badge) {
@@ -455,12 +438,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public ArchiveType getArchiveType() {
-    return archiveType;
+  public BackupType getArchiveType() {
+    return backupType;
   }
 
-  public void setArchiveType(ArchiveType archiveType) {
-    this.archiveType = archiveType;
+  public void setArchiveType(BackupType backupType) {
+    this.backupType = backupType;
   }
 
   public List<MonitorInfo> getMonitorInfos() {

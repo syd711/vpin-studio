@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
+import de.mephisto.vpin.restclient.cards.CardData;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -35,13 +36,24 @@ public class CardsResource {
   private CardService cardService;
 
   @GetMapping("/preview/{gameId}/{templateId}")
-  public ResponseEntity<byte[]> generateCardTemplatePreview(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId));
     }
     throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
   }
+
+  @GetMapping("/gamedata/{gameId}/{templateId}")
+  public CardData getCardData(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return cardService.getCardData(game, templateId);
+    }
+    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
+  }
+
+
 
   @GetMapping("/preview/{gameId}")
   public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId) throws Exception {

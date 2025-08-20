@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -104,8 +104,8 @@ public class CardGenerationPreferencesController implements Initializable {
     });
 
     resolutionChangeListener = new ResolutionChangeListener();
-    cardSizeCombo.setItems(FXCollections.observableList(Arrays.asList(HighscoreCardResolution.qHD.toString(), HighscoreCardResolution.HDReady.toString(), HighscoreCardResolution.HD.toString())));
-    cardSizeCombo.setValue(cardSettings.getCardResolution() != null ? cardSettings.getCardResolution().toString() : HighscoreCardResolution.HDReady.toString());
+    cardSizeCombo.setItems(FXCollections.observableList(Arrays.asList(CardResolution.qHD.toString(), CardResolution.HDReady.toString(), CardResolution.HD.toString())));
+    cardSizeCombo.setValue(cardSettings.getCardResolution() != null ? cardSettings.getCardResolution().toString() : CardResolution.HDReady.toString());
     cardSizeCombo.valueProperty().addListener(resolutionChangeListener);
 
     rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
@@ -197,7 +197,7 @@ public class CardGenerationPreferencesController implements Initializable {
     public void changed(ObservableValue observable, String oldValue, String newValue) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Change Highscore Card Size?", "Change the default highscore card size to " + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        cardSettings.setCardResolution(HighscoreCardResolution.valueOfString(newValue));
+        cardSettings.setCardResolution(CardResolution.valueOfString(newValue));
         client.getPreferenceService().setJsonPreference(cardSettings);
         Platform.runLater(() -> {
           ProgressDialog.createProgressDialog(new RegenerateMediaCacheProgressModel(client.getGameService().getVpxGamesCached()));

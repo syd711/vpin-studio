@@ -22,6 +22,14 @@ public class HighscoreVersion {
 
   private int changedPosition;
 
+  private String displayName;
+
+  private String oldRaw;
+
+  private String newRaw;
+
+  //------------------------------
+
   public int getChangedPosition() {
     return changedPosition;
   }
@@ -45,12 +53,6 @@ public class HighscoreVersion {
   public void setId(Long id) {
     this.id = id;
   }
-
-  private String displayName;
-
-  private String oldRaw;
-
-  private String newRaw;
 
   public String getNewRaw() {
     return newRaw;

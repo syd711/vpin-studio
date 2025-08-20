@@ -19,9 +19,9 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
+  public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension, boolean create) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
-    return new File(mediaDirectory, screen.name());
+    return ensureDirExist(new File(mediaDirectory, screen.name()), create);
   }
 
   @Override
@@ -31,9 +31,8 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
+  public File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen, boolean create) {
     File defaultMedia = new File(installationFolder, "POPMedia/Default");
-    return new File(defaultMedia, screen.getSegment());
+    return ensureDirExist(new File(defaultMedia, screen.getSegment()), create);
   }
-
 }

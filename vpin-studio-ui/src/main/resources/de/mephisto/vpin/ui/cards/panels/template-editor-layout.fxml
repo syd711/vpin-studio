@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<TitledPane fx:id="settingsPane" text="Layout" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorLayoutController">
+   <content>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox styleClass="accordion-container" >
+              <children>
+                <Label text="Border Size:" textFill="WHITE">
+                    <font>
+                      <Font size="14.0" />
+                    </font>
+                </Label>
+                <Slider fx:id="borderSlider" maxWidth="330.0">
+                    <padding>
+                      <Insets top="6.0" />
+                    </padding>
+                </Slider>
+
+                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                    <children>
+                      <Label text="Vertical Spacing:" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="Determines the vertical gaps between the card components." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <Spinner fx:id="paddingSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                    </children>
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                    <children>
+                      <Label text="Margins (top/bottom):" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon fx:id="rawHighscoreHelp11" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="Determines the margins from the card's border." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                      <Spinner fx:id="marginBottomSpinner" editable="true" layoutX="87.0" layoutY="10.0" prefWidth="110.0" styleClass="widget-default" />
+                    </children>
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                </HBox>
+                <Label text="Margins (left/right):" textFill="WHITE">
+                    <font>
+                      <Font size="14.0" />
+                    </font>
+                </Label>
+                <HBox spacing="6.0">
+                    <children>
+                      <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                      <Spinner fx:id="marginRightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                    </children>
+                </HBox>
+              </children>
+              <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+              </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </content>
+</TitledPane>

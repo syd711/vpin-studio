@@ -166,6 +166,23 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   }
 
   /**
+   * Should only be triggered manually
+   */
+  public boolean reloadEmulator(int emulatorId) {
+    GameEmulator emulator = emulatorService.getGameEmulator(emulatorId);
+    if (emulator != null) {
+      mameRomAliasService.clearCache(Arrays.asList(emulator));
+      gameCachingService.clearCacheForEmulator(emulatorId);
+    }
+
+    emulatorService.loadEmulators();
+    highscoreService.refreshAvailableScores();
+    gameCachingService.clearCache();
+    getKnownGames(emulatorId);
+    return true;
+  }
+
+  /**
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public Game reload(int gameId) {
@@ -177,9 +194,14 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     List<Integer> gameIds = new ArrayList<>(getGameIds());
     List<Integer> filtered = new ArrayList<>();
     for (Integer id : gameIds) {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(id);
-      if (gameDetails == null) {
-        filtered.add(id);
+      try {
+        GameDetails gameDetails = gameDetailsRepository.findByPupId(id);
+        if (gameDetails == null) {
+          filtered.add(id);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to fetch game with id {}: {}", id, e.getMessage());
       }
     }
     return filtered;
@@ -201,7 +223,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     }
 
 
-    if (highscoreBackupService.backup(game)) {
+    if (highscoreBackupService.backup(game) != null) {
       return highscoreService.resetHighscore(game, score);
     }
 
@@ -235,7 +257,8 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
    * Returns a complete list of highscore versions
    */
   public ScoreList getScoreHistory(int gameId) {
-    return highscoreService.getScoreHistory(gameId);
+    Game game = getGame(gameId);
+    return highscoreService.getScoreHistory(game);
   }
 
   public ScoreSummary getRecentHighscores(int count) {
@@ -245,7 +268,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public ScoreSummary getRecentHighscores(int count, int gameId) {
     long start = System.currentTimeMillis();
     List<Score> scores = new ArrayList<>();
-    ScoreSummary summary = new ScoreSummary(scores, null);
+    ScoreSummary summary = new ScoreSummary(scores, null, null);
 
     boolean filterEnabled = (boolean) preferencesService.getPreferenceValue(PreferenceNames.HIGHSCORE_FILTER_ENABLED, false);
     List<Player> buildInPlayers = playerService.getBuildInPlayers();
@@ -366,6 +389,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
         GameListItem item = new GameListItem();
         item.setName(file.getName());
         item.setFileName(file.getAbsolutePath());
+        item.setFileSize(file.length());
         item.setEmuId(emulator.getId());
         list.getItems().add(item);
       }
@@ -441,6 +465,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
   public synchronized Game save(Game game) throws Exception {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
+    gameDetails.setIgnoreUpdates(game.isIgnoreUpdates());
     gameDetails.setNotes(game.getComment());
     gameDetails.setCardsDisabled(game.isCardDisabled());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
@@ -567,6 +592,7 @@ public class GameService implements InitializingBean, ApplicationListener<Applic
     TableDetails tableDetails = frontendService.getTableDetails(id);
     return getGameScoreValidation(id, tableDetails);
   }
+
   public GameScoreValidation getGameScoreValidation(int id, TableDetails tableDetails) {
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());

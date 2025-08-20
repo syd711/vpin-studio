@@ -23,7 +23,7 @@ public interface FrontendConnector {
 
   Frontend getFrontend();
 
-  TableAssetsAdapter getTableAssetAdapter();
+  TableAssetsAdapter<Game> getTableAssetAdapter();
 
 
   @NonNull

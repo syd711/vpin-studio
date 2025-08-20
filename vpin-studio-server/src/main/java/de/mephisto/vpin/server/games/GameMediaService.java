@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.backups.VpaArchiveUtil;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.backups.adapters.vpa.VpaService;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.dmd.DMDService;
@@ -106,6 +108,9 @@ public class GameMediaService {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private VpaService vpaService;
 
   /**
    * moved from VpsService to break circular dependency.
@@ -385,17 +390,33 @@ public class GameMediaService {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        if (uploadDescriptor.isAutoFill()) {
-          autoMatch(game, true, false);
+        if (!uploadDescriptor.isBackupRestoreMode()) {
+          if (uploadDescriptor.isAutoFill()) {
+            autoMatch(game, true, false);
+          }
+
+          TableDetails tableDetails = getTableDetails(game.getId());
+          if (tableDetails != null && uploadDescriptor.isAutoFill()) {
+            tableDetails = frontendService.autoFill(game, tableDetails, false);
+          }
+
+          TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
+          frontendService.saveTableDetails(game.getId(), tableDetails);
+        }
+        else {
+          //we have read the table details, including the mapping from the VPA file.
+          TableDetails newTableDetails = getTableDetails(game.getId());
+          TableDetails backedUpTableDetails = VpaArchiveUtil.readTableDetails(analysis.getFile());
+          backedUpTableDetails.setGameName(newTableDetails.getGameName());
+          backedUpTableDetails.setGameFileName(newTableDetails.getGameFileName());
+          backedUpTableDetails.setDateAdded(new Date());
+          backedUpTableDetails.setTourneyId(null);
+          backedUpTableDetails.setWebGameId(null);
+          backedUpTableDetails.setLastPlayed(null);
+          backedUpTableDetails.setEmulatorId(uploadDescriptor.getEmulatorId());
+          frontendService.saveTableDetails(game.getId(), backedUpTableDetails);
         }
 
-        TableDetails tableDetails = getTableDetails(game.getId());
-        if (tableDetails != null && uploadDescriptor.isAutoFill()) {
-          tableDetails = frontendService.autoFill(game, tableDetails, false);
-        }
-
-        TableDataUtil.setMappedFieldValue(tableDetails, serverSettings.getMappingPatchVersion(), uploadDescriptor.getPatchVersion());
-        frontendService.saveTableDetails(game.getId(), tableDetails);
 
         uploadDescriptor.setGameId(returningGameId);
         LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
@@ -496,7 +517,7 @@ public class GameMediaService {
           if (frontendMediaItem.getFile().exists()) {
             File mediaFile = frontendMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix), clone.getGameName() + "." + suffix);
+            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix, true), clone.getGameName() + "." + suffix);
             if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;
@@ -560,7 +581,7 @@ public class GameMediaService {
         String suffix = FilenameUtils.getExtension(mediaFile);
         File out = uniqueMediaAsset(game, screen, suffix);
         if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
-          out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
+          out = new File(frontendService.getMediaFolder(game, screen, suffix, true), game.getGameName() + "." + suffix);
           if (out.exists() && !out.delete()) {
             out = uniqueMediaAsset(game, screen, suffix);
           }
@@ -579,6 +600,18 @@ public class GameMediaService {
         }
       }
     }
+  }
+
+  public boolean deleteGameFile(int emulatorId, String fileName) {
+    GameEmulator gameEmulator = emulatorService.getGameEmulator(emulatorId);
+    if (gameEmulator != null) {
+      File gameFile = new File(gameEmulator.getGamesDirectory(), fileName);
+      if (gameFile.exists() && gameFile.delete()) {
+        LOG.info("Delete game file {}", gameFile.getAbsolutePath());
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
@@ -771,7 +804,7 @@ public class GameMediaService {
   }
 
   public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
     return buildMediaAsset(mediaFolder, game, suffix, true);
   }
 
@@ -780,7 +813,7 @@ public class GameMediaService {
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
       suffix = "mp3";
     }
-    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix, false);
     return buildMediaAsset(mediaFolder, game, suffix, append);
   }
 

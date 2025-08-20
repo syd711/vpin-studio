@@ -291,6 +291,7 @@ public class UploadsButtonController implements Initializable {
     this.gameEmulator = gameEmulator;
 
     boolean disable = games.size() != 1;
+    altSoundUploadItem.setDisable(disable);
     altColorUploadItem.setDisable(disable);
     mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);

@@ -66,6 +66,7 @@ public class WidgetFactory {
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DEFAULT_TEXT_STYLE = "-fx-font-color: #FFFFFF;-fx-text-fill:#FFFFFF;";
+  public static final String DEFAULT_COLOR = "#FFFFFF";
   public static final String DISABLED_COLOR = "#767272";
   public static final String LOCAL_FAVS_COLOR = "#ffcc00";
   public static final String GLOBAL_FAVS_COLOR = "#cc6600";
@@ -146,7 +147,11 @@ public class WidgetFactory {
   }
 
   public static HBox createCheckAndUpdateIcon(String tooltip) {
-    return addUpdateIcon(createCheckIcon("#FFFFFF"), tooltip);
+    return addUpdateIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
+  }
+
+  public static HBox createCheckAndIgnoredIcon(String tooltip) {
+    return addIgnoredIcon(createCheckIcon(DEFAULT_COLOR), tooltip);
   }
 
   public static FontIcon createUpdateStar() {
@@ -221,7 +226,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : DEFAULT_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -229,7 +234,7 @@ public class WidgetFactory {
   public static FontIcon createIcon(String s, int size, String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(size);
-    fontIcon.setIconColor(Paint.valueOf(color != null ? color : "#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(color != null ? color : DEFAULT_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -283,6 +288,19 @@ public class WidgetFactory {
     return root;
   }
 
+  public static HBox addIgnoredIcon(FontIcon icon, String tooltip) {
+    HBox root = new HBox(3);
+    root.setAlignment(Pos.CENTER);
+    Label icon1 = new Label();
+    icon1.setGraphic(icon);
+    Label icon2 = new Label();
+    icon2.setTooltip(new Tooltip(tooltip));
+    icon2.setGraphic(createIcon("mdi2b-bell-cancel-outline"));
+
+    root.getChildren().addAll(icon2, icon1);
+    return root;
+  }
+
   public static Label wrapIcon(FontIcon icon, @NonNull String tooltip) {
     Label label = new Label();
     label.setTooltip(new Tooltip(tooltip));
@@ -311,7 +329,7 @@ public class WidgetFactory {
     label.setText("");
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(DEFAULT_ICON_SIZE);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconColor(Paint.valueOf(DEFAULT_COLOR));
     fontIcon.setIconLiteral("mdi2h-help-circle-outline");
     Tooltip tt = new Tooltip(tooltip);
     tt.setWrapText(true);
@@ -327,7 +345,7 @@ public class WidgetFactory {
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings, boolean disabled) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(DEFAULT_ICON_SIZE+2);
+    fontIcon.setIconSize(DEFAULT_ICON_SIZE + 2);
 
     String nameLower = playlist.getName().toLowerCase();
     String iconLiteral = "mdi2v-view-list";
@@ -912,6 +930,14 @@ public class WidgetFactory {
     return addMediaItemToBorderPane(client, mediaItem, parent, null, null);
   }
 
+  public static AssetMediaPlayer addMediaItemToBorderPane(String url, BorderPane parent) {
+    Image image = new Image(url);
+    ImageViewer imageViewer = new ImageViewer(url, image);
+    parent.setCenter(imageViewer);
+    parent.setUserData(imageViewer);
+    return null;
+  }
+
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener, MediaOptions mediaOptions) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
@@ -922,7 +948,7 @@ public class WidgetFactory {
     boolean audioOnly = parent.getId().equalsIgnoreCase("screenAudioLaunch") || parent.getId().equalsIgnoreCase("screenAudio");
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
-    url += "/" +  URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
+    url += "/" + URLEncoder.encode(mediaItem.getName(), Charset.defaultCharset());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 

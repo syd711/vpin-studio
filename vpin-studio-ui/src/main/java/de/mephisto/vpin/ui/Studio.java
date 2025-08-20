@@ -227,7 +227,6 @@ public class Studio extends Application {
       //replace the OverlayFX client with the Studio one
       Studio.client = client;
       Studio.Features = client.getSystemService().getFeatures();
-
       ServerFX.client = Studio.client;
 
 //      Platform.setImplicitExit(false);

@@ -39,6 +39,7 @@ public class Preferences {
   private String discordBotToken;
 
   private String discordBotAllowList;
+
   private String backupSettings;
 
   private String rankingPoints;
@@ -77,6 +78,10 @@ public class Preferences {
 
   private String vpsSettings;
 
+  private String authenticationSettings;
+
+  private String assetSourcesSettings;
+
   private String webhookSettings;
 
   private String iScoredSettings;
@@ -106,6 +111,22 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getAssetSourcesSettings() {
+    return assetSourcesSettings;
+  }
+
+  public void setAssetSourcesSettings(String assetSourcesSettings) {
+    this.assetSourcesSettings = assetSourcesSettings;
+  }
+
+  public String getAuthenticationSettings() {
+    return authenticationSettings;
+  }
+
+  public void setAuthenticationSettings(String authenticationSettings) {
+    this.authenticationSettings = authenticationSettings;
+  }
 
   public String getIScoredSettings() {
     return iScoredSettings;

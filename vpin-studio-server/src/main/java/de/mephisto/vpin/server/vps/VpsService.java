@@ -2,15 +2,14 @@ package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
-import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.matcher.VpsAutomatcher;
-import de.mephisto.vpin.connectors.vps.model.VPSChange;
+import de.mephisto.vpin.connectors.vps.matcher.VpsMatch;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -24,7 +23,6 @@ import de.mephisto.vpin.server.vpsdb.VpsEntryService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +39,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 @Service
 public class VpsService implements InitializingBean {
@@ -185,7 +183,10 @@ public class VpsService implements InitializingBean {
     return vpsDatabase.getTables();
   }
 
-  public VpsTable getTableById(String extTableId) {
+  public VpsTable getTableById(@Nullable String extTableId) {
+    if (extTableId == null) {
+      return null;
+    }
     VpsTable tableById = vpsDatabase.getTableById(extTableId);
     if (tableById != null) {
       VpsDbEntry vpsDbEntry = vpsEntryService.getVpsEntry(tableById.getId());

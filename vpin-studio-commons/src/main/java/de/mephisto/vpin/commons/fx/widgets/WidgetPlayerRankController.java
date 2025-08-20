@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.OverlaySettings;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -16,8 +16,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -28,7 +26,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,30 +49,28 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   private TableView<RankedPlayerRepresentation> tableView;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnRank;
+  private TableColumn<RankedPlayerRepresentation, Label> columnRank;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnPoints;
+  private TableColumn<RankedPlayerRepresentation, Label> columnPoints;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnName;
+  private TableColumn<RankedPlayerRepresentation, HBox> columnName;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnFirst;
+  private TableColumn<RankedPlayerRepresentation, Label> columnFirst;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnSecond;
+  private TableColumn<RankedPlayerRepresentation, Label> columnSecond;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnThird;
+  private TableColumn<RankedPlayerRepresentation, Label> columnThird;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnComps;
+  private TableColumn<RankedPlayerRepresentation, Label> columnComps;
 
   @FXML
   private StackPane tableStack;
-
-  private Parent loadingOverlay;
 
   // Add a public no-args constructor
   public WidgetPlayerRankController() {
@@ -90,7 +85,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label("#" + value.getRank());
       label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     columnPoints.setCellValueFactory(cellData -> {
@@ -98,7 +93,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label(String.valueOf(value.getPoints()));
       label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     columnName.setCellValueFactory(cellData -> {
@@ -143,11 +138,11 @@ public class WidgetPlayerRankController extends WidgetController implements Init
           });
         }
       }).start();
-      return new SimpleObjectProperty(hBox);
+      return new SimpleObjectProperty<>(hBox);
     });
 
     OverlaySettings overlaySettings = ServerFX.client.getJsonPreference(PreferenceNames.OVERLAY_SETTINGS, OverlaySettings.class);
-    Rectangle2D screenBounds = SystemUtil.getScreenById(overlaySettings.getOverlayScreenId()).getBounds();
+    MonitorInfo screenBounds = ServerFX.client.getScreenInfo(overlaySettings.getOverlayScreenId());
     if (screenBounds.getWidth() < 2600) {
       columnName.setPrefWidth(280);
     }
@@ -160,7 +155,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getFirst()));
       label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     columnSecond.setCellValueFactory(cellData -> {
@@ -168,7 +163,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getSecond()));
       label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     columnThird.setCellValueFactory(cellData -> {
@@ -176,7 +171,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getThird()));
       label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     columnComps.setCellValueFactory(cellData -> {
@@ -184,12 +179,12 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getCompetitionsWon()));
       label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
+      return new SimpleObjectProperty<>(label);
     });
 
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
-      loadingOverlay = loader.load();
+      /*Parent loadingOverlay =*/ loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Ranking...");
     }

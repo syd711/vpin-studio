@@ -32,7 +32,7 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
    */
   @Override
   public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
-    File screenMediaFolder = getGameMediaFolder(game, screen, null);
+    File screenMediaFolder = getGameMediaFolder(game, screen, null, false);
     List<File> allFiles = getMediaFiles(screenMediaFolder);
 
     String baseFilename = game.getGameName();
@@ -40,5 +40,15 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
     Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
     Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
     return mediaFiles.stream().filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
+  }
+
+  /**
+   * Ensure media folders exists
+   */
+  protected File ensureDirExist(File file, boolean create) {
+    if (file != null && !file.exists() && create) {
+      file.mkdirs();
+    }
+    return file;
   }
 }

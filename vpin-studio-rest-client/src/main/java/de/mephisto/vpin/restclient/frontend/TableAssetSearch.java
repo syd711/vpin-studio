@@ -6,12 +6,20 @@ import java.util.List;
 
 public class TableAssetSearch {
 
+  private String assetSourceId;
   private int gameId;
   private VPinScreen screen;
   private String term;
 
   private List<TableAsset> result;
 
+  public String getAssetSourceId() {
+    return assetSourceId;
+  }
+
+  public void setAssetSourceId(String assetSourceId) {
+    this.assetSourceId = assetSourceId;
+  }
 
   public int getGameId() {
     return gameId;

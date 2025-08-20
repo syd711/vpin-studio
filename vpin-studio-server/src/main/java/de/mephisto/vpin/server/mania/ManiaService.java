@@ -17,7 +17,6 @@ import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -72,9 +71,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
 
   @Autowired
   private ManiaServiceCache maniaServiceCache;
-
-  @Autowired
-  private HighscoreService highscoreService;
 
   @Autowired
   private FrontendStatusService frontendStatusService;
@@ -387,7 +383,7 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
 
       maniaServiceCache.clear();
-      preferencesService.savePreference(PreferenceNames.MANIA_SETTINGS, maniaSettings);
+      preferencesService.savePreference(maniaSettings);
     }
     catch (Exception e) {
       LOG.error("Mania Registration failed: {}", e.getMessage(), e);
@@ -578,7 +574,6 @@ public class ManiaService implements InitializingBean, FrontendStatusChangeListe
       }
     }
 
-    highscoreService.setManiaService(this);
     setOnline();
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }

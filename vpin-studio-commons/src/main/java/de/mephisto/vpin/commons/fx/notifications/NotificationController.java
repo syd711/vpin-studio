@@ -3,16 +3,14 @@ package de.mephisto.vpin.commons.fx.notifications;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.restclient.system.MonitorInfo;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +64,8 @@ public class NotificationController implements Initializable {
       }
 
       NotificationSettings notificationSettings = ServerFX.client.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-      Rectangle2D screenBounds = SystemUtil.getScreenById(notificationSettings.getNotificationsScreenId()).getBounds();
-      if (screenBounds.getHeight() > 2000) {
+      MonitorInfo screen = ServerFX.client.getScreenInfo(notificationSettings.getNotificationsScreenId());
+      if (screen.getHeight() > 2000) {
         labelContainer.setPadding(new Insets(0, 0, 0, 650));
       }
 

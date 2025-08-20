@@ -2,11 +2,9 @@ package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.*;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.HttpUtils;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.ui.Studio;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -25,13 +23,19 @@ import java.util.List;
 public class VpsTutorialColumn extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTutorialColumn.class);
 
-  public VpsTutorialColumn(@Nullable String vpsTableId, @NonNull UISettings uiSettings) {
+  public VpsTutorialColumn(@Nullable String vpsTableId) {
     super(0);
     try {
       int iconSize = 22;
       this.setAlignment(Pos.CENTER_LEFT);
 
       VpsTable vpsTable = Studio.client.getVpsService().getTableById(vpsTableId);
+      if (vpsTable == null) {
+        Label label = new Label("-");
+        label.getStyleClass().add("default-text");
+        this.getChildren().add(label);
+        return;
+      }
 
       List<VpsTutorialUrls> tutorialFiles = vpsTable.getTutorialFiles();
       Collections.sort(tutorialFiles, new Comparator<VpsTutorialUrls>() {
@@ -64,13 +68,13 @@ public class VpsTutorialColumn extends HBox {
         }
         else {
           FontIcon icon = WidgetFactory.createIcon("mdi2v-video-box");
-          if(authors.contains("PAPA")) {
+          if (authors.contains("PAPA")) {
             icon = WidgetFactory.createIcon("mdi2a-alpha-p-box-outline");
           }
-          else if(authors.contains("Majestic")) {
+          else if (authors.contains("Majestic")) {
             icon = WidgetFactory.createIcon("mdi2a-alpha-m-box-outline");
           }
-          else if(authors.contains("Digital")) {
+          else if (authors.contains("Digital")) {
             icon = WidgetFactory.createIcon("mdi2a-alpha-d-box-outline");
           }
           if (tutorialFile.getAuthors() != null) {

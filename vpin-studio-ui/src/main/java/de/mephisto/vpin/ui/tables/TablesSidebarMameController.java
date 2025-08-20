@@ -17,21 +17,22 @@ import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.Features;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -59,6 +60,12 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private VBox noInputDataBox;
+
+  @FXML
+  private VBox tablesBox;
+
+  @FXML
+  private VBox tableListBox;
 
   @FXML
   private VBox errorBox;
@@ -127,6 +134,9 @@ public class TablesSidebarMameController implements Initializable {
   private Label labelRomAlias;
 
   @FXML
+  private Label nvOffsetLabel;
+
+  @FXML
   private Label labelRom;
 
 
@@ -173,6 +183,40 @@ public class TablesSidebarMameController implements Initializable {
     ClipboardContent content = new ClipboardContent();
     content.putString(game.get().getRom());
     clipboard.setContent(content);
+  }
+
+  @FXML
+  private void onNvOffset(int gameId) {
+    GameRepresentation game = client.getGameService().getGame(gameId);
+    int nvOffset = game.getNvOffset();
+    if (nvOffset == 0) {
+      nvOffset = 1;
+    }
+    String value = WidgetFactory.showInputDialog(Studio.stage, "NVOffset", "Enter the new NVOffset value for the table.", null, null, String.valueOf(nvOffset));
+    if (value != null) {
+      try {
+        nvOffset = Integer.parseInt(value);
+      }
+      catch (NumberFormatException e) {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Invalid NVOffset value.", "Please input a numeric value.");
+        onNvOffset(gameId);
+        return;
+      }
+
+      try {
+        int nvOffset1 = client.getVpxService().setNvOffset(gameId, nvOffset);
+        if (nvOffset1 == -1) {
+          WidgetFactory.showAlert(Studio.stage, "Error", "The NVOffset value has not been set. The script analysis failed.", "Use the script editor to set the value manually.");
+        }
+        else {
+          EventManager.getInstance().notifyTableChange(gameId, game.getRom(), null);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to set nvoffset value: {}", e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Setting NVOffset failed: " + e.getMessage(), "Use the script editor to set the value manually.");
+      }
+    }
   }
 
   @FXML
@@ -260,9 +304,11 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
     noInputDataBox.managedProperty().bindBidirectional(noInputDataBox.visibleProperty());
     invalidDataBox.managedProperty().bindBidirectional(invalidDataBox.visibleProperty());
+    tablesBox.managedProperty().bindBidirectional(tablesBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     invalidDataBox.setVisible(false);
+    tablesBox.setVisible(false);
 
     mameBtn.managedProperty().bind(mameBtn.visibleProperty());
     mameBtn.setVisible(!Features.IS_STANDALONE);
@@ -294,19 +340,20 @@ public class TablesSidebarMameController implements Initializable {
     saveDisabled = false;
   }
 
-  public void refreshView(Optional<GameRepresentation> g) {
+  public void refreshView(Optional<GameRepresentation> gameOptional) {
     this.options = null;
 
     invalidDataBox.setVisible(false);
-    emptyDataBox.setVisible(g.isEmpty());
-    dataBox.setVisible(g.isPresent());
-    dataScrollPane.setVisible(g.isPresent());
+    emptyDataBox.setVisible(gameOptional.isEmpty());
+    dataBox.setVisible(gameOptional.isPresent());
+    dataScrollPane.setVisible(gameOptional.isPresent());
 
     labelRomAlias.setText("-");
+    nvOffsetLabel.setText("-");
     labelRom.setText("-");
     copyRomAliasBtn.setDisable(true);
     copyRomBtn.setDisable(true);
-    aliasBtn.setDisable(g.isEmpty());
+    aliasBtn.setDisable(gameOptional.isEmpty());
 
     skipPinballStartupTest.setSelected(false);
     useSound.setSelected(false);
@@ -322,15 +369,49 @@ public class TablesSidebarMameController implements Initializable {
     forceStereo.setSelected(false);
 
     this.errorBox.setVisible(false);
-    this.applyDefaultsBtn.setDisable(!g.isPresent());
+    this.applyDefaultsBtn.setDisable(!gameOptional.isPresent());
     noInputDataBox.setVisible(false);
+    tablesBox.setVisible(false);
 
-    if (g.isPresent()) {
-      GameRepresentation game = g.get();
+    if (gameOptional.isPresent()) {
+      GameRepresentation game = gameOptional.get();
 
-      if (!StringUtils.isEmpty(game.getRomAlias())) {
-        labelRomAlias.setText(game.getRomAlias());
-        copyRomAliasBtn.setDisable(false);
+      labelRomAlias.setText(game.getRomAlias());
+      copyRomAliasBtn.setDisable(false);
+
+      if (game.getNvOffset() > 0) {
+        nvOffsetLabel.setText(String.valueOf(game.getNvOffset()));
+      }
+
+      List<GameRepresentation> data = tablesSidebarController.getTableOverviewController().getData();
+      String rom = game.getRom();
+      List<GameRepresentation> sharedGames = data.stream().filter(g -> !StringUtils.isEmpty(g.getRom()) && g.getRom().equals(rom) && g.getId() != game.getId()).collect(Collectors.toList());
+      if (!sharedGames.isEmpty()) {
+        tablesBox.setVisible(true);
+        tableListBox.getChildren().removeAll(tableListBox.getChildren());
+        for (GameRepresentation sharedGame : sharedGames) {
+          HBox row = new HBox(3);
+          String title = "\"" + sharedGame.getGameDisplayName() + "\"";
+          if (game.getNvOffset() > 0) {
+            title += " [NVOffset: " + game.getNvOffset() + "]";
+          }
+          Label label = new Label("- " + title);
+          label.setPrefWidth(494);
+          label.setStyle("");
+          label.getStyleClass().add("default-text");
+
+          Button button = new Button("", WidgetFactory.createIcon("mdi2l-lead-pencil"));
+          button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), sharedGame);
+            }
+          });
+
+          row.getChildren().add(label);
+          row.getChildren().add(button);
+          tableListBox.getChildren().add(row);
+        }
       }
 
       if (!StringUtils.isEmpty(game.getRom())) {

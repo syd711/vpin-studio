@@ -17,7 +17,6 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -30,8 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static de.mephisto.vpin.server.VPinStudioServer.Features;
 
 import java.io.File;
 import java.util.*;
@@ -71,8 +68,9 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private HighscoreResolver highscoreResolver;
 
-  private ManiaService maniaService;
+  // manually injected
   private GameService gameService;
+
   private boolean pauseHighscoreEvents;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
@@ -186,11 +184,6 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
-  public List<Score> parseScores(Date createdAt, String raw, int gameId, long serverId) {
-    return highscoreParser.parseScores(createdAt, raw, gameService.getGame(gameId), serverId);
-  }
-
-  @NonNull
   public List<Score> parseScores(Date createdAt, String raw, @NonNull Game game, long serverId) {
     return highscoreParser.parseScores(createdAt, raw, game, serverId);
   }
@@ -255,24 +248,28 @@ public class HighscoreService implements InitializingBean {
         continue;
       }
       List<Score> scores = highscoreParser.parseScores(highscore.getLastModified(), highscore.getRaw(), game, serverId);
-      result.add(new ScoreSummary(scores, highscore.getCreatedAt()));
+      result.add(new ScoreSummary(scores, highscore.getCreatedAt(), highscore.getRaw()));
     }
     return result;
   }
 
-  public ScoreList getScoreHistory(int gameId) {
+  public ScoreList getScoreHistory(@NonNull Game game) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return getScoresBetween(gameId, new Date(0), new Date(), serverId);
+    return getScoresBetween(game, new Date(0), new Date(), serverId);
   }
 
   /**
    * Returns all available scores for the game with the given id and time frame
    */
-  public ScoreList getScoresBetween(int gameId, Date start, Date end, long serverId) {
+  public ScoreList getScoresBetween(@NonNull Game game, Date start, Date end, long serverId) {
     ScoreList scoreList = new ScoreList();
-    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(gameId, start, end);
+    List<HighscoreVersion> byGameIdAndCreatedAtBetween = highscoreVersionRepository.findByGameIdAndCreatedAtBetween(game.getId(), start, end);
     for (HighscoreVersion version : byGameIdAndCreatedAtBetween) {
-      ScoreSummary scoreSummary = getScoreSummary(version.getCreatedAt(), version.getNewRaw(), gameId, serverId);
+      ScoreSummary scoreSummary = null;
+      List<Score> scores = parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
+      if (scores.size() > 0) {
+        scoreSummary = new ScoreSummary(scores, version.getCreatedAt(), version.getNewRaw());
+      }
       if (scoreSummary != null) {
         scoreList.getScores().add(scoreSummary);
       }
@@ -300,20 +297,24 @@ public class HighscoreService implements InitializingBean {
    * @return all highscores of the given player
    */
   public ScoreSummary getAllHighscoresForPlayer(long serverId, String initials) {
-    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
+    ScoreSummary summary = new ScoreSummary();
     List<Highscore> all = highscoreRepository.findAllByOrderByCreatedAtDesc();
     for (Highscore highscore : all) {
       if (StringUtils.isEmpty(highscore.getRaw())) {
         continue;
       }
-
-      List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), serverId);
+      Game game = gameService.getGame(highscore.getGameId());
+      if (game == null) {
+        continue;
+      }
+      List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), game, serverId);
       for (Score score : scores) {
         String playerInitials = score.getPlayerInitials();
         String altPlayerInitials = playerInitials.replaceAll(" ", "@");
         if (playerInitials.equalsIgnoreCase(initials) || altPlayerInitials.equalsIgnoreCase(initials)) {
-          Game game = frontendService.getOriginalGame(score.getGameId());
-          if (game == null && score.getGameId() > 0) {
+          //FIXME Why ?????? considering parseScores() imposes a non null game and score is forcibly from the parsed game
+          Game _game = frontendService.getOriginalGame(score.getGameId());
+          if (_game == null && score.getGameId() > 0) {
             deleteScores(score.getGameId(), true);
             continue;
           }
@@ -331,8 +332,8 @@ public class HighscoreService implements InitializingBean {
    * @return all highscores of the given player
    */
   @NonNull
-  public ScoreSummary getScoreSummary(long serverId, Game game) {
-    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
+  public ScoreSummary getScoreSummary(long serverId, @NonNull Game game) {
+    ScoreSummary summary = new ScoreSummary();
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
     if (highscore.isPresent()) {
       Highscore h = highscore.get();
@@ -345,31 +346,53 @@ public class HighscoreService implements InitializingBean {
     return summary;
   }
 
-  /**
-   * Returns a list of all scores for the given game
-   *
-   * @param game the game to retrieve the highscores for
-   * @return all highscores of the given player
-   */
-  @NonNull
-  public ScoreSummary getMergedScoreSummary(long serverId, Game game) {
-    ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
-    Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
-    if (highscore.isPresent()) {
-      Highscore h = highscore.get();
-      if (!StringUtils.isEmpty(h.getRaw())) {
-        List<Score> scores = parseScores(h.getCreatedAt(), h.getRaw(), game, serverId);
-        summary.setRaw(h.getRaw());
-        summary.getScores().addAll(scores);
+  public ScoreSummary getScoreSummaryWithDates(long serverId, @NonNull Game game) {
+    ScoreSummary summary = getScoreSummary(serverId, game);
+    List<Score> scores = summary.getScores();
+    if (!scores.isEmpty()) {
+      List<HighscoreVersion> versions = getHighscoreVersionsByGame(game.getId());
+      // to avoid parsing a version multiple time, use a local cache
+      Map<HighscoreVersion, List<Score>> parsedVersions = new HashMap<>(versions.size());
+
+      // for each line of scores, check when it has been lastly changed
+      int offset = 0;
+      for (int pos = 0; pos < scores.size(); pos++) {
+        Score newScore = scores.get(pos);
+        boolean found = false;
+        for (HighscoreVersion version : versions) {
+          //change positions start with 1!
+          int changedPos = version.getChangedPosition() - 1;
+          // last version where line has been changed
+          // As better score could have been inserted before, check changedPos <= pos
+          if (((pos - offset) <= changedPos) && (changedPos <= pos)) {
+            List<Score> versionScores = parsedVersions.get(version);
+            if (versionScores == null) {
+              versionScores = highscoreParser.parseScores(version.getCreatedAt(), version.getNewRaw(), game, serverId);
+              parsedVersions.put(version, versionScores);
+            }
+            Score oldScore = versionScores.get(changedPos);
+            // verify same score and same player
+            if (newScore.matches(oldScore)) {
+              found = true;
+              offset++;
+              newScore.setCreatedAt(version.getCreatedAt());
+              // found score so stop iteration
+              break;
+            }
+          }
+        }
+        // empty the date as it is the last modification date of the Highscore
+        if (!found) {
+          newScore.setCreatedAt(null);
+        }
       }
     }
-    Collections.sort(summary.getScores(), (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
-    if (Features.MANIA_ENABLED) {
-      List<Score> scores = maniaService.getFriendsScoresFor(game);
-      summary.mergeExternalScores(scores);
-    }
-    Collections.sort(summary.getScores(), (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
     return summary;
+  }
+
+
+  public List<HighscoreVersion> getHighscoreVersionsByGame(int gameId) {
+    return highscoreVersionRepository.findByGameIdOrderByCreatedAtDesc(gameId);
   }
 
   /**
@@ -406,27 +429,7 @@ public class HighscoreService implements InitializingBean {
     return scores;
   }
 
-  public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
-    this.listeners.add(listener);
-    LOG.info("Registered highscore change listener: " + listener.getClass().getSimpleName());
-  }
-
-  /**
-   * Collects a list of highscores for serialization
-   *
-   * @param createdAt the date the highscores have been created
-   * @param raw       the raw data
-   * @param gameId    the gameId of the game
-   * @param serverId  the discord server id
-   */
-  private ScoreSummary getScoreSummary(Date createdAt, String raw, int gameId, long serverId) {
-    List<Score> scores = parseScores(createdAt, raw, gameId, serverId);
-    if (scores.size() > 0) {
-      return new ScoreSummary(scores, createdAt);
-    }
-    return null;
-  }
-
+  //--------------------------------------------------------------------
 
   @NonNull
   public Optional<Highscore> getHighscore(@NonNull Game game, boolean forceScan, EventOrigin eventOrigin) {
@@ -622,7 +625,7 @@ public class HighscoreService implements InitializingBean {
     LOG.info("Deleted latest highscore for " + gameId);
 
     if (deleteVersions) {
-      List<HighscoreVersion> versions = highscoreVersionRepository.findByGameId(gameId);
+      List<HighscoreVersion> versions = getHighscoreVersionsByGame(gameId);
       highscoreVersionRepository.deleteAll(versions);
       LOG.info("Deleted all highscore versions for " + gameId);
     }
@@ -701,6 +704,11 @@ public class HighscoreService implements InitializingBean {
     }
   }
 
+  public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
+    this.listeners.add(listener);
+    LOG.info("Registered highscore change listener: " + listener.getClass().getSimpleName());
+  }
+
   public void refreshAvailableScores() {
     this.refreshHighscoreFiles();
     this.refreshVPRegEntries();
@@ -763,11 +771,8 @@ public class HighscoreService implements InitializingBean {
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());
   }
 
-  public void setManiaService(ManiaService maniaService) {
-    this.maniaService = maniaService;
-  }
-
   public void setGameService(GameService gameService) {
     this.gameService = gameService;
   }
+
 }

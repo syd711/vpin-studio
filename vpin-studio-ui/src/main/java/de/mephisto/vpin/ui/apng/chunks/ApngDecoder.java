@@ -31,26 +31,21 @@ public class ApngDecoder {
   static final int PNG_FILTER_AVERAGE = 3;
   static final int PNG_FILTER_PAETH = 4;
 
-  // data stream
-  //private int width, height;
-  private int bitDepth, colorType;
+  private int bitDepth;
+  private int colorType;
   private boolean isInterlaced;
-  // transparency information
-  private boolean tRNS_GRAY_RGB = false;
-  private int trnsR, trnsG, trnsB;
+  private int[] transparentColor;
+  private ApngPalette palette;
 
-  public ApngDecoder(ApngHeader header, int[] transparentColor) {
-    this.bitDepth = header.getBitDepth();
-    this.colorType = header.getColorType();
-    this.isInterlaced = header.getInterlaceMethod() != 0;
-
-    if (transparentColor != null) {
-      this.tRNS_GRAY_RGB = true;
-      this.trnsR = transparentColor[0];
-      this.trnsG = transparentColor[1];
-      this.trnsB = transparentColor[2];
-    }
+  public ApngDecoder(ApngChunkDataInputStream stream) {
+    this.bitDepth = stream.getBitDepth();
+    this.colorType = stream.getColorType();
+    this.isInterlaced = stream.isInterlaced();
+    this.transparentColor = stream.getTransparentColor();
+    this.palette = stream.getPalette();
   }
+
+  //--------------------------------
 
   public void decode(ApngFrame dest, ApngFrameControl ctrl, byte[] frameData, boolean composeAlpha) throws IOException {
     Inflater inf = new Inflater();
@@ -169,9 +164,9 @@ public class ApngDecoder {
       byte a;
       if (bd == 2) {
 	      int gray16 = (short) ((line[i] & 0xFF) * 256 + (line[i + 1] & 0xFF));
-	      a = (gray16 == trnsG) ? 0 : (byte) 255;
+	      a = (gray16 == transparentColor[1]) ? 0 : (byte) 255;
       } else {
-      	a = (g == (byte) trnsG) ? 0 : (byte) 255;
+      	a = (g == (byte) transparentColor[1]) ? 0 : (byte) 255;
       }
       if (composeAlpha) {
         g = a == 0 ? image[oPos + 0] : g;
@@ -191,9 +186,9 @@ public class ApngDecoder {
 	      int r16 = (short) ((line[i + 0] & 0xFF) * 256 + (line[i + 1] & 0xFF));
 	      int g16 = (short) ((line[i + 2] & 0xFF) * 256 + (line[i + 3] & 0xFF));
 	      int b16 = (short) ((line[i + 4] & 0xFF) * 256 + (line[i + 5] & 0xFF));
-	      a = (r16 == trnsR && g16 == trnsG && b16 == trnsB) ? 0 : (byte) 255;
+	      a = (r16 == transparentColor[0] && g16 == transparentColor[1] && b16 == transparentColor[2]) ? 0 : (byte) 255;
       } else {
-  		  a = (r == (byte) trnsR && g == (byte) trnsG && b == (byte) trnsB) ? 0 : (byte) 255;
+  		  a = (r == (byte) transparentColor[0] && g == (byte) transparentColor[1] && b == (byte) transparentColor[2]) ? 0 : (byte) 255;
 	    }
       if (composeAlpha) {
         r = a == 0 ? image[oPos + 0] : r;
@@ -214,7 +209,7 @@ public class ApngDecoder {
       byte g = line[i], a = line[i + bd];
       if (composeAlpha) {
         byte ai = image[oPos + 1];
-        byte af = (byte) (a + ai * (255 - a) / 255.0);
+        byte af = (byte) ((a & 0xFF) + (ai & 0xFF) * (0xFF - (a & 0xFF)) / 255.0);
         g = composeAlpha(image[oPos + 0], g, ai, a, af);
         a = af;
       }
@@ -229,7 +224,7 @@ public class ApngDecoder {
       byte r = line[i], g = line[i + bd], b = line[i + 2 * bd], a = line[i + 3 * bd];
       if (composeAlpha) {
         byte ai = image[oPos + 3];
-        byte af = (byte) (a + ai * (255 - a) / 255.0);
+        byte af = (byte) ((a & 0xFF) + (ai & 0xFF) * (0xFF - (a & 0xFF)) / 255.0);
         r = composeAlpha(image[oPos + 0], r, ai, a, af);
         g = composeAlpha(image[oPos + 1], g, ai, a, af);
         b = composeAlpha(image[oPos + 2], b, ai, a, af);
@@ -242,17 +237,18 @@ public class ApngDecoder {
     }
   }
 
-  private void copy_plain(byte line[], byte image[], int pos, int step, int bpp, int bd) {
-    int l = (line.length / bd / bpp) * bpp, stepBpp = step * bpp;
-    for (int i = 0, oPos = pos; i != l; oPos += stepBpp, i += bpp) {
+  protected void copy_plain(byte line[], byte image[], int pos, int step, int bpp, int bd) {
+    int l = (line.length / bd / bpp) * bpp;
+    for (int i = 0, oPos = pos; i != l; oPos += step * bpp, i += bpp) {
       for (int b = 0; b != bpp; ++b) {
         image[oPos + b] = line[(i + b) * bd];
       }
     }
   }
 
-  protected void copy(byte line[], byte image[], int pos, int step, int bpp, int bd, boolean composeAlpha) {
-    if (!tRNS_GRAY_RGB) {
+  protected void copy(byte[] line, byte[] image, int pos, int step, int bpp, boolean composeAlpha) {
+    int bd = bitDepth / 8;
+    if (transparentColor == null) {
       if (bd == 1 & step == 1 && !composeAlpha) {
         System.arraycopy(line, 0, image, pos, line.length);
       } else if (bpp == 1 || bpp == 3) {
@@ -269,33 +265,82 @@ public class ApngDecoder {
     }
   }
 
-  protected void upsampleTo8Palette(byte line[], byte image[], int pos, int w, int step) {
+  //--------------------------------------
+
+  private void copy_palette_index(byte[] image, int oPos, int idx, boolean composeAlpha) {
+    byte r = palette.getRed(idx), g = palette.getGreen(idx), b = palette.getBlue(idx);
+
+    if (palette.hasTransparency()) {
+      byte a = palette.getAlpha(idx);
+      if (composeAlpha) {
+        byte ai = image[oPos + 3];
+        byte af = (byte) ((a & 0xFF) + (ai & 0xFF) * (0xFF - (a & 0xFF)) / 255.0);
+        r = composeAlpha(image[oPos + 0], r, ai, a, af);
+        g = composeAlpha(image[oPos + 1], g, ai, a, af);
+        b = composeAlpha(image[oPos + 2], b, ai, a, af);
+        a = af;
+      }
+      image[oPos + 3] = a;
+    }
+
+    image[oPos + 0] = r;
+    image[oPos + 1] = g;
+    image[oPos + 2] = b;
+  }
+
+  protected void copy_upsamplePalette(byte line[], byte image[], int pos, int w, int step, int bpp, boolean composeAlpha) {
     int samplesInByte = 8 / bitDepth;
     int maxV = (1 << bitDepth) - 1;
     for (int i = 0, k = 0; i < w; k++, i += samplesInByte) {
       int p = (w - i < samplesInByte) ? w - i : samplesInByte;
       int in = line[k] >> (samplesInByte - p) * bitDepth;
       for (int pp = p - 1; pp >= 0; --pp) {
-        image[pos + (i + pp) * step] = (byte) (in & maxV);
+        int oPos = pos + (i + pp) * step * bpp;
+        copy_palette_index(image, oPos, in & maxV, composeAlpha);
         in >>= bitDepth;
       }
     }
   }
 
-  protected void upsampleTo8Gray(byte line[], byte image[], int pos, int w, int step) {
+  protected void copy_palette(byte line[], byte image[], int pos, int step, int bpp, int bd, boolean composeAlpha) {
+    int l = line.length;
+    for (int i = 0, oPos = pos; i < l; oPos += step * bpp, i += bd) {
+      int idx = line[i];
+      if (bd == 2) {
+	      idx = ((line[i] & 0xFF) * 256 + (line[i + 1] & 0xFF));
+      }
+      copy_palette_index(image, oPos, idx & 0xFF, composeAlpha);
+    }
+  }
+
+  // palette based image is decoded here on the fly, when copied from scanLine into image
+  protected void copyPalette(byte[] line, byte[] image, int pos, int w, int step, int bpp, boolean composeAlpha) {
+    if (bitDepth < 8) {
+      copy_upsamplePalette(line, image, pos, w, step, bpp, composeAlpha);
+    } else {
+      copy_palette(line, image, pos, step, bpp, bitDepth / 8, composeAlpha);
+    }
+  }
+
+  //--------------------------------------
+
+  protected void upsampleTo8Gray(byte[] line, byte[] image, int pos, int w, int step) {
     int samplesInByte = 8 / bitDepth;
     int maxV = (1 << bitDepth) - 1, hmaxV = maxV / 2;
     for (int i = 0, k = 0; i < w; k++, i += samplesInByte) {
       int p = (w - i < samplesInByte) ? w - i : samplesInByte;
       int in = line[k] >> (samplesInByte - p) * bitDepth;
       for (int pp = p - 1; pp >= 0; --pp) {
-        image[pos + (i + pp) * step] = (byte) (((in & maxV) * 255 + hmaxV) / maxV);
+        int idx = pos + (i + pp) * step * 1;
+        int value = in & maxV;
+        byte g = (byte) ((value * 255 + hmaxV) / maxV);
+        image[idx] = g;
         in >>= bitDepth;
       }
     }
   }
 
-  protected void upsampleTo8GrayTrns(byte line[], byte image[], int pos, int w, int step, boolean composeAlpha) {
+  protected void upsampleTo8GrayTrns(byte[] line, byte[] image, int pos, int w, int step, boolean composeAlpha) {
     int samplesInByte = 8 / bitDepth;
     int maxV = (1 << bitDepth) - 1, hmaxV = maxV / 2;
     for (int i = 0, k = 0; i < w; k++, i += samplesInByte) {
@@ -305,7 +350,7 @@ public class ApngDecoder {
         int idx = pos + (i + pp) * step * 2;
         int value = in & maxV;
         byte g = (byte) ((value * 255 + hmaxV) / maxV);
-        byte a = value == trnsG ? 0 : (byte) 255;
+        byte a = value == transparentColor[1] ? 0 : (byte) 255;
         if (composeAlpha) {
           g = a == 0 ? image[idx] : g;
         }
@@ -317,14 +362,15 @@ public class ApngDecoder {
   }
 
   protected void upsampleTo8(byte line[], byte image[], int pos, int w, int step, int bpp, boolean composeAlpha) {
-    if (colorType == PNG_COLOR_PALETTE) { // as is decoder
-      upsampleTo8Palette(line, image, pos, w, step);
-    } else if (bpp == 1) {
+    if (bpp == 1) {
       upsampleTo8Gray(line, image, pos, w, step);
-    } else if (tRNS_GRAY_RGB && bpp == 2) {
+    }
+    else if (transparentColor != null && bpp == 2) {
       upsampleTo8GrayTrns(line, image, pos, w, step, composeAlpha);
     }
   }
+
+  //--------------------------------------
 
   /**
    * @see https://pmt.sourceforge.io/specs/png-1.2-pdg.html#D.Alpha-channel-processing
@@ -334,12 +380,13 @@ public class ApngDecoder {
       // Foreground is full transparent.
       return background;
     }
-    else if (alphaFg == (byte) 255) {
+    else if ((alphaFg & 0xFF) == 0XFF) {
       // Foreground is full opaque.
       return foreground;
     }
     else {
-      double colorFinal = (alphaFg * foreground + alphaBg * background * ((byte) 255 - alphaFg));
+      double colorFinal = (alphaFg & 0xFF) * (foreground & 0xFF) 
+        + (alphaBg & 0xFF) * (background & 0xFF) * (255 - (alphaFg & 0xFF));
       return (byte) (colorFinal / alphaFinal);
     }
   }
@@ -359,7 +406,7 @@ public class ApngDecoder {
     return start[mip] + pos * increment[mip];
   }
 
-  protected void loadMip(byte image[], int imgWidth, InputStream data, int offsetX, int offsetY, int width, int height, int mip, boolean composeAlpha) throws IOException {
+  protected void loadMip(byte[] image, int imgWidth, InputStream data, int offsetX, int offsetY, int width, int height, int mip, boolean composeAlpha) throws IOException {
 
     int mipWidth = mipSize(width, mip, starting_x, increment_x);
     int mipHeight = mipSize(height, mip, starting_y, increment_y);
@@ -369,7 +416,8 @@ public class ApngDecoder {
     byte scanLine1[] = new byte[scanLineSize];
 
     // numBands might be more than numBandsPerColorType[colorType] to support tRNS
-    int resultBpp = bpp(), srcBpp = numBandsPerColorType[colorType] * bytesPerColor();
+    int resultBpp = bpp();
+    int srcBpp = numBandsPerColorType[colorType] * (bitDepth == 16 ? 2 : 1);
 
     for (int y = 0; y != mipHeight; ++y) {
       int filterByte = data.read();
@@ -386,30 +434,31 @@ public class ApngDecoder {
       int pos = ((y + mipPos(offsetY, mip, starting_y, increment_y)) * imgWidth + offsetX + starting_x[mip]) * resultBpp;
       int step = increment_x[mip];
 
-      if (bitDepth == 16) {
-        copy(scanLine0, image, pos, step, resultBpp, 2, composeAlpha);
-      } else if (bitDepth < 8) {
+      if (colorType == PNG_COLOR_PALETTE) {
+        copyPalette(scanLine0, image, pos, mipWidth, step, resultBpp, composeAlpha);
+      } 
+      else if (bitDepth < 8) {
+        // see https://www.w3.org/TR/png/#11IHDR, it is forcibly PNG_COLOR_GRAY 
         upsampleTo8(scanLine0, image, pos, mipWidth, step, resultBpp, composeAlpha);
-      } else {
-        copy(scanLine0, image, pos, step, resultBpp, 1, composeAlpha);
+      } 
+      else {
+        copy(scanLine0, image, pos, step, resultBpp, composeAlpha);
       }
 
-      byte scanLineSwp[] = scanLine0;
+      byte scanLineSwap[] = scanLine0;
       scanLine0 = scanLine1;
-      scanLine1 = scanLineSwp;
+      scanLine1 = scanLineSwap;
     }
   }
 
-  // we won`t decode palette on fly, we will do it later
-  // it is possible that we might want original paletteized image
   // ImageFrame does not support 16 bit color depth,
   // numBandsPerColorType == bytesPerColorType
   // but we will convert RGB->RGBA and L->LA on order to support tRNS
   public int bpp() {
-    return numBandsPerColorType[colorType] + (tRNS_GRAY_RGB ? 1 : 0);
-  }
-
-  private int bytesPerColor() {
-    return bitDepth == 16 ? 2 : 1;
+    // for indexed colors, transform on the fly into RGB or rGBA
+    if (colorType == PNG_COLOR_PALETTE) {
+      return palette.hasTransparency() ? 4 : 3;
+    }
+    return numBandsPerColorType[colorType] + (transparentColor != null ? 1 : 0);
   }
 }

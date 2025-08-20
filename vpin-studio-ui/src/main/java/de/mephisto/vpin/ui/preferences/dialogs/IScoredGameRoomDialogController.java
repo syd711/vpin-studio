@@ -47,6 +47,9 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
   private CheckBox synchronizationCheckbox;
 
   @FXML
+  private CheckBox ignoreHiddenCheckbox;
+
+  @FXML
   private CheckBox resetCheckbox;
 
   @FXML
@@ -118,6 +121,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     urlField.setDisable(true);
     validateBtn.setDisable(true);
     badgeCombo.setDisable(true);
+    ignoreHiddenCheckbox.setDisable(true);
     setDisabled(true);
     nameLabel.setText("-");
 
@@ -132,6 +136,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
       badgeCombo.setDisable(false);
       urlField.setDisable(false);
       validateBtn.setDisable(false);
+      ignoreHiddenCheckbox.setDisable(false);
       setDisabled(false);
       saveBtn.setDisable(false);
 
@@ -227,6 +232,7 @@ public class IScoredGameRoomDialogController implements Initializable, DialogCon
     gameRoom.setUrl(urlField.getText());
     gameRoom.setScoreReset(resetCheckbox.isSelected());
     gameRoom.setSynchronize(synchronizationCheckbox.isSelected());
+    gameRoom.setIgnoreHidden(ignoreHiddenCheckbox.isSelected());
     gameRoom.setBadge(badgeCombo.getValue());
 
     List<IScoredGameRoom> collect = new ArrayList<>(iScoredSettings.getGameRooms().stream().filter(s -> !s.getUuid().equals(gameRoom.getUuid())).collect(Collectors.toList()));

@@ -6,8 +6,8 @@ import de.mephisto.vpin.server.emulators.EmulatorService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
-import de.mephisto.vpin.server.highscores.HighscoreVersionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class AlxService {
   private EmulatorService emulatorService;
 
   @Autowired
-  private HighscoreVersionRepository highscoreVersionRepository;
+  private HighscoreService highscoreService;
 
   public AlxSummary getAlxSummary(int gameId) {
     AlxSummary summary = new AlxSummary();
@@ -44,7 +44,7 @@ public class AlxService {
     }
 
     for (TableAlxEntry entry : alxData) {
-      List<HighscoreVersion> byGameId = highscoreVersionRepository.findByGameId(entry.getGameId());
+      List<HighscoreVersion> byGameId = highscoreService.getHighscoreVersionsByGame(entry.getGameId());
       List<HighscoreVersion> collect = byGameId.stream().filter(score -> score.getChangedPosition() > 0).collect(Collectors.toList());
       List<HighscoreVersion> highscores = byGameId.stream().filter(score -> score.getChangedPosition() == 1).collect(Collectors.toList());
       entry.setScores(collect.size());

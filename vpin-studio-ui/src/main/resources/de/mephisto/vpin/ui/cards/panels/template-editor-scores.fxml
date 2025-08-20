@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<TitledPane fx:id="settingsPane" text="Score Settings" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.LayerEditorScoresController">
+   <content>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox styleClass="accordion-container" >
+              <children>
+                <Label text="Score Font" textFill="WHITE">
+                    <font>
+                      <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+                <BorderPane>
+                    <left>
+                      <Label fx:id="scoreFontLabel" prefWidth="150.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                    </left>
+                    <right>
+                      <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                          <children>
+                            <Button mnemonicParsing="false" onAction="#onFontScoreSelect">
+                                <font>
+                                  <Font size="14.0" />
+                                </font>
+                                <graphic>
+                                  <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
+                                </graphic>
+                            </Button>
+                            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontScoreApplyAll">
+                                <font>
+                                  <Font size="14.0" />
+                                </font>
+                                <graphic>
+                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
+                                </graphic>
+                                <tooltip>
+                                  <Tooltip text="Apply selected font settings to all templates" />
+                                </tooltip>
+                            </Button>
+                          </children>
+                      </HBox>
+                    </right>
+                </BorderPane>
+
+                <Label text="Font Color" textFill="WHITE">
+                    <font>
+                      <Font name="System Bold" size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </Label>
+                <ColorPicker fx:id="fontColorSelector">
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                </ColorPicker>
+
+                <Label text="Font Color for Friends" textFill="WHITE">
+                    <font>
+                      <Font name="System Bold" size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                </Label>
+                <ColorPicker fx:id="friendsFontColorSelector" >
+                    <VBox.margin>
+                      <Insets top="6.0" bottom="12.0" />
+                    </VBox.margin>
+                </ColorPicker>
+
+                <fx:include fx:id="position" source="template-subeditor-position.fxml" />
+
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <Label text="Row Separator:" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="The vertical space between the lines of the highscore text." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+                <Spinner fx:id="rowSeparatorSpinner" editable="true" prefWidth="70" styleClass="widget-default">
+                    <VBox.margin>
+                      <Insets top="6.0" />
+                    </VBox.margin>
+                </Spinner>
+
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <CheckBox fx:id="renderRawHighscore" mnemonicParsing="false" text="Render Raw Highscore Data" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </CheckBox>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="The font size of the highscore text will be adapted according to the number of lines." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <CheckBox fx:id="renderFriendsHighscore" mnemonicParsing="false" text="Render Friends Highscore Data" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </CheckBox>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="The scores of your friends will be merged with yours." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets top="12.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox alignment="BASELINE_LEFT" spacing="6.0">
+                    <children>
+                      <Label text="Max. Scores" textFill="WHITE">
+                          <font>
+                            <Font size="14.0" />
+                          </font>
+                      </Label>
+                      <Label>
+                          <graphic>
+                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                          </graphic>
+                          <tooltip>
+                            <Tooltip text="&quot;0&quot; will render all available scores." />
+                          </tooltip>
+                      </Label>
+                    </children>
+                    <VBox.margin>
+                      <Insets left="26.0" top="12.0" />
+                    </VBox.margin>
+                </HBox>
+                <Spinner fx:id="maxScoresSpinner" editable="true" prefWidth="70.0" styleClass="widget-default">
+                    <VBox.margin>
+                      <Insets left="26.0" top="6.0" />
+                    </VBox.margin>
+                </Spinner>
+
+                <CheckBox fx:id="renderPositionsCheckbox" mnemonicParsing="false" text="Render Positions" textFill="WHITE">
+                    <font>
+                      <Font size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets left="26.0" top="6.0" />
+                    </VBox.margin>
+                </CheckBox>
+
+                <CheckBox fx:id="renderScoreDatesCheckbox" mnemonicParsing="false" text="Render creation Dates" textFill="WHITE">
+                    <font>
+                      <Font size="14.0" />
+                    </font>
+                    <VBox.margin>
+                      <Insets left="26.0" top="6.0" />
+                    </VBox.margin>
+                </CheckBox>
+
+              </children>
+              <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+              </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </content>
+</TitledPane>

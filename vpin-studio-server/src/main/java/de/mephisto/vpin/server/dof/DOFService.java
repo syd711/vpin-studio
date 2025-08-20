@@ -39,7 +39,7 @@ public class DOFService implements InitializingBean {
 
   public DOFSettings saveSettings(DOFSettings settings) {
     try {
-      preferencesService.savePreference(PreferenceNames.DOF_SETTINGS, settings);
+      preferencesService.savePreference(settings);
       return getSettings();
     }
     catch (Exception e) {

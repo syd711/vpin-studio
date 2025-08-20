@@ -30,7 +30,6 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="60.0" styleClass="preference-description" text="The account data is used to automatically download and install assets." textFill="WHITE" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="142.4000244140625" />
@@ -64,7 +63,7 @@
                               <Font size="14.0" />
                            </font>
                         </PasswordField>
-                        <Button mnemonicParsing="false" onAction="#onConnectionTest" text="Test Connection" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button mnemonicParsing="false" onAction="#onConnectionTest" text="Save" fx:id="saveBtn" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

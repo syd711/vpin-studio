@@ -3,29 +3,28 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
-import de.mephisto.vpin.restclient.iscored.IScoredSettings;
-import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
-import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
-import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.iscored.IScoredGameRoom;
+import de.mephisto.vpin.restclient.iscored.IScoredSettings;
+import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.webhooks.WebhookSet;
 import de.mephisto.vpin.restclient.webhooks.WebhookSettings;
 import de.mephisto.vpin.ui.MediaPreviewController;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.archiving.dialogs.*;
 import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.dialogs.IScoredGameRoomDialogController;
@@ -39,7 +38,6 @@ import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -48,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -311,6 +310,7 @@ public class TableDialogs {
     controller.setGame(stage, overviewController, game, screen, false);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    fxResizeHelper.setUserData(controller);
     stage.setUserData(fxResizeHelper);
     stage.setMinWidth(860);
     stage.setMinHeight(600);
@@ -585,33 +585,11 @@ public class TableDialogs {
     }
   }
 
-  public static void openTablesBackupDialog(List<GameRepresentation> games) {
-    Stage stage = Dialogs.createStudioDialogStage(TablesBackupController.class, "dialog-tables-backup.fxml", "Table Backup");
-    TablesBackupController controller = (TablesBackupController) stage.getUserData();
-    controller.setGames(games);
-    stage.showAndWait();
-  }
-
   public static void openTableImportDialog(GameEmulatorRepresentation emulatorRepresentation) {
-    Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Importer");
+    Stage stage = Dialogs.createStudioDialogStage("tableImport", Studio.stage, TableImportController.class, "dialog-table-import.fxml", "Table Importer");
     TableImportController controller = (TableImportController) stage.getUserData();
-    controller.setData(emulatorRepresentation);
+    controller.setData(stage, emulatorRepresentation);
     stage.showAndWait();
-  }
-
-  public static void openTableInstallationDialog(TablesController tablesController, List<ArchiveDescriptorRepresentation> descriptorRepresentations) {
-    Stage stage = Dialogs.createStudioDialogStage(TableRestoreController.class, "dialog-table-restore.fxml", "Restore Tables");
-    TableRestoreController controller = (TableRestoreController) stage.getUserData();
-    controller.setData(tablesController, descriptorRepresentations);
-    stage.showAndWait();
-  }
-
-  public static ArchiveSourceRepresentation openArchiveSourceFileDialog(ArchiveSourceRepresentation source) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveSourceFileDialogController.class, "dialog-archive-source-file.fxml", "Folder Repository");
-    ArchiveSourceFileDialogController controller = (ArchiveSourceFileDialogController) stage.getUserData();
-    controller.setSource(source);
-    stage.showAndWait();
-    return controller.getArchiveSource();
   }
 
   public static void openWebhooksDialog(@NonNull WebhookSettings settings, @Nullable WebhookSet set) {
@@ -629,55 +607,10 @@ public class TableDialogs {
     return controller.getResult();
   }
 
-  public static ArchiveSourceRepresentation openArchiveSourceHttpDialog(ArchiveSourceRepresentation source) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveSourceHttpDialogController.class, "dialog-archive-source-http.fxml", "HTTP Repository");
-    ArchiveSourceHttpDialogController controller = (ArchiveSourceHttpDialogController) stage.getUserData();
-    controller.setSource(source);
-    stage.showAndWait();
-
-    return controller.getArchiveSource();
-  }
-
   public static void openVPSAssetsDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(VPSAssetsDialogController.class, "dialog-vps-assets.fxml", "Virtual Pinball Spreadsheet Assets");
     VPSAssetsDialogController controller = (VPSAssetsDialogController) stage.getUserData();
     controller.setGame(stage, game);
-    stage.showAndWait();
-  }
-
-  public static boolean openArchiveUploadDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveUploadController.class, "dialog-archive-upload.fxml", "Upload");
-    ArchiveUploadController controller = (ArchiveUploadController) stage.getUserData();
-    stage.showAndWait();
-
-    return controller.uploadFinished();
-  }
-
-  public static void openArchiveDownloadDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(ArchiveDownloadDialogController.class, "dialog-archive-download.fxml", "Archive Download");
-    ArchiveDownloadDialogController controller = (ArchiveDownloadDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openVpbmArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(VpbmArchiveBundleDialogController.class, "dialog-vpbm-bundle-download.fxml", "Archive Bundle");
-    VpbmArchiveBundleDialogController controller = (VpbmArchiveBundleDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openVpaArchiveBundleDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(VpaArchiveBundleDialogController.class, "dialog-vpa-bundle-download.fxml", "Archive Bundle");
-    VpaArchiveBundleDialogController controller = (VpaArchiveBundleDialogController) stage.getUserData();
-    controller.setData(selectedItems);
-    stage.showAndWait();
-  }
-
-  public static void openCopyArchiveToRepositoryDialog(ObservableList<ArchiveDescriptorRepresentation> selectedItems) {
-    Stage stage = Dialogs.createStudioDialogStage(CopyArchiveToRepositoryDialogController.class, "dialog-copy-archive-to-repository.fxml", "Copy To Repository");
-    CopyArchiveToRepositoryDialogController controller = (CopyArchiveToRepositoryDialogController) stage.getUserData();
-    controller.setData(selectedItems);
     stage.showAndWait();
   }
 
@@ -742,10 +675,23 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(Stage parent, GameRepresentation game, FrontendMediaItemRepresentation item) {
-    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", game.getGameDisplayName() + " - " + item.getScreen() + " Screen", "dialog-media-preview");
+  public static void openMediaDialog(Stage parent, FrontendMediaItemRepresentation item) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", item.getScreen() + " Screen", "dialog-media-preview");
     MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
-    controller.setData(stage, game, item);
+    controller.setData(stage, item);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(800);
+    stage.setMinHeight(600);
+
+    stage.showAndWait();
+  }
+
+  public static void openMediaDialog(@NonNull Stage parent, @NonNull String title, @NonNull String url) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaPreviewController.class, "dialog-media-preview.fxml", title, "dialog-media-preview");
+    MediaPreviewController controller = (MediaPreviewController) stage.getUserData();
+    controller.setData(stage, url);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);

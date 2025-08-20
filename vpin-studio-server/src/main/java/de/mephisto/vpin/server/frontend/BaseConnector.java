@@ -486,7 +486,7 @@ public abstract class BaseConnector implements FrontendConnector {
         uiSettings.setJustAddedColor(WidgetFactory.hexColor(playlist.getMenuColor()));
       }
       try {
-        preferencesService.savePreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        preferencesService.savePreference(uiSettings);
       }
       catch (Exception e) {
         LOG.error("Failed to save playlist colors: {}", e.getMessage(), e);

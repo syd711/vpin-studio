@@ -131,7 +131,7 @@ public class PinballXConnector extends BaseConnector {
   public void saveSettings(@NonNull Map<String, Object> data) {
     try {
       PinballXSettings settings = JsonSettings.objectMapper.convertValue(data, PinballXSettings.class);
-      preferencesService.savePreference(PreferenceNames.PINBALLX_SETTINGS, settings);
+      preferencesService.savePreference(settings);
       // reinitialize the connector with updated settings
       initializeConnector();
     }

@@ -6,13 +6,13 @@ package de.mephisto.vpin.ui.apng.chunks;
  */
 public class ApngHeader
 {
-  final int width;
-  final int height;
-  final int colorType;
-  final int bitDepth;
-  final int compressionMethod;
-  final int filterMethod;
-  final int interlaceMethod;
+  private final int width;
+  private final int height;
+  private final int colorType;
+  private final int bitDepth;
+  private final int compressionMethod;
+  private final int filterMethod;
+  private final int interlaceMethod;
 
   public ApngHeader(int width, int height, int bitDepth, int colorType, int compressionMethod, int filterMethod, int interlaceMethod) {
     this.width = width;

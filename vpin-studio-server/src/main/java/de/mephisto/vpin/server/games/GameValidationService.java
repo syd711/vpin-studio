@@ -149,7 +149,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
-      if (game.getDirectB2SPath() == null && !pupPacksService.hasPupPack(game)) {
+      if (game.getDirectB2SPath() == null && !pupPacksService.isScanActive() && !pupPacksService.hasPupPack(game)) {
         result.add(ValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {
           return result;
@@ -227,7 +227,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
             }
           }
 
-          if (isValidationEnabled(game, CODE_VPS_PUPPACK_MISSING) && !pupPacksService.hasPupPack(game)) {
+          if (isValidationEnabled(game, CODE_VPS_PUPPACK_MISSING) && !pupPacksService.isScanActive() && !pupPacksService.hasPupPack(game)) {
             List<VpsAuthoredUrls> pupPackFiles = vpsTable.getPupPackFiles();
             for (VpsAuthoredUrls pupPackFile : pupPackFiles) {
               if (pupPackFile.getUrls().isEmpty() || pupPackFile.getUrls().stream().allMatch(VpsUrl::isBroken)) {
@@ -573,16 +573,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      List<String> missingResources = pupPacksService.getMissingResources(game);
-      if (missingResources != null && !missingResources.isEmpty()) {
-        result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, missingResources));
+    if (!pupPacksService.isScanActive()) {
+      if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+        List<String> missingResources = pupPacksService.getMissingResources(game);
+        if (missingResources != null && !missingResources.isEmpty()) {
+          result.add(ValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, missingResources));
+        }
       }
-    }
 
-    if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && pupPacksService.isPupPackDisabled(game)) {
-      ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
-      result.add(validationState);
+      if (game.getDirectB2SPath() == null && pupPacksService.hasPupPack(game) && pupPacksService.isPupPackDisabled(game)) {
+        ValidationState validationState = ValidationStateFactory.create(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED);
+        result.add(validationState);
+      }
     }
     return result;
   }

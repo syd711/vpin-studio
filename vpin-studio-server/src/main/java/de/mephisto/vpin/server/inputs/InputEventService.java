@@ -97,6 +97,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     String overlayBtn = pauseMenuSettings.getOverlayButton();
     String recordBtn = pauseMenuSettings.getRecordingButton();
     String screenshotBtn = pauseMenuSettings.getScreenshotButton();
+    String resetBtn = pauseMenuSettings.getResetButton();
 
     if (name.equals(recordBtn)) {
       if (frontendStatusService.getGameStatus().isActive()) {
@@ -145,9 +146,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     }
 
     //handle key based reset
-    String resetBtn = pauseMenuSettings.getResetButton();
     if (name.equals(resetBtn)) {
       onResetEvent();
+      return;
     }
   }
 
@@ -315,6 +316,8 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Override
   public void afterPropertiesSet() {
+
+    ServerFX.client = overlayClient;
     new Thread(() -> {
       ServerFX.main(new String[]{});
       LOG.info("Overlay listener started.");
@@ -323,9 +326,8 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     shutdownThread = new ShutdownThread(preferencesService, queue);
     shutdownThread.start();
 
-    ServerFX.client = overlayClient;
     ServerFX.waitForOverlay();
-    ServerFX.getInstance().getOverlayStage().setTitle(
+    ServerFX.getInstance().setOverlayTitle(
         frontendService.getFrontendType().equals(FrontendType.Popper) ? "PinUP Popper" : "VPin Studio Overlay");
     LOG.info("Finished initialization of OverlayWindowFX");
 

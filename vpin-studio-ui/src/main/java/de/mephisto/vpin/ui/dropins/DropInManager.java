@@ -2,23 +2,29 @@ package de.mephisto.vpin.ui.dropins;
 
 import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
+import de.mephisto.vpin.commons.utils.TrashBin;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Paint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class DropInManager implements LocalSettingsChangeListener, StudioEventListener, FolderChangeListener {
@@ -43,6 +50,8 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   private Stream<Path> stream;
   private int itemCount;
   private int itemLimit = 50;
+
+  private boolean enabled = false;
 
   public static DropInManager getInstance() {
     if (instance == null) {
@@ -80,22 +89,56 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     localSettingsChanged(LocalUISettings.DROP_IN_FOLDER_ENABLED, LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER_ENABLED));
   }
 
+  public boolean isDropInFile(@NonNull File file) {
+    if (enabled && dropinsFolder != null && dropinsFolder.exists()) {
+      String path = dropinsFolder.getAbsolutePath();
+      return file.getAbsolutePath().startsWith(path);
+    }
+    return false;
+  }
+
   /**
    * Should run on JavaFX Thread !
    */
   public void reload() {
     this.dropInsBtn.getItems().clear();
-
-    itemCount = 0;
-    itemLimit = 100;
-
-    //TODO skipped a "Load More Item..." button for now and simply limit the items
     itemCount = 0;
     itemLimit = 100;
 
     //TODO skipped a "Load More Item..." button for now and simply limit the items
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {
       continueReading();
+    }
+
+    if (!dropInsBtn.getItems().isEmpty()) {
+      HBox box = new HBox(3);
+      box.setAlignment(Pos.CENTER_RIGHT);
+      Button btn = new Button("Delete All");
+      HBox.setMargin(btn, new Insets(0, 0, 3, 3));
+      btn.getStyleClass().add("default-text");
+      btn.setTextFill(Paint.valueOf("#ff3333"));
+      btn.setGraphic(WidgetFactory.createIcon("mdi2d-delete-outline", "#ff3333"));
+      btn.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete all drop in files?", "All files will be moved to the trash.");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            List<MenuItem> items = dropInsBtn.getItems();
+            for (MenuItem item : items) {
+              File f = (File) item.getUserData();
+              if (!TrashBin.moveTo(f)) {
+                WidgetFactory.showAlert(Studio.stage, "Error", "Deletion failed, another process is blocking this file.");
+              }
+            }
+          }
+          reload();
+        }
+      });
+      box.getChildren().add(btn);
+
+      CustomMenuItem item = new CustomMenuItem();
+      item.setContent(box);
+      this.dropInsBtn.getItems().add(0, item);
     }
   }
 
@@ -119,7 +162,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
               root.getStyleClass().add("dropin-menu-item");
               DropInContainerController containerController = loader.getController();
               containerController.setData(dropInsBtn, p.toFile());
-              CustomMenuItem item = new CustomMenuItem();item.setUserData(p.toFile());
+              CustomMenuItem item = new CustomMenuItem();
               item.setUserData(p.toFile());
               item.setContent(root);
               dropInsBtn.getItems().add(item);
@@ -139,7 +182,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   public void localSettingsChanged(@NonNull String key, @Nullable String value) {
     if (key.equals(LocalUISettings.DROP_IN_FOLDER_ENABLED)) {
       if (value != null) {
-        boolean enabled = Boolean.parseBoolean(value);
+        enabled = Boolean.parseBoolean(value);
         LOG.info("Drop-in monitoring enabled: " + enabled);
         Platform.runLater(() -> {
           dropInsBtn.setVisible(enabled);

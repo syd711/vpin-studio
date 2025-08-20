@@ -191,7 +191,7 @@ public class GameRecorder {
 
     try {
       // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4
-      File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
+      File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4", true);
       File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
 
       switch (recordingWriteMode) {

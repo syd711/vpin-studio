@@ -69,6 +69,9 @@ public class PreferencesController extends SettingsSceneController implements In
   private Button backglassBtn;
 
   @FXML
+  private Button mediaSourcesBtn;
+
+  @FXML
   private Button settings_clientBtn;
 
   @FXML
@@ -103,9 +106,6 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private Button pinballYSettingsBtn;
-
-  @FXML
-  private Button vpbmBtn;
 
   @FXML
   private Button overlayBtn;
@@ -222,6 +222,11 @@ public class PreferencesController extends SettingsSceneController implements In
   }
 
   @FXML
+  private void onMediaSources(ActionEvent event) throws IOException {
+    load("preference-asset-sources.fxml", event);
+  }
+
+  @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
   }
@@ -269,7 +274,7 @@ public class PreferencesController extends SettingsSceneController implements In
 
   @FXML
   private void onVpaRepositories(ActionEvent event) throws IOException {
-    load("preference-repositories.fxml", event);
+    load("preference-backups.fxml", event);
   }
 
   @FXML
@@ -325,11 +330,6 @@ public class PreferencesController extends SettingsSceneController implements In
   @FXML
   private void onPinballYSettings(ActionEvent event) throws IOException {
     load("preference-pinbally-settings.fxml", event);
-  }
-
-  @FXML
-  private void onVPBM(ActionEvent event) throws IOException {
-    load("preference-vpbm.fxml", event);
   }
 
   @FXML
@@ -451,7 +451,7 @@ public class PreferencesController extends SettingsSceneController implements In
       preferencesMain.setCenter(node);
     }
     catch (Exception e) {
-      LOG.error("Failed to loading settings view: " + e.getMessage(), e);
+      LOG.error("Failed to loading settings view {}: {}", screen, e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
     }
   }
@@ -463,7 +463,6 @@ public class PreferencesController extends SettingsSceneController implements In
     pinballYSettingsBtn.managedProperty().bindBidirectional(pinballYSettingsBtn.visibleProperty());
     repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
     notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
-    vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
     overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
     pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
@@ -474,9 +473,7 @@ public class PreferencesController extends SettingsSceneController implements In
     vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
     webhooksBtn.managedProperty().bindBidirectional(webhooksBtn.visibleProperty());
 
-    vpbmBtn.setVisible(Features.ARCHIVE_ENABLED);
-    repositoriesBtn.setVisible(false);
-//    repositoriesBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(Features.BACKUPS_ENABLED);
 
     // activation of custom options according to installed frontend
     FrontendType frontendType = client.getFrontendService().getFrontendType();

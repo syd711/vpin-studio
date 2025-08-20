@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
@@ -40,12 +41,12 @@
                                  <top>
                                     <ToolBar BorderPane.alignment="CENTER">
                                       <items>
-                                          <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0" promptText="Asset Search">
+                                          <TextField fx:id="searchField" prefHeight="30.0" prefWidth="235.0" promptText="Asset Search">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </TextField>
-                                        <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
+                                        <Button mnemonicParsing="false" onAction="#onSearch" text="" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -53,6 +54,29 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                              </graphic>
                                           </Button>
+                                         <ComboBox fx:id="assetSourceComboBox" prefWidth="200" />
+                                         <Button fx:id="assetSourceBtn" mnemonicParsing="false" onAction="#onAssetSourceEdit">
+                                            <font>
+                                               <Font size="14.0" />
+                                            </font>
+                                            <graphic>
+                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                            </graphic>
+                                            <tooltip>
+                                               <Tooltip text="Configure Asset Source" />
+                                            </tooltip>
+                                         </Button>
+                                         <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="" textFill="WHITE">
+                                            <font>
+                                               <Font size="14.0" />
+                                            </font>
+                                            <graphic>
+                                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
+                                            </graphic>
+                                            <tooltip>
+                                               <Tooltip text="Rebuilds the search index to fetch the latest assets." />
+                                            </tooltip>
+                                         </Button>
                                       </items>
                                     </ToolBar>
                                  </top>

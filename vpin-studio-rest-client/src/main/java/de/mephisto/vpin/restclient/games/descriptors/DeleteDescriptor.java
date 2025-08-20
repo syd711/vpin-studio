@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteDescriptor {
-  private boolean deleteTable;
-  private boolean deleteDirectB2s;
-  private boolean deleteFromFrontend;
-  private boolean deletePupPack;
-  private boolean deleteDMDs;
-  private boolean deleteHighscores;
-  private boolean deleteMusic;
-  private boolean deleteAltSound;
-  private boolean deleteAltColor;
-  private boolean deleteCfg;
-  private boolean deleteBAMCfg;
-  private boolean deletePov;
-  private boolean deleteRes;
-  private boolean deleteIni;
-  private boolean deleteVbs;
-  private boolean deletePinVol;
-  private boolean keepAssets;
+  private boolean deleteTable = true;
+  private boolean deleteDirectB2s = true;
+  private boolean deleteFromFrontend = true;
+  private boolean deletePupPack = false;
+  private boolean deleteDMDs = true;
+  private boolean deleteHighscores = true;
+  private boolean deleteMusic = false;
+  private boolean deleteAltSound = false;
+  private boolean deleteAltColor = false;
+  private boolean deleteCfg = false;
+  private boolean deleteBAMCfg = true;
+  private boolean deletePov = true;
+  private boolean deleteRes = true;
+  private boolean deleteIni = true;
+  private boolean deleteVbs = true;
+  private boolean deletePinVol = true;
+  private boolean keepAssets = false;
 
   public boolean isDeleteBAMCfg() {
     return deleteBAMCfg;

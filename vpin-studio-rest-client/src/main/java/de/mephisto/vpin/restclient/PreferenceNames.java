@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
+import de.mephisto.vpin.restclient.vpauthenticators.AuthenticationSettings;
 import de.mephisto.vpin.restclient.vpf.VPFSettings;
 import de.mephisto.vpin.restclient.vps.VpsSettings;
 import de.mephisto.vpin.restclient.vpu.VPUSettings;
@@ -53,6 +54,10 @@ public interface PreferenceNames {
   String PINBALLY_SETTINGS = "pinballYSettings";
   String VPU_SETTINGS = "vpuSettings";
   String VPF_SETTINGS = "vpfSettings";
+
+  String AUTHENTICATION_SETTINGS = "authenticationSettings";
+
+  String ASSET_SOURCES_SETTINGS = "assetSourcesSettings";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
@@ -143,6 +148,12 @@ public interface PreferenceNames {
       }
       case PreferenceNames.VPS_SETTINGS: {
         return VpsSettings.class;
+      }
+      case PreferenceNames.AUTHENTICATION_SETTINGS: {
+        return AuthenticationSettings.class;
+      }
+      case PreferenceNames.ASSET_SOURCES_SETTINGS: {
+        return AuthenticationSettings.class;
       }
       default: {
         throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

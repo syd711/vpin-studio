@@ -34,7 +34,7 @@ public class DMDService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
-  private File getDmdFolder(Game game) {
+  public File getDmdFolder(Game game) {
     File tablesFolder = game.getGameFile().getParentFile();
     return new File(tablesFolder, game.getDMDProjectFolder());
   }
@@ -43,7 +43,7 @@ public class DMDService implements InitializingBean {
   public boolean delete(@NonNull Game game) {
     try {
       DMDPackage dmdPackage = getDMDPackage(game);
-      if (dmdPackage != null) {
+      if (dmdPackage != null && dmdPackage.isValid()) {
         File dir = getDmdFolder(game);
         if (dir.exists()) {
           FileUtils.deleteDirectory(dir);
@@ -59,9 +59,7 @@ public class DMDService implements InitializingBean {
 
   @Nullable
   public DMDPackage getDMDPackage(@NonNull Game game) {
-
     if (game.getDMDType() != null && !DMDPackageTypes.Standard.equals(game.getDMDType())) {
-
       DMDPackage dmdPackage = new DMDPackage();
       dmdPackage.setDmdPackageTypes(game.getDMDType());
 

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
+import de.mephisto.vpin.restclient.cards.CardResolution;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ImageUtil;
+import de.mephisto.vpin.commons.fx.ImageUtil;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
@@ -36,11 +36,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+
+/**
+ * ON THE WAY TO commons.fx.CardGraphicsHighscore
+ */
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 
   private final DefaultPictureService directB2SService;
-  private final HighscoreCardResolution highscoreCardResolution;
+  private final CardResolution highscoreCardResolution;
   private final FrontendService frontendService;
 
   private final ScoreSummary summary;
@@ -48,7 +52,7 @@ public class CardGraphics {
   private final Game game;
 
   public CardGraphics(DefaultPictureService directB2SService, FrontendService frontendService, 
-      HighscoreCardResolution highscoreCardResolution, CardTemplate template, Game game, ScoreSummary summary) {
+      CardResolution highscoreCardResolution, CardTemplate template, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
     this.frontendService = frontendService;
     this.highscoreCardResolution = highscoreCardResolution;
@@ -350,13 +354,13 @@ public class CardGraphics {
       yStart = yStart + template.getPadding();
     }
 
-    int wheelWidth = template.getWheelSize();
+    int wheelWidth = (int) template.getWheelSize();
     if (!template.isRenderWheelIcon()) {
       wheelWidth = 0;
     }
 
     int remainingHeight = imageHeight - yStart - template.getMarginBottom();
-    int remainingWidth = imageWidth - template.getMarginLeft() + template.getMarginRight() - wheelWidth;
+    int remainingWidth = imageWidth - template.getMarginLeft() + template.getMarginRight();
     String raw = ScoreFormatUtil.formatRaw(summary.getRaw());
     String[] lines = raw.split("\n");
 

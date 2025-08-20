@@ -59,7 +59,7 @@ public class PlaylistMediaService {
     try {
       if (playlist.getMediaName() != null) {
         String baseFilename = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName().toLowerCase() : playlist.getName().toLowerCase();
-        File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
+        File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen, false);
         if (mediaFolder.exists()) {
           File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename));
           if (mediaFiles != null && mediaFiles.length > 0) {
@@ -83,7 +83,7 @@ public class PlaylistMediaService {
 
   public boolean deleteMedia(int playlistId, VPinScreen screen, String filename) {
     Playlist playlist = playlistService.getPlaylist(playlistId);
-    File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
+    File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen, false);
     File media = new File(mediaFolder, filename);
 
     if (media.exists() && media.delete()) {
@@ -98,7 +98,7 @@ public class PlaylistMediaService {
   }
 
   public File buildMediaAsset(Playlist playlist, VPinScreen screen, String suffix, boolean append) {
-    File playlistMediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
+    File playlistMediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen, true);
     String mediaName = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName() : playlist.getName();
 
     File out = new File(playlistMediaFolder, mediaName + "." + suffix);
