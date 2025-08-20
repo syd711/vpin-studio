@@ -22,9 +22,9 @@
 
 <ScrollPane hbarPolicy="NEVER" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerSidebarController">
     <content>
-        <VBox spacing="24.0" styleClass="accordion-container">
-            <children>
-                <VBox fx:id="versionPane" >
+      <BorderPane styleClass="accordion-container">
+         <top>
+                <VBox fx:id="versionPane" BorderPane.alignment="CENTER">
                     <children>
                     <VBox fx:id="noneActiveInfo" styleClass="info-container">
                         <children>
@@ -38,11 +38,11 @@
                         </Label>
                         </children>
                         <VBox.margin>
-                        <Insets bottom="12.0" right="6.0" top="6.0"  />
+                        <Insets bottom="12.0" right="6.0" top="6.0" />
                         </VBox.margin>
                     </VBox>
 
-                    <Label text="Version" textFill="WHITE">
+                                <Label text="Version" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="14.0" />
                         </font>
@@ -51,144 +51,155 @@
                         </VBox.margin>
                     </Label>
 
-                    <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--" >
+                                <Label fx:id="directB2SLabel" prefHeight="30.0" styleClass="default-text" text="--">
                     </Label>
-                    <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="550.0"  />
+                    <ComboBox fx:id="directB2SCombo" prefHeight="30.0" prefWidth="550.0" />
 
-                    <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="Active backglass" GridPane.columnIndex="1" GridPane.rowIndex="1" >
+                                <CheckBox fx:id="activateCheckbox" mnemonicParsing="false" styleClass="default-text" text="Active backglass" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <VBox.margin>
                             <Insets top="12.0" />
                         </VBox.margin>
                     </CheckBox>
-                    </children>
-                </VBox>
-
-                <HBox spacing="24.0">
-                    <children>
-                        <VBox spacing="6.0">
-                            <children>
-                                <Label text="Background Preview" textFill="WHITE">
-                                    <font>
-                                        <Font name="System Bold" size="14.0" />
-                                    </font>
-                                </Label>
-                                <BorderPane fx:id="thumbnailImagePane" maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
-                                    <bottom>
-                                        <BorderPane BorderPane.alignment="BOTTOM_LEFT">
-                                            <BorderPane.margin>
-                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                            </BorderPane.margin>
-                                            <left>
-                                                <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="CENTER" />
-                                            </left>
-                                            <right>
-                                                <HBox spacing="3.0">
-                                                    <Button fx:id="downloadBackglassBtn" mnemonicParsing="false" onAction="#onBackglassDownload" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                        <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
-                                                        </graphic>
-                                                        <tooltip>
-                                                            <Tooltip prefWidth="400.0" text="Export the backglass image and save it on disk." wrapText="true" />
-                                                        </tooltip>
-                                                    </Button>
-                                                    <Button fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                        <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
-                                                        </graphic>
-                                                        <tooltip>
-                                                            <Tooltip prefWidth="400.0" text="Export the backglass image and use it as a backglass media asset in your frontend." wrapText="true" />
-                                                        </tooltip>
-                                                    </Button>
-                                                </HBox>
-                                            </right>
-                                        </BorderPane>
-                                    </bottom>
-                                    <center>
-                                        <ImageView fx:id="thumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
-                                            <BorderPane.margin>
-                                                <Insets top="12.0" />
-                                            </BorderPane.margin>
-                                        </ImageView>
-                                    </center>
-                                    <padding>
-                                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                    </padding>
-                                </BorderPane>
-                            </children>
-                        </VBox>
-                        <Pane fx:id="loaderStackImages">
-                            <VBox spacing="6.0">
+                    <VBox spacing="24.0" styleClass="accordion-container">
+                        <children>
+            
+                            <HBox spacing="24.0">
                                 <children>
-                                    <Label text="DMD Preview" textFill="WHITE">
-                                        <font>
-                                            <Font name="System Bold" size="14.0" />
-                                        </font>
-                                    </Label>
-                                    <BorderPane fx:id="dmdThumbnailImagePane" maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
-                                        <center>
-                                            <ImageView fx:id="dmdThumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true">
-                                                <BorderPane.margin>
-                                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                                </BorderPane.margin>
-                                            </ImageView>
-                                        </center>
-                                        <bottom>
-                                            <BorderPane BorderPane.alignment="BOTTOM_LEFT">
-                                                <BorderPane.margin>
-                                                    <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                                                </BorderPane.margin>
-                                                <left>
-                                                    <Label fx:id="dmdResolutionLabel" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                        <padding>
-                                                            <Insets left="3.0" />
-                                                        </padding>
-                                                    </Label>
-                                                </left>
-                                                <right>
-                                                    <HBox spacing="3.0">
-                                                        <Button fx:id="uploadDMDBtn" mnemonicParsing="false" onAction="#onDMDUpload" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                            <graphic>
-                                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                            <graphic>
-                                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                            <graphic>
-                                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
-                                                            </graphic>
-                                                            <tooltip>
-                                                                <Tooltip prefWidth="400.0" text="Export the DMD image and use it as a DMD media asset in your frontend." wrapText="true" />
-                                                            </tooltip>
-                                                        </Button>
-                                                        <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                            <graphic>
-                                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="14" />
-                                                            </graphic>
-                                             <tooltip>
-                                                <Tooltip onCloseRequest="#onBackglassDelete" text="Delete backglass file" />
-                                             </tooltip>
-                                                        </Button>
-                                                    </HBox>
-                                                </right>
+                                    <VBox spacing="6.0">
+                                        <children>
+                                            <Label text="Background Preview" textFill="WHITE">
+                                                <font>
+                                                    <Font name="System Bold" size="14.0" />
+                                                </font>
+                                            </Label>
+                                            <BorderPane fx:id="thumbnailImagePane" maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
+                                                <bottom>
+                                                    <BorderPane BorderPane.alignment="BOTTOM_LEFT">
+                                                        <BorderPane.margin>
+                                                            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                                        </BorderPane.margin>
+                                                        <left>
+                                                            <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="CENTER" />
+                                                        </left>
+                                                        <right>
+                                                            <HBox spacing="3.0">
+                                                                <Button fx:id="downloadBackglassBtn" mnemonicParsing="false" onAction="#onBackglassDownload" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                    <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
+                                                                    </graphic>
+                                                                    <tooltip>
+                                                                        <Tooltip prefWidth="400.0" text="Export the backglass image and save it on disk." wrapText="true" />
+                                                                    </tooltip>
+                                                                </Button>
+                                                                <Button fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                    <graphic>
+                                                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
+                                                                    </graphic>
+                                                                    <tooltip>
+                                                                        <Tooltip prefWidth="400.0" text="Export the backglass image and use it as a backglass media asset in your frontend." wrapText="true" />
+                                                                    </tooltip>
+                                                                </Button>
+                                                            </HBox>
+                                                        </right>
+                                                    </BorderPane>
+                                                </bottom>
+                                                <center>
+                                                    <ImageView fx:id="thumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                                                        <BorderPane.margin>
+                                                            <Insets top="12.0" />
+                                                        </BorderPane.margin>
+                                                    </ImageView>
+                                                </center>
+                                                <padding>
+                                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                                </padding>
                                             </BorderPane>
-                                        </bottom>
-                                        <padding>
-                                            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                        </padding>
-                                    </BorderPane>
+                                        </children>
+                                    </VBox>
+                                    <Pane fx:id="loaderStackImages">
+                                        <VBox spacing="6.0">
+                                            <children>
+                                                <Label text="DMD Preview" textFill="WHITE">
+                                                    <font>
+                                                        <Font name="System Bold" size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <BorderPane fx:id="dmdThumbnailImagePane" maxHeight="330.0" maxWidth="330.0" minHeight="330.0" minWidth="330.0" prefHeight="330.0" prefWidth="330.0" styleClass="media-container">
+                                                    <center>
+                                                        <ImageView fx:id="dmdThumbnailImage" fitHeight="280.0" fitWidth="320.0" pickOnBounds="true" preserveRatio="true">
+                                                            <BorderPane.margin>
+                                                                <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                                            </BorderPane.margin>
+                                                        </ImageView>
+                                                    </center>
+                                                    <bottom>
+                                                        <BorderPane BorderPane.alignment="BOTTOM_LEFT">
+                                                            <BorderPane.margin>
+                                                                <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                                            </BorderPane.margin>
+                                                            <left>
+                                                                <Label fx:id="dmdResolutionLabel" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                    <padding>
+                                                                        <Insets left="3.0" />
+                                                                    </padding>
+                                                                </Label>
+                                                            </left>
+                                                            <right>
+                                                                <HBox spacing="3.0">
+                                                                    <Button fx:id="uploadDMDBtn" mnemonicParsing="false" onAction="#onDMDUpload" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                        <graphic>
+                                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
+                                                                        </graphic>
+                                                                    </Button>
+                                                                    <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                        <graphic>
+                                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
+                                                                        </graphic>
+                                                                    </Button>
+                                                                    <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                        <graphic>
+                                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
+                                                                        </graphic>
+                                                                        <tooltip>
+                                                                            <Tooltip prefWidth="400.0" text="Export the DMD image and use it as a DMD media asset in your frontend." wrapText="true" />
+                                                                        </tooltip>
+                                                                    </Button>
+                                                                    <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                                        <graphic>
+                                                                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="14" />
+                                                                        </graphic>
+                                                         <tooltip>
+                                                            <Tooltip onCloseRequest="#onBackglassDelete" text="Delete backglass file" />
+                                                         </tooltip>
+                                                                    </Button>
+                                                                </HBox>
+                                                            </right>
+                                                        </BorderPane>
+                                                    </bottom>
+                                                    <padding>
+                                                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                                    </padding>
+                                                </BorderPane>
+                                            </children>
+                                        </VBox>
+                                    </Pane>
                                 </children>
-                            </VBox>
-                        </Pane>
+                            </HBox>
+                        </children>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                    </VBox>
                     </children>
-                </HBox>
-    
-                 <HBox spacing="48.0">
-                    <children>
-                        <VBox>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+                </VBox>
+         </top>
+         <center>
+            <BorderPane BorderPane.alignment="CENTER">
+               <left>
+                        <VBox BorderPane.alignment="CENTER">
                             <children>
                               <GridPane hgap="3.0" vgap="3.0">
                                   <columnConstraints>
@@ -358,8 +369,13 @@
                                   </children>
                               </GridPane>
                             </children>
+                     <BorderPane.margin>
+                        <Insets right="24.0" />
+                     </BorderPane.margin>
                         </VBox>
-                        <VBox>
+               </left>
+               <center>
+                        <VBox BorderPane.alignment="CENTER">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="6.0">
                                     <children>
@@ -445,7 +461,7 @@
                                         </Label>
                                         <Label fx:id="gameFilenameLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                                        <Label text="Emulator Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                          <Label text="Emulator Name:" textFill="WHITE" GridPane.rowIndex="2">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -457,7 +473,7 @@
                                     </VBox.margin>
                                 </GridPane>
 
-                                <Label text="DirectB2S File" textFill="WHITE">
+                                                  <Label text="DirectB2S File" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="14.0" />
                                     </font>
@@ -523,7 +539,7 @@
                                             </font>
                                         </Label>
      
-                                        <Label text="File Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                                          <Label text="File Name:" textFill="WHITE" GridPane.rowIndex="1">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -534,7 +550,7 @@
                                             </font>
                                         </Label>
 
-                                        <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
+                                                          <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -545,7 +561,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
+                                                          <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -556,7 +572,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
+                                                          <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -567,7 +583,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
+                                                          <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -578,7 +594,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
+                                                          <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -589,7 +605,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
+                                                          <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -600,7 +616,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
+                                                          <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -611,7 +627,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
+                                                          <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -622,7 +638,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
+                                                          <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -633,7 +649,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
+                                                          <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -644,7 +660,7 @@
                                             </font>
                                         </Label>
       
-                                        <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
+                                                          <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -655,19 +671,19 @@
                                             </font>
                                         </Label>
       
-                                    </children>
+                                                      </children>
                                     <VBox.margin>
                                         <Insets top="6.0" />
                                     </VBox.margin>
                                 </GridPane>
                             </children>
                         </VBox>
-                    </children>
-                </HBox>
-            </children>
-            <padding>
-                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-            </padding>
-        </VBox>
+               </center>
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
+            </BorderPane>
+         </center>
+      </BorderPane>
     </content>
 </ScrollPane>
