@@ -133,7 +133,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   private void updateForTabSelection(int index) {
     if (index == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Overview"));
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Updates"));
     }
     else if (index == 1) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Visual Pinball"));
