@@ -14,7 +14,9 @@
     - Kongedam Video Tutorials (you can now download these directly for one of your frontend screens)
     - Superhac's VPX Media Database (https://github.com/superhac/vpinmediadb)
 
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources.png?raw=true" width="500" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources.png?raw=true" width="700" />
+    
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources-selection.png?raw=true" width="400" />
   
   
 - **Tables Overview**:
@@ -22,6 +24,9 @@
   - **Improved ROM column**: The tooltip of a ROM displays additional alias information now. In addition to that, you can use the table search field to filter games by their ROM name or alias.
   - **Improved VPin MAME section**: In addition to the alias mapping, the section shows also the tables which share the same ROM.
   - **NVOffset Management** For the tables that are shown with the same ROM usage, you can edit the nvoffset now too. The script is immediately updated, so you don't even need to open the script editor anymore for this.
+
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/release-notes/alias.png?raw=true" width="400" />
+  
   - **Responsive Toolbar**: Since a lot of users use the Studio with a full HD monitor a second toolbar row has been added so that all toolbar actions are visible all time.
   - **VPS Updates Indicators**: You can disable VPS updates for a table now. The checkbox for this can be found in the sidebar VP spreadsheet section. Note that updates are still recorded for the table, but not visualized anymore.
 - **Table Imports**
