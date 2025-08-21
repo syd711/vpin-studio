@@ -49,7 +49,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -183,16 +182,6 @@ public class DirectB2SResource {
     return download(backglassService.getPreviewBackground(emulatorId, fileName, game, includeFrame), FilenameUtils.getBaseName(fileName) + ".png", false);
   }
 
-  @GetMapping("/croppedBackground/{gameId}")
-  public ResponseEntity<StreamingResponseBody> getCroppedBackground(@PathVariable("gameId") int gameId) {
-    return download(gameId, game -> defaultPictureService.getCroppedDefaultPicture(game));
-  }
-
-  @GetMapping("/croppedDmd/{gameId}")
-  public ResponseEntity<StreamingResponseBody> getCroppedDmd(@PathVariable("gameId") int gameId) {
-    return download(gameId, game -> defaultPictureService.getDMDPicture(game));
-  }
-
   //-------
   // download utilities
 
@@ -222,14 +211,6 @@ public class DirectB2SResource {
         .contentLength(resource.contentLength())
         .contentType(forceDownload ? MediaType.APPLICATION_OCTET_STREAM : MediaType.IMAGE_PNG)
         .body(resource);
-  }
-
-  private ResponseEntity<StreamingResponseBody> download(int gameId, Function<Game, File> provider) {
-    Game game = gameService.getGame(gameId);
-    if (game == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-    return download(provider.apply(game));
   }
 
   private ResponseEntity<StreamingResponseBody> download(File file) {

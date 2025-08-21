@@ -60,7 +60,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public static final String COMPETITION_BADGES = "competition-badges";
 
   public static final String RAW_MEDIA_FOLDER = "media-raw/";
-  public static final String CROPPED_MEDIA_FOLDER = "media-cropped/";
 
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
 
@@ -134,17 +133,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       apply(Features, store.get(SYSTEM_FEATURES_ON), true);
       apply(Features, store.get(SYSTEM_FEATURES_OFF), false);
 
-      if (!getRawImageExtractionFolder().exists()) {
-        boolean mkdirs = getRawImageExtractionFolder().mkdirs();
-        if (!mkdirs) {
-          LOG.error("Failed to create b2s image directory " + getRawImageExtractionFolder().getAbsolutePath());
-        }
-      }
-
-      if (!getCroppedImageFolder().exists()) {
-        boolean mkdirs = getCroppedImageFolder().mkdirs();
-        if (!mkdirs) {
-          LOG.error("Failed to create b2s crops directory " + getCroppedImageFolder().getAbsolutePath());
+      File extractionFolder = getRawImageExtractionFolder();
+      if (!extractionFolder.exists()) {
+        if (!extractionFolder.mkdirs()) {
+          LOG.error("Failed to create b2s image directory " + extractionFolder.getAbsolutePath());
         }
       }
 
@@ -202,7 +194,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     LOG.info(formatPathLog("B2S Server", this.getBackglassServerFolder()));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getRawImageExtractionFolder()));
-    LOG.info(formatPathLog("B2S Cropped Folder", this.getCroppedImageFolder()));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }
@@ -220,10 +211,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getRawImageExtractionFolder() {
     return new File(RESOURCES, RAW_MEDIA_FOLDER);
-  }
-
-  public File getCroppedImageFolder() {
-    return new File(RESOURCES, CROPPED_MEDIA_FOLDER);
   }
 
   public File getBackupFolder() {

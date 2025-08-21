@@ -120,21 +120,10 @@ public class CardGraphics {
           "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
-    File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
-    BufferedImage backgroundImage = null;
-    if (croppedDefaultPicture == null || !template.isUseDirectB2S()) {
+    BufferedImage backgroundImage = directB2SService.generateCroppedDefaultPicture(game);
+    if (backgroundImage == null || !template.isUseDirectB2S()) {
       BufferedImage sImage = ImageUtil.loadImage(sourceImage);
       backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
-    }
-    else {
-      try {
-        backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
-      }
-      catch (Exception e) {
-        LOG.info("Using default image as fallback instead of " + croppedDefaultPicture.getAbsolutePath());
-        BufferedImage sImage = ImageUtil.loadImage(sourceImage);
-        backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
-      }
     }
 
     if (width != backgroundImage.getWidth()) {

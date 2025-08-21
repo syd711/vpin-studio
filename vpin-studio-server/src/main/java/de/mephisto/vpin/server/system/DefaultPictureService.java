@@ -94,14 +94,14 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     if (VPinScreen.BackGlass.equals(onScreen)) {
       File preview = getDefaultPreview(game);
       if (!preview.exists()) {
-        extractPreviewPicture(game);
+        extractDefaultPicture(game, preview, true);
       }
       return extractBytes(preview);
     }
     else if (VPinScreen.Menu.equals(onScreen)) {
       File dmd = getDMDPicture(game);
       if (!dmd.exists()) {
-        extractDmd(game);
+        extractDmd(game, dmd);
       }
       return extractBytes(dmd);
     }
@@ -114,15 +114,9 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     extractDefaultPicture(game, target, false);
   }
 
-  public void extractPreviewPicture(@NonNull Game game) {
-    File target = getDefaultPreview(game);
-    extractDefaultPicture(game, target, true);
-  }
-
   private void extractDefaultPicture(@NonNull Game game, File target, boolean usePreview) {
-    File rawDefaultPicture = getRawDefaultPicture(game);
-    if (!rawDefaultPicture.getParentFile().exists() && !rawDefaultPicture.getParentFile().mkdirs()) {
-      LOG.error("Failed to create raw default picture folder: " + rawDefaultPicture.getParentFile().getAbsolutePath());
+    if (!target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
+      LOG.error("Failed to create raw default picture folder: " + target.getParentFile().getAbsolutePath());
     }
 
     // extract Preview with frame, no grill is hidden...
@@ -171,9 +165,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
     // no more idea :)
   }
 
-  public void extractDmd(Game game) {
-    File target = getDMDPicture(game);
-
+  private void extractDmd(Game game, File target) {
     // use B2S DMD image if present and not hidden
     DirectB2STableSettings tableSettings = backglassService.getTableSettings(game);
     if (tableSettings == null || !tableSettings.isHideB2SDMD()) {
@@ -248,9 +240,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
   public boolean deleteDefaultPictures(@NonNull Game game) {
     boolean success = true;
-    if (!FileUtils.delete(getCroppedDefaultPicture(game))) {
-      success = false;
-    }
     if (!FileUtils.delete(getRawDefaultPicture(game))) {
       success = false;
     }
@@ -269,51 +258,21 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   @Nullable
-  public File generateCroppedDefaultPicture(@NonNull Game game) {
+  public BufferedImage generateCroppedDefaultPicture(@NonNull Game game) {
     try {
       //try to use existing file first
-      File croppedDefaultPicture = getCroppedDefaultPicture(game);
-      if (croppedDefaultPicture.exists()) {
-        return croppedDefaultPicture;
-      }
-
       File rawDefaultPicture = getRawDefaultPicture(game);
       if (!rawDefaultPicture.exists()) {
-        extractDefaultPicture(game);
+        extractDefaultPicture(game, rawDefaultPicture, false);
       }
 
-      rawDefaultPicture = getRawDefaultPicture(game);
       if (rawDefaultPicture.exists()) {
 
         BufferedImage image = ImageIO.read(rawDefaultPicture);
         BufferedImage crop = ImageUtil.crop(image, DEFAULT_MEDIA_RATIO.getXRatio(), DEFAULT_MEDIA_RATIO.getYRatio());
         BufferedImage resized = ImageUtil.resizeImage(crop, cardSettings.getCardResolution().toWidth());
 
-        File target = getCroppedDefaultPicture(game);
-        if (target == null) {
-          return null;
-        }
-
-        if (target.exists()) {
-          if (!target.delete()) {
-            LOG.error("Failed to delete crop picture " + target.getAbsolutePath());
-          }
-        }
-
-        if (!target.getParentFile().exists()) {
-          if (!target.getParentFile().mkdirs()) {
-            LOG.error("Failed to create crop image directory " + target.getParentFile().getAbsolutePath());
-          }
-        }
-
-        if (target.getParentFile().exists() && target.getParentFile().canWrite()) {
-          ImageUtil.write(resized, target);
-          LOG.info("Written cropped default background for " + game.getRom());
-        }
-        else {
-          LOG.error("No permission to write cropped default picture, folder " + game.getRom() + " does not exist.");
-        }
-        return target;
+        return resized;
       }
     }
     catch (Exception e) {
@@ -326,12 +285,11 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) {
     try {
       File backgroundImageFile = getRawDefaultPicture(game);
-      if (backgroundImageFile == null || !backgroundImageFile.exists()) {
-        extractDefaultPicture(game);
+      if (!backgroundImageFile.exists()) {
+        extractDefaultPicture(game, backgroundImageFile, false);
       }
 
-      backgroundImageFile = getRawDefaultPicture(game);
-      if (backgroundImageFile == null || !backgroundImageFile.exists()) {
+      if (!backgroundImageFile.exists()) {
         return null;
       }
 
@@ -340,7 +298,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       if (image.getWidth() < image.getHeight()) {
         image = ImageUtil.crop(image, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
-
 
       BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
       LOG.info("Resized to " + resized.getWidth() + "x" + resized.getHeight());
@@ -363,8 +320,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   public boolean isMediaIndexAvailable() {
-    return systemService.getCroppedImageFolder().exists()
-        && systemService.getRawImageExtractionFolder().exists()
+    return systemService.getRawImageExtractionFolder().exists()
         && !org.apache.commons.io.FileUtils.listFiles(systemService.getRawImageExtractionFolder(), null, false).isEmpty();
   }
 
@@ -376,12 +332,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   //-------------------------
-
-  @NonNull
-  @JsonIgnore
-  public File getCroppedDefaultPicture(Game game) {
-    return new File(systemService.getCroppedImageFolder(), game.getId() + "_" + SystemService.DEFAULT_BACKGROUND);
-  }
 
   @NonNull
   @JsonIgnore
@@ -479,21 +429,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
       }
     }
     LOG.info("Folder '{}' cleaned", systemService.getRawImageExtractionFolder().getAbsolutePath());
-
-    for (File f : org.apache.commons.io.FileUtils.listFiles(systemService.getCroppedImageFolder(), null, false)) {
-      try {
-        Integer id = Integer.valueOf(StringUtils.substringBefore(f.getName(), "_"));
-        String type = StringUtils.substringAfter(f.getName(), "_");
-        if (!gameIds.contains(id) || !(type.equals(SystemService.DEFAULT_BACKGROUND))) {
-          f.delete();
-        }
-      }
-      catch (NumberFormatException e) {
-        LOG.warn("Failed to clean up cropped backglass media file {}", f.getAbsolutePath());
-        f.delete();
-      }
-    }
-    LOG.info("Folder '{}' cleaned", systemService.getCroppedImageFolder().getAbsolutePath());
   }
 
   @Override

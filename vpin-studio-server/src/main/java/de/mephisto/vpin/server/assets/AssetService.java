@@ -84,7 +84,6 @@ public class AssetService {
           defaultPictureService.extractDefaultPicture(game);
         }
 
-        target = defaultPictureService.getRawDefaultPicture(game);
         if (target.exists()) {
           BufferedImage bufferedImage = ImageUtil.loadImage(target);
           return ImageUtil.toBytes(bufferedImage);
