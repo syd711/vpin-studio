@@ -4,10 +4,19 @@
 
 - **Table Backups**
   - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video for more details.
-- **Asset Sources**
+  
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/overview.png?raw=true" width="700" />
+
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/backup.png?raw=true" width="500" />
+  
+- **Media Sources**
   - The Studio allows to configure additional asset sources now. These will be visible, configurable and selectable during the table asset selection. In addition to this new configuration option, the Studio comes with new pre-defined asset sources. These are:
     - Kongedam Video Tutorials (you can now download these directly for one of your frontend screens)
     - Superhac's VPX Media Database (https://github.com/superhac/vpinmediadb)
+
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources.png?raw=true" width="500" />
+  
+  
 - **Tables Overview**:
   - **Added optional column "Tutorials"** also to the regular table overview. This way, users can easier see if there will be a tutorial available in the pause menu.
   - **Improved ROM column**: The tooltip of a ROM displays additional alias information now. In addition to that, you can use the table search field to filter games by their ROM name or alias.
