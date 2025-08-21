@@ -69,9 +69,6 @@ public class DefaultPictureService implements ApplicationListener<ApplicationRea
   private PupPacksService pupPackService;
 
   @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
   private GameLifecycleService gameLifecycleService;
 
   public void updateGame(Game game) {
