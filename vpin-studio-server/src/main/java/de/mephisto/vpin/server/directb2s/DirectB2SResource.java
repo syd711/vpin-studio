@@ -340,13 +340,6 @@ public class DirectB2SResource {
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();
-
-      // FIXME OLE not really needed anymore as defaultPictureService auto detect missing images
-      Game game = gameService.getGame(gameId);
-      if (game != null) {
-        defaultPictureService.extractDefaultPicture(game);
-      }
-
       return descriptor;
     }
     catch (Exception e) {

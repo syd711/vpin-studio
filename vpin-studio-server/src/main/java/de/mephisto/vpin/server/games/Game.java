@@ -206,14 +206,6 @@ public class Game {
     this.pupPackDisabled = pupPackDisabled;
   }
 
-  public boolean isDefaultBackgroundAvailable() {
-    return defaultBackgroundAvailable;
-  }
-
-  public void setDefaultBackgroundAvailable(boolean defaultBackgroundAvailable) {
-    this.defaultBackgroundAvailable = defaultBackgroundAvailable;
-  }
-
   public Date getDateUpdated() {
     return dateUpdated;
   }

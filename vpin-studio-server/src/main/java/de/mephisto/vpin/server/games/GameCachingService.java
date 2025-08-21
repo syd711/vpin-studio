@@ -47,7 +47,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -85,9 +84,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
 
   @Autowired
   private AltColorService altColorService;
-
-  @Autowired
-  private DefaultPictureService defaultPictureService;
 
   @Autowired
   private PupPacksService pupPacksService;
@@ -414,9 +410,6 @@ public class GameCachingService implements InitializingBean, PreferenceChangedLi
     game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
-
-    File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-    game.setDefaultBackgroundAvailable(rawDefaultPicture.exists());
 
     DirectB2S b2s = backglassService.getDirectB2SAndVersions(game);
     game.setNbDirectB2S(b2s != null ? b2s.getNbVersions() : -1);

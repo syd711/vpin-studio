@@ -1,19 +1,10 @@
 package de.mephisto.vpin.ui.cards;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Predicate;
-
 import de.mephisto.vpin.restclient.emulators.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
-import javafx.beans.property.Property;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -21,16 +12,20 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 
-public class HighscoreCardsFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable {
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
-  @FXML
-  private CheckBox missinDefaultImageCheckBox;
+import static de.mephisto.vpin.ui.Studio.client;
+
+public class HighscoreCardsFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> implements Initializable {
 
   @FXML
   private VBox emulatorFilters;
 
-  private List<CheckBox> emulatorCheckboxes = new ArrayList<>();
-
+  private final List<CheckBox> emulatorCheckboxes = new ArrayList<>();
 
   private HighscoreCardsPredicateFactory predicateFactory;
   
@@ -39,13 +34,11 @@ public class HighscoreCardsFilterController extends BaseFilterController<GameRep
     for (CheckBox cb : emulatorCheckboxes) {
       cb.setSelected(true);
     }
-
-    missinDefaultImageCheckBox.setSelected(false);
   }
 
   @Override
   protected boolean hasFilter() {
-    boolean hasFilter = missinDefaultImageCheckBox.isSelected();
+    boolean hasFilter = false;
 
     for (CheckBox cb : emulatorCheckboxes) {
       hasFilter |= !cb.isSelected();
@@ -85,13 +78,5 @@ public class HighscoreCardsFilterController extends BaseFilterController<GameRep
       emulatorFilters.getChildren().add(checkBox);
     }
 
-    setupCheckbox(missinDefaultImageCheckBox, predicateFactory.missinDefaultImageFilter);
-  }
-
-  private void setupCheckbox(CheckBox cb, Property<Boolean> model) {
-    cb.selectedProperty().bindBidirectional(model);
-    cb.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      applyFilters();
-    });
   }
 }

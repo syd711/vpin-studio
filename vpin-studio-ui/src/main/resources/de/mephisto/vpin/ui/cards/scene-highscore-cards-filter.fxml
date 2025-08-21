@@ -65,11 +65,6 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox fx:id="templateFilters">
-                     <children>
-                        <CheckBox fx:id="missinDefaultImageCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Default Image" />
-                     </children>
-                  </VBox>
 
                </children>
                <padding>

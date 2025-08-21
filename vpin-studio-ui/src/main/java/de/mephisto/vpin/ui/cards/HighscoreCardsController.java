@@ -276,20 +276,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     }
 
     BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
-      boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
-      if (!defaultBackgroundAvailable) {
-        Label label = new Label();
-        if (value.isCardDisabled()) {
-          label.setStyle("-fx-text-fill: " + DISABLED_COLOR);
-        }
-        label.setGraphic(WidgetFactory.createAlertIcon("mdi2i-image-off-outline"));
-        Tooltip tt = new Tooltip("The table does not have a default background.");
-        tt.setWrapText(true);
-        tt.setMaxWidth(400);
-        label.setTooltip(tt);
-        return label;
-      }
-
       FontIcon checkIcon = WidgetFactory.createCheckIcon();
       if (value.isCardDisabled()) {
         checkIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));

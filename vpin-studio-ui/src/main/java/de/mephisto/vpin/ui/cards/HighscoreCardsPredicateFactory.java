@@ -3,9 +3,6 @@ package de.mephisto.vpin.ui.cards;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.GameRepresentationModel;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -17,9 +14,6 @@ public class HighscoreCardsPredicateFactory {
   private final List<Integer> emulatorIds = new ArrayList<>();
 
   //--------------- Filters
-
-  Property<Boolean> missinDefaultImageFilter = new SimpleBooleanProperty(false);
-
 
   public void selectEmulator(Integer id) {
     emulatorIds.add(id);
@@ -46,10 +40,6 @@ public class HighscoreCardsPredicateFactory {
         }
 
         if (StringUtils.isNotEmpty(searchTerm) && !StringUtils.containsIgnoreCase(model.getName(), searchTerm)) {
-          return false;
-        }
-
-        if (missinDefaultImageFilter.getValue() && game.isDefaultBackgroundAvailable()) {
           return false;
         }
 

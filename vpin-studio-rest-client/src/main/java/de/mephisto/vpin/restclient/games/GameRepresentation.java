@@ -359,14 +359,6 @@ public class GameRepresentation {
     this.altSoundAvailable = altSoundAvailable;
   }
 
-  public boolean isDefaultBackgroundAvailable() {
-    return defaultBackgroundAvailable;
-  }
-
-  public void setDefaultBackgroundAvailable(boolean defaultBackgroundAvailable) {
-    this.defaultBackgroundAvailable = defaultBackgroundAvailable;
-  }
-
   public String getAssets() {
     return assets;
   }

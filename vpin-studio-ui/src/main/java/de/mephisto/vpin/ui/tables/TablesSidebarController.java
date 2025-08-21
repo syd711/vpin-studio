@@ -496,17 +496,6 @@ public class TablesSidebarController extends BaseSideBarController<GameRepresent
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-//    try {
-//      FXMLLoader loader = new FXMLLoader(TablesSidebarDefaultBackgroundController.class.getResource("scene-tables-sidebar-default-background.fxml"));
-//      Parent tablesRoot = loader.load();
-//      tablesSidebarDefaultBackgroundController = loader.getController();
-//      tablesSidebarDefaultBackgroundController.setSidebarController(this);
-//      titledPaneDefaultBackground.setContent(tablesRoot);
-//    }
-//    catch (IOException e) {
-//      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
-//    }
-
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarHighscoresController.class.getResource("scene-tables-sidebar-highscores.fxml"));
       Parent tablesRoot = loader.load();
