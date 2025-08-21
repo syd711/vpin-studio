@@ -2,6 +2,10 @@
 
 ## Changes
 
+- **Highscore Card Editor**
+
+TODO
+
 - **Table Backups**
   - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video for more details.
   
@@ -36,7 +40,7 @@
 - **Table Imports**
   - The table import dialog has been improved. The file size is now shown too. Also, you can directly delete .vpx of .fp files so get rid of file corpses.
   
-  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/imports.png?raw=true" width="500" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/imports.png?raw=true" width="400" />
   
 - **Table Deletions**:
   - The last selection of the deletion dialog is remembered now.
@@ -64,3 +68,4 @@
 - Fixed ALT sound upload so that a game selection is mandatory now. This enforces the correct ROM name to be used from the game instead of guessing it from the uploading file.
 - Fixed initial selection of the backglass manager: When you press the backglass button from the backglass sidebar in the tables overview, the backglass manager tab initializes with the correct selection again.
 - Fixed saving the PinUP Popper preferences and added option to set the default media directory. 
+- ...and improved the wiki documenation (well, at least a bit...) 
