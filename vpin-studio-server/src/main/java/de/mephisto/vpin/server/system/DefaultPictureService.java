@@ -53,10 +53,8 @@ import java.nio.file.Files;
 import java.util.List;
 
 @Service
-public class DefaultPictureService implements PreferenceChangedListener, ApplicationListener<ApplicationReadyEvent>, InitializingBean, GameDataChangedListener {
+public class DefaultPictureService implements ApplicationListener<ApplicationReadyEvent>, InitializingBean, GameDataChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(DefaultPictureService.class);
-
-  private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
 
   @Autowired
   private SystemService systemService;
@@ -75,10 +73,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
   @Autowired
   private GameLifecycleService gameLifecycleService;
-
-
-  private CardSettings cardSettings;
-
 
   public void updateGame(Game game) {
     if (game != null) {
@@ -258,30 +252,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   }
 
   @Nullable
-  public BufferedImage generateCroppedDefaultPicture(@NonNull Game game) {
-    try {
-      //try to use existing file first
-      File rawDefaultPicture = getRawDefaultPicture(game);
-      if (!rawDefaultPicture.exists()) {
-        extractDefaultPicture(game, rawDefaultPicture, false);
-      }
-
-      if (rawDefaultPicture.exists()) {
-
-        BufferedImage image = ImageIO.read(rawDefaultPicture);
-        BufferedImage crop = ImageUtil.crop(image, DEFAULT_MEDIA_RATIO.getXRatio(), DEFAULT_MEDIA_RATIO.getYRatio());
-        BufferedImage resized = ImageUtil.resizeImage(crop, cardSettings.getCardResolution().toWidth());
-
-        return resized;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Error extracting default picture: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
-  @Nullable
   public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) {
     try {
       File backgroundImageFile = getRawDefaultPicture(game);
@@ -322,13 +292,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
   public boolean isMediaIndexAvailable() {
     return systemService.getRawImageExtractionFolder().exists()
         && !org.apache.commons.io.FileUtils.listFiles(systemService.getRawImageExtractionFolder(), null, false).isEmpty();
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
-    if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equalsIgnoreCase(propertyName)) {
-      cardSettings = preferencesService.getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    }
   }
 
   //-------------------------
@@ -404,9 +367,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Applica
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
-
     gameLifecycleService.addGameDataChangedListener(this);
 
     LOG.info("{} initialization finished.", this.getClass().getSimpleName());

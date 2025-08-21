@@ -261,10 +261,6 @@ public class CardService implements InitializingBean, HighscoreChangeListener, P
     return false;
   }
 
-  private BufferedImage generateCard_old(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
-    return new CardGraphics(directB2SService, frontendService, cardSettings.getCardResolution(), template, game, summary).draw();
-  }
-
   private BufferedImage generateCard(Game game, ScoreSummary summary, CardTemplate template) throws Exception {
     CardResolution res = cardSettings.getCardResolution();
 
