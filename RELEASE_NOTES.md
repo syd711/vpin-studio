@@ -6,8 +6,9 @@
   - The Studio supports creating and restoring table backups now. **Note that this feature is solely for private use only!!!** For this reason, the backups are password protected. To enable the feature, you need to configure your VPU or VPF account for authentication. Check out the YouTube channel video for more details.
   
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/overview.png?raw=true" width="700" />
-
+  
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/backups/backup.png?raw=true" width="500" />
+
   
 - **Media Sources**
   - The Studio allows to configure additional asset sources now. These will be visible, configurable and selectable during the table asset selection. In addition to this new configuration option, the Studio comes with new pre-defined asset sources. These are:
@@ -16,7 +17,7 @@
 
     <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources.png?raw=true" width="700" />
     
-    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources-selection.png?raw=true" width="400" />
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/preferences/media-sources-selection.png?raw=true" width="500" />
   
   
 - **Tables Overview**:
@@ -29,8 +30,14 @@
   
   - **Responsive Toolbar**: Since a lot of users use the Studio with a full HD monitor a second toolbar row has been added so that all toolbar actions are visible all time.
   - **VPS Updates Indicators**: You can disable VPS updates for a table now. The checkbox for this can be found in the sidebar VP spreadsheet section. Note that updates are still recorded for the table, but not visualized anymore.
+
+    <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/ignore-updates.png?raw=true" width="700" />
+  
 - **Table Imports**
   - The table import dialog has been improved. The file size is now shown too. Also, you can directly delete .vpx of .fp files so get rid of file corpses.
+  
+  <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/tables/imports.png?raw=true" width="500" />
+  
 - **Table Deletions**:
   - The last selection of the deletion dialog is remembered now.
 - **Pause Menu**
