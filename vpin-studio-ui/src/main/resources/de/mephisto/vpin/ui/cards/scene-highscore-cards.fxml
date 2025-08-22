@@ -33,7 +33,6 @@
                            <children>
                               <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                  <columns>
-                                    <TableColumn fx:id="columnStatus" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: BASELINE_CENTER;" />
                                     <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="280.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                     <TableColumn fx:id="columnTemplate" minWidth="120.0" prefWidth="-1.0" style="-fx-alignment: BASELINE_LEFT;" text="Template" />
                                  </columns>

@@ -66,9 +66,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnTemplate;
 
   @FXML
-  TableColumn<GameRepresentationModel, GameRepresentationModel> columnStatus;
-
-  @FXML
   private Button tableEditBtn;
 
   @FXML
@@ -286,14 +283,6 @@ public class HighscoreCardsController extends BaseTableController<GameRepresenta
     catch (Exception e) {
       LOG.error("Failed to init card editor: " + e.getMessage(), e);
     }
-
-    BaseLoadingColumn.configureColumn(columnStatus, (value, model) -> {
-      FontIcon checkIcon = WidgetFactory.createCheckIcon();
-      if (value.isCardDisabled()) {
-        checkIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
-      }
-      return checkIcon;
-    }, this, true);
 
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
