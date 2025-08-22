@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class VpsTutorialUrls extends VpsAuthoredUrls {
   private String title;
   private String youtubeId;
@@ -73,8 +75,7 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
 
     VpsTutorialUrls that = (VpsTutorialUrls) o;
 
-    if (title != null && !title.equals(that.title)) return false;
-    return youtubeId.equals(that.youtubeId);
+    return StringUtils.equals(this.title, that.title) && StringUtils.equals(this.youtubeId, that.youtubeId);
   }
 
   @Override
